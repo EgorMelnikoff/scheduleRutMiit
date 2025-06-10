@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Расписание МИИТ</string>
+
+    <string name="search_schedule">Найти расписание</string>
+    <string name="search">Поиск</string>
+    <string name="group">Группа</string>
+    <string name="course">курс</string>
+    <string name="lecturer">Преподаватель</string>
+
+
+    <string name="schedule">Расписание</string>
+    <string name="periodic">Периодическое</string>
+    <string name="non_periodic">Разовое</string>
+    <string name="session">Сессия</string>
+    <string name="week">неделя</string>
+    <string name="support">Поддержать</string>
+    <string name="settings">Настройки</string>
+
+
+    <string name="show_tags">Теги</string>
+    <string name="show_count_classes">Количество пар</string>
+    <string name="report_a_problem">Сообщить о проблеме</string>
+    <string name="collapse">Свернуть</string>
+    <string name="app_info">Приложение создано для удобного просмотра и сохранения расписаний РУТ(МИИТ)</string>
+
+    <string name="empty_day">На это день пары не запланированы</string>
+    <string name="no_saved_schedule">Отсутствует сохраненное расписание</string>
+    <string name="enter_your_query">Введите свой запрос</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="error">Ошибка</string>
+    <string name="error_loading">Ошибка</string>
+    <string name="empty_here">Здесь пусто</string>
+    <string name="update_problem">Возникли проблемы с обновлением</string>
+    <string name="try_again">Попробовать снова</string>
+
+    <string name="save">Сохранить</string>
+    <string name="copy_link">Скопировать ссылку</string>
+    <string name="save_pdf">Скачать pdf</string>
+    <string name="make_default">Сделать основным</string>
+    <string name="delete">Удалить</string>
+    <string name="profile">Профиль</string>
+
+    <string name="news">Новости</string>
+
+
+    <string name="copied">Скопировано</string>
+
+    <string name="all">Все</string>
+    <string name="groups">Группы</string>
+    <string name="people">Преподаватели</string>
+
+    <string name="compact_view">Компактный вид</string>
+    <string name="schedules">Расписания</string>
+    <string name="general">Общее</string>
+    <string name="theme">Тема</string>
+    <string name="about_app">О приложении</string>
+
+
+    <string name="Tag">Тег</string>
+    <string name="Default">Обычный</string>
+    <string name="Green">Зелёный</string>
+    <string name="Yellow">Жёлтый</string>
+    <string name="Red">Красный</string>
+    <string name="Subject">Предмет</string>
+    <string name="Type">Тип занятия</string>
+    <string name="Room">Аудитория</string>
+    <string name="Rooms">Аудитории</string>
+    <string name="Lecturers">Преподаватели</string>
+    <string name="Groups">Группы</string>
+    <string name="Comment">Комментарий</string>
+    <string name="Enter_comment">Введите комментарий</string>
+
+    <string name="light">Светлая</string>
+    <string name="dark">Темная</string>
+    <string name="auto">Авто</string>
+    <string name="color_style">Цветовое оформление</string>
+    <string name="decor">Оформление</string>
+
+    <string name="from">с</string>
+
+    <string name="failed_update_schedules">Не удалось обновить расписания</string>
+    <string name="failed_update">Не удалось обновить расписание</string>
+    <string name="day_off">Выходной</string>
+    <string name="error_load_schedule">Произошла ошибка загрузки расписания</string>
+    <string name="empty_base">Сохраните как минимум одно расписание для его отображения</string>
+    <string name="author">Автор</string>
+    <string name="news_updates">Новости и обновления</string>
+    <string name="source_code">Исходный код</string>
+    <string name="no_comments">Отсутствуют комментарии к парам</string>
+    <string name="comment_add">Комментарий можно добавить, нажав на пару</string>
+</resources>

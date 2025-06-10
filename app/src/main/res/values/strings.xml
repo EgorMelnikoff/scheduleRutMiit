@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Schedule MIIT</string>
+
+    <string name="empty_day">There are no classes scheduled for this day</string>
+    <string name="try_again">Try again</string>
+    <string name="update_problem">There were problems with the update</string>
+    <string name="no_saved_schedule">No saved schedule</string>
+    <string name="empty_here">It`s empty here</string>
+    <string name="error">Error</string>
+
+    <string name="copy_link">Copy link</string>
+    <string name="save_pdf">Download pdf</string>
+    <string name="save">Save</string>
+
+    <string name="settings">Settings</string>
+    <string name="week">week</string>
+    <string name="support">Support</string>
+    <string name="show_tags">Show tags</string>
+    <string name="show_count_classes">Show count classes</string>
+    <string name="report_a_problem">Report a problem</string>
+    <string name="collapse">Collapse</string>
+    <string name="app_info">The application is designed for convenient viewing and saving of RUT (MIIT) schedules</string>
+    <string name="error_loading">Error</string>
+
+    <string name="enter_your_query">Enter your query</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="search">Search</string>
+
+    <string name="group">Group</string>
+    <string name="lecturer">Lecturer</string>
+
+    <string name="course">course</string>
+    <string name="profile">Profile</string>
+
+    <string name="periodic">Periodic</string>
+    <string name="non_periodic">Non periodic</string>
+    <string name="session">Session</string>
+
+    <string name="schedule">Schedule</string>
+    <string name="search_schedule">Search schedule</string>
+
+    <string name="delete">Delete</string>
+    <string name="copied">Copied</string>
+    <string name="make_default">Make default</string>
+
+
+    <string name="all">All</string>
+    <string name="groups">Groups</string>
+    <string name="people">People</string>
+
+    <string name="compact_view">Compact view</string>
+    <string name="schedules">Schedules</string>
+    <string name="general">General</string>
+    <string name="theme">Theme</string>
+    <string name="about_app">About app</string>
+    <string name="news">News</string>
+
+    <string name="telegram" translatable="false">Telegram</string>
+    <string name="github" translatable="false">GitHub</string>
+
+
+    <string name="Tag">Tag</string>
+    <string name="Default">Default</string>
+    <string name="Green">Green</string>
+    <string name="Yellow">Yellow</string>
+    <string name="Red">Red</string>
+    <string name="Subject">Subject</string>
+    <string name="Type">Type</string>
+    <string name="Room">Room</string>
+    <string name="Rooms">Rooms</string>
+    <string name="Lecturers">Lecturers</string>
+    <string name="Groups">Groups</string>
+    <string name="Comment">Comment</string>
+    <string name="Enter_comment">Enter comment</string>
+
+
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="auto">Auto</string>
+    <string name="color_style">Color style</string>
+    <string name="decor">Decor</string>
+
+    <string name="from">from</string>
+
+    <string name="day_off">Day off</string>
+    <string name="error_load_schedule">There was an error loading the schedule</string>
+    <string name="empty_base">Save at least one schedule to display it</string>
+    <string name="failed_update_schedules">Failed to update schedules</string>
+    <string name="failed_update">Failed to update schedule</string>
+    <string name="author">Author</string>
+    <string name="news_updates">News, updates</string>
+    <string name="source_code">Source code</string>
+    <string name="no_comments">There are no comments for the classes</string>
+    <string name="comment_add">You can add a comment by clicking on a class</string>
+</resources>
