@@ -9,14 +9,13 @@ import com.egormelnikoff.schedulerutmiit.data.Group
 import com.egormelnikoff.schedulerutmiit.classes.Institutes
 import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteRepos
 import com.egormelnikoff.schedulerutmiit.ui.search.Options
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
 sealed interface InstitutesState {
-    data object Error : InstitutesState
+    data object Empty : InstitutesState
     data class Loaded(
         val institutes: Institutes
     ) : InstitutesState
@@ -39,12 +38,10 @@ class SearchViewModel : ViewModel() {
     val stateSearch: StateFlow<SearchState> = _stateSearch
 
 
-    private val _stateInstitutes = MutableStateFlow<InstitutesState>(InstitutesState.Error)
-    private var job: Job? = null
+    private val _stateInstitutes = MutableStateFlow<InstitutesState>(InstitutesState.Empty)
 
     fun search(query: String, selectedOptions: Options) {
-        job?.cancel()
-        job = viewModelScope.launch {
+        viewModelScope.launch {
             _stateSearch.value = SearchState.Loading
             if (query.isNotEmpty()) {
                 var groups = listOf<Group>()
@@ -75,7 +72,7 @@ class SearchViewModel : ViewModel() {
         if (_stateInstitutes.value !is InstitutesState.Loaded) {
             when (val institutes = RemoteRepos.getInstitutes()) {
                 is Result.Error -> {
-                    _stateInstitutes.value = InstitutesState.Error
+                    _stateInstitutes.value = InstitutesState.Empty
                 }
 
                 is Result.Success -> {

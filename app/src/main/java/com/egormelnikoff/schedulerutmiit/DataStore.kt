@@ -19,7 +19,6 @@ data class AppSettings(
     val decorColorIndex: Int,
     val eventView: Boolean,
     val calendarView: Boolean,
-    val showTags: Boolean,
     val showCountClasses: Boolean,
 )
 
@@ -29,7 +28,6 @@ object PreferencesKeys {
     val COMPACT_VIEW_EVENT = booleanPreferencesKey(name = "event_view")
 
     val SCHEDULE_VIEW = booleanPreferencesKey(name = "schedule_view")
-    val SHOW_TAGS = booleanPreferencesKey(name = "show_tags")
     val SHOW_COUNT_CLASSES = booleanPreferencesKey(name = "show_count_classes")
 }
 
@@ -60,11 +58,6 @@ class DataStore (
         }
     }
 
-    suspend fun setShowTags (isShowTags: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SHOW_TAGS] = isShowTags
-        }
-    }
 
     suspend fun setShowCountClasses (isShowCountClasses: Boolean) {
         context.dataStore.edit { preferences ->
@@ -86,10 +79,6 @@ class DataStore (
 
     val scheduleViewFlow: Flow<Boolean> = context.dataStore.data.map {
             preferences -> preferences[PreferencesKeys.SCHEDULE_VIEW] ?: true
-    }
-
-    val showTagsFlow: Flow<Boolean> = context.dataStore.data.map {
-            preferences -> preferences[PreferencesKeys.SHOW_TAGS] ?: true
     }
 
     val showCountClassesFlow: Flow<Boolean> = context.dataStore.data.map {

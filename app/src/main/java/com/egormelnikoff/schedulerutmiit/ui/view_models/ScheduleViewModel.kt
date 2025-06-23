@@ -105,11 +105,13 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
     private suspend fun getUpdatedNamedSchedule(
         namedSchedule: NamedScheduleFormatted
     ) {
-        if (System.currentTimeMillis() - namedSchedule.namedScheduleEntity.lastTimeUpdate > 43200000) {
+        if (System.currentTimeMillis() - namedSchedule.namedScheduleEntity.lastTimeUpdate > 43200000
+            && namedSchedule.namedScheduleEntity.type != 3
+        ) {
             val updatedNamedSchedule = RemoteRepos.getNamedSchedule(
                 namedScheduleId = namedSchedule.namedScheduleEntity.id,
                 name = namedSchedule.namedScheduleEntity.shortName,
-                apiId = namedSchedule.namedScheduleEntity.apiId,
+                apiId = namedSchedule.namedScheduleEntity.apiId!!,
                 type = namedSchedule.namedScheduleEntity.type
             )
 
@@ -147,9 +149,10 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
                                     updatedScheduleWithId
                                 )
                             } else {
-                                _stateSchedule.value = (stateSchedule.value as ScheduleState.Loaded).copy(
-                                    message = context.getString(R.string.failed_update)
-                                )
+                                _stateSchedule.value =
+                                    (stateSchedule.value as ScheduleState.Loaded).copy(
+                                        message = context.getString(R.string.failed_update)
+                                    )
                             }
                         } else {
                             localRepos.insertSchedule(
@@ -161,7 +164,7 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
 
                     namedSchedule.schedules.forEach { oldSchedule ->
                         if (!updatedNamedSchedule.data.schedules.any { it.scheduleEntity.timetableId == oldSchedule.scheduleEntity.timetableId }
-                            && LocalDate.now() in oldSchedule.scheduleEntity.startDate..oldSchedule.scheduleEntity.endDate
+                            && LocalDate.now() > oldSchedule.scheduleEntity.endDate
                         ) {
                             localRepos.deleteSchedule(
                                 id = oldSchedule.scheduleEntity.id,
@@ -256,14 +259,13 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
     fun selectSchedule(
         primaryKeyNamedSchedule: Long,
         primaryKeySchedule: Long,
-        apiId: String,
-        timetableId: String
+        timetableId: String?
     ) {
         viewModelScope.launch {
             val scheduleState = _stateSchedule.value as ScheduleState.Loaded
             if (scheduleState.isSaved) {
                 localRepos.updatePrioritySchedule(primaryKeySchedule, primaryKeyNamedSchedule)
-                val updatedNamedSchedule = localRepos.getNamedScheduleByApiId(apiId)
+                val updatedNamedSchedule = localRepos.getNamedScheduleById(primaryKeyNamedSchedule)
                 loadSchedule(
                     namedSchedule = updatedNamedSchedule!!,
                     isSaved = true
@@ -286,7 +288,7 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
     }
 
     fun updateEventExtra(
-        apiId: String,
+        namedScheduleId: Long,
         scheduleId: Long,
         event: Event,
         comment: String,
@@ -300,7 +302,8 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
                 comment = comment,
                 tag = tag
             )
-            val updatedSchedule = localRepos.getNamedScheduleByApiId(apiId)
+
+            val updatedSchedule = localRepos.getNamedScheduleById(namedScheduleId)
             _stateSchedule.value = scheduleState.copy(
                 namedSchedule = updatedSchedule!!,
                 selectedSchedule = updatedSchedule.schedules.first { it.scheduleEntity.id == scheduleId }

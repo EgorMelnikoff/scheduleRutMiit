@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.egormelnikoff.schedulerutmiit.data.Event
+import com.egormelnikoff.schedulerutmiit.ui.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.schedule.ScheduleData
 import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.schedule.ScreenSchedule
@@ -40,6 +42,7 @@ import com.egormelnikoff.schedulerutmiit.ui.schedule.calculateDefaultDate
 import com.egormelnikoff.schedulerutmiit.ui.search.SearchScreen
 import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.ui.settings.SettingsScreen
+import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.SettingsViewModel
 import java.time.LocalDate
@@ -50,6 +53,7 @@ fun Main(
     scheduleViewModel: ScheduleViewModel,
     searchViewModel: SearchViewModel,
     settingsViewModel: SettingsViewModel,
+    newsViewModel: NewsViewModel,
     preferencesDataStore: DataStore,
 
     appSettings: AppSettings,
@@ -64,6 +68,11 @@ fun Main(
             title = LocalContext.current.getString(R.string.schedule),
             image = ImageVector.vectorResource(R.drawable.schedule),
             route = Routes.Schedule.route
+        ),
+        BarItem(
+            title = LocalContext.current.getString(R.string.news),
+            image = ImageVector.vectorResource(R.drawable.news),
+            route = Routes.News.route
         ),
         BarItem(
             title = LocalContext.current.getString(R.string.settings),
@@ -81,14 +90,17 @@ fun Main(
 
     val scheduleState = scheduleViewModel.stateSchedule.collectAsState().value
     val today by remember { mutableStateOf(LocalDate.now()) }
-    val lazyListState = rememberLazyListState()
+    val scheduleListState = rememberLazyListState()
     val schedulesData: MutableMap<String, ScheduleData> = mutableMapOf()
     if (scheduleState is ScheduleState.Loaded) {
         LaunchedEffect(scheduleState.selectedSchedule?.scheduleEntity) {
-            lazyListState.scrollToItem(0)
+            scheduleListState.scrollToItem(0)
         }
         scheduleState.namedSchedule.schedules.forEach { scheduleFormatted ->
-            val weeksCount by remember(scheduleState.namedSchedule.namedScheduleEntity.apiId, scheduleFormatted.scheduleEntity.timetableId) {
+            val weeksCount by remember(
+                scheduleState.namedSchedule.namedScheduleEntity.apiId,
+                scheduleFormatted.scheduleEntity.timetableId
+            ) {
                 mutableIntStateOf(
                     ChronoUnit.WEEKS.between(
                         scheduleFormatted.scheduleEntity.startDate,
@@ -96,15 +108,16 @@ fun Main(
                     ).plus(1).toInt()
                 )
             }
-            val params by remember(scheduleState.namedSchedule.namedScheduleEntity.apiId, scheduleFormatted.scheduleEntity.timetableId) {
+            val params by remember(
+                scheduleState.namedSchedule.namedScheduleEntity.apiId,
+                scheduleFormatted.scheduleEntity.timetableId
+            ) {
                 mutableStateOf(
                     calculateDefaultDate(
                         today, weeksCount, scheduleFormatted.scheduleEntity
                     )
                 )
             }
-
-            println(params.third)
 
             val pagerDaysState = rememberPagerState(
                 pageCount = { weeksCount * 7 },
@@ -140,12 +153,23 @@ fun Main(
             schedulesData[scheduleFormatted.scheduleEntity.timetableId] = scheduleData
         }
     }
-    var showDialogComments by rememberSaveable { mutableStateOf(false) }
+    var showDialogEvent by remember { mutableStateOf(false) }
+    var displayedEvent by remember { mutableStateOf<Event?>(null) }
+    //var showDialogAddEvent by remember { mutableStateOf<Long?>(null) }
+
+    val stateNewsList = newsViewModel.stateNewsList.collectAsState().value
+    val stateNews = newsViewModel.stateNews.collectAsState().value
+    var showDialogNews by remember { mutableStateOf(false) }
+    val newsListState = rememberLazyListState()
+    val newsDialogState = rememberScrollState()
 
     val schedulesState = scheduleViewModel.stateSchedules.collectAsState().value
     val appInfoState = settingsViewModel.stateAuthor.collectAsState().value
     var showDialogSchedules by remember { mutableStateOf(false) }
     var showDialogInfo by remember { mutableStateOf(false) }
+    val settingsListState = rememberScrollState()
+    //var showDialogAddSchedule by remember { mutableStateOf(false) }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -181,14 +205,22 @@ fun Main(
                         onClick = {
                             if (currentRoute == barItem.route) {
                                 when (barItem.route) {
+                                    Routes.Schedule.route -> {
+                                        showDialogEvent = false
+                                    }
                                     Routes.Settings.route -> {
                                         showDialogInfo = false
+                                        //showDialogAddSchedule = false
                                         showDialogSchedules = false
                                     }
 
                                     Routes.Search.route -> {
                                         query = ""
                                         searchViewModel.clearData()
+                                    }
+
+                                    Routes.News.route -> {
+                                        showDialogNews = false
                                     }
                                 }
                             } else {
@@ -213,10 +245,7 @@ fun Main(
         }
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(paddingValues)
+            modifier = Modifier.fillMaxSize()
         ) {
             when (currentRoute) {
                 Routes.Search.route -> {
@@ -228,23 +257,30 @@ fun Main(
                         query = query,
                         searchViewModel = searchViewModel,
                         scheduleViewModel = scheduleViewModel,
-                        searchState = searchState
+                        searchState = searchState,
+                        paddingValues = paddingValues
                     )
                 }
 
                 Routes.Schedule.route -> {
                     ScreenSchedule(
+                        navigateToSearch = { currentRoute = Routes.Search.route },
+                        onShowDialogEvent = { newValue -> showDialogEvent = newValue },
+                        onSelectDisplayedEvent = { newValue -> displayedEvent = newValue },
+
                         scheduleViewModel = scheduleViewModel,
                         preferencesDataStore = preferencesDataStore,
                         appSettings = appSettings,
-                        navigateToSearch = { currentRoute = Routes.Search.route },
-                        showDialogComments = showDialogComments,
+
+                        showDialogEvent = showDialogEvent,
+                        displayedEvent = displayedEvent,
                         scheduleState = scheduleState,
-                        onShowDialogComments = { newValue -> showDialogComments = newValue },
+
                         snackbarHostState = snackbarHostState,
                         schedulesData = schedulesData,
-                        lazyListState = lazyListState,
-                        today = today
+                        scheduleListState = scheduleListState,
+                        today = today,
+                        paddingValues = paddingValues
                     )
                 }
 
@@ -262,7 +298,25 @@ fun Main(
                         showDialogSchedules = showDialogSchedules,
                         showDialogInfo = showDialogInfo,
                         onShowDialogSchedules = { newValue -> showDialogSchedules = newValue },
-                        onShowDialogInfo = { newValue -> showDialogInfo = newValue }
+                        onShowDialogInfo = { newValue -> showDialogInfo = newValue },
+                        //showDialogAddSchedule = showDialogAddSchedule,
+                        //onShowDialogAddSchedule = { newValue -> showDialogAddSchedule = newValue },
+                        //onShowDialogAddEvent = { newValue -> showDialogAddEvent = newValue },
+                        settingsListState = settingsListState,
+                        paddingValues = paddingValues
+                    )
+                }
+
+                Routes.News.route -> {
+                    NewsScreen(
+                        newsViewModel = newsViewModel,
+                        showDialogNews = showDialogNews,
+                        onShowDialogNews = { newValue -> showDialogNews = newValue },
+                        stateNewsList = stateNewsList,
+                        stateNews = stateNews,
+                        newsListState = newsListState,
+                        newsDialogState = newsDialogState,
+                        paddingValues = paddingValues
                     )
                 }
             }

@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.data.repos.remote
 
 import com.egormelnikoff.schedulerutmiit.classes.Institutes
 import com.egormelnikoff.schedulerutmiit.classes.News
-import com.egormelnikoff.schedulerutmiit.classes.NewsShort
+import com.egormelnikoff.schedulerutmiit.classes.NewsList
 import com.egormelnikoff.schedulerutmiit.classes.NonPeriodicContent
 import com.egormelnikoff.schedulerutmiit.classes.PeriodicContent
 import com.egormelnikoff.schedulerutmiit.data.repos.Result
@@ -54,7 +54,8 @@ class RemoteRepos {
                                 2 -> Api.getData(URL("$ROOM_SCHEDULE$apiId/${timetable.id}"))
                                 else -> null
                             }
-                            when (val schedule = Api.parseJson(scheduleJson, Schedule::class.java)) {
+                            when (val schedule =
+                                Api.parseJson(scheduleJson, Schedule::class.java)) {
                                 is Result.Error -> continue
                                 is Result.Success -> {
                                     val fixedSchedule = fixApiIssuance(timetable, schedule.data)
@@ -97,7 +98,7 @@ class RemoteRepos {
             }
         }
 
-        private suspend fun getTimetables (
+        private suspend fun getTimetables(
             apiId: String,
             type: Int
         ): Result<Timetables> {
@@ -108,9 +109,9 @@ class RemoteRepos {
                 else -> null
             }
             return when (val timetables = Api.parseJson(timetablesJson, Timetables::class.java)) {
-                    is Result.Error -> Result.Error(timetables.exception)
-                    is Result.Success -> timetables
-                }
+                is Result.Error -> Result.Error(timetables.exception)
+                is Result.Success -> timetables
+            }
 
         }
 
@@ -127,11 +128,7 @@ class RemoteRepos {
                             val clearedEvents = schedule.nonPeriodicContent?.events
                                 ?.filter { it.startDatetime != null && it.name != null }
                                 ?.distinctBy {
-                                    Triple(
-                                        it.startDatetime!!.toLocalDate().dayOfWeek,
-                                        it.startDatetime.toLocalTime(),
-                                        it.name
-                                    )
+                                    it.hashCode()
                                 }
                                 ?: emptyList()
 
@@ -155,8 +152,9 @@ class RemoteRepos {
                                 events = checkedEvents,
                                 recurrence = Recurrence(
                                     frequency = "WEEKLY",
-                                    currentNumber = 1,
-                                    interval = weeksIndexes.size
+                                    currentNumber = 1, //
+                                    interval = weeksIndexes.size,
+                                    firstWeekNumber = 1
                                 )
                             )
                         }
@@ -190,8 +188,12 @@ class RemoteRepos {
             val schedulesFormatted = mutableListOf<ScheduleFormatted>()
             oldModelSchedules.forEachIndexed { index, oldSchedule ->
                 val events = mutableListOf<Event>()
-                oldSchedule.periodicContent?.events?.let { events.addAll(it) }
-                oldSchedule.nonPeriodicContent?.events?.let { events.addAll(it) }
+                oldSchedule.periodicContent?.events
+                    ?.filter { it.startDatetime != null }
+                    ?.let { events.addAll(it) }
+                oldSchedule.nonPeriodicContent?.events
+                    ?.filter { it.startDatetime != null }
+                    ?.let { events.addAll(it) }
 
                 if (events.isNotEmpty()) {
                     val scheduleEntity = ScheduleEntity(
@@ -224,8 +226,8 @@ class RemoteRepos {
                     schedulesFormatted.add(
                         ScheduleFormatted(
                             scheduleEntity = scheduleEntity,
-                            eventsExtraData = mutableListOf(),
                             events = events,
+                            eventsExtraData = mutableListOf()
                         )
                     )
                 }
@@ -292,15 +294,14 @@ class RemoteRepos {
             }
         }
 
-        suspend fun getNewsList(): Result<List<NewsShort>> {
+        suspend fun getNewsList(page: String): Result<NewsList> {
             return try {
-                val newsListJson = Api.getData(URL(NEWS_CATALOG))
-                Api.parseListShortNews(newsListJson)
+                val newsListJson = Api.getData(URL("${NEWS_CATALOG}&from=$page&to=$page"))
+                Api.parseJson(newsListJson, NewsList::class.java)
             } catch (e: Exception) {
                 Result.Error(e)
             }
         }
-
 
         suspend fun getNewsById(id: Long): Result<News> {
             return try {

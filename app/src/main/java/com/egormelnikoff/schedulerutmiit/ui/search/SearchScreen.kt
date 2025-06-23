@@ -31,9 +31,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -85,12 +82,14 @@ fun SearchScreen(
     searchState: SearchState,
     navigateToSchedule: () -> Unit,
     query: String,
-    onQueryChanged: (String) -> Unit
+    onQueryChanged: (String) -> Unit,
+    paddingValues: PaddingValues
 ) {
     var selectedOption by remember { mutableStateOf(Options.ALL) }
 
     Column(
         modifier = Modifier
+            .padding(paddingValues)
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
@@ -147,7 +146,7 @@ fun SearchScreen(
         ) { stateSearch ->
             when (stateSearch) {
                 is SearchState.EmptyQuery -> Empty(
-                    imageVector = Icons.Default.Search,
+                    imageVector = ImageVector.vectorResource(R.drawable.search_simple),
                     subtitle = LocalContext.current.getString(R.string.enter_your_query)
                 )
 
@@ -244,7 +243,7 @@ fun SearchDataField(
         ),
         leadingIcon = {
             Icon(
-                imageVector = Icons.Default.Search,
+                imageVector = ImageVector.vectorResource(R.drawable.search_simple),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface
             )
@@ -262,7 +261,7 @@ fun SearchDataField(
                     }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Clear,
+                        imageVector = ImageVector.vectorResource(R.drawable.clear),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -388,6 +387,7 @@ fun SearchedItem(
                     is AsyncImagePainter.State.Loading -> {
                         CircularProgressIndicator(
                             modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     }

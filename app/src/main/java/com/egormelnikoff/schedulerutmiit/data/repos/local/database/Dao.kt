@@ -59,6 +59,8 @@ interface NamedScheduleDao {
     @Transaction
     @Query("SELECT * FROM NamedSchedules WHERE apiId = :apiId")
     suspend fun getNamedScheduleByApiId(apiId: Int): NamedScheduleFormatted?
+    @Query("SELECT * FROM NamedSchedules WHERE NamedScheduleId = :id")
+    suspend fun getNamedScheduleById(id: Long): NamedScheduleFormatted?
     @Query("SELECT * FROM EventsExtraData WHERE EventExtraId = :primaryKey")
     suspend fun getEventExtraByEventId(primaryKey: Long): EventExtraData?
     @Query("SELECT ScheduleId FROM Schedules WHERE NamedScheduleId = :primaryKey")
@@ -112,6 +114,6 @@ interface NamedScheduleDao {
 
     @Query("UPDATE Schedules SET isDefaultSchedule = 1 WHERE ScheduleId = :primaryKey")
     suspend fun setDefaultSchedule(primaryKey: Long)
-    @Query("UPDATE Schedules SET isDefaultSchedule = 0 WHERE ScheduleId != :primaryKeySchedule AND namedScheduleId = :NamedScheduleId")
-    suspend fun setNonDefaultSchedule(primaryKeySchedule: Long, NamedScheduleId: Long)
+    @Query("UPDATE Schedules SET isDefaultSchedule = 0 WHERE ScheduleId != :primaryKeySchedule AND namedScheduleId = :namedScheduleId")
+    suspend fun setNonDefaultSchedule(primaryKeySchedule: Long, namedScheduleId: Long)
 }

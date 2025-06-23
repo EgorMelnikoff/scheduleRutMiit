@@ -44,7 +44,7 @@ data class NamedScheduleEntity (
     val id: Long = 0,
     val fullName: String,
     val shortName: String,
-    val apiId: String,
+    val apiId: String?,
     val type: Int,
     @ColumnInfo(name = "isDefaultNamedSchedule")
     var isDefault: Boolean,
@@ -61,7 +61,7 @@ data class ScheduleEntity (
     val timetableId: String,
     val typeName: String,
     val startName: String,
-    val downloadUrl: String,
+    val downloadUrl: String?,
     val startDate: LocalDate,
     val endDate: LocalDate,
     @Embedded
@@ -75,7 +75,7 @@ data class Recurrence(
     val frequency: String?,
     val interval: Int?,
     val currentNumber: Int?,
-    val firstWeekNumber: Int = 1
+    val firstWeekNumber: Int
 )
 
 @Entity(tableName = "Events")
@@ -98,7 +98,7 @@ data class Event(
     val groups: List<Group>?
 ) {
     override fun hashCode(): Int {
-        val hashString: String = if (recurrenceRule != null) {
+        val hashString = if (recurrenceRule != null) {
             "$name$typeName${startDatetime!!.dayOfWeek}${startDatetime.toLocalTime()}${recurrenceRule.interval}$periodNumber$groups"
         } else {
             "$name$typeName$startDatetime$groups"

@@ -9,6 +9,7 @@
     <string name="empty_here">It`s empty here</string>
     <string name="error">Error</string>
 
+    <string name="comment">Comment</string>
     <string name="copy_link">Copy link</string>
     <string name="save_pdf">Download pdf</string>
     <string name="save">Save</string>
@@ -20,7 +21,6 @@
     <string name="show_count_classes">Show count classes</string>
     <string name="report_a_problem">Report a problem</string>
     <string name="collapse">Collapse</string>
-    <string name="app_info">The application is designed for convenient viewing and saving of RUT (MIIT) schedules</string>
     <string name="error_loading">Error</string>
 
     <string name="enter_your_query">Enter your query</string>
@@ -59,6 +59,10 @@
     <string name="telegram" translatable="false">Telegram</string>
     <string name="github" translatable="false">GitHub</string>
 
+    <string name="Class">Class</string>
+    <string name="type">Type</string>
+    <string name="time">Time</string>
+    <string name="place">Place</string>
 
     <string name="Tag">Tag</string>
     <string name="Default">Default</string>
@@ -73,8 +77,10 @@
     <string name="Groups">Groups</string>
     <string name="Comment">Comment</string>
     <string name="Enter_comment">Enter comment</string>
+    <string name="my">My</string>
 
-
+    <string name="unable_load_news_list">Unable to load news list</string>
+    <string name="repeat">Repeat</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="auto">Auto</string>
@@ -87,6 +93,7 @@
     <string name="error_load_schedule">There was an error loading the schedule</string>
     <string name="empty_base">Save at least one schedule to display it</string>
     <string name="failed_update_schedules">Failed to update schedules</string>
+    <string name="no_classes">There are no more classes planned</string>
     <string name="failed_update">Failed to update schedule</string>
     <string name="author">Author</string>
     <string name="news_updates">News, updates</string>

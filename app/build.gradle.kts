@@ -13,8 +13,8 @@ android {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,7 +41,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.material3.adaptive.navigation.suite)
     implementation(libs.coil.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -54,7 +53,6 @@ dependencies {
     testImplementation(libs.junit)
     implementation (libs.google.gson)
     implementation (libs.jsoup)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation (libs.androidx.runtime.livedata)

@@ -76,9 +76,9 @@ data class ScheduleData(
 
 @Composable
 fun ScheduleCalendarView(
-    showEventDialog: (Event?) -> Unit,
+    onShowDialogEvent: (Boolean) -> Unit,
+    onSelectDisplayedEvent: (Event) -> Unit,
     isShortEvent: Boolean,
-    isShowPriority: Boolean,
     isShowCountClasses: Boolean,
     scheduleState: ScheduleState.Loaded,
     eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
@@ -119,19 +119,18 @@ fun ScheduleCalendarView(
         HorizontalCalendar(
             scheduleData = scheduleData,
             eventsByWeekAndDays = eventsByWeekAndDays,
-            isShowPriority = isShowPriority,
             isShowCountClasses = isShowCountClasses,
             today = today,
             scheduleState = scheduleState
         )
         PagedDays(
             isShortEvent = isShortEvent,
-            isShowPriority = isShowPriority,
             eventsByWeekAndDays = eventsByWeekAndDays,
             scheduleState = scheduleState,
             pagerDaysState = scheduleData.pagerDaysState,
 
-            showEventDialog = showEventDialog
+            onShowDialogEvent = onShowDialogEvent,
+            onSelectDisplayedEvent = onSelectDisplayedEvent
         )
     }
 }
@@ -139,7 +138,6 @@ fun ScheduleCalendarView(
 
 @Composable
 fun HorizontalCalendar(
-    isShowPriority: Boolean,
     isShowCountClasses: Boolean,
     today: LocalDate,
     eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
@@ -147,12 +145,13 @@ fun HorizontalCalendar(
     scheduleData: ScheduleData
 ) {
     val scope = rememberCoroutineScope()
-    val firstDayOfCurrentWeek = remember(scheduleData.pagerWeeksState.currentPage, scheduleState.selectedSchedule?.scheduleEntity) {
-
-            calculateFirstDayOfWeek(
-                scheduleState.selectedSchedule!!.scheduleEntity.startDate.plusWeeks(scheduleData.pagerWeeksState.currentPage.toLong())
-            )
-
+    val firstDayOfCurrentWeek = remember(
+        scheduleData.pagerWeeksState.currentPage,
+        scheduleState.selectedSchedule?.scheduleEntity
+    ) {
+        calculateFirstDayOfWeek(
+            scheduleState.selectedSchedule!!.scheduleEntity.startDate.plusWeeks(scheduleData.pagerWeeksState.currentPage.toLong())
+        )
     }
 
     val displayMonth =
@@ -220,7 +219,8 @@ fun HorizontalCalendar(
                     val selectedWeek = calculateCurrentWeek(
                         date = firstDayOfCurrentWeek,
                         startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
-                        interval = scheduleState.selectedSchedule.scheduleEntity.recurrence!!.interval!!
+                        firstPeriodNumber = scheduleState.selectedSchedule.scheduleEntity.recurrence!!.firstWeekNumber,
+                        interval = scheduleState.selectedSchedule.scheduleEntity.recurrence.interval!!
                     )
                     val color = MaterialTheme.colorScheme.onSurface
                     Canvas(
@@ -285,6 +285,7 @@ fun HorizontalCalendar(
                         calculateCurrentWeek(
                             date = firstDayOfWeek,
                             startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
+                            firstPeriodNumber = scheduleState.selectedSchedule.scheduleEntity.recurrence.firstWeekNumber,
                             interval = scheduleState.selectedSchedule.scheduleEntity.recurrence.interval!!
                         )
                     } else {
@@ -305,7 +306,6 @@ fun HorizontalCalendar(
                         events = eventsByDay,
                         eventsExtraData = scheduleState.selectedSchedule.eventsExtraData,
 
-                        isShowPriority = isShowPriority,
                         isShowCountClasses = isShowCountClasses,
 
                         isSelected = currentDate == scheduleData.selectedDate,
@@ -322,7 +322,6 @@ fun DayRowItem(
     selectDate: (LocalDate) -> Unit,
     currentDate: LocalDate,
     isSelected: Boolean,
-    isShowPriority: Boolean,
     isShowCountClasses: Boolean,
     isToday: Boolean,
     events: List<Event>,
@@ -384,16 +383,15 @@ fun DayRowItem(
                             val eventExtraData = eventsExtraData.find {
                                 it.id == event.id
                             }
-                            val color = when {
-                                !isShowPriority -> MaterialTheme.colorScheme.onBackground
-                                eventExtraData?.tag == 1 -> lightThemeRed
-                                eventExtraData?.tag == 2 -> lightThemeOrange
-                                eventExtraData?.tag == 3 -> lightThemeYellow
-                                eventExtraData?.tag == 4 -> lightThemeGreen
-                                eventExtraData?.tag == 5 -> lightThemeLightBlue
-                                eventExtraData?.tag == 6 -> lightThemeBlue
-                                eventExtraData?.tag == 7 -> lightThemeViolet
-                                eventExtraData?.tag == 8 -> lightThemePink
+                            val color = when (eventExtraData?.tag) {
+                                1 -> lightThemeRed
+                                2 -> lightThemeOrange
+                                3 -> lightThemeYellow
+                                4 -> lightThemeGreen
+                                5 -> lightThemeLightBlue
+                                6 -> lightThemeBlue
+                                7 -> lightThemeViolet
+                                8 -> lightThemePink
                                 else -> MaterialTheme.colorScheme.onBackground
                             }
                             Canvas(
@@ -418,12 +416,12 @@ fun DayRowItem(
 @Composable
 fun PagedDays(
     isShortEvent: Boolean,
-    isShowPriority: Boolean,
     scheduleState: ScheduleState.Loaded,
 
     eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
     pagerDaysState: PagerState,
-    showEventDialog: (Event?) -> Unit
+    onShowDialogEvent: (Boolean) -> Unit,
+    onSelectDisplayedEvent: (Event) -> Unit,
 ) {
     HorizontalPager(
         modifier = Modifier.fillMaxSize(),
@@ -438,6 +436,7 @@ fun PagedDays(
             calculateCurrentWeek(
                 date = currentDate,
                 startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
+                firstPeriodNumber = scheduleState.selectedSchedule.scheduleEntity.recurrence.firstWeekNumber,
                 interval = scheduleState.selectedSchedule.scheduleEntity.recurrence.interval!!
             )
         } else {
@@ -466,17 +465,13 @@ fun PagedDays(
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
             ) {
                 items(eventsForDayByStartTime, key = { it.first }) { events ->
-                    Box(
-                        modifier = Modifier.animateItem()
-                    ) {
-                        Event(
-                            isShortEvent = isShortEvent,
-                            isShowPriority = isShowPriority,
-                            eventsExtraData = scheduleState.selectedSchedule.eventsExtraData,
-                            events = events.second,
-                            showEventDialog = showEventDialog
-                        )
-                    }
+                    Event(
+                        isShortEvent = isShortEvent,
+                        eventsExtraData = scheduleState.selectedSchedule.eventsExtraData,
+                        events = events.second,
+                        onShowDialogEvent = onShowDialogEvent,
+                        onSelectDisplayedEvent = onSelectDisplayedEvent
+                    )
                 }
             }
         } else {
@@ -493,6 +488,12 @@ fun calculateFirstDayOfWeek(date: LocalDate): LocalDate {
 }
 
 
-fun calculateCurrentWeek(date: LocalDate, startDate: LocalDate, interval: Int): Int {
-    return ((abs(ChronoUnit.WEEKS.between(date, startDate)).plus(1).toInt()) % interval).plus(1)
+fun calculateCurrentWeek(
+    date: LocalDate,
+    startDate: LocalDate,
+    firstPeriodNumber: Int,
+    interval: Int
+): Int {
+    return (((abs(ChronoUnit.WEEKS.between(date, startDate)).plus(1)
+        .toInt()) + firstPeriodNumber) % interval).plus(1)
 }

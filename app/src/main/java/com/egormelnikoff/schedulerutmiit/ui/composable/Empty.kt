@@ -24,14 +24,13 @@ fun Empty(
     imageVector: ImageVector? = null,
     title: String? = null,
     subtitle: String? = null,
+    isBoldTitle: Boolean = true
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 32.dp)
-
-            ,
+            .padding(horizontal = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
     ) {
@@ -50,7 +49,7 @@ fun Empty(
                 textAlign = TextAlign.Center,
                 text = title,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = if (isBoldTitle) {FontWeight.Bold} else FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }

@@ -3,12 +3,16 @@ package com.egormelnikoff.schedulerutmiit.ui.settings
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -17,11 +21,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Badge
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -40,6 +41,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -55,7 +57,6 @@ import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.SchedulesState
 import com.egormelnikoff.schedulerutmiit.DataStore
 import com.egormelnikoff.schedulerutmiit.data.repos.remote.parser.ParserRoutes.APP_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.ui.theme.Grey
 import com.egormelnikoff.schedulerutmiit.ui.theme.LightGrey
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
@@ -65,14 +66,6 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemePink
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeRed
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeViolet
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeYellow
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeGreen
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeLightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeOrange
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemePink
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeRed
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeViolet
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeYellow
 import com.egormelnikoff.schedulerutmiit.ui.view_models.AppInfoState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -91,35 +84,32 @@ fun SettingsTopBar(
     actions: @Composable (() -> Unit)? = null,
 ) {
     Row(
-        modifier = Modifier.padding(bottom = 8.dp, top = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        verticalAlignment = Alignment.CenterVertically
     ) {
         if (navAction != null) {
             IconButton(
-                onClick = {
-                    navAction()
-                }
+                onClick = navAction
             ) {
                 Icon(
                     imageVector = navImageVector,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
         Text(
             modifier = Modifier
-                .weight(1f),
+                .weight(1f)
+                .padding(horizontal = 8.dp),
             text = title,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onBackground
+            color =  MaterialTheme.colorScheme.onBackground
         )
         actions?.invoke()
     }
-    Spacer(modifier = Modifier.height(8.dp))
 }
 
 @Composable
@@ -136,11 +126,15 @@ fun SettingsScreen(
     onShowDialogSchedules: (Boolean) -> Unit,
     showDialogInfo: Boolean,
     onShowDialogInfo: (Boolean) -> Unit,
+    //showDialogAddSchedule: Boolean,
+    //onShowDialogAddSchedule: (Boolean) -> Unit,
+    //onShowDialogAddEvent: (Long?) -> Unit,
+    settingsListState: ScrollState,
+    paddingValues: PaddingValues,
 ) {
+    val context = LocalContext.current
 
-    val content = LocalContext.current
-
-    val themes = listOf(
+    val themes = arrayOf(
         Theme(
             name = "light",
             imageVector = ImageVector.vectorResource(R.drawable.sun),
@@ -153,7 +147,7 @@ fun SettingsScreen(
         ),
         Theme(
             name = "system",
-            imageVector = Icons.Default.Home,
+            imageVector = ImageVector.vectorResource(R.drawable.error),
             displayedName = LocalContext.current.getString(R.string.auto)
         ),
     )
@@ -164,9 +158,13 @@ fun SettingsScreen(
         uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
         uncheckedTrackColor = MaterialTheme.colorScheme.surface
     )
+
     AnimatedContent(
-        modifier = Modifier.fillMaxSize(),
-        targetState = Pair(showDialogSchedules, showDialogInfo)
+        modifier = Modifier.fillMaxSize().padding(paddingValues),
+        targetState = Pair(showDialogSchedules, showDialogInfo),
+        transitionSpec = {
+            fadeIn() togetherWith fadeOut()
+        }
     ) { target ->
         when {
             target.first -> {
@@ -174,12 +172,15 @@ fun SettingsScreen(
                     onShowDialog = onShowDialogSchedules,
                     navigateToSearch = navigateToSearch,
                     scheduleViewModel = scheduleViewModel,
-                    schedulesState = schedulesState
+                    schedulesState = schedulesState,
+                    //showDialogAddSchedule = onShowDialogSddSchedule,
+                    //onShowDialogAddEvent = onShowDialogAddEvent
                 )
                 BackHandler {
                     onShowDialogSchedules(false)
                 }
             }
+
 
             target.second -> {
                 InfoDialog(
@@ -197,13 +198,13 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(settingsListState)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    GroupSettingsItem (
+                    GroupSettingsItem(
                         title = LocalContext.current.getString(R.string.schedule)
-                    ){
+                    ) {
                         if (schedulesState is SchedulesState.Loaded) {
                             SettingsItem(
                                 onClick = {
@@ -252,32 +253,6 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.outline,
                             thickness = 0.5.dp
                         )
-
-                        SettingsItem(
-                            onClick = {
-                                scope.launch {
-                                    preferencesDataStore.setShowTags(!appSettings.showTags)
-                                }
-                            },
-                            imageVector = ImageVector.vectorResource(R.drawable.tag),
-                            text = LocalContext.current.getString(R.string.show_tags)
-                        ) {
-                            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                                Switch(
-                                    checked = appSettings.showTags,
-                                    onCheckedChange = {
-                                        scope.launch {
-                                            preferencesDataStore.setShowTags(it)
-                                        }
-                                    },
-                                    colors = switchColors
-                                )
-                            }
-                        }
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline,
-                            thickness = 0.5.dp
-                        )
                         SettingsItem(
                             onClick = {
                                 scope.launch {
@@ -302,33 +277,39 @@ fun SettingsScreen(
 
                         }
                     }
-                    GroupSettingsItem (
+                    GroupSettingsItem(
                         title = LocalContext.current.getString(R.string.general)
                     ) {
                         SettingsItem(
                             onClick = null,
-                            imageVector = ImageVector.vectorResource(R.drawable.color),
-                            text = LocalContext.current.getString(R.string.decor),
+                            imageVector = ImageVector.vectorResource(R.drawable.sun),
+                            text = LocalContext.current.getString(R.string.theme),
                             horizontal = false
                         ) {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                ThemeSelector(
-                                    preferences = preferencesDataStore,
-                                    currentTheme = appSettings.theme,
-                                    themes = themes
-                                )
-                                ColorSelector(
-                                    currentTheme = appSettings.theme,
-                                    currentSelected = appSettings.decorColorIndex,
-                                    onColorSelect = { value ->
-                                        scope.launch {
-                                            preferencesDataStore.setDecorColor(value)
-                                        }
+                            ThemeSelector(
+                                preferences = preferencesDataStore,
+                                currentTheme = appSettings.theme,
+                                themes = themes
+                            )
+                        }
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outline,
+                            thickness = 0.5.dp
+                        )
+                        SettingsItem(
+                            onClick = null,
+                            imageVector = ImageVector.vectorResource(R.drawable.color),
+                            text = LocalContext.current.getString(R.string.color_style),
+                            horizontal = false
+                        ) {
+                            ColorSelector(
+                                currentSelected = appSettings.decorColorIndex,
+                                onColorSelect = { value ->
+                                    scope.launch {
+                                        preferencesDataStore.setDecorColor(value)
                                     }
-                                )
-                            }
+                                }
+                            )
                         }
                         HorizontalDivider(
                             color = MaterialTheme.colorScheme.outline,
@@ -341,7 +322,7 @@ fun SettingsScreen(
                                         Intent.ACTION_VIEW,
                                         APP_CHANNEL_URL.toUri()
                                     )
-                                content.startActivity(intent)
+                                context.startActivity(intent)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.send),
                             text = LocalContext.current.getString(R.string.report_a_problem)
@@ -373,9 +354,9 @@ fun GroupSettingsItem(
     title: String? = null,
     content: @Composable (() -> Unit),
 ) {
-    Column (
+    Column(
         verticalArrangement = Arrangement.spacedBy(4.dp)
-    ){
+    ) {
         if (title != null) {
             Text(
                 text = title,
@@ -387,8 +368,10 @@ fun GroupSettingsItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .shadow(3.dp, RoundedCornerShape(12.dp))
                 .clip(RoundedCornerShape(12.dp))
                 .background(MaterialTheme.colorScheme.surface)
+
         ) {
             content.invoke()
         }
@@ -453,29 +436,20 @@ fun SettingsItem(
 
 @Composable
 fun ColorSelector(
-    currentTheme: String,
     currentSelected: Int,
     onColorSelect: (Int) -> Unit,
 ) {
-    val colors = mutableListOf(
-        Pair(LightGrey, Grey),
-        Pair(lightThemeRed, darkThemeRed),
-        Pair(lightThemeOrange, darkThemeOrange),
-        Pair(lightThemeYellow, darkThemeYellow),
-        Pair(lightThemeGreen, darkThemeGreen),
-        Pair(lightThemeLightBlue, darkThemeLightBlue),
-        Pair(lightThemeBlue, darkThemeBlue),
-        Pair(lightThemeViolet, darkThemeViolet),
-        Pair(lightThemePink, darkThemePink),
+    val colors = arrayOf(
+        LightGrey,
+        darkThemeRed,
+        darkThemeOrange,
+        darkThemeYellow,
+        darkThemeGreen,
+        darkThemeLightBlue,
+        darkThemeBlue,
+        darkThemeViolet,
+        darkThemePink,
     )
-
-    val darkTheme = when (currentTheme) {
-        "dark" -> true
-        "light" -> false
-        else -> {
-            isSystemInDarkTheme()
-        }
-    }
 
     SingleChoiceSegmentedButtonRow(
         modifier = Modifier.fillMaxWidth()
@@ -484,10 +458,10 @@ fun ColorSelector(
             SegmentedButton(
                 border = BorderStroke(width = 0.dp, Color.Transparent),
                 colors = SegmentedButtonDefaults.colors().copy(
-                    activeContainerColor = if (darkTheme) color.second else color.first,
+                    activeContainerColor = color,
                     activeBorderColor = Color.Transparent,
                     activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                    inactiveContainerColor = if (darkTheme) color.second else color.first,
+                    inactiveContainerColor = color,
                     inactiveBorderColor = Color.Transparent,
                     inactiveContentColor = Color.Transparent
                 ),
@@ -516,7 +490,7 @@ fun ColorSelector(
 fun ThemeSelector(
     preferences: DataStore,
     currentTheme: String,
-    themes: List<Theme>,
+    themes: Array<Theme>,
 ) {
     val scope = rememberCoroutineScope()
     SingleChoiceSegmentedButtonRow(
@@ -544,10 +518,7 @@ fun ThemeSelector(
                     }
                 },
                 selected = theme.name == currentTheme,
-                icon = {
-
-
-                },
+                icon = {},
                 label = {
                     if (theme.name != "system") {
                         Icon(

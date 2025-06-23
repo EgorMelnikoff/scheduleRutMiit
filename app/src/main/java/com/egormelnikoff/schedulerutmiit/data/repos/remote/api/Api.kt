@@ -1,8 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.remote.api
 
 import android.util.Log
-import com.egormelnikoff.schedulerutmiit.classes.NewsList
-import com.egormelnikoff.schedulerutmiit.classes.NewsShort
 import com.egormelnikoff.schedulerutmiit.data.repos.Result
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
@@ -71,20 +69,6 @@ class Api {
                 e.printStackTrace()
                 Result.Error(e)
             } catch (e: Exception) {
-                e.printStackTrace()
-                Result.Error(e)
-            }
-        }
-
-        fun parseListShortNews(jsonString: String?): Result<List<NewsShort>> {
-            return try {
-                if (!jsonString.isNullOrEmpty()) {
-                    val newsList = gson.fromJson(jsonString, NewsList::class.java)
-                    Result.Success(newsList.items)
-                } else {
-                    Result.Error(Exception("Empty!"))
-                }
-            } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
                 Result.Error(e)
             }

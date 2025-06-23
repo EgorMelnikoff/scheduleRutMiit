@@ -11,6 +11,6 @@ data class BarItem(
 sealed class Routes(val route: String) {
     data object Search : Routes("search")
     data object Schedule : Routes("schedule")
-    //data object News : Routes("news")
+    data object News : Routes("news")
     data object Settings : Routes("settings")
 }

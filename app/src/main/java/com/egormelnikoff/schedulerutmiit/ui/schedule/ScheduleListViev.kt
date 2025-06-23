@@ -13,12 +13,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,14 +41,14 @@ import kotlin.math.abs
 
 @Composable
 fun ScheduleListView(
-    showEventDialog: (Event?) -> Unit,
+    onShowDialogEvent: (Boolean) -> Unit,
+    onSelectDisplayedEvent: (Event) -> Unit,
     scheduleState: ScheduleState.Loaded,
-    lazyListState: LazyListState,
+    scheduleListState: LazyListState,
     isShortEvent: Boolean,
     eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
     today: LocalDate
 ) {
-
     val eventsGrouped by remember(scheduleState.selectedSchedule!!.scheduleEntity) {
         mutableStateOf(
             calculateEvents(
@@ -67,9 +65,9 @@ fun ScheduleListView(
     }
     if (eventsGrouped.isNotEmpty()) {
         LazyColumn(
-            state = lazyListState,
-            contentPadding = PaddingValues(horizontal = 12.dp),
-            modifier = Modifier.fillMaxSize()
+            state = scheduleListState,
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             val formatter = DateTimeFormatter.ofPattern("d MMMM")
             eventsGrouped.forEach { events ->
@@ -84,11 +82,11 @@ fun ScheduleListView(
                     .toList()
                 items(eventsForDayGrouped) { eventsGrouped ->
                     Event(
-                        isShowPriority = true,
                         isShortEvent = isShortEvent,
                         eventsExtraData = scheduleState.selectedSchedule!!.eventsExtraData,
                         events = eventsGrouped.second,
-                        showEventDialog = showEventDialog
+                        onShowDialogEvent = onShowDialogEvent,
+                        onSelectDisplayedEvent = onSelectDisplayedEvent
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -97,7 +95,8 @@ fun ScheduleListView(
     } else {
         Empty(
             title = "¯\\_(ツ)_/¯",
-            subtitle = LocalContext.current.getString(R.string.empty_here)
+            subtitle = LocalContext.current.getString(R.string.no_classes),
+            isBoldTitle = false
         )
     }
 }
@@ -146,10 +145,7 @@ fun calculateEvents(
             )
         ).toInt().plus(1)
         for (week in 1..weeksRemaining) {
-            val weekNumber =
-                (week % scheduleState.selectedSchedule.scheduleEntity.recurrence!!.firstWeekNumber).plus(
-                    1
-                )
+            val weekNumber = ((week + scheduleState.selectedSchedule.scheduleEntity.recurrence!!.firstWeekNumber) % scheduleState.selectedSchedule.scheduleEntity.recurrence.interval!!).plus(1)
             val events = eventsByWeekAndDays[weekNumber]?.values?.flatten()
             if (events != null) {
                 for (event in events) {

@@ -17,12 +17,13 @@ class LocalRepos(
 
         val currentCount = namedScheduleDao.getCount()
         if (currentCount == 1) {
-            val namedScheduleWithNewId = namedScheduleDao.getNamedScheduleByApiId(namedSchedule.namedScheduleEntity.apiId.toInt())
-            namedScheduleDao.setDefaultNamedSchedule(namedScheduleWithNewId!!.namedScheduleEntity.id)
+            val namedScheduleWithNewId = namedScheduleDao.getAll().first()
+            namedScheduleDao.setDefaultNamedSchedule(namedScheduleWithNewId.namedScheduleEntity.id)
         }
     }
 
-    suspend fun insertSchedule (
+
+    suspend fun insertSchedule(
         namedScheduleId: Long,
         scheduleFormatted: ScheduleFormatted
     ) {
@@ -33,7 +34,7 @@ class LocalRepos(
         )
     }
 
-    suspend fun deleteSchedule (
+    suspend fun deleteSchedule(
         id: Long,
         deleteEventsExtra: Boolean = false
     ) {
@@ -47,9 +48,15 @@ class LocalRepos(
     suspend fun getAll(): MutableList<NamedScheduleFormatted> {
         return namedScheduleDao.getAll()
     }
+
     suspend fun getNamedScheduleByApiId(apiId: String): NamedScheduleFormatted? {
         return namedScheduleDao.getNamedScheduleByApiId(apiId.toInt())
     }
+
+    suspend fun getNamedScheduleById(id: Long): NamedScheduleFormatted? {
+        return namedScheduleDao.getNamedScheduleById(id)
+    }
+
     suspend fun getCount(): Int {
         return namedScheduleDao.getCount()
     }
@@ -59,17 +66,18 @@ class LocalRepos(
         namedScheduleDao.setDefaultNamedSchedule(id)
         namedScheduleDao.setNonDefaultNamedSchedule(id)
     }
+
     suspend fun updatePrioritySchedule(idSchedule: Long, idNamedSchedule: Long) {
         namedScheduleDao.setDefaultSchedule(idSchedule)
         namedScheduleDao.setNonDefaultSchedule(idSchedule, idNamedSchedule)
     }
+
     suspend fun updateEventExtra(
         scheduleId: Long,
         event: Event,
         tag: Int,
         comment: String
     ) {
-
         if (comment == "" && tag == 0) {
             namedScheduleDao.deleteEventsExtraByEventId(event.id)
             return
@@ -91,7 +99,6 @@ class LocalRepos(
             )
         }
     }
-
 
     suspend fun deleteSavedSchedule(primaryKey: Long, isDefault: Boolean) {
         namedScheduleDao.delete(primaryKey)

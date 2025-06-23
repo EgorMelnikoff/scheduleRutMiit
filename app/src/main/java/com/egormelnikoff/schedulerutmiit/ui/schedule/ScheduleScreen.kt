@@ -6,12 +6,18 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,10 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,22 +74,35 @@ import kotlin.math.abs
 @Composable
 fun ScreenSchedule(
     navigateToSearch: () -> Unit,
+    onShowDialogEvent: (Boolean) -> Unit,
+    onSelectDisplayedEvent: (Event) -> Unit,
+
+    showDialogEvent: Boolean,
+    displayedEvent: Event?,
 
     scheduleViewModel: ScheduleViewModel,
     preferencesDataStore: DataStore,
-
     appSettings: AppSettings,
-    showDialogComments: Boolean,
+
     scheduleState: ScheduleState,
-    onShowDialogComments: (Boolean) -> Unit,
+
     snackbarHostState: SnackbarHostState,
     schedulesData: MutableMap<String, ScheduleData>,
-    lazyListState: LazyListState,
-    today: LocalDate
+    scheduleListState: LazyListState,
+    today: LocalDate,
+    paddingValues: PaddingValues
 ) {
     var expandedSchedulesMenu by remember { mutableStateOf(false) }
-    var dialogEvent by remember { mutableStateOf<Event?>(null) }
+
     val scope = rememberCoroutineScope()
+
+    if ((scheduleState !is ScheduleState.Loaded || !scheduleState.namedSchedule.namedScheduleEntity.isDefault) && scheduleState !is ScheduleState.EmptyBase) {
+        BackHandler {
+            scope.launch {
+                scheduleViewModel.load()
+            }
+        }
+    }
 
     when (scheduleState) {
         is ScheduleState.Loaded -> {
@@ -97,94 +111,102 @@ fun ScreenSchedule(
                     snackbarHostState.showSnackbar(message = scheduleState.message)
                 }
             }
-
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                TopBar(
-                    onShowExpandedMenu = { newValue ->
-                        expandedSchedulesMenu = newValue
-                    },
-                    scheduleViewModel = scheduleViewModel,
-                    preferencesDataStore = preferencesDataStore,
-
-                    scheduleState = scheduleState,
-
-                    expandedSchedulesMenu = expandedSchedulesMenu,
-                    showDialogComments = showDialogComments,
-                    isScheduleCalendar = appSettings.calendarView,
-                    onShowDialogComments = onShowDialogComments
-                )
-
-
-                if (schedulesData.isNotEmpty() && !scheduleState.selectedSchedule?.events.isNullOrEmpty()) {
-                    val eventsByWeekAndDays =
-                        remember(scheduleState.selectedSchedule!!.scheduleEntity) {
-                            calculateEventsByWeeks(scheduleState)
-                        }
-
-                    AnimatedContent(
-                        targetState = Pair(showDialogComments, appSettings.calendarView)
-                    ) { targetState ->
-                        if (targetState.first) {
-                            CommentsDialog(
-                                scheduleState = scheduleState,
-                                showTags = appSettings.showTags
-                            )
-                        } else if (targetState.second) {
-                            ScheduleCalendarView(
-                                showEventDialog = { newValue ->
-                                    dialogEvent = newValue
-                                },
-                                today = today,
-                                isShowPriority = appSettings.showTags,
-                                isShowCountClasses = appSettings.showCountClasses,
-                                isShortEvent = appSettings.eventView,
-                                scheduleState = scheduleState,
-                                eventsByWeekAndDays = eventsByWeekAndDays,
-                                startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
-                                scheduleData = schedulesData[scheduleState.selectedSchedule.scheduleEntity.timetableId]!!
-                            )
-                        } else {
-                            ScheduleListView(
-                                showEventDialog = { newValue ->
-                                    dialogEvent = newValue
-                                },
-                                scheduleState = scheduleState,
-                                isShortEvent = appSettings.eventView,
-                                eventsByWeekAndDays = eventsByWeekAndDays,
-                                lazyListState = lazyListState,
-                                today = today
-                            )
-                        }
+            if (!scheduleState.isSaved || !scheduleState.namedSchedule.namedScheduleEntity.isDefault) {
+                BackHandler {
+                    scope.launch {
+                        scheduleViewModel.load()
                     }
-                    if (!scheduleState.isSaved || !scheduleState.namedSchedule.namedScheduleEntity.isDefault) {
-                        BackHandler {
-                            scope.launch {
-                                scheduleViewModel.load()
-                            }
-                        }
-                    }
-                } else {
-                    Empty(
-                        title = "¯\\_(ツ)_/¯",
-                        subtitle = LocalContext.current.getString(R.string.empty_here)
-                    )
                 }
             }
-
-            if (dialogEvent != null) {
-                EventDialog(
-                    scheduleViewModel = scheduleViewModel,
-                    scheduleId = scheduleState.selectedSchedule!!.scheduleEntity.id,
-                    apiId = scheduleState.namedSchedule.namedScheduleEntity.apiId,
-                    isSavedSchedule = scheduleState.isSaved,
-                    event = dialogEvent!!,
-                    eventExtraData = scheduleState.selectedSchedule.eventsExtraData.find { it.id == dialogEvent!!.id },
-                    showEventDialog = { newEvent ->
-                        dialogEvent = newEvent
+            AnimatedContent(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                targetState = showDialogEvent,
+                transitionSpec = {
+                    fadeIn() togetherWith fadeOut()
+                }
+            ) { targetState ->
+                if (targetState) {
+                    EventDialog(
+                        scheduleViewModel = scheduleViewModel,
+                        scheduleId = scheduleState.selectedSchedule!!.scheduleEntity.id,
+                        namedScheduleId = scheduleState.namedSchedule.namedScheduleEntity.id,
+                        isSavedSchedule = scheduleState.isSaved,
+                        event = displayedEvent!!,
+                        eventExtraData = scheduleState.selectedSchedule.eventsExtraData.find { it.id == displayedEvent.id },
+                        onShowEventDialog = onShowDialogEvent
+                    )
+                    BackHandler {
+                        onShowDialogEvent(false)
                     }
-                )
+                } else {
+                    Column {
+                        TopBar(
+                            onShowExpandedMenu = { newValue ->
+                                expandedSchedulesMenu = newValue
+                            },
+                            scheduleViewModel = scheduleViewModel,
+                            preferencesDataStore = preferencesDataStore,
+
+                            scheduleState = scheduleState,
+
+                            expandedSchedulesMenu = expandedSchedulesMenu,
+                            isScheduleCalendar = appSettings.calendarView
+                        )
+                        if (schedulesData.isNotEmpty() && !scheduleState.selectedSchedule?.events.isNullOrEmpty()) {
+                            val eventsByWeekAndDays =
+                                remember(scheduleState.selectedSchedule!!.scheduleEntity) {
+                                    calculateEventsByWeeks(scheduleState)
+                                }
+                            AnimatedContent(
+                                targetState = appSettings.calendarView,
+                                transitionSpec = {
+                                    fadeIn() + slideInVertically(
+                                        initialOffsetY = {
+                                            it / 2
+                                        }
+                                    ) togetherWith fadeOut() +
+                                            slideOutVertically(
+                                                targetOffsetY = {
+                                                    it / 2
+                                                }
+                                            )
+                                }
+                            ) { targetState ->
+                                if (targetState) {
+                                    ScheduleCalendarView(
+                                        onShowDialogEvent = onShowDialogEvent,
+                                        onSelectDisplayedEvent = onSelectDisplayedEvent,
+                                        today = today,
+                                        isShowCountClasses = appSettings.showCountClasses,
+                                        isShortEvent = appSettings.eventView,
+                                        scheduleState = scheduleState,
+                                        eventsByWeekAndDays = eventsByWeekAndDays,
+                                        startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
+                                        scheduleData = schedulesData[scheduleState.selectedSchedule.scheduleEntity.timetableId]!!
+                                    )
+                                } else {
+                                    ScheduleListView(
+                                        onShowDialogEvent = onShowDialogEvent,
+                                        onSelectDisplayedEvent = onSelectDisplayedEvent,
+                                        scheduleState = scheduleState,
+                                        isShortEvent = appSettings.eventView,
+                                        eventsByWeekAndDays = eventsByWeekAndDays,
+                                        scheduleListState = scheduleListState,
+                                        today = today
+                                    )
+                                }
+                            }
+                        } else {
+                            Empty(
+                                title = "¯\\_(ツ)_/¯",
+                                subtitle = LocalContext.current.getString(R.string.empty_here),
+                                isBoldTitle = false
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -193,7 +215,7 @@ fun ScreenSchedule(
                 title = LocalContext.current.getString(R.string.no_saved_schedule),
                 subtitle = LocalContext.current.getString(R.string.empty_base),
                 buttonTitle = LocalContext.current.getString(R.string.search),
-                imageVector = Icons.Default.Search,
+                imageVector = ImageVector.vectorResource(R.drawable.search_simple),
                 action = { navigateToSearch() }
             )
         }
@@ -209,13 +231,6 @@ fun ScreenSchedule(
             )
         }
     }
-    if ((scheduleState !is ScheduleState.Loaded || !scheduleState.namedSchedule.namedScheduleEntity.isDefault) && scheduleState !is ScheduleState.EmptyBase) {
-        BackHandler {
-            scope.launch {
-                scheduleViewModel.load()
-            }
-        }
-    }
 }
 
 @Composable
@@ -223,8 +238,6 @@ fun TopBar(
     scheduleState: ScheduleState.Loaded,
     scheduleViewModel: ScheduleViewModel,
 
-    showDialogComments: Boolean,
-    onShowDialogComments: (Boolean) -> Unit,
     onShowExpandedMenu: (Boolean) -> Unit,
     expandedSchedulesMenu: Boolean,
 
@@ -244,7 +257,7 @@ fun TopBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
@@ -293,7 +306,7 @@ fun TopBar(
                             modifier = Modifier.graphicsLayer(
                                 rotationZ = rotationAngle
                             ),
-                            imageVector = Icons.Default.KeyboardArrowDown,
+                            imageVector = ImageVector.vectorResource(R.drawable.down),
                             tint = MaterialTheme.colorScheme.onBackground,
                             contentDescription = null
                         )
@@ -301,11 +314,11 @@ fun TopBar(
                 }
 
             }
-            if (scheduleState.namedSchedule.schedules.isNotEmpty()) {
+            if (scheduleState.namedSchedule.schedules.isNotEmpty() && scheduleState.selectedSchedule?.events?.isNotEmpty() == true) {
                 IconButton(
                     onClick = {
-                        val url = scheduleState.selectedSchedule!!.scheduleEntity.downloadUrl
-                        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                        val url = scheduleState.selectedSchedule.scheduleEntity.downloadUrl
+                        val intent = Intent(Intent.ACTION_VIEW, url?.toUri())
                         context.startActivity(intent)
                     }
                 ) {
@@ -317,47 +330,23 @@ fun TopBar(
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
-                val targetView = Pair(isScheduleCalendar, showDialogComments)
-                var countClick by remember { mutableIntStateOf(0) }
-
-                val iconResource = when {
-                    targetView.second && isScheduleCalendar -> R.drawable.list
-                    targetView.second && !isScheduleCalendar -> R.drawable.schedule
-                    countClick > 0 -> R.drawable.comment
-                    isScheduleCalendar -> R.drawable.list
-                    else -> R.drawable.schedule
-                }
-
                 IconButton(
                     onClick = {
-                        when {
-                            targetView.second -> {
-                                scope.launch {
-                                    preferencesDataStore.setScheduleView(!isScheduleCalendar)
-                                }
-                                onShowDialogComments(false)
-                                countClick = 0
-                            }
-
-                            else -> {
-                                if (countClick > 0) {
-                                    onShowDialogComments(true)
-                                    countClick = 0
-                                } else {
-                                    scope.launch {
-                                        preferencesDataStore.setScheduleView(targetView.first.not())
-                                    }
-                                }
-                                if (scheduleState.isSaved) {
-                                    countClick++
-                                }
+                        scope.launch {
+                            if (isScheduleCalendar) {
+                                preferencesDataStore.setScheduleView(false)
+                            } else {
+                                preferencesDataStore.setScheduleView(true)
                             }
                         }
+
                     }
                 ) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(iconResource),
+                        imageVector = if (isScheduleCalendar) ImageVector.vectorResource(R.drawable.list) else ImageVector.vectorResource(
+                            R.drawable.calendar
+                        ),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onBackground
                     )
@@ -395,7 +384,6 @@ fun TopBar(
                     contentDescription = null
                 )
             }
-
         }
         AnimatedVisibility(
             visible = expandedSchedulesMenu,
@@ -415,12 +403,10 @@ fun TopBar(
                     ExpandedMenuItem(
                         onClick = {
                             scheduleViewModel.selectSchedule(
-                                apiId = scheduleState.namedSchedule.namedScheduleEntity.apiId,
                                 primaryKeySchedule = schedule.scheduleEntity.id,
                                 primaryKeyNamedSchedule = scheduleState.namedSchedule.namedScheduleEntity.id,
                                 timetableId = schedule.scheduleEntity.timetableId
                             )
-                            println(schedule.scheduleEntity)
                         },
                         title = {
                             Column {
@@ -480,7 +466,7 @@ fun TopBar(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     },
-                    trailingIcon = Icons.Default.KeyboardArrowUp,
+                    trailingIcon = ImageVector.vectorResource(R.drawable.up),
                     verticalPadding = 4
                 )
                 HorizontalDivider(
@@ -606,5 +592,3 @@ fun calculateEventsByWeeks(
     }
     return eventsByWeekAndDay
 }
-
-

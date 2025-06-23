@@ -19,7 +19,7 @@ import com.egormelnikoff.schedulerutmiit.AppSettings
 
 @Composable
 fun ScheduleRutMiitTheme(
-    appSettings: AppSettings,
+    appSettings: AppSettings?,
     content: @Composable () -> Unit
 ) {
     val primaryColors = arrayOf(
@@ -33,7 +33,6 @@ fun ScheduleRutMiitTheme(
         Pair(lightThemeViolet, darkThemeViolet),
         Pair(lightThemePink, darkThemePink),
     )
-
 
     val backGroundColors = arrayOf(
         Pair(White, darkThemeNeutralSurface),
@@ -59,9 +58,9 @@ fun ScheduleRutMiitTheme(
         Pair(lightThemePinkSurface, darkThemePinkSurface),
     )
 
-    val currentPrimary = primaryColors[appSettings.decorColorIndex]
-    val currentBackground = backGroundColors[appSettings.decorColorIndex]
-    val currentSurface = surfaceColors[appSettings.decorColorIndex]
+    val currentPrimary = primaryColors[appSettings?.decorColorIndex ?: 0]
+    val currentBackground = backGroundColors[appSettings?.decorColorIndex ?: 0]
+    val currentSurface = surfaceColors[appSettings?.decorColorIndex ?: 0]
 
 
     val lightColorScheme = lightColorScheme(
@@ -73,10 +72,9 @@ fun ScheduleRutMiitTheme(
 
         surface = currentSurface.first,
         onSurface = Grey,
-        onSurfaceVariant = Grey, //
 
-
-        outline = LightGrey,
+        outline =  if (appSettings?.decorColorIndex == 0) LightGrey
+        else currentPrimary.first,
 
         surfaceContainerLow = darkThemeGreen,
         surfaceContainer = darkThemeYellow,
@@ -95,9 +93,9 @@ fun ScheduleRutMiitTheme(
 
         surface = currentSurface.second,
         onSurface = LightGrey,
-        onSurfaceVariant = LightGrey, //
 
-        outline = LightGrey,
+        outline = if (appSettings?.decorColorIndex == 0) LightGrey
+        else currentPrimary.second,
 
         surfaceContainerLow = lightThemeGreen,
         surfaceContainer = lightThemeYellow,
@@ -105,15 +103,7 @@ fun ScheduleRutMiitTheme(
 
     )
 
-
-    val colorScheme = when {
-        appSettings.theme == "light" -> lightColorScheme
-        appSettings.theme == "dark" -> darkColorScheme
-        isSystemInDarkTheme() -> darkColorScheme
-        else -> lightColorScheme
-    }
-
-    val darkTheme = when (appSettings.theme) {
+    val darkTheme = when (appSettings?.theme) {
         "dark" -> true
         "light" -> false
         else -> {
@@ -121,10 +111,10 @@ fun ScheduleRutMiitTheme(
         }
     }
 
-
+    val colorScheme = if (darkTheme) darkColorScheme
+    else lightColorScheme
 
     val animation = SpringSpec<Color>(stiffness = Spring.StiffnessMediumLow)
-
 
     val background by animateColorAsState(colorScheme.background, animation)
     val onBackground by animateColorAsState(colorScheme.onBackground, animation)
@@ -132,7 +122,6 @@ fun ScheduleRutMiitTheme(
     val onPrimary by animateColorAsState(colorScheme.onPrimary, animation)
     val surface by animateColorAsState(colorScheme.surface, animation)
     val onSurface by animateColorAsState(colorScheme.onSurface, animation)
-    val onSurfaceVariant by animateColorAsState(colorScheme.onSurfaceVariant, animation)
     val outline by animateColorAsState(colorScheme.outline, animation)
     val error by animateColorAsState(colorScheme.error, animation)
 
@@ -144,7 +133,6 @@ fun ScheduleRutMiitTheme(
         onPrimary = onPrimary,
         surface = surface,
         onSurface = onSurface,
-        onSurfaceVariant = onSurfaceVariant,
         outline = outline,
         error = error,
     )

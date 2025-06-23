@@ -1,20 +1,22 @@
 package com.egormelnikoff.schedulerutmiit.ui.settings
 
-import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,44 +25,44 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
-import androidx.core.net.toUri
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.repos.remote.parser.ParserRoutes.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.data.repos.remote.parser.ParserRoutes.APP_GITHUB_REPOS
 import com.egormelnikoff.schedulerutmiit.data.repos.remote.parser.ParserRoutes.CLOUD_TIPS
@@ -68,35 +70,33 @@ import com.egormelnikoff.schedulerutmiit.ui.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.view_models.AppInfoState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.SchedulesState
-import kotlinx.coroutines.launch
+
 
 @Composable
 fun SchedulesDialog(
     onShowDialog: (Boolean) -> Unit,
     navigateToSearch: () -> Unit,
     scheduleViewModel: ScheduleViewModel,
-    schedulesState: SchedulesState
+    schedulesState: SchedulesState,
+    //showDialogAddSchedule: (Boolean) -> Unit,
+    //onShowDialogAddEvent: (Long?) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         SettingsTopBar(
             title = LocalContext.current.getString(R.string.schedules),
             navAction = { onShowDialog(false) },
-            navImageVector = Icons.AutoMirrored.Filled.ArrowBack
+            navImageVector = ImageVector.vectorResource(R.drawable.back)
         ) {
             IconButton(
                 onClick = {
-                    scope.launch {
-                        onShowDialog(false)
-                        navigateToSearch()
-                    }
+                    onShowDialog(false)
+                    navigateToSearch()
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add,
+                    imageVector = ImageVector.vectorResource(R.drawable.search_simple),
                     contentDescription = null
                 )
             }
@@ -105,7 +105,9 @@ fun SchedulesDialog(
         if (schedulesState is SchedulesState.Loaded) {
             val groupedSchedules = remember(schedulesState.savedSchedules) {
                 schedulesState.savedSchedules
+                    .sortedBy { it.namedScheduleEntity.type }
                     .groupBy { it.namedScheduleEntity.type }
+
             }
             LazyColumn(
                 modifier = Modifier.weight(1f),
@@ -122,6 +124,7 @@ fun SchedulesDialog(
                                 0 -> LocalContext.current.getString(R.string.Groups)
                                 1 -> LocalContext.current.getString(R.string.Lecturers)
                                 2 -> LocalContext.current.getString(R.string.Rooms)
+                                3 -> LocalContext.current.getString(R.string.my)
                                 else -> LocalContext.current.getString(R.string.schedules)
                             },
                             fontSize = 12.sp,
@@ -131,12 +134,12 @@ fun SchedulesDialog(
                     }
                     items(schedules.value) { schedule ->
                         Box(
-                            modifier = Modifier.animateItem()
+                            modifier = Modifier
                         ) {
                             DialogScheduleItem(
                                 scheduleViewModel = scheduleViewModel,
-                                namedScheduleEntity = schedule.namedScheduleEntity,
-                                onClick = { scheduleViewModel.selectNamedSchedule(schedule.namedScheduleEntity.id) }
+                                namedScheduleFormatted = schedule,
+                                //onShowDialogAddEvent = onShowDialogAddEvent
                             )
                         }
                     }
@@ -147,7 +150,7 @@ fun SchedulesDialog(
                 title = LocalContext.current.getString(R.string.no_saved_schedule),
                 subtitle = LocalContext.current.getString(R.string.empty_base),
                 buttonTitle = LocalContext.current.getString(R.string.search),
-                imageVector = Icons.Default.Search,
+                imageVector = ImageVector.vectorResource(R.drawable.search_simple),
                 action = { navigateToSearch() }
             )
         }
@@ -155,59 +158,156 @@ fun SchedulesDialog(
     }
 }
 
-
 @Composable
 fun DialogScheduleItem(
     scheduleViewModel: ScheduleViewModel,
-    namedScheduleEntity: NamedScheduleEntity,
-    onClick: () -> Unit,
+    namedScheduleFormatted: NamedScheduleFormatted,
+    //onShowDialogAddEvent: (Long?) -> Unit,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    var isExpanded by remember { mutableStateOf(false) }
+    val rotationAngle by animateFloatAsState(
+        targetValue = if (isExpanded) 180f else 0f
+    )
+    Column(
         modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
+            .shadow(3.dp, RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
-            .clickable(onClick = onClick)
+            .clickable(onClick = { isExpanded = !isExpanded })
             .padding(vertical = 8.dp, horizontal = 12.dp)
             .defaultMinSize(minHeight = 52.dp)
-
     ) {
-        Text(
-            modifier = Modifier
-                .weight(1f),
-            text = namedScheduleEntity.fullName,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        val scale by animateFloatAsState(
-            targetValue = if (namedScheduleEntity.isDefault) 1f else 0f
-        )
-        if (namedScheduleEntity.isDefault) {
-            Icon(
-                modifier = Modifier
-                    .size(20.dp)
-                    .graphicsLayer(scaleX = scale, scaleY = scale),
-                imageVector = ImageVector.vectorResource(R.drawable.check),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = namedScheduleFormatted.namedScheduleEntity.fullName,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                color = MaterialTheme.colorScheme.onBackground
             )
-        }
-        IconButton(
-            onClick = {
-                scheduleViewModel.deleteNamedSchedule(
-                    primaryKey = namedScheduleEntity.id,
-                    isDefault = namedScheduleEntity.isDefault
+            val scale by animateFloatAsState(
+                targetValue = if (namedScheduleFormatted.namedScheduleEntity.isDefault) 1f else 0f
+            )
+            if (namedScheduleFormatted.namedScheduleEntity.isDefault) {
+                Icon(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .graphicsLayer(scaleX = scale, scaleY = scale),
+                    imageVector = ImageVector.vectorResource(R.drawable.check),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
+
+            IconButton(
+                onClick = {
+                    isExpanded = !isExpanded
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.graphicsLayer(
+                        rotationZ = rotationAngle
+                    ),
+                    imageVector = ImageVector.vectorResource(R.drawable.down),
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    contentDescription = null
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = isExpanded
         ) {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.delete),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.error
+            FlowRow(
+                maxItemsInEachRow = 2,
+                verticalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ScheduleButton(
+                    modifier = Modifier,
+                    onClick = {
+                        scheduleViewModel.deleteNamedSchedule(
+                            primaryKey = namedScheduleFormatted.namedScheduleEntity.id,
+                            isDefault = namedScheduleFormatted.namedScheduleEntity.isDefault
+                        )
+                    },
+                    colors = ButtonDefaults.outlinedButtonColors().copy(
+                        contentColor = MaterialTheme.colorScheme.error
+                    ),
+                    title = LocalContext.current.getString(R.string.delete),
+                    borderStroke = BorderStroke(
+                        width = 0.5.dp,
+                        MaterialTheme.colorScheme.error
+                    ),
+                    imageVector = ImageVector.vectorResource(R.drawable.delete)
+                )
+                AnimatedVisibility(
+                    visible = !namedScheduleFormatted.namedScheduleEntity.isDefault,
+                    enter = scaleIn(),
+                    exit = scaleOut()
+                ) {
+                    ScheduleButton(
+                        modifier = Modifier,
+                        onClick = {
+                            scheduleViewModel.selectNamedSchedule(namedScheduleFormatted.namedScheduleEntity.id)
+                        },
+                        colors = ButtonDefaults.outlinedButtonColors().copy(
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ),
+                        title = LocalContext.current.getString(R.string.make_default),
+                        borderStroke = BorderStroke(
+                            width = 0.5.dp,
+                            MaterialTheme.colorScheme.onBackground
+                        ),
+                        imageVector = null
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ScheduleButton(
+    onClick: () -> Unit,
+    imageVector: ImageVector?,
+    title: String,
+    colors: ButtonColors,
+    borderStroke: BorderStroke?,
+    modifier: Modifier
+) {
+    OutlinedButton(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        onClick = onClick,
+        colors = colors,
+        border = borderStroke,
+        contentPadding = PaddingValues(
+            horizontal = 8.dp,
+            vertical = 4.dp
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            if (imageVector != null) {
+                Icon(
+                    modifier = Modifier.size(20.dp),
+                    imageVector = imageVector,
+                    contentDescription = null
+                )
+            }
+            Text(
+                text = title,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -220,6 +320,8 @@ fun InfoDialog(
 ) {
     val context = LocalContext.current
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    val uriHandler = LocalUriHandler.current
+
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -227,22 +329,22 @@ fun InfoDialog(
         SettingsTopBar(
             title = LocalContext.current.getString(R.string.about_app),
             navAction = { onShowDialog(false) },
-            navImageVector = Icons.AutoMirrored.Filled.ArrowBack
+            navImageVector = ImageVector.vectorResource(R.drawable.back)
         )
         Column(
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 16.dp)
-                .fillMaxWidth()
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ){
                 Icon(
                     modifier = Modifier
+                        .shadow(3.dp, CircleShape)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surface)
                         .scale(0.6f)
@@ -251,27 +353,34 @@ fun InfoDialog(
                     contentDescription = null,
                     tint = Color.Unspecified
                 )
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = LocalContext.current.getString(R.string.app_name),
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    text = LocalContext.current.getString(R.string.app_info),
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = LocalContext.current.getString(R.string.app_name),
+                        fontSize = 20.sp,
+                        style = TextStyle(
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
+                            )
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                            .padding(horizontal = 8.dp),
+                        text = "${packageInfo.versionName} (${getLongVersionCode(packageInfo)})",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
-            Spacer(
-                modifier = Modifier.height(16.dp)
-            )
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 GroupSettingsItem {
@@ -287,12 +396,7 @@ fun InfoDialog(
                         title = LocalContext.current.getString(R.string.telegram),
                         subtitle = LocalContext.current.getString(R.string.news_updates),
                         onClick = {
-                            val intent =
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    APP_CHANNEL_URL.toUri()
-                                )
-                            context.startActivity(intent)
+                            uriHandler.openUri(APP_CHANNEL_URL)
                         }
                     )
 
@@ -313,12 +417,7 @@ fun InfoDialog(
                         title = LocalContext.current.getString(R.string.github),
                         subtitle = LocalContext.current.getString(R.string.source_code),
                         onClick = {
-                            val intent =
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    APP_GITHUB_REPOS.toUri()
-                                )
-                            context.startActivity(intent)
+                            uriHandler.openUri(APP_GITHUB_REPOS)
                         }
                     )
                 }
@@ -337,12 +436,7 @@ fun InfoDialog(
                         },
                         title = LocalContext.current.getString(R.string.support),
                         onClick = {
-                            val intent =
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    CLOUD_TIPS.toUri()
-                                )
-                            context.startActivity(intent)
+                            uriHandler.openUri(CLOUD_TIPS)
                         }
                     )
                 }
@@ -384,12 +478,11 @@ fun InfoDialog(
                                     title = appInfoState.authorTelegramPage.name!!,
                                     subtitle = LocalContext.current.getString(R.string.author),
                                     onClick = {
-                                        val intent =
-                                            Intent(
-                                                Intent.ACTION_VIEW,
-                                                appInfoState.authorTelegramPage.url?.toUri()
+                                        appInfoState.authorTelegramPage.url?.let {
+                                            uriHandler.openUri(
+                                                it
                                             )
-                                        context.startActivity(intent)
+                                        }
                                     }
                                 )
                             }
@@ -397,14 +490,6 @@ fun InfoDialog(
                     }
                 }
             }
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "${packageInfo.versionName} (${getLongVersionCode(packageInfo)})",
-                textAlign = TextAlign.Center,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface,
-                overflow = TextOverflow.Ellipsis
-            )
         }
     }
 }
@@ -455,7 +540,6 @@ fun Link(
                 )
             }
         }
-
         Icon(
             modifier = Modifier.size(24.dp),
             imageVector = ImageVector.vectorResource(R.drawable.right),
@@ -463,5 +547,4 @@ fun Link(
             tint = MaterialTheme.colorScheme.onSurface
         )
     }
-
 }

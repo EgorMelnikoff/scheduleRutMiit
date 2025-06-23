@@ -34,7 +34,6 @@ data class PeriodicContent (
     val recurrence: Recurrence?
 )
 
-
 data class NonPeriodicContent (
     val events: List<Event>?,
 )
@@ -55,6 +54,10 @@ data class NewsShort (
     val title: String,
     val date: LocalDateTime,
     var thumbnail: String,
+    val secondary: Secondary
+)
+data class Secondary (
+    val text: String
 )
 
 data class News (
@@ -62,8 +65,8 @@ data class News (
     val title: String,
     val hisdateDisplay: String,
     val content: String,
-    var paragraphs: List<String>?,
-    var imagesUrl: List<String>?
+    var elements: MutableList<Pair<String, Any>>?,
+    var images: MutableList<String>?
 )
 
 //Institutes
