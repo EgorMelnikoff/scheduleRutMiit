@@ -90,7 +90,7 @@ fun Event(
             )
         }
         Column(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             events.forEach { event ->
@@ -119,7 +119,6 @@ fun SingleEvent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(3.dp, RoundedCornerShape(12.dp))
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
             .clickable(

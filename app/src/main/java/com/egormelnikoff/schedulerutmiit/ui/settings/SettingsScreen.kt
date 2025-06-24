@@ -41,7 +41,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -84,6 +83,7 @@ fun SettingsTopBar(
     actions: @Composable (() -> Unit)? = null,
 ) {
     Row(
+        modifier = Modifier.padding(bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (navAction != null) {
@@ -368,7 +368,6 @@ fun GroupSettingsItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(3.dp, RoundedCornerShape(12.dp))
                 .clip(RoundedCornerShape(12.dp))
                 .background(MaterialTheme.colorScheme.surface)
 
