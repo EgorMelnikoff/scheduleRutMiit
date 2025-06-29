@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,6 +28,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
@@ -56,6 +56,7 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
@@ -80,7 +81,6 @@ fun NewsScreen(
     stateNews: NewsState,
 
     newsListState: LazyListState,
-    newsDialogState: ScrollState,
     paddingValues: PaddingValues
 ) {
     if (stateNewsList !is NewsListState.Loaded) {
@@ -141,8 +141,8 @@ fun NewsScreen(
                             is NewsState.Loading -> LoadingScreen()
                             is NewsState.Loaded -> {
                                 DialogNews(
-                                    newsDialogState = newsDialogState,
                                     news = stateNews.news,
+                                    paddingTop = paddingValues.calculateTopPadding()
                                 )
                             }
                         }
@@ -221,8 +221,8 @@ fun NewsShort(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogNews(
-    newsDialogState: ScrollState,
-    news: News
+    news: News,
+    paddingTop: Dp
 ) {
     Box(
         modifier = Modifier
@@ -231,7 +231,7 @@ fun DialogNews(
     ) {
         val spacerHeight = if (!news.images.isNullOrEmpty()) {
             230.dp
-        } else 0.dp
+        } else paddingTop
         if (!news.images.isNullOrEmpty()) {
             val model = rememberAsyncImagePainter(news.images!!.first())
             val transition by animateFloatAsState(
@@ -250,7 +250,7 @@ fun DialogNews(
         }
 
         Column(
-            modifier = Modifier.verticalScroll(newsDialogState)
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.height(spacerHeight))
             Column(
@@ -278,9 +278,9 @@ fun DialogNews(
                 val uriHandler = LocalUriHandler.current
 
 
-                Column (
+                Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
-                ){
+                ) {
                     news.elements?.forEach { element ->
                         when (element.first) {
                             "p", "li" -> {
@@ -301,8 +301,9 @@ fun DialogNews(
                                             }
                                     },
 
-                                )
+                                    )
                             }
+
                             "tr" -> {
                                 val tableRow = element.second as List<*>
                                 Column(
@@ -311,7 +312,7 @@ fun DialogNews(
                                         .padding(vertical = 4.dp),
                                     verticalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
-                                    tableRow.forEach {text ->
+                                    tableRow.forEach { text ->
                                         Text(
                                             text = text.toString(),
                                             style = TextStyle(
