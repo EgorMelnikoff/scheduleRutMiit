@@ -200,25 +200,42 @@ fun DialogScheduleItem(
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
-
-            IconButton(
-                onClick = {
-                    isExpanded = !isExpanded
+            if (namedScheduleFormatted.namedScheduleEntity.isDefault) {
+                IconButton(
+                    onClick = {
+                        scheduleViewModel.deleteNamedSchedule(
+                            primaryKey = namedScheduleFormatted.namedScheduleEntity.id,
+                            isDefault = namedScheduleFormatted.namedScheduleEntity.isDefault
+                        )
+                    }
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.delete),
+                        tint = MaterialTheme.colorScheme.error,
+                        contentDescription = null
+                    )
                 }
-            ) {
-                Icon(
-                    modifier = Modifier.graphicsLayer(
-                        rotationZ = rotationAngle
-                    ),
-                    imageVector = ImageVector.vectorResource(R.drawable.down),
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    contentDescription = null
-                )
+            } else {
+                IconButton(
+                    onClick = {
+                        isExpanded = !isExpanded
+                    }
+                ) {
+                    Icon(
+                        modifier = Modifier.graphicsLayer(
+                            rotationZ = rotationAngle
+                        ),
+                        imageVector = ImageVector.vectorResource(R.drawable.down),
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        contentDescription = null
+                    )
+                }
             }
+
         }
 
         AnimatedVisibility(
-            visible = isExpanded
+            visible = !namedScheduleFormatted.namedScheduleEntity.isDefault && isExpanded
         ) {
             FlowRow(
                 maxItemsInEachRow = 2,
@@ -251,6 +268,7 @@ fun DialogScheduleItem(
                     ScheduleButton(
                         modifier = Modifier,
                         onClick = {
+                            isExpanded = false
                             scheduleViewModel.selectNamedSchedule(namedScheduleFormatted.namedScheduleEntity.id)
                         },
                         colors = ButtonDefaults.outlinedButtonColors().copy(
@@ -335,10 +353,10 @@ fun InfoDialog(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ){
+            ) {
                 Icon(
                     modifier = Modifier
                         .clip(CircleShape)
