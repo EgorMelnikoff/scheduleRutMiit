@@ -93,9 +93,6 @@ fun Main(
     val scheduleListState = rememberLazyListState()
     val schedulesData: MutableMap<String, ScheduleData> = mutableMapOf()
     if (scheduleState is ScheduleState.Loaded) {
-        LaunchedEffect(scheduleState.selectedSchedule?.scheduleEntity) {
-            scheduleListState.scrollToItem(0)
-        }
         scheduleState.namedSchedule.schedules.forEach { scheduleFormatted ->
             val weeksCount by remember(
                 scheduleState.namedSchedule.namedScheduleEntity.apiId,
@@ -146,11 +143,13 @@ fun Main(
                 weeksStartIndex = params.second,
                 weeksCount = weeksCount
             )
-
+            schedulesData[scheduleFormatted.scheduleEntity.timetableId] = scheduleData
+            LaunchedEffect(scheduleState.selectedSchedule?.scheduleEntity) {
+                scheduleListState.scrollToItem(0)
+            }
             LaunchedEffect(scheduleState.namedSchedule.namedScheduleEntity.apiId) {
                 scheduleData.pagerDaysState.scrollToPage(params.third)
             }
-            schedulesData[scheduleFormatted.scheduleEntity.timetableId] = scheduleData
         }
     }
     var showDialogEvent by remember { mutableStateOf(false) }
@@ -161,7 +160,6 @@ fun Main(
     val stateNews = newsViewModel.stateNews.collectAsState().value
     var showDialogNews by remember { mutableStateOf(false) }
     val newsListState = rememberLazyListState()
-    val newsDialogState = rememberScrollState()
 
     val schedulesState = scheduleViewModel.stateSchedules.collectAsState().value
     val appInfoState = settingsViewModel.stateAuthor.collectAsState().value
@@ -179,7 +177,7 @@ fun Main(
             ) {
                 val navigationBarItemColors = NavigationBarItemColors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
-                    selectedTextColor = MaterialTheme.colorScheme.onBackground,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
                     selectedIndicatorColor = MaterialTheme.colorScheme.surface,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurface,
                     unselectedTextColor = MaterialTheme.colorScheme.onSurface,
@@ -315,7 +313,6 @@ fun Main(
                         stateNewsList = stateNewsList,
                         stateNews = stateNews,
                         newsListState = newsListState,
-                        newsDialogState = newsDialogState,
                         paddingValues = paddingValues
                     )
                 }

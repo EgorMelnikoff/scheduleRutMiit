@@ -393,6 +393,7 @@ fun InfoDialog(
                 )
 
                 HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 8.dp),
                     color = MaterialTheme.colorScheme.outline,
                     thickness = 0.5.dp
                 )

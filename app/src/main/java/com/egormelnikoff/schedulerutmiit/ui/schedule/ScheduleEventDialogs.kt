@@ -198,26 +198,28 @@ fun EventDialog(
                 EventDialogItem(
                     title = context.getString(R.string.Room),
                 ) {
-                    event.rooms.forEachIndexed { index, room ->
-                        EventDialogClickableItem(
-                            text = room.hint.toString(),
-                            onClick = {
-                                onShowEventDialog(false)
-                                scheduleViewModel.getSchedule(
-                                    name = event.rooms.first().name!!,
-                                    apiId = event.rooms.first().id.toString(),
-                                    type = 2
+                    Column {
+                        event.rooms.forEachIndexed { index, room ->
+                            EventDialogClickableItem(
+                                text = room.hint.toString(),
+                                onClick = {
+                                    onShowEventDialog(false)
+                                    scheduleViewModel.getSchedule(
+                                        name = event.rooms.first().name!!,
+                                        apiId = event.rooms.first().id.toString(),
+                                        type = 2
+                                    )
+                                }
+                            )
+                            if (index != event.rooms.lastIndex) {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(horizontal = 12.dp),
+                                    color = MaterialTheme.colorScheme.outline,
+                                    thickness = 0.5.dp
                                 )
                             }
-                        )
-                        if (index != event.rooms.lastIndex) {
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outline,
-                                thickness = 0.5.dp
-                            )
                         }
                     }
-
                 }
 
             }
@@ -268,26 +270,30 @@ fun EventDialog(
                 EventDialogItem(
                     title = context.getString(R.string.Lecturers),
                 ) {
-                    event.lecturers.forEachIndexed { index, lecturer ->
-                        EventDialogClickableItem(
-                            text = lecturer.fullFio.toString(),
-                            onClick = {
-                                onShowEventDialog(false)
-                                scheduleViewModel.getSchedule(
-                                    name = lecturer.fullFio!!,
-                                    apiId = lecturer.id.toString(),
-                                    type = 1
-                                )
-                            },
-                            imageUrl = "https://www.miit.ru/content/e${lecturer.id}.jpg?id_fe=${lecturer.id}&SWidth=100"
-                        )
-                        if (index != event.lecturers.lastIndex) {
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outline,
-                                thickness = 0.5.dp
+                    Column {
+                        event.lecturers.forEachIndexed { index, lecturer ->
+                            EventDialogClickableItem(
+                                text = lecturer.fullFio.toString(),
+                                onClick = {
+                                    onShowEventDialog(false)
+                                    scheduleViewModel.getSchedule(
+                                        name = lecturer.fullFio!!,
+                                        apiId = lecturer.id.toString(),
+                                        type = 1
+                                    )
+                                },
+                                imageUrl = "https://www.miit.ru/content/e${lecturer.id}.jpg?id_fe=${lecturer.id}&SWidth=100"
                             )
+                            if (index != event.lecturers.lastIndex) {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(horizontal = 12.dp),
+                                    color = MaterialTheme.colorScheme.outline,
+                                    thickness = 0.5.dp
+                                )
+                            }
                         }
                     }
+
                 }
             }
             if (isSavedSchedule) {

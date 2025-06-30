@@ -315,7 +315,8 @@ fun Chip(
         onClick = { onSelect(!selected) },
         label = {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (imageVector != null) {
                     Icon(
@@ -323,7 +324,6 @@ fun Chip(
                         imageVector = imageVector,
                         contentDescription = null
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
                 }
 
                 Text(title)
@@ -410,7 +410,6 @@ fun SearchedItem(
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-
             Text(
                 text = title,
                 fontSize = 16.sp,

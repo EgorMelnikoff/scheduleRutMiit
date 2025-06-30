@@ -30,7 +30,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,7 +48,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.PlatformTextStyle
@@ -275,8 +273,6 @@ fun DialogNews(
                 Spacer(
                     modifier = Modifier.height(4.dp)
                 )
-                val uriHandler = LocalUriHandler.current
-
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -285,23 +281,12 @@ fun DialogNews(
                         when (element.first) {
                             "p", "li" -> {
                                 val text = element.second as AnnotatedString
-                                ClickableText(
+                                Text(
                                     text = text,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onBackground
-                                    ),
-                                    onClick = { offset ->
-                                        text.getStringAnnotations(
-                                            tag = "URL",
-                                            start = offset,
-                                            end = offset
-                                        )
-                                            .firstOrNull()?.let { annotation ->
-                                                uriHandler.openUri(annotation.item)
-                                            }
-                                    },
-
                                     )
+                                )
                             }
 
                             "tr" -> {

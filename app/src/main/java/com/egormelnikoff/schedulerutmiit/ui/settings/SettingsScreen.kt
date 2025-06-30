@@ -132,6 +132,7 @@ fun SettingsScreen(
     settingsListState: ScrollState,
     paddingValues: PaddingValues,
 ) {
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     val themes = arrayOf(
@@ -168,6 +169,9 @@ fun SettingsScreen(
     ) { target ->
         when {
             target.first -> {
+                BackHandler {
+                    onShowDialogSchedules(false)
+                }
                 SchedulesDialog(
                     onShowDialog = onShowDialogSchedules,
                     navigateToSearch = navigateToSearch,
@@ -176,24 +180,21 @@ fun SettingsScreen(
                     //showDialogAddSchedule = onShowDialogSddSchedule,
                     //onShowDialogAddEvent = onShowDialogAddEvent
                 )
-                BackHandler {
-                    onShowDialogSchedules(false)
-                }
+
             }
 
 
             target.second -> {
+                BackHandler {
+                    onShowDialogInfo(false)
+                }
                 InfoDialog(
                     appInfoState = appInfoState,
                     onShowDialog = onShowDialogInfo
                 )
-                BackHandler {
-                    onShowDialogInfo(false)
-                }
             }
 
             else -> {
-                val scope = rememberCoroutineScope()
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -224,6 +225,7 @@ fun SettingsScreen(
                                 }
                             }
                             HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp),
                                 color = MaterialTheme.colorScheme.outline,
                                 thickness = 0.5.dp
                             )
@@ -250,6 +252,7 @@ fun SettingsScreen(
                             }
                         }
                         HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
                             color = MaterialTheme.colorScheme.outline,
                             thickness = 0.5.dp
                         )
@@ -293,6 +296,7 @@ fun SettingsScreen(
                             )
                         }
                         HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
                             color = MaterialTheme.colorScheme.outline,
                             thickness = 0.5.dp
                         )
@@ -312,6 +316,7 @@ fun SettingsScreen(
                             )
                         }
                         HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
                             color = MaterialTheme.colorScheme.outline,
                             thickness = 0.5.dp
                         )
@@ -328,6 +333,7 @@ fun SettingsScreen(
                             text = LocalContext.current.getString(R.string.report_a_problem)
                         )
                         HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
                             color = MaterialTheme.colorScheme.outline,
                             thickness = 0.5.dp
                         )

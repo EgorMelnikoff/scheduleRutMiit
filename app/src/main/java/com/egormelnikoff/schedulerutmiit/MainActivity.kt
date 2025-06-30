@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.runtime.collectAsState
 import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel

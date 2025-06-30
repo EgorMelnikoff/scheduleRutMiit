@@ -1,10 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.remote.parser
 
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.classes.TelegramPage
 import com.egormelnikoff.schedulerutmiit.classes.News
@@ -69,8 +70,9 @@ class Parser {
 
         fun parseNews(news: News): News {
             val document = Jsoup.parse(news.content)
-            val elements = document.select("p, li, tr")
+            val elements = document.select("p, li, tr, img")
             val parsedElements = mutableListOf<Pair<String, Any>>()
+            val parsedImages = mutableListOf<String>()
             for (element in elements) {
                 when (element.tagName()) {
                     "p" -> {
@@ -79,12 +81,14 @@ class Parser {
                             parsedElements.add(Pair("p", annotatedString))
                         }
                     }
+
                     "li" -> {
                         val annotatedString = htmlToAnnotatedString("• ${element.html()}")
                         if (annotatedString.isNotEmpty()) {
                             parsedElements.add(Pair("li", annotatedString))
                         }
                     }
+
                     "tr" -> {
                         val tableRow = element.select("td")
                         val tableRowItems = mutableListOf<String>()
@@ -96,14 +100,13 @@ class Parser {
                         }
                         parsedElements.add(Pair("tr", tableRowItems))
                     }
-                }
-            }
-            val images = document.select("img")
-            val parsedImages = mutableListOf<String>()
-            for (image in images) {
-                val imageUrl = image.attr("src")
-                if (imageUrl.isNotEmpty()) {
-                    parsedImages.add("https://www.miit.ru$imageUrl")
+
+                    "img" -> {
+                        val imageUrl = element.attr("src")
+                        if (imageUrl.isNotEmpty()) {
+                            parsedImages.add("https://www.miit.ru$imageUrl")
+                        }
+                    }
                 }
             }
 
@@ -129,15 +132,18 @@ fun htmlToAnnotatedString(html: String): AnnotatedString {
                         val url = node.attr("href")
                         val linkText = node.text()
 
-                        pushStringAnnotation(tag = "URL", annotation = url)
-
-                        withStyle(style = SpanStyle(
-                            textDecoration = TextDecoration.Underline,
-                            fontSize = 16.sp
+                        pushLink(
+                            LinkAnnotation.Url(
+                                url = url,
+                                styles = TextLinkStyles(
+                                    style = SpanStyle(
+                                        textDecoration = TextDecoration.Underline,
+                                        fontSize = 16.sp
+                                    )
+                                )
+                            )
                         )
-                        ) {
-                            append(linkText)
-                        }
+                        append(linkText)
                         pop()
                     } else {
                         append(node.text())
