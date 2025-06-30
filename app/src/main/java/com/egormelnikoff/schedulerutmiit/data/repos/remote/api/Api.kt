@@ -60,7 +60,6 @@ class Api {
 
         fun <T> parseJson(jsonString: String?, classOfT: Class<T>): Result<T> {
             return try {
-                println(jsonString)
                 if (!jsonString.isNullOrEmpty()) {
                     Result.Success(gson.fromJson(jsonString, classOfT))
                 } else {
