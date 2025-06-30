@@ -47,6 +47,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
 import com.egormelnikoff.schedulerutmiit.data.Event
 import com.egormelnikoff.schedulerutmiit.data.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeGreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeLightBlue
@@ -55,7 +56,6 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemePink
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeRed
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeViolet
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeYellow
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -78,13 +78,16 @@ data class ScheduleData(
 fun ScheduleCalendarView(
     onShowDialogEvent: (Boolean) -> Unit,
     onSelectDisplayedEvent: (Event) -> Unit,
-    isShortEvent: Boolean,
-    isShowCountClasses: Boolean,
-    scheduleState: ScheduleState.Loaded,
-    eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
-    startDate: LocalDate,
+
     scheduleData: ScheduleData,
-    today: LocalDate
+    scheduleEntity: ScheduleEntity,
+    eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
+    eventsExtraData: List<EventExtraData>,
+
+    today: LocalDate,
+    startDate: LocalDate,
+    isShortEvent: Boolean,
+    isShowCountClasses: Boolean
 ) {
     LaunchedEffect(scheduleData.selectedDate) {
         val targetPage = ChronoUnit.DAYS.between(
@@ -118,19 +121,23 @@ fun ScheduleCalendarView(
     ) {
         HorizontalCalendar(
             scheduleData = scheduleData,
+            scheduleEntity = scheduleEntity,
             eventsByWeekAndDays = eventsByWeekAndDays,
+            eventsExtraData = eventsExtraData,
+
             isShowCountClasses = isShowCountClasses,
-            today = today,
-            scheduleState = scheduleState
+            today = today
         )
         PagedDays(
-            isShortEvent = isShortEvent,
-            eventsByWeekAndDays = eventsByWeekAndDays,
-            scheduleState = scheduleState,
-            pagerDaysState = scheduleData.pagerDaysState,
-
             onShowDialogEvent = onShowDialogEvent,
-            onSelectDisplayedEvent = onSelectDisplayedEvent
+            onSelectDisplayedEvent = onSelectDisplayedEvent,
+
+            scheduleEntity = scheduleEntity,
+            eventsByWeekAndDays = eventsByWeekAndDays,
+            eventsExtraData = eventsExtraData,
+
+            pagerDaysState = scheduleData.pagerDaysState,
+            isShortEvent = isShortEvent
         )
     }
 }
@@ -141,16 +148,17 @@ fun HorizontalCalendar(
     isShowCountClasses: Boolean,
     today: LocalDate,
     eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
-    scheduleState: ScheduleState.Loaded,
-    scheduleData: ScheduleData
+    scheduleData: ScheduleData,
+    scheduleEntity: ScheduleEntity,
+    eventsExtraData: List<EventExtraData>
 ) {
     val scope = rememberCoroutineScope()
     val firstDayOfCurrentWeek = remember(
         scheduleData.pagerWeeksState.currentPage,
-        scheduleState.selectedSchedule?.scheduleEntity
+        scheduleEntity
     ) {
         calculateFirstDayOfWeek(
-            scheduleState.selectedSchedule!!.scheduleEntity.startDate.plusWeeks(scheduleData.pagerWeeksState.currentPage.toLong())
+            scheduleEntity.startDate.plusWeeks(scheduleData.pagerWeeksState.currentPage.toLong())
         )
     }
 
@@ -215,12 +223,12 @@ fun HorizontalCalendar(
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                if (scheduleState.selectedSchedule!!.scheduleEntity.recurrence != null) {
+                if (scheduleEntity.recurrence != null) {
                     val selectedWeek = calculateCurrentWeek(
                         date = firstDayOfCurrentWeek,
-                        startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
-                        firstPeriodNumber = scheduleState.selectedSchedule.scheduleEntity.recurrence!!.firstWeekNumber,
-                        interval = scheduleState.selectedSchedule.scheduleEntity.recurrence.interval!!
+                        startDate = scheduleEntity.startDate,
+                        firstPeriodNumber = scheduleEntity.recurrence.firstWeekNumber,
+                        interval = scheduleEntity.recurrence.interval!!
                     )
                     val color = MaterialTheme.colorScheme.onSurface
                     Canvas(
@@ -277,16 +285,16 @@ fun HorizontalCalendar(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 val firstDayOfWeek = calculateFirstDayOfWeek(
-                    scheduleState.selectedSchedule!!.scheduleEntity.startDate.plusWeeks(index.toLong())
+                    scheduleEntity.startDate.plusWeeks(index.toLong())
                 )
 
                 val currentWeek =
-                    if (scheduleState.selectedSchedule.scheduleEntity.recurrence != null) {
+                    if (scheduleEntity.recurrence != null) {
                         calculateCurrentWeek(
                             date = firstDayOfWeek,
-                            startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
-                            firstPeriodNumber = scheduleState.selectedSchedule.scheduleEntity.recurrence.firstWeekNumber,
-                            interval = scheduleState.selectedSchedule.scheduleEntity.recurrence.interval!!
+                            startDate = scheduleEntity.startDate,
+                            firstPeriodNumber = scheduleEntity.recurrence.firstWeekNumber,
+                            interval = scheduleEntity.recurrence.interval!!
                         )
                     } else {
                         1
@@ -294,7 +302,7 @@ fun HorizontalCalendar(
                 for (date in 0 until 7) {
                     val currentDate = firstDayOfWeek.plusDays(date.toLong())
                     val eventsByDay = eventsByWeekAndDays[currentWeek]?.filter {
-                        if (scheduleState.selectedSchedule.scheduleEntity.recurrence != null) {
+                        if (scheduleEntity.recurrence != null) {
                             it.key.dayOfWeek == currentDate.dayOfWeek
                         } else {
                             it.key == currentDate
@@ -304,7 +312,7 @@ fun HorizontalCalendar(
                         selectDate = scheduleData.selectDate,
                         currentDate = currentDate,
                         events = eventsByDay,
-                        eventsExtraData = scheduleState.selectedSchedule.eventsExtraData,
+                        eventsExtraData = eventsExtraData,
 
                         isShowCountClasses = isShowCountClasses,
 
@@ -415,13 +423,15 @@ fun DayRowItem(
 
 @Composable
 fun PagedDays(
-    isShortEvent: Boolean,
-    scheduleState: ScheduleState.Loaded,
-
-    eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
-    pagerDaysState: PagerState,
     onShowDialogEvent: (Boolean) -> Unit,
     onSelectDisplayedEvent: (Event) -> Unit,
+
+    scheduleEntity: ScheduleEntity,
+    eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
+    eventsExtraData: List<EventExtraData>,
+
+    pagerDaysState: PagerState,
+    isShortEvent: Boolean
 ) {
     HorizontalPager(
         modifier = Modifier.fillMaxSize(),
@@ -429,36 +439,36 @@ fun PagedDays(
         verticalAlignment = Alignment.Top,
         pageSpacing = 12.dp
     ) { index ->
-        val currentDate =
-            scheduleState.selectedSchedule!!.scheduleEntity.startDate.plusDays(index.toLong())
+        val currentDate = scheduleEntity.startDate.plusDays(index.toLong())
 
-        val currentWeek = if (scheduleState.selectedSchedule.scheduleEntity.recurrence != null) {
+        val currentWeek = if (scheduleEntity.recurrence != null) {
             calculateCurrentWeek(
                 date = currentDate,
-                startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
-                firstPeriodNumber = scheduleState.selectedSchedule.scheduleEntity.recurrence.firstWeekNumber,
-                interval = scheduleState.selectedSchedule.scheduleEntity.recurrence.interval!!
+                startDate = scheduleEntity.startDate,
+                firstPeriodNumber = scheduleEntity.recurrence.firstWeekNumber,
+                interval = scheduleEntity.recurrence.interval!!
             )
         } else {
             1
         }
 
-        val eventsForDayByStartTime by remember(scheduleState.namedSchedule.namedScheduleEntity.apiId) {
+        val eventsForDayByStartTime by remember(
+            scheduleEntity.namedScheduleId,
+            scheduleEntity.id
+        ) {
             mutableStateOf(
                 (eventsByWeekAndDays[currentWeek]?.filter {
-                    if (scheduleState.selectedSchedule.scheduleEntity.recurrence != null) {
+                    if (scheduleEntity.recurrence != null) {
                         it.key.dayOfWeek == currentDate.dayOfWeek
                     } else {
                         it.key == currentDate
                     }
-                }?.values?.flatten() ?: emptyList()
-                        )
+                }?.values?.flatten() ?: emptyList())
                     .sortedBy { event -> event.startDatetime!!.toLocalTime() }
                     .groupBy { event -> event.startDatetime.toString() }
                     .toList()
             )
         }
-
         if (eventsForDayByStartTime.isNotEmpty()) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -467,7 +477,7 @@ fun PagedDays(
                 items(eventsForDayByStartTime, key = { it.first }) { events ->
                     Event(
                         isShortEvent = isShortEvent,
-                        eventsExtraData = scheduleState.selectedSchedule.eventsExtraData,
+                        eventsExtraData = eventsExtraData,
                         events = events.second,
                         onShowDialogEvent = onShowDialogEvent,
                         onSelectDisplayedEvent = onSelectDisplayedEvent

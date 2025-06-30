@@ -156,7 +156,7 @@ fun ScreenSchedule(
                         )
                         if (schedulesData.isNotEmpty() && !scheduleState.selectedSchedule?.events.isNullOrEmpty()) {
                             val eventsByWeekAndDays =
-                                remember(scheduleState.selectedSchedule!!.scheduleEntity) {
+                                remember(scheduleState.selectedSchedule!!.scheduleEntity, scheduleState.namedSchedule.namedScheduleEntity.id) {
                                     calculateEventsByWeeks(scheduleState)
                                 }
                             AnimatedContent(
@@ -178,21 +178,26 @@ fun ScreenSchedule(
                                     ScheduleCalendarView(
                                         onShowDialogEvent = onShowDialogEvent,
                                         onSelectDisplayedEvent = onSelectDisplayedEvent,
-                                        today = today,
+
                                         isShowCountClasses = appSettings.showCountClasses,
                                         isShortEvent = appSettings.eventView,
-                                        scheduleState = scheduleState,
+
+                                        scheduleEntity = scheduleState.selectedSchedule.scheduleEntity,
+                                        scheduleData = schedulesData[scheduleState.selectedSchedule.scheduleEntity.timetableId]!!,
                                         eventsByWeekAndDays = eventsByWeekAndDays,
+                                        eventsExtraData = scheduleState.selectedSchedule.eventsExtraData,
+
                                         startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
-                                        scheduleData = schedulesData[scheduleState.selectedSchedule.scheduleEntity.timetableId]!!
+                                        today = today
                                     )
                                 } else {
                                     ScheduleListView(
                                         onShowDialogEvent = onShowDialogEvent,
                                         onSelectDisplayedEvent = onSelectDisplayedEvent,
-                                        scheduleState = scheduleState,
+                                        scheduleEntity = scheduleState.selectedSchedule.scheduleEntity,
                                         isShortEvent = appSettings.eventView,
                                         eventsByWeekAndDays = eventsByWeekAndDays,
+                                        eventsExtraData = scheduleState.selectedSchedule.eventsExtraData,
                                         scheduleListState = scheduleListState,
                                         today = today
                                     )

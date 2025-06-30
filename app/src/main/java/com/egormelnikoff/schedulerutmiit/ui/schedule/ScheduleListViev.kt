@@ -30,8 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.Event
+import com.egormelnikoff.schedulerutmiit.data.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -43,18 +44,22 @@ import kotlin.math.abs
 fun ScheduleListView(
     onShowDialogEvent: (Boolean) -> Unit,
     onSelectDisplayedEvent: (Event) -> Unit,
-    scheduleState: ScheduleState.Loaded,
     scheduleListState: LazyListState,
     isShortEvent: Boolean,
     eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
+    eventsExtraData: List<EventExtraData>,
+    scheduleEntity: ScheduleEntity,
     today: LocalDate
 ) {
-    val eventsGrouped by remember(scheduleState.selectedSchedule!!.scheduleEntity) {
+    val eventsGrouped by remember(
+        scheduleEntity.namedScheduleId,
+        scheduleEntity.id
+    ) {
         mutableStateOf(
             calculateEvents(
                 eventsByWeekAndDays = eventsByWeekAndDays,
                 today = today,
-                scheduleState = scheduleState
+                scheduleEntity = scheduleEntity
             )
                 .filter { it.startDatetime!!.toLocalDate() >= today }
                 .sortedBy { it.startDatetime }
@@ -63,6 +68,7 @@ fun ScheduleListView(
                 }
         )
     }
+
     if (eventsGrouped.isNotEmpty()) {
         LazyColumn(
             state = scheduleListState,
@@ -83,7 +89,7 @@ fun ScheduleListView(
                 items(eventsForDayGrouped) { eventsGrouped ->
                     Event(
                         isShortEvent = isShortEvent,
-                        eventsExtraData = scheduleState.selectedSchedule!!.eventsExtraData,
+                        eventsExtraData = eventsExtraData,
                         events = eventsGrouped.second,
                         onShowDialogEvent = onShowDialogEvent,
                         onSelectDisplayedEvent = onSelectDisplayedEvent
@@ -134,18 +140,21 @@ fun DateHeader(date: LocalDate, formatter: DateTimeFormatter) {
 fun calculateEvents(
     eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
     today: LocalDate,
-    scheduleState: ScheduleState.Loaded,
+    scheduleEntity: ScheduleEntity
 ): MutableList<Event> {
     val displayedEvents = mutableListOf<Event>()
-    if (scheduleState.selectedSchedule!!.scheduleEntity.recurrence != null) {
+    if (scheduleEntity.recurrence != null) {
         val weeksRemaining = abs(
             ChronoUnit.WEEKS.between(
                 today,
-                scheduleState.selectedSchedule.scheduleEntity.endDate
+                scheduleEntity.endDate
             )
         ).toInt().plus(1)
         for (week in 1..weeksRemaining) {
-            val weekNumber = ((week + scheduleState.selectedSchedule.scheduleEntity.recurrence!!.firstWeekNumber) % scheduleState.selectedSchedule.scheduleEntity.recurrence.interval!!).plus(1)
+            val weekNumber =
+                ((week + scheduleEntity.recurrence.firstWeekNumber) % scheduleEntity.recurrence.interval!!).plus(
+                    1
+                )
             val events = eventsByWeekAndDays[weekNumber]?.values?.flatten()
             if (events != null) {
                 for (event in events) {
