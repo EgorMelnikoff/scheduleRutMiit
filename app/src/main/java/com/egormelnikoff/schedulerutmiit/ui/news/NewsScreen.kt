@@ -84,36 +84,39 @@ fun NewsScreen(
     if (stateNewsList !is NewsListState.Loaded) {
         newsViewModel.getNewsList(1)
     }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        AnimatedContent(
-            modifier = Modifier.fillMaxSize(),
-            targetState = stateNewsList,
-            transitionSpec = {
-                fadeIn() togetherWith fadeOut()
-            }
-        ) { targetNewsListState ->
-            when (targetNewsListState) {
-                is NewsListState.Error -> ErrorScreen(
-                    title = LocalContext.current.getString(R.string.error),
-                    subtitle = LocalContext.current.getString(R.string.unable_load_news_list),
-                    buttonTitle = LocalContext.current.getString(R.string.repeat),
-                    imageVector = ImageVector.vectorResource(R.drawable.refresh),
-                    action = {
-                        newsViewModel.getNewsList(1)
-                    }
-                )
+    AnimatedContent(
+        modifier = Modifier.fillMaxSize(),
+        targetState = stateNewsList,
+        transitionSpec = {
+            fadeIn() togetherWith fadeOut()
+        }
+    ) { targetNewsListState ->
+        when (targetNewsListState) {
+            is NewsListState.Error -> ErrorScreen(
+                title = LocalContext.current.getString(R.string.error),
+                subtitle = LocalContext.current.getString(R.string.unable_load_news_list),
+                buttonTitle = LocalContext.current.getString(R.string.repeat),
+                imageVector = ImageVector.vectorResource(R.drawable.refresh),
+                action = {
+                    newsViewModel.getNewsList(1)
+                }
+            )
 
-                is NewsListState.Loading -> LoadingScreen()
-                is NewsListState.Loaded -> {
+            is NewsListState.Loading -> LoadingScreen(
+                paddingTop = paddingValues.calculateTopPadding(),
+                paddingBottom = paddingValues.calculateBottomPadding()
+            )
+            is NewsListState.Loaded -> {
+                Box {
                     LazyColumn(
                         state = newsListState,
-                        modifier = Modifier.padding(paddingValues),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = paddingValues.calculateTopPadding() + 16.dp,
+                            bottom = paddingValues.calculateBottomPadding()
+                        )
                     ) {
                         items(targetNewsListState.news) { newsShort ->
                             NewsShort(
@@ -125,33 +128,54 @@ fun NewsScreen(
                             )
                         }
                     }
-                    AnimatedVisibility(
-                        modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
-                        visible = showDialogNews,
-                        enter = scaleIn(animationSpec = tween(300)),
-                        exit = fadeOut(animationSpec = tween(500))
-                    ) {
-                        when (stateNews) {
-                            is NewsState.Error -> Empty(
-                                subtitle = LocalContext.current.getString(R.string.error),
-                            )
-
-                            is NewsState.Loading -> LoadingScreen()
-                            is NewsState.Loaded -> {
-                                DialogNews(
-                                    news = stateNews.news,
-                                    paddingTop = paddingValues.calculateTopPadding()
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        MaterialTheme.colorScheme.background,
+                                        Color.Transparent
+                                    ),
+                                    startY = 0f,
+                                    endY = 200f
                                 )
-                            }
+                            )
+                    )
+                }
+                AnimatedVisibility(
+                    visible = showDialogNews,
+                    enter = scaleIn(animationSpec = tween(300)),
+                    exit = fadeOut(animationSpec = tween(500))
+                ) {
+                    when (stateNews) {
+                        is NewsState.Error -> Empty(
+                            subtitle = LocalContext.current.getString(R.string.error),
+                            paddingTop = paddingValues.calculateTopPadding(),
+                            paddingBottom = 0.dp
+                        )
+
+                        is NewsState.Loading -> LoadingScreen(
+                            paddingTop = paddingValues.calculateTopPadding(),
+                            paddingBottom = paddingValues.calculateBottomPadding()
+                        )
+                        is NewsState.Loaded -> {
+                            DialogNews(
+                                news = stateNews.news,
+                                paddingTop = paddingValues.calculateTopPadding(),
+                                paddingBottom = paddingValues.calculateBottomPadding()
+                            )
                         }
-                        BackHandler {
-                            onShowDialogNews(false)
-                        }
+                    }
+                    BackHandler {
+                        onShowDialogNews(false)
                     }
                 }
             }
         }
     }
+
 }
 
 @Composable
@@ -220,7 +244,8 @@ fun NewsShort(
 @Composable
 fun DialogNews(
     news: News,
-    paddingTop: Dp
+    paddingTop: Dp,
+    paddingBottom: Dp
 ) {
     Box(
         modifier = Modifier
@@ -239,8 +264,8 @@ fun DialogNews(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
-                    .alpha(transition)
-                    .background(MaterialTheme.colorScheme.surface),
+                    .background(MaterialTheme.colorScheme.surface)
+                    .alpha(transition),
                 painter = model,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
@@ -255,7 +280,7 @@ fun DialogNews(
                 modifier = Modifier
                     .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(16.dp),
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
@@ -273,7 +298,6 @@ fun DialogNews(
                 Spacer(
                     modifier = Modifier.height(4.dp)
                 )
-
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -338,7 +362,9 @@ fun DialogNews(
                         }
                     }
                 }
-
+                Spacer(
+                    modifier = Modifier.padding(bottom = paddingBottom)
+                )
             }
         }
         Box(
