@@ -161,7 +161,9 @@ fun SettingsScreen(
     )
 
     AnimatedContent(
-        modifier = Modifier.fillMaxSize().padding(paddingValues),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = paddingValues.calculateTopPadding()),
         targetState = Pair(showDialogSchedules, showDialogInfo),
         transitionSpec = {
             fadeIn() togetherWith fadeOut()
@@ -178,7 +180,8 @@ fun SettingsScreen(
                     scheduleViewModel = scheduleViewModel,
                     schedulesState = schedulesState,
                     //showDialogAddSchedule = onShowDialogSddSchedule,
-                    //onShowDialogAddEvent = onShowDialogAddEvent
+                    //onShowDialogAddEvent = onShowDialogAddEvent,
+                    paddingBottom = paddingValues.calculateBottomPadding()
                 )
 
             }
@@ -190,7 +193,8 @@ fun SettingsScreen(
                 }
                 InfoDialog(
                     appInfoState = appInfoState,
-                    onShowDialog = onShowDialogInfo
+                    onShowDialog = onShowDialogInfo,
+                    paddingBottom = paddingValues.calculateBottomPadding()
                 )
             }
 
@@ -200,8 +204,7 @@ fun SettingsScreen(
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                         .verticalScroll(settingsListState)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                 ) {
                     GroupSettingsItem(
                         title = LocalContext.current.getString(R.string.schedule)
@@ -280,6 +283,7 @@ fun SettingsScreen(
 
                         }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
                     GroupSettingsItem(
                         title = LocalContext.current.getString(R.string.general)
                     ) {
@@ -348,8 +352,10 @@ fun SettingsScreen(
                             text = LocalContext.current.getString(R.string.about_app)
                         )
                     }
+                    Spacer(
+                        modifier = Modifier.height(paddingValues.calculateBottomPadding())
+                    )
                 }
-
             }
         }
     }

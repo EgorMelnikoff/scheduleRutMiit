@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -55,6 +57,7 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
@@ -79,6 +82,7 @@ fun SchedulesDialog(
     schedulesState: SchedulesState,
     //showDialogAddSchedule: (Boolean) -> Unit,
     //onShowDialogAddEvent: (Long?) -> Unit,
+    paddingBottom: Dp,
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -111,7 +115,7 @@ fun SchedulesDialog(
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = paddingBottom)
             ) {
                 groupedSchedules.forEach { schedules ->
                     stickyHeader {
@@ -132,15 +136,11 @@ fun SchedulesDialog(
                         )
                     }
                     items(schedules.value) { schedule ->
-                        Box(
-                            modifier = Modifier
-                        ) {
-                            DialogScheduleItem(
-                                scheduleViewModel = scheduleViewModel,
-                                namedScheduleFormatted = schedule,
-                                //onShowDialogAddEvent = onShowDialogAddEvent
-                            )
-                        }
+                        DialogScheduleItem(
+                            scheduleViewModel = scheduleViewModel,
+                            namedScheduleFormatted = schedule,
+                            //onShowDialogAddEvent = onShowDialogAddEvent
+                        )
                     }
                 }
             }
@@ -171,7 +171,13 @@ fun DialogScheduleItem(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
-            .clickable(onClick = { isExpanded = !isExpanded })
+            .let {
+                if (namedScheduleFormatted.namedScheduleEntity.isDefault) {
+                    it
+                } else {
+                    it.clickable(onClick = { isExpanded = !isExpanded })
+                }
+            }
             .padding(vertical = 8.dp, horizontal = 12.dp)
             .defaultMinSize(minHeight = 52.dp)
     ) {
@@ -332,7 +338,8 @@ fun ScheduleButton(
 @Composable
 fun InfoDialog(
     appInfoState: AppInfoState,
-    onShowDialog: (Boolean) -> Unit
+    onShowDialog: (Boolean) -> Unit,
+    paddingBottom: Dp
 ) {
     val context = LocalContext.current
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -498,6 +505,10 @@ fun InfoDialog(
                     }
                 }
             }
+
+            Spacer(
+                modifier = Modifier.height(paddingBottom)
+            )
         }
     }
 }
