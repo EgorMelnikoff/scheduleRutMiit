@@ -89,7 +89,7 @@ fun SearchScreen(
 
     Column(
         modifier = Modifier
-            .padding(paddingValues)
+            .padding(top = paddingValues.calculateTopPadding())
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
@@ -147,10 +147,14 @@ fun SearchScreen(
             when (stateSearch) {
                 is SearchState.EmptyQuery -> Empty(
                     imageVector = ImageVector.vectorResource(R.drawable.search_simple),
-                    subtitle = LocalContext.current.getString(R.string.enter_your_query)
+                    subtitle = LocalContext.current.getString(R.string.enter_your_query),
+                    paddingBottom = paddingValues.calculateBottomPadding()
                 )
 
-                is SearchState.Loading -> LoadingScreen()
+                is SearchState.Loading -> LoadingScreen(
+                    paddingTop = 0.dp,
+                    paddingBottom = paddingValues.calculateBottomPadding()
+                )
                 is SearchState.EmptyResult -> Empty(
                     subtitle = LocalContext.current.getString(R.string.nothing_found)
                 )
@@ -160,7 +164,12 @@ fun SearchScreen(
                         modifier = Modifier
                             .fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp),
+                        contentPadding = PaddingValues(
+                            start = 8.dp,
+                            end = 8.dp,
+                            bottom = paddingValues.calculateBottomPadding()
+
+                        ),
                         horizontalAlignment = Alignment.Start
                     ) {
                         if (stateSearch.groups.isNotEmpty() && (selectedOption == Options.ALL || selectedOption == Options.GROUPS)) {
