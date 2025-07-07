@@ -1,13 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.remote.api
 
-import android.util.Log
 import com.egormelnikoff.schedulerutmiit.data.repos.Result
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonSyntaxException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.HttpURLConnection
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.request.get
+import io.ktor.http.HttpStatusCode
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -16,6 +17,12 @@ import java.time.format.DateTimeFormatter
 
 class Api {
     companion object {
+        private val httpClient = HttpClient(CIO) {
+            engine {
+                requestTimeout = 20000
+            }
+        }
+
         private val gson = GsonBuilder()
             .registerTypeAdapter(
                 LocalDate::class.java,
@@ -31,39 +38,37 @@ class Api {
                 }
             ).create()
 
-        suspend fun getData(url: URL): String? {
-            return withContext(Dispatchers.IO) {
-                var connection: HttpURLConnection? = null
-                try {
-                    connection = url.openConnection() as HttpURLConnection
-                    connection.requestMethod = "GET"
-                    connection.connectTimeout = 3000
-                    connection.readTimeout = 20000
 
-                    if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-                        connection.inputStream.bufferedReader().use { it.readText() }
-                    } else {
-                        Log.e(
-                            "NetworkError",
-                            "Error response code: ${connection.responseCode}"
-                        )
-                        null
-                    }
-                } catch (e: Exception) {
-                    Log.e("NetworkError", "Exception while fetching $url: ${e.message}")
-                    null
-                } finally {
-                    connection?.disconnect()
+        suspend fun getData(url: URL): Result<String> {
+            return try {
+                val response = httpClient.get(url)
+
+                if (response.status == HttpStatusCode.OK) {
+                    Result.Success(response.body<String>())
+                } else {
+                    Result.Error(
+                        Exception("Error response code: ${response.status}")
+                    )
                 }
+            } catch (e: Exception) {
+                Result.Error(e)
             }
         }
 
-        fun <T> parseJson(jsonString: String?, classOfT: Class<T>): Result<T> {
+        fun <T> parseJson(jsonString: Result<String?>, classOfT: Class<T>): Result<T> {
             return try {
-                if (!jsonString.isNullOrEmpty()) {
-                    Result.Success(gson.fromJson(jsonString, classOfT))
-                } else {
-                    Result.Error(Exception("Empty JSON"))
+                when (jsonString) {
+                    is Result.Success -> {
+                        if (!jsonString.data.isNullOrEmpty()) {
+                            Result.Success(gson.fromJson(jsonString.data, classOfT))
+                        } else {
+                            Result.Error(Exception("Empty JSON"))
+                        }
+                    }
+
+                    is Result.Error -> {
+                        Result.Error(jsonString.exception)
+                    }
                 }
             } catch (e: JsonSyntaxException) {
                 e.printStackTrace()
