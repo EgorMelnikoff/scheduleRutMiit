@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchViewModel
@@ -42,7 +43,6 @@ class MainActivity : ComponentActivity() {
             }.collectAsState(
                 initial = null
             )
-
             ScheduleRutMiitTheme(
                 appSettings = appSettings.value
             ) {
@@ -56,7 +56,10 @@ class MainActivity : ComponentActivity() {
                         appSettings = appSettings.value!!
                     )
                 } else {
-                    LoadingScreen()
+                    LoadingScreen(
+                        paddingTop = 0.dp,
+                        paddingBottom = 0.dp
+                    )
                 }
             }
         }
