@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 data class BarItem(
     val title: String,
-    val image: ImageVector,
+    val icon: ImageVector,
     val route: String
 )
 
