@@ -54,6 +54,8 @@ dependencies {
     implementation (libs.google.gson)
     implementation (libs.jsoup)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
     implementation(libs.androidx.room.ktx)
     implementation (libs.androidx.runtime.livedata)
     implementation (libs.androidx.datastore.preferences)
