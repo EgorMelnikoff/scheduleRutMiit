@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
@@ -49,7 +50,8 @@ fun ScheduleListView(
     eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
     eventsExtraData: List<EventExtraData>,
     scheduleEntity: ScheduleEntity,
-    today: LocalDate
+    today: LocalDate,
+    paddingBottom: Dp
 ) {
     val eventsGrouped by remember(
         scheduleEntity.namedScheduleId,
@@ -66,21 +68,23 @@ fun ScheduleListView(
                 .groupBy { event ->
                     event.startDatetime!!.toLocalDate()
                 }
+                .toList()
         )
     }
 
     if (eventsGrouped.isNotEmpty()) {
         LazyColumn(
             state = scheduleListState,
-            contentPadding = PaddingValues(horizontal = 16.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = paddingBottom),
             modifier = Modifier.fillMaxSize(),
         ) {
+            val lastIndex = eventsGrouped.lastIndex
             val formatter = DateTimeFormatter.ofPattern("d MMMM")
-            eventsGrouped.forEach { events ->
+            eventsGrouped.forEachIndexed {index, events ->
                 stickyHeader {
-                    DateHeader(events.key, formatter)
+                    DateHeader(events.first, formatter)
                 }
-                val eventsForDayGrouped = events.value
+                val eventsForDayGrouped = events.second
                     .sortedBy { event -> event.startDatetime!!.toLocalTime() }
                     .groupBy { event ->
                         event.startDatetime.toString()
@@ -94,7 +98,9 @@ fun ScheduleListView(
                         onShowDialogEvent = onShowDialogEvent,
                         onSelectDisplayedEvent = onSelectDisplayedEvent
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
+                    if (index != lastIndex) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
         }
@@ -102,7 +108,8 @@ fun ScheduleListView(
         Empty(
             title = "¯\\_(ツ)_/¯",
             subtitle = LocalContext.current.getString(R.string.no_classes),
-            isBoldTitle = false
+            isBoldTitle = false,
+            paddingBottom = paddingBottom
         )
     }
 }

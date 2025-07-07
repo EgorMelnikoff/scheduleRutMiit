@@ -33,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.IconToggleButtonColors
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -108,7 +109,10 @@ fun ScreenSchedule(
         is ScheduleState.Loaded -> {
             LaunchedEffect(scheduleState.message) {
                 if (scheduleState.message != null) {
-                    snackbarHostState.showSnackbar(message = scheduleState.message)
+                    snackbarHostState.showSnackbar(
+                        message = scheduleState.message,
+                        duration = SnackbarDuration.Long
+                    )
                 }
             }
             if (!scheduleState.isSaved || !scheduleState.namedSchedule.namedScheduleEntity.isDefault) {
@@ -121,7 +125,7 @@ fun ScreenSchedule(
             AnimatedContent(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
+                    .padding(top = paddingValues.calculateTopPadding()),
                 targetState = showDialogEvent,
                 transitionSpec = {
                     fadeIn() togetherWith fadeOut()
@@ -188,7 +192,8 @@ fun ScreenSchedule(
                                         eventsExtraData = scheduleState.selectedSchedule.eventsExtraData,
 
                                         startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
-                                        today = today
+                                        today = today,
+                                        paddingBottom = paddingValues.calculateBottomPadding()
                                     )
                                 } else {
                                     ScheduleListView(
@@ -199,7 +204,8 @@ fun ScreenSchedule(
                                         eventsByWeekAndDays = eventsByWeekAndDays,
                                         eventsExtraData = scheduleState.selectedSchedule.eventsExtraData,
                                         scheduleListState = scheduleListState,
-                                        today = today
+                                        today = today,
+                                        paddingBottom = paddingValues.calculateBottomPadding()
                                     )
                                 }
                             }
@@ -226,7 +232,10 @@ fun ScreenSchedule(
         }
 
         is ScheduleState.Loading -> {
-            LoadingScreen()
+            LoadingScreen(
+                paddingTop = paddingValues.calculateTopPadding(),
+                paddingBottom = paddingValues.calculateBottomPadding()
+            )
         }
 
         is ScheduleState.Error -> {

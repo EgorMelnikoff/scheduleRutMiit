@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
@@ -87,7 +88,8 @@ fun ScheduleCalendarView(
     today: LocalDate,
     startDate: LocalDate,
     isShortEvent: Boolean,
-    isShowCountClasses: Boolean
+    isShowCountClasses: Boolean,
+    paddingBottom: Dp
 ) {
     LaunchedEffect(scheduleData.selectedDate) {
         val targetPage = ChronoUnit.DAYS.between(
@@ -137,7 +139,8 @@ fun ScheduleCalendarView(
             eventsExtraData = eventsExtraData,
 
             pagerDaysState = scheduleData.pagerDaysState,
-            isShortEvent = isShortEvent
+            isShortEvent = isShortEvent,
+            paddingBottom = paddingBottom
         )
     }
 }
@@ -431,7 +434,8 @@ fun PagedDays(
     eventsExtraData: List<EventExtraData>,
 
     pagerDaysState: PagerState,
-    isShortEvent: Boolean
+    isShortEvent: Boolean,
+    paddingBottom: Dp
 ) {
     HorizontalPager(
         modifier = Modifier.fillMaxSize(),
@@ -472,7 +476,7 @@ fun PagedDays(
         if (eventsForDayByStartTime.isNotEmpty()) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = paddingBottom)
             ) {
                 items(eventsForDayByStartTime, key = { it.first }) { events ->
                     Event(
@@ -487,7 +491,8 @@ fun PagedDays(
         } else {
             Empty(
                 title = LocalContext.current.getString(R.string.day_off),
-                subtitle = LocalContext.current.getString(R.string.empty_day)
+                subtitle = LocalContext.current.getString(R.string.empty_day),
+                paddingBottom = paddingBottom
             )
         }
     }
