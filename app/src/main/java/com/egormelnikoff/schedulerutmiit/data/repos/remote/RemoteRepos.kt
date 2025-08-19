@@ -256,8 +256,8 @@ class RemoteRepos(
                     recurrence = if (oldSchedule.periodicContent != null) {
                         val currentWeekIndex = abs(
                             ChronoUnit.WEEKS.between(
-                                oldSchedule.timetable.startDate,
-                                LocalDate.now()
+                                calculateFirstDayOfWeek(oldSchedule.timetable.startDate),
+                                calculateFirstDayOfWeek(LocalDate.now())
                             ) + oldSchedule.periodicContent.recurrence!!.currentNumber!!
                         ) - 1
                         val firstWeekNumber =
