@@ -1,9 +1,9 @@
-package com.egormelnikoff.schedulerutmiit.data.repos.local.database
+package com.egormelnikoff.schedulerutmiit.data.datasource.local
 
 import androidx.room.TypeConverter
-import com.egormelnikoff.schedulerutmiit.data.Group
-import com.egormelnikoff.schedulerutmiit.data.Lecturer
-import com.egormelnikoff.schedulerutmiit.data.Room
+import com.egormelnikoff.schedulerutmiit.data.entity.Group
+import com.egormelnikoff.schedulerutmiit.data.entity.Lecturer
+import com.egormelnikoff.schedulerutmiit.data.entity.Room
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement

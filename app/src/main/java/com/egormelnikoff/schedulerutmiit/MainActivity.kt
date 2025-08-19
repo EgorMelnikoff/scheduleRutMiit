@@ -4,14 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.data.repos.datastore.AppSettings
+import com.egormelnikoff.schedulerutmiit.ui.Main
 import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModel
+import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.SettingsViewModel
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
-import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsViewModel
 import kotlinx.coroutines.flow.combine
 
 class MainActivity : ComponentActivity() {
@@ -19,19 +22,36 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        val preferencesDataStore = DataStore(this)
-        val searchViewModel = SearchViewModel()
-        val scheduleViewModel = ScheduleViewModel(this)
-        val settingsViewModel = SettingsViewModel()
-        val newsViewModel = NewsViewModel()
+        val container = (applicationContext as ScheduleApplication).container
+
+        val searchViewModel: SearchViewModel by viewModels {
+            SearchViewModel.provideFactory(
+                container = container
+            )
+        }
+        val scheduleViewModel: ScheduleViewModel by viewModels {
+            ScheduleViewModel.provideFactory(
+                container = container
+            )
+        }
+        val newsViewModel: NewsViewModel by viewModels {
+            NewsViewModel.provideFactory(
+                container = container
+            )
+        }
+        val settingsViewModel: SettingsViewModel by viewModels {
+            SettingsViewModel.provideFactory(
+                container = container
+            )
+        }
 
         setContent {
             val appSettings = combine(
-                preferencesDataStore.themeFlow,
-                preferencesDataStore.decorColorFlow,
-                preferencesDataStore.scheduleViewFlow,
-                preferencesDataStore.viewEventFlow,
-                preferencesDataStore.showCountClassesFlow
+                container.dataStore.themeFlow,
+                container.dataStore.decorColorFlow,
+                container.dataStore.scheduleViewFlow,
+                container.dataStore.viewEventFlow,
+                container.dataStore.showCountClassesFlow
             ) { theme, primaryColorIndex, isCalendarView, isShortEventView, isShowCountClasses ->
                 AppSettings(
                     theme = theme,
@@ -43,16 +63,17 @@ class MainActivity : ComponentActivity() {
             }.collectAsState(
                 initial = null
             )
+
             ScheduleRutMiitTheme(
                 appSettings = appSettings.value
             ) {
                 if (appSettings.value != null) {
                     Main(
-                        scheduleViewModel = scheduleViewModel,
                         searchViewModel = searchViewModel,
-                        settingsViewModel = settingsViewModel,
+                        scheduleViewModel = scheduleViewModel,
                         newsViewModel = newsViewModel,
-                        preferencesDataStore = preferencesDataStore,
+                        settingsViewModel = settingsViewModel,
+                        preferencesDataStore = container.dataStore,
                         appSettings = appSettings.value!!
                     )
                 } else {

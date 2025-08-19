@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit
+package com.egormelnikoff.schedulerutmiit.data.repos.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -11,7 +11,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "Settings")
 
 data class AppSettings(
@@ -23,7 +22,7 @@ data class AppSettings(
 )
 
 object PreferencesKeys {
-    val THEME = stringPreferencesKey(name="theme")
+    val THEME = stringPreferencesKey(name = "theme")
     val DECOR_COLOR = intPreferencesKey(name = "decor_color")
     val COMPACT_VIEW_EVENT = booleanPreferencesKey(name = "event_view")
 
@@ -31,57 +30,57 @@ object PreferencesKeys {
     val SHOW_COUNT_CLASSES = booleanPreferencesKey(name = "show_count_classes")
 }
 
-class DataStore (
+class DataStore(
     private val context: Context
 ) {
-    suspend fun setTheme (theme: String) {
+    suspend fun setTheme(theme: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.THEME] = theme
         }
     }
 
-    suspend fun setDecorColor (color: Int) {
+    suspend fun setDecorColor(color: Int) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.DECOR_COLOR] = color
         }
     }
 
-    suspend fun setScheduleView (isCalendar: Boolean) {
+    suspend fun setScheduleView(isCalendar: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.SCHEDULE_VIEW] = isCalendar
         }
     }
 
-    suspend fun setViewEvent (isShort: Boolean) {
+    suspend fun setViewEvent(isShort: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.COMPACT_VIEW_EVENT] = isShort
         }
     }
 
 
-    suspend fun setShowCountClasses (isShowCountClasses: Boolean) {
+    suspend fun setShowCountClasses(isShowCountClasses: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.SHOW_COUNT_CLASSES] = isShowCountClasses
         }
     }
 
-    val themeFlow: Flow<String> = context.dataStore.data.map {
-            preferences -> preferences[PreferencesKeys.THEME] ?: "system"
+    val themeFlow: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.THEME] ?: "system"
     }
 
-    val decorColorFlow: Flow<Int> = context.dataStore.data.map {
-            preferences -> preferences[PreferencesKeys.DECOR_COLOR] ?: 0
+    val decorColorFlow: Flow<Int> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.DECOR_COLOR] ?: 0
     }
 
-    val viewEventFlow: Flow<Boolean> = context.dataStore.data.map {
-            preferences -> preferences[PreferencesKeys.COMPACT_VIEW_EVENT] ?: false
+    val viewEventFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.COMPACT_VIEW_EVENT] ?: false
     }
 
-    val scheduleViewFlow: Flow<Boolean> = context.dataStore.data.map {
-            preferences -> preferences[PreferencesKeys.SCHEDULE_VIEW] ?: true
+    val scheduleViewFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.SCHEDULE_VIEW] ?: true
     }
 
-    val showCountClassesFlow: Flow<Boolean> = context.dataStore.data.map {
-            preferences -> preferences[PreferencesKeys.SHOW_COUNT_CLASSES] ?: true
+    val showCountClassesFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.SHOW_COUNT_CLASSES] ?: true
     }
 }

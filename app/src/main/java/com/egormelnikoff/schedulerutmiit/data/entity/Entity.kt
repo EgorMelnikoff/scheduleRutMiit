@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data
+package com.egormelnikoff.schedulerutmiit.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded

@@ -1,15 +1,15 @@
-package com.egormelnikoff.schedulerutmiit.data.repos.local.database
+package com.egormelnikoff.schedulerutmiit.data.datasource.local
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
-import com.egormelnikoff.schedulerutmiit.data.Event
-import com.egormelnikoff.schedulerutmiit.data.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.NamedScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.data.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.ScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.data.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
 
 @Dao
 interface NamedScheduleDao {

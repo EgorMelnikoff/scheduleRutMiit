@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.repos.local.database
+package com.egormelnikoff.schedulerutmiit.data.datasource.local
 
 import android.content.Context
 import androidx.room.Database
@@ -7,11 +7,10 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.egormelnikoff.schedulerutmiit.data.Event
-import com.egormelnikoff.schedulerutmiit.data.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.ScheduleEntity
-
+import com.egormelnikoff.schedulerutmiit.data.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 
 @Database(
     entities = [

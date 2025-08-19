@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.repos.remote.api
+package com.egormelnikoff.schedulerutmiit.data.datasource.remote.api
 
 object ApiRoutes {
     private const val BASE_URL = "https://rut-miit.ru/data-service/data/"

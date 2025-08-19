@@ -1,8 +1,8 @@
-package com.egormelnikoff.schedulerutmiit.classes
+package com.egormelnikoff.schedulerutmiit.model
 
-import com.egormelnikoff.schedulerutmiit.data.Event
-import com.egormelnikoff.schedulerutmiit.data.Group
-import com.egormelnikoff.schedulerutmiit.data.Recurrence
+import com.egormelnikoff.schedulerutmiit.data.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.entity.Group
+import com.egormelnikoff.schedulerutmiit.data.entity.Recurrence
 import java.time.LocalDate
 import java.time.LocalDateTime
 
