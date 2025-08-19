@@ -2,12 +2,9 @@ package com.egormelnikoff.schedulerutmiit.ui.news
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -60,14 +57,14 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.model.News
+import com.egormelnikoff.schedulerutmiit.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
 import com.egormelnikoff.schedulerutmiit.ui.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.classes.News
-import com.egormelnikoff.schedulerutmiit.classes.NewsShort
-import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsListState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsListState
+import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsState
+import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsViewModel
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -84,30 +81,63 @@ fun NewsScreen(
     if (stateNewsList !is NewsListState.Loaded) {
         newsViewModel.getNewsList(1)
     }
-    AnimatedContent(
-        modifier = Modifier.fillMaxSize(),
-        targetState = stateNewsList,
-        transitionSpec = {
-            fadeIn() togetherWith fadeOut()
-        }
-    ) { targetNewsListState ->
-        when (targetNewsListState) {
-            is NewsListState.Error -> ErrorScreen(
-                title = LocalContext.current.getString(R.string.error),
-                subtitle = LocalContext.current.getString(R.string.unable_load_news_list),
-                buttonTitle = LocalContext.current.getString(R.string.repeat),
-                imageVector = ImageVector.vectorResource(R.drawable.refresh),
-                action = {
-                    newsViewModel.getNewsList(1)
-                }
-            )
+    Box {
+        AnimatedContent(
+            modifier = Modifier.fillMaxSize(),
+            targetState = Pair(stateNewsList, showDialogNews),
+            transitionSpec = {
+                fadeIn() togetherWith fadeOut()
+            }
+        ) { targetNewsScreenState ->
+            val targetNewsListState = targetNewsScreenState.first
+            val targetShowDialogNews = targetNewsScreenState.second
+            when {
+                targetShowDialogNews -> {
+                    BackHandler {
+                        onShowDialogNews(false)
+                    }
+                    when (stateNews) {
+                        is NewsState.Error -> Empty(
+                            subtitle = LocalContext.current.getString(R.string.error),
+                            paddingTop = paddingValues.calculateTopPadding(),
+                            paddingBottom = paddingValues.calculateBottomPadding()
+                        )
 
-            is NewsListState.Loading -> LoadingScreen(
-                paddingTop = paddingValues.calculateTopPadding(),
-                paddingBottom = paddingValues.calculateBottomPadding()
-            )
-            is NewsListState.Loaded -> {
-                Box {
+                        is NewsState.Loading -> LoadingScreen(
+                            paddingTop = paddingValues.calculateTopPadding(),
+                            paddingBottom = paddingValues.calculateBottomPadding()
+                        )
+
+                        is NewsState.Loaded -> {
+                            DialogNews(
+                                news = stateNews.news,
+                                paddingTop = paddingValues.calculateTopPadding(),
+                                paddingBottom = paddingValues.calculateBottomPadding()
+                            )
+                        }
+                    }
+                }
+
+                targetNewsListState is NewsListState.Error ->
+                    ErrorScreen(
+                        title = LocalContext.current.getString(R.string.error),
+                        subtitle = LocalContext.current.getString(R.string.unable_load_news_list),
+                        buttonTitle = LocalContext.current.getString(R.string.repeat),
+                        imageVector = ImageVector.vectorResource(R.drawable.refresh),
+                        action = {
+                            newsViewModel.getNewsList(1)
+                        },
+                        paddingTop = paddingValues.calculateTopPadding(),
+                        paddingBottom = paddingValues.calculateBottomPadding()
+                    )
+
+                targetNewsListState is NewsListState.Loading -> LoadingScreen(
+                    paddingTop = paddingValues.calculateTopPadding(),
+                    paddingBottom = paddingValues.calculateBottomPadding()
+                )
+
+                targetNewsListState is NewsListState.Loaded -> {
+
                     LazyColumn(
                         state = newsListState,
                         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -128,54 +158,26 @@ fun NewsScreen(
                             )
                         }
                     }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        MaterialTheme.colorScheme.background,
-                                        Color.Transparent
-                                    ),
-                                    startY = 0f,
-                                    endY = 200f
-                                )
-                            )
-                    )
-                }
-                AnimatedVisibility(
-                    visible = showDialogNews,
-                    enter = scaleIn(animationSpec = tween(300)),
-                    exit = fadeOut(animationSpec = tween(500))
-                ) {
-                    when (stateNews) {
-                        is NewsState.Error -> Empty(
-                            subtitle = LocalContext.current.getString(R.string.error),
-                            paddingTop = paddingValues.calculateTopPadding(),
-                            paddingBottom = 0.dp
-                        )
 
-                        is NewsState.Loading -> LoadingScreen(
-                            paddingTop = paddingValues.calculateTopPadding(),
-                            paddingBottom = paddingValues.calculateBottomPadding()
-                        )
-                        is NewsState.Loaded -> {
-                            DialogNews(
-                                news = stateNews.news,
-                                paddingTop = paddingValues.calculateTopPadding(),
-                                paddingBottom = paddingValues.calculateBottomPadding()
-                            )
-                        }
-                    }
-                    BackHandler {
-                        onShowDialogNews(false)
-                    }
                 }
             }
         }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.background,
+                            Color.Transparent
+                        ),
+                        startY = 0f,
+                        endY = 200f
+                    )
+                )
+        )
     }
-
 }
 
 @Composable
@@ -367,21 +369,6 @@ fun DialogNews(
                 )
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(spacerHeight)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.background,
-                            Color.Transparent
-                        ),
-                        startY = 0f,
-                        endY = 200f
-                    )
-                )
-        )
     }
 }
 

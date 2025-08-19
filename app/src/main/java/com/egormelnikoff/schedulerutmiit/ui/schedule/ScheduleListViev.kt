@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.Event
-import com.egormelnikoff.schedulerutmiit.data.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -44,7 +44,7 @@ import kotlin.math.abs
 @Composable
 fun ScheduleListView(
     onShowDialogEvent: (Boolean) -> Unit,
-    onSelectDisplayedEvent: (Event) -> Unit,
+    onSelectDisplayedEvent: (Event?) -> Unit,
     scheduleListState: LazyListState,
     isShortEvent: Boolean,
     eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
@@ -80,7 +80,7 @@ fun ScheduleListView(
         ) {
             val lastIndex = eventsGrouped.lastIndex
             val formatter = DateTimeFormatter.ofPattern("d MMMM")
-            eventsGrouped.forEachIndexed {index, events ->
+            eventsGrouped.forEachIndexed { index, events ->
                 stickyHeader {
                     DateHeader(events.first, formatter)
                 }
@@ -151,10 +151,15 @@ fun calculateEvents(
 ): MutableList<Event> {
     val displayedEvents = mutableListOf<Event>()
     if (scheduleEntity.recurrence != null) {
+        val defaultDate = if (today < scheduleEntity.startDate) {
+            scheduleEntity.startDate
+        } else {
+            today
+        }
         val weeksRemaining = abs(
             ChronoUnit.WEEKS.between(
-                today,
-                scheduleEntity.endDate
+                calculateFirstDayOfWeek(defaultDate),
+                calculateFirstDayOfWeek(scheduleEntity.endDate)
             )
         ).toInt().plus(1)
         for (week in 1..weeksRemaining) {
@@ -165,7 +170,7 @@ fun calculateEvents(
             val events = eventsByWeekAndDays[weekNumber]?.values?.flatten()
             if (events != null) {
                 for (event in events) {
-                    val startOfWeek = calculateFirstDayOfWeek(today)
+                    val startOfWeek = calculateFirstDayOfWeek(defaultDate)
                         .plusDays(event.startDatetime!!.toLocalDate().dayOfWeek.value - 1L)
                         .plusWeeks(week - 1L)
 

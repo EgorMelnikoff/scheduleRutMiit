@@ -1,14 +1,19 @@
-package com.egormelnikoff.schedulerutmiit.ui.view_models
+package com.egormelnikoff.schedulerutmiit.ui.search.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.classes.Institute
-import com.egormelnikoff.schedulerutmiit.classes.Person
-import com.egormelnikoff.schedulerutmiit.data.repos.Result
-import com.egormelnikoff.schedulerutmiit.data.Group
-import com.egormelnikoff.schedulerutmiit.classes.Institutes
+import androidx.lifecycle.viewmodel.CreationExtras
+import com.egormelnikoff.schedulerutmiit.AppContainer
+import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.entity.Group
 import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteRepos
+import com.egormelnikoff.schedulerutmiit.model.Institute
+import com.egormelnikoff.schedulerutmiit.model.Institutes
+import com.egormelnikoff.schedulerutmiit.model.Person
 import com.egormelnikoff.schedulerutmiit.ui.search.Options
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -32,17 +37,33 @@ sealed interface SearchState {
     data object EmptyResult : SearchState
 }
 
+class SearchViewModel(
+    private val remoteRepos: RemoteRepos
+) : ViewModel() {
+    companion object {
+        fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+                    return SearchViewModel(
+                        remoteRepos = container.remoteRepos
+                    ) as T
+                }
+            }
+        }
+    }
 
-class SearchViewModel : ViewModel() {
+    private var searchJob: Job? = null
     private val _stateSearch = MutableStateFlow<SearchState>(SearchState.EmptyQuery)
     val stateSearch: StateFlow<SearchState> = _stateSearch
 
-
     private val _stateInstitutes = MutableStateFlow<InstitutesState>(InstitutesState.Empty)
 
+
     fun search(query: String, selectedOptions: Options) {
-        viewModelScope.launch {
-            _stateSearch.value = SearchState.Loading
+        _stateSearch.value = SearchState.Loading
+        val newSearchJob = viewModelScope.launch {
+            searchJob?.cancelAndJoin()
             if (query.isNotEmpty()) {
                 var groups = listOf<Group>()
                 var people = listOf<Person>()
@@ -66,11 +87,12 @@ class SearchViewModel : ViewModel() {
                 _stateSearch.value = SearchState.EmptyQuery
             }
         }
+        searchJob = newSearchJob
     }
 
     private suspend fun searchGroup(query: String): List<Group> {
         if (_stateInstitutes.value !is InstitutesState.Loaded) {
-            when (val institutes = RemoteRepos.getInstitutes()) {
+            when (val institutes = remoteRepos.getInstitutes()) {
                 is Result.Error -> {
                     _stateInstitutes.value = InstitutesState.Empty
                 }
@@ -111,13 +133,13 @@ class SearchViewModel : ViewModel() {
     }
 
     private suspend fun searchPerson(query: String): List<Person> {
-        return when (val professors = RemoteRepos.getPeople(query)) {
+        return when (val professors = remoteRepos.getPeople(query)) {
             is Result.Success -> professors.data
             is Result.Error -> emptyList()
         }
     }
 
-    fun clearData() {
+    fun setDefaultSearchState() {
         _stateSearch.value = SearchState.EmptyQuery
     }
 }

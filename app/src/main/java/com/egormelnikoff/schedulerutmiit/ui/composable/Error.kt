@@ -24,6 +24,7 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -33,18 +34,26 @@ fun ErrorScreen(
     subtitle: String? = null,
     buttonTitle: String? = null,
     imageVector: ImageVector? = null,
-    action: (() -> Unit)? = null
+    action: (() -> Unit)? = null,
+    paddingTop: Dp? = null,
+    paddingBottom: Dp? = null
+
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp)
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(
+                start = 32.dp,
+                end = 32.dp,
+                top = paddingTop ?: 0.dp,
+                bottom = paddingBottom ?: 0.dp
+            ),
         contentAlignment = Alignment.Center
     ) {
-        Column (
+        Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
-        ){
+        ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start,

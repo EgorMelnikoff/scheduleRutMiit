@@ -51,11 +51,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.AppSettings
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SchedulesState
-import com.egormelnikoff.schedulerutmiit.DataStore
-import com.egormelnikoff.schedulerutmiit.data.repos.remote.parser.ParserRoutes.APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.data.repos.datastore.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.repos.datastore.DataStore
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.SchedulesState
+import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.AppInfoState
+import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.SettingsViewModel
 import com.egormelnikoff.schedulerutmiit.ui.theme.LightGrey
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
@@ -65,8 +67,6 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemePink
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeRed
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeViolet
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeYellow
-import com.egormelnikoff.schedulerutmiit.ui.view_models.AppInfoState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SettingsViewModel
 import kotlinx.coroutines.launch
 
 data class Theme(
@@ -106,7 +106,7 @@ fun SettingsTopBar(
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color =  MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground
         )
         actions?.invoke()
     }
@@ -228,7 +228,6 @@ fun SettingsScreen(
                                 }
                             }
                             HorizontalDivider(
-                                modifier = Modifier.padding(horizontal = 16.dp),
                                 color = MaterialTheme.colorScheme.outline,
                                 thickness = 0.5.dp
                             )
@@ -255,7 +254,6 @@ fun SettingsScreen(
                             }
                         }
                         HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
                             color = MaterialTheme.colorScheme.outline,
                             thickness = 0.5.dp
                         )
@@ -265,7 +263,7 @@ fun SettingsScreen(
                                     preferencesDataStore.setShowCountClasses(!appSettings.showCountClasses)
                                 }
                             },
-                            imageVector = ImageVector.vectorResource(R.drawable.resource_class),
+                            imageVector = ImageVector.vectorResource(R.drawable.count),
                             text = LocalContext.current.getString(R.string.show_count_classes)
                         ) {
                             CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
@@ -300,7 +298,6 @@ fun SettingsScreen(
                             )
                         }
                         HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
                             color = MaterialTheme.colorScheme.outline,
                             thickness = 0.5.dp
                         )
@@ -320,7 +317,6 @@ fun SettingsScreen(
                             )
                         }
                         HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
                             color = MaterialTheme.colorScheme.outline,
                             thickness = 0.5.dp
                         )
@@ -337,7 +333,6 @@ fun SettingsScreen(
                             text = LocalContext.current.getString(R.string.report_a_problem)
                         )
                         HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
                             color = MaterialTheme.colorScheme.outline,
                             thickness = 0.5.dp
                         )
@@ -345,7 +340,7 @@ fun SettingsScreen(
                             onClick = {
                                 onShowDialogInfo(true)
                                 if (appInfoState !is AppInfoState.Loaded) {
-                                    settingsViewModel.getInfo()
+                                    settingsViewModel.getAppInfo()
                                 }
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.info),

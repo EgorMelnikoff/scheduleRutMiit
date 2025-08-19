@@ -1,16 +1,18 @@
-package com.egormelnikoff.schedulerutmiit.ui.view_models
+package com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.repos.Result
+import androidx.lifecycle.viewmodel.CreationExtras
+import com.egormelnikoff.schedulerutmiit.AppContainer
+import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.repos.local.LocalRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.local.database.AppDatabase
-import com.egormelnikoff.schedulerutmiit.data.Event
-import com.egormelnikoff.schedulerutmiit.data.NamedScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.data.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteRepos
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -36,12 +38,25 @@ sealed interface ScheduleState {
     ) : ScheduleState
 }
 
+class ScheduleViewModel(
+    private val localRepos: LocalRepos,
+    private val remoteRepos: RemoteRepos
+) : ViewModel() {
+    companion object {
+        fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+                    return ScheduleViewModel(
+                        localRepos = container.localRepos,
+                        remoteRepos = container.remoteRepos
+                    ) as T
+                }
+            }
+        }
+    }
 
-class ScheduleViewModel(private val context: Context) : ViewModel() {
-    private val db = AppDatabase.getDatabase(context)
-    private val namedScheduleDao = db.namedScheduleDao()
-
-    private val localRepos = LocalRepos(namedScheduleDao)
+    private var scheduleJob: Job? = null
 
     private val _stateSchedules = MutableStateFlow<SchedulesState>(SchedulesState.EmptyBase)
     val stateSchedules: StateFlow<SchedulesState> = _stateSchedules
@@ -51,25 +66,24 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            val defaultNamedSchedule = load()
+            val defaultNamedSchedule = loadNamedSchedulesFromDb()
             if (defaultNamedSchedule != null) {
-                getUpdatedNamedSchedule(defaultNamedSchedule)
+                updateAndSetNamedSchedule(defaultNamedSchedule)
             }
-
         }
     }
 
 
-    suspend fun load(): NamedScheduleFormatted? {
-        val namedSchedules = localRepos.getAll()
+    suspend fun loadNamedSchedulesFromDb(): NamedScheduleFormatted? {
+        val namedSchedules = localRepos.getAllNamedSchedules()
         return if (namedSchedules.isEmpty()) {
             _stateSchedule.value = ScheduleState.EmptyBase
             null
         } else {
             val defaultNamedSchedule = namedSchedules.find { it.namedScheduleEntity.isDefault }
                 ?: namedSchedules.first()
-            loadSchedules(namedSchedules)
-            loadSchedule(
+            setNamedSchedules(namedSchedules)
+            setNamedSchedule(
                 namedSchedule = defaultNamedSchedule,
                 isSaved = true
             )
@@ -77,7 +91,19 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-    private suspend fun loadSchedule(
+    private fun setNamedSchedules(
+        namedSchedules: MutableList<NamedScheduleFormatted>
+    ) {
+        if (namedSchedules.isEmpty()) {
+            _stateSchedules.value = SchedulesState.EmptyBase
+        } else {
+            _stateSchedules.value = SchedulesState.Loaded(
+                savedSchedules = namedSchedules
+            )
+        }
+    }
+
+    private suspend fun setNamedSchedule(
         namedSchedule: NamedScheduleFormatted,
         isSaved: Boolean
     ) {
@@ -90,25 +116,50 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
         )
     }
 
-    private fun loadSchedules(
-        namedSchedules: MutableList<NamedScheduleFormatted>
+    fun getAndSetNamedSchedule(
+        name: String,
+        apiId: String,
+        type: Int
     ) {
-        if (namedSchedules.isEmpty()) {
-            _stateSchedules.value = SchedulesState.EmptyBase
-        } else {
-            _stateSchedules.value = SchedulesState.Loaded(
-                savedSchedules = namedSchedules
-            )
+        _stateSchedule.value = ScheduleState.Loading
+        val getNamedScheduleJob = viewModelScope.launch {
+            scheduleJob?.cancelAndJoin()
+            val checkedNamedSchedule = localRepos.getNamedScheduleByApiId(apiId)
+            if (checkedNamedSchedule != null) {
+                setNamedSchedule(
+                    namedSchedule = checkedNamedSchedule,
+                    isSaved = true
+                )
+                return@launch
+            }
+            when (val namedSchedule = remoteRepos.getNamedSchedule(
+                namedScheduleId = 0,
+                name = name,
+                apiId = apiId,
+                type = type
+            )) {
+                is Result.Error -> {
+                    _stateSchedule.value = ScheduleState.Error
+                }
+
+                is Result.Success -> {
+                    setNamedSchedule(
+                        namedSchedule = namedSchedule.data,
+                        isSaved = false
+                    )
+                }
+            }
         }
+        scheduleJob = getNamedScheduleJob
     }
 
-    private suspend fun getUpdatedNamedSchedule(
+    private suspend fun updateAndSetNamedSchedule(
         namedSchedule: NamedScheduleFormatted
     ) {
         if (System.currentTimeMillis() - namedSchedule.namedScheduleEntity.lastTimeUpdate > 43200000
             && namedSchedule.namedScheduleEntity.type != 3
         ) {
-            val updatedNamedSchedule = RemoteRepos.getNamedSchedule(
+            val updatedNamedSchedule = remoteRepos.getNamedSchedule(
                 namedScheduleId = namedSchedule.namedScheduleEntity.id,
                 name = namedSchedule.namedScheduleEntity.shortName,
                 apiId = namedSchedule.namedScheduleEntity.apiId!!,
@@ -118,7 +169,13 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
             when (updatedNamedSchedule) {
                 is Result.Error -> {
                     _stateSchedule.value = (stateSchedule.value as ScheduleState.Loaded).copy(
-                        message = "${context.getString(R.string.failed_update_schedules)}\n${updatedNamedSchedule.exception.message}"
+                        message = if (updatedNamedSchedule.exception.message != null) {
+                            //currentContext.getString(R.string.failed_update_schedules)+
+                            "\n${updatedNamedSchedule.exception.message}"
+                        } else {
+                            "failed_update_schedules"
+                            //currentContext.getString(R.string.failed_update_schedules)
+                        }
                     )
                 }
 
@@ -137,7 +194,7 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
                                 )
                             }
                             val ids = updatedEvents.map { it.id }.filter { it != 0L }
-                            if (ids.size == ids.toSet().size) {
+                            if (ids.sorted() == ids.toSet().sorted()) {
                                 val updatedScheduleWithId = ScheduleFormatted(
                                     events = updatedEvents,
                                     scheduleEntity = oldSchedule.scheduleEntity,
@@ -151,7 +208,8 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
                             } else {
                                 _stateSchedule.value =
                                     (stateSchedule.value as ScheduleState.Loaded).copy(
-                                        message = context.getString(R.string.failed_update)
+                                        message = "failed_update"
+                                        //currentContext.getString(R.string.failed_update)
                                     )
                             }
                         } else {
@@ -172,20 +230,34 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
                             )
                         }
                     }
-                    load()
+                    loadNamedSchedulesFromDb()
                 }
             }
         }
     }
 
+    fun saveCurrentNamedSchedule() {
+        viewModelScope.launch {
+            val state = _stateSchedule.value as ScheduleState.Loaded
+            localRepos.insertNamedSchedule(state.namedSchedule)
+            val schedules = localRepos.getAllNamedSchedules()
+            setNamedSchedules(schedules)
+            setNamedSchedule(
+                namedSchedule = schedules.find { it.namedScheduleEntity.apiId == state.namedSchedule.namedScheduleEntity.apiId }
+                    ?: schedules.first(),
+                isSaved = true
+            )
+        }
+
+    }
 
     fun deleteNamedSchedule(
         primaryKey: Long,
         isDefault: Boolean,
     ) {
         viewModelScope.launch {
-            localRepos.deleteSavedSchedule(primaryKey, isDefault)
-            loadSchedules(localRepos.getAll())
+            localRepos.deleteNamedSchedule(primaryKey, isDefault)
+            setNamedSchedules(localRepos.getAllNamedSchedules())
 
             val state = _stateSchedule.value as ScheduleState.Loaded
             _stateSchedule.value = state.copy(
@@ -195,64 +267,13 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-
-    fun getSchedule(
-        name: String,
-        apiId: String,
-        type: Int
-    ) {
-        viewModelScope.launch {
-            _stateSchedule.value = ScheduleState.Loading
-            val checkedNamedSchedule = localRepos.getNamedScheduleByApiId(apiId)
-            if (checkedNamedSchedule != null) {
-                loadSchedule(
-                    namedSchedule = checkedNamedSchedule,
-                    isSaved = true
-                )
-                return@launch
-            }
-            when (val namedSchedule = RemoteRepos.getNamedSchedule(
-                namedScheduleId = 0,
-                name = name,
-                apiId = apiId,
-                type = type
-            )) {
-                is Result.Error -> {
-                    _stateSchedule.value = ScheduleState.Error
-                }
-
-                is Result.Success -> {
-                    loadSchedule(
-                        namedSchedule = namedSchedule.data,
-                        isSaved = false
-                    )
-                }
-            }
-        }
-    }
-
-    fun saveSchedule() {
-        viewModelScope.launch {
-            val state = _stateSchedule.value as ScheduleState.Loaded
-            localRepos.insertNewNamedSchedule(state.namedSchedule)
-            val schedules = localRepos.getAll()
-            loadSchedules(schedules)
-            loadSchedule(
-                namedSchedule = schedules.find { it.namedScheduleEntity.apiId == state.namedSchedule.namedScheduleEntity.apiId }
-                    ?: schedules.first(),
-                isSaved = true
-            )
-        }
-
-    }
-
     fun selectNamedSchedule(
         id: Long
     ) {
         viewModelScope.launch {
             localRepos.updatePriorityNamedSchedule(id)
-            val newDefaultNamedSchedule = load()
-            getUpdatedNamedSchedule(newDefaultNamedSchedule!!)
+            val newDefaultNamedSchedule = loadNamedSchedulesFromDb()
+            updateAndSetNamedSchedule(newDefaultNamedSchedule!!)
         }
     }
 
@@ -266,7 +287,7 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
             if (scheduleState.isSaved) {
                 localRepos.updatePrioritySchedule(primaryKeySchedule, primaryKeyNamedSchedule)
                 val updatedNamedSchedule = localRepos.getNamedScheduleById(primaryKeyNamedSchedule)
-                loadSchedule(
+                setNamedSchedule(
                     namedSchedule = updatedNamedSchedule!!,
                     isSaved = true
                 )
@@ -277,7 +298,7 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
                             scheduleEntity.isDefault = scheduleEntity.timetableId == timetableId
                         }
                     }
-                loadSchedule(
+                setNamedSchedule(
                     namedSchedule = scheduleState.namedSchedule
                         .copy(schedules = updatedSchedules),
                     isSaved = false
@@ -310,4 +331,5 @@ class ScheduleViewModel(private val context: Context) : ViewModel() {
             )
         }
     }
+
 }

@@ -1,12 +1,17 @@
-package com.egormelnikoff.schedulerutmiit.ui.view_models
+package com.egormelnikoff.schedulerutmiit.ui.news.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.classes.News
-import com.egormelnikoff.schedulerutmiit.classes.NewsShort
-import com.egormelnikoff.schedulerutmiit.data.repos.Result
+import androidx.lifecycle.viewmodel.CreationExtras
+import com.egormelnikoff.schedulerutmiit.AppContainer
+import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.repos.local.LocalRepos
 import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.remote.parser.Parser
+import com.egormelnikoff.schedulerutmiit.model.News
+import com.egormelnikoff.schedulerutmiit.model.NewsShort
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -29,8 +34,27 @@ sealed interface NewsState {
     data object Error : NewsState
 }
 
+class NewsViewModel(
+    private val localRepos: LocalRepos,
+    private val remoteRepos: RemoteRepos
 
-class NewsViewModel : ViewModel() {
+) : ViewModel() {
+    companion object {
+        fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+                    return NewsViewModel(
+                        localRepos = container.localRepos,
+                        remoteRepos = container.remoteRepos
+                    ) as T
+                }
+            }
+        }
+    }
+
+    private var newsJob: Job? = null
+
     private val _stateNewsList = MutableStateFlow<NewsListState>(NewsListState.Loading)
     val stateNewsList: StateFlow<NewsListState> = _stateNewsList
 
@@ -38,9 +62,10 @@ class NewsViewModel : ViewModel() {
     val stateNews: StateFlow<NewsState> = _stateNews
 
     fun getNewsList(page: Int) {
-        viewModelScope.launch {
-            _stateNewsList.value = NewsListState.Loading
-            when (val newsList = RemoteRepos.getNewsList(page = page.toString())) {
+        _stateNewsList.value = NewsListState.Loading
+        val newNewsListJob = viewModelScope.launch {
+            newsJob?.cancelAndJoin()
+            when (val newsList = remoteRepos.getNewsList(page = page.toString())) {
                 is Result.Error -> _stateNewsList.value = NewsListState.Error
                 is Result.Success -> {
                     val updatedItems = newsList.data.items.map { newsShort ->
@@ -52,19 +77,22 @@ class NewsViewModel : ViewModel() {
                 }
             }
         }
+        newsJob = newNewsListJob
     }
 
     fun getNewsById(id: Long) {
-        viewModelScope.launch {
-            _stateNews.value = NewsState.Loading
-            when (val news = RemoteRepos.getNewsById(id)) {
+        _stateNews.value = NewsState.Loading
+        val newNewsJob = viewModelScope.launch {
+            newsJob?.cancelAndJoin()
+            when (val news = remoteRepos.getNewsById(id)) {
                 is Result.Error -> _stateNews.value = NewsState.Error
                 is Result.Success -> {
                     _stateNews.value = NewsState.Loaded(
-                        news = Parser.parseNews(news.data)
+                        news = localRepos.parseNews(news.data)
                     )
                 }
             }
         }
+        newsJob = newNewsJob
     }
 }

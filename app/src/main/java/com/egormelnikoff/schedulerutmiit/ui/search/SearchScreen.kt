@@ -67,9 +67,9 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
 import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchViewModel
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchState
+import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModel
 
 enum class Options {
     ALL, GROUPS, PEOPLE
@@ -77,8 +77,8 @@ enum class Options {
 
 @Composable
 fun SearchScreen(
-    scheduleViewModel: ScheduleViewModel,
     searchViewModel: SearchViewModel,
+    scheduleViewModel: ScheduleViewModel,
     searchState: SearchState,
     navigateToSchedule: () -> Unit,
     query: String,
@@ -146,7 +146,7 @@ fun SearchScreen(
         ) { stateSearch ->
             when (stateSearch) {
                 is SearchState.EmptyQuery -> Empty(
-                    imageVector = ImageVector.vectorResource(R.drawable.search_simple),
+                    imageVector = ImageVector.vectorResource(R.drawable.search),
                     subtitle = LocalContext.current.getString(R.string.enter_your_query),
                     paddingBottom = paddingValues.calculateBottomPadding()
                 )
@@ -155,8 +155,10 @@ fun SearchScreen(
                     paddingTop = 0.dp,
                     paddingBottom = paddingValues.calculateBottomPadding()
                 )
+
                 is SearchState.EmptyResult -> Empty(
-                    subtitle = LocalContext.current.getString(R.string.nothing_found)
+                    subtitle = LocalContext.current.getString(R.string.nothing_found),
+                    paddingBottom = paddingValues.calculateBottomPadding()
                 )
 
                 is SearchState.Loaded -> {
@@ -208,8 +210,8 @@ fun SearchScreen(
                                 SearchedItem(
                                     onQueryChanged = onQueryChanged,
                                     navigateToSchedule = navigateToSchedule,
-                                    searchViewModel = searchViewModel,
                                     scheduleViewModel = scheduleViewModel,
+                                    searchViewModel = searchViewModel,
                                     type = 1,
                                     id = person.id.toString(),
                                     title = person.name!!,
@@ -230,7 +232,7 @@ fun SearchDataField(
     onQueryChanged: (String) -> Unit,
     value: String,
     selectedOptions: Options,
-    searchViewModel: SearchViewModel,
+    searchViewModel: SearchViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     OutlinedTextField(
@@ -266,7 +268,7 @@ fun SearchDataField(
                 IconButton(
                     onClick = {
                         onQueryChanged("")
-                        searchViewModel.clearData()
+                        searchViewModel.setDefaultSearchState()
                     }
                 ) {
                     Icon(
@@ -363,9 +365,9 @@ fun SearchedItem(
             .clickable(
                 onClick = {
                     navigateToSchedule()
-                    scheduleViewModel.getSchedule(title, id, type)
+                    scheduleViewModel.getAndSetNamedSchedule(title, id, type)
                     onQueryChanged("")
-                    searchViewModel.clearData()
+                    searchViewModel.setDefaultSearchState()
                 }
             )
             .padding(horizontal = 8.dp, vertical = 8.dp),

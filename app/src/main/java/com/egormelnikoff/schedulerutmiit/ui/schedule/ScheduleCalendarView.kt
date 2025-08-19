@@ -28,7 +28,6 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,10 +44,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.data.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
-import com.egormelnikoff.schedulerutmiit.data.Event
-import com.egormelnikoff.schedulerutmiit.data.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeGreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeLightBlue
@@ -78,7 +77,7 @@ data class ScheduleData(
 @Composable
 fun ScheduleCalendarView(
     onShowDialogEvent: (Boolean) -> Unit,
-    onSelectDisplayedEvent: (Event) -> Unit,
+    onSelectDisplayedEvent: (Event?) -> Unit,
 
     scheduleData: ScheduleData,
     scheduleEntity: ScheduleEntity,
@@ -86,40 +85,12 @@ fun ScheduleCalendarView(
     eventsExtraData: List<EventExtraData>,
 
     today: LocalDate,
-    startDate: LocalDate,
     isShortEvent: Boolean,
     isShowCountClasses: Boolean,
     paddingBottom: Dp
 ) {
-    LaunchedEffect(scheduleData.selectedDate) {
-        val targetPage = ChronoUnit.DAYS.between(
-            startDate,
-            scheduleData.selectedDate
-        ).toInt()
-
-        if (scheduleData.pagerDaysState.currentPage != targetPage) {
-            scheduleData.pagerDaysState.scrollToPage(targetPage)
-        }
-    }
-
-    LaunchedEffect(scheduleData.pagerDaysState.currentPage) {
-        val newSelectedDate = startDate.plusDays(scheduleData.pagerDaysState.currentPage.toLong())
-        scheduleData.selectDate(newSelectedDate)
-
-        val targetWeekIndex = ChronoUnit.WEEKS.between(
-            calculateFirstDayOfWeek(startDate),
-            calculateFirstDayOfWeek(newSelectedDate)
-        ).toInt()
-
-        if (scheduleData.pagerWeeksState.currentPage != targetWeekIndex) {
-            scheduleData.pagerWeeksState.animateScrollToPage(targetWeekIndex)
-        }
-    }
-
-
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         HorizontalCalendar(
             scheduleData = scheduleData,
@@ -318,7 +289,7 @@ fun HorizontalCalendar(
                         eventsExtraData = eventsExtraData,
 
                         isShowCountClasses = isShowCountClasses,
-
+                        isDisabled = currentDate !in scheduleEntity.startDate..scheduleEntity.endDate,
                         isSelected = currentDate == scheduleData.selectedDate,
                         isToday = (currentDate == today)
                     )
@@ -332,6 +303,7 @@ fun HorizontalCalendar(
 fun DayRowItem(
     selectDate: (LocalDate) -> Unit,
     currentDate: LocalDate,
+    isDisabled: Boolean,
     isSelected: Boolean,
     isShowCountClasses: Boolean,
     isToday: Boolean,
@@ -344,12 +316,13 @@ fun DayRowItem(
         modifier = Modifier.width(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             text = dayOfWeek.take(2).lowercase(),
             fontSize = 12.sp,
-            color = if (currentDate.dayOfWeek.value == 7) MaterialTheme.colorScheme.error
-            else MaterialTheme.colorScheme.onSurface
+            color = if (isDisabled) MaterialTheme.colorScheme.surface
+            else if (currentDate.dayOfWeek.value == 7) {
+                MaterialTheme.colorScheme.error
+            } else MaterialTheme.colorScheme.onSurface
         )
         Box(
             contentAlignment = Alignment.Center,
@@ -361,15 +334,22 @@ fun DayRowItem(
                     else if (isToday) MaterialTheme.colorScheme.surface
                     else Color.Unspecified
                 )
-                .clickable(onClick = {
-                    selectDate(currentDate)
-                }),
+                .let {
+                    if (!isDisabled) {
+                        it.clickable(onClick = {
+                            selectDate(currentDate)
+                        })
+                    } else {
+                        it
+                    }
+                }
         ) {
             Text(
                 text = currentDate.dayOfMonth.toString(),
                 fontSize = 12.sp,
                 color =
-                    if (isSelected) MaterialTheme.colorScheme.onPrimary
+                    if (isDisabled) MaterialTheme.colorScheme.surface
+                    else if (isSelected) MaterialTheme.colorScheme.onPrimary
                     else if (currentDate.dayOfWeek.value == 7) MaterialTheme.colorScheme.error
                     else MaterialTheme.colorScheme.onSurface
             )
@@ -386,10 +366,7 @@ fun DayRowItem(
             ) {
                 for (groupedEvents in eventsByStartTime) {
                     var offset = 0
-                    Box(
-                        modifier = Modifier
-
-                    ) {
+                    Box {
                         for (event in groupedEvents.value) {
                             val eventExtraData = eventsExtraData.find {
                                 it.id == event.id
@@ -427,7 +404,7 @@ fun DayRowItem(
 @Composable
 fun PagedDays(
     onShowDialogEvent: (Boolean) -> Unit,
-    onSelectDisplayedEvent: (Event) -> Unit,
+    onSelectDisplayedEvent: (Event?) -> Unit,
 
     scheduleEntity: ScheduleEntity,
     eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,

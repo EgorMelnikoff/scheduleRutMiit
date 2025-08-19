@@ -60,11 +60,11 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.Event
-import com.egormelnikoff.schedulerutmiit.data.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.settings.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.settings.SettingsTopBar
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
 import java.time.ZoneId
 import java.time.ZoneOffset
 
@@ -147,12 +147,12 @@ fun EventDialog(
                 )
             }
         }
-        Column (
+        Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(4.dp)
-        ){
+        ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -204,7 +204,7 @@ fun EventDialog(
                                 text = room.hint.toString(),
                                 onClick = {
                                     onShowEventDialog(false)
-                                    scheduleViewModel.getSchedule(
+                                    scheduleViewModel.getAndSetNamedSchedule(
                                         name = event.rooms.first().name!!,
                                         apiId = event.rooms.first().id.toString(),
                                         type = 2
@@ -213,7 +213,6 @@ fun EventDialog(
                             )
                             if (index != event.rooms.lastIndex) {
                                 HorizontalDivider(
-                                    modifier = Modifier.padding(horizontal = 12.dp),
                                     color = MaterialTheme.colorScheme.outline,
                                     thickness = 0.5.dp
                                 )
@@ -244,7 +243,7 @@ fun EventDialog(
                                     .clickable(
                                         onClick = {
                                             onShowEventDialog(false)
-                                            scheduleViewModel.getSchedule(
+                                            scheduleViewModel.getAndSetNamedSchedule(
                                                 name = group.name!!,
                                                 apiId = group.id.toString(),
                                                 type = 0
@@ -276,7 +275,7 @@ fun EventDialog(
                                 text = lecturer.fullFio.toString(),
                                 onClick = {
                                     onShowEventDialog(false)
-                                    scheduleViewModel.getSchedule(
+                                    scheduleViewModel.getAndSetNamedSchedule(
                                         name = lecturer.fullFio!!,
                                         apiId = lecturer.id.toString(),
                                         type = 1
@@ -286,7 +285,6 @@ fun EventDialog(
                             )
                             if (index != event.lecturers.lastIndex) {
                                 HorizontalDivider(
-                                    modifier = Modifier.padding(horizontal = 12.dp),
                                     color = MaterialTheme.colorScheme.outline,
                                     thickness = 0.5.dp
                                 )
@@ -401,8 +399,8 @@ fun EventDialogClickableItem(
                     modifier = Modifier
                         .size(30.dp)
                         .let {
-                            if (model.state !is  AsyncImagePainter.State.Success) {
-                                it .border(0.5.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+                            if (model.state !is AsyncImagePainter.State.Success) {
+                                it.border(0.5.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
                             } else it
                         }
                         .alpha(transition),

@@ -64,14 +64,14 @@ import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.NamedScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.data.repos.remote.parser.ParserRoutes.APP_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.data.repos.remote.parser.ParserRoutes.APP_GITHUB_REPOS
-import com.egormelnikoff.schedulerutmiit.data.repos.remote.parser.ParserRoutes.CLOUD_TIPS
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_GITHUB_REPOS
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.CLOUD_TIPS
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.ui.composable.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.ui.view_models.AppInfoState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SchedulesState
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.SchedulesState
+import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.AppInfoState
 
 
 @Composable
@@ -150,7 +150,8 @@ fun SchedulesDialog(
                 subtitle = LocalContext.current.getString(R.string.empty_base),
                 buttonTitle = LocalContext.current.getString(R.string.search),
                 imageVector = ImageVector.vectorResource(R.drawable.search_simple),
-                action = { navigateToSearch() }
+                action = { navigateToSearch() },
+                paddingBottom = paddingBottom
             )
         }
 
@@ -362,7 +363,7 @@ fun InfoDialog(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Icon(
                     modifier = Modifier
@@ -386,7 +387,9 @@ fun InfoDialog(
                             )
                         ),
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         modifier = Modifier
@@ -418,7 +421,6 @@ fun InfoDialog(
                 )
 
                 HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 8.dp),
                     color = MaterialTheme.colorScheme.outline,
                     thickness = 0.5.dp
                 )

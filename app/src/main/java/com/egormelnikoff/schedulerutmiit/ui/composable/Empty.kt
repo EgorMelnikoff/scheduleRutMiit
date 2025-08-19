@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -24,13 +25,20 @@ fun Empty(
     imageVector: ImageVector? = null,
     title: String? = null,
     subtitle: String? = null,
-    isBoldTitle: Boolean = true
+    isBoldTitle: Boolean = true,
+    paddingTop: Dp? = null,
+    paddingBottom: Dp? = null
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 32.dp),
+            .padding(
+                start = 32.dp,
+                end = 32.dp,
+                top = paddingTop ?: 0.dp,
+                bottom = paddingBottom ?: 0.dp
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
     ) {
@@ -49,7 +57,9 @@ fun Empty(
                 textAlign = TextAlign.Center,
                 text = title,
                 fontSize = 20.sp,
-                fontWeight = if (isBoldTitle) {FontWeight.Bold} else FontWeight.Normal,
+                fontWeight = if (isBoldTitle) {
+                    FontWeight.Bold
+                } else FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }

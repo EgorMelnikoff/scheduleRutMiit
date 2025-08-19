@@ -39,10 +39,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,15 +57,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.repos.datastore.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.repos.datastore.DataStore
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
 import com.egormelnikoff.schedulerutmiit.ui.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.DataStore
-import com.egormelnikoff.schedulerutmiit.data.Event
-import com.egormelnikoff.schedulerutmiit.data.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleState
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -76,7 +76,7 @@ import kotlin.math.abs
 fun ScreenSchedule(
     navigateToSearch: () -> Unit,
     onShowDialogEvent: (Boolean) -> Unit,
-    onSelectDisplayedEvent: (Event) -> Unit,
+    onSelectDisplayedEvent: (Event?) -> Unit,
 
     showDialogEvent: Boolean,
     displayedEvent: Event?,
@@ -100,7 +100,7 @@ fun ScreenSchedule(
     if ((scheduleState !is ScheduleState.Loaded || !scheduleState.namedSchedule.namedScheduleEntity.isDefault) && scheduleState !is ScheduleState.EmptyBase) {
         BackHandler {
             scope.launch {
-                scheduleViewModel.load()
+                scheduleViewModel.loadNamedSchedulesFromDb()
             }
         }
     }
@@ -115,13 +115,6 @@ fun ScreenSchedule(
                     )
                 }
             }
-            if (!scheduleState.isSaved || !scheduleState.namedSchedule.namedScheduleEntity.isDefault) {
-                BackHandler {
-                    scope.launch {
-                        scheduleViewModel.load()
-                    }
-                }
-            }
             AnimatedContent(
                 modifier = Modifier
                     .fillMaxSize()
@@ -134,7 +127,7 @@ fun ScreenSchedule(
                 if (targetState) {
                     EventDialog(
                         scheduleViewModel = scheduleViewModel,
-                        scheduleId = scheduleState.selectedSchedule!!.scheduleEntity.id,
+                        scheduleId = scheduleState.selectedSchedule?.scheduleEntity?.id!!,
                         namedScheduleId = scheduleState.namedSchedule.namedScheduleEntity.id,
                         isSavedSchedule = scheduleState.isSaved,
                         event = displayedEvent!!,
@@ -160,7 +153,10 @@ fun ScreenSchedule(
                         )
                         if (schedulesData.isNotEmpty() && !scheduleState.selectedSchedule?.events.isNullOrEmpty()) {
                             val eventsByWeekAndDays =
-                                remember(scheduleState.selectedSchedule!!.scheduleEntity, scheduleState.namedSchedule.namedScheduleEntity.id) {
+                                remember(
+                                    scheduleState.selectedSchedule!!.scheduleEntity,
+                                    scheduleState.namedSchedule.namedScheduleEntity.id
+                                ) {
                                     calculateEventsByWeeks(scheduleState)
                                 }
                             AnimatedContent(
@@ -191,7 +187,6 @@ fun ScreenSchedule(
                                         eventsByWeekAndDays = eventsByWeekAndDays,
                                         eventsExtraData = scheduleState.selectedSchedule.eventsExtraData,
 
-                                        startDate = scheduleState.selectedSchedule.scheduleEntity.startDate,
                                         today = today,
                                         paddingBottom = paddingValues.calculateBottomPadding()
                                     )
@@ -213,7 +208,8 @@ fun ScreenSchedule(
                             Empty(
                                 title = "¯\\_(ツ)_/¯",
                                 subtitle = LocalContext.current.getString(R.string.empty_here),
-                                isBoldTitle = false
+                                isBoldTitle = false,
+                                paddingBottom = paddingValues.calculateBottomPadding()
                             )
                         }
                     }
@@ -227,7 +223,8 @@ fun ScreenSchedule(
                 subtitle = LocalContext.current.getString(R.string.empty_base),
                 buttonTitle = LocalContext.current.getString(R.string.search),
                 imageVector = ImageVector.vectorResource(R.drawable.search_simple),
-                action = { navigateToSearch() }
+                action = { navigateToSearch() },
+                paddingBottom = paddingValues.calculateBottomPadding()
             )
         }
 
@@ -242,6 +239,8 @@ fun ScreenSchedule(
             ErrorScreen(
                 title = LocalContext.current.getString(R.string.error),
                 subtitle = LocalContext.current.getString(R.string.error_load_schedule),
+                paddingTop = paddingValues.calculateTopPadding(),
+                paddingBottom = paddingValues.calculateBottomPadding()
             )
         }
     }
@@ -385,7 +384,7 @@ fun TopBar(
                             scheduleState.namedSchedule.namedScheduleEntity.isDefault
                         )
                     } else {
-                        scheduleViewModel.saveSchedule()
+                        scheduleViewModel.saveCurrentNamedSchedule()
                     }
                 }
             ) {
@@ -557,8 +556,8 @@ fun calculateDefaultDate(
     if (today in scheduleEntity.startDate..scheduleEntity.endDate) {
         weeksStartIndex = abs(
             ChronoUnit.WEEKS.between(
-                scheduleEntity.startDate,
-                today
+                calculateFirstDayOfWeek(scheduleEntity.startDate),
+                calculateFirstDayOfWeek(today)
             ).toInt()
         )
         daysStartIndex = abs(
