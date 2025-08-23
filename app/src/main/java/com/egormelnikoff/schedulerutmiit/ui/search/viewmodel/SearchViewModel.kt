@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.egormelnikoff.schedulerutmiit.AppContainer
+import com.egormelnikoff.schedulerutmiit.AppContainerInterface
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.entity.Group
-import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteReposInterface
 import com.egormelnikoff.schedulerutmiit.model.Institute
 import com.egormelnikoff.schedulerutmiit.model.Institutes
 import com.egormelnikoff.schedulerutmiit.model.Person
@@ -38,10 +38,10 @@ sealed interface SearchState {
 }
 
 class SearchViewModel(
-    private val remoteRepos: RemoteRepos
+    private val remoteRepos: RemoteReposInterface
 ) : ViewModel() {
     companion object {
-        fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
+        fun provideFactory(container: AppContainerInterface): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {

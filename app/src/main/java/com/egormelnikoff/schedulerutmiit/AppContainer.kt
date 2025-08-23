@@ -17,13 +17,10 @@ interface AppContainerInterface {
 class AppContainer(private val applicationContext: Context) : AppContainerInterface {
     private val api = Api()
     private val parser = Parser()
-    private val namedScheduleDao by lazy {
-        AppDatabase.getDatabase(applicationContext).namedScheduleDao()
-    }
 
     override val localRepos by lazy {
         LocalRepos(
-            namedScheduleDao = namedScheduleDao,
+            namedScheduleDao = AppDatabase.getDatabase(applicationContext).namedScheduleDao(),
             parser = parser
         )
     }

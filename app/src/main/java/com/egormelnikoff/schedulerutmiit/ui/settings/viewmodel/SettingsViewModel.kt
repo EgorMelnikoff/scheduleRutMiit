@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.egormelnikoff.schedulerutmiit.AppContainer
+import com.egormelnikoff.schedulerutmiit.AppContainerInterface
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.AUTHOR_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteReposInterface
 import com.egormelnikoff.schedulerutmiit.model.TelegramPage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -23,10 +23,10 @@ sealed interface AppInfoState {
 }
 
 class SettingsViewModel(
-    private val remoteRepos: RemoteRepos
+    private val remoteRepos: RemoteReposInterface
 ) : ViewModel() {
     companion object {
-        fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
+        fun provideFactory(container: AppContainerInterface): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
@@ -39,6 +39,7 @@ class SettingsViewModel(
     }
 
     private var infoJob: Job? = null
+
     private val _stateAppInfo = MutableStateFlow<AppInfoState>(AppInfoState.Loading)
     val stateAppInfo: StateFlow<AppInfoState> = _stateAppInfo
 

@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.local
 
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.NamedScheduleDao
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserInterface
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
@@ -53,7 +53,7 @@ interface LocalReposInterface {
 
 class LocalRepos(
     private val namedScheduleDao: NamedScheduleDao,
-    private val parser: Parser
+    private val parser: ParserInterface
 ) : LocalReposInterface {
     override suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted) {
         if (namedSchedule.namedScheduleEntity.isDefault) {

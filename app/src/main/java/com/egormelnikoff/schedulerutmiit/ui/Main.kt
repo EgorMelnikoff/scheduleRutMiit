@@ -457,6 +457,11 @@ fun CustomNavigationBarItem(
             .clickable(
                 onClick = onClick
             )
+            .let {
+                if (isSelected) {
+                    it.background(MaterialTheme.colorScheme.primary)
+                } else it
+            }
             .padding(8.dp)
             .width(52.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -466,7 +471,7 @@ fun CustomNavigationBarItem(
             modifier = Modifier.size(24.dp),
             imageVector = icon,
             contentDescription = title,
-            tint = if (isSelected) MaterialTheme.colorScheme.primary
+            tint = if (isSelected) MaterialTheme.colorScheme.onPrimary
             else MaterialTheme.colorScheme.onSurface
         )
         Text(
@@ -481,7 +486,7 @@ fun CustomNavigationBarItem(
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = if (isSelected) MaterialTheme.colorScheme.primary
+            color = if (isSelected) MaterialTheme.colorScheme.onPrimary
             else MaterialTheme.colorScheme.onSurface
         )
     }

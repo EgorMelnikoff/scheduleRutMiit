@@ -1,14 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.remote
 
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.Api
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiInterface
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.GROUPS
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.GROUP_SCHEDULE
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.NEWS
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.NEWS_CATALOG
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.PERSON_SCHEDULE
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.ROOM_SCHEDULE
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserInterface
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.PEOPLE
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
@@ -27,6 +27,7 @@ import com.egormelnikoff.schedulerutmiit.model.TelegramPage
 import com.egormelnikoff.schedulerutmiit.model.Timetable
 import com.egormelnikoff.schedulerutmiit.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.model.Timetables
+import com.egormelnikoff.schedulerutmiit.ui.schedule.calculateFirstDayOfWeek
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalTime
@@ -49,8 +50,8 @@ interface RemoteReposInterface {
 }
 
 class RemoteRepos(
-    private val api: Api,
-    private val parser: Parser
+    private val api: ApiInterface,
+    private val parser: ParserInterface
 ): RemoteReposInterface {
     override suspend fun getNamedSchedule(
         namedScheduleId: Long,

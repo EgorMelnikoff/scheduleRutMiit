@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.egormelnikoff.schedulerutmiit.AppContainer
+import com.egormelnikoff.schedulerutmiit.AppContainerInterface
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.data.repos.local.LocalRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.local.LocalReposInterface
+import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteReposInterface
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,11 +39,11 @@ sealed interface ScheduleState {
 }
 
 class ScheduleViewModel(
-    private val localRepos: LocalRepos,
-    private val remoteRepos: RemoteRepos
+    private val localRepos: LocalReposInterface,
+    private val remoteRepos: RemoteReposInterface
 ) : ViewModel() {
     companion object {
-        fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
+        fun provideFactory(container: AppContainerInterface): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
