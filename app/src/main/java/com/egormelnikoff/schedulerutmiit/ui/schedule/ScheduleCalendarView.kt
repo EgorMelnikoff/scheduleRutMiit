@@ -16,20 +16,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -65,7 +63,7 @@ import java.util.Locale
 import kotlin.math.abs
 
 
-data class ScheduleCalendarParams (
+data class ScheduleCalendarParams(
     val pagerDaysState: PagerState,
     val pagerWeeksState: PagerState,
     val selectedDate: LocalDate,
@@ -437,29 +435,30 @@ fun PagedDays(
             1
         }
 
-        val eventsForDayByStartTime by remember(
-            scheduleEntity.namedScheduleId,
-            scheduleEntity.id
-        ) {
-            mutableStateOf(
-                (eventsByWeekAndDays[currentWeek]?.filter {
-                    if (scheduleEntity.recurrence != null) {
-                        it.key.dayOfWeek == currentDate.dayOfWeek
-                    } else {
-                        it.key == currentDate
-                    }
-                }?.values?.flatten() ?: emptyList())
-                    .sortedBy { event -> event.startDatetime!!.toLocalTime() }
-                    .groupBy { event -> event.startDatetime.toString() }
-                    .toList()
-            )
-        }
+        val eventsForDayByStartTime =
+            (eventsByWeekAndDays[currentWeek]?.filter {
+                if (scheduleEntity.recurrence != null) {
+                    it.key.dayOfWeek == currentDate.dayOfWeek
+                } else {
+                    it.key == currentDate
+                }
+            }?.values?.flatten() ?: emptyList())
+                .sortedBy { event -> event.startDatetime!!.toLocalTime() }
+                .groupBy { event -> event.startDatetime.toString() }
+                .toList()
+
+
         if (eventsForDayByStartTime.isNotEmpty()) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = paddingBottom)
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = paddingBottom
+                    )
             ) {
-                items(eventsForDayByStartTime, key = { it.first }) { events ->
+                eventsForDayByStartTime.forEach { events ->
                     Event(
                         isShortEvent = isShortEvent,
                         eventsExtraData = eventsExtraData,
