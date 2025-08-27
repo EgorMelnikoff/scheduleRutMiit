@@ -119,23 +119,21 @@ fun SettingsScreen(
             title = LocalContext.current.getString(R.string.schedule),
             items = listOf(
                 {
-                    if (scheduleUiState.savedNamedSchedules.isNotEmpty()) {
-                        SettingsItem(
-                            onClick = {
-                                onShowDialogSchedules()
-                            },
-                            imageVector = ImageVector.vectorResource(R.drawable.schedule),
-                            text = LocalContext.current.getString(R.string.schedules)
+                    SettingsItem(
+                        onClick = {
+                            onShowDialogSchedules()
+                        },
+                        imageVector = ImageVector.vectorResource(R.drawable.schedule),
+                        text = LocalContext.current.getString(R.string.schedules)
+                    ) {
+                        Badge(
+                            containerColor = Color.Unspecified,
+                            contentColor = MaterialTheme.colorScheme.onSurface
                         ) {
-                            Badge(
-                                containerColor = Color.Unspecified,
-                                contentColor = MaterialTheme.colorScheme.onSurface
-                            ) {
-                                Text(
-                                    text = scheduleUiState.savedNamedSchedules.size.toString(),
-                                    fontSize = 12.sp,
-                                )
-                            }
+                            Text(
+                                text = scheduleUiState.savedNamedSchedules.size.toString(),
+                                fontSize = 12.sp,
+                            )
                         }
                     }
                 }, {
