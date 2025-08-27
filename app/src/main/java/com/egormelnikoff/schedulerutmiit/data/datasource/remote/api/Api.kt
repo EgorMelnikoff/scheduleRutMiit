@@ -43,7 +43,6 @@ class ApiImpl : Api {
 
 
     override suspend fun getData(url: URL): Result<String> {
-        println(url)
         return try {
             val response = httpClient.get(url)
 
