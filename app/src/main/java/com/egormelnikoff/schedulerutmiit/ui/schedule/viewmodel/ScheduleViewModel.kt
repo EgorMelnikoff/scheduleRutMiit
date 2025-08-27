@@ -46,6 +46,7 @@ data class ScheduleUiState(
     val currentNamedSchedule: NamedScheduleFormatted? = null,
     val currentScheduleEntity: ScheduleEntity? = null,
     val currentScheduleData: ScheduleData? = null,
+    val isUpdating: Boolean = false,
     val isError: Boolean = false,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
@@ -127,9 +128,10 @@ class ScheduleViewModelImpl(
                 val resultUpdate = repos.updateNamedSchedule(
                     namedSchedule = namedSchedule,
                     onStartUpdate = {
-                        viewModelScope.launch {
-                            _uiEventChannel.send(UiEvent.ShowInfoMessage("${resourcesManager.getString(R.string.updating)}..."))
-                        }
+                        _uiState.update { it.copy(isUpdating = true) }
+                    },
+                    onFinishUpdate = {
+                        _uiState.update { it.copy(isUpdating = false) }
                     }
                 )
 
@@ -162,9 +164,10 @@ class ScheduleViewModelImpl(
                 val resultUpdate = repos.updateNamedSchedule(
                     namedSchedule = localNamedSchedule,
                     onStartUpdate = {
-                        viewModelScope.launch {
-                            _uiEventChannel.send(UiEvent.ShowInfoMessage("${resourcesManager.getString(R.string.updating)}..."))
-                        }
+                        _uiState.update { it.copy(isUpdating = true) }
+                    },
+                    onFinishUpdate = {
+                        _uiState.update { it.copy(isUpdating = false) }
                     }
                 )
 

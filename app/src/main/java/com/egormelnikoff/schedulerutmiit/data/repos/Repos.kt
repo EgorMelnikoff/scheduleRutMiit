@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.data.repos
 
+import androidx.room.Update
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
@@ -71,6 +72,7 @@ interface Repos {
 
     suspend fun updateNamedSchedule(
         onStartUpdate: () -> Unit,
+        onFinishUpdate: () -> Unit,
         namedSchedule: NamedScheduleFormatted
     ): Result<String>
 }
@@ -171,11 +173,14 @@ class ReposImpl(
 
     override suspend fun updateNamedSchedule(
         onStartUpdate: () -> Unit,
+        onFinishUpdate: () -> Unit,
         namedSchedule: NamedScheduleFormatted
     ): Result<String> {
         if (shouldUpdateNamedSchedule(namedSchedule)) {
             onStartUpdate()
-            return performNamedScheduleUpdate(namedSchedule)
+            val result = performNamedScheduleUpdate(namedSchedule)
+            onFinishUpdate()
+            return result
         }
         return Result.Success("Success update")
     }
