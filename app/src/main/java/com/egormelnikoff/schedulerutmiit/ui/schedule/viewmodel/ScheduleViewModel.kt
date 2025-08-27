@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.egormelnikoff.schedulerutmiit.AppContainer
+import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.datasource.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
@@ -69,6 +71,7 @@ sealed interface UiEvent {
 
 class ScheduleViewModelImpl(
     private val repos: Repos,
+    private val resourcesManager: ResourcesManager
 ) : ViewModel(), ScheduleViewModel {
     companion object {
         fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
@@ -79,7 +82,8 @@ class ScheduleViewModelImpl(
                     extras: CreationExtras
                 ): T {
                     return ScheduleViewModelImpl(
-                        repos = container.repos
+                        repos = container.repos,
+                        resourcesManager = container.resourcesManager
                     ) as T
                 }
             }
@@ -124,14 +128,15 @@ class ScheduleViewModelImpl(
                     namedSchedule = namedSchedule,
                     onStartUpdate = {
                         viewModelScope.launch {
-                            _uiEventChannel.send(UiEvent.ShowInfoMessage("Обновление..."))
+                            _uiEventChannel.send(UiEvent.ShowInfoMessage("${resourcesManager.getString(R.string.updating)}..."))
                         }
                     }
                 )
 
                 if (resultUpdate is Result.Error) {
-                    val errorMsg = resultUpdate.exception.message ?: "Неизвестная ошибка"
-                    _uiEventChannel.send(UiEvent.ShowErrorMessage("Не удалось обновить: $errorMsg"))
+                    val errorMsg = resultUpdate.exception.message ?: resourcesManager.getString(R.string.unknown_error)
+                    _uiEventChannel.send(UiEvent.ShowErrorMessage("${resourcesManager.getString(R.string.failed_update)}: $errorMsg"))
+
                 }
             }
         }
@@ -158,14 +163,14 @@ class ScheduleViewModelImpl(
                     namedSchedule = localNamedSchedule,
                     onStartUpdate = {
                         viewModelScope.launch {
-                            _uiEventChannel.send(UiEvent.ShowInfoMessage("Обновление..."))
+                            _uiEventChannel.send(UiEvent.ShowInfoMessage("${resourcesManager.getString(R.string.updating)}..."))
                         }
                     }
                 )
 
                 if (resultUpdate is Result.Error) {
-                    val errorMsg = resultUpdate.exception.message ?: "Неизвестная ошибка"
-                    _uiEventChannel.send(UiEvent.ShowErrorMessage("Не удалось обновить: $errorMsg"))
+                    val errorMsg = resultUpdate.exception.message ?: resourcesManager.getString(R.string.unknown_error)
+                    _uiEventChannel.send(UiEvent.ShowErrorMessage("${resourcesManager.getString(R.string.failed_update)}: $errorMsg"))
                 }
                 return@launch
             }
@@ -222,7 +227,7 @@ class ScheduleViewModelImpl(
                     repos.getNamedScheduleById(currentNamedSchedule.namedScheduleEntity.id)
 
                 val schedule =
-                    updatedNamedSchedule?.schedules?.find { s -> s.scheduleEntity.isDefault } //??????
+                    updatedNamedSchedule?.schedules?.find { s -> s.scheduleEntity.isDefault }
 
                 _uiState.update {
                     it.copy(
