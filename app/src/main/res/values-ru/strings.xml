@@ -88,8 +88,9 @@
 
     <string name="from">с</string>
 
-    <string name="failed_update_schedules">Не удалось обновить расписания</string>
     <string name="failed_update">Не удалось обновить расписание</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="updating">Обновление</string>
     <string name="day_off">Выходной</string>
     <string name="error_load_schedule">Произошла ошибка загрузки расписания</string>
     <string name="empty_base">Сохраните как минимум одно расписание для его отображения</string>

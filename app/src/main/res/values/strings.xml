@@ -8,7 +8,8 @@
     <string name="no_saved_schedule">No saved schedule</string>
     <string name="empty_here">It`s empty here</string>
     <string name="error">Error</string>
-
+    <string name="unknown_error">Unknown error</string>
+    <string name="updating">Updating</string>
     <string name="comment">Comment</string>
     <string name="copy_link">Copy link</string>
     <string name="save_pdf">Download pdf</string>
@@ -92,7 +93,6 @@
     <string name="day_off">Day off</string>
     <string name="error_load_schedule">There was an error loading the schedule</string>
     <string name="empty_base">Save at least one schedule to display it</string>
-    <string name="failed_update_schedules">Failed to update schedules</string>
     <string name="no_classes">There are no more classes planned</string>
     <string name="failed_update">Failed to update schedule</string>
     <string name="author">Author</string>
