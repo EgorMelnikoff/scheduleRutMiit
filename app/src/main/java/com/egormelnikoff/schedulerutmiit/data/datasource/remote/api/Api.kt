@@ -14,12 +14,12 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-interface ApiInterface {
+interface Api {
     suspend fun getData(url: URL): Result<String>
     fun <T> parseJson(jsonString: Result<String?>, classOfT: Class<T>): Result<T>
 }
 
-class Api : ApiInterface {
+class ApiImpl : Api {
     private val httpClient = HttpClient(CIO) {
         engine {
             requestTimeout = 25000
@@ -43,6 +43,7 @@ class Api : ApiInterface {
 
 
     override suspend fun getData(url: URL): Result<String> {
+        println(url)
         return try {
             val response = httpClient.get(url)
 

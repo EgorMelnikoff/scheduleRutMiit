@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.repos.datastore
+package com.egormelnikoff.schedulerutmiit.data.datasource.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore

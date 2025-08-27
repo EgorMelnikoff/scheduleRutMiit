@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,11 +29,11 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -62,19 +63,18 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.ui.composable.GroupItem
+import com.egormelnikoff.schedulerutmiit.ui.composable.SimpleTopBar
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.settings.ColorSelector
-import com.egormelnikoff.schedulerutmiit.ui.settings.SettingsTopBar
 import java.time.ZoneId
 import java.time.ZoneOffset
 
 @Composable
 fun EventDialog(
     scheduleViewModel: ScheduleViewModel,
-    namedScheduleId: Long,
-    scheduleId: Long,
     isSavedSchedule: Boolean,
-    onShowEventDialog: (Boolean) -> Unit,
+    onBack: () -> Unit,
     eventExtraData: EventExtraData?,
     event: Event
 ) {
@@ -116,40 +116,41 @@ fun EventDialog(
             append("\n${LocalContext.current.getString(R.string.groups)}: ${event.groups.joinToString { it.name.toString() }}")
         }
     }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        SettingsTopBar(
-            title = "",
-            navAction = {
-                onShowEventDialog(false)
-            },
-            navImageVector = ImageVector.vectorResource(R.drawable.back)
-        ) {
-            IconButton(
-                onClick = {
-                    val sendIntent: Intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, eventString.toString())
-                        type = "text/plain"
-                    }
-                    val shareIntent = Intent.createChooser(sendIntent, null)
-                    context.startActivity(shareIntent)
-                }
+    Scaffold (
+        topBar = {
+            SimpleTopBar(
+                title = "",
+                navAction = {
+                    onBack()
+                },
+                navImageVector = ImageVector.vectorResource(R.drawable.back)
             ) {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.share),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
+                IconButton(
+                    onClick = {
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, eventString.toString())
+                            type = "text/plain"
+                        }
+                        val shareIntent = Intent.createChooser(sendIntent, null)
+                        context.startActivity(shareIntent)
+                    }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.share),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
+    ){ padding ->
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .fillMaxSize()
+                .padding(top = padding.calculateTopPadding(), start = 16.dp, end = 16.dp)
+                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
@@ -194,16 +195,19 @@ fun EventDialog(
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
             if (!event.rooms.isNullOrEmpty()) {
-                EventDialogItem(
+                GroupItem(
                     title = context.getString(R.string.Room),
-                ) {
-                    Column {
-                        event.rooms.forEachIndexed { index, room ->
+                    titleColor = MaterialTheme.colorScheme.primary,
+                    items = event.rooms.map { room ->
+                        {
                             EventDialogClickableItem(
                                 text = room.hint.toString(),
                                 onClick = {
-                                    onShowEventDialog(false)
+                                    onBack()
                                     scheduleViewModel.getAndSetNamedSchedule(
                                         name = event.rooms.first().name!!,
                                         apiId = event.rooms.first().id.toString(),
@@ -211,16 +215,10 @@ fun EventDialog(
                                     )
                                 }
                             )
-                            if (index != event.rooms.lastIndex) {
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.outline,
-                                    thickness = 0.5.dp
-                                )
-                            }
                         }
                     }
-                }
 
+                )
             }
             if (!event.groups.isNullOrEmpty()) {
                 EventDialogItem(
@@ -242,7 +240,7 @@ fun EventDialog(
                                     .defaultMinSize(minWidth = 80.dp)
                                     .clickable(
                                         onClick = {
-                                            onShowEventDialog(false)
+                                            onBack()
                                             scheduleViewModel.getAndSetNamedSchedule(
                                                 name = group.name!!,
                                                 apiId = group.id.toString(),
@@ -266,15 +264,15 @@ fun EventDialog(
                 }
             }
             if (!event.lecturers.isNullOrEmpty()) {
-                EventDialogItem(
+                GroupItem(
                     title = context.getString(R.string.Lecturers),
-                ) {
-                    Column {
-                        event.lecturers.forEachIndexed { index, lecturer ->
+                    titleColor = MaterialTheme.colorScheme.primary,
+                    items = event.lecturers.map { lecturer ->
+                        {
                             EventDialogClickableItem(
                                 text = lecturer.fullFio.toString(),
                                 onClick = {
-                                    onShowEventDialog(false)
+                                    onBack()
                                     scheduleViewModel.getAndSetNamedSchedule(
                                         name = lecturer.fullFio!!,
                                         apiId = lecturer.id.toString(),
@@ -283,16 +281,9 @@ fun EventDialog(
                                 },
                                 imageUrl = "https://www.miit.ru/content/e${lecturer.id}.jpg?id_fe=${lecturer.id}&SWidth=100"
                             )
-                            if (index != event.lecturers.lastIndex) {
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.outline,
-                                    thickness = 0.5.dp
-                                )
-                            }
                         }
                     }
-
-                }
+                )
             }
             if (isSavedSchedule) {
                 EventDialogItem(
@@ -303,8 +294,6 @@ fun EventDialog(
                         onCommentChanged = { newValue ->
                             comment = newValue
                             scheduleViewModel.updateEventExtra(
-                                namedScheduleId,
-                                scheduleId,
                                 event,
                                 comment,
                                 tag
@@ -322,8 +311,6 @@ fun EventDialog(
                         onColorSelect = { value ->
                             tag = value
                             scheduleViewModel.updateEventExtra(
-                                namedScheduleId = namedScheduleId,
-                                scheduleId = scheduleId,
                                 event = event,
                                 comment = comment,
                                 tag = value
@@ -334,7 +321,6 @@ fun EventDialog(
             }
         }
     }
-
 }
 
 @Composable

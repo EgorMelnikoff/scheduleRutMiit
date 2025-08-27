@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.ui.schedule
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.ui.composable.GroupItem
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeLightBlue
@@ -48,8 +46,7 @@ import java.time.ZoneOffset
 
 @Composable
 fun Event(
-    onShowDialogEvent: (Boolean) -> Unit,
-    onSelectDisplayedEvent: (Event?) -> Unit,
+    onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
     events: List<Event>,
     eventsExtraData: List<EventExtraData>,
     isShortEvent: Boolean
@@ -90,36 +87,42 @@ fun Event(
                 color = MaterialTheme.colorScheme.primary
             )
         }
-        Column(
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surface)
-        ) {
-            events.forEachIndexed { index, event ->
-                SingleEvent(
-                    eventExtraData = eventsExtraData.find {
-                        it.id == event.id
-                    },
-                    isShortEvent = isShortEvent,
-                    event = event,
-                    onShowDialogEvent = onShowDialogEvent,
-                    onSelectDisplayedEvent = onSelectDisplayedEvent
-                )
-                if (index != events.lastIndex) {
-                    HorizontalDivider(
-                        thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outline
+
+        GroupItem(
+            items = events.map { event ->
+                {
+                    SingleEvent(
+                        eventExtraData = eventsExtraData.find {
+                            it.id == event.id
+                        },
+                        isShortEvent = isShortEvent,
+                        event = event,
+                        onShowDialogEvent = onShowDialogEvent
                     )
                 }
             }
-        }
+        )
+//        Column(
+//            modifier = Modifier
+//                .clip(RoundedCornerShape(12.dp))
+//                .background(MaterialTheme.colorScheme.surface)
+//        ) {
+//            events.forEachIndexed { index, event ->
+//
+//                if (index != events.lastIndex) {
+//                    HorizontalDivider(
+//                        thickness = 0.5.dp,
+//                        color = MaterialTheme.colorScheme.outline
+//                    )
+//                }
+//            }
+//        }
     }
 }
 
 @Composable
 fun SingleEvent(
-    onShowDialogEvent: (Boolean) -> Unit,
-    onSelectDisplayedEvent: (Event?) -> Unit,
+    onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
     isShortEvent: Boolean,
     event: Event,
     eventExtraData: EventExtraData?,
@@ -129,19 +132,16 @@ fun SingleEvent(
             .fillMaxWidth()
             .clickable(
                 onClick = {
-                    onSelectDisplayedEvent(null)
-                    onSelectDisplayedEvent(event)
-                    onShowDialogEvent(true)
+                    onShowDialogEvent(Pair(event, eventExtraData))
                 },
             )
             .animateContentSize()
     ) {
         if (eventExtraData != null) {
             Canvas(Modifier.fillMaxWidth()) {
-                val width = size.width
                 drawLine(
                     start = Offset(x = 0f, y = 0f),
-                    end = Offset(x = width, y = 0f),
+                    end = Offset(x = size.width, y = 0f),
                     color = when (eventExtraData.tag) {
                         1 -> darkThemeRed
                         2 -> darkThemeOrange

@@ -5,84 +5,60 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.data.repos.datastore.AppSettings
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.ui.Main
-import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsViewModelImpl
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModelImpl
+import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModelImpl
+import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.SettingsViewModelImpl
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
-import kotlinx.coroutines.flow.combine
+
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         val container = (applicationContext as ScheduleApplication).container
 
-        val searchViewModel: SearchViewModel by viewModels {
-            SearchViewModel.provideFactory(
+        val searchViewModel: SearchViewModelImpl by viewModels {
+            SearchViewModelImpl.provideFactory(
                 container = container
             )
         }
-        val scheduleViewModel: ScheduleViewModel by viewModels {
-            ScheduleViewModel.provideFactory(
+        val scheduleViewModel: ScheduleViewModelImpl by viewModels {
+            ScheduleViewModelImpl.provideFactory(
                 container = container
             )
         }
-        val newsViewModel: NewsViewModel by viewModels {
-            NewsViewModel.provideFactory(
+        val newsViewModel: NewsViewModelImpl by viewModels {
+            NewsViewModelImpl.provideFactory(
                 container = container
             )
         }
-        val settingsViewModel: SettingsViewModel by viewModels {
-            SettingsViewModel.provideFactory(
+        val settingsViewModel: SettingsViewModelImpl by viewModels {
+            SettingsViewModelImpl.provideFactory(
                 container = container
             )
         }
-
         setContent {
-            val appSettings = combine(
-                container.dataStore.themeFlow,
-                container.dataStore.decorColorFlow,
-                container.dataStore.scheduleViewFlow,
-                container.dataStore.viewEventFlow,
-                container.dataStore.showCountClassesFlow
-            ) { theme, primaryColorIndex, isCalendarView, isShortEventView, isShowCountClasses ->
-                AppSettings(
-                    theme = theme,
-                    decorColorIndex = primaryColorIndex,
-                    eventView = isShortEventView,
-                    calendarView = isCalendarView,
-                    showCountClasses = isShowCountClasses,
-                )
-            }.collectAsState(
-                initial = null
-            )
+            val appSettings by settingsViewModel.appSettings.collectAsStateWithLifecycle()
 
-            ScheduleRutMiitTheme(
-                appSettings = appSettings.value
-            ) {
-                if (appSettings.value != null) {
+            appSettings?.let { settings ->
+                ScheduleRutMiitTheme(appSettings = settings) {
                     Main(
                         searchViewModel = searchViewModel,
                         scheduleViewModel = scheduleViewModel,
                         newsViewModel = newsViewModel,
                         settingsViewModel = settingsViewModel,
                         preferencesDataStore = container.dataStore,
-                        appSettings = appSettings.value!!
-                    )
-                } else {
-                    LoadingScreen(
-                        paddingTop = 0.dp,
-                        paddingBottom = 0.dp
+                        appSettings = settings
                     )
                 }
             }
         }
     }
 }
+

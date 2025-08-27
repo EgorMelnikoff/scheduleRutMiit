@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.egormelnikoff.schedulerutmiit.AppContainerInterface
+import com.egormelnikoff.schedulerutmiit.AppContainer
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.entity.Group
-import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteReposInterface
+import com.egormelnikoff.schedulerutmiit.data.repos.Repos
 import com.egormelnikoff.schedulerutmiit.model.Institute
 import com.egormelnikoff.schedulerutmiit.model.Institutes
 import com.egormelnikoff.schedulerutmiit.model.Person
@@ -18,13 +18,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-
-sealed interface InstitutesState {
-    data object Empty : InstitutesState
-    data class Loaded(
-        val institutes: Institutes
-    ) : InstitutesState
+interface SearchViewModel {
+    val stateSearch: StateFlow<SearchState>
+    fun search(query: String, selectedOptions: Options)
+    fun setDefaultSearchState()
 }
+
+
+data class InstitutesState (
+    val institutes: Institutes
+)
 
 sealed interface SearchState {
     data object EmptyQuery : SearchState
@@ -37,30 +40,31 @@ sealed interface SearchState {
     data object EmptyResult : SearchState
 }
 
-class SearchViewModel(
-    private val remoteRepos: RemoteReposInterface
-) : ViewModel() {
+
+class SearchViewModelImpl(
+    private val repos: Repos
+) : ViewModel(), SearchViewModel {
     companion object {
-        fun provideFactory(container: AppContainerInterface): ViewModelProvider.Factory {
+        fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-                    return SearchViewModel(
-                        remoteRepos = container.remoteRepos
+                    return SearchViewModelImpl(
+                        repos = container.repos
                     ) as T
                 }
             }
         }
     }
 
-    private var searchJob: Job? = null
     private val _stateSearch = MutableStateFlow<SearchState>(SearchState.EmptyQuery)
-    val stateSearch: StateFlow<SearchState> = _stateSearch
+    private val _stateInstitutes = MutableStateFlow(InstitutesState(Institutes(listOf())))
 
-    private val _stateInstitutes = MutableStateFlow<InstitutesState>(InstitutesState.Empty)
+    override val stateSearch: StateFlow<SearchState> = _stateSearch
 
+    private var searchJob: Job? = null
 
-    fun search(query: String, selectedOptions: Options) {
+    override fun search(query: String, selectedOptions: Options) {
         _stateSearch.value = SearchState.Loading
         val newSearchJob = viewModelScope.launch {
             searchJob?.cancelAndJoin()
@@ -90,22 +94,26 @@ class SearchViewModel(
         searchJob = newSearchJob
     }
 
+    override fun setDefaultSearchState() {
+        _stateSearch.value = SearchState.EmptyQuery
+    }
+
     private suspend fun searchGroup(query: String): List<Group> {
-        if (_stateInstitutes.value !is InstitutesState.Loaded) {
-            when (val institutes = remoteRepos.getInstitutes()) {
+        if (_stateInstitutes.value.institutes.institutes!!.isEmpty()) {
+            when (val institutes = repos.getInstitutes()) {
                 is Result.Error -> {
-                    _stateInstitutes.value = InstitutesState.Empty
+                    _stateInstitutes.value = InstitutesState(Institutes(listOf()))
                 }
 
                 is Result.Success -> {
-                    _stateInstitutes.value = InstitutesState.Loaded(
+                    _stateInstitutes.value = InstitutesState(
                         institutes.data
                     )
                 }
             }
         }
-        if (_stateInstitutes.value is InstitutesState.Loaded) {
-            val groups = (_stateInstitutes.value as InstitutesState.Loaded)
+        if (_stateInstitutes.value.institutes.institutes!!.isNotEmpty()) {
+            val groups = (_stateInstitutes.value)
                 .institutes.institutes?.let { getGroups(it) }
             if (groups != null) {
                 val filteredGroups = groups
@@ -133,13 +141,10 @@ class SearchViewModel(
     }
 
     private suspend fun searchPerson(query: String): List<Person> {
-        return when (val professors = remoteRepos.getPeople(query)) {
+        return when (val professors = repos.getPeople(query)) {
             is Result.Success -> professors.data
             is Result.Error -> emptyList()
         }
     }
 
-    fun setDefaultSearchState() {
-        _stateSearch.value = SearchState.EmptyQuery
-    }
 }

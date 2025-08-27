@@ -73,7 +73,7 @@ interface NamedScheduleDao {
     suspend fun delete (primaryKey: Long) {
         deleteNamedScheduleById(primaryKey)
         val schedulesId = getScheduleId(primaryKey)
-        deleteSchedulesByNSId(primaryKey)
+        deleteSchedulesByNamedScheduleId(primaryKey)
         for (scheduleId in schedulesId) {
             deleteEventsByScheduleId(scheduleId)
             deleteEventsExtraByScheduleId(scheduleId)
@@ -82,7 +82,7 @@ interface NamedScheduleDao {
     @Query("DELETE FROM NamedSchedules WHERE NamedScheduleId = :primaryKey")
     suspend fun deleteNamedScheduleById(primaryKey: Long)
     @Query("DELETE FROM Schedules WHERE namedScheduleId = :id")
-    suspend fun deleteSchedulesByNSId(id: Long)
+    suspend fun deleteSchedulesByNamedScheduleId(id: Long)
     @Query("DELETE FROM Schedules WHERE ScheduleId = :id")
     suspend fun deleteScheduleById (id: Long)
     @Query("DELETE FROM Events WHERE eventScheduleId = :id")
@@ -104,6 +104,12 @@ interface NamedScheduleDao {
         scheduleId: Long,
         eventId: Long,
         comment: String
+    )
+
+    @Query("UPDATE namedschedules SET lastTimeUpdate = :lastTimeUpdate WHERE NamedScheduleId = :namedScheduleId")
+    suspend fun updateLastTimeUpdate (
+        namedScheduleId: Long,
+        lastTimeUpdate: Long
     )
 
     @Query("UPDATE NamedSchedules SET isDefaultNamedSchedule = 1 WHERE NamedScheduleId = :primaryKey")

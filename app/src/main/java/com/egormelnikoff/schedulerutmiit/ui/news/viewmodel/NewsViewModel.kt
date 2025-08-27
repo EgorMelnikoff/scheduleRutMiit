@@ -4,92 +4,110 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.egormelnikoff.schedulerutmiit.AppContainerInterface
+import com.egormelnikoff.schedulerutmiit.AppContainer
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.repos.local.LocalReposInterface
-import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteReposInterface
+import com.egormelnikoff.schedulerutmiit.data.repos.Repos
 import com.egormelnikoff.schedulerutmiit.model.News
 import com.egormelnikoff.schedulerutmiit.model.NewsShort
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-sealed interface NewsListState {
-    data object Loading : NewsListState
-    data class Loaded(
-        var news: List<NewsShort>
-    ) : NewsListState
-
-    data object Error : NewsListState
+interface NewsViewModel {
+    val uiState: StateFlow<NewsState>
+    fun getNewsList(page: Int)
+    fun getNewsById(id: Long)
 }
 
-sealed interface NewsState {
-    data object Loading : NewsState
-    data class Loaded(
-        val news: News
-    ) : NewsState
+data class NewsState(
+    val newsList: List<NewsShort> = listOf(),
+    val currentNews: News? = null,
+    val isError: Boolean = false,
+    val isLoading: Boolean = false
+)
 
-    data object Error : NewsState
-}
+class NewsViewModelImpl(
+    private val repos: Repos
 
-class NewsViewModel(
-    private val localRepos: LocalReposInterface,
-    private val remoteRepos: RemoteReposInterface
-
-) : ViewModel() {
+) : ViewModel(), NewsViewModel {
     companion object {
-        fun provideFactory(container: AppContainerInterface): ViewModelProvider.Factory {
+        fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-                    return NewsViewModel(
-                        localRepos = container.localRepos,
-                        remoteRepos = container.remoteRepos
+                override fun <T : ViewModel> create(
+                    modelClass: Class<T>,
+                    extras: CreationExtras
+                ): T {
+                    return NewsViewModelImpl(
+                        repos = container.repos
                     ) as T
                 }
             }
         }
     }
 
+    private val _uiState = MutableStateFlow(NewsState())
+    override val uiState = _uiState.asStateFlow()
+
     private var newsJob: Job? = null
 
-    private val _stateNewsList = MutableStateFlow<NewsListState>(NewsListState.Loading)
-    val stateNewsList: StateFlow<NewsListState> = _stateNewsList
+    init {
+        getNewsList(1)
+    }
 
-    private val _stateNews = MutableStateFlow<NewsState>(NewsState.Loading)
-    val stateNews: StateFlow<NewsState> = _stateNews
-
-    fun getNewsList(page: Int) {
-        _stateNewsList.value = NewsListState.Loading
+    override fun getNewsList(page: Int) {
+        _uiState.update { it.copy(isLoading = true, isError = false) }
         val newNewsListJob = viewModelScope.launch {
             newsJob?.cancelAndJoin()
-            when (val newsList = remoteRepos.getNewsList(page = page.toString())) {
-                is Result.Error -> _stateNewsList.value = NewsListState.Error
+            when (val newsList = repos.getNewsList(page = page.toString())) {
+                is Result.Error -> _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        isError = true
+                    )
+                }
+
                 is Result.Success -> {
                     val updatedItems = newsList.data.items.map { newsShort ->
                         newsShort.apply { thumbnail = "https://www.miit.ru$thumbnail" }
                     }
-                    _stateNewsList.value = NewsListState.Loaded(
-                        news = updatedItems.filter { it.secondary.text != "Наши защиты" }
-                    )
+                    _uiState.update { state ->
+                        state.copy(
+                            isLoading = false,
+                            isError = false,
+                            newsList = updatedItems.filter { it.secondary.text != "Наши защиты" }
+                        )
+                    }
                 }
             }
         }
         newsJob = newNewsListJob
     }
 
-    fun getNewsById(id: Long) {
-        _stateNews.value = NewsState.Loading
+    override fun getNewsById(id: Long) {
+        _uiState.update { it.copy(isLoading = true) }
         val newNewsJob = viewModelScope.launch {
             newsJob?.cancelAndJoin()
-            when (val news = remoteRepos.getNewsById(id)) {
-                is Result.Error -> _stateNews.value = NewsState.Error
-                is Result.Success -> {
-                    _stateNews.value = NewsState.Loaded(
-                        news = localRepos.parseNews(news.data)
+            when (val news = repos.getNewsById(id)) {
+                is Result.Error -> _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        isError = true
                     )
+                }
+
+                is Result.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isError = false,
+                            currentNews = repos.parseNews(news.data)
+                        )
+                    }
                 }
             }
         }

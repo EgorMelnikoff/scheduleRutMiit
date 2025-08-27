@@ -1,14 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.remote
 
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiInterface
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.Api
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.GROUPS
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.GROUP_SCHEDULE
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.NEWS
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.NEWS_CATALOG
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.PERSON_SCHEDULE
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.ROOM_SCHEDULE
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserInterface
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.PEOPLE
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
@@ -35,11 +35,11 @@ import java.time.temporal.ChronoUnit
 import java.time.temporal.WeekFields
 import kotlin.math.abs
 
-interface RemoteReposInterface {
+interface RemoteRepos {
     suspend fun getInstitutes(): Result<Institutes>
     suspend fun getPeople(query: String): Result<List<Person>>
     suspend fun getNamedSchedule(
-        namedScheduleId: Long,
+        namedScheduleId: Long = 0,
         name: String,
         apiId: String,
         type: Int
@@ -49,10 +49,10 @@ interface RemoteReposInterface {
     suspend fun getTgChannelInfo(url: String): Result<TelegramPage>
 }
 
-class RemoteRepos(
-    private val api: ApiInterface,
-    private val parser: ParserInterface
-): RemoteReposInterface {
+class RemoteReposImpl(
+    private val api: Api,
+    private val parser: Parser
+) : RemoteRepos {
     override suspend fun getNamedSchedule(
         namedScheduleId: Long,
         name: String,
@@ -206,7 +206,7 @@ class RemoteRepos(
                             events = checkedEvents,
                             recurrence = Recurrence(
                                 frequency = "WEEKLY",
-                                currentNumber = 1, //
+                                currentNumber = 1, //parse
                                 interval = weeksIndexes.size,
                                 firstWeekNumber = 1
                             )
@@ -255,21 +255,31 @@ class RemoteRepos(
                     startDate = oldSchedule.timetable?.startDate!!,
                     endDate = oldSchedule.timetable.endDate!!,
                     recurrence = if (oldSchedule.periodicContent != null) {
-                        val currentWeekIndex = abs(
-                            ChronoUnit.WEEKS.between(
-                                calculateFirstDayOfWeek(oldSchedule.timetable.startDate),
-                                calculateFirstDayOfWeek(LocalDate.now())
-                            ) + oldSchedule.periodicContent.recurrence!!.currentNumber!!
-                        ) - 1
-                        val firstWeekNumber =
-                            (currentWeekIndex % oldSchedule.periodicContent.recurrence.interval!!).toInt()
-                                .plus(1)
-                        Recurrence(
-                            frequency = oldSchedule.periodicContent.recurrence.frequency,
-                            interval = oldSchedule.periodicContent.recurrence.interval,
-                            currentNumber = oldSchedule.periodicContent.recurrence.currentNumber,
-                            firstWeekNumber = firstWeekNumber
-                        )
+                        if (LocalDate.now() > oldSchedule.timetable.startDate) {
+                            val currentWeekIndex = abs(
+                                ChronoUnit.WEEKS.between(
+                                    calculateFirstDayOfWeek(oldSchedule.timetable.startDate),
+                                    calculateFirstDayOfWeek(LocalDate.now())
+                                ) + oldSchedule.periodicContent.recurrence!!.currentNumber!!
+                            ) - 1
+                            val firstWeekNumber =
+                                (currentWeekIndex % oldSchedule.periodicContent.recurrence.interval!!).toInt()
+                                    .plus(1)
+                            Recurrence(
+                                frequency = oldSchedule.periodicContent.recurrence.frequency,
+                                interval = oldSchedule.periodicContent.recurrence.interval,
+                                currentNumber = oldSchedule.periodicContent.recurrence.currentNumber,
+                                firstWeekNumber = firstWeekNumber
+                            )
+                        } else {
+                            Recurrence(
+                                frequency = oldSchedule.periodicContent.recurrence!!.frequency,
+                                interval = oldSchedule.periodicContent.recurrence.interval,
+                                currentNumber = oldSchedule.periodicContent.recurrence.currentNumber,
+                                firstWeekNumber = oldSchedule.periodicContent.recurrence.currentNumber
+                                    ?: 1
+                            )
+                        }
                     } else null,
                     typeName = oldSchedule.timetable.typeName!!,
                     downloadUrl = oldSchedule.timetable.downloadUrl!!,

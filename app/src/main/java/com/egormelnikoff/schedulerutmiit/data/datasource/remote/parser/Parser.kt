@@ -18,13 +18,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 
-interface ParserInterface {
+interface Parser {
     suspend fun parsePeople(url: String): Result<List<Person>>
     suspend fun parseChannelInfo(url: String): Result<TelegramPage>
     fun parseNews(news: News): News
 }
 
-class Parser : ParserInterface {
+class ParserImpl : Parser {
     override suspend fun parsePeople(url: String): Result<List<Person>> {
         return withContext(Dispatchers.IO) {
             val document = Jsoup.connect(url).get()

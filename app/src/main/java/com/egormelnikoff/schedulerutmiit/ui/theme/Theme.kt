@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.egormelnikoff.schedulerutmiit.data.repos.datastore.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 
 
 @Composable

@@ -1,14 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.local
 
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.NamedScheduleDao
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserInterface
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.model.News
 
-interface LocalReposInterface {
+interface LocalRepos {
     suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted)
     suspend fun insertSchedule(
         namedScheduleId: Long,
@@ -25,7 +25,7 @@ interface LocalReposInterface {
         deleteEventsExtra: Boolean = false
     )
 
-    suspend fun getCount(): Int
+    suspend fun isSavingAvailable(): Boolean
     suspend fun getAllNamedSchedules(): MutableList<NamedScheduleFormatted>
     suspend fun getNamedScheduleByApiId(
         apiId: String
@@ -48,13 +48,18 @@ interface LocalReposInterface {
         comment: String
     )
 
+    suspend fun updateLastTimeUpdate (
+        namedScheduleId: Long,
+        lastTimeUpdate: Long
+    )
+
     fun parseNews(news: News): News
 }
 
-class LocalRepos(
+class LocalReposImpl(
     private val namedScheduleDao: NamedScheduleDao,
-    private val parser: ParserInterface
-) : LocalReposInterface {
+    private val parser: Parser
+) : LocalRepos {
     override suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted) {
         if (namedSchedule.namedScheduleEntity.isDefault) {
             namedSchedule.namedScheduleEntity.isDefault = false
@@ -115,9 +120,7 @@ class LocalRepos(
         return namedScheduleDao.getNamedScheduleById(idNamedSchedule)
     }
 
-    override suspend fun getCount(): Int {
-        return namedScheduleDao.getCount()
-    }
+    override suspend fun isSavingAvailable(): Boolean = namedScheduleDao.getCount() < 5
 
     override suspend fun updatePriorityNamedSchedule(id: Long) {
         namedScheduleDao.setDefaultNamedSchedule(id)
@@ -127,6 +130,10 @@ class LocalRepos(
     override suspend fun updatePrioritySchedule(idSchedule: Long, idNamedSchedule: Long) {
         namedScheduleDao.setDefaultSchedule(idSchedule)
         namedScheduleDao.setNonDefaultSchedule(idSchedule, idNamedSchedule)
+    }
+
+    override suspend fun updateLastTimeUpdate(namedScheduleId: Long, lastTimeUpdate: Long) {
+        namedScheduleDao.updateLastTimeUpdate(namedScheduleId, lastTimeUpdate)
     }
 
     override suspend fun updateEventExtra(

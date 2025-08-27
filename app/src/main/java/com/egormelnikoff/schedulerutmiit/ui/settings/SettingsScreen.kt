@@ -1,11 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.settings
 
 import android.content.Intent
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -24,9 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -40,7 +33,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -51,13 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.data.repos.datastore.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.repos.datastore.DataStore
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.SchedulesState
-import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.AppInfoState
-import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.composable.GroupItem
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.LightGrey
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
@@ -76,59 +66,13 @@ data class Theme(
 )
 
 @Composable
-fun SettingsTopBar(
-    title: String,
-    navAction: (() -> Unit)? = null,
-    navImageVector: ImageVector,
-    actions: @Composable (() -> Unit)? = null,
-) {
-    Row(
-        modifier = Modifier.padding(bottom = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (navAction != null) {
-            IconButton(
-                onClick = navAction
-            ) {
-                Icon(
-                    imageVector = navImageVector,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        }
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp),
-            text = title,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        actions?.invoke()
-    }
-}
-
-@Composable
 fun SettingsScreen(
-    navigateToSearch: () -> Unit,
-    scheduleViewModel: ScheduleViewModel,
-    settingsViewModel: SettingsViewModel,
     preferencesDataStore: DataStore,
     appSettings: AppSettings,
 
-    schedulesState: SchedulesState,
-    appInfoState: AppInfoState,
-    showDialogSchedules: Boolean,
-    onShowDialogSchedules: (Boolean) -> Unit,
-    showDialogInfo: Boolean,
-    onShowDialogInfo: (Boolean) -> Unit,
-    //showDialogAddSchedule: Boolean,
-    //onShowDialogAddSchedule: (Boolean) -> Unit,
-    //onShowDialogAddEvent: (Long?) -> Unit,
+    scheduleUiState: ScheduleUiState,
+    onShowDialogSchedules: () -> Unit,
+    onShowDialogInfo: () -> Unit,
     settingsListState: ScrollState,
     paddingValues: PaddingValues,
 ) {
@@ -160,229 +104,149 @@ fun SettingsScreen(
         uncheckedTrackColor = MaterialTheme.colorScheme.surface
     )
 
-    AnimatedContent(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = paddingValues.calculateTopPadding()),
-        targetState = Pair(showDialogSchedules, showDialogInfo),
-        transitionSpec = {
-            fadeIn() togetherWith fadeOut()
-        }
-    ) { target ->
-        when {
-            target.first -> {
-                BackHandler {
-                    onShowDialogSchedules(false)
-                }
-                SchedulesDialog(
-                    onShowDialog = onShowDialogSchedules,
-                    navigateToSearch = navigateToSearch,
-                    scheduleViewModel = scheduleViewModel,
-                    schedulesState = schedulesState,
-                    //showDialogAddSchedule = onShowDialogSddSchedule,
-                    //onShowDialogAddEvent = onShowDialogAddEvent,
-                    paddingBottom = paddingValues.calculateBottomPadding()
-                )
-
-            }
-
-
-            target.second -> {
-                BackHandler {
-                    onShowDialogInfo(false)
-                }
-                InfoDialog(
-                    appInfoState = appInfoState,
-                    onShowDialog = onShowDialogInfo,
-                    paddingBottom = paddingValues.calculateBottomPadding()
-                )
-            }
-
-            else -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                        .verticalScroll(settingsListState)
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                ) {
-                    GroupSettingsItem(
-                        title = LocalContext.current.getString(R.string.schedule)
-                    ) {
-                        if (schedulesState is SchedulesState.Loaded) {
-                            SettingsItem(
-                                onClick = {
-                                    onShowDialogSchedules(!showDialogSchedules)
-                                },
-                                imageVector = ImageVector.vectorResource(R.drawable.schedule),
-                                text = LocalContext.current.getString(R.string.schedules)
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(settingsListState)
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = paddingValues.calculateTopPadding()
+            )
+    ) {
+        GroupItem(
+            title = LocalContext.current.getString(R.string.schedule),
+            items = listOf(
+                {
+                    if (scheduleUiState.savedNamedSchedules.isNotEmpty()) {
+                        SettingsItem(
+                            onClick = {
+                                onShowDialogSchedules()
+                            },
+                            imageVector = ImageVector.vectorResource(R.drawable.schedule),
+                            text = LocalContext.current.getString(R.string.schedules)
+                        ) {
+                            Badge(
+                                containerColor = Color.Unspecified,
+                                contentColor = MaterialTheme.colorScheme.onSurface
                             ) {
-                                Badge(
-                                    containerColor = Color.Unspecified,
-                                    contentColor = MaterialTheme.colorScheme.onSurface
-                                ) {
-                                    Text(
-                                        text = schedulesState.savedSchedules.size.toString(),
-                                        fontSize = 12.sp,
-                                    )
-                                }
-                            }
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outline,
-                                thickness = 0.5.dp
-                            )
-                        }
-                        SettingsItem(
-                            onClick = {
-                                scope.launch {
-                                    preferencesDataStore.setViewEvent(!appSettings.eventView)
-                                }
-                            },
-                            imageVector = ImageVector.vectorResource(R.drawable.compact),
-                            text = LocalContext.current.getString(R.string.compact_view)
-                        ) {
-                            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                                Switch(
-                                    checked = appSettings.eventView,
-                                    onCheckedChange = {
-                                        scope.launch {
-                                            preferencesDataStore.setViewEvent(it)
-                                        }
-                                    },
-                                    colors = switchColors
+                                Text(
+                                    text = scheduleUiState.savedNamedSchedules.size.toString(),
+                                    fontSize = 12.sp,
                                 )
                             }
-                        }
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline,
-                            thickness = 0.5.dp
-                        )
-                        SettingsItem(
-                            onClick = {
-                                scope.launch {
-                                    preferencesDataStore.setShowCountClasses(!appSettings.showCountClasses)
-                                }
-                            },
-                            imageVector = ImageVector.vectorResource(R.drawable.count),
-                            text = LocalContext.current.getString(R.string.show_count_classes)
-                        ) {
-                            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                                Switch(
-                                    modifier = Modifier.padding(0.dp),
-                                    checked = appSettings.showCountClasses,
-                                    onCheckedChange = {
-                                        scope.launch {
-                                            preferencesDataStore.setShowCountClasses(it)
-                                        }
-                                    },
-                                    colors = switchColors
-                                )
-                            }
-
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    GroupSettingsItem(
-                        title = LocalContext.current.getString(R.string.general)
+                }, {
+                    SettingsItem(
+                        onClick = {
+                            scope.launch {
+                                preferencesDataStore.setViewEvent(!appSettings.eventView)
+                            }
+                        },
+                        imageVector = ImageVector.vectorResource(R.drawable.compact),
+                        text = LocalContext.current.getString(R.string.compact_view)
                     ) {
-                        SettingsItem(
-                            onClick = null,
-                            imageVector = ImageVector.vectorResource(R.drawable.sun),
-                            text = LocalContext.current.getString(R.string.theme),
-                            horizontal = false
-                        ) {
-                            ThemeSelector(
-                                preferences = preferencesDataStore,
-                                currentTheme = appSettings.theme,
-                                themes = themes
-                            )
-                        }
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline,
-                            thickness = 0.5.dp
-                        )
-                        SettingsItem(
-                            onClick = null,
-                            imageVector = ImageVector.vectorResource(R.drawable.color),
-                            text = LocalContext.current.getString(R.string.color_style),
-                            horizontal = false
-                        ) {
-                            ColorSelector(
-                                currentSelected = appSettings.decorColorIndex,
-                                onColorSelect = { value ->
+                        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                            Switch(
+                                checked = appSettings.eventView,
+                                onCheckedChange = {
                                     scope.launch {
-                                        preferencesDataStore.setDecorColor(value)
+                                        preferencesDataStore.setViewEvent(it)
                                     }
-                                }
+                                },
+                                colors = switchColors
                             )
                         }
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline,
-                            thickness = 0.5.dp
-                        )
-                        SettingsItem(
-                            onClick = {
-                                val intent =
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        APP_CHANNEL_URL.toUri()
-                                    )
-                                context.startActivity(intent)
-                            },
-                            imageVector = ImageVector.vectorResource(R.drawable.send),
-                            text = LocalContext.current.getString(R.string.report_a_problem)
-                        )
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline,
-                            thickness = 0.5.dp
-                        )
-                        SettingsItem(
-                            onClick = {
-                                onShowDialogInfo(true)
-                                if (appInfoState !is AppInfoState.Loaded) {
-                                    settingsViewModel.getAppInfo()
-                                }
-                            },
-                            imageVector = ImageVector.vectorResource(R.drawable.info),
-                            text = LocalContext.current.getString(R.string.about_app)
+                    }
+                },
+                {
+                    SettingsItem(
+                        onClick = {
+                            scope.launch {
+                                preferencesDataStore.setShowCountClasses(!appSettings.showCountClasses)
+                            }
+                        },
+                        imageVector = ImageVector.vectorResource(R.drawable.count),
+                        text = LocalContext.current.getString(R.string.show_count_classes)
+                    ) {
+                        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                            Switch(
+                                modifier = Modifier.padding(0.dp),
+                                checked = appSettings.showCountClasses,
+                                onCheckedChange = {
+                                    scope.launch {
+                                        preferencesDataStore.setShowCountClasses(it)
+                                    }
+                                },
+                                colors = switchColors
+                            )
+                        }
+
+                    }
+                }
+            )
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        GroupItem(
+            title = LocalContext.current.getString(R.string.general),
+            items = listOf(
+                {
+                    SettingsItem(
+                        onClick = null,
+                        imageVector = ImageVector.vectorResource(R.drawable.sun),
+                        text = LocalContext.current.getString(R.string.theme),
+                        horizontal = false
+                    ) {
+                        ThemeSelector(
+                            preferences = preferencesDataStore,
+                            currentTheme = appSettings.theme,
+                            themes = themes
                         )
                     }
-                    Spacer(
-                        modifier = Modifier.height(paddingValues.calculateBottomPadding())
+                },
+                {
+                    SettingsItem(
+                        onClick = null,
+                        imageVector = ImageVector.vectorResource(R.drawable.color),
+                        text = LocalContext.current.getString(R.string.color_style),
+                        horizontal = false
+                    ) {
+                        ColorSelector(
+                            currentSelected = appSettings.decorColorIndex,
+                            onColorSelect = { value ->
+                                scope.launch {
+                                    preferencesDataStore.setDecorColor(value)
+                                }
+                            }
+                        )
+                    }
+                }, {
+                    SettingsItem(
+                        onClick = {
+                            val intent =
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    APP_CHANNEL_URL.toUri()
+                                )
+                            context.startActivity(intent)
+                        },
+                        imageVector = ImageVector.vectorResource(R.drawable.send),
+                        text = LocalContext.current.getString(R.string.report_a_problem),
+                    )
+                }, {
+                    SettingsItem(
+                        onClick = {
+                            onShowDialogInfo()
+                        },
+                        imageVector = ImageVector.vectorResource(R.drawable.info),
+                        text = LocalContext.current.getString(R.string.about_app),
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun GroupSettingsItem(
-    title: String? = null,
-    content: @Composable (() -> Unit),
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        if (title != null) {
-            Text(
-                text = title,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
             )
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surface)
-
-        ) {
-            content.invoke()
-        }
+        )
     }
-
 }
 
 @Composable
@@ -403,6 +267,7 @@ fun SettingsItem(
                     it
                 }
             }
+
             .padding(horizontal = 16.dp, vertical = 16.dp)
             .defaultMinSize(minHeight = 36.dp),
         verticalArrangement = Arrangement.Center

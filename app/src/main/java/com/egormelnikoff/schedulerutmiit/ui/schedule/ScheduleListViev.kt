@@ -1,7 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.ui.schedule
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,9 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -32,57 +32,42 @@ import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
-import java.time.temporal.ChronoUnit
 import java.util.Locale
-import kotlin.math.abs
 
 @Composable
 fun ScheduleListView(
-    onShowDialogEvent: (Boolean) -> Unit,
-    onSelectDisplayedEvent: (Event?) -> Unit,
+    onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
     scheduleListState: LazyListState,
     isShortEvent: Boolean,
-    eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
+    eventsForList: List<Pair<LocalDate, List<Event>>>,
     eventsExtraData: List<EventExtraData>,
-    scheduleEntity: ScheduleEntity,
-    today: LocalDate,
     paddingBottom: Dp
 ) {
-    val eventsGrouped by remember(
-        scheduleEntity.namedScheduleId,
-        scheduleEntity.id
-    ) {
-        mutableStateOf(
-            calculateEvents(
-                eventsByWeekAndDays = eventsByWeekAndDays,
-                today = today,
-                scheduleEntity = scheduleEntity
-            )
-                .filter { it.startDatetime!!.toLocalDate() >= today }
-                .sortedBy { it.startDatetime }
-                .groupBy { event ->
-                    event.startDatetime!!.toLocalDate()
-                }
-                .toList()
-        )
-    }
-
-    if (eventsGrouped.isNotEmpty()) {
+    if (eventsForList.isNotEmpty()) {
+        val scope = rememberCoroutineScope()
         LazyColumn(
             state = scheduleListState,
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = paddingBottom),
+            contentPadding = PaddingValues(bottom = paddingBottom),
             modifier = Modifier.fillMaxSize(),
         ) {
-            val lastIndex = eventsGrouped.lastIndex
+            val lastIndex = eventsForList.lastIndex
             val formatter = DateTimeFormatter.ofPattern("d MMMM")
-            eventsGrouped.forEachIndexed { index, events ->
+            eventsForList.forEachIndexed { index, events ->
                 stickyHeader {
-                    DateHeader(events.first, formatter)
+                    DateHeader(
+                        date = events.first,
+                        formatter = formatter,
+                        onClick = {
+                            scope.launch {
+                                scheduleListState.animateScrollToItem(0)
+                            }
+                        }
+                    )
                 }
                 val eventsForDayGrouped = events.second
                     .sortedBy { event -> event.startDatetime!!.toLocalTime() }
@@ -91,13 +76,16 @@ fun ScheduleListView(
                     }
                     .toList()
                 items(eventsForDayGrouped) { eventsGrouped ->
-                    Event(
-                        isShortEvent = isShortEvent,
-                        eventsExtraData = eventsExtraData,
-                        events = eventsGrouped.second,
-                        onShowDialogEvent = onShowDialogEvent,
-                        onSelectDisplayedEvent = onSelectDisplayedEvent
-                    )
+                    Box (
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ){
+                        Event(
+                            isShortEvent = isShortEvent,
+                            eventsExtraData = eventsExtraData,
+                            events = eventsGrouped.second,
+                            onShowDialogEvent = onShowDialogEvent,
+                        )
+                    }
                     if (index != lastIndex) {
                         Spacer(modifier = Modifier.height(12.dp))
                     }
@@ -115,12 +103,17 @@ fun ScheduleListView(
 }
 
 @Composable
-fun DateHeader(date: LocalDate, formatter: DateTimeFormatter) {
+fun DateHeader(
+    date: LocalDate,
+    formatter: DateTimeFormatter,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -142,51 +135,4 @@ fun DateHeader(date: LocalDate, formatter: DateTimeFormatter) {
             color = MaterialTheme.colorScheme.primary
         )
     }
-}
-
-fun calculateEvents(
-    eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
-    today: LocalDate,
-    scheduleEntity: ScheduleEntity
-): MutableList<Event> {
-    val displayedEvents = mutableListOf<Event>()
-    if (scheduleEntity.recurrence != null) {
-        val defaultDate = if (today < scheduleEntity.startDate) {
-            scheduleEntity.startDate
-        } else {
-            today
-        }
-        val weeksRemaining = abs(
-            ChronoUnit.WEEKS.between(
-                calculateFirstDayOfWeek(defaultDate),
-                calculateFirstDayOfWeek(scheduleEntity.endDate)
-            )
-        ).toInt().plus(1)
-        for (week in 1..weeksRemaining) {
-            val weekNumber =
-                ((week + scheduleEntity.recurrence.firstWeekNumber) % scheduleEntity.recurrence.interval!!).plus(
-                    1
-                )
-            val events = eventsByWeekAndDays[weekNumber]?.values?.flatten()
-            if (events != null) {
-                for (event in events) {
-                    val startOfWeek = calculateFirstDayOfWeek(defaultDate)
-                        .plusDays(event.startDatetime!!.toLocalDate().dayOfWeek.value - 1L)
-                        .plusWeeks(week - 1L)
-
-                    val newEvent = event.copy(
-                        startDatetime = startOfWeek.atTime(event.startDatetime.toLocalTime()),
-                        endDatetime = startOfWeek.atTime(event.endDatetime?.toLocalTime())
-                    )
-
-                    displayedEvents.add(newEvent)
-                }
-            }
-        }
-    } else {
-        if (!eventsByWeekAndDays[1]?.values.isNullOrEmpty()) {
-            displayedEvents.addAll(eventsByWeekAndDays[1]?.values!!.flatten())
-        }
-    }
-    return displayedEvents
 }

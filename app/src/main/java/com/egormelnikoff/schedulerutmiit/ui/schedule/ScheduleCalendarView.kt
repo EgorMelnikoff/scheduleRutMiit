@@ -48,6 +48,7 @@ import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleData
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeGreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeLightBlue
@@ -63,53 +64,54 @@ import java.time.temporal.ChronoUnit
 import java.util.Locale
 import kotlin.math.abs
 
-data class ScheduleData(
-    var selectedDate: LocalDate,
-    val selectDate: (LocalDate) -> Unit,
+
+data class ScheduleCalendarParams (
     val pagerDaysState: PagerState,
     val pagerWeeksState: PagerState,
-    val defaultDate: LocalDate,
-    val daysStartIndex: Int,
-    val weeksStartIndex: Int,
-    val weeksCount: Int
+    val selectedDate: LocalDate,
+    val selectDate: (LocalDate) -> Unit
 )
 
 @Composable
 fun ScheduleCalendarView(
-    onShowDialogEvent: (Boolean) -> Unit,
-    onSelectDisplayedEvent: (Event?) -> Unit,
+    onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
 
-    scheduleData: ScheduleData,
+    eventsByWeekAndDays: Map<Int, Map<LocalDate, List<Event>>>,
     scheduleEntity: ScheduleEntity,
-    eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
     eventsExtraData: List<EventExtraData>,
 
     today: LocalDate,
     isShortEvent: Boolean,
     isShowCountClasses: Boolean,
-    paddingBottom: Dp
+    paddingBottom: Dp,
+
+    scheduleData: ScheduleData,
+    scheduleCalendarParams: ScheduleCalendarParams
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         HorizontalCalendar(
-            scheduleData = scheduleData,
             scheduleEntity = scheduleEntity,
-            eventsByWeekAndDays = eventsByWeekAndDays,
             eventsExtraData = eventsExtraData,
 
             isShowCountClasses = isShowCountClasses,
-            today = today
+            today = today,
+            eventsByWeekAndDays = eventsByWeekAndDays,
+
+            pagerWeeksState = scheduleCalendarParams.pagerWeeksState,
+            selectedDate = scheduleCalendarParams.selectedDate,
+            scheduleData = scheduleData,
+            selectDate = scheduleCalendarParams.selectDate
         )
         PagedDays(
             onShowDialogEvent = onShowDialogEvent,
-            onSelectDisplayedEvent = onSelectDisplayedEvent,
 
             scheduleEntity = scheduleEntity,
             eventsByWeekAndDays = eventsByWeekAndDays,
             eventsExtraData = eventsExtraData,
 
-            pagerDaysState = scheduleData.pagerDaysState,
+            pagerDaysState = scheduleCalendarParams.pagerDaysState,
             isShortEvent = isShortEvent,
             paddingBottom = paddingBottom
         )
@@ -121,24 +123,27 @@ fun ScheduleCalendarView(
 fun HorizontalCalendar(
     isShowCountClasses: Boolean,
     today: LocalDate,
-    eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
     scheduleData: ScheduleData,
+    eventsByWeekAndDays: Map<Int, Map<LocalDate, List<Event>>>,
     scheduleEntity: ScheduleEntity,
-    eventsExtraData: List<EventExtraData>
+    eventsExtraData: List<EventExtraData>,
+    pagerWeeksState: PagerState,
+    selectedDate: LocalDate,
+    selectDate: (LocalDate) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val firstDayOfCurrentWeek = remember(
-        scheduleData.pagerWeeksState.currentPage,
+        pagerWeeksState.currentPage,
         scheduleEntity
     ) {
         calculateFirstDayOfWeek(
-            scheduleEntity.startDate.plusWeeks(scheduleData.pagerWeeksState.currentPage.toLong())
+            scheduleEntity.startDate.plusWeeks(pagerWeeksState.currentPage.toLong())
         )
     }
 
     val displayMonth =
-        if (firstDayOfCurrentWeek == calculateFirstDayOfWeek(scheduleData.selectedDate))
-            scheduleData.selectedDate
+        if (firstDayOfCurrentWeek == calculateFirstDayOfWeek(selectedDate))
+            selectedDate
         else
             firstDayOfCurrentWeek.plusDays(4L)
 
@@ -154,10 +159,10 @@ fun HorizontalCalendar(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                enabled = scheduleData.pagerWeeksState.currentPage != 0,
+                enabled = pagerWeeksState.currentPage != 0,
                 onClick = {
                     scope.launch {
-                        scheduleData.pagerWeeksState.animateScrollToPage(scheduleData.pagerWeeksState.currentPage - 1)
+                        pagerWeeksState.animateScrollToPage(pagerWeeksState.currentPage - 1)
                     }
                 },
                 colors = IconButtonColors(
@@ -179,9 +184,9 @@ fun HorizontalCalendar(
                     .clickable(
                         onClick = {
                             scope.launch {
-                                scheduleData.pagerWeeksState.animateScrollToPage(scheduleData.weeksStartIndex)
+                                pagerWeeksState.animateScrollToPage(scheduleData.weeksStartIndex)
                             }
-                            scheduleData.selectDate(scheduleData.defaultDate)
+                            selectDate(scheduleData.defaultDate)
                         }
                     )
                     .padding(horizontal = 4.dp),
@@ -225,10 +230,10 @@ fun HorizontalCalendar(
             }
 
             IconButton(
-                enabled = scheduleData.pagerWeeksState.currentPage != scheduleData.weeksCount - 1,
+                enabled = pagerWeeksState.currentPage != scheduleData.weeksCount - 1,
                 onClick = {
                     scope.launch {
-                        scheduleData.pagerWeeksState.animateScrollToPage(scheduleData.pagerWeeksState.currentPage + 1)
+                        pagerWeeksState.animateScrollToPage(pagerWeeksState.currentPage + 1)
                     }
                 },
                 colors = IconButtonColors(
@@ -246,7 +251,7 @@ fun HorizontalCalendar(
         }
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
-            state = scheduleData.pagerWeeksState,
+            state = pagerWeeksState,
             verticalAlignment = Alignment.Top,
             pageSpacing = 16.dp,
             contentPadding = PaddingValues(
@@ -282,15 +287,15 @@ fun HorizontalCalendar(
                             it.key == currentDate
                         }
                     }?.values?.flatten() ?: emptyList()
-                    DayRowItem(
-                        selectDate = scheduleData.selectDate,
+                    HorizontalCalendarItem(
+                        selectDate = selectDate,
                         currentDate = currentDate,
                         events = eventsByDay,
                         eventsExtraData = eventsExtraData,
 
                         isShowCountClasses = isShowCountClasses,
                         isDisabled = currentDate !in scheduleEntity.startDate..scheduleEntity.endDate,
-                        isSelected = currentDate == scheduleData.selectedDate,
+                        isSelected = currentDate == selectedDate,
                         isToday = (currentDate == today)
                     )
                 }
@@ -300,7 +305,7 @@ fun HorizontalCalendar(
 }
 
 @Composable
-fun DayRowItem(
+fun HorizontalCalendarItem(
     selectDate: (LocalDate) -> Unit,
     currentDate: LocalDate,
     isDisabled: Boolean,
@@ -403,11 +408,10 @@ fun DayRowItem(
 
 @Composable
 fun PagedDays(
-    onShowDialogEvent: (Boolean) -> Unit,
-    onSelectDisplayedEvent: (Event?) -> Unit,
+    onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
 
     scheduleEntity: ScheduleEntity,
-    eventsByWeekAndDays: MutableMap<Int, Map<LocalDate, List<Event>>>,
+    eventsByWeekAndDays: Map<Int, Map<LocalDate, List<Event>>>,
     eventsExtraData: List<EventExtraData>,
 
     pagerDaysState: PagerState,
@@ -461,7 +465,6 @@ fun PagedDays(
                         eventsExtraData = eventsExtraData,
                         events = events.second,
                         onShowDialogEvent = onShowDialogEvent,
-                        onSelectDisplayedEvent = onSelectDisplayedEvent
                     )
                 }
             }
@@ -474,11 +477,6 @@ fun PagedDays(
         }
     }
 }
-
-fun calculateFirstDayOfWeek(date: LocalDate): LocalDate {
-    return date.minusDays(date.dayOfWeek.value - 1L)
-}
-
 
 fun calculateCurrentWeek(
     date: LocalDate,
