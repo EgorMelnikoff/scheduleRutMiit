@@ -102,21 +102,6 @@ fun Event(
                 }
             }
         )
-//        Column(
-//            modifier = Modifier
-//                .clip(RoundedCornerShape(12.dp))
-//                .background(MaterialTheme.colorScheme.surface)
-//        ) {
-//            events.forEachIndexed { index, event ->
-//
-//                if (index != events.lastIndex) {
-//                    HorizontalDivider(
-//                        thickness = 0.5.dp,
-//                        color = MaterialTheme.colorScheme.outline
-//                    )
-//                }
-//            }
-//        }
     }
 }
 
