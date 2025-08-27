@@ -13,8 +13,8 @@ android {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
-        versionName = "1.1.3"
+        versionCode = 7
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.room.ktx)
     implementation (libs.androidx.runtime.livedata)
     implementation (libs.androidx.datastore.preferences)
