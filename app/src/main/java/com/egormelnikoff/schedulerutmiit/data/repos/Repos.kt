@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.data.repos
 
-import androidx.room.Update
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
