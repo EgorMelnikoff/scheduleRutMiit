@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.ui.settings
 
 import android.content.Intent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,13 +10,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -73,7 +73,7 @@ fun SettingsScreen(
     scheduleUiState: ScheduleUiState,
     onShowDialogSchedules: () -> Unit,
     onShowDialogInfo: () -> Unit,
-    settingsListState: ScrollState,
+    settingsListState: LazyGridState,
     paddingValues: PaddingValues,
 ) {
     val scope = rememberCoroutineScope()
@@ -104,146 +104,153 @@ fun SettingsScreen(
         uncheckedTrackColor = MaterialTheme.colorScheme.surface
     )
 
-    Column(
+    LazyVerticalGrid(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(settingsListState)
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-                top = paddingValues.calculateTopPadding()
-            )
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background),
+        columns = GridCells.Adaptive(minSize = 450.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = paddingValues.calculateTopPadding() + 16.dp,
+            bottom = paddingValues.calculateBottomPadding()
+        ),
+        state = settingsListState
     ) {
-        GroupItem(
-            title = LocalContext.current.getString(R.string.schedule),
-            items = listOf(
-                {
-                    SettingsItem(
-                        onClick = {
-                            onShowDialogSchedules()
-                        },
-                        imageVector = ImageVector.vectorResource(R.drawable.schedule),
-                        text = LocalContext.current.getString(R.string.schedules)
-                    ) {
-                        Badge(
-                            containerColor = Color.Unspecified,
-                            contentColor = MaterialTheme.colorScheme.onSurface
+        item {
+            GroupItem(
+                title = LocalContext.current.getString(R.string.schedule),
+                items = listOf(
+                    {
+                        SettingsItem(
+                            onClick = {
+                                onShowDialogSchedules()
+                            },
+                            imageVector = ImageVector.vectorResource(R.drawable.schedule),
+                            text = LocalContext.current.getString(R.string.schedules)
                         ) {
-                            Text(
-                                text = scheduleUiState.savedNamedSchedules.size.toString(),
-                                fontSize = 12.sp,
-                            )
-                        }
-                    }
-                }, {
-                    SettingsItem(
-                        onClick = {
-                            scope.launch {
-                                preferencesDataStore.setViewEvent(!appSettings.eventView)
-                            }
-                        },
-                        imageVector = ImageVector.vectorResource(R.drawable.compact),
-                        text = LocalContext.current.getString(R.string.compact_view)
-                    ) {
-                        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                            Switch(
-                                checked = appSettings.eventView,
-                                onCheckedChange = {
-                                    scope.launch {
-                                        preferencesDataStore.setViewEvent(it)
-                                    }
-                                },
-                                colors = switchColors
-                            )
-                        }
-                    }
-                },
-                {
-                    SettingsItem(
-                        onClick = {
-                            scope.launch {
-                                preferencesDataStore.setShowCountClasses(!appSettings.showCountClasses)
-                            }
-                        },
-                        imageVector = ImageVector.vectorResource(R.drawable.count),
-                        text = LocalContext.current.getString(R.string.show_count_classes)
-                    ) {
-                        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                            Switch(
-                                modifier = Modifier.padding(0.dp),
-                                checked = appSettings.showCountClasses,
-                                onCheckedChange = {
-                                    scope.launch {
-                                        preferencesDataStore.setShowCountClasses(it)
-                                    }
-                                },
-                                colors = switchColors
-                            )
-                        }
-
-                    }
-                }
-            )
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        GroupItem(
-            title = LocalContext.current.getString(R.string.general),
-            items = listOf(
-                {
-                    SettingsItem(
-                        onClick = null,
-                        imageVector = ImageVector.vectorResource(R.drawable.sun),
-                        text = LocalContext.current.getString(R.string.theme),
-                        horizontal = false
-                    ) {
-                        ThemeSelector(
-                            preferences = preferencesDataStore,
-                            currentTheme = appSettings.theme,
-                            themes = themes
-                        )
-                    }
-                },
-                {
-                    SettingsItem(
-                        onClick = null,
-                        imageVector = ImageVector.vectorResource(R.drawable.color),
-                        text = LocalContext.current.getString(R.string.color_style),
-                        horizontal = false
-                    ) {
-                        ColorSelector(
-                            currentSelected = appSettings.decorColorIndex,
-                            onColorSelect = { value ->
-                                scope.launch {
-                                    preferencesDataStore.setDecorColor(value)
-                                }
-                            }
-                        )
-                    }
-                }, {
-                    SettingsItem(
-                        onClick = {
-                            val intent =
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    APP_CHANNEL_URL.toUri()
+                            Badge(
+                                containerColor = Color.Unspecified,
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            ) {
+                                Text(
+                                    text = scheduleUiState.savedNamedSchedules.size.toString(),
+                                    fontSize = 12.sp,
                                 )
-                            context.startActivity(intent)
-                        },
-                        imageVector = ImageVector.vectorResource(R.drawable.send),
-                        text = LocalContext.current.getString(R.string.report_a_problem),
-                    )
-                }, {
-                    SettingsItem(
-                        onClick = {
-                            onShowDialogInfo()
-                        },
-                        imageVector = ImageVector.vectorResource(R.drawable.info),
-                        text = LocalContext.current.getString(R.string.about_app),
-                    )
-                }
+                            }
+                        }
+                    }, {
+                        SettingsItem(
+                            onClick = {
+                                scope.launch {
+                                    preferencesDataStore.setViewEvent(!appSettings.eventView)
+                                }
+                            },
+                            imageVector = ImageVector.vectorResource(R.drawable.compact),
+                            text = LocalContext.current.getString(R.string.compact_view)
+                        ) {
+                            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                                Switch(
+                                    checked = appSettings.eventView,
+                                    onCheckedChange = {
+                                        scope.launch {
+                                            preferencesDataStore.setViewEvent(it)
+                                        }
+                                    },
+                                    colors = switchColors
+                                )
+                            }
+                        }
+                    },
+                    {
+                        SettingsItem(
+                            onClick = {
+                                scope.launch {
+                                    preferencesDataStore.setShowCountClasses(!appSettings.showCountClasses)
+                                }
+                            },
+                            imageVector = ImageVector.vectorResource(R.drawable.count),
+                            text = LocalContext.current.getString(R.string.show_count_classes)
+                        ) {
+                            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                                Switch(
+                                    modifier = Modifier.padding(0.dp),
+                                    checked = appSettings.showCountClasses,
+                                    onCheckedChange = {
+                                        scope.launch {
+                                            preferencesDataStore.setShowCountClasses(it)
+                                        }
+                                    },
+                                    colors = switchColors
+                                )
+                            }
+
+                        }
+                    }
+                )
             )
-        )
+        }
+        item {
+            GroupItem(
+                title = LocalContext.current.getString(R.string.general),
+                items = listOf(
+                    {
+                        SettingsItem(
+                            onClick = null,
+                            imageVector = ImageVector.vectorResource(R.drawable.sun),
+                            text = LocalContext.current.getString(R.string.theme),
+                            horizontal = false
+                        ) {
+                            ThemeSelector(
+                                preferences = preferencesDataStore,
+                                currentTheme = appSettings.theme,
+                                themes = themes
+                            )
+                        }
+                    },
+                    {
+                        SettingsItem(
+                            onClick = null,
+                            imageVector = ImageVector.vectorResource(R.drawable.color),
+                            text = LocalContext.current.getString(R.string.color_style),
+                            horizontal = false
+                        ) {
+                            ColorSelector(
+                                currentSelected = appSettings.decorColorIndex,
+                                onColorSelect = { value ->
+                                    scope.launch {
+                                        preferencesDataStore.setDecorColor(value)
+                                    }
+                                }
+                            )
+                        }
+                    }, {
+                        SettingsItem(
+                            onClick = {
+                                val intent =
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        APP_CHANNEL_URL.toUri()
+                                    )
+                                context.startActivity(intent)
+                            },
+                            imageVector = ImageVector.vectorResource(R.drawable.send),
+                            text = LocalContext.current.getString(R.string.report_a_problem),
+                        )
+                    }, {
+                        SettingsItem(
+                            onClick = {
+                                onShowDialogInfo()
+                            },
+                            imageVector = ImageVector.vectorResource(R.drawable.info),
+                            text = LocalContext.current.getString(R.string.about_app),
+                        )
+                    }
+                )
+            )
+        }
     }
 }
 
@@ -257,7 +264,6 @@ fun SettingsItem(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
             .let {
                 if (onClick != null) {
                     it.clickable(onClick = onClick)

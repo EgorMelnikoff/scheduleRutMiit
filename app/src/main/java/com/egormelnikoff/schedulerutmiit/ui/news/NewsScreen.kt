@@ -3,21 +3,20 @@ package com.egormelnikoff.schedulerutmiit.ui.news
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -55,21 +54,24 @@ fun NewsScreen(
     newsViewModel: NewsViewModel,
     onShowDialogNews: () -> Unit,
     newsUiState: NewsState,
-    newsLazyListState: LazyListState,
+    newsGridListState: LazyStaggeredGridState,
     paddingValues: PaddingValues
 ) {
     Box {
         when {
             newsUiState.newsList.isNotEmpty() -> {
-                LazyColumn(
-                    state = newsLazyListState,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                LazyVerticalStaggeredGrid (
+                    modifier = Modifier.fillMaxWidth(),
+                    columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
+                    verticalItemSpacing = 12.dp,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         end = 16.dp,
                         top = paddingValues.calculateTopPadding() + 16.dp,
                         bottom = paddingValues.calculateBottomPadding()
-                    )
+                    ),
+                    state = newsGridListState
                 ) {
                     items(newsUiState.newsList) { newsShort ->
                         NewsShort(
@@ -129,7 +131,8 @@ fun NewsShort(
         targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
     )
     val formatter = DateTimeFormatter.ofPattern("d MMMM")
-    Box(
+
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
@@ -149,34 +152,27 @@ fun NewsShort(
             contentDescription = null,
         )
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Spacer(modifier = Modifier.height(138.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = newsShort.title.trim(),
-                    fontSize = 16.sp,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                    fontWeight = FontWeight.Bold,
-                    style = TextStyle(
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        )
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                DateNews(
-                    date = newsShort.date.format(formatter)
-                )
-            }
+            Text(
+                text = newsShort.title.trim(),
+                fontSize = 16.sp,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold,
+                style = TextStyle(
+                    platformStyle = PlatformTextStyle(
+                        includeFontPadding = false
+                    )
+                ),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            DateNews(
+                date = newsShort.date.format(formatter)
+            )
         }
     }
 }
@@ -187,7 +183,8 @@ fun DateNews(
 ) {
     Row(
         modifier = Modifier
-            .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.primary)
             .padding(horizontal = 8.dp, vertical = 2.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -196,7 +193,7 @@ fun DateNews(
             modifier = Modifier.size(12.dp),
             imageVector = ImageVector.vectorResource(R.drawable.schedule),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.onPrimary
         )
         Text(
             text = date,
@@ -204,7 +201,7 @@ fun DateNews(
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

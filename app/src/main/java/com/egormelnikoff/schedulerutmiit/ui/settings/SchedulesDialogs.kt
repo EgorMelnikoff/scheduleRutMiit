@@ -45,7 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.composable.SimpleTopBar
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleUiState
@@ -74,6 +74,7 @@ fun SchedulesDialog(
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.search_simple),
+                        tint = MaterialTheme.colorScheme.onBackground,
                         contentDescription = null
                     )
                 }
@@ -83,8 +84,8 @@ fun SchedulesDialog(
         if (scheduleUiState.savedNamedSchedules.isNotEmpty()) {
             val groupedSchedules = remember(scheduleUiState.savedNamedSchedules) {
                 scheduleUiState.savedNamedSchedules
-                    .sortedBy { it.namedScheduleEntity.type }
-                    .groupBy { it.namedScheduleEntity.type }
+                    .sortedBy { it.type }
+                    .groupBy { it.type }
 
             }
             LazyColumn(
@@ -117,10 +118,10 @@ fun SchedulesDialog(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
-                    items(schedules.value) { schedule ->
+                    items(schedules.value) { namedScheduleEntity ->
                         DialogScheduleItem(
                             scheduleViewModel = scheduleViewModel,
-                            namedScheduleFormatted = schedule
+                            namedScheduleEntity = namedScheduleEntity
                         )
                     }
                 }
@@ -141,14 +142,14 @@ fun SchedulesDialog(
 @Composable
 fun DialogScheduleItem(
     scheduleViewModel: ScheduleViewModel,
-    namedScheduleFormatted: NamedScheduleFormatted
+    namedScheduleEntity: NamedScheduleEntity
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     val rotationAngle by animateFloatAsState(
         targetValue = if (isExpanded) 180f else 0f
     )
     val scale by animateFloatAsState(
-        targetValue = if (namedScheduleFormatted.namedScheduleEntity.isDefault) 1f else 0f
+        targetValue = if (namedScheduleEntity.isDefault) 1f else 0f
     )
 
     Column(
@@ -157,7 +158,7 @@ fun DialogScheduleItem(
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
             .let {
-                if (namedScheduleFormatted.namedScheduleEntity.isDefault) {
+                if (namedScheduleEntity.isDefault) {
                     it
                 } else {
                     it.clickable(onClick = { isExpanded = !isExpanded })
@@ -169,26 +170,16 @@ fun DialogScheduleItem(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = namedScheduleFormatted.namedScheduleEntity.fullName,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = namedScheduleFormatted.schedules.joinToString(", ") { it.scheduleEntity.typeName },
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            if (namedScheduleFormatted.namedScheduleEntity.isDefault) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = namedScheduleEntity.fullName,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            if (namedScheduleEntity.isDefault) {
                 Icon(
                     modifier = Modifier
                         .size(20.dp)
@@ -201,10 +192,10 @@ fun DialogScheduleItem(
 
             IconButton(
                 onClick = {
-                    if (namedScheduleFormatted.namedScheduleEntity.isDefault) {
+                    if (namedScheduleEntity.isDefault) {
                         scheduleViewModel.deleteNamedSchedule(
-                            primaryKey = namedScheduleFormatted.namedScheduleEntity.id,
-                            isDefault = namedScheduleFormatted.namedScheduleEntity.isDefault
+                            primaryKey = namedScheduleEntity.id,
+                            isDefault = true
                         )
                     } else {
                         isExpanded = !isExpanded
@@ -212,7 +203,7 @@ fun DialogScheduleItem(
 
                 }
             ) {
-                if (namedScheduleFormatted.namedScheduleEntity.isDefault) {
+                if (namedScheduleEntity.isDefault) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.delete),
                         tint = MaterialTheme.colorScheme.error,
@@ -231,7 +222,7 @@ fun DialogScheduleItem(
             }
         }
         AnimatedVisibility(
-            visible = !namedScheduleFormatted.namedScheduleEntity.isDefault && isExpanded
+            visible = !namedScheduleEntity.isDefault && isExpanded
         ) {
             FlowRow(
                 maxItemsInEachRow = 2,
@@ -242,8 +233,8 @@ fun DialogScheduleItem(
                     modifier = Modifier,
                     onClick = {
                         scheduleViewModel.deleteNamedSchedule(
-                            primaryKey = namedScheduleFormatted.namedScheduleEntity.id,
-                            isDefault = namedScheduleFormatted.namedScheduleEntity.isDefault
+                            primaryKey = namedScheduleEntity.id,
+                            isDefault = namedScheduleEntity.isDefault
                         )
                     },
                     colors = ButtonDefaults.outlinedButtonColors().copy(
@@ -257,7 +248,7 @@ fun DialogScheduleItem(
                     imageVector = ImageVector.vectorResource(R.drawable.delete)
                 )
                 AnimatedVisibility(
-                    visible = !namedScheduleFormatted.namedScheduleEntity.isDefault,
+                    visible = !namedScheduleEntity.isDefault,
                     enter = scaleIn(),
                     exit = scaleOut()
                 ) {
@@ -265,7 +256,7 @@ fun DialogScheduleItem(
                         modifier = Modifier,
                         onClick = {
                             isExpanded = false
-                            scheduleViewModel.selectDefaultNamedSchedule(namedScheduleFormatted.namedScheduleEntity.id)
+                            scheduleViewModel.selectDefaultNamedSchedule(namedScheduleEntity.id)
                         },
                         colors = ButtonDefaults.outlinedButtonColors().copy(
                             contentColor = MaterialTheme.colorScheme.onBackground
