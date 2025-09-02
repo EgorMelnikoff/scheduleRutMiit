@@ -259,7 +259,6 @@ fun Main(
                 }
 
                 entry<Routes.NewsList> {
-                    println(newsUiState)
                     NewsScreen(
                         newsViewModel = newsViewModel,
                         onShowDialogNews = {
