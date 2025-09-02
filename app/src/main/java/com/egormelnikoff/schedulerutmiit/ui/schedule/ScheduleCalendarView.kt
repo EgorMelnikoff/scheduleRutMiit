@@ -58,9 +58,7 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeYellow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
-import java.time.temporal.ChronoUnit
 import java.util.Locale
-import kotlin.math.abs
 
 
 data class ScheduleCalendarParams(
@@ -456,7 +454,8 @@ fun PagedDays(
                         start = 16.dp,
                         end = 16.dp,
                         bottom = paddingBottom
-                    )
+                    ),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 eventsForDayByStartTime.forEach { events ->
                     Event(
@@ -475,14 +474,4 @@ fun PagedDays(
             )
         }
     }
-}
-
-fun calculateCurrentWeek(
-    date: LocalDate,
-    startDate: LocalDate,
-    firstPeriodNumber: Int,
-    interval: Int
-): Int {
-    return (((abs(ChronoUnit.WEEKS.between(date, startDate)).plus(1)
-        .toInt()) + firstPeriodNumber) % interval).plus(1)
 }
