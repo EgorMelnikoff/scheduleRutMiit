@@ -74,7 +74,7 @@ class RemoteReposImpl(
                         when (val schedule = api.parseJson(scheduleJson, Schedule::class.java)) {
                             is Result.Error -> continue
                             is Result.Success -> {
-                                val fixedSchedule = fixApiIssuance(timetable, schedule.data)
+                                val fixedSchedule = fixApiIssuance(apiId, timetable, schedule.data)
                                 schedules.add(fixedSchedule!!)
                             }
                         }
@@ -170,7 +170,7 @@ class RemoteReposImpl(
 
     }
 
-    private fun fixApiIssuance(timetable: Timetable, schedule: Schedule): Schedule? {
+    private suspend fun fixApiIssuance(apiId: String, timetable: Timetable, schedule: Schedule): Schedule? {
         val fixedSchedule = when (timetable.type) {
             TimetableType.PERIODIC.type -> {
                 Schedule(
@@ -206,7 +206,7 @@ class RemoteReposImpl(
                             events = checkedEvents,
                             recurrence = Recurrence(
                                 frequency = "WEEKLY",
-                                currentNumber = 1, //parse
+                                currentNumber = parser.parseCurrentWeek("https://www.miit.ru/timetable/$apiId"),
                                 interval = weeksIndexes.size,
                                 firstWeekNumber = 1
                             )
@@ -250,20 +250,23 @@ class RemoteReposImpl(
                 ?.let { events.addAll(it) }
 
             if (events.isNotEmpty()) {
+                val today = LocalDate.now()
                 val scheduleEntity = ScheduleEntity(
                     namedScheduleId = id,
                     startDate = oldSchedule.timetable?.startDate!!,
                     endDate = oldSchedule.timetable.endDate!!,
                     recurrence = if (oldSchedule.periodicContent != null) {
-                        if (LocalDate.now() > oldSchedule.timetable.startDate) {
+                        if (today > oldSchedule.timetable.startDate) {
                             val currentWeekIndex = abs(
                                 ChronoUnit.WEEKS.between(
                                     calculateFirstDayOfWeek(oldSchedule.timetable.startDate),
                                     calculateFirstDayOfWeek(LocalDate.now())
-                                ) + oldSchedule.periodicContent.recurrence!!.currentNumber!!
-                            ) - 1
+                                )
+                            ).plus(1)
                             val firstWeekNumber =
-                                (currentWeekIndex % oldSchedule.periodicContent.recurrence.interval!!).toInt()
+                                ((currentWeekIndex + oldSchedule.periodicContent.recurrence!!.currentNumber!!)
+                                        % oldSchedule.periodicContent.recurrence.interval!!)
+                                    .toInt()
                                     .plus(1)
                             Recurrence(
                                 frequency = oldSchedule.periodicContent.recurrence.frequency,

@@ -81,7 +81,7 @@ class ReposImpl(
     private val remoteRepos: RemoteRepos
 ) : Repos {
     companion object {
-        val SCHEDULE_UPDATE_THRESHOLD_MS = TimeUnit.HOURS.toMillis(12)
+        val SCHEDULE_UPDATE_THRESHOLD_MS = TimeUnit.HOURS.toMillis(6)
         const val CUSTOM_SCHEDULE_TYPE = 3
     }
 
@@ -187,7 +187,6 @@ class ReposImpl(
     private fun shouldUpdateNamedSchedule(namedSchedule: NamedScheduleFormatted): Boolean {
         val timeSinceLastUpdate =
             System.currentTimeMillis() - namedSchedule.namedScheduleEntity.lastTimeUpdate
-        println(timeSinceLastUpdate)
         return timeSinceLastUpdate > SCHEDULE_UPDATE_THRESHOLD_MS && namedSchedule.namedScheduleEntity.type != CUSTOM_SCHEDULE_TYPE
     }
 
@@ -233,9 +232,12 @@ class ReposImpl(
                 }
                 val ids = updatedEvents.map { it.id }.filter { it != 0L }
                 if (ids.sorted() == ids.toSet().sorted()) {
+                    val updatedScheduleEntity = oldSchedule.scheduleEntity.copy(
+                        recurrence = updatedSchedule.scheduleEntity.recurrence
+                    )
                     val updatedScheduleWithId = ScheduleFormatted(
                         events = updatedEvents,
-                        scheduleEntity = oldSchedule.scheduleEntity,
+                        scheduleEntity = updatedScheduleEntity,
                         eventsExtraData = oldSchedule.eventsExtraData
                     )
                     localRepos.deleteSchedule(oldSchedule.scheduleEntity.id)
