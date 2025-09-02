@@ -8,6 +8,7 @@ import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 data class BarItem(
     val title: String,
     val icon: ImageVector,
+    val selectedIcon: ImageVector,
     val route: Routes
 )
 

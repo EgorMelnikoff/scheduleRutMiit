@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 
-
 @Composable
 fun ScheduleRutMiitTheme(
     appSettings: AppSettings?,
@@ -76,10 +75,7 @@ fun ScheduleRutMiitTheme(
         outline =  if (appSettings?.decorColorIndex == 0) LightGrey
         else currentPrimary.first,
 
-        surfaceContainerLow = darkThemeGreen,
-        surfaceContainer = darkThemeYellow,
-        surfaceContainerHigh = darkThemeRed
-
+        error = darkThemeRed
     )
 
 
@@ -97,10 +93,7 @@ fun ScheduleRutMiitTheme(
         outline = if (appSettings?.decorColorIndex == 0) LightGrey
         else currentPrimary.second,
 
-        surfaceContainerLow = lightThemeGreen,
-        surfaceContainer = lightThemeYellow,
-        surfaceContainerHigh = lightThemeRed
-
+        error = darkThemeRed
     )
 
     val darkTheme = when (appSettings?.theme) {

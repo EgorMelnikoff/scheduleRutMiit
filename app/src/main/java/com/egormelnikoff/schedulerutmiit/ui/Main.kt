@@ -1,44 +1,17 @@
 package com.egormelnikoff.schedulerutmiit.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,27 +19,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
+import com.egormelnikoff.schedulerutmiit.ui.composable.CustomNavigationBar
+import com.egormelnikoff.schedulerutmiit.ui.composable.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.ui.news.NewsDialog
 import com.egormelnikoff.schedulerutmiit.ui.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsViewModel
@@ -99,27 +63,33 @@ fun Main(
         BarItem(
             title = LocalContext.current.getString(R.string.search),
             icon = ImageVector.vectorResource(R.drawable.search),
+            selectedIcon = ImageVector.vectorResource(R.drawable.search),
             route = Routes.Search
         ),
         BarItem(
             title = LocalContext.current.getString(R.string.schedule),
             icon = ImageVector.vectorResource(R.drawable.schedule),
+            selectedIcon = ImageVector.vectorResource(R.drawable.schedule_fill),
             route = Routes.Schedule
         ),
         BarItem(
             title = LocalContext.current.getString(R.string.news),
             icon = ImageVector.vectorResource(R.drawable.news),
+            selectedIcon = ImageVector.vectorResource(R.drawable.news_fill),
             route = Routes.NewsList
         ),
         BarItem(
             title = LocalContext.current.getString(R.string.settings),
             icon = ImageVector.vectorResource(R.drawable.settings),
+            selectedIcon = ImageVector.vectorResource(R.drawable.settings_fill),
             route = Routes.Settings
         )
     )
-    val appBackStack = remember {
-        AppBackStack(
-            startRoute = Routes.Schedule
+    val appBackStack by remember {
+        mutableStateOf(
+            AppBackStack(
+                startRoute = Routes.Schedule
+            )
         )
     }
 
@@ -130,11 +100,28 @@ fun Main(
 
     val snackBarHostState = remember { SnackbarHostState() }
     val scheduleListState = rememberLazyListState()
-    val newsListState = rememberLazyListState()
-    val settingsListState = rememberScrollState()
+    val newsListState = rememberLazyStaggeredGridState()
+    val settingsListState = rememberLazyGridState()
 
     var query by remember { mutableStateOf("") }
     val today by remember { mutableStateOf(LocalDate.now()) }
+    var selectedDate by remember(
+        scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.apiId
+    ) {
+        mutableStateOf(
+            scheduleUiState.currentScheduleData?.defaultDate ?: today
+        )
+    }
+    val pagerDaysState = rememberPagerState(
+        pageCount = { scheduleUiState.currentScheduleData?.weeksCount?.times(7) ?: 0 },
+        initialPage = scheduleUiState.currentScheduleData?.daysStartIndex ?: 0
+    )
+
+    val pagerWeeksState = rememberPagerState(
+        pageCount = { scheduleUiState.currentScheduleData?.weeksCount ?: 0 },
+        initialPage = scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0
+    )
+
 
     LaunchedEffect(key1 = Unit) {
         scheduleViewModel.uiEvent.collect { info ->
@@ -156,37 +143,16 @@ fun Main(
         }
     }
 
-    val pagerDaysState = rememberPagerState(
-        pageCount = { scheduleUiState.currentScheduleData?.weeksCount?.times(7) ?: 0 },
-        initialPage = scheduleUiState.currentScheduleData?.daysStartIndex ?: 0
-    )
-
-    val pagerWeeksState = rememberPagerState(
-        pageCount = { scheduleUiState.currentScheduleData?.weeksCount ?: 0 },
-        initialPage = scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0
-    )
-
-    var selectedDate by remember(
-        scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.apiId
-    ) {
-        mutableStateOf(
-            scheduleUiState.currentScheduleData?.defaultDate ?: LocalDate.now()
-        )
-    }
-
     LaunchedEffect(
         scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.apiId,
         scheduleUiState.currentScheduleEntity?.timetableId
     ) {
+        pagerDaysState.scrollToPage(scheduleUiState.currentScheduleData?.daysStartIndex ?: 0)
         scheduleListState.scrollToItem(0)
     }
 
-    LaunchedEffect(scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.apiId) {
-        pagerDaysState.scrollToPage(scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0)
-    }
-
-    LaunchedEffect(selectedDate) {
-        if (scheduleUiState.currentScheduleEntity != null) {
+    if (scheduleUiState.currentScheduleEntity != null) {
+        LaunchedEffect(selectedDate) {
             val targetPage = ChronoUnit.DAYS.between(
                 scheduleUiState.currentScheduleEntity.startDate,
                 selectedDate
@@ -196,10 +162,8 @@ fun Main(
                 pagerDaysState.scrollToPage(targetPage)
             }
         }
-    }
 
-    LaunchedEffect(pagerDaysState.currentPage) {
-        if (scheduleUiState.currentScheduleEntity != null) {
+        LaunchedEffect(pagerDaysState.currentPage) {
             val newSelectedDate =
                 scheduleUiState.currentScheduleEntity.startDate.plusDays(
                     pagerDaysState.currentPage.toLong()
@@ -219,7 +183,6 @@ fun Main(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-
         bottomBar = {
             CustomNavigationBar(
                 appBackStack = appBackStack,
@@ -228,42 +191,9 @@ fun Main(
             )
         },
         snackbarHost = {
-            SnackbarHost(snackBarHostState) { data ->
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .background(
-                            MaterialTheme.colorScheme.surface,
-                            RoundedCornerShape(12.dp)
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        fontSize = 12.sp,
-                        style = TextStyle(
-                            platformStyle = PlatformTextStyle(
-                                includeFontPadding = false
-                            )
-                        ),
-                        text = data.visuals.message,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    IconButton(
-                        onClick = {
-                            data.dismiss()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.clear),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-            }
+            CustomSnackbarHost(
+                snackBarHostState = snackBarHostState
+            )
         }
     ) { paddingValues ->
         NavDisplay(
@@ -323,6 +253,7 @@ fun Main(
                         scheduleViewModel = scheduleViewModel,
                         searchViewModel = searchViewModel,
                         searchState = searchState,
+                        scheduleUiState = scheduleUiState,
                         paddingValues = paddingValues
                     )
                 }
@@ -335,7 +266,7 @@ fun Main(
                             appBackStack.navigateToDialog(Routes.News)
                         },
                         newsUiState = newsUiState,
-                        newsLazyListState = newsListState,
+                        newsGridListState = newsListState,
                         paddingValues = paddingValues
                     )
                 }
@@ -399,149 +330,5 @@ fun Main(
                 }
             }
         )
-    }
-}
-
-@Composable
-fun CustomNavigationBar(
-    appBackStack: AppBackStack<Routes.Schedule>,
-    visible: Boolean,
-    barItems: Array<BarItem>
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.Transparent,
-                        MaterialTheme.colorScheme.background
-                    ),
-                    startY = 0f,
-                    endY = Float.POSITIVE_INFINITY
-                )
-            )
-            .padding(horizontal = 24.dp)
-            .padding(
-                top = 12.dp,
-                bottom = WindowInsets.navigationBars.asPaddingValues()
-                    .calculateBottomPadding() + 8.dp
-            ),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(
-            16.dp,
-            Alignment.CenterHorizontally
-        )
-    ) {
-        CustomAnimatedVisibility(
-            visible = visible
-        ) {
-            Row(
-                modifier = Modifier
-                    .height(56.dp)
-                    .border(
-                        0.1.dp,
-                        MaterialTheme.colorScheme.outline,
-                        RoundedCornerShape(16.dp)
-                    )
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        MaterialTheme.colorScheme.background
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                barItems.forEach { barItem ->
-                    CustomNavigationBarItem(
-                        icon = barItem.icon,
-                        title = barItem.title,
-                        isSelected = appBackStack.last() == barItem.route,
-                        onClick = {
-                            appBackStack.navigateToPage(barItem.route)
-                        }
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CustomNavigationBarItem(
-    icon: ImageVector,
-    title: String,
-    isSelected: Boolean = true,
-    onClick: () -> Unit
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.9f else 1.0f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
-    )
-
-    Column(
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            )
-            .scale(scale)
-            .let {
-                if (isSelected) {
-                    it.background(
-                        MaterialTheme.colorScheme.surface
-                    )
-                } else it
-            }
-            .padding(8.dp)
-            .width(52.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Icon(
-            modifier = Modifier.size(24.dp),
-            imageVector = icon,
-            contentDescription = title,
-            tint = if (isSelected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.onSurface
-        )
-        Text(
-            text = title,
-            fontSize = 8.sp,
-            fontWeight = if (isSelected) FontWeight.Bold
-            else FontWeight.Normal,
-            style = TextStyle(
-                platformStyle = PlatformTextStyle(
-                    includeFontPadding = false
-                )
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = if (isSelected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.onSurface
-        )
-    }
-}
-
-@Composable
-fun CustomAnimatedVisibility(
-    visible: Boolean,
-    content: @Composable (() -> Unit),
-) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn() + slideInVertically(
-            initialOffsetY = { fullHeight -> fullHeight }
-        ),
-        exit = fadeOut() + slideOutVertically(
-            targetOffsetY = { fullHeight -> fullHeight }
-        )
-    ) {
-        content.invoke()
     }
 }

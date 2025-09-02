@@ -71,6 +71,8 @@ import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import kotlin.math.abs
 
 @Composable
 fun ScreenSchedule(
@@ -190,10 +192,11 @@ fun ScreenSchedule(
                             } else {
                                 ScheduleListView(
                                     onShowDialogEvent = onShowDialogEvent,
-                                    isShortEvent = appSettings.eventView,
+                                    scheduleEntity = scheduleUiState.currentScheduleEntity,
                                     eventsForList = scheduleUiState.currentScheduleData.eventForList,
                                     eventsExtraData = scheduleUiState.currentScheduleData.eventsExtraData,
                                     scheduleListState = scheduleListState,
+                                    isShortEvent = appSettings.eventView,
                                     paddingBottom = paddingValues.calculateBottomPadding()
                                 )
                             }
@@ -548,4 +551,14 @@ fun ExpandedMenuItem(
 
 fun calculateFirstDayOfWeek(date: LocalDate): LocalDate {
     return date.minusDays(date.dayOfWeek.value - 1L)
+}
+
+fun calculateCurrentWeek(
+    date: LocalDate,
+    startDate: LocalDate,
+    firstPeriodNumber: Int,
+    interval: Int
+): Int {
+    val weeksFromStart = abs(ChronoUnit.WEEKS.between(date, startDate)).plus(1).toInt()
+    return ((weeksFromStart + firstPeriodNumber) % interval).plus(1)
 }

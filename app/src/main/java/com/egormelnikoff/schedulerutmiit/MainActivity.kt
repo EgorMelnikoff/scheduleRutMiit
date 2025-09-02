@@ -16,12 +16,12 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
 
 
 class MainActivity : ComponentActivity() {
-
+    private lateinit var container: AppContainer
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        val container = (applicationContext as ScheduleApplication).container
+        container = (applicationContext as ScheduleApplication).container
 
         val searchViewModel: SearchViewModelImpl by viewModels {
             SearchViewModelImpl.provideFactory(
