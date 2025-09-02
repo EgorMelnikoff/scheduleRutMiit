@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.ui.schedule
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,9 +51,7 @@ fun Event(
     isShortEvent: Boolean
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize(),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Row(
@@ -120,7 +117,6 @@ fun SingleEvent(
                     onShowDialogEvent(Pair(event, eventExtraData))
                 },
             )
-            .animateContentSize()
     ) {
         if (eventExtraData != null) {
             Canvas(Modifier.fillMaxWidth()) {
