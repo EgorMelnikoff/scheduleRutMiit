@@ -23,6 +23,7 @@ fun GroupItem(
     items: List<@Composable () -> Unit>
 ) {
     Column(
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         if (title != null) {
@@ -42,7 +43,7 @@ fun GroupItem(
                 val isFirst = index == 0
                 val isLast = index == items.lastIndex
                 val edgeCorner = 16.dp
-                val interiorCorner = 8.dp
+                val interiorCorner = 4.dp
                 val shape = when {
                     isFirst && isLast -> RoundedCornerShape(edgeCorner)
                     isFirst -> RoundedCornerShape(
