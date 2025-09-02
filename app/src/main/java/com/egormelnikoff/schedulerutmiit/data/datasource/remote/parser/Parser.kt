@@ -21,6 +21,7 @@ import org.jsoup.nodes.TextNode
 interface Parser {
     suspend fun parsePeople(url: String): Result<List<Person>>
     suspend fun parseChannelInfo(url: String): Result<TelegramPage>
+    suspend fun parseCurrentWeek(url: String): Int
     fun parseNews(news: News): News
 }
 
@@ -118,6 +119,18 @@ class ParserImpl : Parser {
         news.elements = parsedElements
         news.images = parsedImages
         return news
+    }
+
+    override suspend fun parseCurrentWeek(url: String): Int {
+        return withContext(Dispatchers.IO) {
+            val document = Jsoup.connect(url).get()
+            val activeLink = document.select(".nav-link.active").first()
+            val weekText = activeLink?.text()
+            val weekNumber = weekText?.split(" ")?.get(0)
+            val romanToArabic = mapOf("I" to 1, "II" to 2, "III" to 3, "IV" to 4, "V" to 5)
+            val weekNumberInt = romanToArabic[weekNumber]
+            weekNumberInt ?: 1
+        }
     }
 
     private fun htmlToAnnotatedString(html: String): AnnotatedString {
