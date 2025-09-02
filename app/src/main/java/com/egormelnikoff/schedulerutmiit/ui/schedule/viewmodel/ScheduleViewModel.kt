@@ -10,6 +10,7 @@ import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
@@ -42,7 +43,7 @@ interface ScheduleViewModel {
 }
 
 data class ScheduleUiState(
-    val savedNamedSchedules: List<NamedScheduleFormatted> = emptyList(),
+    val savedNamedSchedules: List<NamedScheduleEntity> = emptyList(),
     val currentNamedSchedule: NamedScheduleFormatted? = null,
     val currentScheduleEntity: ScheduleEntity? = null,
     val currentScheduleData: ScheduleData? = null,
@@ -114,7 +115,7 @@ class ScheduleViewModelImpl(
             val currentSchedule = findDefaultSchedule(defaultNamedSchedule)
             _uiState.update {
                 it.copy(
-                    savedNamedSchedules = savedNamedSchedules,
+                    savedNamedSchedules = savedNamedSchedules.map { namedScheduleFormatted -> namedScheduleFormatted.namedScheduleEntity },
                     currentNamedSchedule = defaultNamedSchedule,
                     currentScheduleEntity = currentSchedule?.scheduleEntity,
                     currentScheduleData = calculateScheduleData(currentSchedule),
@@ -136,7 +137,8 @@ class ScheduleViewModelImpl(
                 )
 
                 if (resultUpdate is Result.Error) {
-                    val errorMsg = resultUpdate.exception.message ?: resourcesManager.getString(R.string.unknown_error)
+                    val errorMsg = resultUpdate.exception.message
+                        ?: resourcesManager.getString(R.string.unknown_error)
                     _uiEventChannel.send(UiEvent.ShowErrorMessage("${resourcesManager.getString(R.string.failed_update)}: $errorMsg"))
 
                 }
@@ -172,7 +174,8 @@ class ScheduleViewModelImpl(
                 )
 
                 if (resultUpdate is Result.Error) {
-                    val errorMsg = resultUpdate.exception.message ?: resourcesManager.getString(R.string.unknown_error)
+                    val errorMsg = resultUpdate.exception.message
+                        ?: resourcesManager.getString(R.string.unknown_error)
                     _uiEventChannel.send(UiEvent.ShowErrorMessage("${resourcesManager.getString(R.string.failed_update)}: $errorMsg"))
                 }
                 return@launch
@@ -273,7 +276,8 @@ class ScheduleViewModelImpl(
                     ?: updatedCurrentNamedSchedule.schedules.firstOrNull()
             _uiState.update { value ->
                 value.copy(
-                    savedNamedSchedules = repos.getAllNamedSchedules(),
+                    savedNamedSchedules = repos.getAllNamedSchedules()
+                        .map { it.namedScheduleEntity },
                     currentNamedSchedule = updatedCurrentNamedSchedule,
                     currentScheduleEntity = updatesCurrentSchedule?.scheduleEntity,
                     currentScheduleData = calculateScheduleData(updatesCurrentSchedule),
@@ -290,7 +294,8 @@ class ScheduleViewModelImpl(
 
             _uiState.update {
                 it.copy(
-                    savedNamedSchedules = repos.getAllNamedSchedules(),
+                    savedNamedSchedules = repos.getAllNamedSchedules()
+                        .map { namedScheduleFormatted -> namedScheduleFormatted.namedScheduleEntity },
                     isSaved = (primaryKey != _uiState.value.currentNamedSchedule!!.namedScheduleEntity.id) && _uiState.value.isSaved,
                     isSavingAvailable = repos.isSavingAvailable()
                 )
@@ -355,8 +360,8 @@ class ScheduleViewModelImpl(
             ScheduleData(
                 weeksCount = weeksCount,
                 defaultDate = defaultParams.first,
-                daysStartIndex = defaultParams.second,
-                weeksStartIndex = defaultParams.third,
+                weeksStartIndex = defaultParams.second,
+                daysStartIndex = defaultParams.third,
                 eventsForCalendar = eventsForCalendar,
                 eventForList = eventsForList,
                 eventsExtraData = scheduleFormatted.eventsExtraData
