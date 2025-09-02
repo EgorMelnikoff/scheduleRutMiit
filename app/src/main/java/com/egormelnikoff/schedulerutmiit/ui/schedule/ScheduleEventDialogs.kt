@@ -264,6 +264,9 @@ fun EventDialog(
                 }
             }
             if (!event.lecturers.isNullOrEmpty()) {
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
                 GroupItem(
                     title = context.getString(R.string.Lecturers),
                     titleColor = MaterialTheme.colorScheme.primary,
