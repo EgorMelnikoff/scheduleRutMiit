@@ -67,6 +67,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
 import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchState
 import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModel
@@ -81,6 +82,7 @@ fun SearchScreen(
     scheduleViewModel: ScheduleViewModel,
     searchState: SearchState,
     navigateToSchedule: () -> Unit,
+    scheduleUiState: ScheduleUiState,
     query: String,
     onQueryChanged: (String) -> Unit,
     paddingValues: PaddingValues
@@ -106,7 +108,6 @@ fun SearchScreen(
             Spacer(
                 modifier = Modifier.height(8.dp)
             )
-
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -145,11 +146,42 @@ fun SearchScreen(
             }
         ) { stateSearch ->
             when (stateSearch) {
-                is SearchState.EmptyQuery -> Empty(
-                    imageVector = ImageVector.vectorResource(R.drawable.search),
-                    subtitle = LocalContext.current.getString(R.string.enter_your_query),
-                    paddingBottom = paddingValues.calculateBottomPadding()
-                )
+                is SearchState.EmptyQuery -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (scheduleUiState.savedNamedSchedules.isEmpty()) {
+                            Empty(
+                                imageVector = ImageVector.vectorResource(R.drawable.search),
+                                subtitle = LocalContext.current.getString(R.string.enter_your_query),
+                                paddingBottom = paddingValues.calculateBottomPadding()
+                            )
+                        } else {
+                            Text(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp),
+                                text = LocalContext.current.getString(R.string.maybe_you_serch),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            scheduleUiState.savedNamedSchedules.forEach { namedScheduleEntity ->
+                                SearchedItem(
+                                    onQueryChanged = onQueryChanged,
+                                    navigateToSchedule = navigateToSchedule,
+                                    searchViewModel = searchViewModel,
+                                    scheduleViewModel = scheduleViewModel,
+                                    type = namedScheduleEntity.type,
+                                    id = namedScheduleEntity.apiId!!,
+                                    title = namedScheduleEntity.shortName
+                                )
+                            }
+                        }
+                    }
+                }
 
                 is SearchState.Loading -> LoadingScreen(
                     paddingTop = 0.dp,
