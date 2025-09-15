@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -82,7 +83,8 @@ fun ScheduleCalendarView(
     paddingBottom: Dp,
 
     scheduleData: ScheduleData,
-    scheduleCalendarParams: ScheduleCalendarParams
+    scheduleCalendarParams: ScheduleCalendarParams,
+    hapticFeedback: HapticFeedback
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -109,7 +111,8 @@ fun ScheduleCalendarView(
 
             pagerDaysState = scheduleCalendarParams.pagerDaysState,
             isShortEvent = isShortEvent,
-            paddingBottom = paddingBottom
+            paddingBottom = paddingBottom,
+            hapticFeedback = hapticFeedback
         )
     }
 }
@@ -412,7 +415,8 @@ fun PagedDays(
 
     pagerDaysState: PagerState,
     isShortEvent: Boolean,
-    paddingBottom: Dp
+    paddingBottom: Dp,
+    hapticFeedback: HapticFeedback
 ) {
     HorizontalPager(
         modifier = Modifier.fillMaxSize(),
@@ -463,6 +467,7 @@ fun PagedDays(
                         eventsExtraData = eventsExtraData,
                         events = events.second,
                         onShowDialogEvent = onShowDialogEvent,
+                        hapticFeedback = hapticFeedback
                     )
                 }
             }
