@@ -87,6 +87,7 @@ data class Event(
     var scheduleId: Long,
     val startDatetime: LocalDateTime?,
     val endDatetime: LocalDateTime?,
+    val isHidden: Boolean = false,
     @Embedded
     val recurrenceRule: RecurrenceRule?,
     val periodNumber: Int?,
