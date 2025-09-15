@@ -86,8 +86,12 @@
     <string name="color_style">Цветовое оформление</string>
     <string name="decor">Оформление</string>
 
+    <string name="default_schedule">Основное расписание</string>
+    <string name="open">Открыть</string>
+    <string name="is_saved">сохранено</string>
+    <string name="is_deleted">удалено</string>
     <string name="from">с</string>
-
+    <string name="Current_on">Актуально на</string>
     <string name="failed_update">Не удалось обновить расписание</string>
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="updating">Обновление</string>

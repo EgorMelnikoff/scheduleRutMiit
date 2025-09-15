@@ -88,8 +88,12 @@
     <string name="color_style">Color style</string>
     <string name="decor">Decor</string>
 
+    <string name="default_schedule">Default schedule</string>
+    <string name="open">Open</string>
+    <string name="is_saved">is saved</string>
+    <string name="is_deleted">is deleted</string>
     <string name="from">from</string>
-
+    <string name="Current_on">Current on</string>
     <string name="day_off">Day off</string>
     <string name="error_load_schedule">There was an error loading the schedule</string>
     <string name="empty_base">Save at least one schedule to display it</string>
