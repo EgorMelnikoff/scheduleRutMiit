@@ -19,7 +19,7 @@ import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
         Event::class,
         EventExtraData::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 
@@ -39,6 +39,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "schedule_database"
                 )
                     .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_2_3)
                     .build()
                 INSTANCE = instance
                 instance
@@ -92,5 +93,11 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         """)
         db.execSQL("DROP TABLE Schedules")
         db.execSQL("ALTER TABLE Schedules_new RENAME TO Schedules")
+    }
+}
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE Events ADD COLUMN isHidden INTEGER NOT NULL DEFAULT 0")
     }
 }
