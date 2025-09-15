@@ -29,7 +29,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -37,23 +36,16 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -67,6 +59,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
 import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.composable.SearchDataField
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchState
@@ -83,12 +76,12 @@ fun SearchScreen(
     searchState: SearchState,
     navigateToSchedule: () -> Unit,
     scheduleUiState: ScheduleUiState,
+    selectedOption: Options,
+    onSelectOption: (Options) -> Unit,
     query: String,
     onQueryChanged: (String) -> Unit,
     paddingValues: PaddingValues
 ) {
-    var selectedOption by remember { mutableStateOf(Options.ALL) }
-
     Column(
         modifier = Modifier
             .padding(top = paddingValues.calculateTopPadding())
@@ -100,10 +93,47 @@ fun SearchScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
             SearchDataField(
-                onQueryChanged = onQueryChanged,
-                searchViewModel = searchViewModel,
                 value = query,
-                selectedOptions = selectedOption
+                onValueChanged = onQueryChanged,
+                action = {
+                    searchViewModel.search(query.trim(), selectedOption)
+                },
+                placeholder = {
+                    Text(
+                        text = LocalContext.current.getString(R.string.search)
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.search_simple),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                },
+                trailingIcon = {
+                    AnimatedVisibility(
+                        visible = query != "",
+                        enter = scaleIn(animationSpec = tween(300)),
+                        exit = fadeOut(animationSpec = tween(500))
+                    ) {
+                        IconButton(
+                            onClick = {
+                                onQueryChanged("")
+                                searchViewModel.setDefaultSearchState()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.clear),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    autoCorrectEnabled = false,
+                    imeAction = ImeAction.Search
+                )
             )
             Spacer(
                 modifier = Modifier.height(8.dp)
@@ -117,7 +147,7 @@ fun SearchScreen(
                     imageVector = null,
                     selected = selectedOption == Options.ALL,
                     onSelect = {
-                        selectedOption = Options.ALL
+                        onSelectOption(Options.ALL)
                     }
                 )
                 Chip(
@@ -125,7 +155,7 @@ fun SearchScreen(
                     imageVector = ImageVector.vectorResource(R.drawable.group),
                     selected = selectedOption == Options.GROUPS,
                     onSelect = {
-                        selectedOption = Options.GROUPS
+                        onSelectOption(Options.GROUPS)
                     }
                 )
                 Chip(
@@ -133,7 +163,7 @@ fun SearchScreen(
                     imageVector = ImageVector.vectorResource(R.drawable.person),
                     selected = selectedOption == Options.PEOPLE,
                     onSelect = {
-                        selectedOption = Options.PEOPLE
+                        onSelectOption(Options.PEOPLE)
                     }
                 )
             }
@@ -170,12 +200,12 @@ fun SearchScreen(
                             )
                             scheduleUiState.savedNamedSchedules.forEach { namedScheduleEntity ->
                                 SearchedItem(
-                                    onQueryChanged = onQueryChanged,
-                                    navigateToSchedule = navigateToSchedule,
-                                    searchViewModel = searchViewModel,
-                                    scheduleViewModel = scheduleViewModel,
-                                    type = namedScheduleEntity.type,
-                                    id = namedScheduleEntity.apiId!!,
+                                    onClick = {
+                                        navigateToSchedule()
+                                        scheduleViewModel.setNamedSchedule(namedScheduleEntity.id)
+                                        onQueryChanged("")
+                                        searchViewModel.setDefaultSearchState()
+                                    },
                                     title = namedScheduleEntity.shortName
                                 )
                             }
@@ -218,12 +248,16 @@ fun SearchScreen(
                             }
                             items(stateSearch.groups) { group ->
                                 SearchedItem(
-                                    onQueryChanged = onQueryChanged,
-                                    navigateToSchedule = navigateToSchedule,
-                                    searchViewModel = searchViewModel,
-                                    scheduleViewModel = scheduleViewModel,
-                                    type = 0,
-                                    id = group.id.toString(),
+                                    onClick = {
+                                        navigateToSchedule()
+                                        scheduleViewModel.getAndSetNamedSchedule(
+                                            name = group.name!!,
+                                            apiId = group.id.toString(),
+                                            type = 0
+                                        )
+                                        onQueryChanged("")
+                                        searchViewModel.setDefaultSearchState()
+                                    },
                                     title = group.name!!
                                 )
                             }
@@ -240,12 +274,16 @@ fun SearchScreen(
                             }
                             items(stateSearch.people) { person ->
                                 SearchedItem(
-                                    onQueryChanged = onQueryChanged,
-                                    navigateToSchedule = navigateToSchedule,
-                                    scheduleViewModel = scheduleViewModel,
-                                    searchViewModel = searchViewModel,
-                                    type = 1,
-                                    id = person.id.toString(),
+                                    onClick = {
+                                        navigateToSchedule()
+                                        scheduleViewModel.getAndSetNamedSchedule(
+                                            name = person.name!!,
+                                            apiId = person.id.toString(),
+                                            type = 1
+                                        )
+                                        onQueryChanged("")
+                                        searchViewModel.setDefaultSearchState()
+                                    },
                                     title = person.name!!,
                                     subtitle = person.position!!,
                                     imageUrl = "https://www.miit.ru/content/e${person.id}.jpg?id_fe=${person.id}&SWidth=100"
@@ -260,82 +298,6 @@ fun SearchScreen(
 }
 
 @Composable
-fun SearchDataField(
-    onQueryChanged: (String) -> Unit,
-    value: String,
-    selectedOptions: Options,
-    searchViewModel: SearchViewModel
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    OutlinedTextField(
-        value = value,
-        maxLines = 1,
-        modifier = Modifier.fillMaxWidth(),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-
-            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-
-            focusedIndicatorColor = MaterialTheme.colorScheme.surface,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
-
-            focusedLeadingIconColor = MaterialTheme.colorScheme.onBackground,
-            unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary
-        ),
-        leadingIcon = {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.search_simple),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface
-            )
-        },
-        trailingIcon = {
-            AnimatedVisibility(
-                visible = value != "",
-                enter = scaleIn(animationSpec = tween(300)),
-                exit = fadeOut(animationSpec = tween(500))
-            ) {
-                IconButton(
-                    onClick = {
-                        onQueryChanged("")
-                        searchViewModel.setDefaultSearchState()
-                    }
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.clear),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-        },
-        placeholder = {
-            Text(
-                text = LocalContext.current.getString(
-                    R.string.search
-                )
-            )
-        },
-        onValueChange = { newQuery ->
-            onQueryChanged(newQuery)
-        },
-        shape = RoundedCornerShape(12.dp),
-        keyboardOptions = KeyboardOptions(
-            autoCorrectEnabled = false,
-            imeAction = ImeAction.Search
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                searchViewModel.search(value.trim(), selectedOptions)
-                keyboardController?.hide()
-            }
-        )
-    )
-}
-
-@Composable
 fun Chip(
     title: String,
     imageVector: ImageVector?,
@@ -343,11 +305,7 @@ fun Chip(
     onSelect: (Boolean) -> Unit
 ) {
     FilterChip(
-        border = FilterChipDefaults.filterChipBorder(
-            enabled = true,
-            selected = false,
-            borderColor = Color.Transparent
-        ),
+        border = null,
         colors = FilterChipDefaults.filterChipColors(
             containerColor = MaterialTheme.colorScheme.surface,
             selectedContainerColor = MaterialTheme.colorScheme.primary,
@@ -380,12 +338,7 @@ fun Chip(
 
 @Composable
 fun SearchedItem(
-    navigateToSchedule: () -> Unit,
-    onQueryChanged: (String) -> Unit,
-    searchViewModel: SearchViewModel,
-    scheduleViewModel: ScheduleViewModel,
-    id: String,
-    type: Int,
+    onClick: () -> Unit,
     title: String,
     subtitle: String? = null,
     imageUrl: String? = null
@@ -396,10 +349,7 @@ fun SearchedItem(
             .clip(RoundedCornerShape(8.dp))
             .clickable(
                 onClick = {
-                    navigateToSchedule()
-                    scheduleViewModel.getAndSetNamedSchedule(title, id, type)
-                    onQueryChanged("")
-                    searchViewModel.setDefaultSearchState()
+                    onClick()
                 }
             )
             .padding(horizontal = 8.dp, vertical = 8.dp),

@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.data.repos
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.repos.local.LocalRepos
 import com.egormelnikoff.schedulerutmiit.data.repos.remote.RemoteRepos
@@ -209,6 +208,7 @@ class ReposImpl(
                     oldNamedSchedule = namedScheduleToUpdate,
                     newNamedSchedule = remoteResult.data
                 )
+                Result.Success("Success update")
             }
         }
     }
@@ -217,35 +217,39 @@ class ReposImpl(
     private suspend fun mergeAndUpdateSchedules(
         oldNamedSchedule: NamedScheduleFormatted,
         newNamedSchedule: NamedScheduleFormatted
-    ): Result<String> {
+    ) {
         val oldNamedSchedulesMap =
             oldNamedSchedule.schedules.associateBy { it.scheduleEntity.timetableId }
 
-        val errorSchedules = mutableListOf<ScheduleEntity>()
         newNamedSchedule.schedules.forEach { updatedSchedule ->
             val oldSchedule = oldNamedSchedulesMap[updatedSchedule.scheduleEntity.timetableId]
             if (oldSchedule != null) {
+                val updatedScheduleEntity = if (oldSchedule.scheduleEntity.recurrence?.currentNumber != updatedSchedule.scheduleEntity.recurrence?.currentNumber) {
+                    oldSchedule.scheduleEntity.copy(
+                        recurrence = updatedSchedule.scheduleEntity.recurrence
+                    )
+                } else {
+                    oldSchedule.scheduleEntity
+                }
+
                 val updatedEvents = updatedSchedule.events.map { event ->
                     val oldEvent = oldSchedule.events.find { it == event }
                     event.copy(
                         id = oldEvent?.id ?: 0L
                     )
                 }
-                val ids = updatedEvents.map { it.id }.filter { it != 0L }
-                if (ids.sorted() == ids.toSet().sorted()) {
-                    val updatedScheduleEntity = oldSchedule.scheduleEntity.copy(
-                        recurrence = updatedSchedule.scheduleEntity.recurrence
-                    )
-                    val updatedScheduleWithId = ScheduleFormatted(
-                        events = updatedEvents,
-                        scheduleEntity = updatedScheduleEntity,
-                        eventsExtraData = oldSchedule.eventsExtraData
-                    )
-                    localRepos.deleteSchedule(oldSchedule.scheduleEntity.id)
-                    localRepos.insertSchedule(oldNamedSchedule.namedScheduleEntity.id, updatedScheduleWithId)
-                } else {
-                    errorSchedules.add(oldSchedule.scheduleEntity)
-                }
+
+                val updatedScheduleWithId = ScheduleFormatted(
+                    scheduleEntity = updatedScheduleEntity,
+                    events = updatedEvents,
+                    eventsExtraData = oldSchedule.eventsExtraData
+                )
+                localRepos.deleteSchedule(oldSchedule.scheduleEntity.id)
+                localRepos.insertSchedule(
+                    oldNamedSchedule.namedScheduleEntity.id,
+                    updatedScheduleWithId
+                )
+
             } else {
                 localRepos.insertSchedule(oldNamedSchedule.namedScheduleEntity.id, updatedSchedule)
             }
@@ -262,11 +266,9 @@ class ReposImpl(
                 )
             }
         }
-        localRepos.updateLastTimeUpdate(oldNamedSchedule.namedScheduleEntity.id, System.currentTimeMillis())
-        return if (errorSchedules.isEmpty()) {
-            Result.Success("Success update")
-        } else {
-            Result.Error(Exception("${oldNamedSchedule.namedScheduleEntity.shortName} (${errorSchedules.joinToString { it.typeName }})"))
-        }
+        localRepos.updateLastTimeUpdate(
+            oldNamedSchedule.namedScheduleEntity.id,
+            System.currentTimeMillis()
+        )
     }
 }

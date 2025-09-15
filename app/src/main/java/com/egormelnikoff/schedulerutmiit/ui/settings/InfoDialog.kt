@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -56,11 +56,12 @@ import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.AppInfoState
 fun InfoDialog(
     onBack: () -> Unit,
     appInfoState: AppInfoState,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    uriHandler: UriHandler
 ) {
     val context = LocalContext.current
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    val uriHandler = LocalUriHandler.current
+
     Scaffold(
         topBar = {
             SimpleTopBar(

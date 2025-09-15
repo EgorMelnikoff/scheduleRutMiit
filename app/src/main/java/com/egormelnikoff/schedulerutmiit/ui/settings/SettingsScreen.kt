@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.ui.settings
 
-import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,33 +19,31 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.ui.composable.GroupItem
+import com.egormelnikoff.schedulerutmiit.ui.composable.SwitchButton
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.LightGrey
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
@@ -67,17 +64,19 @@ data class Theme(
 
 @Composable
 fun SettingsScreen(
+    onShowDialogSchedules: () -> Unit,
+    onShowDialogInfo: () -> Unit,
+
     preferencesDataStore: DataStore,
     appSettings: AppSettings,
 
     scheduleUiState: ScheduleUiState,
-    onShowDialogSchedules: () -> Unit,
-    onShowDialogInfo: () -> Unit,
+
     settingsListState: LazyGridState,
     paddingValues: PaddingValues,
+    uriHandler: UriHandler
 ) {
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     val themes = arrayOf(
         Theme(
@@ -108,7 +107,7 @@ fun SettingsScreen(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background),
-        columns = GridCells.Adaptive(minSize = 450.dp),
+        columns = GridCells.Adaptive(minSize = 300.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(
@@ -151,17 +150,15 @@ fun SettingsScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.compact),
                             text = LocalContext.current.getString(R.string.compact_view)
                         ) {
-                            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                                Switch(
-                                    checked = appSettings.eventView,
-                                    onCheckedChange = {
-                                        scope.launch {
-                                            preferencesDataStore.setViewEvent(it)
-                                        }
-                                    },
-                                    colors = switchColors
-                                )
-                            }
+                            SwitchButton(
+                                checked = appSettings.eventView,
+                                onCheckedChange = {
+                                    scope.launch {
+                                        preferencesDataStore.setViewEvent(it)
+                                    }
+                                },
+                                colors = switchColors
+                            )
                         }
                     },
                     {
@@ -174,19 +171,15 @@ fun SettingsScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.count),
                             text = LocalContext.current.getString(R.string.show_count_classes)
                         ) {
-                            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                                Switch(
-                                    modifier = Modifier.padding(0.dp),
-                                    checked = appSettings.showCountClasses,
-                                    onCheckedChange = {
-                                        scope.launch {
-                                            preferencesDataStore.setShowCountClasses(it)
-                                        }
-                                    },
-                                    colors = switchColors
-                                )
-                            }
-
+                            SwitchButton(
+                                checked = appSettings.showCountClasses,
+                                onCheckedChange = {
+                                    scope.launch {
+                                        preferencesDataStore.setShowCountClasses(it)
+                                    }
+                                },
+                                colors = switchColors
+                            )
                         }
                     }
                 )
@@ -229,12 +222,7 @@ fun SettingsScreen(
                     }, {
                         SettingsItem(
                             onClick = {
-                                val intent =
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        APP_CHANNEL_URL.toUri()
-                                    )
-                                context.startActivity(intent)
+                                uriHandler.openUri(APP_CHANNEL_URL)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.send),
                             text = LocalContext.current.getString(R.string.report_a_problem),
