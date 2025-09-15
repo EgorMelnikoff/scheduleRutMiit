@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.ui.schedule
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -30,7 +31,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.IconToggleButtonColors
 import androidx.compose.material3.LinearProgressIndicator
@@ -51,6 +51,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -88,6 +89,7 @@ fun ScreenSchedule(
     scheduleCalendarParams: ScheduleCalendarParams,
     scheduleListState: LazyListState,
     today: LocalDate,
+    hapticFeedback: HapticFeedback
 ) {
     var expandedSchedulesMenu by remember { mutableStateOf(false) }
 
@@ -110,7 +112,8 @@ fun ScreenSchedule(
 
         scheduleUiState.currentNamedSchedule != null -> {
             Scaffold(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize(),
                 topBar = {
                     val showLoadDefaultSchedule =
                         scheduleUiState.savedNamedSchedules.isNotEmpty()
@@ -130,7 +133,7 @@ fun ScreenSchedule(
                         scheduleUiState = scheduleUiState,
                         expandedSchedulesMenu = expandedSchedulesMenu,
                         onShowLoadDefaultScheduleButton = showLoadDefaultSchedule,
-                        isScheduleCalendar = appSettings.calendarView
+                        isScheduleCalendar = appSettings.calendarView,
                     )
                 }
             ) { padding ->
@@ -187,7 +190,8 @@ fun ScreenSchedule(
                                     today = today,
                                     paddingBottom = paddingValues.calculateBottomPadding(),
                                     scheduleCalendarParams = scheduleCalendarParams,
-                                    scheduleData = scheduleUiState.currentScheduleData
+                                    scheduleData = scheduleUiState.currentScheduleData,
+                                    hapticFeedback = hapticFeedback
                                 )
                             } else {
                                 ScheduleListView(
@@ -197,7 +201,8 @@ fun ScreenSchedule(
                                     eventsExtraData = scheduleUiState.currentScheduleData.eventsExtraData,
                                     scheduleListState = scheduleListState,
                                     isShortEvent = appSettings.eventView,
-                                    paddingBottom = paddingValues.calculateBottomPadding()
+                                    paddingBottom = paddingValues.calculateBottomPadding(),
+                                    hapticFeedback = hapticFeedback
                                 )
                             }
                         }
@@ -238,9 +243,9 @@ fun ScheduleTopBar(
 
     onLoadDefaultSchedule: () -> Unit,
     onShowLoadDefaultScheduleButton: Boolean,
-
     preferencesDataStore: DataStore,
-    isScheduleCalendar: Boolean
+    isScheduleCalendar: Boolean,
+
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -255,14 +260,11 @@ fun ScheduleTopBar(
                 IconButton(
                     onClick = {
                         onLoadDefaultSchedule()
-                    },
-                    colors = IconButtonDefaults.iconButtonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.onBackground
-                    )
+                    }
                 ) {
                     Icon(
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier
+                            .size(24.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.back),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onBackground
@@ -282,7 +284,6 @@ fun ScheduleTopBar(
                                         onShowExpandedMenu(!expandedSchedulesMenu)
                                     }
                                 )
-
                         } else {
                             it
                         }
@@ -378,8 +379,12 @@ fun ScheduleTopBar(
                             primaryKey = scheduleUiState.currentNamedSchedule.namedScheduleEntity.id,
                             isDefault = scheduleUiState.currentNamedSchedule.namedScheduleEntity.isDefault
                         )
+                        val string = "${context.getString(R.string.schedule)} ${context.getString(R.string.is_deleted)}"
+                        Toast.makeText(context, string, Toast.LENGTH_LONG).show()
                     } else {
                         scheduleViewModel.saveCurrentNamedSchedule()
+                        val string = "${context.getString(R.string.schedule)} ${context.getString(R.string.is_saved)}"
+                        Toast.makeText(context, string, Toast.LENGTH_LONG).show()
                     }
                 }
             ) {

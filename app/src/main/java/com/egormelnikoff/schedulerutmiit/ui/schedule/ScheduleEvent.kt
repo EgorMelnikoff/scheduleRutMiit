@@ -1,8 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.ui.schedule
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -11,16 +12,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -48,7 +59,8 @@ fun Event(
     onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
     events: List<Event>,
     eventsExtraData: List<EventExtraData>,
-    isShortEvent: Boolean
+    isShortEvent: Boolean,
+    hapticFeedback: HapticFeedback
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -94,7 +106,8 @@ fun Event(
                         },
                         isShortEvent = isShortEvent,
                         event = event,
-                        onShowDialogEvent = onShowDialogEvent
+                        onShowDialogEvent = onShowDialogEvent,
+                        hapticFeedback = hapticFeedback
                     )
                 }
             }
@@ -108,169 +121,185 @@ fun SingleEvent(
     isShortEvent: Boolean,
     event: Event,
     eventExtraData: EventExtraData?,
+    hapticFeedback: HapticFeedback
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                onClick = {
-                    onShowDialogEvent(Pair(event, eventExtraData))
-                },
-            )
-    ) {
-        if (eventExtraData != null) {
-            Canvas(Modifier.fillMaxWidth()) {
-                drawLine(
-                    start = Offset(x = 0f, y = 0f),
-                    end = Offset(x = size.width, y = 0f),
-                    color = when (eventExtraData.tag) {
-                        1 -> darkThemeRed
-                        2 -> darkThemeOrange
-                        3 -> darkThemeYellow
-                        4 -> darkThemeGreen
-                        5 -> darkThemeLightBlue
-                        6 -> darkThemeBlue
-                        7 -> darkThemeViolet
-                        8 -> darkThemePink
-                        else -> Color.Unspecified
-                    },
-                    strokeWidth = 24f
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-        }
-
+    var expandedMenu by remember { mutableStateOf(false) }
+    Box {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+                .combinedClickable(
+                    onClick = {
+                        onShowDialogEvent(Pair(event, eventExtraData))
+                    },
+                    onLongClick = {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                        expandedMenu = !expandedMenu
+                    }
+                )
         ) {
-            Text(
-                text = event.typeName.toString(),
-                fontSize = 12.sp,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
+            if (eventExtraData != null) {
+                Canvas(Modifier.fillMaxWidth()) {
+                    drawLine(
+                        start = Offset(x = 0f, y = 0f),
+                        end = Offset(x = size.width, y = 0f),
+                        color = when (eventExtraData.tag) {
+                            1 -> darkThemeRed
+                            2 -> darkThemeOrange
+                            3 -> darkThemeYellow
+                            4 -> darkThemeGreen
+                            5 -> darkThemeLightBlue
+                            6 -> darkThemeBlue
+                            7 -> darkThemeViolet
+                            8 -> darkThemePink
+                            else -> Color.Unspecified
+                        },
+                        strokeWidth = 24f
                     )
-                ),
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = event.name.toString(),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            if (!isShortEvent) {
-                if (event.groups!!.isNotEmpty()) {
-                    FlowRow(
-                        itemVerticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(14.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.group),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-
-                        event.groups.forEach { group ->
-                            Text(
-                                text = group.name!!,
-                                fontSize = 12.sp,
-                                style = TextStyle(
-                                    platformStyle = PlatformTextStyle(
-                                        includeFontPadding = false
-                                    )
-                                ),
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
                 }
-                if (event.rooms!!.isNotEmpty()) {
-                    FlowRow(
-                        itemVerticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(14.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.room),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                        event.rooms.forEach { room ->
-                            Text(
-                                text = room.name!!,
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1,
-                                style = TextStyle(
-                                    platformStyle = PlatformTextStyle(
-                                        includeFontPadding = false
-                                    )
-                                ),
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
-                }
-                if (event.lecturers!!.isNotEmpty()) {
-                    FlowRow(
-                        itemVerticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(14.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.person),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                        event.lecturers.forEach { lecturer ->
-                            Text(
-                                text = lecturer.shortFio!!,
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1,
-                                style = TextStyle(
-                                    platformStyle = PlatformTextStyle(
-                                        includeFontPadding = false
-                                    )
-                                ),
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
-                }
+                Spacer(modifier = Modifier.height(4.dp))
             }
-            if (eventExtraData != null && eventExtraData.comment != "") {
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 2.dp),
-                    color = MaterialTheme.colorScheme.outline,
-                    thickness = 0.5.dp
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = event.typeName.toString(),
+                    fontSize = 12.sp,
+                    style = TextStyle(
+                        platformStyle = PlatformTextStyle(
+                            includeFontPadding = false
+                        )
+                    ),
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-                Comment(
-                    message = eventExtraData.comment
+                Text(
+                    text = event.name.toString(),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    style = TextStyle(
+                        platformStyle = PlatformTextStyle(
+                            includeFontPadding = false
+                        )
+                    ),
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
+                if (!isShortEvent) {
+                    if (event.groups!!.isNotEmpty()) {
+                        FlowRow(
+                            itemVerticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(14.dp),
+                                imageVector = ImageVector.vectorResource(R.drawable.group),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+
+                            event.groups.forEach { group ->
+                                Text(
+                                    text = group.name!!,
+                                    fontSize = 12.sp,
+                                    style = TextStyle(
+                                        platformStyle = PlatformTextStyle(
+                                            includeFontPadding = false
+                                        )
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+                    }
+                    if (event.rooms!!.isNotEmpty()) {
+                        FlowRow(
+                            itemVerticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(14.dp),
+                                imageVector = ImageVector.vectorResource(R.drawable.room),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                            event.rooms.forEach { room ->
+                                Text(
+                                    text = room.name!!,
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 1,
+                                    style = TextStyle(
+                                        platformStyle = PlatformTextStyle(
+                                            includeFontPadding = false
+                                        )
+                                    ),
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+                    }
+                    if (event.lecturers!!.isNotEmpty()) {
+                        FlowRow(
+                            itemVerticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(14.dp),
+                                imageVector = ImageVector.vectorResource(R.drawable.person),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                            event.lecturers.forEach { lecturer ->
+                                Text(
+                                    text = lecturer.shortFio!!,
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 1,
+                                    style = TextStyle(
+                                        platformStyle = PlatformTextStyle(
+                                            includeFontPadding = false
+                                        )
+                                    ),
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+                    }
+                }
+                if (eventExtraData != null && eventExtraData.comment != "") {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 2.dp),
+                        color = MaterialTheme.colorScheme.outline,
+                        thickness = 0.5.dp
+                    )
+                    Comment(
+                        message = eventExtraData.comment
+                    )
+                }
             }
         }
+        DropdownMenuEvent(
+            onDismiss = { expandedMenu = false },
+            onHide = {},
+            onOpen = {
+                onShowDialogEvent(Pair(event, eventExtraData))
+            },
+            expanded = expandedMenu
+        )
     }
 }
 
@@ -304,6 +333,58 @@ fun Comment(
             ),
             overflow = TextOverflow.Ellipsis,
             color = color ?: MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
+fun DropdownMenuEvent(
+    onDismiss: () -> Unit,
+    onHide: () -> Unit,
+    onOpen: () -> Unit,
+    expanded: Boolean
+) {
+    DropdownMenu(
+        shape = RoundedCornerShape(8.dp),
+        containerColor = MaterialTheme.colorScheme.background,
+        expanded = expanded,
+        onDismissRequest = { onDismiss() }
+    ) {
+//        DropdownMenuItem(
+//            text = { Text("Скрыть") },
+//            leadingIcon = {
+//                Icon(
+//                    modifier = Modifier
+//                        .size(24.dp),
+//                    imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
+//                    contentDescription = null,
+//                    tint = MaterialTheme.colorScheme.onBackground
+//                )
+//            },
+//            onClick = { onHide() },
+//            colors = MenuDefaults.itemColors().copy(
+//                textColor = MaterialTheme.colorScheme.onBackground,
+//                leadingIconColor = MaterialTheme.colorScheme.onBackground,
+//                trailingIconColor = MaterialTheme.colorScheme.onBackground
+//            )
+//        )
+        DropdownMenuItem(
+            text = { Text("Открыть") },
+            leadingIcon = {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp),
+                    imageVector = ImageVector.vectorResource(R.drawable.open_panel),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            onClick = { onOpen() },
+            colors = MenuDefaults.itemColors().copy(
+                textColor = MaterialTheme.colorScheme.onBackground,
+                leadingIconColor = MaterialTheme.colorScheme.onBackground,
+                trailingIconColor = MaterialTheme.colorScheme.onBackground
+            )
         )
     }
 }
