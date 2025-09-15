@@ -18,10 +18,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
@@ -29,6 +32,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
+import com.egormelnikoff.schedulerutmiit.ui.composable.BarItem
 import com.egormelnikoff.schedulerutmiit.ui.composable.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.ui.composable.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.ui.news.NewsDialog
@@ -40,12 +44,14 @@ import com.egormelnikoff.schedulerutmiit.ui.schedule.ScreenSchedule
 import com.egormelnikoff.schedulerutmiit.ui.schedule.calculateFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.UiEvent
+import com.egormelnikoff.schedulerutmiit.ui.search.Options
 import com.egormelnikoff.schedulerutmiit.ui.search.SearchScreen
 import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.ui.settings.InfoDialog
 import com.egormelnikoff.schedulerutmiit.ui.settings.SchedulesDialog
 import com.egormelnikoff.schedulerutmiit.ui.settings.SettingsScreen
 import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.SettingsViewModel
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -59,32 +65,6 @@ fun Main(
 
     appSettings: AppSettings,
 ) {
-    val barItems = arrayOf(
-        BarItem(
-            title = LocalContext.current.getString(R.string.search),
-            icon = ImageVector.vectorResource(R.drawable.search),
-            selectedIcon = ImageVector.vectorResource(R.drawable.search),
-            route = Routes.Search
-        ),
-        BarItem(
-            title = LocalContext.current.getString(R.string.schedule),
-            icon = ImageVector.vectorResource(R.drawable.schedule),
-            selectedIcon = ImageVector.vectorResource(R.drawable.schedule_fill),
-            route = Routes.Schedule
-        ),
-        BarItem(
-            title = LocalContext.current.getString(R.string.news),
-            icon = ImageVector.vectorResource(R.drawable.news),
-            selectedIcon = ImageVector.vectorResource(R.drawable.news_fill),
-            route = Routes.NewsList
-        ),
-        BarItem(
-            title = LocalContext.current.getString(R.string.settings),
-            icon = ImageVector.vectorResource(R.drawable.settings),
-            selectedIcon = ImageVector.vectorResource(R.drawable.settings_fill),
-            route = Routes.Settings
-        )
-    )
     val appBackStack by remember {
         mutableStateOf(
             AppBackStack(
@@ -92,6 +72,9 @@ fun Main(
             )
         )
     }
+    val uriHandler = LocalUriHandler.current
+    val hapticFeedback = LocalHapticFeedback.current
+    val scope = rememberCoroutineScope()
 
     val searchState = searchViewModel.stateSearch.collectAsState().value
     val scheduleUiState = scheduleViewModel.uiState.collectAsState().value
@@ -103,6 +86,7 @@ fun Main(
     val newsListState = rememberLazyStaggeredGridState()
     val settingsListState = rememberLazyGridState()
 
+    var selectedOption by remember { mutableStateOf(Options.ALL) }
     var query by remember { mutableStateOf("") }
     val today by remember { mutableStateOf(LocalDate.now()) }
     var selectedDate by remember(
@@ -181,6 +165,52 @@ fun Main(
         }
     }
 
+    val barItems = arrayOf(
+        BarItem(
+            title = LocalContext.current.getString(R.string.search),
+            icon = ImageVector.vectorResource(R.drawable.search),
+            selectedIcon = ImageVector.vectorResource(R.drawable.search),
+            route = Routes.Search,
+            onClick = {
+                searchViewModel.setDefaultSearchState()
+                selectedOption = Options.ALL
+                query = ""
+            }
+        ),
+        BarItem(
+            title = LocalContext.current.getString(R.string.schedule),
+            icon = ImageVector.vectorResource(R.drawable.schedule),
+            selectedIcon = ImageVector.vectorResource(R.drawable.schedule_fill),
+            route = Routes.Schedule,
+            onClick = {
+                if (scheduleUiState.currentNamedSchedule != null && !scheduleUiState.currentNamedSchedule.namedScheduleEntity.isDefault) {
+                    scheduleViewModel.loadInitialData(true)
+                }
+            }
+        ),
+        BarItem(
+            title = LocalContext.current.getString(R.string.news),
+            icon = ImageVector.vectorResource(R.drawable.news),
+            selectedIcon = ImageVector.vectorResource(R.drawable.news_fill),
+            route = Routes.NewsList,
+            onClick = {
+                scope.launch {
+                    newsListState.scrollToItem(0)
+                }
+            }
+        ),
+        BarItem(
+            title = LocalContext.current.getString(R.string.settings),
+            icon = ImageVector.vectorResource(R.drawable.settings),
+            selectedIcon = ImageVector.vectorResource(R.drawable.settings_fill),
+            route = Routes.Settings,
+            onClick = {
+                scope.launch {
+                    settingsListState.scrollToItem(0)
+                }
+            }
+        )
+    )
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -239,7 +269,8 @@ fun Main(
                             pagerWeeksState = pagerWeeksState,
                             selectedDate = selectedDate,
                             selectDate = { newValue -> selectedDate = newValue }
-                        )
+                        ),
+                        hapticFeedback = hapticFeedback
                     )
                 }
 
@@ -250,6 +281,8 @@ fun Main(
                         },
                         onQueryChanged = { newValue -> query = newValue },
                         query = query,
+                        selectedOption = selectedOption,
+                        onSelectOption = { option -> selectedOption = option },
                         scheduleViewModel = scheduleViewModel,
                         searchViewModel = searchViewModel,
                         searchState = searchState,
@@ -284,7 +317,8 @@ fun Main(
                             appBackStack.navigateToDialog(Routes.Info)
                         },
                         settingsListState = settingsListState,
-                        paddingValues = paddingValues
+                        paddingValues = paddingValues,
+                        uriHandler = uriHandler
                     )
                 }
 
@@ -316,7 +350,11 @@ fun Main(
                         },
                         scheduleViewModel = scheduleViewModel,
                         scheduleUiState = scheduleUiState,
-                        paddingValues = paddingValues
+                        paddingValues = paddingValues,
+                        navigateToSchedule = {
+                            appBackStack.onBack()
+                            appBackStack.navigateToPage(Routes.Schedule)
+                        }
                     )
                 }
 
@@ -324,7 +362,8 @@ fun Main(
                     InfoDialog(
                         onBack = { appBackStack.onBack() },
                         appInfoState = appInfoState,
-                        paddingValues = paddingValues
+                        paddingValues = paddingValues,
+                        uriHandler = uriHandler
                     )
                 }
             }
