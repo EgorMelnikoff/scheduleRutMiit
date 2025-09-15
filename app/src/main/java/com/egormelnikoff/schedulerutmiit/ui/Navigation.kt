@@ -1,16 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.ui
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-
-data class BarItem(
-    val title: String,
-    val icon: ImageVector,
-    val selectedIcon: ImageVector,
-    val route: Routes
-)
 
 sealed class Routes(val isDialog: Boolean) {
     data object Search : Routes(false)

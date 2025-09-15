@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,8 +45,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.ui.AppBackStack
-import com.egormelnikoff.schedulerutmiit.ui.BarItem
 import com.egormelnikoff.schedulerutmiit.ui.Routes
+
+data class BarItem(
+    val title: String,
+    val icon: ImageVector,
+    val selectedIcon: ImageVector,
+    val route: Routes,
+    val onClick: () -> Unit
+)
 
 @Composable
 fun CustomNavigationBar(
@@ -101,7 +109,11 @@ fun CustomNavigationBar(
                         barItem = barItem,
                         isSelected = appBackStack.last() == barItem.route,
                         onClick = {
-                            appBackStack.navigateToPage(barItem.route)
+                            if (barItem.route == appBackStack.last()) {
+                                barItem.onClick()
+                            } else {
+                                appBackStack.navigateToPage(barItem.route)
+                            }
                         }
                     )
                 }
