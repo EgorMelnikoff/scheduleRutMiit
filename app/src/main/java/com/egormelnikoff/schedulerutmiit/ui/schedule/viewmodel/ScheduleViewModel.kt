@@ -36,6 +36,7 @@ interface ScheduleViewModel {
     fun loadInitialData(showIsLoading: Boolean)
     fun getAndSetNamedSchedule(name: String, apiId: String, type: Int)
     fun selectDefaultNamedSchedule(primaryKey: Long)
+    fun setNamedSchedule(primaryKey: Long)
     fun selectDefaultSchedule(primaryKeySchedule: Long, timetableId: String?)
     fun saveCurrentNamedSchedule()
     fun deleteNamedSchedule(primaryKey: Long, isDefault: Boolean)
@@ -140,7 +141,6 @@ class ScheduleViewModelImpl(
                     val errorMsg = resultUpdate.exception.message
                         ?: resourcesManager.getString(R.string.unknown_error)
                     _uiEventChannel.send(UiEvent.ShowErrorMessage("${resourcesManager.getString(R.string.failed_update)}: $errorMsg"))
-
                 }
             }
         }
@@ -216,6 +216,21 @@ class ScheduleViewModelImpl(
         viewModelScope.launch {
             repos.updatePriorityNamedSchedule(primaryKey)
             loadInitialData(false)
+        }
+    }
+
+    override fun setNamedSchedule(primaryKey: Long) {
+        viewModelScope.launch {
+            val namedSchedule = repos.getNamedScheduleById(primaryKey)
+            val currentSchedule = findDefaultSchedule(namedSchedule)
+
+            _uiState.update {
+                it.copy(
+                    currentNamedSchedule = namedSchedule,
+                    currentScheduleEntity = currentSchedule?.scheduleEntity,
+                    currentScheduleData = calculateScheduleData(currentSchedule),
+                )
+            }
         }
     }
 
@@ -338,7 +353,7 @@ class ScheduleViewModelImpl(
     private fun calculateScheduleData(
         scheduleFormatted: ScheduleFormatted?
     ): ScheduleData? {
-        return if (scheduleFormatted != null) {
+        return if (scheduleFormatted != null && scheduleFormatted.events.isNotEmpty()) {
             val today = LocalDate.now()
             val weeksCount = ChronoUnit.WEEKS.between(
                 calculateFirstDayOfWeek(scheduleFormatted.scheduleEntity.startDate),
@@ -406,32 +421,24 @@ class ScheduleViewModelImpl(
 
 
     private fun calculateEventsForCalendar(
-        currentSchedule: ScheduleFormatted?
+        currentSchedule: ScheduleFormatted
     ): Map<Int, Map<LocalDate, List<Event>>> {
-        val eventsByWeekAndDay = mutableMapOf<Int, Map<LocalDate, List<Event>>>()
-        if (currentSchedule != null) {
-            if (currentSchedule.scheduleEntity.recurrence != null) {
-                for (week in 1..currentSchedule.scheduleEntity.recurrence.interval!!) {
-                    val eventsForWeek =
-                        currentSchedule.events.filter { event ->
-                            event.recurrenceRule?.let { rule ->
-                                rule.interval == 1 || (rule.interval > 1 && week == event.periodNumber)
-                            } ?: false
-                        }
+        val recurrence = currentSchedule.scheduleEntity.recurrence
+            ?: return mapOf(
+                1 to currentSchedule.events
+                    .groupBy { it.startDatetime!!.toLocalDate() })
 
-
-                    eventsByWeekAndDay[week] =
-                        eventsForWeek.groupBy { it.startDatetime!!.toLocalDate() }
-
+        return buildMap {
+            for (week in 1..recurrence.interval!!) {
+                val eventsForWeek = currentSchedule.events.filter { event ->
+                    val rule = event.recurrenceRule ?: return@filter false
+                    rule.interval == 1 || event.periodNumber == week
                 }
-            } else {
-                eventsByWeekAndDay[1] =
-                    currentSchedule.events.groupBy { it.startDatetime!!.toLocalDate() }
-
+                if (eventsForWeek.isNotEmpty()) {
+                    this[week] = eventsForWeek.groupBy { it.startDatetime!!.toLocalDate() }
+                }
             }
         }
-        return eventsByWeekAndDay
-
     }
 
     private fun calculateEventsForList(
@@ -439,50 +446,55 @@ class ScheduleViewModelImpl(
         today: LocalDate,
         scheduleEntity: ScheduleEntity
     ): List<Pair<LocalDate, List<Event>>> {
-        val displayedEvents = mutableListOf<Event>()
-        if (scheduleEntity.recurrence != null) {
-            val startDate = if (today < scheduleEntity.startDate) {
-                scheduleEntity.startDate
-            } else {
-                today
-            }
-            val weeksRemaining = abs(
-                ChronoUnit.WEEKS.between(
-                    calculateFirstDayOfWeek(startDate),
-                    calculateFirstDayOfWeek(scheduleEntity.endDate)
-                )
-            ).toInt().plus(1)
-            for (week in 1..weeksRemaining) {
-                val weekNumber =
-                    ((week + scheduleEntity.recurrence.firstWeekNumber) % scheduleEntity.recurrence.interval!!).plus(
-                        1
+        if (scheduleEntity.recurrence == null) {
+            return eventsByWeekAndDays[1]?.values
+                .orEmpty()
+                .asSequence()
+                .flatten()
+                .filter { it.startDatetime?.toLocalDate()?.isAfter(today.minusDays(1)) == true }
+                .sortedBy { it.startDatetime }
+                .groupBy { it.startDatetime!!.toLocalDate() }
+                .toList()
+        }
+        val startDate = calculateFirstDayOfWeek(maxOf(today, scheduleEntity.startDate))
+        val allEvents = buildList {
+            val weeksNumbers = getWeeksNumbers(startDate, scheduleEntity)
+            weeksNumbers.forEachIndexed { index, week ->
+                val eventsInWeek = eventsByWeekAndDays[week]?.values.orEmpty().flatten()
+                val currentWeekStartDate = startDate.plusWeeks(index.toLong())
+                eventsInWeek.forEach { event ->
+                    val eventStartDayOfWeek =
+                        event.startDatetime?.toLocalDate()?.dayOfWeek?.value ?: return@forEach
+                    val newEventDate = currentWeekStartDate.plusDays(eventStartDayOfWeek - 1L)
+                    if (newEventDate.isAfter(scheduleEntity.endDate)) return@forEach
+                    val newEvent = event.copy(
+                        startDatetime = newEventDate.atTime(event.startDatetime.toLocalTime()),
+                        endDatetime = newEventDate.atTime(event.endDatetime?.toLocalTime())
                     )
-                val events = eventsByWeekAndDays[weekNumber]?.values?.flatten()
-                if (events != null) {
-                    for (event in events) {
-                        val startOfWeek = calculateFirstDayOfWeek(startDate)
-                            .plusDays(event.startDatetime!!.toLocalDate().dayOfWeek.value - 1L)
-                            .plusWeeks(week - 1L)
-
-                        val newEvent = event.copy(
-                            startDatetime = startOfWeek.atTime(event.startDatetime.toLocalTime()),
-                            endDatetime = startOfWeek.atTime(event.endDatetime?.toLocalTime())
-                        )
-
-                        displayedEvents.add(newEvent)
-                    }
+                    add(newEvent)
                 }
             }
-        } else {
-            if (!eventsByWeekAndDays[1]?.values.isNullOrEmpty()) {
-                displayedEvents.addAll(eventsByWeekAndDays[1]?.values!!.flatten())
-            }
         }
-        return displayedEvents.filter { it.startDatetime!!.toLocalDate() >= today }
+
+        return allEvents
+            .filter { it.startDatetime?.toLocalDate()?.isAfter(today.minusDays(1)) == true }
             .sortedBy { it.startDatetime }
-            .groupBy { event ->
-                event.startDatetime!!.toLocalDate()
-            }
+            .groupBy { it.startDatetime!!.toLocalDate() }
             .toList()
     }
+}
+
+fun getWeeksNumbers(
+    startDate: LocalDate,
+    scheduleEntity: ScheduleEntity
+): List<Int> {
+    val weeksCount = ChronoUnit.WEEKS.between(calculateFirstDayOfWeek(scheduleEntity.startDate), calculateFirstDayOfWeek(scheduleEntity.endDate)).toInt() + 1
+    val weeksRemaining = ChronoUnit.WEEKS.between(startDate, calculateFirstDayOfWeek(scheduleEntity.endDate)).toInt() + 1
+    val recurrence = scheduleEntity.recurrence ?: return emptyList()
+
+    return (1 ..  weeksCount)
+        .asSequence()
+        .map { week -> ((week + recurrence.firstWeekNumber) % recurrence.interval!!).plus(1)}
+        .toList()
+        .drop((weeksCount - weeksRemaining))
 }
