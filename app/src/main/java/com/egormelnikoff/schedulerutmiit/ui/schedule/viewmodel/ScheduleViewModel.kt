@@ -257,10 +257,13 @@ class ScheduleViewModelImpl(
                 namedSchedule = namedSchedule
             )
             if (namedSchedule != null) {
-                updateNamedSchedule(namedSchedule.namedScheduleEntity)
                 updateUiStateNamedSchedule(
                     namedSchedule = repos.getNamedScheduleByApiId(namedSchedule.namedScheduleEntity.apiId!!)
                 )
+                updateUiStateParams(
+                    isSaved = true
+                )
+                updateNamedSchedule(namedSchedule.namedScheduleEntity)
             }
         }
     }
