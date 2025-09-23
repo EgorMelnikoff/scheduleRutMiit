@@ -157,20 +157,24 @@ fun SchedulesDialog(
                 isDefault = namedScheduleActionsDialog!!.isDefault,
                 onSet = {
                     if (namedScheduleActionsDialog!!.id != scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.id) {
-                        scheduleViewModel.setNamedSchedule(namedScheduleActionsDialog!!.id)
+                        scheduleViewModel.getNamedScheduleFromDb(
+                            primaryKeyNamedSchedule = namedScheduleActionsDialog!!.id
+                        )
                     }
                     navigateToSchedule()
                     namedScheduleActionsDialog = null
                 },
                 onSelectDefault = {
-                    scheduleViewModel.selectDefaultNamedSchedule(
-                        primaryKey = namedScheduleActionsDialog!!.id
+                    scheduleViewModel.getNamedScheduleFromDb(
+                        primaryKeyNamedSchedule = namedScheduleActionsDialog!!.id,
+                        setDefault = true
                     )
+                    navigateToSchedule()
                     namedScheduleActionsDialog = null
                 },
                 onDelete = {
                     scheduleViewModel.deleteNamedSchedule(
-                        primaryKey = namedScheduleActionsDialog!!.id,
+                        primaryKeyNamedSchedule = namedScheduleActionsDialog!!.id,
                         isDefault = true
                     )
                     namedScheduleActionsDialog = null
