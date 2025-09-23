@@ -13,8 +13,8 @@ android {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 26
         targetSdk = 36
-        versionCode = 10
-        versionName = "1.2.2"
+        versionCode = 11
+        versionName = "1.2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,6 +41,12 @@ android {
 }
 
 dependencies {
+    implementation (libs.google.gson)
+    implementation (libs.jsoup)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+
     implementation(libs.coil.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -50,18 +56,15 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    implementation (libs.google.gson)
-    implementation (libs.jsoup)
+
     implementation(libs.androidx.room.runtime)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
-    implementation(libs.androidx.room.ktx)
     implementation (libs.androidx.runtime.livedata)
     implementation (libs.androidx.datastore.preferences)
     annotationProcessor(libs.androidx.room.room.compiler)
+    
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
