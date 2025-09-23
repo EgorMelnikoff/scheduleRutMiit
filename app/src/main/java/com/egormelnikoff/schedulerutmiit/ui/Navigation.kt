@@ -11,7 +11,7 @@ sealed class Routes(val isDialog: Boolean) {
     data object Settings : Routes(false)
 
     data class EventDialog(
-        val event: Event?,
+        val event: Event,
         val eventExtraData: EventExtraData?
     ) : Routes(true)
 
