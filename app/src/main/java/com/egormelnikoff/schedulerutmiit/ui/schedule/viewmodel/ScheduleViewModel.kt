@@ -359,6 +359,7 @@ class ScheduleViewModelImpl(
     private suspend fun updateNamedSchedule(
         namedScheduleEntity: NamedScheduleEntity
     ) {
+        val currentScheduleId = _uiState.value.currentScheduleEntity?.id
         updateUiStateParams(
             isUpdating = true
         )
@@ -367,6 +368,12 @@ class ScheduleViewModelImpl(
                 updateUiStateParams(
                     savedNamedSchedules = repos.getAllNamedSchedules()
                 )
+                if (namedScheduleEntity.id == uiState.value.currentNamedSchedule?.namedScheduleEntity?.id) {
+                    updateUiStateNamedSchedule(
+                        namedSchedule = repos.getNamedScheduleById(namedScheduleEntity.id),
+                        scheduleId = currentScheduleId
+                    )
+                }
             }
             is Result.Error -> {
                 val errorMessage = resultUpdate.exception.message
