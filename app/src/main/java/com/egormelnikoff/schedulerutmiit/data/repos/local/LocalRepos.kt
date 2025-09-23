@@ -4,6 +4,7 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.local.NamedScheduleDao
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.model.News
@@ -21,12 +22,11 @@ interface LocalRepos {
     )
 
     suspend fun deleteSchedule(
-        id: Long,
-        deleteEventsExtra: Boolean = false
+        id: Long
     )
 
     suspend fun isSavingAvailable(): Boolean
-    suspend fun getAllNamedSchedules(): MutableList<NamedScheduleFormatted>
+    suspend fun getAllNamedSchedules(): List<NamedScheduleEntity>
     suspend fun getNamedScheduleByApiId(
         apiId: String
     ): NamedScheduleFormatted?
@@ -68,8 +68,8 @@ class LocalReposImpl(
 
         val currentCount = namedScheduleDao.getCount()
         if (currentCount == 1) {
-            val namedScheduleWithNewId = namedScheduleDao.getAll().first()
-            namedScheduleDao.setDefaultNamedSchedule(namedScheduleWithNewId.namedScheduleEntity.id)
+            val namedScheduleEntityWithNewId = namedScheduleDao.getAll().first()
+            namedScheduleDao.setDefaultNamedSchedule(namedScheduleEntityWithNewId.id)
         }
     }
 
@@ -77,10 +77,9 @@ class LocalReposImpl(
         namedScheduleId: Long,
         scheduleFormatted: ScheduleFormatted
     ) {
-        namedScheduleDao.insertSchedule(
+        namedScheduleDao.insertScheduleWithEvents(
             namedScheduleId = namedScheduleId,
             scheduleFormatted = scheduleFormatted,
-            insertExtraEvents = false
         )
     }
 
@@ -92,23 +91,20 @@ class LocalReposImpl(
         if (isDefault) {
             val namedSchedules = namedScheduleDao.getAll()
             if (namedSchedules.isNotEmpty()) {
-                updatePriorityNamedSchedule(namedSchedules[0].namedScheduleEntity.id)
+                updatePriorityNamedSchedule(namedSchedules[0].id)
             }
         }
     }
 
     override suspend fun deleteSchedule(
-        id: Long,
-        deleteEventsExtra: Boolean
+        id: Long
     ) {
         namedScheduleDao.deleteScheduleById(id)
         namedScheduleDao.deleteEventsByScheduleId(id)
-        if (deleteEventsExtra) {
-            namedScheduleDao.deleteEventsExtraByScheduleId(id)
-        }
+        namedScheduleDao.deleteEventsExtraByScheduleId(id)
     }
 
-    override suspend fun getAllNamedSchedules(): MutableList<NamedScheduleFormatted> {
+    override suspend fun getAllNamedSchedules(): List<NamedScheduleEntity> {
         return namedScheduleDao.getAll()
     }
 
