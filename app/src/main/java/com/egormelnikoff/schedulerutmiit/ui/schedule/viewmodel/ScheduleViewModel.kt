@@ -30,17 +30,9 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
-interface ScheduleViewModel {
-    val uiState: StateFlow<ScheduleUiState>
-    val uiEvent: Flow<UiEvent>
-    fun loadInitialData(showIsLoading: Boolean)
-    fun getAndSetNamedSchedule(name: String, apiId: String, type: Int)
-    fun selectDefaultNamedSchedule(primaryKey: Long)
-    fun setNamedSchedule(primaryKey: Long)
-    fun selectDefaultSchedule(primaryKeySchedule: Long, timetableId: String?)
-    fun saveCurrentNamedSchedule()
-    fun deleteNamedSchedule(primaryKey: Long, isDefault: Boolean)
-    fun updateEventExtra(event: Event, comment: String, tag: Int)
+sealed interface UiEvent {
+    data class ShowErrorMessage(val message: String) : UiEvent
+    data class ShowInfoMessage(val message: String) : UiEvent
 }
 
 data class ScheduleUiState(
@@ -65,10 +57,17 @@ data class ScheduleData(
     val eventsExtraData: List<EventExtraData> = listOf()
 )
 
+interface ScheduleViewModel {
+    val uiState: StateFlow<ScheduleUiState>
+    val uiEvent: Flow<UiEvent>
 
-sealed interface UiEvent {
-    data class ShowErrorMessage(val message: String) : UiEvent
-    data class ShowInfoMessage(val message: String) : UiEvent
+    fun loadInitialData(showLoading: Boolean = true)
+    fun getNamedScheduleFromApi(name: String, apiId: String, type: Int)
+    fun getNamedScheduleFromDb(primaryKeyNamedSchedule: Long, setDefault: Boolean = false)
+    fun saveCurrentNamedSchedule()
+    fun deleteNamedSchedule(primaryKeyNamedSchedule: Long, isDefault: Boolean)
+    fun setNewDefaultSchedule(primaryKeySchedule: Long, timetableId: String)
+    fun updateEventExtra(event: Event, comment: String, tag: Int)
 }
 
 
@@ -102,178 +101,166 @@ class ScheduleViewModelImpl(
     private var fetchScheduleJob: Job? = null
 
     init {
-        loadInitialData(true)
+        loadInitialData()
     }
 
-    override fun loadInitialData(showIsLoading: Boolean) {
+    override fun loadInitialData(showLoading: Boolean) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = showIsLoading) }
+            updateUiStateParams(
+                isLoading = showLoading
+            )
             val savedNamedSchedules = repos.getAllNamedSchedules()
-
-            val defaultNamedSchedule = savedNamedSchedules.find { it.namedScheduleEntity.isDefault }
+            val defaultNamedScheduleEntity = savedNamedSchedules.find { it.isDefault }
                 ?: savedNamedSchedules.firstOrNull()
 
-            val currentSchedule = findDefaultSchedule(defaultNamedSchedule)
-            _uiState.update {
-                it.copy(
-                    savedNamedSchedules = savedNamedSchedules.map { namedScheduleFormatted -> namedScheduleFormatted.namedScheduleEntity },
-                    currentNamedSchedule = defaultNamedSchedule,
-                    currentScheduleEntity = currentSchedule?.scheduleEntity,
-                    currentScheduleData = calculateScheduleData(currentSchedule),
-                    isLoading = false,
-                    isSaved = defaultNamedSchedule != null,
-                    isSavingAvailable = repos.isSavingAvailable()
+            if (defaultNamedScheduleEntity != null) {
+                val defaultNamedSchedule = repos.getNamedScheduleById(defaultNamedScheduleEntity.id)
+                updateUiStateNamedSchedule(
+                    namedSchedule = defaultNamedSchedule
                 )
             }
 
-            defaultNamedSchedule?.let { namedSchedule ->
-                val resultUpdate = repos.updateNamedSchedule(
-                    namedSchedule = namedSchedule,
-                    onStartUpdate = {
-                        _uiState.update { it.copy(isUpdating = true) }
-                    },
-                    onFinishUpdate = {
-                        _uiState.update { it.copy(isUpdating = false) }
-                    }
-                )
+            updateUiStateParams(
+                savedNamedSchedules = savedNamedSchedules,
+                isLoading = false,
+                isSaved = defaultNamedScheduleEntity != null,
+            )
 
-                if (resultUpdate is Result.Error) {
-                    val errorMsg = resultUpdate.exception.message
-                        ?: resourcesManager.getString(R.string.unknown_error)
-                    _uiEventChannel.send(UiEvent.ShowErrorMessage("${resourcesManager.getString(R.string.failed_update)}: $errorMsg"))
-                }
+            defaultNamedScheduleEntity?.let { namedScheduleEntity ->
+                updateNamedSchedule(namedScheduleEntity)
+                updateUiStateNamedSchedule(
+                    namedSchedule = repos.getNamedScheduleByApiId(namedScheduleEntity.apiId!!)
+                )
             }
         }
     }
 
-    override fun getAndSetNamedSchedule(name: String, apiId: String, type: Int) {
+    private suspend fun updateUiStateParams (
+        savedNamedSchedules: List<NamedScheduleEntity>? = null,
+        isUpdating: Boolean? = null,
+        isError: Boolean? = null,
+        isLoading: Boolean? = null,
+        isSaved: Boolean? = null
+    ) {
+        _uiState.update {
+            it.copy(
+                savedNamedSchedules = savedNamedSchedules ?: it.savedNamedSchedules,
+                isUpdating = isUpdating ?: it.isUpdating,
+                isError = isError ?: it.isError,
+                isLoading = isLoading ?: it.isLoading,
+                isSaved = isSaved ?: it.isSaved,
+                isSavingAvailable = repos.isSavingAvailable()
+            )
+        }
+    }
+
+    private fun updateUiStateNamedSchedule(
+        namedSchedule: NamedScheduleFormatted?,
+        scheduleId: Long? = null
+    ) {
+        val currentSchedule = findCurrentSchedule(namedSchedule, scheduleId)
+        _uiState.update {
+            it.copy(
+                currentNamedSchedule = namedSchedule,
+                currentScheduleEntity = currentSchedule?.scheduleEntity,
+                currentScheduleData = calculateScheduleData(currentSchedule),
+            )
+        }
+    }
+
+    private suspend fun sendErrorUiEvent (
+        message: String
+    ) {
+        _uiEventChannel.send(UiEvent.ShowErrorMessage(message))
+    }
+
+    private fun findCurrentSchedule(
+        namedSchedule: NamedScheduleFormatted?,
+        scheduleId: Long?
+    ): ScheduleFormatted? {
+        if (namedSchedule == null) return null
+        if (scheduleId == null) return findDefaultSchedule(namedSchedule)
+        return namedSchedule.schedules.firstOrNull { s -> s.scheduleEntity.id == scheduleId }
+    }
+
+    private fun findDefaultSchedule(
+        namedSchedule: NamedScheduleFormatted
+    ): ScheduleFormatted? {
+        return namedSchedule.schedules.find { it.scheduleEntity.isDefault }
+            ?: namedSchedule.schedules.firstOrNull()
+    }
+
+
+    override fun getNamedScheduleFromApi(
+        name: String,
+        apiId: String,
+        type: Int
+    ) {
         val fetchJob = viewModelScope.launch {
             fetchScheduleJob?.cancelAndJoin()
-            _uiState.update { it.copy(isLoading = true) }
+            updateUiStateParams(isLoading = true)
 
             val localNamedSchedule = repos.getNamedScheduleByApiId(apiId)
             if (localNamedSchedule != null) {
-                val defaultSchedule = findDefaultSchedule(localNamedSchedule)
-                _uiState.update {
-                    it.copy(
-                        isError = false,
-                        isLoading = false,
-                        currentNamedSchedule = localNamedSchedule,
-                        currentScheduleEntity = defaultSchedule?.scheduleEntity,
-                        isSaved = true
-                    )
-                }
-                val resultUpdate = repos.updateNamedSchedule(
-                    namedSchedule = localNamedSchedule,
-                    onStartUpdate = {
-                        _uiState.update { it.copy(isUpdating = true) }
-                    },
-                    onFinishUpdate = {
-                        _uiState.update { it.copy(isUpdating = false) }
-                    }
+                updateUiStateNamedSchedule(
+                    namedSchedule = localNamedSchedule
                 )
-
-                if (resultUpdate is Result.Error) {
-                    val errorMsg = resultUpdate.exception.message
-                        ?: resourcesManager.getString(R.string.unknown_error)
-                    _uiEventChannel.send(UiEvent.ShowErrorMessage("${resourcesManager.getString(R.string.failed_update)}: $errorMsg"))
-                }
+                updateUiStateParams(
+                    isError = false,
+                    isLoading = false,
+                    isSaved = true
+                )
+                updateNamedSchedule(localNamedSchedule.namedScheduleEntity)
+                updateUiStateNamedSchedule(
+                    namedSchedule = repos.getNamedScheduleByApiId(localNamedSchedule.namedScheduleEntity.apiId!!)
+                )
                 return@launch
             }
 
-            when (val result =
-                repos.getNamedSchedule(name = name, apiId = apiId, type = type)) {
+            when (val newNamedSchedule = repos.getNamedSchedule(name = name, apiId = apiId, type = type)) {
                 is Result.Success -> {
-                    val newNamedSchedule = result.data
-                    val defaultSchedule = findDefaultSchedule(newNamedSchedule)
-                    _uiState.update {
-                        it.copy(
-                            isError = false,
-                            isLoading = false,
-                            currentNamedSchedule = newNamedSchedule,
-                            currentScheduleEntity = defaultSchedule?.scheduleEntity,
-                            currentScheduleData = calculateScheduleData(defaultSchedule),
-                            isSaved = false
-                        )
-                    }
+                    updateUiStateNamedSchedule(
+                        namedSchedule = newNamedSchedule.data
+                    )
+                    updateUiStateParams(
+                        isError = false,
+                        isLoading = false,
+                        isSaved = false
+                    )
                 }
 
                 is Result.Error -> {
-                    _uiState.update {
-                        it.copy(
-                            isError = true,
-                            isLoading = false
-                        )
-                    }
-                    _uiEventChannel.send(UiEvent.ShowErrorMessage("${result.exception.message}")) //Loading error
+                    updateUiStateParams(
+                        isError = true,
+                        isLoading = false
+                    )
+                    sendErrorUiEvent(
+                        message = "${newNamedSchedule.exception.message}"
+                    )
                 }
             }
         }
         fetchScheduleJob = fetchJob
     }
 
-    override fun selectDefaultNamedSchedule(primaryKey: Long) {
+    override fun getNamedScheduleFromDb(
+        primaryKeyNamedSchedule: Long,
+        setDefault: Boolean
+    ) {
         viewModelScope.launch {
-            repos.updatePriorityNamedSchedule(primaryKey)
-            loadInitialData(false)
-        }
-    }
-
-    override fun setNamedSchedule(primaryKey: Long) {
-        viewModelScope.launch {
-            val namedSchedule = repos.getNamedScheduleById(primaryKey)
-            val currentSchedule = findDefaultSchedule(namedSchedule)
-
-            _uiState.update {
-                it.copy(
-                    currentNamedSchedule = namedSchedule,
-                    currentScheduleEntity = currentSchedule?.scheduleEntity,
-                    currentScheduleData = calculateScheduleData(currentSchedule),
-                )
+            if (setDefault) {
+                repos.updatePriorityNamedSchedule(primaryKeyNamedSchedule)
             }
-        }
-    }
+            val namedSchedule = repos.getNamedScheduleById(primaryKeyNamedSchedule)
 
-    override fun selectDefaultSchedule(primaryKeySchedule: Long, timetableId: String?) {
-        viewModelScope.launch {
-            val currentState = _uiState.value
-            val currentNamedSchedule = currentState.currentNamedSchedule ?: return@launch
-
-            if (currentState.isSaved) {
-                repos.updatePrioritySchedule(
-                    primaryKeySchedule,
-                    currentNamedSchedule.namedScheduleEntity.id
+            updateUiStateNamedSchedule(
+                namedSchedule = namedSchedule
+            )
+            if (namedSchedule != null) {
+                updateNamedSchedule(namedSchedule.namedScheduleEntity)
+                updateUiStateNamedSchedule(
+                    namedSchedule = repos.getNamedScheduleByApiId(namedSchedule.namedScheduleEntity.apiId!!)
                 )
-                val updatedNamedSchedule =
-                    repos.getNamedScheduleById(currentNamedSchedule.namedScheduleEntity.id)
-
-                val schedule =
-                    updatedNamedSchedule?.schedules?.find { s -> s.scheduleEntity.isDefault }
-
-                _uiState.update {
-                    it.copy(
-                        currentNamedSchedule = updatedNamedSchedule,
-                        currentScheduleEntity = schedule?.scheduleEntity,
-                        currentScheduleData = calculateScheduleData(schedule)
-                    )
-                }
-            } else {
-                val updatedSchedules = currentNamedSchedule.schedules.map { schedule ->
-                    schedule.copy(
-                        scheduleEntity = schedule.scheduleEntity.copy(
-                            isDefault = schedule.scheduleEntity.timetableId == timetableId
-                        )
-                    )
-                }
-                val updatedNamedSchedule = currentNamedSchedule.copy(schedules = updatedSchedules)
-                val updatedDefaultSchedule = findDefaultSchedule(updatedNamedSchedule)
-                _uiState.update {
-                    it.copy(
-                        currentNamedSchedule = updatedNamedSchedule,
-                        currentScheduleEntity = updatedDefaultSchedule?.scheduleEntity,
-                        currentScheduleData = calculateScheduleData(updatedDefaultSchedule)
-                    )
-                }
             }
         }
     }
@@ -284,45 +271,73 @@ class ScheduleViewModelImpl(
             if (_uiState.value.isSaved) return@launch
 
             repos.insertNamedSchedule(currentNamedSchedule)
-            val updatedCurrentNamedSchedule =
-                repos.getNamedScheduleByApiId(currentNamedSchedule.namedScheduleEntity.apiId!!)
-            val updatesCurrentSchedule =
-                updatedCurrentNamedSchedule!!.schedules.find { it.scheduleEntity.isDefault }
-                    ?: updatedCurrentNamedSchedule.schedules.firstOrNull()
-            _uiState.update { value ->
-                value.copy(
-                    savedNamedSchedules = repos.getAllNamedSchedules()
-                        .map { it.namedScheduleEntity },
-                    currentNamedSchedule = updatedCurrentNamedSchedule,
-                    currentScheduleEntity = updatesCurrentSchedule?.scheduleEntity,
-                    currentScheduleData = calculateScheduleData(updatesCurrentSchedule),
-                    isSaved = true,
-                    isSavingAvailable = repos.isSavingAvailable()
+
+            updateUiStateNamedSchedule(
+                namedSchedule = repos.getNamedScheduleByApiId(currentNamedSchedule.namedScheduleEntity.apiId!!)
+            )
+            updateUiStateParams(
+                savedNamedSchedules = repos.getAllNamedSchedules(),
+                isSaved = true
+            )
+        }
+    }
+
+    override fun deleteNamedSchedule(
+        primaryKeyNamedSchedule: Long,
+        isDefault: Boolean
+    ) {
+        viewModelScope.launch {
+            repos.deleteNamedSchedule(primaryKeyNamedSchedule, isDefault)
+
+            updateUiStateParams(
+                savedNamedSchedules = repos.getAllNamedSchedules(),
+                isSaved = (primaryKeyNamedSchedule != _uiState.value.currentNamedSchedule!!.namedScheduleEntity.id) && _uiState.value.isSaved
+            )
+        }
+    }
+
+    override fun setNewDefaultSchedule(
+        primaryKeySchedule: Long,
+        timetableId: String
+    ) {
+        viewModelScope.launch {
+            val currentState = _uiState.value
+            val currentNamedSchedule = currentState.currentNamedSchedule ?: return@launch
+
+            if (currentState.isSaved) {
+                repos.updatePrioritySchedule(
+                    primaryKeySchedule,
+                    currentNamedSchedule.namedScheduleEntity.id
+                )
+
+                updateUiStateNamedSchedule(
+                    namedSchedule =  repos.getNamedScheduleById(currentNamedSchedule.namedScheduleEntity.id)
+                )
+            } else {
+                val updatedSchedules = currentNamedSchedule.schedules.map { schedule ->
+                    schedule.copy(
+                        scheduleEntity = schedule.scheduleEntity.copy(
+                            isDefault = schedule.scheduleEntity.timetableId == timetableId
+                        )
+                    )
+                }
+                updateUiStateNamedSchedule(
+                    namedSchedule = currentNamedSchedule
+                        .copy(schedules = updatedSchedules)
                 )
             }
         }
     }
 
-    override fun deleteNamedSchedule(primaryKey: Long, isDefault: Boolean) {
+    override fun updateEventExtra(
+        event: Event,
+        comment: String,
+        tag: Int
+    ) {
         viewModelScope.launch {
-            repos.deleteNamedSchedule(primaryKey, isDefault)
-
-            _uiState.update {
-                it.copy(
-                    savedNamedSchedules = repos.getAllNamedSchedules()
-                        .map { namedScheduleFormatted -> namedScheduleFormatted.namedScheduleEntity },
-                    isSaved = (primaryKey != _uiState.value.currentNamedSchedule!!.namedScheduleEntity.id) && _uiState.value.isSaved,
-                    isSavingAvailable = repos.isSavingAvailable()
-                )
-            }
-        }
-    }
-
-    override fun updateEventExtra(event: Event, comment: String, tag: Int) {
-        viewModelScope.launch {
-            val scheduleId = _uiState.value.currentScheduleEntity?.id ?: return@launch
             val namedScheduleId =
                 _uiState.value.currentNamedSchedule?.namedScheduleEntity?.id ?: return@launch
+            val scheduleId = _uiState.value.currentScheduleEntity?.id ?: return@launch
 
             repos.updateEventExtra(
                 scheduleId = scheduleId,
@@ -331,24 +346,39 @@ class ScheduleViewModelImpl(
                 tag = tag
             )
 
-            val updatedNamedSchedule = repos.getNamedScheduleById(namedScheduleId)
-            val updatedCurrentSchedule =
-                updatedNamedSchedule?.schedules?.firstOrNull { s -> s.scheduleEntity.id == scheduleId }
-            _uiState.update {
-                it.copy(
-                    currentNamedSchedule = updatedNamedSchedule,
-                    currentScheduleEntity = updatedCurrentSchedule?.scheduleEntity,
-                    currentScheduleData = calculateScheduleData(updatedCurrentSchedule)
-                )
-            }
+            updateUiStateNamedSchedule(
+                namedSchedule = repos.getNamedScheduleById(namedScheduleId),
+                scheduleId = scheduleId
+            )
         }
     }
 
-    private fun findDefaultSchedule(namedSchedule: NamedScheduleFormatted?): ScheduleFormatted? {
-        if (namedSchedule == null) return null
-        return namedSchedule.schedules.find { it.scheduleEntity.isDefault }
-            ?: namedSchedule.schedules.firstOrNull()
+    private suspend fun updateNamedSchedule(
+        namedScheduleEntity: NamedScheduleEntity
+    ) {
+        updateUiStateParams(
+            isUpdating = true
+        )
+        when (val resultUpdate = repos.updateNamedSchedule(namedScheduleEntity = namedScheduleEntity)) {
+            is Result.Success -> {
+                updateUiStateParams(
+                    savedNamedSchedules = repos.getAllNamedSchedules()
+                )
+            }
+            is Result.Error -> {
+                val errorMessage = resultUpdate.exception.message
+                    ?: resourcesManager.getString(R.string.unknown_error)
+                sendErrorUiEvent(
+                    message = "${resourcesManager.getString(R.string.failed_update)}: $errorMessage"
+                )
+            }
+        }
+        updateUiStateParams(
+            isUpdating = false
+        )
     }
+
+
 
     private fun calculateScheduleData(
         scheduleFormatted: ScheduleFormatted?
@@ -369,17 +399,18 @@ class ScheduleViewModelImpl(
             val eventsForCalendar = calculateEventsForCalendar(scheduleFormatted)
             val eventsForList = calculateEventsForList(
                 today = today,
+                eventsForCalendar = eventsForCalendar,
                 scheduleEntity = scheduleFormatted.scheduleEntity,
-                eventsByWeekAndDays = eventsForCalendar
             )
+
             ScheduleData(
                 weeksCount = weeksCount,
                 defaultDate = defaultParams.first,
                 weeksStartIndex = defaultParams.second,
                 daysStartIndex = defaultParams.third,
                 eventsForCalendar = eventsForCalendar,
-                eventForList = eventsForList,
-                eventsExtraData = scheduleFormatted.eventsExtraData
+                eventsExtraData = scheduleFormatted.eventsExtraData,
+                eventForList = eventsForList
             )
         } else null
     }
@@ -419,7 +450,6 @@ class ScheduleViewModelImpl(
         return Triple(defaultDate, weeksStartIndex, daysStartIndex)
     }
 
-
     private fun calculateEventsForCalendar(
         currentSchedule: ScheduleFormatted
     ): Map<Int, Map<LocalDate, List<Event>>> {
@@ -442,12 +472,12 @@ class ScheduleViewModelImpl(
     }
 
     private fun calculateEventsForList(
-        eventsByWeekAndDays: Map<Int, Map<LocalDate, List<Event>>>,
+        eventsForCalendar: Map<Int, Map<LocalDate, List<Event>>>,
         today: LocalDate,
         scheduleEntity: ScheduleEntity
     ): List<Pair<LocalDate, List<Event>>> {
         if (scheduleEntity.recurrence == null) {
-            return eventsByWeekAndDays[1]?.values
+            return eventsForCalendar[1]?.values
                 .orEmpty()
                 .asSequence()
                 .flatten()
@@ -460,7 +490,7 @@ class ScheduleViewModelImpl(
         val allEvents = buildList {
             val weeksNumbers = getWeeksNumbers(startDate, scheduleEntity)
             weeksNumbers.forEachIndexed { index, week ->
-                val eventsInWeek = eventsByWeekAndDays[week]?.values.orEmpty().flatten()
+                val eventsInWeek = eventsForCalendar[week]?.values.orEmpty().flatten()
                 val currentWeekStartDate = startDate.plusWeeks(index.toLong())
                 eventsInWeek.forEach { event ->
                     val eventStartDayOfWeek =
@@ -469,7 +499,7 @@ class ScheduleViewModelImpl(
                     if (newEventDate.isAfter(scheduleEntity.endDate)) return@forEach
                     val newEvent = event.copy(
                         startDatetime = newEventDate.atTime(event.startDatetime.toLocalTime()),
-                        endDatetime = newEventDate.atTime(event.endDatetime?.toLocalTime())
+                        endDatetime = newEventDate.atTime(event.endDatetime?.toLocalTime()),
                     )
                     add(newEvent)
                 }
@@ -482,19 +512,24 @@ class ScheduleViewModelImpl(
             .groupBy { it.startDatetime!!.toLocalDate() }
             .toList()
     }
-}
 
-fun getWeeksNumbers(
-    startDate: LocalDate,
-    scheduleEntity: ScheduleEntity
-): List<Int> {
-    val weeksCount = ChronoUnit.WEEKS.between(calculateFirstDayOfWeek(scheduleEntity.startDate), calculateFirstDayOfWeek(scheduleEntity.endDate)).toInt() + 1
-    val weeksRemaining = ChronoUnit.WEEKS.between(startDate, calculateFirstDayOfWeek(scheduleEntity.endDate)).toInt() + 1
-    val recurrence = scheduleEntity.recurrence ?: return emptyList()
+    private fun getWeeksNumbers(
+        startDate: LocalDate,
+        scheduleEntity: ScheduleEntity
+    ): List<Int> {
+        val weeksCount = ChronoUnit.WEEKS.between(
+            calculateFirstDayOfWeek(scheduleEntity.startDate),
+            calculateFirstDayOfWeek(scheduleEntity.endDate)
+        ).toInt() + 1
+        val weeksRemaining =
+            ChronoUnit.WEEKS.between(startDate, calculateFirstDayOfWeek(scheduleEntity.endDate))
+                .toInt() + 1
+        val recurrence = scheduleEntity.recurrence ?: return emptyList()
 
-    return (1 ..  weeksCount)
-        .asSequence()
-        .map { week -> ((week + recurrence.firstWeekNumber) % recurrence.interval!!).plus(1)}
-        .toList()
-        .drop((weeksCount - weeksRemaining))
+        return (1..weeksCount)
+            .asSequence()
+            .map { week -> ((week + recurrence.firstWeekNumber) % recurrence.interval!!).plus(1) }
+            .toList()
+            .drop((weeksCount - weeksRemaining))
+    }
 }
