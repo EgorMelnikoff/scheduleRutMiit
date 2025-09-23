@@ -30,7 +30,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,8 +56,7 @@ fun ScheduleListView(
     eventsExtraData: List<EventExtraData>,
     scheduleListState: LazyListState,
     isShortEvent: Boolean,
-    paddingBottom: Dp,
-    hapticFeedback: HapticFeedback
+    paddingBottom: Dp
 ) {
     if (eventsForList.isNotEmpty()) {
         val scope = rememberCoroutineScope()
@@ -99,8 +97,7 @@ fun ScheduleListView(
                                 isShortEvent = isShortEvent,
                                 eventsExtraData = eventsExtraData,
                                 events = eventsGrouped.second,
-                                onShowDialogEvent = onShowDialogEvent,
-                                hapticFeedback = hapticFeedback
+                                onShowDialogEvent = onShowDialogEvent
                             )
                         }
                         if (index != lastIndex) {
