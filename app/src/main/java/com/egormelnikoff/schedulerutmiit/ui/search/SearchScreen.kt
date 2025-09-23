@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -57,12 +56,12 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.ui.composable.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
 import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.composable.SearchDataField
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchState
+import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchUiState
 import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModel
 
 enum class Options {
@@ -73,7 +72,7 @@ enum class Options {
 fun SearchScreen(
     searchViewModel: SearchViewModel,
     scheduleViewModel: ScheduleViewModel,
-    searchState: SearchState,
+    searchUiState: SearchUiState,
     navigateToSchedule: () -> Unit,
     scheduleUiState: ScheduleUiState,
     selectedOption: Options,
@@ -86,13 +85,12 @@ fun SearchScreen(
         modifier = Modifier
             .padding(top = paddingValues.calculateTopPadding())
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-        ) {
-            SearchDataField(
+        Column {
+            CustomTextField(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 value = query,
                 onValueChanged = onQueryChanged,
                 action = {
@@ -135,13 +133,13 @@ fun SearchScreen(
                     imeAction = ImeAction.Search
                 )
             )
-            Spacer(
-                modifier = Modifier.height(8.dp)
-            )
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                Spacer(
+                    modifier = Modifier.width(8.dp)
+                )
                 Chip(
                     title = LocalContext.current.getString(R.string.all),
                     imageVector = null,
@@ -166,17 +164,25 @@ fun SearchScreen(
                         onSelectOption(Options.PEOPLE)
                     }
                 )
+                Spacer(
+                    modifier = Modifier.width(8.dp)
+                )
             }
         }
         AnimatedContent(
             modifier = Modifier.fillMaxSize(),
-            targetState = searchState,
+            targetState = searchUiState,
             transitionSpec = {
                 fadeIn() togetherWith fadeOut()
             }
-        ) { stateSearch ->
-            when (stateSearch) {
-                is SearchState.EmptyQuery -> {
+        ) { searchUiState ->
+            when {
+                searchUiState.isLoading -> LoadingScreen(
+                    paddingTop = 0.dp,
+                    paddingBottom = paddingValues.calculateBottomPadding()
+                )
+
+                searchUiState.isEmptyQuery -> {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -193,7 +199,7 @@ fun SearchScreen(
                             Text(
                                 modifier = Modifier
                                     .padding(horizontal = 8.dp),
-                                text = LocalContext.current.getString(R.string.maybe_you_serch),
+                                text = LocalContext.current.getString(R.string.saved_schedules),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -202,7 +208,7 @@ fun SearchScreen(
                                 SearchedItem(
                                     onClick = {
                                         navigateToSchedule()
-                                        scheduleViewModel.setNamedSchedule(namedScheduleEntity.id)
+                                        scheduleViewModel.getNamedScheduleFromDb(namedScheduleEntity.id)
                                         onQueryChanged("")
                                         searchViewModel.setDefaultSearchState()
                                     },
@@ -213,17 +219,12 @@ fun SearchScreen(
                     }
                 }
 
-                is SearchState.Loading -> LoadingScreen(
-                    paddingTop = 0.dp,
-                    paddingBottom = paddingValues.calculateBottomPadding()
-                )
-
-                is SearchState.EmptyResult -> Empty(
+                searchUiState.groups.isEmpty() && searchUiState.people.isEmpty() -> Empty(
                     subtitle = LocalContext.current.getString(R.string.nothing_found),
                     paddingBottom = paddingValues.calculateBottomPadding()
                 )
 
-                is SearchState.Loaded -> {
+                else -> {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize(),
@@ -236,7 +237,7 @@ fun SearchScreen(
                         ),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        if (stateSearch.groups.isNotEmpty() && (selectedOption == Options.ALL || selectedOption == Options.GROUPS)) {
+                        if (searchUiState.groups.isNotEmpty() && (selectedOption == Options.ALL || selectedOption == Options.GROUPS)) {
                             item {
                                 Text(
                                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -246,11 +247,11 @@ fun SearchScreen(
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
-                            items(stateSearch.groups) { group ->
+                            items(searchUiState.groups) { group ->
                                 SearchedItem(
                                     onClick = {
                                         navigateToSchedule()
-                                        scheduleViewModel.getAndSetNamedSchedule(
+                                        scheduleViewModel.getNamedScheduleFromApi(
                                             name = group.name!!,
                                             apiId = group.id.toString(),
                                             type = 0
@@ -262,7 +263,7 @@ fun SearchScreen(
                                 )
                             }
                         }
-                        if (stateSearch.people.isNotEmpty() && (selectedOption == Options.ALL || selectedOption == Options.PEOPLE)) {
+                        if (searchUiState.people.isNotEmpty() && (selectedOption == Options.ALL || selectedOption == Options.PEOPLE)) {
                             item {
                                 Text(
                                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -272,11 +273,11 @@ fun SearchScreen(
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
-                            items(stateSearch.people) { person ->
+                            items(searchUiState.people) { person ->
                                 SearchedItem(
                                     onClick = {
                                         navigateToSchedule()
-                                        scheduleViewModel.getAndSetNamedSchedule(
+                                        scheduleViewModel.getNamedScheduleFromApi(
                                             name = person.name!!,
                                             apiId = person.id.toString(),
                                             type = 1
@@ -347,10 +348,8 @@ fun SearchedItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .clickable(
-                onClick = {
-                    onClick()
-                }
+            .clickable (
+                onClick = onClick
             )
             .padding(horizontal = 8.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,

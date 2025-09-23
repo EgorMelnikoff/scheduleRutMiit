@@ -16,30 +16,23 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 interface SearchViewModel {
-    val stateSearch: StateFlow<SearchState>
+    val uiState: StateFlow<SearchUiState>
     fun search(query: String, selectedOptions: Options)
     fun setDefaultSearchState()
 }
 
-
-data class InstitutesState (
-    val institutes: Institutes
+data class SearchUiState(
+    val institutes: Institutes? = null,
+    val groups: List<Group> = listOf(),
+    val people: List<Person> = listOf(),
+    val isEmptyQuery: Boolean = true,
+    val isLoading: Boolean = false
 )
-
-sealed interface SearchState {
-    data object EmptyQuery : SearchState
-    data object Loading : SearchState
-    data class Loaded(
-        val groups: List<Group>,
-        val people: List<Person>
-    ) : SearchState
-
-    data object EmptyResult : SearchState
-}
-
 
 class SearchViewModelImpl(
     private val repos: Repos
@@ -48,7 +41,10 @@ class SearchViewModelImpl(
         fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+                override fun <T : ViewModel> create(
+                    modelClass: Class<T>,
+                    extras: CreationExtras
+                ): T {
                     return SearchViewModelImpl(
                         repos = container.repos
                     ) as T
@@ -57,15 +53,13 @@ class SearchViewModelImpl(
         }
     }
 
-    private val _stateSearch = MutableStateFlow<SearchState>(SearchState.EmptyQuery)
-    private val _stateInstitutes = MutableStateFlow(InstitutesState(Institutes(listOf())))
-
-    override val stateSearch: StateFlow<SearchState> = _stateSearch
+    private val _uiState = MutableStateFlow(SearchUiState())
+    override val uiState = _uiState.asStateFlow()
 
     private var searchJob: Job? = null
 
     override fun search(query: String, selectedOptions: Options) {
-        _stateSearch.value = SearchState.Loading
+        _uiState.update { it.copy(isLoading = true) }
         val newSearchJob = viewModelScope.launch {
             searchJob?.cancelAndJoin()
             if (query.isNotEmpty()) {
@@ -80,41 +74,64 @@ class SearchViewModelImpl(
                 }
 
                 if (groups.isNotEmpty() || people.isNotEmpty()) {
-                    _stateSearch.value = SearchState.Loaded(
-                        groups = groups,
-                        people = people,
-                    )
+                    _uiState.update {
+                        it.copy(
+                            groups = groups,
+                            people = people,
+                            isEmptyQuery = false,
+                            isLoading = false
+                        )
+                    }
                 } else {
-                    _stateSearch.value = SearchState.EmptyResult
+                    _uiState.update {
+                        it.copy(
+                            groups = listOf(),
+                            people = listOf(),
+                            isEmptyQuery = false,
+                            isLoading = false
+                        )
+                    }
                 }
             } else {
-                _stateSearch.value = SearchState.EmptyQuery
+                setDefaultSearchState()
             }
         }
         searchJob = newSearchJob
     }
 
     override fun setDefaultSearchState() {
-        _stateSearch.value = SearchState.EmptyQuery
+        _uiState.update {
+            it.copy(
+                isEmptyQuery = true,
+                isLoading = false,
+                groups = listOf(),
+                people = listOf()
+            )
+        }
     }
 
     private suspend fun searchGroup(query: String): List<Group> {
-        if (_stateInstitutes.value.institutes.institutes!!.isEmpty()) {
+        if (_uiState.value.institutes == null) {
             when (val institutes = repos.getInstitutes()) {
                 is Result.Error -> {
-                    _stateInstitutes.value = InstitutesState(Institutes(listOf()))
+                    _uiState.update {
+                        it.copy(
+                            institutes = null
+                        )
+                    }
                 }
 
                 is Result.Success -> {
-                    _stateInstitutes.value = InstitutesState(
-                        institutes.data
-                    )
+                    _uiState.update {
+                        it.copy(
+                            institutes = institutes.data
+                        )
+                    }
                 }
             }
         }
-        if (_stateInstitutes.value.institutes.institutes!!.isNotEmpty()) {
-            val groups = (_stateInstitutes.value)
-                .institutes.institutes?.let { getGroups(it) }
+        if (_uiState.value.institutes != null) {
+            val groups = (_uiState.value.institutes)!!.institutes?.let { getGroups(it) }
             if (groups != null) {
                 val filteredGroups = groups
                     .filter {
@@ -146,5 +163,4 @@ class SearchViewModelImpl(
             is Result.Error -> emptyList()
         }
     }
-
 }
