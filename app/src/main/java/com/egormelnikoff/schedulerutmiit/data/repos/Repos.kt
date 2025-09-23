@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.data.repos
 
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.repos.local.LocalRepos
@@ -20,40 +21,32 @@ interface Repos {
         namedScheduleId: Long,
         scheduleFormatted: ScheduleFormatted
     )
-
     suspend fun deleteNamedSchedule(
         primaryKey: Long,
         isDefault: Boolean
     )
-
     suspend fun deleteSchedule(
-        id: Long,
-        deleteEventsExtra: Boolean = false
+        id: Long
     )
-
     suspend fun isSavingAvailable(): Boolean
-    suspend fun getAllNamedSchedules(): MutableList<NamedScheduleFormatted>
+    suspend fun getAllNamedSchedules(): List<NamedScheduleEntity>
     suspend fun getNamedScheduleByApiId(
         apiId: String
     ): NamedScheduleFormatted?
-
     suspend fun getNamedScheduleById(idNamedSchedule: Long): NamedScheduleFormatted?
     suspend fun updatePriorityNamedSchedule(
         id: Long
     )
-
     suspend fun updatePrioritySchedule(
         idSchedule: Long,
         idNamedSchedule: Long
     )
-
     suspend fun updateEventExtra(
         scheduleId: Long,
         event: Event,
         tag: Int,
         comment: String
     )
-
     fun parseNews(news: News): News
 
     suspend fun getInstitutes(): Result<Institutes>
@@ -70,9 +63,7 @@ interface Repos {
     suspend fun getTgChannelInfo(url: String): Result<TelegramPage>
 
     suspend fun updateNamedSchedule(
-        onStartUpdate: () -> Unit,
-        onFinishUpdate: () -> Unit,
-        namedSchedule: NamedScheduleFormatted
+        namedScheduleEntity: NamedScheduleEntity
     ): Result<String>
 }
 
@@ -100,15 +91,15 @@ class ReposImpl(
         localRepos.deleteNamedSchedule(primaryKey, isDefault)
     }
 
-    override suspend fun deleteSchedule(id: Long, deleteEventsExtra: Boolean) {
-        localRepos.deleteSchedule(id, deleteEventsExtra)
+    override suspend fun deleteSchedule(id: Long) {
+        localRepos.deleteSchedule(id)
     }
 
     override suspend fun isSavingAvailable(): Boolean {
         return localRepos.isSavingAvailable()
     }
 
-    override suspend fun getAllNamedSchedules(): MutableList<NamedScheduleFormatted> {
+    override suspend fun getAllNamedSchedules(): List<NamedScheduleEntity> {
         return localRepos.getAllNamedSchedules()
     }
 
@@ -171,31 +162,27 @@ class ReposImpl(
     }
 
     override suspend fun updateNamedSchedule(
-        onStartUpdate: () -> Unit,
-        onFinishUpdate: () -> Unit,
-        namedSchedule: NamedScheduleFormatted
+        namedScheduleEntity: NamedScheduleEntity
     ): Result<String> {
-        if (shouldUpdateNamedSchedule(namedSchedule)) {
-            onStartUpdate()
-            val result = performNamedScheduleUpdate(namedSchedule)
-            onFinishUpdate()
-            return result
+        if (shouldUpdateNamedSchedule(namedScheduleEntity)) {
+            return performNamedScheduleUpdate(namedScheduleEntity)
         }
         return Result.Success("Success update")
     }
 
-    private fun shouldUpdateNamedSchedule(namedSchedule: NamedScheduleFormatted): Boolean {
+
+    private fun shouldUpdateNamedSchedule(namedScheduleEntity: NamedScheduleEntity): Boolean {
         val timeSinceLastUpdate =
-            System.currentTimeMillis() - namedSchedule.namedScheduleEntity.lastTimeUpdate
-        return timeSinceLastUpdate > SCHEDULE_UPDATE_THRESHOLD_MS && namedSchedule.namedScheduleEntity.type != CUSTOM_SCHEDULE_TYPE
+            System.currentTimeMillis() - namedScheduleEntity.lastTimeUpdate
+        return timeSinceLastUpdate > SCHEDULE_UPDATE_THRESHOLD_MS && namedScheduleEntity.type != CUSTOM_SCHEDULE_TYPE
     }
 
-    private suspend fun performNamedScheduleUpdate(namedScheduleToUpdate: NamedScheduleFormatted): Result<String> {
+    private suspend fun performNamedScheduleUpdate(namedScheduleEntity: NamedScheduleEntity): Result<String> {
         val remoteResult = remoteRepos.getNamedSchedule(
-            namedScheduleId = namedScheduleToUpdate.namedScheduleEntity.id,
-            name = namedScheduleToUpdate.namedScheduleEntity.shortName,
-            apiId = namedScheduleToUpdate.namedScheduleEntity.apiId!!,
-            type = namedScheduleToUpdate.namedScheduleEntity.type
+            namedScheduleId = namedScheduleEntity.id,
+            name = namedScheduleEntity.shortName,
+            apiId = namedScheduleEntity.apiId!!,
+            type = namedScheduleEntity.type
         )
 
         return when (remoteResult) {
@@ -204,11 +191,16 @@ class ReposImpl(
             }
 
             is Result.Success -> {
-                mergeAndUpdateSchedules(
-                    oldNamedSchedule = namedScheduleToUpdate,
-                    newNamedSchedule = remoteResult.data
-                )
-                Result.Success("Success update")
+                val oldNamedSchedule = localRepos.getNamedScheduleById(namedScheduleEntity.id)
+                if (oldNamedSchedule != null) {
+                    mergeAndUpdateSchedules(
+                        oldNamedSchedule = oldNamedSchedule,
+                        newNamedSchedule = remoteResult.data
+                    )
+                    Result.Success("Success update")
+                } else {
+                    Result.Error(Exception("Cannot find schedule"))
+                }
             }
         }
     }
@@ -224,13 +216,14 @@ class ReposImpl(
         newNamedSchedule.schedules.forEach { updatedSchedule ->
             val oldSchedule = oldNamedSchedulesMap[updatedSchedule.scheduleEntity.timetableId]
             if (oldSchedule != null) {
-                val updatedScheduleEntity = if (oldSchedule.scheduleEntity.recurrence?.currentNumber != updatedSchedule.scheduleEntity.recurrence?.currentNumber) {
-                    oldSchedule.scheduleEntity.copy(
-                        recurrence = updatedSchedule.scheduleEntity.recurrence
-                    )
-                } else {
-                    oldSchedule.scheduleEntity
-                }
+                val updatedScheduleEntity =
+                    if (oldSchedule.scheduleEntity.recurrence?.currentNumber != updatedSchedule.scheduleEntity.recurrence?.currentNumber) {
+                        oldSchedule.scheduleEntity.copy(
+                            recurrence = updatedSchedule.scheduleEntity.recurrence
+                        )
+                    } else {
+                        oldSchedule.scheduleEntity
+                    }
 
                 val updatedEvents = updatedSchedule.events.map { event ->
                     val oldEvent = oldSchedule.events.find { it == event }
@@ -261,8 +254,7 @@ class ReposImpl(
             val isOutdated = LocalDate.now() > oldSchedule.scheduleEntity.endDate
             if (!stillExists && isOutdated) {
                 localRepos.deleteSchedule(
-                    id = oldSchedule.scheduleEntity.id,
-                    deleteEventsExtra = true
+                    id = oldSchedule.scheduleEntity.id
                 )
             }
         }
