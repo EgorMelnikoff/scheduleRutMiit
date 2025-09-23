@@ -91,6 +91,7 @@ fun SearchScreen(
         Column {
             CustomTextField(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                maxLines = 1,
                 value = query,
                 onValueChanged = onQueryChanged,
                 action = {

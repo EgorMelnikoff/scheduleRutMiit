@@ -21,6 +21,7 @@ fun CustomTextField(
     onValueChanged: (String) -> Unit,
     keyboardOptions: KeyboardOptions,
     colors: TextFieldColors? = null,
+    maxLines: Int? = null,
     action: (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -31,7 +32,7 @@ fun CustomTextField(
 
     OutlinedTextField(
         value = value,
-        maxLines = 1,
+        maxLines = maxLines ?: Int.MAX_VALUE,
         modifier = modifier.fillMaxWidth(),
         colors = colors ?: TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
