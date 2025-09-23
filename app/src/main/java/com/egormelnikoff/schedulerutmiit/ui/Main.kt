@@ -23,12 +23,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import androidx.navigationevent.NavigationEventSwipeEdge
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
@@ -73,10 +73,9 @@ fun Main(
         )
     }
     val uriHandler = LocalUriHandler.current
-    val hapticFeedback = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
 
-    val searchState = searchViewModel.stateSearch.collectAsState().value
+    val searchUiState = searchViewModel.uiState.collectAsState().value
     val scheduleUiState = scheduleViewModel.uiState.collectAsState().value
     val newsUiState = newsViewModel.uiState.collectAsState().value
     val appInfoState = settingsViewModel.stateAppInfo.collectAsState().value
@@ -89,6 +88,8 @@ fun Main(
     var selectedOption by remember { mutableStateOf(Options.ALL) }
     var query by remember { mutableStateOf("") }
     val today by remember { mutableStateOf(LocalDate.now()) }
+
+    var expandedSchedulesMenu by remember { mutableStateOf(false) }
     var selectedDate by remember(
         scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.apiId
     ) {
@@ -100,7 +101,6 @@ fun Main(
         pageCount = { scheduleUiState.currentScheduleData?.weeksCount?.times(7) ?: 0 },
         initialPage = scheduleUiState.currentScheduleData?.daysStartIndex ?: 0
     )
-
     val pagerWeeksState = rememberPagerState(
         pageCount = { scheduleUiState.currentScheduleData?.weeksCount ?: 0 },
         initialPage = scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0
@@ -131,6 +131,7 @@ fun Main(
         scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.apiId,
         scheduleUiState.currentScheduleEntity?.timetableId
     ) {
+        expandedSchedulesMenu = false
         pagerDaysState.scrollToPage(scheduleUiState.currentScheduleData?.daysStartIndex ?: 0)
         scheduleListState.scrollToItem(0)
     }
@@ -184,7 +185,7 @@ fun Main(
             route = Routes.Schedule,
             onClick = {
                 if (scheduleUiState.currentNamedSchedule != null && !scheduleUiState.currentNamedSchedule.namedScheduleEntity.isDefault) {
-                    scheduleViewModel.loadInitialData(true)
+                    scheduleViewModel.loadInitialData(false)
                 }
             }
         ),
@@ -232,14 +233,23 @@ fun Main(
             onBack = {
                 appBackStack.onBack()
             },
-            transitionSpec = {
-                fadeIn() togetherWith fadeOut()
-            },
             popTransitionSpec = {
-                fadeIn() togetherWith fadeOut()
+                fadeIn() togetherWith slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth })
             },
             predictivePopTransitionSpec = {
-                fadeIn() togetherWith slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth })
+                when (it) {
+                    NavigationEventSwipeEdge.Left -> {
+                        fadeIn() togetherWith slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth })
+                    }
+
+                    NavigationEventSwipeEdge.Right -> {
+                        fadeIn() togetherWith slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth })
+                    }
+
+                    else -> {
+                        fadeIn() togetherWith fadeOut()
+                    }
+                }
             },
             entryProvider = entryProvider {
                 entry<Routes.Schedule> {
@@ -270,7 +280,10 @@ fun Main(
                             selectedDate = selectedDate,
                             selectDate = { newValue -> selectedDate = newValue }
                         ),
-                        hapticFeedback = hapticFeedback
+                        expandedSchedulesMenu = expandedSchedulesMenu,
+                        onShowExpandedMenu = { newValue ->
+                            expandedSchedulesMenu = newValue
+                        }
                     )
                 }
 
@@ -285,7 +298,7 @@ fun Main(
                         onSelectOption = { option -> selectedOption = option },
                         scheduleViewModel = scheduleViewModel,
                         searchViewModel = searchViewModel,
-                        searchState = searchState,
+                        searchUiState = searchUiState,
                         scheduleUiState = scheduleUiState,
                         paddingValues = paddingValues
                     )
@@ -327,7 +340,7 @@ fun Main(
                         onBack = { appBackStack.onBack() },
                         scheduleViewModel = scheduleViewModel,
                         isSavedSchedule = scheduleUiState.isSaved,
-                        event = key.event!!,
+                        event = key.event,
                         eventExtraData = key.eventExtraData
                     )
                 }
