@@ -35,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -83,8 +82,7 @@ fun ScheduleCalendarView(
     paddingBottom: Dp,
 
     scheduleData: ScheduleData,
-    scheduleCalendarParams: ScheduleCalendarParams,
-    hapticFeedback: HapticFeedback
+    scheduleCalendarParams: ScheduleCalendarParams
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -111,8 +109,7 @@ fun ScheduleCalendarView(
 
             pagerDaysState = scheduleCalendarParams.pagerDaysState,
             isShortEvent = isShortEvent,
-            paddingBottom = paddingBottom,
-            hapticFeedback = hapticFeedback
+            paddingBottom = paddingBottom
         )
     }
 }
@@ -370,34 +367,32 @@ fun HorizontalCalendarItem(
             ) {
                 for (groupedEvents in eventsByStartTime) {
                     var offset = 0
-                    Box {
-                        for (event in groupedEvents.value) {
-                            val eventExtraData = eventsExtraData.find {
-                                it.id == event.id
-                            }
-                            val color = when (eventExtraData?.tag) {
-                                1 -> lightThemeRed
-                                2 -> lightThemeOrange
-                                3 -> lightThemeYellow
-                                4 -> lightThemeGreen
-                                5 -> lightThemeLightBlue
-                                6 -> lightThemeBlue
-                                7 -> lightThemeViolet
-                                8 -> lightThemePink
-                                else -> MaterialTheme.colorScheme.onBackground
-                            }
-                            Canvas(
-                                modifier = Modifier
-                                    .padding(start = offset.dp)
-                                    .size(6.dp)
-                            ) {
-                                drawCircle(
-                                    color = color,
-                                    center = center
-                                )
-                            }
-                            offset += 5
+                    for (event in groupedEvents.value) {
+                        val eventExtraData = eventsExtraData.find {
+                            it.id == event.id
                         }
+                        val color = when (eventExtraData?.tag) {
+                            1 -> lightThemeRed
+                            2 -> lightThemeOrange
+                            3 -> lightThemeYellow
+                            4 -> lightThemeGreen
+                            5 -> lightThemeLightBlue
+                            6 -> lightThemeBlue
+                            7 -> lightThemeViolet
+                            8 -> lightThemePink
+                            else -> MaterialTheme.colorScheme.onBackground
+                        }
+                        Canvas(
+                            modifier = Modifier
+                                .padding(start = offset.dp)
+                                .size(6.dp)
+                        ) {
+                            drawCircle(
+                                color = color,
+                                center = center
+                            )
+                        }
+                        offset += 5
                     }
                 }
             }
@@ -415,8 +410,7 @@ fun PagedDays(
 
     pagerDaysState: PagerState,
     isShortEvent: Boolean,
-    paddingBottom: Dp,
-    hapticFeedback: HapticFeedback
+    paddingBottom: Dp
 ) {
     HorizontalPager(
         modifier = Modifier.fillMaxSize(),
@@ -466,8 +460,7 @@ fun PagedDays(
                         isShortEvent = isShortEvent,
                         eventsExtraData = eventsExtraData,
                         events = events.second,
-                        onShowDialogEvent = onShowDialogEvent,
-                        hapticFeedback = hapticFeedback
+                        onShowDialogEvent = onShowDialogEvent
                     )
                 }
             }
