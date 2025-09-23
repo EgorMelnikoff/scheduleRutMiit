@@ -25,14 +25,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -49,7 +47,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -63,6 +60,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.ui.composable.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.composable.GroupItem
 import com.egormelnikoff.schedulerutmiit.ui.composable.SimpleTopBar
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
@@ -208,7 +206,7 @@ fun EventDialog(
                                 text = room.hint.toString(),
                                 onClick = {
                                     onBack()
-                                    scheduleViewModel.getAndSetNamedSchedule(
+                                    scheduleViewModel.getNamedScheduleFromApi(
                                         name = event.rooms.first().name!!,
                                         apiId = event.rooms.first().id.toString(),
                                         type = 2
@@ -241,7 +239,7 @@ fun EventDialog(
                                     .clickable(
                                         onClick = {
                                             onBack()
-                                            scheduleViewModel.getAndSetNamedSchedule(
+                                            scheduleViewModel.getNamedScheduleFromApi(
                                                 name = group.name!!,
                                                 apiId = group.id.toString(),
                                                 type = 0
@@ -276,7 +274,7 @@ fun EventDialog(
                                 text = lecturer.fullFio.toString(),
                                 onClick = {
                                     onBack()
-                                    scheduleViewModel.getAndSetNamedSchedule(
+                                    scheduleViewModel.getNamedScheduleFromApi(
                                         name = lecturer.fullFio!!,
                                         apiId = lecturer.id.toString(),
                                         type = 1
@@ -289,20 +287,63 @@ fun EventDialog(
                 )
             }
             if (isSavedSchedule) {
+                val onCommentChange: (String) -> Unit = { newValue ->
+                    comment = newValue
+                    scheduleViewModel.updateEventExtra(
+                        event,
+                        comment,
+                        tag
+                    )
+                }
                 EventDialogItem(
                     title = LocalContext.current.getString(R.string.comment),
                     withBackground = false
                 ) {
-                    CommentField(
-                        onCommentChanged = { newValue ->
-                            comment = newValue
-                            scheduleViewModel.updateEventExtra(
-                                event,
-                                comment,
-                                tag
+                    CustomTextField(
+                        modifier = Modifier.height(100.dp),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+
+                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
+                        ),
+                        value = comment,
+                        onValueChanged = onCommentChange,
+                        keyboardOptions = KeyboardOptions(
+                            autoCorrectEnabled = false,
+                            imeAction = ImeAction.Done
+                        ),
+                        placeholder = {
+                            Text(
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                text = LocalContext.current.getString(R.string.Enter_comment)
                             )
                         },
-                        comment = comment
+                        trailingIcon = {
+                            AnimatedVisibility(
+                                visible = comment != "",
+                                enter = scaleIn(animationSpec = tween(300)),
+                                exit = fadeOut(animationSpec = tween(500))
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        onCommentChange("")
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.clear),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
                     )
                 }
                 EventDialogItem(
@@ -439,68 +480,3 @@ fun EventDialogClickableItem(
         )
     }
 }
-
-
-@Composable
-fun CommentField(
-    onCommentChanged: (String) -> Unit,
-    comment: String
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp),
-        value = comment,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-
-            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-
-            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
-        ),
-        placeholder = {
-            Text(
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-                text = LocalContext.current.getString(R.string.Enter_comment)
-            )
-        },
-        onValueChange = { newQuery ->
-            onCommentChanged(newQuery)
-        },
-        shape = RoundedCornerShape(12.dp),
-        keyboardOptions = KeyboardOptions(
-            autoCorrectEnabled = false, imeAction = ImeAction.Done
-        ),
-        trailingIcon = {
-            AnimatedVisibility(
-                visible = comment != "",
-                enter = scaleIn(animationSpec = tween(300)),
-                exit = fadeOut(animationSpec = tween(500))
-            ) {
-                IconButton(
-                    onClick = {
-                        onCommentChanged("")
-                    }
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.clear),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-        },
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                keyboardController?.hide()
-            }
-        ),
-    )
-}
-
