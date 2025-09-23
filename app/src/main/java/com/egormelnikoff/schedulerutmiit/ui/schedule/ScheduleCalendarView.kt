@@ -367,32 +367,34 @@ fun HorizontalCalendarItem(
             ) {
                 for (groupedEvents in eventsByStartTime) {
                     var offset = 0
-                    for (event in groupedEvents.value) {
-                        val eventExtraData = eventsExtraData.find {
-                            it.id == event.id
+                    Box {
+                        for (event in groupedEvents.value) {
+                            val eventExtraData = eventsExtraData.find {
+                                it.id == event.id
+                            }
+                            val color = when (eventExtraData?.tag) {
+                                1 -> lightThemeRed
+                                2 -> lightThemeOrange
+                                3 -> lightThemeYellow
+                                4 -> lightThemeGreen
+                                5 -> lightThemeLightBlue
+                                6 -> lightThemeBlue
+                                7 -> lightThemeViolet
+                                8 -> lightThemePink
+                                else -> MaterialTheme.colorScheme.onBackground
+                            }
+                            Canvas(
+                                modifier = Modifier
+                                    .padding(start = offset.dp)
+                                    .size(6.dp)
+                            ) {
+                                drawCircle(
+                                    color = color,
+                                    center = center
+                                )
+                            }
+                            offset += 5
                         }
-                        val color = when (eventExtraData?.tag) {
-                            1 -> lightThemeRed
-                            2 -> lightThemeOrange
-                            3 -> lightThemeYellow
-                            4 -> lightThemeGreen
-                            5 -> lightThemeLightBlue
-                            6 -> lightThemeBlue
-                            7 -> lightThemeViolet
-                            8 -> lightThemePink
-                            else -> MaterialTheme.colorScheme.onBackground
-                        }
-                        Canvas(
-                            modifier = Modifier
-                                .padding(start = offset.dp)
-                                .size(6.dp)
-                        ) {
-                            drawCircle(
-                                color = color,
-                                center = center
-                            )
-                        }
-                        offset += 5
                     }
                 }
             }
