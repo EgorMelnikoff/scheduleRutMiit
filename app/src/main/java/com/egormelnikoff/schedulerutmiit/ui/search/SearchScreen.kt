@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.composable.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
 import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
@@ -63,6 +64,7 @@ import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchUiState
 import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModel
+import com.egormelnikoff.schedulerutmiit.ui.settings.SchedulesDialogContent
 
 enum class Options {
     ALL, GROUPS, PEOPLE
@@ -79,7 +81,9 @@ fun SearchScreen(
     onSelectOption: (Options) -> Unit,
     query: String,
     onQueryChanged: (String) -> Unit,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    namedScheduleActionsDialog: NamedScheduleEntity?,
+    onShowActionsDialog: (NamedScheduleEntity?) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -184,38 +188,28 @@ fun SearchScreen(
                 )
 
                 searchUiState.isEmptyQuery -> {
-                    Column(
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                            .fillMaxSize()
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = paddingValues.calculateBottomPadding()
+                            )
                     ) {
                         if (scheduleUiState.savedNamedSchedules.isEmpty()) {
                             Empty(
                                 imageVector = ImageVector.vectorResource(R.drawable.search),
                                 subtitle = LocalContext.current.getString(R.string.enter_your_query),
-                                paddingBottom = paddingValues.calculateBottomPadding()
                             )
                         } else {
-                            Text(
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp),
-                                text = LocalContext.current.getString(R.string.saved_schedules),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
+                            SchedulesDialogContent(
+                                scheduleUiState = scheduleUiState,
+                                namedScheduleActionsDialog = namedScheduleActionsDialog,
+                                onShowActionsDialog = onShowActionsDialog,
+                                scheduleViewModel = scheduleViewModel,
+                                navigateToSchedule = navigateToSchedule
                             )
-                            scheduleUiState.savedNamedSchedules.forEach { namedScheduleEntity ->
-                                SearchedItem(
-                                    onClick = {
-                                        navigateToSchedule()
-                                        scheduleViewModel.getNamedScheduleFromDb(namedScheduleEntity.id)
-                                        onQueryChanged("")
-                                        searchViewModel.setDefaultSearchState()
-                                    },
-                                    title = namedScheduleEntity.shortName
-                                )
-                            }
                         }
                     }
                 }
@@ -234,7 +228,6 @@ fun SearchScreen(
                             start = 8.dp,
                             end = 8.dp,
                             bottom = paddingValues.calculateBottomPadding()
-
                         ),
                         horizontalAlignment = Alignment.Start
                     ) {

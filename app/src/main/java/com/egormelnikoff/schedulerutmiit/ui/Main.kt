@@ -32,6 +32,7 @@ import androidx.navigationevent.NavigationEventSwipeEdge
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
+import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.composable.BarItem
 import com.egormelnikoff.schedulerutmiit.ui.composable.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.ui.composable.CustomSnackbarHost
@@ -87,6 +88,7 @@ fun Main(
 
     var selectedOption by remember { mutableStateOf(Options.ALL) }
     var query by remember { mutableStateOf("") }
+    var namedScheduleActionsDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
     val today by remember { mutableStateOf(LocalDate.now()) }
 
     var expandedSchedulesMenu by remember { mutableStateOf(false) }
@@ -233,6 +235,9 @@ fun Main(
             onBack = {
                 appBackStack.onBack()
             },
+            transitionSpec = {
+                fadeIn() togetherWith fadeOut()
+            },
             popTransitionSpec = {
                 fadeIn() togetherWith slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth })
             },
@@ -292,10 +297,15 @@ fun Main(
                         navigateToSchedule = {
                             appBackStack.navigateToPage(Routes.Schedule)
                         },
-                        onQueryChanged = { newValue -> query = newValue },
                         query = query,
+                        onQueryChanged = { newValue -> query = newValue },
+                        namedScheduleActionsDialog = namedScheduleActionsDialog,
+                        onShowActionsDialog = {newValue ->
+                            namedScheduleActionsDialog = newValue
+                        },
                         selectedOption = selectedOption,
                         onSelectOption = { option -> selectedOption = option },
+
                         scheduleViewModel = scheduleViewModel,
                         searchViewModel = searchViewModel,
                         searchUiState = searchUiState,
@@ -357,17 +367,22 @@ fun Main(
                         onBack = {
                             appBackStack.onBack()
                         },
+                        navigateToSchedule = {
+                            appBackStack.onBack()
+                            appBackStack.navigateToPage(Routes.Schedule)
+                        },
                         navigateToSearch = {
                             appBackStack.onBack()
                             appBackStack.navigateToPage(Routes.Search)
                         },
+                        onShowActionsDialog = {newValue ->
+                            namedScheduleActionsDialog = newValue
+                        },
+
                         scheduleViewModel = scheduleViewModel,
                         scheduleUiState = scheduleUiState,
-                        paddingValues = paddingValues,
-                        navigateToSchedule = {
-                            appBackStack.onBack()
-                            appBackStack.navigateToPage(Routes.Schedule)
-                        }
+
+                        namedScheduleActionsDialog = namedScheduleActionsDialog,
                     )
                 }
 

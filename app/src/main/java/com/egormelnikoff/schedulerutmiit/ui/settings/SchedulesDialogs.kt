@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -28,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,11 +59,11 @@ fun SchedulesDialog(
     onBack: () -> Unit,
     navigateToSearch: () -> Unit,
     navigateToSchedule: () -> Unit,
-    scheduleViewModel: ScheduleViewModel,
+    onShowActionsDialog: (NamedScheduleEntity?) -> Unit,
     scheduleUiState: ScheduleUiState,
-    paddingValues: PaddingValues
+    scheduleViewModel: ScheduleViewModel,
+    namedScheduleActionsDialog: NamedScheduleEntity?
 ) {
-    var namedScheduleActionsDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
     Scaffold(
         topBar = {
             SimpleTopBar(
@@ -87,103 +85,125 @@ fun SchedulesDialog(
             }
         }
     ) { padding ->
-        if (scheduleUiState.savedNamedSchedules.isNotEmpty()) {
-            val groupedSchedules by remember(
-                scheduleUiState.savedNamedSchedules
-            ) {
-                mutableStateOf(
-                    scheduleUiState.savedNamedSchedules
-                        .sortedBy { it.type }
-                        .groupBy { it.type }
-                        .toList()
-                )
-            }
-            val defaultNamedSchedule = scheduleUiState.savedNamedSchedules.find { it.isDefault }
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        top = padding.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = 16.dp,
-                        end = 16.dp
-                    )
-                    .background(MaterialTheme.colorScheme.background),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    top = padding.calculateTopPadding(),
+                    start = 16.dp,
+                    end = 16.dp
+                ),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (scheduleUiState.savedNamedSchedules.isNotEmpty()) {
+                val defaultNamedSchedule = scheduleUiState.savedNamedSchedules.find { it.isDefault }
                 if (defaultNamedSchedule != null) {
                     DefaultNamedScheduleItem(
                         namedScheduleEntity = defaultNamedSchedule
                     )
                 }
-                groupedSchedules.forEachIndexed { index, namedSchedules ->
-                    GroupItem(
-                        title = when (namedSchedules.first) {
-                            0 -> LocalContext.current.getString(R.string.Groups)
-                            1 -> LocalContext.current.getString(R.string.Lecturers)
-                            2 -> LocalContext.current.getString(R.string.Rooms)
-                            3 -> LocalContext.current.getString(R.string.my)
-                            else -> LocalContext.current.getString(R.string.schedules)
-                        },
-                        items = namedSchedules.second.map { namedScheduleEntity ->
-                            {
-                                NamedScheduleItem(
-                                    namedScheduleEntity = namedScheduleEntity,
-                                    onShowActionsDialog = {
-                                        namedScheduleActionsDialog = namedScheduleEntity
-                                    }
-                                )
-                            }
-                        }
-                    )
-                    if (index == groupedSchedules.lastIndex) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                    }
-                }
+                SchedulesDialogContent(
+                    scheduleUiState = scheduleUiState,
+                    namedScheduleActionsDialog = namedScheduleActionsDialog,
+                    onShowActionsDialog = onShowActionsDialog,
+                    scheduleViewModel = scheduleViewModel,
+                    navigateToSchedule = navigateToSchedule
+                )
+            } else {
+                ErrorScreen(
+                    title = LocalContext.current.getString(R.string.no_saved_schedule),
+                    subtitle = LocalContext.current.getString(R.string.empty_base),
+                    buttonTitle = LocalContext.current.getString(R.string.search),
+                    imageVector = ImageVector.vectorResource(R.drawable.search_simple),
+                    action = { navigateToSearch() },
+                    paddingBottom = 0.dp
+                )
             }
-        } else {
-            ErrorScreen(
-                title = LocalContext.current.getString(R.string.no_saved_schedule),
-                subtitle = LocalContext.current.getString(R.string.empty_base),
-                buttonTitle = LocalContext.current.getString(R.string.search),
-                imageVector = ImageVector.vectorResource(R.drawable.search_simple),
-                action = { navigateToSearch() },
-                paddingBottom = 0.dp
-            )
         }
-        if (namedScheduleActionsDialog != null) {
-            DialogNamedScheduleActions(
-                title = namedScheduleActionsDialog!!.shortName,
-                isDefault = namedScheduleActionsDialog!!.isDefault,
-                onSet = {
-                    if (namedScheduleActionsDialog!!.id != scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.id) {
-                        scheduleViewModel.getNamedScheduleFromDb(
-                            primaryKeyNamedSchedule = namedScheduleActionsDialog!!.id
+    }
+}
+
+@Composable
+fun SchedulesDialogContent(
+    scheduleUiState: ScheduleUiState,
+    namedScheduleActionsDialog: NamedScheduleEntity?,
+    onShowActionsDialog: (NamedScheduleEntity?) -> Unit,
+    scheduleViewModel: ScheduleViewModel,
+    navigateToSchedule: () -> Unit
+) {
+    val groupedSchedules by remember(
+        scheduleUiState.savedNamedSchedules
+    ) {
+        mutableStateOf(
+            scheduleUiState.savedNamedSchedules
+                .sortedBy { it.type }
+                .groupBy { it.type }
+                .toList()
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        groupedSchedules.forEachIndexed { index, namedSchedules ->
+            GroupItem(
+                title = when (namedSchedules.first) {
+                    0 -> LocalContext.current.getString(R.string.Groups)
+                    1 -> LocalContext.current.getString(R.string.Lecturers)
+                    2 -> LocalContext.current.getString(R.string.Rooms)
+                    3 -> LocalContext.current.getString(R.string.my)
+                    else -> LocalContext.current.getString(R.string.schedules)
+                },
+                items = namedSchedules.second.map { namedScheduleEntity ->
+                    {
+                        NamedScheduleItem(
+                            namedScheduleEntity = namedScheduleEntity,
+                            onShowActionsDialog = {
+                                onShowActionsDialog(namedScheduleEntity)
+                            }
                         )
                     }
-                    navigateToSchedule()
-                    namedScheduleActionsDialog = null
-                },
-                onSelectDefault = {
-                    scheduleViewModel.getNamedScheduleFromDb(
-                        primaryKeyNamedSchedule = namedScheduleActionsDialog!!.id,
-                        setDefault = true
-                    )
-                    navigateToSchedule()
-                    namedScheduleActionsDialog = null
-                },
-                onDelete = {
-                    scheduleViewModel.deleteNamedSchedule(
-                        primaryKeyNamedSchedule = namedScheduleActionsDialog!!.id,
-                        isDefault = true
-                    )
-                    namedScheduleActionsDialog = null
-                },
-                onDismiss = {
-                    namedScheduleActionsDialog = null
                 }
             )
+            if (index == groupedSchedules.lastIndex) {
+                Spacer(modifier = Modifier.height(4.dp))
+            }
         }
+    }
+    if (namedScheduleActionsDialog != null) {
+        DialogNamedScheduleActions(
+            title = namedScheduleActionsDialog.shortName,
+            isDefault = namedScheduleActionsDialog.isDefault,
+            onSet = {
+                if (namedScheduleActionsDialog.id != scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.id) {
+                    scheduleViewModel.getNamedScheduleFromDb(
+                        primaryKeyNamedSchedule = namedScheduleActionsDialog.id
+                    )
+                }
+                navigateToSchedule()
+                onShowActionsDialog(null)
+            },
+            onSelectDefault = {
+                scheduleViewModel.getNamedScheduleFromDb(
+                    primaryKeyNamedSchedule = namedScheduleActionsDialog.id,
+                    setDefault = true
+                )
+                navigateToSchedule()
+                onShowActionsDialog(null)
+            },
+            onDelete = {
+                scheduleViewModel.deleteNamedSchedule(
+                    primaryKeyNamedSchedule = namedScheduleActionsDialog.id,
+                    isDefault = true
+                )
+                onShowActionsDialog(null)
+            },
+            onDismiss = {
+                onShowActionsDialog(null)
+            }
+        )
     }
 }
 
