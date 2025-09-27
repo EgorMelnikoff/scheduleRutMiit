@@ -88,6 +88,7 @@ data class Event(
     val startDatetime: LocalDateTime?,
     val endDatetime: LocalDateTime?,
     val isHidden: Boolean = false,
+    val isCustomEvent: Boolean = false,
     @Embedded
     val recurrenceRule: RecurrenceRule?,
     val periodNumber: Int?,
