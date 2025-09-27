@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -58,12 +59,12 @@ object DefaultEventParams {
     val types = arrayOf(
         null,
         "Лекция",
-        "Практическое занятие",
         "Лабораторная работа",
-        "Экзамен",
-        "Зачёт",
-        "Комиссия",
+        "Практическое занятие",
         "Консультация",
+        "Зачёт",
+        "Экзамен",
+        "Комиссия",
         "Другое"
     )
     val defaultRoom = Room(
@@ -92,6 +93,7 @@ object DefaultEventParams {
 fun AddEventDialog(
     scheduleViewModel: ScheduleViewModel,
     snackBarHostState: SnackbarHostState,
+    focusManager: FocusManager,
     scope: CoroutineScope,
     scheduleEntity: ScheduleEntity,
     paddingValues: PaddingValues,
@@ -148,7 +150,7 @@ fun AddEventDialog(
                     placeholderText = LocalContext.current.getString(R.string.class_name),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = false,
-                        imeAction = ImeAction.Search
+                        imeAction = ImeAction.Done
                     )
                 )
 
@@ -171,6 +173,7 @@ fun AddEventDialog(
                                 selected = type == typeEvent,
                                 onSelect = {
                                     typeEvent = type
+                                    focusManager.clearFocus()
                                 }
                             )
                         }
@@ -186,6 +189,7 @@ fun AddEventDialog(
                                     ?: LocalContext.current.getString(R.string.date),
                                 onClick = {
                                     showDialogDate = true
+                                    focusManager.clearFocus()
                                 }
                             )
                         }, {
@@ -198,6 +202,7 @@ fun AddEventDialog(
                                         imageVector = ImageVector.vectorResource(R.drawable.time),
                                         onClick = {
                                             showDialogStart = true
+                                            focusManager.clearFocus()
                                         }
                                     )
                                 },
@@ -209,6 +214,7 @@ fun AddEventDialog(
                                         imageVector = ImageVector.vectorResource(R.drawable.time),
                                         onClick = {
                                             showDialogEnd = true
+                                            focusManager.clearFocus()
                                         },
                                         enabled = startTime != null
                                     )
@@ -227,6 +233,7 @@ fun AddEventDialog(
                     elements = roomsList,
                     onAddElement = {
                         roomsList = (roomsList + DefaultEventParams.defaultRoom)
+                        focusManager.clearFocus()
                     },
                     maxCount = 1
                 ) { index, room ->
@@ -246,6 +253,7 @@ fun AddEventDialog(
                     elements = lecturersList,
                     onAddElement = {
                         lecturersList = (lecturersList + DefaultEventParams.defaultLecturer)
+                        focusManager.clearFocus()
                     },
                     maxCount = 3
                 ) { index, lecturer ->
@@ -266,6 +274,7 @@ fun AddEventDialog(
                     elements = groupsList,
                     onAddElement = {
                         groupsList = (groupsList + DefaultEventParams.defaultGroup)
+                        focusManager.clearFocus()
                     },
                     maxCount = 7
                 ) { index, group ->
@@ -384,6 +393,10 @@ fun LecturerInput(
             onValueChanged = { newValue ->
                 onValueChanged(lecturer.copy(shortFio = newValue, fullFio = newValue))
             },
+            keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false,
+                imeAction = ImeAction.Next
+            ),
             placeholderText = LocalContext.current.getString(R.string.full_name_of_lecturer),
         )
         RemoveButton { onRemove() }
@@ -408,6 +421,10 @@ fun RoomInput(
             onValueChanged = { newValue ->
                 onValueChanged(room.copy(name = newValue, hint = newValue))
             },
+            keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false,
+                imeAction = ImeAction.Next
+            ),
             placeholderText = LocalContext.current.getString(R.string.room_number),
         )
         RemoveButton { onRemove() }
@@ -431,6 +448,10 @@ fun GroupInput(
             onValueChanged = { newValue ->
                 onValueChanged(group.copy(name = newValue))
             },
+            keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false,
+                imeAction = ImeAction.Next
+            ),
             placeholderText = LocalContext.current.getString(R.string.group_number),
         )
         RemoveButton { onRemove() }

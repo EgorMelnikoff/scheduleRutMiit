@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -43,6 +44,7 @@ import java.time.format.DateTimeFormatter
 fun AddScheduleDialog(
     scheduleViewModel: ScheduleViewModel,
     snackbarHostState: SnackbarHostState,
+    focusManager: FocusManager,
     scope: CoroutineScope,
     onBack: () -> Unit,
     paddingValues: PaddingValues
@@ -95,7 +97,7 @@ fun AddScheduleDialog(
                                 placeholderText = LocalContext.current.getString(R.string.schedule_name),
                                 keyboardOptions = KeyboardOptions(
                                     autoCorrectEnabled = false,
-                                    imeAction = ImeAction.Search
+                                    imeAction = ImeAction.Done
                                 )
                             )
                         }, {
@@ -105,17 +107,21 @@ fun AddScheduleDialog(
                                         modifier = Modifier.weight(1f),
                                         onClick = {
                                             dialogStartDate = true
+                                            focusManager.clearFocus()
                                         },
-                                        title = startDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: LocalContext.current.getString(R.string.start_date)
+                                        title = startDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                                            ?: LocalContext.current.getString(R.string.start_date)
                                     )
                                 },
                                 endParam = {
                                     ChooseDateTimeButton(
                                         modifier = Modifier.weight(1f),
                                         onClick = {
-                                           dialogEndDate = true
+                                            dialogEndDate = true
+                                            focusManager.clearFocus()
                                         },
-                                        title = endDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: LocalContext.current.getString(R.string.end_date),
+                                        title = endDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                                            ?: LocalContext.current.getString(R.string.end_date),
                                         enabled = startDate != null
                                     )
                                 }
@@ -128,10 +134,11 @@ fun AddScheduleDialog(
                 modifier = Modifier.padding(top = 8.dp),
                 title = LocalContext.current.getString(R.string.create),
                 onClick = {
-                    val errorMessages = checkScheduleParams(context, nameSchedule, startDate, endDate)
+                    val errorMessages =
+                        checkScheduleParams(context, nameSchedule, startDate, endDate)
                     if (errorMessages.isEmpty()) {
                         scheduleViewModel.addCustomSchedule(
-                            name = nameSchedule,
+                            name = nameSchedule.trim(),
                             startDate = startDate!!,
                             endDate = endDate!!,
                         )
