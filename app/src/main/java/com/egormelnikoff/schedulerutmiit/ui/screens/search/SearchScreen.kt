@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.search
+package com.egormelnikoff.schedulerutmiit.ui.screens.search
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -30,10 +30,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,14 +56,14 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.composable.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
-import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchUiState
-import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.ui.settings.SchedulesDialogContent
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
+import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
+import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchUiState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchViewModel
 
 enum class Options {
     ALL, GROUPS, PEOPLE
@@ -76,6 +75,7 @@ fun SearchScreen(
     scheduleViewModel: ScheduleViewModel,
     searchUiState: SearchUiState,
     navigateToSchedule: () -> Unit,
+    navigateToAddSchedule: () -> Unit,
     scheduleUiState: ScheduleUiState,
     selectedOption: Options,
     onSelectOption: (Options) -> Unit,
@@ -87,25 +87,27 @@ fun SearchScreen(
 ) {
     Column(
         modifier = Modifier
-            .padding(top = paddingValues.calculateTopPadding())
+            .padding(top = paddingValues.calculateTopPadding() + 16.dp)
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             CustomTextField(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.weight(1f),
                 maxLines = 1,
                 value = query,
                 onValueChanged = onQueryChanged,
                 action = {
                     searchViewModel.search(query.trim(), selectedOption)
                 },
-                placeholder = {
-                    Text(
-                        text = LocalContext.current.getString(R.string.search)
-                    )
-                },
+                placeholderText = LocalContext.current.getString(R.string.search),
                 leadingIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.search_simple),
@@ -138,42 +140,27 @@ fun SearchScreen(
                     imeAction = ImeAction.Search
                 )
             )
-            Row(
-                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            IconButton(
+                onClick = {
+                    navigateToAddSchedule()
+                },
+                colors = IconButtonDefaults.iconButtonColors().copy(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
             ) {
-                Spacer(
-                    modifier = Modifier.width(8.dp)
-                )
-                Chip(
-                    title = LocalContext.current.getString(R.string.all),
-                    imageVector = null,
-                    selected = selectedOption == Options.ALL,
-                    onSelect = {
-                        onSelectOption(Options.ALL)
-                    }
-                )
-                Chip(
-                    title = LocalContext.current.getString(R.string.groups),
-                    imageVector = ImageVector.vectorResource(R.drawable.group),
-                    selected = selectedOption == Options.GROUPS,
-                    onSelect = {
-                        onSelectOption(Options.GROUPS)
-                    }
-                )
-                Chip(
-                    title = LocalContext.current.getString(R.string.people),
-                    imageVector = ImageVector.vectorResource(R.drawable.person),
-                    selected = selectedOption == Options.PEOPLE,
-                    onSelect = {
-                        onSelectOption(Options.PEOPLE)
-                    }
-                )
-                Spacer(
-                    modifier = Modifier.width(8.dp)
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp),
+                    imageVector = ImageVector.vectorResource(R.drawable.add),
+                    contentDescription = null
                 )
             }
         }
+        FilterRow(
+            selectedOption = selectedOption,
+            onSelectOption = onSelectOption
+        )
         AnimatedContent(
             modifier = Modifier.fillMaxSize(),
             targetState = searchUiState,
@@ -192,8 +179,6 @@ fun SearchScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(
-                                start = 16.dp,
-                                end = 16.dp,
                                 bottom = paddingValues.calculateBottomPadding()
                             )
                     ) {
@@ -203,7 +188,7 @@ fun SearchScreen(
                                 subtitle = LocalContext.current.getString(R.string.enter_your_query),
                             )
                         } else {
-                            SchedulesDialogContent(
+                            SavedSchedules(
                                 scheduleUiState = scheduleUiState,
                                 namedScheduleActionsDialog = namedScheduleActionsDialog,
                                 onShowActionsDialog = onShowActionsDialog,
@@ -293,43 +278,46 @@ fun SearchScreen(
 }
 
 @Composable
-fun Chip(
-    title: String,
-    imageVector: ImageVector?,
-    selected: Boolean,
-    onSelect: (Boolean) -> Unit
+fun FilterRow (
+    selectedOption: Options,
+    onSelectOption: (Options) -> Unit
 ) {
-    FilterChip(
-        border = null,
-        colors = FilterChipDefaults.filterChipColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            selectedContainerColor = MaterialTheme.colorScheme.primary,
-            labelColor = MaterialTheme.colorScheme.onSurface,
-            iconColor = MaterialTheme.colorScheme.onPrimary,
-            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-        ),
-        onClick = { onSelect(!selected) },
-        label = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (imageVector != null) {
-                    Icon(
-                        modifier = Modifier.width(16.dp),
-                        imageVector = imageVector,
-                        contentDescription = null
-                    )
-                }
-
-                Text(title)
+    Row(
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Spacer(
+            modifier = Modifier.width(8.dp)
+        )
+        CustomChip (
+            title = LocalContext.current.getString(R.string.all),
+            imageVector = null,
+            selected = selectedOption == Options.ALL,
+            onSelect = {
+                onSelectOption(Options.ALL)
             }
-        },
-        selected = selected,
-    )
-
+        )
+        CustomChip(
+            title = LocalContext.current.getString(R.string.groups),
+            imageVector = ImageVector.vectorResource(R.drawable.group),
+            selected = selectedOption == Options.GROUPS,
+            onSelect = {
+                onSelectOption(Options.GROUPS)
+            }
+        )
+        CustomChip(
+            title = LocalContext.current.getString(R.string.people),
+            imageVector = ImageVector.vectorResource(R.drawable.person),
+            selected = selectedOption == Options.PEOPLE,
+            onSelect = {
+                onSelectOption(Options.PEOPLE)
+            }
+        )
+        Spacer(
+            modifier = Modifier.width(8.dp)
+        )
+    }
 }
-
 
 @Composable
 fun SearchedItem(
@@ -342,7 +330,7 @@ fun SearchedItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .clickable (
+            .clickable(
                 onClick = onClick
             )
             .padding(horizontal = 8.dp, vertical = 8.dp),
