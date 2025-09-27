@@ -1,13 +1,9 @@
-package com.egormelnikoff.schedulerutmiit.ui.composable
+package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -59,7 +55,6 @@ data class BarItem(
 @Composable
 fun CustomNavigationBar(
     appBackStack: AppBackStack<Routes.Schedule>,
-    visible: Boolean,
     barItems: Array<BarItem>
 ) {
     Row(
@@ -82,49 +77,42 @@ fun CustomNavigationBar(
                     .calculateBottomPadding() + 8.dp
             ),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(
-            16.dp,
-            Alignment.CenterHorizontally
-        )
+        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
     ) {
-        CustomAnimatedVisibility(
-            visible = visible
+        Row(
+            modifier = Modifier
+                .height(56.dp)
+                .border(
+                    0.1.dp,
+                    MaterialTheme.colorScheme.outline,
+                    RoundedCornerShape(16.dp)
+                )
+                .clip(RoundedCornerShape(16.dp))
+                .background(
+                    MaterialTheme.colorScheme.background
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Row(
-                modifier = Modifier
-                    .height(56.dp)
-                    .border(
-                        0.1.dp,
-                        MaterialTheme.colorScheme.outline,
-                        RoundedCornerShape(16.dp)
-                    )
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        MaterialTheme.colorScheme.background
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                barItems.forEach { barItem ->
-                    CustomNavigationBarItem(
-                        barItem = barItem,
-                        isSelected = appBackStack.last() == barItem.route,
-                        onClick = {
-                            if (barItem.route == appBackStack.last()) {
-                                barItem.onClick()
-                            } else {
-                                appBackStack.navigateToPage(barItem.route)
-                            }
+            barItems.forEach { barItem ->
+                CustomNavigationItem(
+                    barItem = barItem,
+                    isSelected = appBackStack.lastPage() == barItem.route,
+                    onClick = {
+                        if (barItem.route == appBackStack.lastPage()) {
+                            barItem.onClick()
+                        } else {
+                            appBackStack.navigateToPage(barItem.route)
                         }
-                    )
-                }
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun CustomNavigationBarItem(
+fun CustomNavigationItem(
     barItem: BarItem,
     isSelected: Boolean,
     onClick: () -> Unit
@@ -175,23 +163,5 @@ fun CustomNavigationBarItem(
             color = if (isSelected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.onSurface
         )
-    }
-}
-
-@Composable
-fun CustomAnimatedVisibility(
-    visible: Boolean,
-    content: @Composable (() -> Unit),
-) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn() + slideInVertically(
-            initialOffsetY = { fullHeight -> fullHeight }
-        ),
-        exit = fadeOut() + slideOutVertically(
-            targetOffsetY = { fullHeight -> fullHeight }
-        )
-    ) {
-        content.invoke()
     }
 }
