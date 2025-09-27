@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.schedule
+package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -45,8 +45,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleData
+import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeGreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeLightBlue
@@ -55,11 +54,12 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemePink
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeRed
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeViolet
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeYellow
+import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleData
+import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleUiState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
-
 
 data class ScheduleCalendarParams(
     val pagerDaysState: PagerState,
@@ -70,44 +70,42 @@ data class ScheduleCalendarParams(
 
 @Composable
 fun ScheduleCalendarView(
-    onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
-
-    eventsByWeekAndDays: Map<Int, Map<LocalDate, List<Event>>>,
-    scheduleEntity: ScheduleEntity,
-    eventsExtraData: List<EventExtraData>,
-
+    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
+    onDeleteEvent: (Long) -> Unit,
+    scheduleUiState: ScheduleUiState,
+    scheduleCalendarParams: ScheduleCalendarParams,
     today: LocalDate,
+    isSavedSchedule: Boolean,
     isShortEvent: Boolean,
     isShowCountClasses: Boolean,
-    paddingBottom: Dp,
-
-    scheduleData: ScheduleData,
-    scheduleCalendarParams: ScheduleCalendarParams
+    paddingBottom: Dp
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         HorizontalCalendar(
-            scheduleEntity = scheduleEntity,
-            eventsExtraData = eventsExtraData,
+            scheduleEntity = scheduleUiState.currentScheduleEntity!!,
+            eventsExtraData = scheduleUiState.currentScheduleData!!.eventsExtraData,
 
             isShowCountClasses = isShowCountClasses,
             today = today,
-            eventsByWeekAndDays = eventsByWeekAndDays,
+            scheduleData = scheduleUiState.currentScheduleData,
 
             pagerWeeksState = scheduleCalendarParams.pagerWeeksState,
             selectedDate = scheduleCalendarParams.selectedDate,
-            scheduleData = scheduleData,
+
             selectDate = scheduleCalendarParams.selectDate
         )
         PagedDays(
-            onShowDialogEvent = onShowDialogEvent,
+            navigateToEvent = navigateToEvent,
+            onDeleteEvent =  onDeleteEvent,
 
-            scheduleEntity = scheduleEntity,
-            eventsByWeekAndDays = eventsByWeekAndDays,
-            eventsExtraData = eventsExtraData,
+            scheduleEntity = scheduleUiState.currentScheduleEntity,
+            eventsByWeekAndDays = scheduleUiState.currentScheduleData.eventsForCalendar,
+            eventsExtraData = scheduleUiState.currentScheduleData.eventsExtraData,
 
             pagerDaysState = scheduleCalendarParams.pagerDaysState,
+            isSavedSchedule = isSavedSchedule,
             isShortEvent = isShortEvent,
             paddingBottom = paddingBottom
         )
@@ -120,7 +118,6 @@ fun HorizontalCalendar(
     isShowCountClasses: Boolean,
     today: LocalDate,
     scheduleData: ScheduleData,
-    eventsByWeekAndDays: Map<Int, Map<LocalDate, List<Event>>>,
     scheduleEntity: ScheduleEntity,
     eventsExtraData: List<EventExtraData>,
     pagerWeeksState: PagerState,
@@ -276,7 +273,7 @@ fun HorizontalCalendar(
                     }
                 for (date in 0 until 7) {
                     val currentDate = firstDayOfWeek.plusDays(date.toLong())
-                    val eventsByDay = eventsByWeekAndDays[currentWeek]?.filter {
+                    val eventsByDay = scheduleData.eventsForCalendar[currentWeek]?.filter {
                         if (scheduleEntity.recurrence != null) {
                             it.key.dayOfWeek == currentDate.dayOfWeek
                         } else {
@@ -359,7 +356,7 @@ fun HorizontalCalendarItem(
             Spacer(modifier = Modifier.height(8.dp))
             val eventsByStartTime = events
                 .sortedBy { it.startDatetime!!.toLocalTime() }
-                .groupBy { it.startDatetime!!.toLocalTime() }
+                .groupBy { event -> Pair(event.startDatetime!!.toLocalTime(), event.endDatetime!!.toLocalTime()) }
             FlowRow(
                 maxItemsInEachRow = if (events.size in 6..8) 4 else 5,
                 horizontalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterHorizontally),
@@ -404,13 +401,14 @@ fun HorizontalCalendarItem(
 
 @Composable
 fun PagedDays(
-    onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
-
+    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
+    onDeleteEvent: (Long) -> Unit,
     scheduleEntity: ScheduleEntity,
     eventsByWeekAndDays: Map<Int, Map<LocalDate, List<Event>>>,
     eventsExtraData: List<EventExtraData>,
 
     pagerDaysState: PagerState,
+    isSavedSchedule: Boolean,
     isShortEvent: Boolean,
     paddingBottom: Dp
 ) {
@@ -442,7 +440,7 @@ fun PagedDays(
                 }
             }?.values?.flatten() ?: emptyList())
                 .sortedBy { event -> event.startDatetime!!.toLocalTime() }
-                .groupBy { event -> event.startDatetime.toString() }
+                .groupBy { event -> Pair(event.startDatetime!!.toLocalTime(), event.endDatetime!!.toLocalTime()) }
                 .toList()
 
 
@@ -458,11 +456,13 @@ fun PagedDays(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 eventsForDayByStartTime.forEach { events ->
-                    Event(
-                        isShortEvent = isShortEvent,
-                        eventsExtraData = eventsExtraData,
+                    ScheduleEvent(
+                        navigateToEvent = navigateToEvent,
+                        onDeleteEvent = onDeleteEvent,
                         events = events.second,
-                        onShowDialogEvent = onShowDialogEvent
+                        isSavedSchedule = isSavedSchedule,
+                        isShortEvent = isShortEvent,
+                        eventsExtraData = eventsExtraData
                     )
                 }
             }

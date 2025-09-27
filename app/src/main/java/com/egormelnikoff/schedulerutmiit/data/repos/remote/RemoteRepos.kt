@@ -27,7 +27,7 @@ import com.egormelnikoff.schedulerutmiit.model.TelegramPage
 import com.egormelnikoff.schedulerutmiit.model.Timetable
 import com.egormelnikoff.schedulerutmiit.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.model.Timetables
-import com.egormelnikoff.schedulerutmiit.ui.schedule.calculateFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalTime
@@ -170,7 +170,11 @@ class RemoteReposImpl(
 
     }
 
-    private suspend fun fixApiIssuance(apiId: String, timetable: Timetable, schedule: Schedule): Schedule? {
+    private suspend fun fixApiIssuance(
+        apiId: String,
+        timetable: Timetable,
+        schedule: Schedule
+    ): Schedule? {
         val fixedSchedule = when (timetable.type) {
             TimetableType.PERIODIC.type -> {
                 Schedule(

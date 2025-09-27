@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel
+package com.egormelnikoff.schedulerutmiit.ui.view_models
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,7 +15,7 @@ import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.repos.Repos
-import com.egormelnikoff.schedulerutmiit.ui.schedule.calculateFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
@@ -64,6 +64,10 @@ interface ScheduleViewModel {
     fun loadInitialData(showLoading: Boolean = true)
     fun getNamedScheduleFromApi(name: String, apiId: String, type: Int)
     fun getNamedScheduleFromDb(primaryKeyNamedSchedule: Long, setDefault: Boolean = false)
+    fun addCustomSchedule(name: String, startDate: LocalDate, endDate: LocalDate)
+    fun addCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
+
+    fun deleteCustomEvent(scheduleEntity: ScheduleEntity, primaryKeyEvent: Long)
     fun saveCurrentNamedSchedule()
     fun deleteNamedSchedule(primaryKeyNamedSchedule: Long, isDefault: Boolean)
     fun setNewDefaultSchedule(primaryKeySchedule: Long, timetableId: String)
@@ -129,13 +133,13 @@ class ScheduleViewModelImpl(
             defaultNamedScheduleEntity?.let { namedScheduleEntity ->
                 updateNamedSchedule(namedScheduleEntity)
                 updateUiStateNamedSchedule(
-                    namedSchedule = repos.getNamedScheduleByApiId(namedScheduleEntity.apiId!!)
+                    namedSchedule = repos.getNamedScheduleById(namedScheduleEntity.id)
                 )
             }
         }
     }
 
-    private suspend fun updateUiStateParams (
+    private suspend fun updateUiStateParams(
         savedNamedSchedules: List<NamedScheduleEntity>? = null,
         isUpdating: Boolean? = null,
         isError: Boolean? = null,
@@ -168,7 +172,7 @@ class ScheduleViewModelImpl(
         }
     }
 
-    private suspend fun sendErrorUiEvent (
+    private suspend fun sendErrorUiEvent(
         message: String
     ) {
         _uiEventChannel.send(UiEvent.ShowErrorMessage(message))
@@ -212,12 +216,13 @@ class ScheduleViewModelImpl(
                 )
                 updateNamedSchedule(localNamedSchedule.namedScheduleEntity)
                 updateUiStateNamedSchedule(
-                    namedSchedule = repos.getNamedScheduleByApiId(localNamedSchedule.namedScheduleEntity.apiId!!)
+                    namedSchedule = repos.getNamedScheduleById(localNamedSchedule.namedScheduleEntity.id)
                 )
                 return@launch
             }
 
-            when (val newNamedSchedule = repos.getNamedSchedule(name = name, apiId = apiId, type = type)) {
+            when (val newNamedSchedule =
+                repos.getNamedSchedule(name = name, apiId = apiId, type = type)) {
                 is Result.Success -> {
                     updateUiStateNamedSchedule(
                         namedSchedule = newNamedSchedule.data
@@ -258,7 +263,7 @@ class ScheduleViewModelImpl(
             )
             if (namedSchedule != null) {
                 updateUiStateNamedSchedule(
-                    namedSchedule = repos.getNamedScheduleByApiId(namedSchedule.namedScheduleEntity.apiId!!)
+                    namedSchedule = namedSchedule
                 )
                 updateUiStateParams(
                     isSaved = true
@@ -268,15 +273,100 @@ class ScheduleViewModelImpl(
         }
     }
 
+    override fun addCustomSchedule(
+        name: String,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ) {
+        viewModelScope.launch {
+            val fixedStartDate = calculateFirstDayOfWeek(startDate)
+            val fixedEndDate = calculateFirstDayOfWeek(endDate).plusDays(6)
+            val namedSchedule = NamedScheduleFormatted(
+                namedScheduleEntity = NamedScheduleEntity(
+                    id = 0,
+                    fullName = name,
+                    shortName = name,
+                    apiId = null,
+                    type = 3,
+                    isDefault = false,
+                    lastTimeUpdate = 0L
+                ),
+                schedules = listOf(
+                    ScheduleFormatted(
+                        scheduleEntity = ScheduleEntity(
+                            id = 0,
+                            namedScheduleId = 0,
+                            timetableId = "d=${fixedStartDate}",
+                            typeName = resourcesManager.getString(R.string.my)!!,
+                            startName = "с $fixedStartDate",
+                            downloadUrl = null,
+                            startDate = fixedStartDate,
+                            endDate = fixedEndDate,
+                            recurrence = null
+                        ),
+                        events = listOf(),
+                        eventsExtraData = listOf()
+                    )
+                )
+            )
+            repos.insertNamedSchedule(namedSchedule)
+            updateUiStateParams(
+                savedNamedSchedules = repos.getAllNamedSchedules()
+            )
+        }
+    }
+
+    override fun addCustomEvent(
+        scheduleEntity: ScheduleEntity,
+        event: Event
+    ) {
+        viewModelScope.launch {
+            if (repos.isEventAddingUnavailable(
+                    event.startDatetime!!.toLocalDate(),
+                    scheduleEntity.id
+                )
+            ) {
+                sendErrorUiEvent(resourcesManager.getString(R.string.events_count_error).toString())
+                return@launch
+            }
+            repos.insertEvent(event)
+            updateUiStateNamedSchedule(
+                namedSchedule = repos.getNamedScheduleById(scheduleEntity.namedScheduleId),
+                scheduleId = scheduleEntity.id
+            )
+            updateUiStateParams(
+                savedNamedSchedules = repos.getAllNamedSchedules(),
+                isSaved = true
+            )
+        }
+    }
+
+    override fun deleteCustomEvent(
+        scheduleEntity: ScheduleEntity,
+        primaryKeyEvent: Long
+    ) {
+        viewModelScope.launch {
+            repos.deleteEvent(primaryKeyEvent)
+            updateUiStateNamedSchedule(
+                namedSchedule = repos.getNamedScheduleById(scheduleEntity.namedScheduleId),
+                scheduleId = scheduleEntity.id
+            )
+            updateUiStateParams(
+                savedNamedSchedules = repos.getAllNamedSchedules(),
+                isSaved = true
+            )
+        }
+    }
+
     override fun saveCurrentNamedSchedule() {
         viewModelScope.launch {
             val currentNamedSchedule = _uiState.value.currentNamedSchedule ?: return@launch
             if (_uiState.value.isSaved) return@launch
 
-            repos.insertNamedSchedule(currentNamedSchedule)
+            val namedScheduleId = repos.insertNamedSchedule(currentNamedSchedule)
 
             updateUiStateNamedSchedule(
-                namedSchedule = repos.getNamedScheduleByApiId(currentNamedSchedule.namedScheduleEntity.apiId!!)
+                namedSchedule = repos.getNamedScheduleById(namedScheduleId)
             )
             updateUiStateParams(
                 savedNamedSchedules = repos.getAllNamedSchedules(),
@@ -314,7 +404,7 @@ class ScheduleViewModelImpl(
                 )
 
                 updateUiStateNamedSchedule(
-                    namedSchedule =  repos.getNamedScheduleById(currentNamedSchedule.namedScheduleEntity.id)
+                    namedSchedule = repos.getNamedScheduleById(currentNamedSchedule.namedScheduleEntity.id)
                 )
             } else {
                 val updatedSchedules = currentNamedSchedule.schedules.map { schedule ->
@@ -363,7 +453,8 @@ class ScheduleViewModelImpl(
         updateUiStateParams(
             isUpdating = true
         )
-        when (val resultUpdate = repos.updateNamedSchedule(namedScheduleEntity = namedScheduleEntity)) {
+        when (val resultUpdate =
+            repos.updateNamedSchedule(namedScheduleEntity = namedScheduleEntity)) {
             is Result.Success -> {
                 updateUiStateParams(
                     savedNamedSchedules = repos.getAllNamedSchedules()
@@ -375,6 +466,7 @@ class ScheduleViewModelImpl(
                     )
                 }
             }
+
             is Result.Error -> {
                 val errorMessage = resultUpdate.exception.message
                     ?: resourcesManager.getString(R.string.unknown_error)
@@ -387,7 +479,6 @@ class ScheduleViewModelImpl(
             isUpdating = false
         )
     }
-
 
 
     private fun calculateScheduleData(

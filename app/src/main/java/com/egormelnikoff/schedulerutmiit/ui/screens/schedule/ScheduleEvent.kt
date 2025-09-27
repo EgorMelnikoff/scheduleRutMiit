@@ -1,7 +1,7 @@
-package com.egormelnikoff.schedulerutmiit.ui.schedule
+package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -11,16 +11,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -31,7 +40,8 @@ import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.ui.composable.GroupItem
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
+import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeLightBlue
@@ -44,10 +54,12 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 
 @Composable
-fun Event(
-    onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
+fun ScheduleEvent(
+    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
+    onDeleteEvent: (Long) -> Unit,
     events: List<Event>,
     eventsExtraData: List<EventExtraData>,
+    isSavedSchedule: Boolean,
     isShortEvent: Boolean
 ) {
     Column(
@@ -88,13 +100,15 @@ fun Event(
         GroupItem(
             items = events.map { event ->
                 {
-                    SingleEvent(
+                    ScheduleSingleEvent(
+                        navigateToEvent = navigateToEvent,
+                        onDeleteEvent = onDeleteEvent,
+                        event = event,
                         eventExtraData = eventsExtraData.find {
                             it.id == event.id
                         },
-                        isShortEvent = isShortEvent,
-                        event = event,
-                        onShowDialogEvent = onShowDialogEvent
+                        isSavedSchedule = isSavedSchedule,
+                        isShortEvent = isShortEvent
                     )
                 }
             }
@@ -103,18 +117,27 @@ fun Event(
 }
 
 @Composable
-fun SingleEvent(
-    onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
+fun ScheduleSingleEvent(
+    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
+    onDeleteEvent: (Long) -> Unit,
+    isSavedSchedule: Boolean,
     isShortEvent: Boolean,
     event: Event,
     eventExtraData: EventExtraData?
 ) {
+    var showExpandedMenu by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                onShowDialogEvent(Pair(event, eventExtraData))
-            }
+            .combinedClickable(
+                onClick = {
+                    navigateToEvent(Pair(event, eventExtraData))
+                },
+                onLongClick = {
+                    showExpandedMenu = true
+                }
+            )
     ) {
         if (eventExtraData != null) {
             Canvas(Modifier.fillMaxWidth()) {
@@ -144,17 +167,19 @@ fun SingleEvent(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(
-                text = event.typeName.toString(),
-                fontSize = 12.sp,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            if (event.typeName != null) {
+                Text(
+                    text = event.typeName,
+                    fontSize = 12.sp,
+                    style = TextStyle(
+                        platformStyle = PlatformTextStyle(
+                            includeFontPadding = false
+                        )
+                    ),
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
             Text(
                 text = event.name.toString(),
                 fontSize = 16.sp,
@@ -169,7 +194,7 @@ fun SingleEvent(
                 color = MaterialTheme.colorScheme.onBackground
             )
             if (!isShortEvent) {
-                if (event.groups!!.isNotEmpty()) {
+                if (!event.groups.isNullOrEmpty()) {
                     FlowRow(
                         itemVerticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
@@ -199,7 +224,7 @@ fun SingleEvent(
                         }
                     }
                 }
-                if (event.rooms!!.isNotEmpty()) {
+                if (!event.rooms.isNullOrEmpty()) {
                     FlowRow(
                         itemVerticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
@@ -228,7 +253,7 @@ fun SingleEvent(
                         }
                     }
                 }
-                if (event.lecturers!!.isNotEmpty()) {
+                if (!event.lecturers.isNullOrEmpty()) {
                     FlowRow(
                         itemVerticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
@@ -269,8 +294,69 @@ fun SingleEvent(
                 )
             }
         }
+
+        DropdownMenu(
+            containerColor = MaterialTheme.colorScheme.background,
+            expanded = showExpandedMenu,
+            shape = RoundedCornerShape(12.dp),
+            onDismissRequest = { showExpandedMenu = false }
+        ) {
+            DropdownMenuItem(
+                colors = MenuDefaults.itemColors().copy(
+                    textColor = MaterialTheme.colorScheme.onBackground,
+                    leadingIconColor = MaterialTheme.colorScheme.onBackground
+                ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.open_panel),
+                        contentDescription = null
+                    )
+                },
+                text = {
+                    Text(
+                        text = LocalContext.current.getString(R.string.open)
+                    )
+                },
+                onClick = { navigateToEvent(Pair(event, eventExtraData)) }
+            )
+            if (event.isCustomEvent && isSavedSchedule) {
+                DropdownMenuItem(
+                    colors = MenuDefaults.itemColors().copy(
+                        textColor = MaterialTheme.colorScheme.error,
+                        leadingIconColor = MaterialTheme.colorScheme.error
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.delete),
+                            contentDescription = null
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = LocalContext.current.getString(R.string.delete)
+                        )
+                    },
+                    onClick = {
+                        showExpandedMenu = false
+                        showDeleteDialog = true
+                    }
+                )
+            }
+        }
+        if (showDeleteDialog) {
+            CustomAlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                onConfirmation = {
+                    onDeleteEvent(event.id)
+                    showDeleteDialog = false
+                },
+                dialogTitle = LocalContext.current.getString(R.string.deleting_class),
+                dialogText = "${LocalContext.current.getString(R.string.really_delete_class)} \"${event.name}\"?"
+            )
+        }
     }
 }
+
 
 @Composable
 fun Comment(

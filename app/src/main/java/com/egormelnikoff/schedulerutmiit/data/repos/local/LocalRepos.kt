@@ -8,13 +8,27 @@ import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.model.News
+import java.time.LocalDate
 
 interface LocalRepos {
-    suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted)
+    suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted): Long
     suspend fun insertSchedule(
         namedScheduleId: Long,
         scheduleFormatted: ScheduleFormatted
     )
+
+    suspend fun insertEvent(
+        event: Event
+    )
+
+    suspend fun deleteEvent(
+        primaryKeyEvent: Long
+    )
+
+    suspend fun getCountEventsPerDate(
+        date: LocalDate,
+        scheduleId: Long
+    ): Int
 
     suspend fun deleteNamedSchedule(
         primaryKey: Long,
@@ -48,7 +62,7 @@ interface LocalRepos {
         comment: String
     )
 
-    suspend fun updateLastTimeUpdate (
+    suspend fun updateLastTimeUpdate(
         namedScheduleId: Long,
         lastTimeUpdate: Long
     )
@@ -60,17 +74,18 @@ class LocalReposImpl(
     private val namedScheduleDao: NamedScheduleDao,
     private val parser: Parser
 ) : LocalRepos {
-    override suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted) {
+    override suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted): Long {
         if (namedSchedule.namedScheduleEntity.isDefault) {
             namedSchedule.namedScheduleEntity.isDefault = false
         }
-        namedScheduleDao.insertNamedSchedule(namedSchedule)
+        val namedScheduleId = namedScheduleDao.insertNamedSchedule(namedSchedule)
 
         val currentCount = namedScheduleDao.getCount()
         if (currentCount == 1) {
             val namedScheduleEntityWithNewId = namedScheduleDao.getAll().first()
             namedScheduleDao.setDefaultNamedSchedule(namedScheduleEntityWithNewId.id)
         }
+        return namedScheduleId
     }
 
     override suspend fun insertSchedule(
@@ -81,6 +96,24 @@ class LocalReposImpl(
             namedScheduleId = namedScheduleId,
             scheduleFormatted = scheduleFormatted,
         )
+    }
+
+    override suspend fun insertEvent(event: Event) {
+        namedScheduleDao.insertEvent(event)
+    }
+
+    override suspend fun deleteEvent(
+        primaryKeyEvent: Long
+    ) {
+        namedScheduleDao.deleteEventById(primaryKeyEvent)
+        namedScheduleDao.deleteEventExtraByEventId(primaryKeyEvent)
+    }
+
+    override suspend fun getCountEventsPerDate(
+        date: LocalDate,
+        scheduleId: Long
+    ): Int {
+        return namedScheduleDao.getCountEventsPerDate(date.toString(), scheduleId)
     }
 
     override suspend fun deleteNamedSchedule(
@@ -139,7 +172,7 @@ class LocalReposImpl(
         comment: String
     ) {
         if (comment == "" && tag == 0) {
-            namedScheduleDao.deleteEventsExtraByEventId(event.id)
+            namedScheduleDao.deleteEventExtraByEventId(event.id)
             return
         }
         val checkEventExtra = namedScheduleDao.getEventExtraByEventId(event.id)

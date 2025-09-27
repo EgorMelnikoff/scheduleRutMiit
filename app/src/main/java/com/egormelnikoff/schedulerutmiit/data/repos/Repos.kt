@@ -16,11 +16,24 @@ import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 interface Repos {
-    suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted)
+    suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted): Long
     suspend fun insertSchedule(
         namedScheduleId: Long,
         scheduleFormatted: ScheduleFormatted
     )
+    suspend fun insertEvent (
+        event: Event
+    )
+
+    suspend fun deleteEvent (
+        primaryKeyEvent: Long
+    )
+
+    suspend fun isEventAddingUnavailable (
+        date: LocalDate,
+        scheduleId: Long
+    ): Boolean
+
     suspend fun deleteNamedSchedule(
         primaryKey: Long,
         isDefault: Boolean
@@ -74,10 +87,11 @@ class ReposImpl(
     companion object {
         val SCHEDULE_UPDATE_THRESHOLD_MS = TimeUnit.HOURS.toMillis(6)
         const val CUSTOM_SCHEDULE_TYPE = 3
+        const val MAX_EVENTS_COUNT = 10
     }
 
-    override suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted) {
-        localRepos.insertNamedSchedule(namedSchedule)
+    override suspend fun insertNamedSchedule(namedSchedule: NamedScheduleFormatted): Long {
+        return localRepos.insertNamedSchedule(namedSchedule)
     }
 
     override suspend fun insertSchedule(
@@ -85,6 +99,18 @@ class ReposImpl(
         scheduleFormatted: ScheduleFormatted
     ) {
         localRepos.insertSchedule(namedScheduleId, scheduleFormatted)
+    }
+
+    override suspend fun insertEvent(event: Event) {
+        localRepos.insertEvent(event)
+    }
+
+    override suspend fun deleteEvent(primaryKeyEvent: Long) {
+        localRepos.deleteEvent(primaryKeyEvent)
+    }
+
+    override suspend fun isEventAddingUnavailable(date: LocalDate, scheduleId: Long): Boolean {
+        return localRepos.getCountEventsPerDate(date, scheduleId) >= MAX_EVENTS_COUNT
     }
 
     override suspend fun deleteNamedSchedule(primaryKey: Long, isDefault: Boolean) {

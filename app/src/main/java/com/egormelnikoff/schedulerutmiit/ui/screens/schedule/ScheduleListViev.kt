@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.schedule
+package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
@@ -40,7 +40,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
+import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -50,11 +50,13 @@ import java.util.Locale
 @SuppressLint("FrequentlyChangingValue")
 @Composable
 fun ScheduleListView(
-    onShowDialogEvent: (Pair<Event, EventExtraData?>) -> Unit,
+    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
+    onDeleteEvent: (Long) -> Unit,
     scheduleEntity: ScheduleEntity,
     eventsForList: List<Pair<LocalDate, List<Event>>>,
     eventsExtraData: List<EventExtraData>,
     scheduleListState: LazyListState,
+    isSavedSchedule: Boolean,
     isShortEvent: Boolean,
     paddingBottom: Dp
 ) {
@@ -85,19 +87,19 @@ fun ScheduleListView(
                     }
                     val eventsForDayGrouped = events.second
                         .sortedBy { event -> event.startDatetime!!.toLocalTime() }
-                        .groupBy { event ->
-                            event.startDatetime.toString()
-                        }
+                        .groupBy { event -> Pair(event.startDatetime!!.toLocalTime(), event.endDatetime!!.toLocalTime()) }
                         .toList()
                     items(eventsForDayGrouped) { eventsGrouped ->
                         Box(
                             modifier = Modifier.padding(horizontal = 16.dp)
                         ) {
-                            Event(
-                                isShortEvent = isShortEvent,
-                                eventsExtraData = eventsExtraData,
+                            ScheduleEvent(
+                                navigateToEvent = navigateToEvent,
+                                onDeleteEvent = onDeleteEvent,
                                 events = eventsGrouped.second,
-                                onShowDialogEvent = onShowDialogEvent
+                                eventsExtraData = eventsExtraData,
+                                isSavedSchedule = isSavedSchedule,
+                                isShortEvent = isShortEvent
                             )
                         }
                         if (index != lastIndex) {
