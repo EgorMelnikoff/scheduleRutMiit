@@ -1,6 +1,5 @@
-package com.egormelnikoff.schedulerutmiit.ui.settings
+package com.egormelnikoff.schedulerutmiit.ui.screens.settings
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,17 +12,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,18 +39,9 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.ui.composable.GroupItem
-import com.egormelnikoff.schedulerutmiit.ui.composable.SwitchButton
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.theme.LightGrey
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeLightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeOrange
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemePink
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeRed
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeViolet
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeYellow
+import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
+import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
 import kotlinx.coroutines.launch
 
 data class Theme(
@@ -64,51 +52,24 @@ data class Theme(
 
 @Composable
 fun SettingsScreen(
-    onShowDialogSchedules: () -> Unit,
     onShowDialogInfo: () -> Unit,
 
     preferencesDataStore: DataStore,
     appSettings: AppSettings,
 
-    scheduleUiState: ScheduleUiState,
-
-    settingsListState: LazyGridState,
+    settingsListState: LazyStaggeredGridState,
     paddingValues: PaddingValues,
     uriHandler: UriHandler
 ) {
     val scope = rememberCoroutineScope()
 
-    val themes = arrayOf(
-        Theme(
-            name = "light",
-            imageVector = ImageVector.vectorResource(R.drawable.sun),
-            displayedName = LocalContext.current.getString(R.string.light)
-        ),
-        Theme(
-            name = "dark",
-            imageVector = ImageVector.vectorResource(R.drawable.moon),
-            displayedName = LocalContext.current.getString(R.string.dark)
-        ),
-        Theme(
-            name = "system",
-            imageVector = ImageVector.vectorResource(R.drawable.error),
-            displayedName = LocalContext.current.getString(R.string.auto)
-        ),
-    )
-    val switchColors = SwitchDefaults.colors().copy(
-        checkedTrackColor = MaterialTheme.colorScheme.primary,
-        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-        uncheckedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        uncheckedTrackColor = MaterialTheme.colorScheme.surface
-    )
 
-    LazyVerticalGrid(
+    LazyVerticalStaggeredGrid(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background),
-        columns = GridCells.Adaptive(minSize = 300.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
+        verticalItemSpacing = 12.dp,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(
             start = 16.dp,
@@ -125,24 +86,6 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                onShowDialogSchedules()
-                            },
-                            imageVector = ImageVector.vectorResource(R.drawable.schedule),
-                            text = LocalContext.current.getString(R.string.schedules)
-                        ) {
-                            Badge(
-                                containerColor = Color.Unspecified,
-                                contentColor = MaterialTheme.colorScheme.onSurface
-                            ) {
-                                Text(
-                                    text = scheduleUiState.savedNamedSchedules.size.toString(),
-                                    fontSize = 12.sp,
-                                )
-                            }
-                        }
-                    }, {
-                        SettingsItem(
-                            onClick = {
                                 scope.launch {
                                     preferencesDataStore.setViewEvent(!appSettings.eventView)
                                 }
@@ -150,14 +93,13 @@ fun SettingsScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.compact),
                             text = LocalContext.current.getString(R.string.compact_view)
                         ) {
-                            SwitchButton(
+                            CustomSwitch(
                                 checked = appSettings.eventView,
                                 onCheckedChange = {
                                     scope.launch {
                                         preferencesDataStore.setViewEvent(it)
                                     }
-                                },
-                                colors = switchColors
+                                }
                             )
                         }
                     },
@@ -171,14 +113,13 @@ fun SettingsScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.count),
                             text = LocalContext.current.getString(R.string.show_count_classes)
                         ) {
-                            SwitchButton(
+                            CustomSwitch(
                                 checked = appSettings.showCountClasses,
                                 onCheckedChange = {
                                     scope.launch {
                                         preferencesDataStore.setShowCountClasses(it)
                                     }
-                                },
-                                colors = switchColors
+                                }
                             )
                         }
                     }
@@ -187,7 +128,7 @@ fun SettingsScreen(
         }
         item {
             GroupItem(
-                title = LocalContext.current.getString(R.string.general),
+                title = LocalContext.current.getString(R.string.decor),
                 items = listOf(
                     {
                         SettingsItem(
@@ -198,8 +139,7 @@ fun SettingsScreen(
                         ) {
                             ThemeSelector(
                                 preferences = preferencesDataStore,
-                                currentTheme = appSettings.theme,
-                                themes = themes
+                                currentTheme = appSettings.theme
                             )
                         }
                     },
@@ -219,7 +159,15 @@ fun SettingsScreen(
                                 }
                             )
                         }
-                    }, {
+                    }
+                )
+            )
+        }
+        item {
+            GroupItem(
+                title = LocalContext.current.getString(R.string.general),
+                items = listOf(
+                    {
                         SettingsItem(
                             onClick = {
                                 uriHandler.openUri(APP_CHANNEL_URL)
@@ -298,63 +246,28 @@ fun SettingsItem(
 }
 
 @Composable
-fun ColorSelector(
-    currentSelected: Int,
-    onColorSelect: (Int) -> Unit,
-) {
-    val colors = arrayOf(
-        LightGrey,
-        darkThemeRed,
-        darkThemeOrange,
-        darkThemeYellow,
-        darkThemeGreen,
-        darkThemeLightBlue,
-        darkThemeBlue,
-        darkThemeViolet,
-        darkThemePink,
-    )
-
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        colors.forEachIndexed { index, color ->
-            SegmentedButton(
-                border = BorderStroke(width = 0.dp, Color.Transparent),
-                colors = SegmentedButtonDefaults.colors().copy(
-                    activeContainerColor = color,
-                    activeBorderColor = Color.Transparent,
-                    activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                    inactiveContainerColor = color,
-                    inactiveBorderColor = Color.Transparent,
-                    inactiveContentColor = Color.Transparent
-                ),
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = colors.size,
-                    baseShape = RoundedCornerShape(12.dp)
-                ),
-                onClick = {
-                    onColorSelect(index)
-                },
-                selected = index == currentSelected,
-                icon = {},
-                label = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.check),
-                        contentDescription = null
-                    )
-                }
-            )
-        }
-    }
-}
-
-@Composable
 fun ThemeSelector(
     preferences: DataStore,
-    currentTheme: String,
-    themes: Array<Theme>,
+    currentTheme: String
 ) {
+    val themes = arrayOf(
+        Theme(
+            name = "light",
+            imageVector = ImageVector.vectorResource(R.drawable.sun),
+            displayedName = LocalContext.current.getString(R.string.light)
+        ),
+        Theme(
+            name = "dark",
+            imageVector = ImageVector.vectorResource(R.drawable.moon),
+            displayedName = LocalContext.current.getString(R.string.dark)
+        ),
+        Theme(
+            name = "system",
+            imageVector = ImageVector.vectorResource(R.drawable.error),
+            displayedName = LocalContext.current.getString(R.string.auto)
+        ),
+    )
+
     val scope = rememberCoroutineScope()
     SingleChoiceSegmentedButtonRow(
         modifier = Modifier.fillMaxWidth()
