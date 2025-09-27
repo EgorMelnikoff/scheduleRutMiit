@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.schedule
+package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
@@ -33,7 +33,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -44,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -60,21 +60,22 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.ui.composable.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.composable.GroupItem
-import com.egormelnikoff.schedulerutmiit.ui.composable.SimpleTopBar
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.settings.ColorSelector
+import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
+import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
+import com.egormelnikoff.schedulerutmiit.ui.elements.SimpleTopBar
+import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
 import java.time.ZoneId
 import java.time.ZoneOffset
 
 @Composable
 fun EventDialog(
-    scheduleViewModel: ScheduleViewModel,
-    isSavedSchedule: Boolean,
     onBack: () -> Unit,
+    scheduleViewModel: ScheduleViewModel,
+    event: Event,
     eventExtraData: EventExtraData?,
-    event: Event
+    isSavedSchedule: Boolean,
+    isCustomSchedule: Boolean
 ) {
     val context = LocalContext.current
     var tag by remember { mutableIntStateOf(eventExtraData?.tag ?: 0) }
@@ -95,7 +96,9 @@ fun EventDialog(
 
     val eventString = StringBuilder().apply {
         append("${LocalContext.current.getString(R.string.Class)}: ${event.name}")
-        append("\n${LocalContext.current.getString(R.string.type)}: ${event.typeName}")
+        if (event.typeName != null) {
+            append("\n${LocalContext.current.getString(R.string.class_type)}: ${event.typeName}")
+        }
         append("\n${LocalContext.current.getString(R.string.time)}: $startTime - $endTime")
 
         if (event.timeSlotName != null) {
@@ -114,7 +117,7 @@ fun EventDialog(
             append("\n${LocalContext.current.getString(R.string.groups)}: ${event.groups.joinToString { it.name.toString() }}")
         }
     }
-    Scaffold (
+    Scaffold(
         topBar = {
             SimpleTopBar(
                 title = "",
@@ -143,33 +146,32 @@ fun EventDialog(
                 }
             }
         }
-    ){ padding ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = padding.calculateTopPadding(), start = 16.dp, end = 16.dp)
                 .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+
+            Text(
+                text = event.name!!,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 2,
+                style = TextStyle(
+                    platformStyle = PlatformTextStyle(
+                        includeFontPadding = false
+                    )
+                ),
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            if (event.typeName != null) {
                 Text(
-                    text = event.name!!,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    style = TextStyle(
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        )
-                    ),
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = event.typeName!!,
+                    text = event.typeName,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -180,21 +182,21 @@ fun EventDialog(
                     ),
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                Text(
-                    text = "$startTime - $endTime",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    style = TextStyle(
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        )
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
             }
+            Text(
+                text = "$startTime - $endTime",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = TextStyle(
+                    platformStyle = PlatformTextStyle(
+                        includeFontPadding = false
+                    )
+                ),
+                color = MaterialTheme.colorScheme.onBackground
+            )
             Spacer(
-                modifier = Modifier.height(8.dp)
+                modifier = Modifier.height(4.dp)
             )
             if (!event.rooms.isNullOrEmpty()) {
                 GroupItem(
@@ -202,25 +204,28 @@ fun EventDialog(
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = event.rooms.map { room ->
                         {
-                            EventDialogClickableItem(
+                            EventDialogItemContent(
                                 text = room.hint.toString(),
-                                onClick = {
-                                    onBack()
-                                    scheduleViewModel.getNamedScheduleFromApi(
-                                        name = event.rooms.first().name!!,
-                                        apiId = event.rooms.first().id.toString(),
-                                        type = 2
-                                    )
-                                }
+                                onClick = if (!isCustomSchedule) {
+                                    {
+                                        onBack()
+                                        scheduleViewModel.getNamedScheduleFromApi(
+                                            name = event.rooms.first().name!!,
+                                            apiId = event.rooms.first().id.toString(),
+                                            type = 2
+                                        )
+                                    }
+                                } else null
                             )
                         }
                     }
 
                 )
             }
-            if (!event.groups.isNullOrEmpty()) {
+            if (!event.groups.isNullOrEmpty() && !isCustomSchedule) {
                 EventDialogItem(
                     title = context.getString(R.string.Groups),
+                    titleColor = MaterialTheme.colorScheme.primary,
                     withBackground = false
                 ) {
                     FlowRow(
@@ -262,25 +267,24 @@ fun EventDialog(
                 }
             }
             if (!event.lecturers.isNullOrEmpty()) {
-                Spacer(
-                    modifier = Modifier.height(4.dp)
-                )
                 GroupItem(
                     title = context.getString(R.string.Lecturers),
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = event.lecturers.map { lecturer ->
                         {
-                            EventDialogClickableItem(
+                            EventDialogItemContent(
                                 text = lecturer.fullFio.toString(),
-                                onClick = {
-                                    onBack()
-                                    scheduleViewModel.getNamedScheduleFromApi(
-                                        name = lecturer.fullFio!!,
-                                        apiId = lecturer.id.toString(),
-                                        type = 1
-                                    )
-                                },
-                                imageUrl = "https://www.miit.ru/content/e${lecturer.id}.jpg?id_fe=${lecturer.id}&SWidth=100"
+                                onClick = if (!isCustomSchedule) {
+                                    {
+                                        onBack()
+                                        scheduleViewModel.getNamedScheduleFromApi(
+                                            name = lecturer.fullFio!!,
+                                            apiId = lecturer.id.toString(),
+                                            type = 1
+                                        )
+                                    }
+                                } else null,
+                                imageUrl = if (lecturer.id != null && lecturer.url != null) "https://www.miit.ru/content/e${lecturer.id}.jpg?id_fe=${lecturer.id}&SWidth=100" else null
                             )
                         }
                     }
@@ -297,34 +301,20 @@ fun EventDialog(
                 }
                 EventDialogItem(
                     title = LocalContext.current.getString(R.string.comment),
+                    titleColor = MaterialTheme.colorScheme.primary,
                     withBackground = false
                 ) {
                     CustomTextField(
-                        modifier = Modifier.height(100.dp),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-
-                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                            unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
-                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
                         value = comment,
                         onValueChanged = onCommentChange,
                         keyboardOptions = KeyboardOptions(
                             autoCorrectEnabled = false,
-                            imeAction = ImeAction.Done
+                            imeAction = ImeAction.Default
                         ),
-                        placeholder = {
-                            Text(
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                text = LocalContext.current.getString(R.string.Enter_comment)
-                            )
-                        },
+                        placeholderText = LocalContext.current.getString(R.string.Enter_comment),
                         trailingIcon = {
                             AnimatedVisibility(
                                 visible = comment != "",
@@ -348,6 +338,7 @@ fun EventDialog(
                 }
                 EventDialogItem(
                     title = LocalContext.current.getString(R.string.Tag),
+                    titleColor = MaterialTheme.colorScheme.primary,
                     withBackground = false
                 ) {
                     ColorSelector(
@@ -370,18 +361,19 @@ fun EventDialog(
 @Composable
 fun EventDialogItem(
     title: String,
+    titleColor: Color? = null,
     withBackground: Boolean = true,
     content: @Composable () -> Unit
 ) {
     Column(
-        modifier = Modifier.padding(top = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(2.dp)
+        modifier = Modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
             text = title,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            color = titleColor ?: MaterialTheme.colorScheme.onSurface
         )
         if (withBackground) {
             Box(
@@ -400,15 +392,21 @@ fun EventDialogItem(
 
 
 @Composable
-fun EventDialogClickableItem(
-    onClick: (() -> Unit),
+fun EventDialogItemContent(
+    onClick: (() -> Unit)? = null,
     text: String,
     imageUrl: String? = null
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .let {
+                if (onClick != null) {
+                    it.clickable { onClick() }
+                } else {
+                    it
+                }
+            }
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -472,11 +470,13 @@ fun EventDialogClickableItem(
             overflow = TextOverflow.Ellipsis,
             color = MaterialTheme.colorScheme.onBackground
         )
-        Icon(
-            modifier = Modifier.size(24.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.right),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface
-        )
+        if (onClick != null) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.right),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }
