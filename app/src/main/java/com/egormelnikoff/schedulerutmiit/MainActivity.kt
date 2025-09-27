@@ -8,12 +8,11 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.ui.Main
-import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsViewModelImpl
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModelImpl
-import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModelImpl
-import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.SettingsViewModelImpl
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
-
+import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsViewModelImpl
+import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModelImpl
+import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchViewModelImpl
+import com.egormelnikoff.schedulerutmiit.ui.view_models.SettingsViewModelImpl
 
 class MainActivity : ComponentActivity() {
     private lateinit var container: AppContainer
@@ -43,6 +42,7 @@ class MainActivity : ComponentActivity() {
                 container = container
             )
         }
+
         setContent {
             val appSettings by settingsViewModel.appSettings.collectAsStateWithLifecycle()
 
