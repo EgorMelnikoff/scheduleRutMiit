@@ -14,7 +14,7 @@ import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
 @Dao
 interface NamedScheduleDao {
     @Insert
-    suspend fun insertNamedSchedule(namedScheduleFormatted: NamedScheduleFormatted) {
+    suspend fun insertNamedSchedule(namedScheduleFormatted: NamedScheduleFormatted): Long {
         val namedScheduleId = insertNamedScheduleEntity(namedScheduleFormatted.namedScheduleEntity)
         for (schedule in namedScheduleFormatted.schedules) {
             insertScheduleWithEvents(
@@ -22,7 +22,9 @@ interface NamedScheduleDao {
                 scheduleFormatted = schedule
             )
         }
+        return namedScheduleId
     }
+
     @Insert
     suspend fun insertScheduleWithEvents(
         namedScheduleId: Long,
@@ -54,7 +56,6 @@ interface NamedScheduleDao {
     @Transaction
     @Query("SELECT * FROM NamedSchedules")
     suspend fun getAll(): List<NamedScheduleEntity>
-
     @Transaction
     @Query("SELECT * FROM NamedSchedules WHERE apiId = :apiId")
     suspend fun getNamedScheduleByApiId(apiId: Int): NamedScheduleFormatted?
@@ -67,6 +68,8 @@ interface NamedScheduleDao {
     @Query("SELECT COUNT(*) FROM NamedSchedules")
     suspend fun getCount(): Int
 
+    @Query("SELECT COUNT(*) FROM Events WHERE eventScheduleId = :scheduleId AND SUBSTRING(startDatetime, 1, 10) = :date")
+    suspend fun getCountEventsPerDate(date: String, scheduleId: Long): Int
 
     @Transaction
     suspend fun delete(primaryKey: Long) {
@@ -86,10 +89,12 @@ interface NamedScheduleDao {
     suspend fun deleteScheduleById(id: Long)
     @Query("DELETE FROM Events WHERE eventScheduleId = :id")
     suspend fun deleteEventsByScheduleId(id: Long)
+    @Query("DELETE FROM Events WHERE EventId = :id")
+    suspend fun deleteEventById(id: Long)
     @Query("DELETE FROM EventsExtraData WHERE eventExtraScheduleId = :id")
     suspend fun deleteEventsExtraByScheduleId(id: Long)
     @Query("DELETE FROM EventsExtraData WHERE EventExtraId = :id")
-    suspend fun deleteEventsExtraByEventId(id: Long)
+    suspend fun deleteEventExtraByEventId(id: Long)
 
 
     @Query("UPDATE eventsextradata SET tag = :priority WHERE eventExtraScheduleId = :scheduleId AND EventExtraId = :eventId")
