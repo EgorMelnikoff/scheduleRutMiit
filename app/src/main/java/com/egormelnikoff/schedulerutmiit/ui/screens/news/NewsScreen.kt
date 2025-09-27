@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.news
+package com.egormelnikoff.schedulerutmiit.ui.screens.news
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -43,10 +43,10 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.model.NewsShort
-import com.egormelnikoff.schedulerutmiit.ui.composable.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsState
-import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
+import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsViewModel
 import java.time.format.DateTimeFormatter
 
 @Composable

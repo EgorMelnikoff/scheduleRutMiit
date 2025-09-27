@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.search.viewmodel
+package com.egormelnikoff.schedulerutmiit.ui.view_models
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,7 +11,7 @@ import com.egormelnikoff.schedulerutmiit.data.repos.Repos
 import com.egormelnikoff.schedulerutmiit.model.Institute
 import com.egormelnikoff.schedulerutmiit.model.Institutes
 import com.egormelnikoff.schedulerutmiit.model.Person
-import com.egormelnikoff.schedulerutmiit.ui.search.Options
+import com.egormelnikoff.schedulerutmiit.ui.screens.search.Options
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow

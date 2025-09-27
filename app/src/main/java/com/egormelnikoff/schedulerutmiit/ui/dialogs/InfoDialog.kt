@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.settings
+package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -48,9 +48,9 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_GITHUB_REPOS
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.CLOUD_TIPS
-import com.egormelnikoff.schedulerutmiit.ui.composable.GroupItem
-import com.egormelnikoff.schedulerutmiit.ui.composable.SimpleTopBar
-import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.AppInfoState
+import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
+import com.egormelnikoff.schedulerutmiit.ui.elements.SimpleTopBar
+import com.egormelnikoff.schedulerutmiit.ui.view_models.AppInfoState
 
 @Composable
 fun InfoDialog(

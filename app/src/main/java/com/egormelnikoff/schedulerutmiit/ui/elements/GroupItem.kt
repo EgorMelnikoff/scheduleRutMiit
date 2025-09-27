@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.composable
+package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

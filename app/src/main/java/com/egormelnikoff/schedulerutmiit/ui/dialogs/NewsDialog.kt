@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.news
+package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -42,9 +42,10 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.model.News
-import com.egormelnikoff.schedulerutmiit.ui.composable.Empty
-import com.egormelnikoff.schedulerutmiit.ui.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsState
+import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
+import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
+import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsState
 
 @Composable
 fun NewsDialog(
