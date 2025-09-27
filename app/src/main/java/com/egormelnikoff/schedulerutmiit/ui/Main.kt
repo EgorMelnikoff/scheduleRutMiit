@@ -4,8 +4,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -25,33 +29,32 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
-import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import androidx.navigationevent.NavigationEventSwipeEdge
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.composable.BarItem
-import com.egormelnikoff.schedulerutmiit.ui.composable.CustomNavigationBar
-import com.egormelnikoff.schedulerutmiit.ui.composable.CustomSnackbarHost
-import com.egormelnikoff.schedulerutmiit.ui.news.NewsDialog
-import com.egormelnikoff.schedulerutmiit.ui.news.NewsScreen
-import com.egormelnikoff.schedulerutmiit.ui.news.viewmodel.NewsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.schedule.EventDialog
-import com.egormelnikoff.schedulerutmiit.ui.schedule.ScheduleCalendarParams
-import com.egormelnikoff.schedulerutmiit.ui.schedule.ScreenSchedule
-import com.egormelnikoff.schedulerutmiit.ui.schedule.calculateFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.schedule.viewmodel.UiEvent
-import com.egormelnikoff.schedulerutmiit.ui.search.Options
-import com.egormelnikoff.schedulerutmiit.ui.search.SearchScreen
-import com.egormelnikoff.schedulerutmiit.ui.search.viewmodel.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.ui.settings.InfoDialog
-import com.egormelnikoff.schedulerutmiit.ui.settings.SchedulesDialog
-import com.egormelnikoff.schedulerutmiit.ui.settings.SettingsScreen
-import com.egormelnikoff.schedulerutmiit.ui.settings.viewmodel.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddEventDialog
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventDialog
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.InfoDialog
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.NewsDialog
+import com.egormelnikoff.schedulerutmiit.ui.elements.BarItem
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
+import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleCalendarParams
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.ui.screens.search.Options
+import com.egormelnikoff.schedulerutmiit.ui.screens.search.SearchScreen
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
+import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.UiEvent
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -84,7 +87,7 @@ fun Main(
     val snackBarHostState = remember { SnackbarHostState() }
     val scheduleListState = rememberLazyListState()
     val newsListState = rememberLazyStaggeredGridState()
-    val settingsListState = rememberLazyGridState()
+    val settingsListState = rememberLazyStaggeredGridState()
 
     var selectedOption by remember { mutableStateOf(Options.ALL) }
     var query by remember { mutableStateOf("") }
@@ -175,9 +178,13 @@ fun Main(
             selectedIcon = ImageVector.vectorResource(R.drawable.search),
             route = Routes.Search,
             onClick = {
-                searchViewModel.setDefaultSearchState()
-                selectedOption = Options.ALL
-                query = ""
+                if (appBackStack.last() is Routes.AddSchedule) {
+                    appBackStack.onBack()
+                } else {
+                    searchViewModel.setDefaultSearchState()
+                    selectedOption = Options.ALL
+                    query = ""
+                }
             }
         ),
         BarItem(
@@ -186,7 +193,9 @@ fun Main(
             selectedIcon = ImageVector.vectorResource(R.drawable.schedule_fill),
             route = Routes.Schedule,
             onClick = {
-                if (scheduleUiState.currentNamedSchedule != null && !scheduleUiState.currentNamedSchedule.namedScheduleEntity.isDefault) {
+                if (appBackStack.last() is Routes.EventDialog || appBackStack.last() is Routes.AddEvent) {
+                    appBackStack.onBack()
+                } else if (scheduleUiState.currentNamedSchedule != null && !scheduleUiState.currentNamedSchedule.namedScheduleEntity.isDefault) {
                     scheduleViewModel.loadInitialData(false)
                 }
             }
@@ -197,8 +206,12 @@ fun Main(
             selectedIcon = ImageVector.vectorResource(R.drawable.news_fill),
             route = Routes.NewsList,
             onClick = {
-                scope.launch {
-                    newsListState.scrollToItem(0)
+                if (appBackStack.last() is Routes.News) {
+                    appBackStack.onBack()
+                } else {
+                    scope.launch {
+                        newsListState.animateScrollToItem(0)
+                    }
                 }
             }
         ),
@@ -208,18 +221,22 @@ fun Main(
             selectedIcon = ImageVector.vectorResource(R.drawable.settings_fill),
             route = Routes.Settings,
             onClick = {
-                scope.launch {
-                    settingsListState.scrollToItem(0)
+                if (appBackStack.last() is Routes.Info) {
+                    appBackStack.onBack()
+                } else {
+                    scope.launch {
+                        settingsListState.animateScrollToItem(0)
+                    }
                 }
             }
         )
     )
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             CustomNavigationBar(
                 appBackStack = appBackStack,
-                visible = !appBackStack.last().isDialog,
                 barItems = barItems
             )
         },
@@ -230,7 +247,13 @@ fun Main(
         }
     ) { paddingValues ->
         NavDisplay(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(
+                        WindowInsetsSides.Horizontal
+                    )
+                ),
             backStack = appBackStack.backStack,
             onBack = {
                 appBackStack.onBack()
@@ -243,11 +266,11 @@ fun Main(
             },
             predictivePopTransitionSpec = {
                 when (it) {
-                    NavigationEventSwipeEdge.Left -> {
+                    0 -> {
                         fadeIn() togetherWith slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth })
                     }
 
-                    NavigationEventSwipeEdge.Right -> {
+                    1 -> {
                         fadeIn() togetherWith slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth })
                     }
 
@@ -262,7 +285,14 @@ fun Main(
                         navigateToSearch = {
                             appBackStack.navigateToPage(Routes.Search)
                         },
-                        onShowDialogEvent = { value ->
+                        navigateToAddEvent = { value ->
+                            appBackStack.navigateToDialog(
+                                Routes.AddEvent(
+                                    scheduleEntity = value
+                                )
+                            )
+                        },
+                        navigateToEvent = { value ->
                             appBackStack.navigateToDialog(
                                 Routes.EventDialog(
                                     event = value.first,
@@ -297,10 +327,13 @@ fun Main(
                         navigateToSchedule = {
                             appBackStack.navigateToPage(Routes.Schedule)
                         },
+                        navigateToAddSchedule = {
+                            appBackStack.navigateToDialog(Routes.AddSchedule)
+                        },
                         query = query,
                         onQueryChanged = { newValue -> query = newValue },
                         namedScheduleActionsDialog = namedScheduleActionsDialog,
-                        onShowActionsDialog = {newValue ->
+                        onShowActionsDialog = { newValue ->
                             namedScheduleActionsDialog = newValue
                         },
                         selectedOption = selectedOption,
@@ -331,11 +364,6 @@ fun Main(
                         preferencesDataStore = preferencesDataStore,
                         appSettings = appSettings,
 
-                        scheduleUiState = scheduleUiState,
-
-                        onShowDialogSchedules = {
-                            appBackStack.navigateToDialog(Routes.Schedules)
-                        },
                         onShowDialogInfo = {
                             appBackStack.navigateToDialog(Routes.Info)
                         },
@@ -349,9 +377,10 @@ fun Main(
                     EventDialog(
                         onBack = { appBackStack.onBack() },
                         scheduleViewModel = scheduleViewModel,
-                        isSavedSchedule = scheduleUiState.isSaved,
                         event = key.event,
-                        eventExtraData = key.eventExtraData
+                        eventExtraData = key.eventExtraData,
+                        isSavedSchedule = scheduleUiState.isSaved,
+                        isCustomSchedule = scheduleUiState.currentNamedSchedule!!.namedScheduleEntity.type == 3
                     )
                 }
 
@@ -362,29 +391,6 @@ fun Main(
                     )
                 }
 
-                entry(Routes.Schedules) {
-                    SchedulesDialog(
-                        onBack = {
-                            appBackStack.onBack()
-                        },
-                        navigateToSchedule = {
-                            appBackStack.onBack()
-                            appBackStack.navigateToPage(Routes.Schedule)
-                        },
-                        navigateToSearch = {
-                            appBackStack.onBack()
-                            appBackStack.navigateToPage(Routes.Search)
-                        },
-                        onShowActionsDialog = {newValue ->
-                            namedScheduleActionsDialog = newValue
-                        },
-
-                        scheduleViewModel = scheduleViewModel,
-                        scheduleUiState = scheduleUiState,
-
-                        namedScheduleActionsDialog = namedScheduleActionsDialog,
-                    )
-                }
 
                 entry(Routes.Info) {
                     InfoDialog(
@@ -392,6 +398,31 @@ fun Main(
                         appInfoState = appInfoState,
                         paddingValues = paddingValues,
                         uriHandler = uriHandler
+                    )
+                }
+
+                entry(Routes.AddSchedule) {
+                    AddScheduleDialog(
+                        scheduleViewModel = scheduleViewModel,
+                        scope = scope,
+                        snackbarHostState = snackBarHostState,
+                        paddingValues = paddingValues,
+                        onBack = {
+                            appBackStack.onBack()
+                        }
+                    )
+                }
+
+                entry<Routes.AddEvent> { key ->
+                    AddEventDialog(
+                        scheduleViewModel = scheduleViewModel,
+                        scope = scope,
+                        snackBarHostState = snackBarHostState,
+                        scheduleEntity = key.scheduleEntity,
+                        paddingValues = paddingValues,
+                        onBack = {
+                            appBackStack.onBack()
+                        }
                     )
                 }
             }
