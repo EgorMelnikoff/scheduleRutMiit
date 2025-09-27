@@ -63,7 +63,6 @@
     <string name="Yellow">Жёлтый</string>
     <string name="Red">Красный</string>
     <string name="Subject">Предмет</string>
-    <string name="Type">Тип занятия</string>
     <string name="Room">Аудитория</string>
     <string name="Rooms">Аудитории</string>
     <string name="Lecturers">Преподаватели</string>
@@ -72,7 +71,6 @@
     <string name="Enter_comment">Введите комментарий</string>
 
     <string name="Class">Пара</string>
-    <string name="type">Тип</string>
     <string name="time">Время</string>
     <string name="place">Место</string>
 
@@ -104,4 +102,45 @@
     <string name="source_code">Исходный код</string>
     <string name="no_comments">Отсутствуют комментарии к парам</string>
     <string name="comment_add">Комментарий можно добавить, нажав на пару</string>
+
+    <string name="confirm">Подтвердить</string>
+
+    <string name="adding_a_schedule">Добавление расписания</string>
+    <string name="schedule_name">Название</string>
+    <string name="start_date">Дата начала</string>
+    <string name="end_date">Дата окончания</string>
+    <string name="no_start_date_specified">Не указана дата начала</string>
+    <string name="no_end_date_specified">Не указана дата окончания</string>
+    <string name="create">Создать</string>
+
+    <string name="adding_a_class">Добавление пары</string>
+    <string name="class_name">Название</string>
+    <string name="not_specified">Не указан</string>
+    <string name="class_type">Тип занятия</string>
+    <string name="date">Дата</string>
+    <string name="start_time">Время начала</string>
+    <string name="end_time">Время окончания</string>
+    <string name="room_number">Номер аудитории</string>
+    <string name="full_name_of_lecturer">ФИО преподавателя</string>
+    <string name="group_number">Номер группы</string>
+    <string name="add">Добавить</string>
+
+    <string name="no_name_specified">Не указано назввание</string>
+    <string name="no_date_specified">Не указана дата</string>
+    <string name="no_start_time_specified">Не указано время начала</string>
+    <string name="no_end_time_specified">Не указано время окончания</string>
+    <string name="time_is_chosen_incorrectly">Некорректно указано время</string>
+    <string name="room_number_not_specified">Не указан номер аудитории</string>
+    <string name="provide_the_names_of_all_lecturers">Укажите имена всех преподавателей</string>
+    <string name="provide_the_numbers_of_all_groups">Укажите номера всех групп</string>
+
+
+
+    <string name="deleting_class">Удаление пары</string>
+    <string name="really_delete_class">Действительно удалить пару</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+
+    <string name="date_and_time">Дата и время</string>
+    <string name="events_count_error">Достигнуто максимальное количество пар на день</string>
 </resources>
