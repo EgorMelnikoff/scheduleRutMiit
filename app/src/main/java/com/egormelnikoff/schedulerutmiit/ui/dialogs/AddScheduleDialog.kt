@@ -31,7 +31,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
+import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.SimpleTopBar
 import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -85,9 +85,9 @@ fun AddScheduleDialog(
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                GroupItem(
+                GridGroup(
                     items = listOf(
-                        {
+                        listOf {
                             CustomTextField(
                                 modifier = Modifier.fillMaxWidth(),
                                 value = nameSchedule,
@@ -100,33 +100,31 @@ fun AddScheduleDialog(
                                     imeAction = ImeAction.Done
                                 )
                             )
-                        }, {
-                            SplitParam(
-                                startParam = {
-                                    ChooseDateTimeButton(
-                                        modifier = Modifier.weight(1f),
-                                        onClick = {
-                                            dialogStartDate = true
-                                            focusManager.clearFocus()
-                                        },
-                                        title = startDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                                            ?: LocalContext.current.getString(R.string.start_date)
-                                    )
-                                },
-                                endParam = {
-                                    ChooseDateTimeButton(
-                                        modifier = Modifier.weight(1f),
-                                        onClick = {
-                                            dialogEndDate = true
-                                            focusManager.clearFocus()
-                                        },
-                                        title = endDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                                            ?: LocalContext.current.getString(R.string.end_date),
-                                        enabled = startDate != null
-                                    )
-                                }
-                            )
-                        }
+                        },
+                        listOf(
+                            {
+                                ChooseDateTimeButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = {
+                                        dialogStartDate = true
+                                        focusManager.clearFocus()
+                                    },
+                                    title = startDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                                        ?: LocalContext.current.getString(R.string.start_date)
+                                )
+                            }, {
+                                ChooseDateTimeButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = {
+                                        dialogEndDate = true
+                                        focusManager.clearFocus()
+                                    },
+                                    title = endDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                                        ?: LocalContext.current.getString(R.string.end_date),
+                                    enabled = startDate != null
+                                )
+                            }
+                        )
                     )
                 )
             }

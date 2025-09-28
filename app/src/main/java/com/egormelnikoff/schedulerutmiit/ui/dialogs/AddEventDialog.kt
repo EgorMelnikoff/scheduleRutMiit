@@ -43,7 +43,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
+import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.SimpleTopBar
 import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -179,10 +179,10 @@ fun AddEventDialog(
                         }
                     }
                 }
-                GroupItem(
+                GridGroup(
                     title = LocalContext.current.getString(R.string.date_and_time),
                     items = listOf(
-                        {
+                        listOf {
                             ChooseDateTimeButton(
                                 modifier = Modifier.fillMaxWidth(),
                                 title = dateEvent?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
@@ -192,35 +192,34 @@ fun AddEventDialog(
                                     focusManager.clearFocus()
                                 }
                             )
-                        }, {
-                            SplitParam(
-                                startParam = {
-                                    ChooseDateTimeButton(
-                                        modifier = Modifier.weight(1f),
-                                        title = startTime?.format(DateTimeFormatter.ofPattern("HH:mm"))
-                                            ?: LocalContext.current.getString(R.string.start_time),
-                                        imageVector = ImageVector.vectorResource(R.drawable.time),
-                                        onClick = {
-                                            showDialogStart = true
-                                            focusManager.clearFocus()
-                                        }
-                                    )
-                                },
-                                endParam = {
-                                    ChooseDateTimeButton(
-                                        modifier = Modifier.weight(1f),
-                                        title = endTime?.format(DateTimeFormatter.ofPattern("HH:mm"))
-                                            ?: LocalContext.current.getString(R.string.end_time),
-                                        imageVector = ImageVector.vectorResource(R.drawable.time),
-                                        onClick = {
-                                            showDialogEnd = true
-                                            focusManager.clearFocus()
-                                        },
-                                        enabled = startTime != null
-                                    )
-                                }
-                            )
-                        }
+                        },
+                        listOf(
+                            {
+                                ChooseDateTimeButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    title = startTime?.format(DateTimeFormatter.ofPattern("HH:mm"))
+                                        ?: LocalContext.current.getString(R.string.start_time),
+                                    imageVector = ImageVector.vectorResource(R.drawable.time),
+                                    onClick = {
+                                        showDialogStart = true
+                                        focusManager.clearFocus()
+                                    }
+                                )
+                            }, {
+                                ChooseDateTimeButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    title = endTime?.format(DateTimeFormatter.ofPattern("HH:mm"))
+                                        ?: LocalContext.current.getString(R.string.end_time),
+                                    imageVector = ImageVector.vectorResource(R.drawable.time),
+                                    onClick = {
+                                        showDialogEnd = true
+                                        focusManager.clearFocus()
+                                    },
+                                    enabled = startTime != null
+                                )
+                            }
+
+                        )
                     )
                 )
                 HorizontalDivider(
@@ -312,9 +311,9 @@ fun AddEventDialog(
                             typeName = typeEvent,
 
                             startDatetime = LocalDateTime.of(dateEvent, startTime)
-                                    .atZone(ZoneId.systemDefault())
-                                    .withZoneSameInstant(ZoneOffset.UTC)
-                                    .toLocalDateTime(),
+                                .atZone(ZoneId.systemDefault())
+                                .withZoneSameInstant(ZoneOffset.UTC)
+                                .toLocalDateTime(),
                             endDatetime = LocalDateTime.of(dateEvent, endTime)
                                 .atZone(ZoneId.systemDefault())
                                 .withZoneSameInstant(ZoneOffset.UTC)
@@ -354,6 +353,7 @@ fun AddEventDialog(
         }
         if (showDialogStart) {
             BottomSheetTimePicker(
+                selectedTime = startTime,
                 onTimeSelect = { newValue ->
                     startTime = newValue
                     if (endTime == null) {
@@ -367,6 +367,7 @@ fun AddEventDialog(
         }
         if (showDialogEnd) {
             BottomSheetTimePicker(
+                selectedTime = endTime,
                 onTimeSelect = { newValue ->
                     endTime = newValue
                 },
