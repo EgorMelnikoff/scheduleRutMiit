@@ -22,11 +22,14 @@ import java.time.LocalTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetTimePicker(
+    selectedTime: LocalTime?,
     onTimeSelect: (LocalTime) -> Unit,
     onShowDialog: (Boolean) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val timePickerState = rememberTimePickerState(
+        initialHour = selectedTime?.hour ?: 0,
+        initialMinute = selectedTime?.minute ?: 0,
         is24Hour = true
     )
 
