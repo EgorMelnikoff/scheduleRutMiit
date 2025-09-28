@@ -140,21 +140,23 @@ fun SearchScreen(
                     imeAction = ImeAction.Search
                 )
             )
-            IconButton(
-                onClick = {
-                    navigateToAddSchedule()
-                },
-                colors = IconButtonDefaults.iconButtonColors().copy(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .size(24.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.add),
-                    contentDescription = null
-                )
+            if (scheduleUiState.isSavingAvailable) {
+                IconButton(
+                    onClick = {
+                        navigateToAddSchedule()
+                    },
+                    colors = IconButtonDefaults.iconButtonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.add),
+                        contentDescription = null
+                    )
+                }
             }
         }
         FilterRow(
