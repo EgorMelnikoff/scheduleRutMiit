@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -22,13 +23,10 @@ import androidx.compose.ui.unit.sp
 fun GridGroup(
     title: String? = null,
     titleColor: Color? = null,
+    edgeCorner: Dp = 16.dp,
+    interiorCorner: Dp = 4.dp,
     items: List<List<@Composable () -> Unit>>
 ) {
-    val edgeCorner = remember { 16.dp }
-    val interiorCorner = remember { 4.dp }
-
-    val totalColumns = items.size
-
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -48,8 +46,7 @@ fun GridGroup(
         ) {
             items.forEachIndexed { indexColumn, itemDataColumn ->
                 val isFirstColumn = indexColumn == 0
-                val isLastColumn = indexColumn == totalColumns - 1
-                val totalRows = itemDataColumn.size
+                val isLastColumn = indexColumn == items.lastIndex
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -57,7 +54,7 @@ fun GridGroup(
                 ) {
                     itemDataColumn.forEachIndexed { indexRow, itemDataRow ->
                         val isFirstRow = indexRow == 0
-                        val isLastRow = indexRow == totalRows - 1
+                        val isLastRow = indexRow == itemDataColumn.lastIndex
 
                         val topStartRadius = if (isFirstColumn && isFirstRow) edgeCorner else interiorCorner
                         val topEndRadius = if (isFirstColumn && isLastRow) edgeCorner else interiorCorner
@@ -92,11 +89,10 @@ fun GridGroup(
 fun ColumnGroup(
     title: String? = null,
     titleColor: Color? = null,
+    edgeCorner: Dp = 16.dp,
+    interiorCorner: Dp = 4.dp,
     items: List<@Composable () -> Unit>
 ) {
-    val edgeCorner = 16.dp
-    val interiorCorner = 4.dp
-
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -118,23 +114,18 @@ fun ColumnGroup(
                 val isFirst = index == 0
                 val isLast = index == items.lastIndex
 
-                val shape = when {
-                    isFirst && isLast -> RoundedCornerShape(edgeCorner)
-                    isFirst -> RoundedCornerShape(
-                        topStart = edgeCorner,
-                        topEnd = edgeCorner,
-                        bottomStart = interiorCorner,
-                        bottomEnd = interiorCorner
-                    )
+                val topStartRadius = if (isFirst) edgeCorner else interiorCorner
+                val topEndRadius = if (isFirst) edgeCorner else interiorCorner
+                val bottomStartRadius = if (isLast) edgeCorner else interiorCorner
+                val bottomEndRadius = if (isLast) edgeCorner else interiorCorner
 
-                    isLast -> RoundedCornerShape(
-                        topStart = interiorCorner,
-                        topEnd = interiorCorner,
-                        bottomStart = edgeCorner,
-                        bottomEnd = edgeCorner
+                val shape = remember(topStartRadius, topEndRadius, bottomStartRadius, bottomEndRadius) {
+                    RoundedCornerShape(
+                        topStart = topStartRadius,
+                        topEnd = topEndRadius,
+                        bottomStart = bottomStartRadius,
+                        bottomEnd = bottomEndRadius
                     )
-
-                    else -> RoundedCornerShape(interiorCorner)
                 }
 
                 Box(
@@ -155,11 +146,10 @@ fun ColumnGroup(
 fun RowGroup(
     title: String? = null,
     titleColor: Color? = null,
+    edgeCorner: Dp = 16.dp,
+    interiorCorner: Dp = 4.dp,
     items: List<@Composable () -> Unit>
 ) {
-    val edgeCorner = 16.dp
-    val interiorCorner = 4.dp
-
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -180,23 +170,18 @@ fun RowGroup(
                 val isFirst = index == 0
                 val isLast = index == items.lastIndex
 
-                val shape = when {
-                    isFirst && isLast -> RoundedCornerShape(edgeCorner)
-                    isFirst -> RoundedCornerShape(
-                        topStart = edgeCorner,
-                        bottomStart = edgeCorner,
-                        topEnd = interiorCorner,
-                        bottomEnd = interiorCorner
-                    )
+                val topStartRadius = if (isFirst) edgeCorner else interiorCorner
+                val topEndRadius = if (isFirst) edgeCorner else interiorCorner
+                val bottomStartRadius = if (isLast) edgeCorner else interiorCorner
+                val bottomEndRadius = if (isLast) edgeCorner else interiorCorner
 
-                    isLast -> RoundedCornerShape(
-                        topStart = interiorCorner,
-                        bottomStart = interiorCorner,
-                        topEnd = edgeCorner,
-                        bottomEnd = edgeCorner
+                val shape = remember(topStartRadius, topEndRadius, bottomStartRadius, bottomEndRadius) {
+                    RoundedCornerShape(
+                        topStart = topStartRadius,
+                        topEnd = topEndRadius,
+                        bottomStart = bottomStartRadius,
+                        bottomEnd = bottomEndRadius
                     )
-
-                    else -> RoundedCornerShape(interiorCorner)
                 }
 
                 Box(
