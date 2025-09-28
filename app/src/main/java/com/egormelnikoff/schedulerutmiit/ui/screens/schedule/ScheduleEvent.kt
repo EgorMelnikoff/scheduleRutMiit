@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeLightBlue
@@ -97,7 +97,7 @@ fun ScheduleEvent(
             )
         }
 
-        GroupItem(
+        ColumnGroup(
             items = events.map { event ->
                 {
                     ScheduleSingleEvent(

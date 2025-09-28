@@ -48,7 +48,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_GITHUB_REPOS
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.CLOUD_TIPS
-import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
+import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.SimpleTopBar
 import com.egormelnikoff.schedulerutmiit.ui.view_models.AppInfoState
 
@@ -126,7 +126,7 @@ fun InfoDialog(
                     )
                 }
             }
-            GroupItem(
+            ColumnGroup(
                 items = listOf(
                     {
                         Link(
@@ -164,7 +164,7 @@ fun InfoDialog(
                 )
             )
 
-            GroupItem(
+            ColumnGroup(
                 items = listOf {
                     Link(
                         icon = {
@@ -199,7 +199,7 @@ fun InfoDialog(
 
                 is AppInfoState.Loaded -> {
                     if (appInfoState.authorTelegramPage != null) {
-                        GroupItem(
+                        ColumnGroup(
                             items = listOf {
                                 Link(
                                     icon = {

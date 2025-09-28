@@ -40,8 +40,8 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
+import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
-import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
 import kotlinx.coroutines.launch
 
 data class Theme(
@@ -80,7 +80,7 @@ fun SettingsScreen(
         state = settingsListState
     ) {
         item {
-            GroupItem(
+            ColumnGroup(
                 title = LocalContext.current.getString(R.string.schedule),
                 items = listOf(
                     {
@@ -127,7 +127,7 @@ fun SettingsScreen(
             )
         }
         item {
-            GroupItem(
+            ColumnGroup(
                 title = LocalContext.current.getString(R.string.decor),
                 items = listOf(
                     {
@@ -164,7 +164,7 @@ fun SettingsScreen(
             )
         }
         item {
-            GroupItem(
+            ColumnGroup(
                 title = LocalContext.current.getString(R.string.general),
                 items = listOf(
                     {

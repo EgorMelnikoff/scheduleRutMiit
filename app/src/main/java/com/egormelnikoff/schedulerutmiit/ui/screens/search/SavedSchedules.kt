@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
+import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
 import java.time.Instant
@@ -56,7 +56,7 @@ fun SavedSchedules(
     Box(
         modifier = Modifier.padding(horizontal = 16.dp).verticalScroll(rememberScrollState())
     ) {
-        GroupItem(
+        ColumnGroup(
             title = LocalContext.current.getString(R.string.saved_schedules),
             items = scheduleUiState.savedNamedSchedules.map { namedScheduleEntity ->
                 {

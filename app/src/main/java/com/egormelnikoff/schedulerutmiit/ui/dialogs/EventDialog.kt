@@ -61,8 +61,8 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
+import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.elements.GroupItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.SimpleTopBar
 import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
 import java.time.ZoneId
@@ -199,7 +199,7 @@ fun EventDialog(
                 modifier = Modifier.height(4.dp)
             )
             if (!event.rooms.isNullOrEmpty()) {
-                GroupItem(
+                ColumnGroup(
                     title = context.getString(R.string.Room),
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = event.rooms.map { room ->
@@ -267,7 +267,7 @@ fun EventDialog(
                 }
             }
             if (!event.lecturers.isNullOrEmpty()) {
-                GroupItem(
+                ColumnGroup(
                     title = context.getString(R.string.Lecturers),
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = event.lecturers.map { lecturer ->
