@@ -79,6 +79,9 @@ fun CustomTextField(
         shape = RoundedCornerShape(12.dp),
         keyboardOptions = keyboardOptions ?: KeyboardOptions.Default,
         keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+            },
             onSearch = {
                 if (action != null) {
                     action()
