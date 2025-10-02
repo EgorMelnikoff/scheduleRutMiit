@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
@@ -17,19 +15,20 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,6 +41,7 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRou
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 data class Theme(
@@ -52,18 +52,16 @@ data class Theme(
 
 @Composable
 fun SettingsScreen(
+    externalPadding: PaddingValues,
     onShowDialogInfo: () -> Unit,
+    onOpenUri: (String) -> Unit,
 
     preferencesDataStore: DataStore,
     appSettings: AppSettings,
 
     settingsListState: LazyStaggeredGridState,
-    paddingValues: PaddingValues,
-    uriHandler: UriHandler
+    scope: CoroutineScope
 ) {
-    val scope = rememberCoroutineScope()
-
-
     LazyVerticalStaggeredGrid(
         modifier = Modifier
             .fillMaxWidth()
@@ -74,8 +72,8 @@ fun SettingsScreen(
         contentPadding = PaddingValues(
             start = 16.dp,
             end = 16.dp,
-            top = paddingValues.calculateTopPadding() + 16.dp,
-            bottom = paddingValues.calculateBottomPadding()
+            top = externalPadding.calculateTopPadding() + 16.dp,
+            bottom = externalPadding.calculateBottomPadding()
         ),
         state = settingsListState
     ) {
@@ -170,7 +168,7 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                uriHandler.openUri(APP_CHANNEL_URL)
+                                onOpenUri(APP_CHANNEL_URL)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.send),
                             text = LocalContext.current.getString(R.string.report_a_problem),
@@ -193,8 +191,8 @@ fun SettingsScreen(
 @Composable
 fun SettingsItem(
     onClick: (() -> Unit)?,
-    imageVector: ImageVector,
     text: String,
+    imageVector: ImageVector,
     horizontal: Boolean = true,
     content: @Composable (() -> Unit)? = null,
 ) {
@@ -207,10 +205,9 @@ fun SettingsItem(
                     it
                 }
             }
-
             .padding(horizontal = 16.dp, vertical = 16.dp)
             .defaultMinSize(minHeight = 36.dp),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -236,10 +233,8 @@ fun SettingsItem(
             if (horizontal) {
                 content?.invoke()
             }
-
         }
         if (!horizontal) {
-            Spacer(modifier = Modifier.height(8.dp))
             content?.invoke()
         }
     }
@@ -269,48 +264,50 @@ fun ThemeSelector(
     )
 
     val scope = rememberCoroutineScope()
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        themes.forEachIndexed { index, theme ->
-            SegmentedButton(
-                modifier = Modifier.fillMaxWidth(),
-                colors = SegmentedButtonDefaults.colors().copy(
-                    activeContainerColor = MaterialTheme.colorScheme.primary,
-                    activeBorderColor = Color.Transparent,
-                    activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                    inactiveContainerColor = MaterialTheme.colorScheme.background,
-                    inactiveBorderColor = Color.Transparent,
-                    inactiveContentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = themes.size,
-                    baseShape = RoundedCornerShape(12.dp)
-                ),
-                onClick = {
-                    scope.launch {
-                        preferences.setTheme(theme.name)
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+        SingleChoiceSegmentedButtonRow(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            themes.forEachIndexed { index, theme ->
+                SegmentedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = SegmentedButtonDefaults.colors().copy(
+                        activeContainerColor = MaterialTheme.colorScheme.primary,
+                        activeBorderColor = Color.Transparent,
+                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
+                        inactiveContainerColor = MaterialTheme.colorScheme.background,
+                        inactiveBorderColor = Color.Transparent,
+                        inactiveContentColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = themes.size,
+                        baseShape = RoundedCornerShape(12.dp)
+                    ),
+                    onClick = {
+                        scope.launch {
+                            preferences.setTheme(theme.name)
+                        }
+                    },
+                    selected = theme.name == currentTheme,
+                    icon = {},
+                    label = {
+                        if (theme.name != "system") {
+                            Icon(
+                                modifier = Modifier
+                                    .size(16.dp),
+                                imageVector = theme.imageVector,
+                                contentDescription = theme.displayedName
+                            )
+                        } else {
+                            Text(
+                                text = theme.displayedName,
+                                fontSize = 12.sp,
+                            )
+                        }
                     }
-                },
-                selected = theme.name == currentTheme,
-                icon = {},
-                label = {
-                    if (theme.name != "system") {
-                        Icon(
-                            modifier = Modifier
-                                .size(16.dp),
-                            imageVector = theme.imageVector,
-                            contentDescription = theme.displayedName
-                        )
-                    } else {
-                        Text(
-                            text = theme.displayedName,
-                            fontSize = 12.sp,
-                        )
-                    }
-                }
-            )
+                )
+            }
         }
     }
 }
