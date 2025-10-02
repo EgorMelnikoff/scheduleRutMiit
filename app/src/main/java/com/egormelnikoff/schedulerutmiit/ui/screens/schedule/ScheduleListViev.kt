@@ -1,9 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
-import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,12 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,102 +32,83 @@ import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
-@SuppressLint("FrequentlyChangingValue")
 @Composable
 fun ScheduleListView(
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
     onDeleteEvent: (Long) -> Unit,
-    scheduleEntity: ScheduleEntity,
+    onUpdateHiddenEvent: (Long) -> Unit,
     eventsForList: List<Pair<LocalDate, List<Event>>>,
     eventsExtraData: List<EventExtraData>,
+
+    startDate: LocalDate,
+    recurrence: Recurrence?,
+
     scheduleListState: LazyListState,
     isSavedSchedule: Boolean,
     isShortEvent: Boolean,
     paddingBottom: Dp
 ) {
     if (eventsForList.isNotEmpty()) {
-        val scope = rememberCoroutineScope()
-        Box {
-            LazyColumn(
-                state = scheduleListState,
-                contentPadding = PaddingValues(bottom = paddingBottom),
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                val lastIndex = eventsForList.lastIndex
-                val formatter = DateTimeFormatter.ofPattern("d MMMM")
-                eventsForList.forEachIndexed { index, events ->
-                    stickyHeader {
-                        DateHeader(
-                            currentWeek = if (scheduleEntity.recurrence != null) {
-                                calculateCurrentWeek(
-                                    date = events.first,
-                                    startDate = scheduleEntity.startDate,
-                                    firstPeriodNumber = scheduleEntity.recurrence.firstWeekNumber,
-                                    interval = scheduleEntity.recurrence.interval!!
-                                )
-                            } else null,
-                            date = events.first,
-                            formatter = formatter
+        LazyColumn(
+            state = scheduleListState,
+            contentPadding = PaddingValues(bottom = paddingBottom),
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            val lastIndex = eventsForList.lastIndex
+            val formatter = DateTimeFormatter.ofPattern("d MMMM")
+            eventsForList.forEachIndexed { index, events ->
+                val eventsForDayGrouped = events.second
+                    .sortedBy { event -> event.startDatetime!!.toLocalTime() }
+                    .groupBy { event ->
+                        Pair(
+                            event.startDatetime!!.toLocalTime(),
+                            event.endDatetime!!.toLocalTime()
                         )
                     }
-                    val eventsForDayGrouped = events.second
-                        .sortedBy { event -> event.startDatetime!!.toLocalTime() }
-                        .groupBy { event -> Pair(event.startDatetime!!.toLocalTime(), event.endDatetime!!.toLocalTime()) }
-                        .toList()
-                    items(eventsForDayGrouped) { eventsGrouped ->
-                        Box(
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        ) {
-                            ScheduleEvent(
-                                navigateToEvent = navigateToEvent,
-                                onDeleteEvent = onDeleteEvent,
-                                events = eventsGrouped.second,
-                                eventsExtraData = eventsExtraData,
-                                isSavedSchedule = isSavedSchedule,
-                                isShortEvent = isShortEvent
+                    .toList()
+
+                stickyHeader {
+                    DateHeader(
+                        currentWeek = if (recurrence != null) {
+                            calculateCurrentWeek(
+                                date = events.first,
+                                startDate = startDate,
+                                firstPeriodNumber = recurrence.firstWeekNumber,
+                                interval = recurrence.interval!!
                             )
-                        }
-                        if (index != lastIndex) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    }
-                }
-            }
-            AnimatedVisibility(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = paddingBottom),
-                visible = scheduleListState.firstVisibleItemIndex != 0,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                IconButton(
-                    colors = IconButtonDefaults.iconButtonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    onClick = {
-                        scope.launch {
-                            scheduleListState.animateScrollToItem(0)
-                        }
-                    }
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.top),
-                        contentDescription = null
+                        } else null,
+                        date = events.first,
+                        formatter = formatter
                     )
+                }
+
+                items(eventsForDayGrouped) { eventsGrouped ->
+                    Box(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        ScheduleEvent(
+                            navigateToEvent = navigateToEvent,
+                            onDeleteEvent = onDeleteEvent,
+                            onUpdateHiddenEvent = onUpdateHiddenEvent,
+                            events = eventsGrouped.second,
+                            eventsExtraData = eventsExtraData,
+                            isSavedSchedule = isSavedSchedule,
+                            isShortEvent = isShortEvent
+                        )
+                    }
+                    if (index != lastIndex) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
             }
         }
-
     } else {
         Empty(
             title = "¯\\_(ツ)_/¯",
