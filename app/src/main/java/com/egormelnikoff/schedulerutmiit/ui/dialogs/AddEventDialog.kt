@@ -25,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -151,7 +150,7 @@ fun AddEventDialog(
 
                 ColumnGroup(
                     title = LocalContext.current.getString(R.string.class_type),
-                    backgroundColor = Color.Unspecified,
+                    withBackground = false,
                     items = listOf{
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),

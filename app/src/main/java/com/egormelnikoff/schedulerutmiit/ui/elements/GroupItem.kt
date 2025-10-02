@@ -78,12 +78,21 @@ fun GridGroup(
                         val isFirstRow = indexRow == 0
                         val isLastRow = indexRow == itemDataColumn.lastIndex
 
-                        val topStartRadius = if (isFirstColumn && isFirstRow) edgeCorner else interiorCorner
-                        val topEndRadius = if (isFirstColumn && isLastRow) edgeCorner else interiorCorner
-                        val bottomStartRadius = if (isLastColumn && isFirstRow) edgeCorner else interiorCorner
-                        val bottomEndRadius = if (isLastColumn && isLastRow) edgeCorner else interiorCorner
+                        val topStartRadius =
+                            if (isFirstColumn && isFirstRow) edgeCorner else interiorCorner
+                        val topEndRadius =
+                            if (isFirstColumn && isLastRow) edgeCorner else interiorCorner
+                        val bottomStartRadius =
+                            if (isLastColumn && isFirstRow) edgeCorner else interiorCorner
+                        val bottomEndRadius =
+                            if (isLastColumn && isLastRow) edgeCorner else interiorCorner
 
-                        val shape = remember(topStartRadius, topEndRadius, bottomStartRadius, bottomEndRadius) {
+                        val shape = remember(
+                            topStartRadius,
+                            topEndRadius,
+                            bottomStartRadius,
+                            bottomEndRadius
+                        ) {
                             RoundedCornerShape(
                                 topStart = topStartRadius,
                                 topEnd = topEndRadius,
@@ -111,7 +120,7 @@ fun GridGroup(
 fun ColumnGroup(
     title: String? = null,
     titleColor: Color? = null,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    withBackground: Boolean = true,
     edgeCorner: Dp = 16.dp,
     interiorCorner: Dp = 4.dp,
     items: List<@Composable () -> Unit>
@@ -138,25 +147,37 @@ fun ColumnGroup(
                 val isFirst = index == 0
                 val isLast = index == items.lastIndex
 
-                val topStartRadius = if (isFirst) edgeCorner else interiorCorner
-                val topEndRadius = if (isFirst) edgeCorner else interiorCorner
-                val bottomStartRadius = if (isLast) edgeCorner else interiorCorner
-                val bottomEndRadius = if (isLast) edgeCorner else interiorCorner
-
-                val shape = remember(topStartRadius, topEndRadius, bottomStartRadius, bottomEndRadius) {
-                    RoundedCornerShape(
-                        topStart = topStartRadius,
-                        topEnd = topEndRadius,
-                        bottomStart = bottomStartRadius,
-                        bottomEnd = bottomEndRadius
-                    )
-                }
-
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(shape)
-                        .background(backgroundColor)
+                        .let {
+                            if (withBackground) {
+                                val topStartRadius = if (isFirst) edgeCorner else interiorCorner
+                                val topEndRadius = if (isFirst) edgeCorner else interiorCorner
+                                val bottomStartRadius = if (isLast) edgeCorner else interiorCorner
+                                val bottomEndRadius = if (isLast) edgeCorner else interiorCorner
+
+                                val shape = remember(
+                                    topStartRadius,
+                                    topEndRadius,
+                                    bottomStartRadius,
+                                    bottomEndRadius
+                                ) {
+                                    RoundedCornerShape(
+                                        topStart = topStartRadius,
+                                        topEnd = topEndRadius,
+                                        bottomStart = bottomStartRadius,
+                                        bottomEnd = bottomEndRadius
+                                    )
+                                }
+                                it
+                                    .clip(shape)
+                                    .background(MaterialTheme.colorScheme.surface)
+                            } else {
+                                it
+                            }
+                        }
+
                 ) {
                     itemData()
                 }
@@ -199,14 +220,15 @@ fun RowGroup(
                 val topEndRadius = if (isLast) edgeCorner else interiorCorner
                 val bottomEndRadius = if (isLast) edgeCorner else interiorCorner
 
-                val shape = remember(topStartRadius, topEndRadius, bottomStartRadius, bottomEndRadius) {
-                    RoundedCornerShape(
-                        topStart = topStartRadius,
-                        topEnd = topEndRadius,
-                        bottomStart = bottomStartRadius,
-                        bottomEnd = bottomEndRadius
-                    )
-                }
+                val shape =
+                    remember(topStartRadius, topEndRadius, bottomStartRadius, bottomEndRadius) {
+                        RoundedCornerShape(
+                            topStart = topStartRadius,
+                            topEnd = topEndRadius,
+                            bottomStart = bottomStartRadius,
+                            bottomEnd = bottomEndRadius
+                        )
+                    }
 
                 Box(
                     modifier = Modifier

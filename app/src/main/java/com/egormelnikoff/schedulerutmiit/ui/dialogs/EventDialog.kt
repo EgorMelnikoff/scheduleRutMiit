@@ -36,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -242,7 +241,7 @@ fun EventDialog(
                 ColumnGroup(
                     title = context.getString(R.string.Groups),
                     titleColor = MaterialTheme.colorScheme.primary,
-                    backgroundColor = Color.Unspecified,
+                    withBackground = false,
                     items = listOf {
                         FlowRow(
                             modifier = Modifier
@@ -315,7 +314,7 @@ fun EventDialog(
                 ColumnGroup(
                     title = LocalContext.current.getString(R.string.comment),
                     titleColor = MaterialTheme.colorScheme.primary,
-                    backgroundColor = Color.Unspecified,
+                    withBackground = false,
                     items = listOf {
                         CustomTextField(
                             modifier = Modifier
@@ -357,7 +356,7 @@ fun EventDialog(
                 ColumnGroup(
                     title = LocalContext.current.getString(R.string.Tag),
                     titleColor = MaterialTheme.colorScheme.primary,
-                    backgroundColor = Color.Unspecified,
+                    withBackground = false,
                     items = listOf {
                         ColorSelector(
                             currentSelected = tag,
