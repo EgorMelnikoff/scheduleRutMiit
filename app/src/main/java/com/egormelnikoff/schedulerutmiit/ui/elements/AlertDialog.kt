@@ -1,10 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import com.egormelnikoff.schedulerutmiit.R
 
@@ -14,6 +16,7 @@ fun CustomAlertDialog(
     onConfirmation: () -> Unit,
     dialogTitle: String,
     dialogText: String,
+    dialogIcon: ImageVector? = null,
     confirmText: String? = null,
     dismissText: String? = null
 ) {
@@ -21,6 +24,15 @@ fun CustomAlertDialog(
         title = {
             Text(text = dialogTitle)
         },
+        icon = if (dialogIcon != null){
+            {
+                Icon(
+                    imageVector = dialogIcon,
+                    contentDescription = dialogTitle
+                )
+            }
+
+        } else null,
         text = {
             Text(text = dialogText)
         },
@@ -31,6 +43,7 @@ fun CustomAlertDialog(
             TextButton(
                 onClick = {
                     onConfirmation()
+                    onDismissRequest()
                 }
             ) {
                 Text(
@@ -52,6 +65,7 @@ fun CustomAlertDialog(
             }
         },
         containerColor = MaterialTheme.colorScheme.background,
+        iconContentColor = MaterialTheme.colorScheme.onSurface,
         titleContentColor = MaterialTheme.colorScheme.onBackground,
         textContentColor = MaterialTheme.colorScheme.onSurface,
     )
