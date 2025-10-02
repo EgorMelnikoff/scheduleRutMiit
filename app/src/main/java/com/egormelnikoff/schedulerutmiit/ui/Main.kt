@@ -35,27 +35,27 @@ import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
-import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.InfoDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.NewsDialog
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.Options
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.BarItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleCalendarParams
+import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleCalendarState
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.ui.screens.search.Options
-import com.egormelnikoff.schedulerutmiit.ui.screens.search.SearchScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
-import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SettingsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.UiEvent
+import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.UiEvent
+import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -77,28 +77,30 @@ fun Main(
             )
         )
     }
+    val today by remember { mutableStateOf(LocalDate.now()) }
     val focusManager = LocalFocusManager.current
     val uriHandler = LocalUriHandler.current
     val scope = rememberCoroutineScope()
-
-    val searchUiState = searchViewModel.uiState.collectAsState().value
-    val scheduleUiState = scheduleViewModel.uiState.collectAsState().value
-    val newsUiState = newsViewModel.uiState.collectAsState().value
-    val appInfoState = settingsViewModel.stateAppInfo.collectAsState().value
 
     val snackBarHostState = remember { SnackbarHostState() }
     val scheduleListState = rememberLazyListState()
     val newsListState = rememberLazyStaggeredGridState()
     val settingsListState = rememberLazyStaggeredGridState()
 
+    val searchUiState = searchViewModel.uiState.collectAsState().value
+    val scheduleUiState = scheduleViewModel.uiState.collectAsState().value
+    val newsUiState = newsViewModel.uiState.collectAsState().value
+    val appInfoState = settingsViewModel.stateAppInfo.collectAsState().value
+
+    var visibleSavedSchedules by remember { mutableStateOf(true) }
+    var visibleHiddenEvents by remember { mutableStateOf(false) }
+
     var selectedOption by remember { mutableStateOf(Options.ALL) }
-    var query by remember { mutableStateOf("") }
-    var namedScheduleActionsDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
-    val today by remember { mutableStateOf(LocalDate.now()) }
+    var searchQuery by remember { mutableStateOf("") }
 
     var expandedSchedulesMenu by remember { mutableStateOf(false) }
     var selectedDate by remember(
-        scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.apiId
+        scheduleUiState.currentScheduleData?.namedSchedule?.namedScheduleEntity?.apiId
     ) {
         mutableStateOf(
             scheduleUiState.currentScheduleData?.defaultDate ?: today
@@ -112,7 +114,6 @@ fun Main(
         pageCount = { scheduleUiState.currentScheduleData?.weeksCount ?: 0 },
         initialPage = scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0
     )
-
 
     LaunchedEffect(key1 = Unit) {
         scheduleViewModel.uiEvent.collect { info ->
@@ -135,18 +136,18 @@ fun Main(
     }
 
     LaunchedEffect(
-        scheduleUiState.currentNamedSchedule?.namedScheduleEntity?.apiId,
-        scheduleUiState.currentScheduleEntity?.timetableId
+        scheduleUiState.currentScheduleData?.namedSchedule?.namedScheduleEntity?.apiId,
+        scheduleUiState.currentScheduleData?.settledScheduleEntity?.timetableId
     ) {
         expandedSchedulesMenu = false
         pagerDaysState.scrollToPage(scheduleUiState.currentScheduleData?.daysStartIndex ?: 0)
         scheduleListState.scrollToItem(0)
     }
 
-    if (scheduleUiState.currentScheduleEntity != null) {
+    if (scheduleUiState.currentScheduleData?.settledScheduleEntity != null) {
         LaunchedEffect(selectedDate) {
             val targetPage = ChronoUnit.DAYS.between(
-                scheduleUiState.currentScheduleEntity.startDate,
+                scheduleUiState.currentScheduleData.settledScheduleEntity.startDate,
                 selectedDate
             ).toInt()
 
@@ -157,13 +158,13 @@ fun Main(
 
         LaunchedEffect(pagerDaysState.currentPage) {
             val newSelectedDate =
-                scheduleUiState.currentScheduleEntity.startDate.plusDays(
+                scheduleUiState.currentScheduleData.settledScheduleEntity.startDate.plusDays(
                     pagerDaysState.currentPage.toLong()
                 )
             selectedDate = newSelectedDate
 
             val targetWeekIndex = ChronoUnit.WEEKS.between(
-                calculateFirstDayOfWeek(scheduleUiState.currentScheduleEntity.startDate),
+                calculateFirstDayOfWeek(scheduleUiState.currentScheduleData.settledScheduleEntity.startDate),
                 calculateFirstDayOfWeek(newSelectedDate)
             ).toInt()
 
@@ -175,17 +176,13 @@ fun Main(
 
     val barItems = arrayOf(
         BarItem(
-            title = LocalContext.current.getString(R.string.search),
-            icon = ImageVector.vectorResource(R.drawable.search),
-            selectedIcon = ImageVector.vectorResource(R.drawable.search),
-            route = Routes.Search,
+            title = LocalContext.current.getString(R.string.review),
+            icon = ImageVector.vectorResource(R.drawable.review),
+            selectedIcon = ImageVector.vectorResource(R.drawable.review),
+            route = Routes.Review,
             onClick = {
-                if (appBackStack.last() is Routes.AddSchedule) {
+                if (appBackStack.last() is Routes.SearchDialog || appBackStack.last() is Routes.AddScheduleDialog) {
                     appBackStack.onBack()
-                } else {
-                    searchViewModel.setDefaultSearchState()
-                    selectedOption = Options.ALL
-                    query = ""
                 }
             }
         ),
@@ -195,10 +192,17 @@ fun Main(
             selectedIcon = ImageVector.vectorResource(R.drawable.schedule_fill),
             route = Routes.Schedule,
             onClick = {
-                if (appBackStack.last() is Routes.EventDialog || appBackStack.last() is Routes.AddEvent) {
+                if (appBackStack.last() is Routes.EventDialog || appBackStack.last() is Routes.AddEventDialog) {
                     appBackStack.onBack()
-                } else if (scheduleUiState.currentNamedSchedule != null && !scheduleUiState.currentNamedSchedule.namedScheduleEntity.isDefault) {
-                    scheduleViewModel.loadInitialData(false)
+                } else {
+                    scope.launch {
+                        if (appSettings.calendarView) {
+                            selectedDate = scheduleUiState.currentScheduleData?.defaultDate ?: today
+                            pagerWeeksState.animateScrollToPage(scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0)
+                        } else {
+                            scheduleListState.animateScrollToItem(0)
+                        }
+                    }
                 }
             }
         ),
@@ -208,7 +212,7 @@ fun Main(
             selectedIcon = ImageVector.vectorResource(R.drawable.news_fill),
             route = Routes.NewsList,
             onClick = {
-                if (appBackStack.last() is Routes.News) {
+                if (appBackStack.last() is Routes.NewsDialog) {
                     appBackStack.onBack()
                 } else {
                     scope.launch {
@@ -223,7 +227,7 @@ fun Main(
             selectedIcon = ImageVector.vectorResource(R.drawable.settings_fill),
             route = Routes.Settings,
             onClick = {
-                if (appBackStack.last() is Routes.Info) {
+                if (appBackStack.last() is Routes.InfoDialog) {
                     appBackStack.onBack()
                 } else {
                     scope.launch {
@@ -233,6 +237,55 @@ fun Main(
             }
         )
     )
+
+    val onSelectDefaultNamedSchedule: (Long) -> Unit = { value ->
+        scheduleViewModel.getNamedScheduleFromDb(
+            primaryKeyNamedSchedule = value,
+            setDefault = true
+        )
+    }
+    val onSetNamedSchedule: (Long) -> Unit = { value ->
+        if (value != scheduleUiState.currentScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
+            scheduleViewModel.getNamedScheduleFromDb(
+                primaryKeyNamedSchedule = value
+            )
+        }
+        appBackStack.navigateToPage(Routes.Schedule)
+    }
+    val onDeleteNamedSchedule: ( Pair<Long, Boolean>) -> Unit = { value ->
+        scheduleViewModel.deleteNamedSchedule(
+            primaryKeyNamedSchedule = value.first,
+            isDefault = value.second
+        )
+    }
+    val onSetDefaultSchedule: ( Triple<Long, Long, String>) -> Unit = { value ->
+        scheduleViewModel.setDefaultSchedule(
+            primaryKeyNamedSchedule = value.first,
+            primaryKeySchedule = value.second,
+            timetableId = value.third
+        )
+    }
+
+    val onDeleteEvent: (Long) -> Unit = { primaryKey ->
+        scheduleViewModel.deleteCustomEvent(
+            scheduleEntity = scheduleUiState.currentScheduleData!!.settledScheduleEntity!!,
+            primaryKeyEvent = primaryKey
+        )
+    }
+    val onHideEvent: (Long) -> Unit = { primaryKey ->
+        scheduleViewModel.updateEventHidden(
+            scheduleEntity = scheduleUiState.currentScheduleData!!.settledScheduleEntity!!,
+            eventPrimaryKey = primaryKey,
+            isHidden = true
+        )
+    }
+    val onShowEvent: (Long) -> Unit = { primaryKey ->
+        scheduleViewModel.updateEventHidden(
+            scheduleEntity = scheduleUiState.currentScheduleData!!.settledScheduleEntity!!,
+            eventPrimaryKey = primaryKey,
+            isHidden = false
+        )
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -247,7 +300,7 @@ fun Main(
                 snackBarHostState = snackBarHostState
             )
         }
-    ) { paddingValues ->
+    ) { externalPadding ->
         NavDisplay(
             modifier = Modifier
                 .fillMaxSize()
@@ -282,14 +335,52 @@ fun Main(
                 }
             },
             entryProvider = entryProvider {
+                entry<Routes.Review> {
+                    ReviewScreen(
+                        externalPadding = externalPadding,
+                        navigateToSearch = {
+                            appBackStack.navigateToDialog(Routes.SearchDialog)
+                        },
+                        navigateToAddSchedule = {
+                            appBackStack.navigateToDialog(Routes.AddScheduleDialog)
+                        },
+                        navigateToEvent = { value ->
+                            appBackStack.navigateToDialog(
+                                Routes.EventDialog(
+                                    event = value.first,
+                                    eventExtraData = value.second
+                                )
+                            )
+                        },
+                        onChangeSavedSchedulesVisibility = { newValue ->
+                            visibleSavedSchedules = newValue
+                        },
+                        onChangeHiddenEventsVisibility = { newValue ->
+                            visibleHiddenEvents = newValue
+                        },
+
+                        onSetNamedSchedule = onSetNamedSchedule,
+                        onSelectDefaultNamedSchedule = onSelectDefaultNamedSchedule,
+                        onDeleteNamedSchedule = onDeleteNamedSchedule,
+                        onShowEvent = onShowEvent,
+
+                        today = today,
+                        visibleSavedSchedules = visibleSavedSchedules,
+                        visibleHiddenEvents = visibleHiddenEvents,
+                        scheduleUiState = scheduleUiState
+                    )
+                }
+
                 entry<Routes.Schedule> {
                     ScreenSchedule(
-                        navigateToSearch = {
-                            appBackStack.navigateToPage(Routes.Search)
+                        externalPadding = externalPadding,
+                        today = today,
+                        navigateToReview = {
+                            appBackStack.navigateToPage(Routes.Review)
                         },
                         navigateToAddEvent = { value ->
                             appBackStack.navigateToDialog(
-                                Routes.AddEvent(
+                                Routes.AddEventDialog(
                                     scheduleEntity = value
                                 )
                             )
@@ -302,131 +393,206 @@ fun Main(
                                 )
                             )
                         },
+                        onShowExpandedMenu = { newValue ->
+                            expandedSchedulesMenu = newValue
+                        },
 
-                        scheduleViewModel = scheduleViewModel,
-                        preferencesDataStore = preferencesDataStore,
+                        onLoadInitialData = {
+                            scheduleViewModel.loadInitialData(false)
+                        },
+                        onSaveCurrentNamedSchedule = {
+                            scheduleViewModel.saveCurrentNamedSchedule()
+                        },
+                        onSelectDefaultNamedSchedule = onSelectDefaultNamedSchedule,
+                        onDeleteNamedSchedule = onDeleteNamedSchedule,
+                        onDeleteEvent = onDeleteEvent,
+                        onHideEvent = onHideEvent,
+                        onSetDefaultSchedule = onSetDefaultSchedule,
+
+                        onSetScheduleView = { newValue ->
+                            scope.launch {
+                                preferencesDataStore.setScheduleView(newValue)
+                            }
+                        },
+
                         appSettings = appSettings,
+                        expandedSchedulesMenu = expandedSchedulesMenu,
+
                         scheduleUiState = scheduleUiState,
                         scheduleListState = scheduleListState,
-                        today = today,
-
-                        paddingValues = paddingValues,
-                        scheduleCalendarParams = ScheduleCalendarParams(
+                        scheduleCalendarState = ScheduleCalendarState(
                             pagerDaysState = pagerDaysState,
                             pagerWeeksState = pagerWeeksState,
                             selectedDate = selectedDate,
                             selectDate = { newValue -> selectedDate = newValue }
-                        ),
-                        expandedSchedulesMenu = expandedSchedulesMenu,
-                        onShowExpandedMenu = { newValue ->
-                            expandedSchedulesMenu = newValue
-                        }
-                    )
-                }
-
-                entry(Routes.Search) {
-                    SearchScreen(
-                        navigateToSchedule = {
-                            appBackStack.navigateToPage(Routes.Schedule)
-                        },
-                        navigateToAddSchedule = {
-                            appBackStack.navigateToDialog(Routes.AddSchedule)
-                        },
-                        query = query,
-                        onQueryChanged = { newValue -> query = newValue },
-                        namedScheduleActionsDialog = namedScheduleActionsDialog,
-                        onShowActionsDialog = { newValue ->
-                            namedScheduleActionsDialog = newValue
-                        },
-                        selectedOption = selectedOption,
-                        onSelectOption = { option -> selectedOption = option },
-
-                        scheduleViewModel = scheduleViewModel,
-                        searchViewModel = searchViewModel,
-                        searchUiState = searchUiState,
-                        scheduleUiState = scheduleUiState,
-                        paddingValues = paddingValues
+                        )
                     )
                 }
 
                 entry<Routes.NewsList> {
                     NewsScreen(
-                        newsViewModel = newsViewModel,
+                        onGetNewsList = { value ->
+                            newsViewModel.getNewsList(value)
+                        },
+                        onGetNewsById = { value ->
+                            newsViewModel.getNewsById(value)
+                        },
                         onShowDialogNews = {
-                            appBackStack.navigateToDialog(Routes.News)
+                            appBackStack.navigateToDialog(Routes.NewsDialog)
                         },
                         newsUiState = newsUiState,
                         newsGridListState = newsListState,
-                        paddingValues = paddingValues
+                        paddingValues = externalPadding
                     )
                 }
 
-                entry(Routes.Settings) {
+                entry<Routes.Settings> {
                     SettingsScreen(
+                        externalPadding = externalPadding,
+                        onShowDialogInfo = {
+                            appBackStack.navigateToDialog(Routes.InfoDialog)
+                        },
+                        onOpenUri = { value ->
+                            uriHandler.openUri(value)
+                        },
+
                         preferencesDataStore = preferencesDataStore,
                         appSettings = appSettings,
 
-                        onShowDialogInfo = {
-                            appBackStack.navigateToDialog(Routes.Info)
-                        },
                         settingsListState = settingsListState,
-                        paddingValues = paddingValues,
-                        uriHandler = uriHandler
+                        scope = scope
                     )
                 }
 
                 entry<Routes.EventDialog> { key ->
                     EventDialog(
+                        externalPadding = externalPadding,
                         onBack = { appBackStack.onBack() },
-                        scheduleViewModel = scheduleViewModel,
+                        onSearchNamedSchedule = { value ->
+                            scheduleViewModel.getNamedScheduleFromApi(
+                                name = value.first,
+                                apiId = value.second,
+                                type = value.third
+                            )
+                        },
+                        onEventExtraChange = { value ->
+                            scheduleViewModel.updateEventExtra(
+                                event = key.event,
+                                comment = value.first,
+                                tag = value.second
+                            )
+                        },
+                        onDeleteEvent = onDeleteEvent,
+                        onHideEvent = onHideEvent,
+                        onShowEvent = onShowEvent,
                         event = key.event,
                         eventExtraData = key.eventExtraData,
                         isSavedSchedule = scheduleUiState.isSaved,
-                        isCustomSchedule = scheduleUiState.currentNamedSchedule!!.namedScheduleEntity.type == 3
+                        isCustomSchedule = scheduleUiState.currentScheduleData!!.namedSchedule!!.namedScheduleEntity.type == 3
                     )
                 }
 
-                entry(Routes.News) {
+                entry<Routes.NewsDialog> {
                     NewsDialog(
-                        newsUiState = newsUiState,
-                        paddingValues = paddingValues
+                        externalPadding = externalPadding,
+                        newsUiState = newsUiState
                     )
                 }
 
-
-                entry(Routes.Info) {
+                entry<Routes.InfoDialog> {
                     InfoDialog(
+                        externalPadding = externalPadding,
                         onBack = { appBackStack.onBack() },
-                        appInfoState = appInfoState,
-                        paddingValues = paddingValues,
-                        uriHandler = uriHandler
+                        onOpenUri = { value ->
+                            uriHandler.openUri(value)
+                        },
+                        appInfoState = appInfoState
                     )
                 }
 
-                entry(Routes.AddSchedule) {
-                    AddScheduleDialog(
-                        scheduleViewModel = scheduleViewModel,
-                        scope = scope,
-                        snackbarHostState = snackBarHostState,
-                        focusManager = focusManager,
-                        paddingValues = paddingValues,
-                        onBack = {
-                            appBackStack.onBack()
-                        }
-                    )
-                }
-
-                entry<Routes.AddEvent> { key ->
+                entry<Routes.AddEventDialog> { key ->
                     AddEventDialog(
-                        scheduleViewModel = scheduleViewModel,
-                        scope = scope,
-                        snackBarHostState = snackBarHostState,
-                        focusManager = focusManager,
-                        scheduleEntity = key.scheduleEntity,
-                        paddingValues = paddingValues,
+                        externalPadding = externalPadding,
                         onBack = {
                             appBackStack.onBack()
+                        },
+                        onAddCustomEvent = { event ->
+                            scheduleViewModel.addCustomEvent(
+                                scheduleEntity = key.scheduleEntity,
+                                event = event
+                            )
+                        },
+                        onShowErrorMessage = { message ->
+                            scope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = message,
+                                    duration = SnackbarDuration.Long
+                                )
+                            }
+                        },
+                        scheduleEntity = key.scheduleEntity,
+                        focusManager = focusManager
+                    )
+                }
+
+                entry<Routes.SearchDialog> {
+                    SearchScheduleDialog(
+                        externalPadding = externalPadding,
+
+                        searchQuery = searchQuery,
+                        onChangeQuery = { newValue ->
+                            searchQuery = newValue
+                        },
+                        selectedOption = selectedOption,
+                        onSelectOption = { newValue ->
+                            selectedOption = newValue
+                            focusManager.clearFocus()
+                        },
+
+                        searchUiState = searchUiState,
+                        onSetDefaultState = {
+                            searchViewModel.setDefaultSearchState()
+                        },
+                        onSearchSchedule = { value ->
+                            scheduleViewModel.getNamedScheduleFromApi(
+                                name = value.first,
+                                apiId = value.second,
+                                type = value.third
+                            )
+                            appBackStack.navigateToPage(Routes.Schedule)
+                            searchViewModel.setDefaultSearchState()
+                            searchQuery = ""
+                            selectedOption = Options.ALL
+                        },
+                        onSearch = { value ->
+                            searchViewModel.search(value.first, value.second)
                         }
+                    )
+                }
+
+                entry<Routes.AddScheduleDialog> {
+                    AddScheduleDialog(
+                        externalPadding = externalPadding,
+                        onBack = {
+                            appBackStack.onBack()
+                        },
+                        onAddCustomSchedule = { value ->
+                            scheduleViewModel.addCustomSchedule(
+                                name = value.first,
+                                startDate = value.second,
+                                endDate = value.third,
+                            )
+                            appBackStack.navigateToPage(Routes.Schedule)
+                        },
+                        onShowErrorMessage = { message ->
+                            scope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = message,
+                                    duration = SnackbarDuration.Long
+                                )
+                            }
+                        },
+                        focusManager = focusManager
                     )
                 }
             }
