@@ -110,6 +110,12 @@ interface NamedScheduleDao {
         comment: String
     )
 
+    @Query("UPDATE Events SET isHidden = :isHidden WHERE EventId = :eventId")
+    suspend fun updateEventHidden(
+        eventId: Long,
+        isHidden: Boolean
+    )
+
     @Query("UPDATE namedschedules SET lastTimeUpdate = :lastTimeUpdate WHERE NamedScheduleId = :namedScheduleId")
     suspend fun updateLastTimeUpdate(
         namedScheduleId: Long,
@@ -124,6 +130,6 @@ interface NamedScheduleDao {
 
     @Query("UPDATE Schedules SET isDefaultSchedule = 1 WHERE ScheduleId = :primaryKey")
     suspend fun setDefaultSchedule(primaryKey: Long)
-    @Query("UPDATE Schedules SET isDefaultSchedule = 0 WHERE ScheduleId != :primaryKeySchedule AND namedScheduleId = :namedScheduleId")
-    suspend fun setNonDefaultSchedule(primaryKeySchedule: Long, namedScheduleId: Long)
+    @Query("UPDATE Schedules SET isDefaultSchedule = 0 WHERE ScheduleId != :primaryKeySchedule AND namedScheduleId = :primaryKeyNamedSchedule")
+    suspend fun setNonDefaultSchedule(primaryKeySchedule: Long, primaryKeyNamedSchedule: Long)
 }
