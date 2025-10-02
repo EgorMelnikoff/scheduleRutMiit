@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,7 +53,6 @@ import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.DialogNamedScheduleActions
-import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
@@ -99,7 +99,6 @@ fun ReviewScreen(
     scheduleUiState: ScheduleUiState,
     today: LocalDate
 ) {
-    val formatter = DateTimeFormatter.ofPattern("d MMM, HH:mm", Locale.getDefault())
     var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
     var showDeleteNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
 
@@ -209,16 +208,9 @@ fun ReviewScreen(
                     ColumnGroup(
                         items = scheduleUiState.savedNamedSchedules.map { namedScheduleEntity ->
                             {
-                                val instant = Instant.ofEpochMilli(namedScheduleEntity.lastTimeUpdate)
-                                val lastTimeUpdate =
-                                    formatter.format(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()))
-
-                                ClickableItem(
-                                    title = namedScheduleEntity.fullName,
-                                    subtitle = if (namedScheduleEntity.type != 3) {
-                                        "${LocalContext.current.getString(R.string.Current_on)} $lastTimeUpdate"
-                                    } else null,
-                                    onClick = {
+                                NamedScheduleItem(
+                                    namedScheduleEntity = namedScheduleEntity,
+                                    onShowActionsDialog = {
                                         showNamedScheduleDialog = namedScheduleEntity
                                     }
                                 )
@@ -562,6 +554,75 @@ fun EventExtra(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun NamedScheduleItem(
+    onShowActionsDialog: () -> Unit,
+    namedScheduleEntity: NamedScheduleEntity
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .clickable {
+                onShowActionsDialog()
+            }
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .defaultMinSize(minHeight = 52.dp),
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            val instant = Instant.ofEpochMilli(namedScheduleEntity.lastTimeUpdate)
+            val formatter = DateTimeFormatter.ofPattern("d MMM, HH:mm", Locale.getDefault())
+            val lastTimeUpdate =
+                formatter.format(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()))
+            Text(
+                text = namedScheduleEntity.shortName,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                style = TextStyle(
+                    platformStyle = PlatformTextStyle(
+                        includeFontPadding = false
+                    )
+                ),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            if (namedScheduleEntity.type != 3) {
+                Text(
+                    text = "${LocalContext.current.getString(R.string.Current_on)} $lastTimeUpdate",
+                    fontSize = 12.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1, style = TextStyle(
+                        platformStyle = PlatformTextStyle(
+                            includeFontPadding = false
+                        )
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+        if (namedScheduleEntity.isDefault) {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.check),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        Icon(
+            modifier = Modifier.size(24.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.right),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
