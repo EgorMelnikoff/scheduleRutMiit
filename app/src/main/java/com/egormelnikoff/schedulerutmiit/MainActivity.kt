@@ -9,13 +9,14 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.ui.Main
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
-import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsViewModelImpl
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModelImpl
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SearchViewModelImpl
-import com.egormelnikoff.schedulerutmiit.ui.view_models.SettingsViewModelImpl
+import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsViewModelImpl
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModelImpl
+import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModelImpl
+import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModelImpl
 
 class MainActivity : ComponentActivity() {
     private lateinit var container: AppContainer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
