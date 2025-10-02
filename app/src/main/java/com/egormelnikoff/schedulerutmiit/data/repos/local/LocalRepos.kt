@@ -21,6 +21,11 @@ interface LocalRepos {
         event: Event
     )
 
+    suspend fun updateEventHidden(
+        eventPrimaryKey: Long,
+        isHidden: Boolean
+    )
+
     suspend fun deleteEvent(
         primaryKeyEvent: Long
     )
@@ -39,7 +44,6 @@ interface LocalRepos {
         id: Long
     )
 
-    suspend fun isSavingAvailable(): Boolean
     suspend fun getAllNamedSchedules(): List<NamedScheduleEntity>
     suspend fun getNamedScheduleByApiId(
         apiId: String
@@ -51,8 +55,8 @@ interface LocalRepos {
     )
 
     suspend fun updatePrioritySchedule(
-        idSchedule: Long,
-        idNamedSchedule: Long
+        primaryKeyNamedSchedule: Long,
+        primaryKeySchedule: Long
     )
 
     suspend fun updateEventExtra(
@@ -102,6 +106,13 @@ class LocalReposImpl(
         namedScheduleDao.insertEvent(event)
     }
 
+    override suspend fun updateEventHidden(
+        eventPrimaryKey: Long,
+        isHidden: Boolean
+    ) {
+        namedScheduleDao.updateEventHidden(eventPrimaryKey, isHidden)
+    }
+
     override suspend fun deleteEvent(
         primaryKeyEvent: Long
     ) {
@@ -149,16 +160,20 @@ class LocalReposImpl(
         return namedScheduleDao.getNamedScheduleById(idNamedSchedule)
     }
 
-    override suspend fun isSavingAvailable(): Boolean = namedScheduleDao.getCount() < 5
-
     override suspend fun updatePriorityNamedSchedule(id: Long) {
         namedScheduleDao.setDefaultNamedSchedule(id)
         namedScheduleDao.setNonDefaultNamedSchedule(id)
     }
 
-    override suspend fun updatePrioritySchedule(idSchedule: Long, idNamedSchedule: Long) {
-        namedScheduleDao.setDefaultSchedule(idSchedule)
-        namedScheduleDao.setNonDefaultSchedule(idSchedule, idNamedSchedule)
+    override suspend fun updatePrioritySchedule(
+        primaryKeyNamedSchedule: Long,
+        primaryKeySchedule: Long
+    ) {
+        namedScheduleDao.setDefaultSchedule(primaryKeySchedule)
+        namedScheduleDao.setNonDefaultSchedule(
+            primaryKeyNamedSchedule = primaryKeyNamedSchedule,
+            primaryKeySchedule = primaryKeySchedule
+        )
     }
 
     override suspend fun updateLastTimeUpdate(namedScheduleId: Long, lastTimeUpdate: Long) {
