@@ -38,7 +38,7 @@ data class ScheduleFormatted(
 )
 
 @Entity(tableName = "NamedSchedules")
-data class NamedScheduleEntity (
+data class NamedScheduleEntity(
     @ColumnInfo(name = "NamedScheduleId")
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -52,7 +52,7 @@ data class NamedScheduleEntity (
 )
 
 @Entity(tableName = "Schedules")
-data class ScheduleEntity (
+data class ScheduleEntity(
     @ColumnInfo(name = "ScheduleId")
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -87,7 +87,7 @@ data class Event(
     var scheduleId: Long,
     val startDatetime: LocalDateTime?,
     val endDatetime: LocalDateTime?,
-    val isHidden: Boolean = false,
+    var isHidden: Boolean = false,
     val isCustomEvent: Boolean = false,
     @Embedded
     val recurrenceRule: RecurrenceRule?,
@@ -99,7 +99,7 @@ data class Event(
     val rooms: List<Room>?,
     val groups: List<Group>?
 ) {
-    override fun hashCode(): Int {
+    private fun customHashCode(): Int {
         val hashString = if (recurrenceRule != null) {
             "$name$typeName${startDatetime!!.dayOfWeek}${startDatetime.toLocalTime()}${recurrenceRule.interval}$periodNumber$groups"
         } else {
@@ -108,16 +108,16 @@ data class Event(
         return hashString.hashCode()
     }
 
-    override fun equals(other: Any?): Boolean {
-        return this.hashCode() == other.hashCode()
+    fun customEquals(other: Event): Boolean {
+        return this.customHashCode() == other.customHashCode()
     }
 }
 
 
 @Entity(tableName = "EventsExtraData")
-data class EventExtraData (
+data class EventExtraData(
     @ColumnInfo(name = "EventExtraId")
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Long = 0,
 
     @ColumnInfo(name = "eventExtraScheduleId")
@@ -135,7 +135,7 @@ data class RecurrenceRule(
     val interval: Int
 )
 
-data class Lecturer (
+data class Lecturer(
     val id: Int?,
     val shortFio: String?,
     val fullFio: String?,
@@ -144,14 +144,14 @@ data class Lecturer (
     val hint: String?
 )
 
-data class Room (
+data class Room(
     val id: Int?,
     val name: String?,
     val url: String?,
     val hint: String?
 )
 
-data class Group (
+data class Group(
     val id: Int?,
     val name: String?,
     val url: String?,
