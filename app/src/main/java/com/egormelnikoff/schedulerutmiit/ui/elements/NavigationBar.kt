@@ -48,7 +48,7 @@ data class BarItem(
     val icon: ImageVector,
     val selectedIcon: ImageVector,
     val route: Routes,
-    val onClick: () -> Unit
+    val onClick: (() -> Unit)?
 )
 
 @Composable
@@ -99,7 +99,7 @@ fun CustomNavigationBar(
                     isSelected = appBackStack.lastPage() == barItem.route,
                     onClick = {
                         if (barItem.route == appBackStack.lastPage()) {
-                            barItem.onClick()
+                            barItem.onClick?.invoke()
                         } else {
                             appBackStack.navigateToPage(barItem.route)
                         }
