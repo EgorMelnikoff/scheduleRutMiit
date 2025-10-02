@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.view_models
+package com.egormelnikoff.schedulerutmiit.ui.view_models.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
