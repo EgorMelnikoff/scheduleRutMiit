@@ -17,8 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -40,14 +39,12 @@ import com.egormelnikoff.schedulerutmiit.data.entity.Room
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetTimePicker
+import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
-import com.egormelnikoff.schedulerutmiit.ui.elements.SimpleTopBar
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -91,13 +88,12 @@ object DefaultEventParams {
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun AddEventDialog(
-    scheduleViewModel: ScheduleViewModel,
-    snackBarHostState: SnackbarHostState,
-    focusManager: FocusManager,
-    scope: CoroutineScope,
+    onBack: () -> Unit,
+    onAddCustomEvent: (Event) -> Unit,
+    onShowErrorMessage: (String) -> Unit,
     scheduleEntity: ScheduleEntity,
-    paddingValues: PaddingValues,
-    onBack: () -> Unit
+    focusManager: FocusManager,
+    externalPadding: PaddingValues,
 ) {
     val context = LocalContext.current
     var showDialogDate by remember { mutableStateOf(false) }
@@ -116,23 +112,22 @@ fun AddEventDialog(
 
     Scaffold(
         topBar = {
-            SimpleTopBar(
-                title = LocalContext.current.getString(R.string.adding_a_class),
+            CustomTopAppBar(
+                titleText = LocalContext.current.getString(R.string.adding_a_class),
                 navAction = {
                     onBack()
-                },
-                navImageVector = ImageVector.vectorResource(R.drawable.back)
+                }
             )
         }
-    ) { padding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(
                     start = 16.dp, end = 16.dp,
-                    top = padding.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding()
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = externalPadding.calculateBottomPadding()
                 )
         ) {
             Column(
@@ -154,31 +149,32 @@ fun AddEventDialog(
                     )
                 )
 
-                EventDialogItem(
+                ColumnGroup(
                     title = LocalContext.current.getString(R.string.class_type),
-                    withBackground = false
-                ) {
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(
-                            8.dp,
-                            Alignment.CenterVertically
-                        )
-                    ) {
-                        DefaultEventParams.types.forEach { type ->
-                            CustomChip(
-                                title = type
-                                    ?: LocalContext.current.getString(R.string.not_specified),
-                                imageVector = null,
-                                selected = type == typeEvent,
-                                onSelect = {
-                                    typeEvent = type
-                                    focusManager.clearFocus()
-                                }
+                    backgroundColor = Color.Unspecified,
+                    items = listOf{
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(
+                                8.dp,
+                                Alignment.CenterVertically
                             )
+                        ) {
+                            DefaultEventParams.types.forEach { type ->
+                                CustomChip(
+                                    title = type
+                                        ?: LocalContext.current.getString(R.string.not_specified),
+                                    imageVector = null,
+                                    selected = type == typeEvent,
+                                    onSelect = {
+                                        typeEvent = type
+                                        focusManager.clearFocus()
+                                    }
+                                )
+                            }
                         }
                     }
-                }
+                )
                 GridGroup(
                     title = LocalContext.current.getString(R.string.date_and_time),
                     items = listOf(
@@ -291,7 +287,7 @@ fun AddEventDialog(
             }
             CustomButton(
                 modifier = Modifier.padding(top = 8.dp),
-                title = LocalContext.current.getString(R.string.add),
+                buttonTitle = LocalContext.current.getString(R.string.add),
                 onClick = {
                     val errorMessages = checkEventParams(
                         context = context,
@@ -304,7 +300,6 @@ fun AddEventDialog(
                         groupsList = groupsList
                     )
                     if (errorMessages.isEmpty()) {
-
                         val event = Event(
                             scheduleId = scheduleEntity.id,
                             name = nameEvent.trim(),
@@ -326,18 +321,10 @@ fun AddEventDialog(
                             recurrenceRule = null,
                             periodNumber = null
                         )
-                        scheduleViewModel.addCustomEvent(
-                            scheduleEntity = scheduleEntity,
-                            event = event
-                        )
+                        onAddCustomEvent(event)
                         onBack()
                     } else {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = errorMessages,
-                                duration = SnackbarDuration.Long
-                            )
-                        }
+                        onShowErrorMessage(errorMessages)
                     }
                 }
             )
