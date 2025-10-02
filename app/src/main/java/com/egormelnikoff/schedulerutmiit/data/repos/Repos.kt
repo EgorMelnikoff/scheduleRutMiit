@@ -25,6 +25,11 @@ interface Repos {
         event: Event
     )
 
+    suspend fun updateEventHidden(
+        eventPrimaryKey: Long,
+        isHidden: Boolean
+    )
+
     suspend fun deleteEvent (
         primaryKeyEvent: Long
     )
@@ -41,7 +46,6 @@ interface Repos {
     suspend fun deleteSchedule(
         id: Long
     )
-    suspend fun isSavingAvailable(): Boolean
     suspend fun getAllNamedSchedules(): List<NamedScheduleEntity>
     suspend fun getNamedScheduleByApiId(
         apiId: String
@@ -51,8 +55,8 @@ interface Repos {
         id: Long
     )
     suspend fun updatePrioritySchedule(
-        idSchedule: Long,
-        idNamedSchedule: Long
+        primaryKeySchedule: Long,
+        primaryKeyNamedSchedule: Long
     )
     suspend fun updateEventExtra(
         scheduleId: Long,
@@ -105,6 +109,9 @@ class ReposImpl(
         localRepos.insertEvent(event)
     }
 
+    override suspend fun updateEventHidden(eventPrimaryKey: Long, isHidden: Boolean) {
+        localRepos.updateEventHidden(eventPrimaryKey, isHidden)
+    }
     override suspend fun deleteEvent(primaryKeyEvent: Long) {
         localRepos.deleteEvent(primaryKeyEvent)
     }
@@ -119,10 +126,6 @@ class ReposImpl(
 
     override suspend fun deleteSchedule(id: Long) {
         localRepos.deleteSchedule(id)
-    }
-
-    override suspend fun isSavingAvailable(): Boolean {
-        return localRepos.isSavingAvailable()
     }
 
     override suspend fun getAllNamedSchedules(): List<NamedScheduleEntity> {
@@ -141,8 +144,14 @@ class ReposImpl(
         localRepos.updatePriorityNamedSchedule(id)
     }
 
-    override suspend fun updatePrioritySchedule(idSchedule: Long, idNamedSchedule: Long) {
-        localRepos.updatePriorityNamedSchedule(idSchedule)
+    override suspend fun updatePrioritySchedule(
+        primaryKeySchedule: Long,
+        primaryKeyNamedSchedule: Long
+    ) {
+        localRepos.updatePrioritySchedule(
+            primaryKeyNamedSchedule = primaryKeyNamedSchedule,
+            primaryKeySchedule = primaryKeySchedule
+        )
     }
 
     override suspend fun updateEventExtra(
@@ -252,9 +261,10 @@ class ReposImpl(
                     }
 
                 val updatedEvents = updatedSchedule.events.map { event ->
-                    val oldEvent = oldSchedule.events.find { it == event }
+                    val oldEvent = oldSchedule.events.find { it.customEquals(event) }
                     event.copy(
-                        id = oldEvent?.id ?: 0L
+                        id = oldEvent?.id ?: 0L,
+                        isHidden = oldEvent?.isHidden ?: false
                     )
                 }
 
