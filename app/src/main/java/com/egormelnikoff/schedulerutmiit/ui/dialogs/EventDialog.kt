@@ -2,20 +2,16 @@ package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,11 +19,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,11 +35,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -55,28 +47,36 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.elements.SimpleTopBar
-import com.egormelnikoff.schedulerutmiit.ui.view_models.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import java.time.ZoneId
 import java.time.ZoneOffset
 
 @Composable
 fun EventDialog(
+    externalPadding: PaddingValues,
     onBack: () -> Unit,
-    scheduleViewModel: ScheduleViewModel,
+    onSearchNamedSchedule: (Triple<String, String, Int>) -> Unit,
+    onEventExtraChange: (Pair<String, Int>) -> Unit,
+    onDeleteEvent: (Long) -> Unit,
+    onHideEvent: (Long) -> Unit,
+    onShowEvent: (Long) -> Unit,
     event: Event,
     eventExtraData: EventExtraData?,
     isSavedSchedule: Boolean,
-    isCustomSchedule: Boolean
+    isCustomSchedule: Boolean,
 ) {
+    var showEventActionsDialog by remember { mutableStateOf(false) }
+    var showEventDeleteDialog by remember { mutableStateOf(false) }
+    var showEventHideDialog by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
     var tag by remember { mutableIntStateOf(eventExtraData?.tag ?: 0) }
     var comment by remember { mutableStateOf(eventExtraData?.comment ?: "") }
@@ -117,14 +117,13 @@ fun EventDialog(
             append("\n${LocalContext.current.getString(R.string.groups)}: ${event.groups.joinToString { it.name.toString() }}")
         }
     }
+
     Scaffold(
         topBar = {
-            SimpleTopBar(
-                title = "",
+            CustomTopAppBar(
                 navAction = {
                     onBack()
-                },
-                navImageVector = ImageVector.vectorResource(R.drawable.back)
+                }
             ) {
                 IconButton(
                     onClick = {
@@ -144,13 +143,31 @@ fun EventDialog(
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
+                if (isSavedSchedule) {
+                    IconButton(
+                        onClick = {
+                            showEventActionsDialog = true
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.more_vert),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
             }
         }
-    ) { padding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = padding.calculateTopPadding(), start = 16.dp, end = 16.dp)
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = externalPadding.calculateBottomPadding(),
+                    start = 16.dp, end = 16.dp
+                )
                 .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -195,24 +212,23 @@ fun EventDialog(
                 ),
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(
-                modifier = Modifier.height(4.dp)
-            )
             if (!event.rooms.isNullOrEmpty()) {
                 ColumnGroup(
                     title = context.getString(R.string.Room),
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = event.rooms.map { room ->
                         {
-                            EventDialogItemContent(
-                                text = room.hint.toString(),
+                            ClickableItem(
+                                title = room.hint.toString(),
                                 onClick = if (!isCustomSchedule) {
                                     {
                                         onBack()
-                                        scheduleViewModel.getNamedScheduleFromApi(
-                                            name = event.rooms.first().name!!,
-                                            apiId = event.rooms.first().id.toString(),
-                                            type = 2
+                                        onSearchNamedSchedule(
+                                            Triple(
+                                                room.name!!,
+                                                room.id.toString(),
+                                                2
+                                            )
                                         )
                                     }
                                 } else null
@@ -223,48 +239,51 @@ fun EventDialog(
                 )
             }
             if (!event.groups.isNullOrEmpty() && !isCustomSchedule) {
-                EventDialogItem(
+                ColumnGroup(
                     title = context.getString(R.string.Groups),
                     titleColor = MaterialTheme.colorScheme.primary,
-                    withBackground = false
-                ) {
-                    FlowRow(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        event.groups.forEach { group ->
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(4.dp))
-                                    .background(MaterialTheme.colorScheme.surface)
-                                    .defaultMinSize(minWidth = 80.dp)
-                                    .clickable(
-                                        onClick = {
-                                            onBack()
-                                            scheduleViewModel.getNamedScheduleFromApi(
-                                                name = group.name!!,
-                                                apiId = group.id.toString(),
-                                                type = 0
-                                            )
-                                        }
+                    backgroundColor = Color.Unspecified,
+                    items = listOf {
+                        FlowRow(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            event.groups.forEach { group ->
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .background(MaterialTheme.colorScheme.surface)
+                                        .defaultMinSize(minWidth = 80.dp)
+                                        .clickable(
+                                            onClick = {
+                                                onBack()
+                                                onSearchNamedSchedule(
+                                                    Triple(
+                                                        group.name!!,
+                                                        group.id.toString(),
+                                                        0
+                                                    )
+                                                )
+                                            }
+                                        )
+                                        .padding(horizontal = 8.dp)
+                                ) {
+                                    Text(
+                                        text = group.name.toString(),
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        color = MaterialTheme.colorScheme.onBackground
                                     )
-                                    .padding(horizontal = 8.dp)
-                            ) {
-                                Text(
-                                    text = group.name.toString(),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
+                                }
                             }
                         }
                     }
-                }
+                )
             }
             if (!event.lecturers.isNullOrEmpty()) {
                 ColumnGroup(
@@ -272,15 +291,17 @@ fun EventDialog(
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = event.lecturers.map { lecturer ->
                         {
-                            EventDialogItemContent(
-                                text = lecturer.fullFio.toString(),
+                            ClickableItem(
+                                title = lecturer.fullFio.toString(),
                                 onClick = if (!isCustomSchedule) {
                                     {
                                         onBack()
-                                        scheduleViewModel.getNamedScheduleFromApi(
-                                            name = lecturer.fullFio!!,
-                                            apiId = lecturer.id.toString(),
-                                            type = 1
+                                        onSearchNamedSchedule(
+                                            Triple(
+                                                lecturer.fullFio!!,
+                                                lecturer.id.toString(),
+                                                1
+                                            )
                                         )
                                     }
                                 } else null,
@@ -291,192 +312,116 @@ fun EventDialog(
                 )
             }
             if (isSavedSchedule) {
-                val onCommentChange: (String) -> Unit = { newValue ->
-                    comment = newValue
-                    scheduleViewModel.updateEventExtra(
-                        event,
-                        comment,
-                        tag
-                    )
-                }
-                EventDialogItem(
+                ColumnGroup(
                     title = LocalContext.current.getString(R.string.comment),
                     titleColor = MaterialTheme.colorScheme.primary,
-                    withBackground = false
-                ) {
-                    CustomTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                        value = comment,
-                        onValueChanged = onCommentChange,
-                        keyboardOptions = KeyboardOptions(
-                            autoCorrectEnabled = false,
-                            imeAction = ImeAction.Default
-                        ),
-                        placeholderText = LocalContext.current.getString(R.string.Enter_comment),
-                        trailingIcon = {
-                            AnimatedVisibility(
-                                visible = comment != "",
-                                enter = scaleIn(animationSpec = tween(300)),
-                                exit = fadeOut(animationSpec = tween(500))
-                            ) {
-                                IconButton(
-                                    onClick = {
-                                        onCommentChange("")
-                                    }
+                    backgroundColor = Color.Unspecified,
+                    items = listOf {
+                        CustomTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp),
+                            value = comment,
+                            onValueChanged = { newValue ->
+                                comment = newValue
+                                onEventExtraChange(Pair(newValue, tag))
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                autoCorrectEnabled = false,
+                                imeAction = ImeAction.Default
+                            ),
+                            placeholderText = LocalContext.current.getString(R.string.Enter_comment),
+                            trailingIcon = {
+                                AnimatedVisibility(
+                                    visible = comment != "",
+                                    enter = scaleIn(animationSpec = tween(300)),
+                                    exit = fadeOut(animationSpec = tween(500))
                                 ) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.clear),
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
+                                    IconButton(
+                                        onClick = {
+                                            comment = ""
+                                            onEventExtraChange(Pair("", tag))
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.clear),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
                                 }
                             }
-                        }
-                    )
-                }
-                EventDialogItem(
+                        )
+                    }
+                )
+                ColumnGroup(
                     title = LocalContext.current.getString(R.string.Tag),
                     titleColor = MaterialTheme.colorScheme.primary,
-                    withBackground = false
-                ) {
-                    ColorSelector(
-                        currentSelected = tag,
-                        onColorSelect = { value ->
-                            tag = value
-                            scheduleViewModel.updateEventExtra(
-                                event = event,
-                                comment = comment,
+                    backgroundColor = Color.Unspecified,
+                    items = listOf {
+                        ColorSelector(
+                            currentSelected = tag,
+                            onColorSelect = { value ->
                                 tag = value
-                            )
-                        }
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun EventDialogItem(
-    title: String,
-    titleColor: Color? = null,
-    withBackground: Boolean = true,
-    content: @Composable () -> Unit
-) {
-    Column(
-        modifier = Modifier,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = title,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            color = titleColor ?: MaterialTheme.colorScheme.onSurface
-        )
-        if (withBackground) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                content.invoke()
-            }
-        } else {
-            content.invoke()
-        }
-    }
-}
-
-
-@Composable
-fun EventDialogItemContent(
-    onClick: (() -> Unit)? = null,
-    text: String,
-    imageUrl: String? = null
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .let {
-                if (onClick != null) {
-                    it.clickable { onClick() }
-                } else {
-                    it
-                }
-            }
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        if (imageUrl != null) {
-            val model = rememberAsyncImagePainter(imageUrl)
-            val transition by animateFloatAsState(
-                targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
-            )
-            Box(
-                modifier = Modifier
-                    .size(30.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    modifier = Modifier
-                        .size(30.dp)
-                        .let {
-                            if (model.state !is AsyncImagePainter.State.Success) {
-                                it.border(0.5.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
-                            } else it
-                        }
-                        .alpha(transition),
-                    contentScale = ContentScale.Crop,
-                    painter = model,
-                    contentDescription = null,
+                                onEventExtraChange(Pair(comment, value))
+                            }
+                        )
+                    }
                 )
-                when (model.state) {
-                    is AsyncImagePainter.State.Loading -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-
-                    is AsyncImagePainter.State.Error, AsyncImagePainter.State.Empty -> {
-                        Text(
-                            text = text.first().toString(),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-
-                    else -> {
-
-                    }
-                }
             }
         }
-        Text(
-            modifier = Modifier.weight(1f),
-            text = text,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onBackground
+    }
+    if (showEventDeleteDialog) {
+        CustomAlertDialog(
+            dialogIcon = ImageVector.vectorResource(R.drawable.delete),
+            dialogTitle = "${LocalContext.current.getString(R.string.delete_event)}?",
+            dialogText = LocalContext.current.getString(R.string.event_deleting_alert),
+            onDismissRequest = {
+                showEventDeleteDialog = false
+            },
+            onConfirmation = {
+                onDeleteEvent(event.id)
+            }
         )
-        if (onClick != null) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.right),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface
-            )
-        }
+    }
+    if (showEventHideDialog) {
+        CustomAlertDialog(
+            dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),
+            dialogTitle = "${LocalContext.current.getString(R.string.hide_event)}?",
+            dialogText = LocalContext.current.getString(R.string.event_visibility_alert),
+            onDismissRequest = {
+                showEventHideDialog = false
+            },
+            onConfirmation = {
+                onHideEvent(event.id)
+            }
+        )
+    }
+    if (showEventActionsDialog) {
+        DialogEventActions(
+            event = event,
+            onDismiss = {
+                showEventActionsDialog = false
+            },
+            onDeleteEvent = if (event.isCustomEvent) {
+                {
+                    showEventDeleteDialog = true
+                    onBack()
+                }
+            } else null,
+            onHideEvent = if (!event.isHidden) {
+                {
+                    showEventHideDialog = true
+                    event.isHidden = true
+
+                }
+            } else null,
+            onShowEvent = if (event.isHidden) {
+                {
+                    onShowEvent(event.id)
+                    event.isHidden = false
+                }
+            } else null
+        )
     }
 }
