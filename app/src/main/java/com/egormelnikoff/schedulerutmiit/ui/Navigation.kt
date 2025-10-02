@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 
 sealed class Routes(val isDialog: Boolean) {
-    data object Search : Routes(false)
+    data object Review : Routes(false)
     data object Schedule : Routes(false)
     data object NewsList : Routes(false)
     data object Settings : Routes(false)
@@ -14,12 +14,13 @@ sealed class Routes(val isDialog: Boolean) {
         val event: Event,
         val eventExtraData: EventExtraData?
     ) : Routes(true)
-    data object News : Routes(true)
-    data object Info : Routes(true)
-    data object AddSchedule : Routes(true)
-    data class AddEvent(
+    data object NewsDialog : Routes(true)
+    data object InfoDialog : Routes(true)
+    data class AddEventDialog(
        val scheduleEntity: ScheduleEntity
     ) : Routes(true)
+    data object SearchDialog : Routes(true)
+    data object AddScheduleDialog : Routes(true)
 }
 
 class AppBackStack<T : Routes>(
