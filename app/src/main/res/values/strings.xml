@@ -28,6 +28,7 @@
     <string name="enter_your_query">Enter your query</string>
     <string name="nothing_found">Nothing found</string>
     <string name="search">Search</string>
+    <string name="review">Review</string>
 
     <string name="group">Group</string>
     <string name="Lecturers">Lecturers</string>
@@ -134,12 +135,29 @@
     <string name="room_number_not_specified">Room number not specified</string>
     <string name="provide_the_names_of_all_lecturers">Provide the names of all lecturers</string>
     <string name="provide_the_numbers_of_all_groups">Provide the numbers of all groups</string>
-
-    <string name="deleting_class">Deleting class</string>
-    <string name="really_delete_class">Really delete class</string>
+    <string name="hide_event">Hide class</string>
+    <string name="event_deleting_alert">The action will delete the lesson, comments and tags</string>
+    <string name="event_visibility_alert">Please note, class will no longer appear in the schedule</string>
+    <string name="delete_event">Delete class</string>
+    <string name="show_event">Show class</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="hide">Hide</string>
+    <plurals name="events">
+        <item quantity="one">event</item>
+        <item quantity="two">events</item>
+        <item quantity="few">events</item>
+        <item quantity="many">events</item>
+        <item quantity="other">events</item>
+    </plurals>
 
+    <string name="comments_on_tomorrow_events">Comments on tomorrow class</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="delete_schedule">Delete schedule</string>
+    <string name="impossible_restore_eventextra">It will be impossible to restore comments and tags for pairs</string>
+    <string name="hidden_events">Hidden events</string>
+    <string name="search_or_create">Search or create</string>
+    <string name="return_default">Return default</string>
     <string name="date_and_time">Date and time</string>
     <string name="events_count_error">The maximum number of classes per day has been reached</string>
 </resources>

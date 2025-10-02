@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Расписание МИИТ</string>
 
     <string name="search_schedule">Найти расписание</string>
@@ -55,7 +55,7 @@
     <string name="general">Общее</string>
     <string name="theme">Тема</string>
     <string name="about_app">О приложении</string>
-
+    <string name="review">Обзор</string>
 
     <string name="Tag">Тег</string>
     <string name="Default">Обычный</string>
@@ -134,10 +134,25 @@
     <string name="provide_the_names_of_all_lecturers">Укажите имена всех преподавателей</string>
     <string name="provide_the_numbers_of_all_groups">Укажите номера всех групп</string>
 
-
-
-    <string name="deleting_class">Удаление пары</string>
-    <string name="really_delete_class">Действительно удалить пару</string>
+    <plurals name="events">
+        <item quantity="one" tools:ignore="ImpliedQuantity">пара</item>
+        <item quantity="few">пары</item>
+        <item quantity="many">пар</item>
+        <item quantity="other">пар</item>
+    </plurals>
+    <string name="hide">Скрыть</string>
+    <string name="comments_on_tomorrow_events">Комментарии к завтрашним парам</string>
+    <string name="tomorrow">Завтра</string>
+    <string name="delete_schedule">Удалить расписание</string>
+    <string name="search_or_create">Найти или создать</string>
+    <string name="impossible_restore_eventextra">Восстановить комментари и теги к парам будет невозможно</string>
+    <string name="return_default">Вернуть основное</string>
+    <string name="hidden_events">Скрытые пары</string>
+    <string name="hide_event">Скрыть пару</string>
+    <string name="event_deleting_alert">Действие удалит пару, комментарии теги</string>
+    <string name="event_visibility_alert">Будьте внимательны, занятие перестанет отображаться в расписании</string>
+    <string name="delete_event">Удалить пару</string>
+    <string name="show_event">Показать пару</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
 
