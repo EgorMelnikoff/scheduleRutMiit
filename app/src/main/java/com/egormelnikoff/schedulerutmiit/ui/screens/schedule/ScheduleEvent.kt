@@ -57,6 +57,7 @@ import java.time.ZoneOffset
 fun ScheduleEvent(
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
     onDeleteEvent: (Long) -> Unit,
+    onUpdateHiddenEvent: (Long) -> Unit,
     events: List<Event>,
     eventsExtraData: List<EventExtraData>,
     isSavedSchedule: Boolean,
@@ -103,6 +104,7 @@ fun ScheduleEvent(
                     ScheduleSingleEvent(
                         navigateToEvent = navigateToEvent,
                         onDeleteEvent = onDeleteEvent,
+                        onUpdateHiddenEvent = onUpdateHiddenEvent,
                         event = event,
                         eventExtraData = eventsExtraData.find {
                             it.id == event.id
@@ -120,6 +122,7 @@ fun ScheduleEvent(
 fun ScheduleSingleEvent(
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
     onDeleteEvent: (Long) -> Unit,
+    onUpdateHiddenEvent: (Long) -> Unit,
     isSavedSchedule: Boolean,
     isShortEvent: Boolean,
     event: Event,
@@ -127,6 +130,8 @@ fun ScheduleSingleEvent(
 ) {
     var showExpandedMenu by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showHideDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -319,6 +324,29 @@ fun ScheduleSingleEvent(
                 },
                 onClick = { navigateToEvent(Pair(event, eventExtraData)) }
             )
+            if (isSavedSchedule) {
+                DropdownMenuItem(
+                    colors = MenuDefaults.itemColors().copy(
+                        textColor = MaterialTheme.colorScheme.onBackground,
+                        leadingIconColor = MaterialTheme.colorScheme.onBackground
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
+                            contentDescription = null
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = LocalContext.current.getString(R.string.hide)
+                        )
+                    },
+                    onClick = {
+                        showHideDialog = true
+                        showExpandedMenu = false
+                    }
+                )
+            }
             if (event.isCustomEvent && isSavedSchedule) {
                 DropdownMenuItem(
                     colors = MenuDefaults.itemColors().copy(
@@ -343,15 +371,27 @@ fun ScheduleSingleEvent(
                 )
             }
         }
-        if (showDeleteDialog) {
+        if (showDeleteDialog && event.isCustomEvent) {
             CustomAlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 onConfirmation = {
                     onDeleteEvent(event.id)
-                    showDeleteDialog = false
                 },
-                dialogTitle = LocalContext.current.getString(R.string.deleting_class),
-                dialogText = "${LocalContext.current.getString(R.string.really_delete_class)} \"${event.name}\"?"
+                dialogIcon = ImageVector.vectorResource(R.drawable.delete),
+                dialogTitle = "${LocalContext.current.getString(R.string.delete_event)}?",
+                dialogText = LocalContext.current.getString(R.string.event_deleting_alert)
+            )
+        }
+        if (showHideDialog) {
+            CustomAlertDialog(
+                onDismissRequest = { showHideDialog = false },
+                onConfirmation = {
+                    onUpdateHiddenEvent(event.id)
+                    showHideDialog = false
+                },
+                dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),
+                dialogTitle = "${LocalContext.current.getString(R.string.hide_event)}?",
+                dialogText = LocalContext.current.getString(R.string.event_visibility_alert)
             )
         }
     }
