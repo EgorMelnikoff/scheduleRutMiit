@@ -43,19 +43,21 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.model.NewsShort
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsState
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun NewsScreen(
-    newsViewModel: NewsViewModel,
     onShowDialogNews: () -> Unit,
+    onGetNewsList: (Int) -> Unit,
+    onGetNewsById: (Long) -> Unit,
+
     newsUiState: NewsState,
     newsGridListState: LazyStaggeredGridState,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
 ) {
     Box {
         when {
@@ -77,7 +79,7 @@ fun NewsScreen(
                         NewsShort(
                             newsShort = newsShort,
                             onClick = {
-                                newsViewModel.getNewsById(newsShort.idInformation)
+                                onGetNewsById(newsShort.idInformation)
                                 onShowDialogNews()
                             }
                         )
@@ -94,10 +96,14 @@ fun NewsScreen(
                 ErrorScreen(
                     title = LocalContext.current.getString(R.string.error),
                     subtitle = LocalContext.current.getString(R.string.unable_load_news_list),
-                    buttonTitle = LocalContext.current.getString(R.string.repeat),
-                    imageVector = ImageVector.vectorResource(R.drawable.refresh),
-                    action = {
-                        newsViewModel.getNewsList(1)
+                    button = {
+                        CustomButton(
+                            buttonTitle = LocalContext.current.getString(R.string.repeat),
+                            imageVector = ImageVector.vectorResource(R.drawable.refresh),
+                            onClick = {
+                                onGetNewsList(1)
+                            }
+                        )
                     },
                     paddingTop = paddingValues.calculateTopPadding(),
                     paddingBottom = paddingValues.calculateBottomPadding()

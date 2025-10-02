@@ -45,12 +45,12 @@ import com.egormelnikoff.schedulerutmiit.model.News
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
-import com.egormelnikoff.schedulerutmiit.ui.view_models.NewsState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsState
 
 @Composable
 fun NewsDialog(
     newsUiState: NewsState,
-    paddingValues: PaddingValues
+    externalPadding: PaddingValues
 ) {
     Box(
         modifier = Modifier
@@ -69,10 +69,10 @@ fun NewsDialog(
             )
 
             newsUiState.currentNews != null -> {
-                News(
+                NewsDialogContent(
                     news = newsUiState.currentNews,
-                    paddingTop = paddingValues.calculateTopPadding(),
-                    paddingBottom = paddingValues.calculateBottomPadding()
+                    paddingTop = externalPadding.calculateTopPadding(),
+                    paddingBottom = externalPadding.calculateBottomPadding()
                 )
             }
         }
@@ -82,7 +82,7 @@ fun NewsDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun News(
+fun NewsDialogContent(
     news: News,
     paddingTop: Dp,
     paddingBottom: Dp
