@@ -254,7 +254,8 @@ fun ClickableItem(
     imageSize: Dp = 36.dp,
     imageUrl: String? = null,
     imageUrlErrorTextSize: Int = 12,
-    imageVector: ImageVector? = null
+    imageVector: ImageVector? = null,
+    imageVectorColor: Color? = null
 ) {
     Row(
         modifier = Modifier
@@ -313,10 +314,7 @@ fun ClickableItem(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
-
-                    else -> {
-
-                    }
+                    else -> { }
                 }
             }
         } ?: imageVector?.let {
@@ -324,7 +322,7 @@ fun ClickableItem(
                 modifier = Modifier.size(imageSize),
                 imageVector = imageVector,
                 contentDescription = null,
-                tint = Color.Unspecified
+                tint = imageVectorColor ?: Color.Unspecified
             )
         }
         Column(
