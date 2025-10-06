@@ -136,7 +136,7 @@ fun EventDialog(
                     }
                 ) {
                     Icon(
-                        modifier = Modifier.size(20.dp),
+                        modifier = Modifier.size(24.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.share),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onBackground
@@ -149,7 +149,7 @@ fun EventDialog(
                         }
                     ) {
                         Icon(
-                            modifier = Modifier.size(20.dp),
+                            modifier = Modifier.size(24.dp),
                             imageVector = ImageVector.vectorResource(R.drawable.more_vert),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onBackground
