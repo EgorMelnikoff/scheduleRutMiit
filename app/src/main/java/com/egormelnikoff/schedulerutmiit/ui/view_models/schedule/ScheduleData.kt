@@ -5,6 +5,7 @@ import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -20,6 +21,8 @@ class ScheduleData(
     val eventForList: List<Pair<LocalDate, List<Event>>> = listOf(),
     val eventsExtraData: List<EventExtraData> = listOf(),
     val hiddenEvents: List<Event> = listOf(),
+    var eventsForTomorrow: List<Event> = listOf(),
+    var countEventsForWeek: Int = 0,
 
     val defaultDate: LocalDate,
     val daysStartIndex: Int,
@@ -58,6 +61,12 @@ class ScheduleData(
                         nonPeriodicEvents = null,
                         scheduleEntity = scheduleWithoutHiddenEvents.scheduleEntity,
                     )
+                    val reviewParams = calculateReviewParams(
+                        today = today,
+                        periodicEventsForCalendar = periodicEventsForCalendar,
+                        nonPeriodicEventsForCalendar = null,
+                        scheduleEntity = scheduleFormatted.scheduleEntity
+                    )
                     ScheduleData(
                         namedSchedule = namedSchedule,
                         settledScheduleEntity = scheduleFormatted.scheduleEntity,
@@ -66,6 +75,8 @@ class ScheduleData(
                         eventsExtraData = scheduleWithoutHiddenEvents.eventsExtraData,
                         eventForList = eventsForList,
                         hiddenEvents = hiddenEvents,
+                        eventsForTomorrow = reviewParams.first,
+                        countEventsForWeek = reviewParams.second,
                         weeksCount = weeksCount,
                         defaultDate = defaultParams.first,
                         weeksStartIndex = defaultParams.second,
@@ -80,6 +91,12 @@ class ScheduleData(
                         nonPeriodicEvents = scheduleFormatted.events,
                         scheduleEntity = scheduleWithoutHiddenEvents.scheduleEntity,
                     )
+                    val reviewParams = calculateReviewParams(
+                        today = today,
+                        periodicEventsForCalendar = null,
+                        nonPeriodicEventsForCalendar = nonPeriodicEventsForCalendar,
+                        scheduleEntity = scheduleFormatted.scheduleEntity
+                    )
                     ScheduleData(
                         namedSchedule = namedSchedule,
                         settledScheduleEntity = scheduleFormatted.scheduleEntity,
@@ -88,6 +105,8 @@ class ScheduleData(
                         eventsExtraData = scheduleWithoutHiddenEvents.eventsExtraData,
                         eventForList = eventsForList,
                         hiddenEvents = hiddenEvents,
+                        eventsForTomorrow = reviewParams.first,
+                        countEventsForWeek = reviewParams.second,
                         weeksCount = weeksCount,
                         defaultDate = defaultParams.first,
                         weeksStartIndex = defaultParams.second,
@@ -223,6 +242,62 @@ class ScheduleData(
                 .map { week -> ((week + recurrence.firstWeekNumber) % recurrence.interval!!).plus(1) }
                 .toList()
                 .drop((weeksCount - weeksRemaining))
+        }
+
+        private fun calculateReviewParams (
+            today: LocalDate,
+            periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>?,
+            nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>?,
+            scheduleEntity: ScheduleEntity
+        ): Pair<List<Event>, Int> {
+            val displayedDate = today.plusDays(1)
+            var eventsForTomorrow = listOf<Event>()
+            var countEventsForWeek = 0
+
+            periodicEventsForCalendar?.let { periodicEvents ->
+                val recurrence = scheduleEntity.recurrence!!
+                val startDate = scheduleEntity.startDate
+
+                val currentWeek = calculateCurrentWeek(
+                    date = displayedDate,
+                    startDate = startDate,
+                    interval = recurrence.interval!!,
+                    firstPeriodNumber = recurrence.firstWeekNumber
+                )
+
+                val eventsForCurrentWeek = periodicEvents[currentWeek] ?: emptyMap()
+                val eventsForTomorrowPeriodic =
+                    eventsForCurrentWeek[displayedDate.dayOfWeek]
+
+                eventsForTomorrow = eventsForTomorrowPeriodic
+                    ?.distinctBy { it.startDatetime }
+                    ?: listOf()
+
+                countEventsForWeek = eventsForCurrentWeek
+                    .flatMap { it.value }
+                    .distinctBy { it.startDatetime }
+                    .size
+
+            } ?: nonPeriodicEventsForCalendar?.let { nonPeriodicEvents ->
+                val eventsForTomorrowNonPeriodic = nonPeriodicEvents[displayedDate]
+                eventsForTomorrow = eventsForTomorrowNonPeriodic ?: listOf()
+                countEventsForWeek = getEventsCountForWeek(displayedDate, nonPeriodicEvents)
+            }
+            return Pair(eventsForTomorrow, countEventsForWeek)
+        }
+
+        private fun getEventsCountForWeek(
+            today: LocalDate,
+            events: Map<LocalDate, List<Event>>
+        ): Int {
+            var count = 0
+            val firstDayOfWeek = calculateFirstDayOfWeek(today)
+            for (date in 0 until 7) {
+                val currentDate = firstDayOfWeek.plusDays(date.toLong())
+                val eventPerDay = events[currentDate]?.distinctBy { it.startDatetime }
+                count += eventPerDay?.size ?: 0
+            }
+            return count
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.review
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -59,8 +60,6 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateCurrentWeek
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeLightBlue
@@ -71,7 +70,6 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeViolet
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeYellow
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleUiState
 import java.time.Instant
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -96,61 +94,62 @@ fun ReviewScreen(
 
     visibleSavedSchedules: Boolean,
     visibleHiddenEvents: Boolean,
-    scheduleUiState: ScheduleUiState,
-    today: LocalDate
+    scheduleUiState: ScheduleUiState
 ) {
     var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
     var showDeleteNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(
-                titleText =  LocalContext.current.getString(R.string.review),
-                actions = {
-                    IconButton(
-                        onClick = {
-                            navigateToAddSchedule()
-                        },
-                        colors = IconButtonDefaults.iconButtonColors().copy(
-                            contentColor = MaterialTheme.colorScheme.onBackground
-                        )
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.add),
-                            contentDescription = null
-                        )
+            if (scheduleUiState.savedNamedSchedules.isNotEmpty()) {
+                CustomTopAppBar(
+                    titleText = LocalContext.current.getString(R.string.review),
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                navigateToAddSchedule()
+                            },
+                            colors = IconButtonDefaults.iconButtonColors().copy(
+                                contentColor = MaterialTheme.colorScheme.onBackground
+                            )
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(24.dp),
+                                imageVector = ImageVector.vectorResource(R.drawable.add),
+                                contentDescription = null
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                navigateToSearch()
+                            },
+                            colors = IconButtonDefaults.iconButtonColors().copy(
+                                contentColor = MaterialTheme.colorScheme.onBackground
+                            )
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(24.dp),
+                                imageVector = ImageVector.vectorResource(R.drawable.search),
+                                contentDescription = null
+                            )
+                        }
                     }
-                    IconButton(
-                        onClick = {
-                            navigateToSearch()
-                        },
-                        colors = IconButtonDefaults.iconButtonColors().copy(
-                            contentColor = MaterialTheme.colorScheme.onBackground
-                        )
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.search_simple),
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
+                )
+            }
         }
     ) { innerPadding ->
         if (scheduleUiState.savedNamedSchedules.isNotEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
                     .padding(
                         start = 8.dp, end = 8.dp,
                         top = innerPadding.calculateTopPadding() + 16.dp,
                         bottom = externalPadding.calculateBottomPadding()
-                    )
-                    .verticalScroll(rememberScrollState()),
+                    ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (
@@ -158,47 +157,11 @@ fun ReviewScreen(
                     && scheduleUiState.defaultScheduleData.settledScheduleEntity != null
                     && scheduleUiState.isSaved
                 ) {
-                    var eventsForTomorrow = listOf<Event>()
-                    var countEventsForWeek = 0
-                    scheduleUiState.defaultScheduleData.periodicEventsForCalendar?.let { periodicEvents ->
-                        val recurrence =
-                            scheduleUiState.defaultScheduleData.settledScheduleEntity.recurrence!!
-                        val startDate =
-                            scheduleUiState.defaultScheduleData.settledScheduleEntity.startDate
-
-
-                        val currentWeek = calculateCurrentWeek(
-                            date = today,
-                            startDate = startDate,
-                            interval = recurrence.interval!!,
-                            firstPeriodNumber = recurrence.firstWeekNumber
-                        )
-
-                        val eventsForCurrentWeek = periodicEvents[currentWeek] ?: emptyMap()
-                        val eventsForTomorrowPeriodic =
-                            eventsForCurrentWeek[today.plusDays(1).dayOfWeek]
-
-                        eventsForTomorrow = eventsForTomorrowPeriodic
-                            ?.distinctBy { it.startDatetime }
-                            ?: listOf()
-
-                        countEventsForWeek = eventsForCurrentWeek
-                            .flatMap { it.value }
-                            .distinctBy { it.startDatetime }
-                            .size
-
-                    }
-                    scheduleUiState.defaultScheduleData.nonPeriodicEventsForCalendar?.let { nonPeriodicEvents ->
-                        val eventsForTomorrowNonPeriodic = nonPeriodicEvents[today.plusDays(1)]
-                        eventsForTomorrow = eventsForTomorrowNonPeriodic ?: listOf()
-                        countEventsForWeek = getEventsCountPerWeek(today, nonPeriodicEvents)
-                    }
                     EventsReview(
                         navigateToEvent = navigateToEvent,
-                        countEventsForWeek = countEventsForWeek,
-                        eventsForTomorrow = eventsForTomorrow,
                         scheduleUiState = scheduleUiState
                     )
+                    Spacer(modifier = Modifier.height(2.dp))
                 }
                 ExpandedItem(
                     title = LocalContext.current.getString(R.string.saved_schedules),
@@ -245,6 +208,8 @@ fun ReviewScreen(
             }
         } else {
             ErrorScreen(
+                title = LocalContext.current.getString(R.string.no_saved_schedule),
+                subtitle = LocalContext.current.getString(R.string.empty_base),
                 button = {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -252,7 +217,7 @@ fun ReviewScreen(
                     ) {
                         CustomButton(
                             buttonTitle = LocalContext.current.getString(R.string.search),
-                            imageVector = ImageVector.vectorResource(R.drawable.search_simple),
+                            imageVector = ImageVector.vectorResource(R.drawable.search),
                             onClick = { navigateToSearch() },
                         )
                         CustomButton(
@@ -262,7 +227,6 @@ fun ReviewScreen(
                         )
                     }
                 },
-
                 paddingTop = innerPadding.calculateTopPadding(),
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
@@ -367,13 +331,13 @@ fun ExpandedItem(
 
 @Composable
 fun EventsReview(
-    eventsForTomorrow: List<Event>,
-    countEventsForWeek: Int,
     scheduleUiState: ScheduleUiState,
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
 ) {
     Column(
-        modifier = Modifier.padding(horizontal = 8.dp),
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         RowGroup(
@@ -381,36 +345,37 @@ fun EventsReview(
                 {
                     EventsCount(
                         title = LocalContext.current.getString(R.string.tomorrow),
-                        value = eventsForTomorrow.size.toString(),
+                        value = scheduleUiState.defaultScheduleData!!.eventsForTomorrow.size.toString(),
                         comment = LocalResources.current.getQuantityString(
                             R.plurals.events,
-                            eventsForTomorrow.size
+                            scheduleUiState.defaultScheduleData.eventsForTomorrow.size
                         )
                     )
                 }, {
                     EventsCount(
-                        title = LocalContext.current.getString(R.string.week).replaceFirstChar { it.uppercase() },
-                        value = countEventsForWeek.toString(),
+                        title = LocalContext.current.getString(R.string.week)
+                            .replaceFirstChar { it.uppercase() },
+                        value = scheduleUiState.defaultScheduleData!!.countEventsForWeek.toString(),
                         comment = LocalResources.current.getQuantityString(
                             R.plurals.events,
-                            countEventsForWeek
+                            scheduleUiState.defaultScheduleData.countEventsForWeek
                         )
                     )
                 }
             )
         )
-        val haveAnyEventsExtraData = eventsForTomorrow.any {
-            scheduleUiState.defaultScheduleData!!.eventsExtraData.find { eventExtraData ->
+        val haveAnyEventsExtraData = scheduleUiState.defaultScheduleData!!.eventsForTomorrow.any {
+            scheduleUiState.defaultScheduleData.eventsExtraData.find { eventExtraData ->
                 it.id == eventExtraData.id && eventExtraData.comment != ""
             } != null
         }
 
-        if (eventsForTomorrow.isNotEmpty() && haveAnyEventsExtraData) {
+        if (scheduleUiState.defaultScheduleData.eventsForTomorrow.isNotEmpty() && haveAnyEventsExtraData) {
             ColumnGroup(
                 title = LocalContext.current.getString(R.string.comments_on_tomorrow_events),
-                items = eventsForTomorrow.mapNotNull { event ->
+                items = scheduleUiState.defaultScheduleData.eventsForTomorrow.mapNotNull { event ->
                     val eventExtraData =
-                        scheduleUiState.defaultScheduleData!!.eventsExtraData.find { it.id == event.id }
+                        scheduleUiState.defaultScheduleData.eventsExtraData.find { it.id == event.id }
 
                     if (eventExtraData != null && eventExtraData.comment != "") {
                         {
@@ -708,18 +673,4 @@ fun HiddenEvent(
             )
         }
     }
-}
-
-fun getEventsCountPerWeek(
-    today: LocalDate,
-    events: Map<LocalDate, List<Event>>
-): Int {
-    var count = 0
-    val firstDayOfWeek = calculateFirstDayOfWeek(today)
-    for (date in 0 until 7) {
-        val currentDate = firstDayOfWeek.plusDays(date.toLong())
-        val eventPerDay = events[currentDate]?.distinctBy { it.startDatetime }
-        count += eventPerDay?.size ?: 0
-    }
-    return count
 }
