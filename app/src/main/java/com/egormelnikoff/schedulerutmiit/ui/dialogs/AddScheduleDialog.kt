@@ -62,13 +62,13 @@ fun AddScheduleDialog(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(rememberScrollState())
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
                     top = innerPadding.calculateTopPadding(),
                     bottom = externalPadding.calculateBottomPadding()
-                )
-                .verticalScroll(rememberScrollState()),
+                ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             GridGroup(
@@ -114,7 +114,6 @@ fun AddScheduleDialog(
                 )
             )
             CustomButton(
-                modifier = Modifier.padding(top = 8.dp),
                 buttonTitle = LocalContext.current.getString(R.string.create),
                 onClick = {
                     val errorMessages =
@@ -166,10 +165,10 @@ fun checkScheduleParams(
             append("${context.getString(R.string.no_name_specified)}\n")
         }
         if (startDate == null) {
-            append("${context.getString(R.string.no_start_time_specified)}\n")
+            append("${context.getString(R.string.no_start_date_specified)}\n")
         }
         if (endDate == null) {
-            append("${context.getString(R.string.no_end_time_specified)}\n")
+            append("${context.getString(R.string.no_end_date_specified)}\n")
         }
     }.trimEnd()
     return errorString.toString()
