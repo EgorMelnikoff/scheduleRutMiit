@@ -133,6 +133,7 @@ fun InfoDialog(
                             title = LocalContext.current.getString(R.string.github),
                             subtitle = LocalContext.current.getString(R.string.source_code),
                             imageVector = ImageVector.vectorResource(R.drawable.logo_github),
+                            imageVectorColor = MaterialTheme.colorScheme.onBackground,
                             onClick = {
                                 onOpenUri(APP_GITHUB_REPOS)
                             },
@@ -147,6 +148,7 @@ fun InfoDialog(
                     ClickableItem(
                         title = LocalContext.current.getString(R.string.support),
                         imageVector = ImageVector.vectorResource(R.drawable.ruble),
+                        imageVectorColor = MaterialTheme.colorScheme.onBackground,
                         onClick = {
                             onOpenUri(CLOUD_TIPS)
                         }
