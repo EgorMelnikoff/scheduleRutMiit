@@ -1,163 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Schedule MIIT</string>
-
-    <string name="my">My</string>
-    <string name="empty_day">There are no classes scheduled for this day</string>
-    <string name="try_again">Try again</string>
-    <string name="update_problem">There were problems with the update</string>
-    <string name="no_saved_schedule">No saved schedule</string>
-    <string name="empty_here">It`s empty here</string>
-    <string name="error">Error</string>
-    <string name="unknown_error">Unknown error</string>
-    <string name="updating">Updating</string>
-    <string name="comment">Comment</string>
-    <string name="copy_link">Copy link</string>
-    <string name="save_pdf">Download pdf</string>
-    <string name="save">Save</string>
-    <string name="saved_schedules">Saved schedules</string>
-    <string name="settings">Settings</string>
-    <string name="week">week</string>
-    <string name="support">Support</string>
-    <string name="show_tags">Show tags</string>
-    <string name="show_count_classes">Show count classes</string>
-    <string name="report_a_problem">Report a problem</string>
-    <string name="collapse">Collapse</string>
-    <string name="error_loading">Error</string>
-
-    <string name="enter_your_query">Enter your query</string>
-    <string name="nothing_found">Nothing found</string>
-    <string name="search">Search</string>
-    <string name="review">Review</string>
-
-    <string name="group">Group</string>
-    <string name="Lecturers">Lecturers</string>
-    <string name="lecturer">Lecturer</string>
-
-    <string name="course">course</string>
-    <string name="profile">Profile</string>
-
-    <string name="periodic">Periodic</string>
-    <string name="non_periodic">Non periodic</string>
-    <string name="session">Session</string>
-
-    <string name="schedule">Schedule</string>
-    <string name="search_schedule">Search schedule</string>
-
-    <string name="delete">Delete</string>
-    <string name="copied">Copied</string>
-    <string name="make_default">Make default</string>
-
-
-    <string name="all">All</string>
-    <string name="groups">Groups</string>
-    <string name="people">People</string>
-
-    <string name="compact_view">Compact view</string>
-    <string name="schedules">Schedules</string>
-    <string name="general">General</string>
-    <string name="theme">Theme</string>
-    <string name="about_app">About app</string>
-    <string name="news">News</string>
-
-    <string name="telegram" translatable="false">Telegram</string>
-    <string name="github" translatable="false">GitHub</string>
-
     <string name="Class">Class</string>
-    <string name="time">Time</string>
-    <string name="place">Place</string>
-
-    <string name="Tag">Tag</string>
-    <string name="Default">Default</string>
-    <string name="Green">Green</string>
-    <string name="Yellow">Yellow</string>
-    <string name="Red">Red</string>
-    <string name="Subject">Subject</string>
-    <string name="Room">Room</string>
-    <string name="Rooms">Rooms</string>
-
-    <string name="Groups">Groups</string>
-    <string name="Comment">Comment</string>
-    <string name="Enter_comment">Enter comment</string>
-
-
-    <string name="unable_load_news_list">Unable to load news list</string>
-    <string name="repeat">Repeat</string>
-    <string name="light">Light</string>
-    <string name="dark">Dark</string>
-    <string name="auto">Auto</string>
-    <string name="color_style">Color style</string>
-    <string name="decor">Decor</string>
-
-    <string name="default_schedule">Default schedule</string>
-    <string name="open">Open</string>
-    <string name="is_saved">is saved</string>
-    <string name="is_deleted">is deleted</string>
-    <string name="from">from</string>
     <string name="Current_on">Current on</string>
     <string name="day_off">Day off</string>
-    <string name="error_load_schedule">There was an error loading the schedule</string>
-    <string name="empty_base">Save at least one schedule to display it</string>
-    <string name="no_classes">There are no more classes planned</string>
-    <string name="failed_update">Failed to update schedule</string>
-    <string name="author">Author</string>
-    <string name="news_updates">News, updates</string>
-    <string name="source_code">Source code</string>
-    <string name="no_comments">There are no comments for the classes</string>
-    <string name="comment_add">You can add a comment by clicking on a class</string>
-
-    <string name="confirm">Confirm</string>
-
-    <string name="adding_a_schedule">Adding a schedule</string>
-    <string name="schedule_name">Schedule name</string>
-    <string name="start_date">Start date</string>
-    <string name="end_date">Start date</string>
-    <string name="no_start_date_specified">No start date specified</string>
-    <string name="no_end_date_specified">No end date specified</string>
-    <string name="create">Create</string>
-
-    <string name="adding_a_class">Adding a class</string>
-    <string name="class_name">Class name</string>
-    <string name="class_type">Class type</string>
-    <string name="not_specified">Not specified</string>
-    <string name="date">Date</string>
-    <string name="start_time">Start time</string>
-    <string name="end_time">Start time</string>
-    <string name="room_number">Room number</string>
-    <string name="full_name_of_lecturer">Full name of lecturer</string>
-    <string name="group_number">Group number</string>
-    <string name="add">Add</string>
-    <string name="no_name_specified">No name specified</string>
-    <string name="no_date_specified">No date specified</string>
-    <string name="no_start_time_specified">No start time specified</string>
-    <string name="no_end_time_specified">No end time specified</string>
-    <string name="time_is_chosen_incorrectly">Time is chosen incorrectly</string>
-    <string name="room_number_not_specified">Room number not specified</string>
-    <string name="provide_the_names_of_all_lecturers">Provide the names of all lecturers</string>
-    <string name="provide_the_numbers_of_all_groups">Provide the numbers of all groups</string>
-    <string name="hide_event">Hide class</string>
-    <string name="event_deleting_alert">The action will delete the lesson, comments and tags</string>
-    <string name="event_visibility_alert">Please note, class will no longer appear in the schedule</string>
-    <string name="delete_event">Delete class</string>
-    <string name="show_event">Show class</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="hide">Hide</string>
+    <string name="Default">Default</string>
+    <string name="Enter_comment">Enter comment</string>
     <plurals name="events">
-        <item quantity="one">event</item>
-        <item quantity="two">events</item>
         <item quantity="few">events</item>
         <item quantity="many">events</item>
+        <item quantity="one">event</item>
         <item quantity="other">events</item>
+        <item quantity="two">events</item>
     </plurals>
-
+    <string name="Green">Green</string>
+    <string name="Groups">Groups</string>
+    <string name="Lecturers">Lecturers</string>
+    <string name="Red">Red</string>
+    <string name="Room">Room</string>
+    <string name="Rooms">Rooms</string>
+    <string name="Subject">Subject</string>
+    <string name="Tag">Tag</string>
+    <string name="Yellow">Yellow</string>
+    <string name="about_app">About app</string>
+    <string name="add">Add</string>
+    <string name="adding_a_class">Adding a class</string>
+    <string name="adding_a_schedule">Adding a schedule</string>
+    <string name="all">All</string>
+    <string name="app_name">Schedule MIIT</string>
+    <string name="author">Author</string>
+    <string name="auto">Auto</string>
+    <string name="class_name">Class name</string>
+    <string name="class_type">Class type</string>
+    <string name="collapse">Collapse</string>
+    <string name="color_style">Color style</string>
+    <string name="comment">Comment</string>
     <string name="comments_on_tomorrow_events">Comments on tomorrow class</string>
-    <string name="tomorrow">Tomorrow</string>
-    <string name="delete_schedule">Delete schedule</string>
-    <string name="impossible_restore_eventextra">It will be impossible to restore comments and tags for pairs</string>
-    <string name="hidden_events">Hidden events</string>
-    <string name="search_or_create">Search or create</string>
-    <string name="return_default">Return default</string>
+    <string name="compact_view">Compact view</string>
+    <string name="confirm">Confirm</string>
+    <string name="create">Create</string>
+    <string name="dark">Dark</string>
+    <string name="date">Date</string>
     <string name="date_and_time">Date and time</string>
+    <string name="decor">Decor</string>
+    <string name="delete">Delete</string>
+    <string name="delete_event">Delete class</string>
+    <string name="delete_schedule">Delete schedule</string>
+    <string name="empty_base">Save at least one schedule to display it</string>
+    <string name="empty_day">There are no classes scheduled for this day</string>
+    <string name="empty_here">It`s empty here</string>
+    <string name="end_date">Start date</string>
+    <string name="end_time">Start time</string>
+    <string name="enter_your_query">Enter your query</string>
+    <string name="error">Error</string>
+    <string name="error_load_schedule">There was an error loading the schedule</string>
+    <string name="event_deleting_alert">The action will delete the lesson, comments and tags</string>
+    <string name="event_visibility_alert">Please note, class will no longer appear in the schedule</string>
     <string name="events_count_error">The maximum number of classes per day has been reached</string>
+    <string name="failed_update">Failed to update schedule</string>
+    <string name="full_name_of_lecturer">Full name of lecturer</string>
+    <string name="general">General</string>
+    <string name="github" translatable="false">GitHub</string>
+    <string name="group_number">Group number</string>
+    <string name="groups">Groups</string>
+    <string name="hidden_events">Hidden events</string>
+    <string name="hide">Hide</string>
+    <string name="hide_event">Hide class</string>
+    <string name="impossible_restore_eventextra">It will be impossible to restore comments and tags for pairs</string>
+    <string name="light">Light</string>
+    <string name="make_default">Make default</string>
+    <string name="my">My</string>
+    <string name="news">News</string>
+    <string name="news_updates">News, updates</string>
+    <string name="no">No</string>
+    <string name="no_classes">There are no more classes planned</string>
+    <string name="no_date_specified">No date specified</string>
+    <string name="no_end_date_specified">No end date specified</string>
+    <string name="no_end_time_specified">No end time specified</string>
+    <string name="no_name_specified">No name specified</string>
+    <string name="no_saved_schedule">No saved schedule</string>
+    <string name="no_start_date_specified">No start date specified</string>
+    <string name="no_start_time_specified">No start time specified</string>
+    <string name="not_specified">Not specified</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="open">Open</string>
+    <string name="people">People</string>
+    <string name="place">Place</string>
+    <string name="provide_the_names_of_all_lecturers">Provide the names of all lecturers</string>
+    <string name="provide_the_numbers_of_all_groups">Provide the numbers of all groups</string>
+    <string name="repeat">Repeat</string>
+    <string name="report_a_problem">Report a problem</string>
+    <string name="return_default">Return default</string>
+    <string name="review">Review</string>
+    <string name="room_number">Room number</string>
+    <string name="room_number_not_specified">Room number not specified</string>
+    <string name="saved_schedules">Saved schedules</string>
+    <string name="schedule">Schedule</string>
+    <string name="schedule_name">Schedule name</string>
+    <string name="schedules">Schedules</string>
+    <string name="search">Search</string>
+    <string name="search_or_create">Search or create</string>
+    <string name="settings">Settings</string>
+    <string name="show_count_classes">Show count classes</string>
+    <string name="show_event">Show class</string>
+    <string name="source_code">Source code</string>
+    <string name="start_date">Start date</string>
+    <string name="start_time">Start time</string>
+    <string name="support">Support</string>
+    <string name="telegram" translatable="false">Telegram</string>
+    <string name="theme">Theme</string>
+    <string name="time">Time</string>
+    <string name="time_is_chosen_incorrectly">Time is chosen incorrectly</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="unable_load_news_list">Unable to load news list</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="week">week</string>
+    <string name="yes">Yes</string>
 </resources>
