@@ -9,6 +9,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,10 +24,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
@@ -51,7 +54,8 @@ fun ScreenSchedule(
     today: LocalDate,
 
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
-    navigateToReview: () -> Unit,
+    navigateToAddSchedule: () -> Unit,
+    navigateToSearch: () -> Unit,
     navigateToAddEvent: (ScheduleEntity) -> Unit,
 
     onDeleteEvent: (Long) -> Unit,
@@ -194,11 +198,21 @@ fun ScreenSchedule(
                 title = LocalContext.current.getString(R.string.no_saved_schedule),
                 subtitle = LocalContext.current.getString(R.string.empty_base),
                 button = {
-                    CustomButton(
-                        buttonTitle = LocalContext.current.getString(R.string.search_or_create),
-                        imageVector = ImageVector.vectorResource(R.drawable.review),
-                        onClick = { navigateToReview() },
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CustomButton(
+                            buttonTitle = LocalContext.current.getString(R.string.search),
+                            imageVector = ImageVector.vectorResource(R.drawable.search),
+                            onClick = { navigateToSearch() },
+                        )
+                        CustomButton(
+                            buttonTitle = LocalContext.current.getString(R.string.create),
+                            imageVector = ImageVector.vectorResource(R.drawable.add),
+                            onClick = { navigateToAddSchedule() },
+                        )
+                    }
                 },
                 paddingTop = externalPadding.calculateTopPadding(),
                 paddingBottom = externalPadding.calculateBottomPadding()
