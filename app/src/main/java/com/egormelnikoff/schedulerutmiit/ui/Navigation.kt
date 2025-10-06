@@ -28,7 +28,7 @@ class AppBackStack<T : Routes>(
 ) {
     val backStack = mutableStateListOf<Routes>(startRoute)
 
-    fun last() = backStack.last ()
+    fun last() = backStack.last()
 
     fun lastPage() = backStack.last { !it.isDialog }
 

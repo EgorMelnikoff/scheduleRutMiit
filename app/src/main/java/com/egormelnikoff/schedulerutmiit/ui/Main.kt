@@ -140,6 +140,7 @@ fun Main(
         scheduleUiState.currentScheduleData?.settledScheduleEntity?.timetableId
     ) {
         expandedSchedulesMenu = false
+        visibleHiddenEvents = false
         pagerDaysState.scrollToPage(scheduleUiState.currentScheduleData?.daysStartIndex ?: 0)
         scheduleListState.scrollToItem(0)
     }
@@ -364,7 +365,6 @@ fun Main(
                         onDeleteNamedSchedule = onDeleteNamedSchedule,
                         onShowEvent = onShowEvent,
 
-                        today = today,
                         visibleSavedSchedules = visibleSavedSchedules,
                         visibleHiddenEvents = visibleHiddenEvents,
                         scheduleUiState = scheduleUiState
@@ -375,8 +375,11 @@ fun Main(
                     ScreenSchedule(
                         externalPadding = externalPadding,
                         today = today,
-                        navigateToReview = {
-                            appBackStack.navigateToPage(Routes.Review)
+                        navigateToSearch = {
+                            appBackStack.navigateToDialog(Routes.SearchDialog)
+                        },
+                        navigateToAddSchedule = {
+                            appBackStack.navigateToDialog(Routes.AddScheduleDialog)
                         },
                         navigateToAddEvent = { value ->
                             appBackStack.navigateToDialog(
