@@ -69,8 +69,7 @@ fun SearchScheduleDialog(
             .padding(
                 start = 8.dp,
                 end = 8.dp,
-                top = externalPadding.calculateTopPadding() + 16.dp,
-                bottom = externalPadding.calculateBottomPadding()
+                top = externalPadding.calculateTopPadding() + 16.dp
             ),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -89,7 +88,7 @@ fun SearchScheduleDialog(
                 placeholderText = LocalContext.current.getString(R.string.search),
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.search_simple),
+                        imageVector = ImageVector.vectorResource(R.drawable.search),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface
                     )
@@ -157,7 +156,8 @@ fun SearchScheduleDialog(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(
                             start = 8.dp,
-                            end = 8.dp
+                            end = 8.dp,
+                            bottom = externalPadding.calculateBottomPadding()
                         ),
                         horizontalAlignment = Alignment.Start
                     ) {
