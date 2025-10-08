@@ -1,25 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="Class">Пара</string>
-    <string name="Current_on">Актуально на</string>
-    <string name="day_off">Выходной</string>
-    <string name="Default">Обычный</string>
-    <string name="Enter_comment">Введите комментарий</string>
-    <plurals name="events">
-        <item quantity="few">пары</item>
-        <item quantity="many">пар</item>
-        <item quantity="one" tools:ignore="ImpliedQuantity">пара</item>
-        <item quantity="other">пар</item>
-    </plurals>
-    <string name="Green">Зелёный</string>
-    <string name="Groups">Группы</string>
-    <string name="Lecturers">Преподаватели</string>
-    <string name="Red">Красный</string>
-    <string name="Room">Аудитория</string>
-    <string name="Rooms">Аудитории</string>
-    <string name="Subject">Предмет</string>
-    <string name="Tag">Тег</string>
-    <string name="Yellow">Жёлтый</string>
+    <string name="_class">Пара</string>
+    <string name="_default">Обычный</string>
     <string name="about_app">О приложении</string>
     <string name="add">Добавить</string>
     <string name="adding_a_class">Добавление пары</string>
@@ -37,9 +19,11 @@
     <string name="compact_view">Компактный вид</string>
     <string name="confirm">Подтвердить</string>
     <string name="create">Создать</string>
+    <string name="current_on">Актуально на</string>
     <string name="dark">Темная</string>
     <string name="date">Дата</string>
     <string name="date_and_time">Дата и время</string>
+    <string name="day_off">Выходной</string>
     <string name="decor">Оформление</string>
     <string name="delete">Удалить</string>
     <string name="delete_event">Удалить пару</string>
@@ -49,12 +33,19 @@
     <string name="empty_here">Здесь пусто</string>
     <string name="end_date">Дата окончания</string>
     <string name="end_time">Время окончания</string>
+    <string name="enter_comment">Введите комментарий</string>
     <string name="enter_your_query">Введите свой запрос</string>
     <string name="error">Ошибка</string>
     <string name="error_load_schedule">Произошла ошибка загрузки расписания</string>
     <string name="event_deleting_alert">Действие удалит пару, комментарии теги</string>
     <string name="event_visibility_alert">Будьте внимательны, занятие перестанет отображаться в расписании</string>
     <string name="events_count_error">Достигнуто максимальное количество пар на день</string>
+    <plurals name="events">
+        <item quantity="few">пары</item>
+        <item quantity="many">пар</item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">пара</item>
+        <item quantity="other">пар</item>
+    </plurals>
     <string name="failed_update">Не удалось обновить расписание</string>
     <string name="full_name_of_lecturer">ФИО преподавателя</string>
     <string name="general">Общее</string>
@@ -64,11 +55,13 @@
     <string name="hide">Скрыть</string>
     <string name="hide_event">Скрыть пару</string>
     <string name="impossible_restore_eventextra">Восстановить комментари и теги к парам будет невозможно</string>
+    <string name="lecturers">Преподаватели</string>
     <string name="light">Светлая</string>
     <string name="make_default">Сделать основным</string>
     <string name="my">Мои</string>
     <string name="news">Новости</string>
     <string name="news_updates">Новости и обновления</string>
+    <string name="next_week">Следующая неделя</string>
     <string name="no">Нет</string>
     <string name="no_classes">Занятий больше не планируется</string>
     <string name="no_date_specified">Не указана дата</string>
@@ -89,8 +82,11 @@
     <string name="report_a_problem">Сообщить о проблеме</string>
     <string name="return_default">Вернуть основное</string>
     <string name="review">Обзор</string>
+    <string name="room">Аудитория</string>
     <string name="room_number">Номер аудитории</string>
     <string name="room_number_not_specified">Не указан номер аудитории</string>
+    <string name="rooms">Аудитории</string>
+    <string name="save">Сохранить</string>
     <string name="saved_schedules">Сохраненные расписания</string>
     <string name="schedule">Расписание</string>
     <string name="schedule_name">Название</string>
@@ -104,12 +100,13 @@
     <string name="start_date">Дата начала</string>
     <string name="start_time">Время начала</string>
     <string name="support">Поддержать</string>
+    <string name="tag">Тег</string>
     <string name="theme">Тема</string>
     <string name="time">Время</string>
     <string name="time_is_chosen_incorrectly">Некорректно указано время</string>
     <string name="tomorrow">Завтра</string>
     <string name="unable_load_news_list">Не удалось загрузить список новостей</string>
     <string name="unknown_error">Неизвестная ошибка</string>
-    <string name="week">неделя</string>
+    <string name="week">Неделя</string>
     <string name="yes">Да</string>
 </resources>

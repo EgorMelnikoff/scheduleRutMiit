@@ -1,26 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="Class">Class</string>
-    <string name="Current_on">Current on</string>
-    <string name="day_off">Day off</string>
-    <string name="Default">Default</string>
-    <string name="Enter_comment">Enter comment</string>
-    <plurals name="events">
-        <item quantity="few">events</item>
-        <item quantity="many">events</item>
-        <item quantity="one">event</item>
-        <item quantity="other">events</item>
-        <item quantity="two">events</item>
-    </plurals>
-    <string name="Green">Green</string>
-    <string name="Groups">Groups</string>
-    <string name="Lecturers">Lecturers</string>
-    <string name="Red">Red</string>
-    <string name="Room">Room</string>
-    <string name="Rooms">Rooms</string>
-    <string name="Subject">Subject</string>
-    <string name="Tag">Tag</string>
-    <string name="Yellow">Yellow</string>
+    <string name="_class">Class</string>
+    <string name="_default">Default</string>
     <string name="about_app">About app</string>
     <string name="add">Add</string>
     <string name="adding_a_class">Adding a class</string>
@@ -38,9 +19,11 @@
     <string name="compact_view">Compact view</string>
     <string name="confirm">Confirm</string>
     <string name="create">Create</string>
+    <string name="current_on">Current on</string>
     <string name="dark">Dark</string>
     <string name="date">Date</string>
     <string name="date_and_time">Date and time</string>
+    <string name="day_off">Day off</string>
     <string name="decor">Decor</string>
     <string name="delete">Delete</string>
     <string name="delete_event">Delete class</string>
@@ -50,12 +33,20 @@
     <string name="empty_here">It`s empty here</string>
     <string name="end_date">Start date</string>
     <string name="end_time">Start time</string>
+    <string name="enter_comment">Enter comment</string>
     <string name="enter_your_query">Enter your query</string>
     <string name="error">Error</string>
     <string name="error_load_schedule">There was an error loading the schedule</string>
     <string name="event_deleting_alert">The action will delete the lesson, comments and tags</string>
     <string name="event_visibility_alert">Please note, class will no longer appear in the schedule</string>
     <string name="events_count_error">The maximum number of classes per day has been reached</string>
+    <plurals name="events">
+        <item quantity="few">classes</item>
+        <item quantity="many">classes</item>
+        <item quantity="one">class</item>
+        <item quantity="other">classes</item>
+        <item quantity="two">classes</item>
+    </plurals>
     <string name="failed_update">Failed to update schedule</string>
     <string name="full_name_of_lecturer">Full name of lecturer</string>
     <string name="general">General</string>
@@ -66,11 +57,13 @@
     <string name="hide">Hide</string>
     <string name="hide_event">Hide class</string>
     <string name="impossible_restore_eventextra">It will be impossible to restore comments and tags for pairs</string>
+    <string name="lecturers">Lecturers</string>
     <string name="light">Light</string>
     <string name="make_default">Make default</string>
     <string name="my">My</string>
     <string name="news">News</string>
     <string name="news_updates">News, updates</string>
+    <string name="next_week">Next week</string>
     <string name="no">No</string>
     <string name="no_classes">There are no more classes planned</string>
     <string name="no_date_specified">No date specified</string>
@@ -91,8 +84,11 @@
     <string name="report_a_problem">Report a problem</string>
     <string name="return_default">Return default</string>
     <string name="review">Review</string>
+    <string name="room">Room</string>
     <string name="room_number">Room number</string>
     <string name="room_number_not_specified">Room number not specified</string>
+    <string name="rooms">Rooms</string>
+    <string name="save">Save</string>
     <string name="saved_schedules">Saved schedules</string>
     <string name="schedule">Schedule</string>
     <string name="schedule_name">Schedule name</string>
@@ -106,6 +102,7 @@
     <string name="start_date">Start date</string>
     <string name="start_time">Start time</string>
     <string name="support">Support</string>
+    <string name="tag">Tag</string>
     <string name="telegram" translatable="false">Telegram</string>
     <string name="theme">Theme</string>
     <string name="time">Time</string>
@@ -113,6 +110,6 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="unable_load_news_list">Unable to load news list</string>
     <string name="unknown_error">Unknown error</string>
-    <string name="week">week</string>
+    <string name="week">Week</string>
     <string name="yes">Yes</string>
 </resources>
