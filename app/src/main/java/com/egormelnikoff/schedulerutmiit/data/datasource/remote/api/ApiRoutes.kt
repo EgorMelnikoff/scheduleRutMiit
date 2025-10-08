@@ -1,13 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.api
 
 object ApiRoutes {
-    private const val BASE_URL = "https://rut-miit.ru/data-service/data/"
-    const val GROUPS = "${BASE_URL}timetable/groups-catalog"
+    const val BASE_URL = "https://rut-miit.ru/"
+    private const val DATA = "data-service/data/"
 
-    const val GROUP_SCHEDULE = "${BASE_URL}timetable/v2/group/"
-    const val PERSON_SCHEDULE = "${BASE_URL}timetable/v2/person/"
-    const val ROOM_SCHEDULE = "${BASE_URL}timetable/v2/room/"
+    const val GROUPS = "${DATA}timetable/groups-catalog"
+    const val TIMETABLE = "${DATA}timetable/v2/{type}/{apiId}"
+    const val SCHEDULE = "${DATA}timetable/v2/{type}/{apiId}/{timetableId}"
 
-    const val NEWS_CATALOG = "${BASE_URL}news?idk_information_category=2&page_size=20"
-    const val NEWS = "${BASE_URL}news/"
+    const val NEWS_CATALOG = "${DATA}news?idk_information_category=2&page_size=20"
+    const val NEWS = "${DATA}news/{newsId}"
 }

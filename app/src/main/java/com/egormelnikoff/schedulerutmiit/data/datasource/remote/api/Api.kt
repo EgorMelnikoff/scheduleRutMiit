@@ -1,84 +1,46 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.api
 
-import com.egormelnikoff.schedulerutmiit.data.Result
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonSyntaxException
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.request.get
-import io.ktor.http.HttpStatusCode
-import java.net.URL
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.GROUPS
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.NEWS
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.NEWS_CATALOG
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.SCHEDULE
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.TIMETABLE
+import com.egormelnikoff.schedulerutmiit.model.Institutes
+import com.egormelnikoff.schedulerutmiit.model.News
+import com.egormelnikoff.schedulerutmiit.model.NewsList
+import com.egormelnikoff.schedulerutmiit.model.Schedule
+import com.egormelnikoff.schedulerutmiit.model.Timetables
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
+
 
 interface Api {
-    suspend fun getData(url: URL): Result<String>
-    fun <T> parseJson(jsonString: Result<String?>, classOfT: Class<T>): Result<T>
-}
+    @GET(GROUPS)
+    suspend fun getInstitutes(): Response<Institutes>
 
-class ApiImpl : Api {
-    private val httpClient = HttpClient(CIO) {
-        engine {
-            requestTimeout = 25000
-        }
-    }
+    @GET(TIMETABLE)
+    suspend fun getTimetables(
+        @Path("type") type: String,
+        @Path("apiId") apiId: String
+    ): Response<Timetables>
 
-    private val gson = GsonBuilder()
-        .registerTypeAdapter(
-            LocalDate::class.java,
-            JsonDeserializer { json, _, _ ->
-                LocalDate.parse(json.asString, DateTimeFormatter.ISO_DATE)
-            }
-        )
-        .registerTypeAdapter(
-            LocalDateTime::class.java,
-            JsonDeserializer { json, _, _ ->
-                LocalDateTime.parse(json.asString, DateTimeFormatter.ISO_ZONED_DATE_TIME)
+    @GET(SCHEDULE)
+    suspend fun getSchedule(
+        @Path("type") type: String,
+        @Path("apiId") apiId: String,
+        @Path("timetableId") timetableId: String?
+    ): Response<Schedule>
 
-            }
-        ).create()
+    @GET(NEWS_CATALOG)
+    suspend fun getNewsList(
+        @Query("from") fromPage: String,
+        @Query("to") toPage: String
+    ): Response<NewsList>
 
-
-    override suspend fun getData(url: URL): Result<String> {
-        return try {
-            val response = httpClient.get(url)
-
-            if (response.status == HttpStatusCode.OK) {
-                Result.Success(response.body<String>())
-            } else {
-                Result.Error(
-                    Exception("Error response code: ${response.status}")
-                )
-            }
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override fun <T> parseJson(jsonString: Result<String?>, classOfT: Class<T>): Result<T> {
-        return try {
-            when (jsonString) {
-                is Result.Success -> {
-                    if (!jsonString.data.isNullOrEmpty()) {
-                        Result.Success(gson.fromJson(jsonString.data, classOfT))
-                    } else {
-                        Result.Error(Exception("Empty JSON"))
-                    }
-                }
-
-                is Result.Error -> {
-                    Result.Error(jsonString.exception)
-                }
-            }
-        } catch (e: JsonSyntaxException) {
-            e.printStackTrace()
-            Result.Error(e)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Result.Error(e)
-        }
-    }
+    @GET(NEWS)
+    suspend fun getNewsById(
+        @Path("newsId") newsId: Long
+    ): Response<News>
 }
