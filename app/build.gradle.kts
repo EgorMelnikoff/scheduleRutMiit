@@ -1,8 +1,11 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.devtoolsKsp)
+    id ("dagger.hilt.android.plugin")
 }
 
 android {
@@ -13,8 +16,8 @@ android {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 26
         targetSdk = 36
-        versionCode = 15
-        versionName = "1.4.1"
+        versionCode = 16
+        versionName = "1.4.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,8 +35,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
     }
     buildFeatures {
         compose = true
@@ -44,8 +49,20 @@ dependencies {
     implementation (libs.google.gson)
     implementation (libs.jsoup)
     implementation(libs.androidx.room.ktx)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation (libs.androidx.runtime.livedata)
+    implementation (libs.androidx.datastore.preferences)
+    annotationProcessor(libs.androidx.room.room.compiler)
+    ksp(libs.androidx.room.room.compiler)
+    implementation (libs.hilt.android)
+    ksp (libs.hilt.android.compiler)
+
+    implementation (libs.androidx.hilt.lifecycle.viewmodel )
+    ksp (libs.androidx.hilt.compiler)
 
     implementation(libs.coil.compose)
     implementation(libs.androidx.core.ktx)
@@ -57,13 +74,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.navigation3.ui)
-    implementation (libs.androidx.runtime.livedata)
-    implementation (libs.androidx.datastore.preferences)
-    annotationProcessor(libs.androidx.room.room.compiler)
-    
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,5 +81,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    ksp(libs.androidx.room.room.compiler)
 }
