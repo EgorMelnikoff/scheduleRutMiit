@@ -134,19 +134,21 @@ fun SearchScheduleDialog(
             when {
                 searchUiState.isLoading -> LoadingScreen(
                     paddingTop = 0.dp,
-                    paddingBottom = 0.dp
+                    paddingBottom = externalPadding.calculateBottomPadding()
                 )
 
                 searchUiState.isEmptyQuery -> {
                     Empty(
                         imageVector = ImageVector.vectorResource(R.drawable.search),
-                        subtitle = LocalContext.current.getString(R.string.enter_your_query)
+                        subtitle = LocalContext.current.getString(R.string.enter_your_query),
+                        paddingBottom = externalPadding.calculateBottomPadding()
                     )
                 }
 
                 searchUiState.groups.isEmpty() && searchUiState.people.isEmpty() ->
                     Empty(
-                        subtitle = LocalContext.current.getString(R.string.nothing_found)
+                        subtitle = LocalContext.current.getString(R.string.nothing_found),
+                        paddingBottom = externalPadding.calculateBottomPadding()
                     )
 
                 else -> {
