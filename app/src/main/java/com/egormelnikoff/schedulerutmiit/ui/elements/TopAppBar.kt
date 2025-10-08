@@ -2,11 +2,7 @@ package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -94,11 +90,10 @@ fun ScheduleTopAppBar (
     expandedSchedulesMenu: Boolean,
     onShowExpandedMenu: (Boolean) -> Unit,
     onSetScheduleView: (Boolean) -> Unit,
-    onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit,
-    onSaveCurrentNamedSchedule: () -> Unit
+    onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit
 ) {
     val isNotEmpty = scheduleUiState.currentScheduleData!!.namedSchedule!!.schedules.isNotEmpty() && scheduleUiState.currentScheduleData.settledScheduleEntity != null
-    val isSomeSchedules = scheduleUiState.currentScheduleData.namedSchedule!!.schedules.size > 1
+    val isSomeSchedules = scheduleUiState.currentScheduleData.namedSchedule.schedules.size > 1
     val isCustomSchedule = scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.type == 3
     val rotationAngle by animateFloatAsState(
         targetValue = if (expandedSchedulesMenu) 180f else 0f
@@ -158,7 +153,7 @@ fun ScheduleTopAppBar (
             if (isNotEmpty && !isCustomSchedule) {
                 IconButton(
                     onClick = {
-                        val url = scheduleUiState.currentScheduleData.settledScheduleEntity?.downloadUrl
+                        val url = scheduleUiState.currentScheduleData.settledScheduleEntity.downloadUrl
                         val intent = Intent(Intent.ACTION_VIEW, url?.toUri())
                         context.startActivity(intent)
                     }
@@ -175,7 +170,7 @@ fun ScheduleTopAppBar (
             if (isNotEmpty && isCustomSchedule) {
                 IconButton(
                     onClick = {
-                        navigateToAddEvent(scheduleUiState.currentScheduleData.settledScheduleEntity!!)
+                        navigateToAddEvent(scheduleUiState.currentScheduleData.settledScheduleEntity)
                     }
                 ) {
                     Icon(
@@ -204,41 +199,19 @@ fun ScheduleTopAppBar (
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
-            AnimatedContent(
-                targetState = scheduleUiState.isSaved,
-                transitionSpec = {
-                    fadeIn() togetherWith fadeOut()
+            IconButton(
+                onClick = {
+                    onShowNamedScheduleDialog(
+                        scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity
+                    )
                 }
-            ) { isSaved ->
-                if (isSaved) {
-                    IconButton(
-                        onClick = {
-                            onShowNamedScheduleDialog(
-                                scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity
-                            )
-                        },
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.more_vert),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                } else {
-                    IconButton(
-                        onClick = {
-                            onSaveCurrentNamedSchedule()
-                        }
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.save),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
+            ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = ImageVector.vectorResource(R.drawable.more_vert),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
             }
         }
     )
