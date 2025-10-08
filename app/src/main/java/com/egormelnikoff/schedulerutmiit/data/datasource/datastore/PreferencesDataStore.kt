@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "Settings")
 
@@ -30,7 +31,7 @@ object PreferencesKeys {
     val SHOW_COUNT_CLASSES = booleanPreferencesKey(name = "show_count_classes")
 }
 
-class DataStore(
+class PreferencesDataStore @Inject constructor(
     private val context: Context
 ) {
     suspend fun setTheme(theme: String) {
