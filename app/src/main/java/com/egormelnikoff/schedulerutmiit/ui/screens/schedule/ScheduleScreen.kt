@@ -93,19 +93,24 @@ fun ScreenSchedule(
                 title = LocalContext.current.getString(R.string.error),
                 subtitle = LocalContext.current.getString(R.string.error_load_schedule),
                 paddingTop = externalPadding.calculateTopPadding(),
+                button = {
+                    CustomButton(
+                        buttonTitle = LocalContext.current.getString(R.string.return_default),
+                        imageVector = ImageVector.vectorResource(R.drawable.back),
+                        onClick = { onLoadInitialData() },
+                    )
+                },
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
         }
 
         scheduleUiState.currentScheduleData?.namedSchedule != null -> {
             Scaffold(
-                modifier = Modifier
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 topBar = {
                     ScheduleTopAppBar(
                         navigateToAddEvent = navigateToAddEvent,
                         onSetScheduleView = onSetScheduleView,
-                        onSaveCurrentNamedSchedule = onSaveCurrentNamedSchedule,
                         onShowExpandedMenu = onShowExpandedMenu,
                         onShowNamedScheduleDialog = { newValue ->
                             showNamedScheduleDialog = newValue
@@ -234,7 +239,9 @@ fun ScreenSchedule(
             },
             onLoadInitialData = if (!scheduleUiState.currentScheduleData!!.namedSchedule!!.namedScheduleEntity.isDefault) {
                 onLoadInitialData
-            } else null
+            } else null,
+            isSavedNamedSchedule = scheduleUiState.isSaved,
+            onSaveCurrentNamedSchedule = onSaveCurrentNamedSchedule
         )
     }
 
@@ -250,7 +257,7 @@ fun ScreenSchedule(
                 onDeleteNamedSchedule(
                     Pair(
                         scheduleUiState.currentScheduleData!!.namedSchedule!!.namedScheduleEntity.id,
-                        scheduleUiState.currentScheduleData.namedSchedule!!.namedScheduleEntity.isDefault
+                        scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.isDefault
                     )
                 )
             }
