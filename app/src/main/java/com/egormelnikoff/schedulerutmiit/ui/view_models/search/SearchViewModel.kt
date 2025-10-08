@@ -1,17 +1,15 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_models.search
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
-import com.egormelnikoff.schedulerutmiit.AppContainer
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.entity.Group
-import com.egormelnikoff.schedulerutmiit.data.repos.Repos
+import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
 import com.egormelnikoff.schedulerutmiit.model.Institute
 import com.egormelnikoff.schedulerutmiit.model.Institutes
 import com.egormelnikoff.schedulerutmiit.model.Person
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.Options
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 interface SearchViewModel {
     val uiState: StateFlow<SearchUiState>
@@ -34,24 +33,10 @@ data class SearchUiState(
     val isLoading: Boolean = false
 )
 
-class SearchViewModelImpl(
-    private val repos: Repos
+@HiltViewModel
+class SearchViewModelImpl @Inject constructor(
+    private val searchRepos: SearchRepos
 ) : ViewModel(), SearchViewModel {
-    companion object {
-        fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
-            return object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras
-                ): T {
-                    return SearchViewModelImpl(
-                        repos = container.repos
-                    ) as T
-                }
-            }
-        }
-    }
 
     private val _uiState = MutableStateFlow(SearchUiState())
     override val uiState = _uiState.asStateFlow()
@@ -112,7 +97,7 @@ class SearchViewModelImpl(
 
     private suspend fun searchGroup(query: String): List<Group> {
         if (_uiState.value.institutes == null) {
-            when (val institutes = repos.getInstitutes()) {
+            when (val institutes = searchRepos.getInstitutes()) {
                 is Result.Error -> {
                     _uiState.update {
                         it.copy(
@@ -158,7 +143,7 @@ class SearchViewModelImpl(
     }
 
     private suspend fun searchPerson(query: String): List<Person> {
-        return when (val professors = repos.getPeople(query)) {
+        return when (val professors = searchRepos.getPeople(query)) {
             is Result.Success -> professors.data
             is Result.Error -> emptyList()
         }

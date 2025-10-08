@@ -1,22 +1,21 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_models.settings
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
-import com.egormelnikoff.schedulerutmiit.AppContainer
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
+import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.AUTHOR_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.data.repos.Repos
+import com.egormelnikoff.schedulerutmiit.data.repos.settings.SettingsRepos
 import com.egormelnikoff.schedulerutmiit.model.TelegramPage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 interface SettingsViewModel {
     val stateAppInfo: StateFlow<AppInfoState>
@@ -31,25 +30,11 @@ sealed interface AppInfoState {
     ) : AppInfoState
 }
 
-
-class SettingsViewModelImpl(
-    private val repos: Repos,
-    private val dataStore: DataStore
+@HiltViewModel
+class SettingsViewModelImpl @Inject constructor(
+    private val settingsRepos: SettingsRepos,
+    private val dataStore: PreferencesDataStore
 ) : ViewModel(), SettingsViewModel {
-    companion object {
-        fun provideFactory(container: AppContainer): ViewModelProvider.Factory {
-            return object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-                    return SettingsViewModelImpl(
-                        repos = container.repos,
-                        dataStore = container.dataStore
-                    ) as T
-                }
-            }
-        }
-    }
-
     private val _stateAppInfo = MutableStateFlow<AppInfoState>(AppInfoState.Loading)
     private val _appSettings = MutableStateFlow<AppSettings?>(null)
 
@@ -67,7 +52,7 @@ class SettingsViewModelImpl(
         val newInfoJob = viewModelScope.launch {
             infoJob?.cancelAndJoin()
             _stateAppInfo.value = AppInfoState.Loading
-            val authorInfo = repos.getTgChannelInfo(AUTHOR_CHANNEL_URL)
+            val authorInfo = settingsRepos.getTgChannelInfo(AUTHOR_CHANNEL_URL)
 
             _stateAppInfo.value = AppInfoState.Loaded(
                 authorTelegramPage = when (authorInfo) {
