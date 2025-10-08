@@ -1,12 +1,7 @@
 package com.egormelnikoff.schedulerutmiit
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class ScheduleApplication : Application() {
-    lateinit var container: AppContainer
-
-    override fun onCreate() {
-        super.onCreate()
-        container = AppContainerImpl(this)
-    }
-}
+@HiltAndroidApp
+class ScheduleApplication : Application()
