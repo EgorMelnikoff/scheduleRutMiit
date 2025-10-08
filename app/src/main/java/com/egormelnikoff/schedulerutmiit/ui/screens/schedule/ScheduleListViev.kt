@@ -163,7 +163,7 @@ fun DateHeader(
                 )
             }
             Text(
-                text = "${LocalContext.current.getString(R.string.week)} $currentWeek",
+                text = "${LocalContext.current.getString(R.string.week).replaceFirstChar { it.lowercase() }} $currentWeek",
                 fontSize = 16.sp,
                 color = color
             )
