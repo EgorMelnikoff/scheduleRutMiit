@@ -57,7 +57,7 @@ fun NewsScreen(
 
     newsUiState: NewsState,
     newsGridListState: LazyStaggeredGridState,
-    paddingValues: PaddingValues,
+    externalPadding: PaddingValues,
 ) {
     Box {
         when {
@@ -70,8 +70,8 @@ fun NewsScreen(
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         end = 16.dp,
-                        top = paddingValues.calculateTopPadding() + 16.dp,
-                        bottom = paddingValues.calculateBottomPadding()
+                        top = externalPadding.calculateTopPadding() + 16.dp,
+                        bottom = externalPadding.calculateBottomPadding()
                     ),
                     state = newsGridListState
                 ) {
@@ -88,8 +88,8 @@ fun NewsScreen(
             }
 
             newsUiState.isLoading -> LoadingScreen(
-                paddingTop = paddingValues.calculateTopPadding(),
-                paddingBottom = paddingValues.calculateBottomPadding()
+                paddingTop = 0.dp,
+                paddingBottom = externalPadding.calculateBottomPadding()
             )
 
             newsUiState.isError ->
@@ -105,8 +105,8 @@ fun NewsScreen(
                             }
                         )
                     },
-                    paddingTop = paddingValues.calculateTopPadding(),
-                    paddingBottom = paddingValues.calculateBottomPadding()
+                    paddingTop = 0.dp,
+                    paddingBottom = externalPadding.calculateBottomPadding()
                 )
         }
         Box(
