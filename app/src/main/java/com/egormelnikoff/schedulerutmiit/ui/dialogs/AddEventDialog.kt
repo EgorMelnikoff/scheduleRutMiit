@@ -223,7 +223,7 @@ fun AddEventDialog(
                     color = MaterialTheme.colorScheme.outline
                 )
                 ListParam(
-                    title = LocalContext.current.getString(R.string.Room),
+                    title = LocalContext.current.getString(R.string.room),
                     elements = roomsList,
                     onAddElement = {
                         roomsList = (roomsList + DefaultEventParams.defaultRoom)
@@ -243,7 +243,7 @@ fun AddEventDialog(
                     )
                 }
                 ListParam(
-                    title = LocalContext.current.getString(R.string.Lecturers),
+                    title = LocalContext.current.getString(R.string.lecturers),
                     elements = lecturersList,
                     onAddElement = {
                         lecturersList = (lecturersList + DefaultEventParams.defaultLecturer)
@@ -264,7 +264,7 @@ fun AddEventDialog(
                     )
                 }
                 ListParam(
-                    title = LocalContext.current.getString(R.string.Groups),
+                    title = LocalContext.current.getString(R.string.groups),
                     elements = groupsList,
                     onAddElement = {
                         groupsList = (groupsList + DefaultEventParams.defaultGroup)

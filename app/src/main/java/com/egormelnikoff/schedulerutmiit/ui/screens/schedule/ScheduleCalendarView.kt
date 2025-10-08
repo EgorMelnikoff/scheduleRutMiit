@@ -64,7 +64,7 @@ fun ScheduleCalendarView(
             navigateToEvent = navigateToEvent,
             onDeleteEvent = onDeleteEvent,
             onUpdateHiddenEvent = onUpdateHiddenEvent,
-            scheduleEntity = scheduleUiState.currentScheduleData.settledScheduleEntity!!,
+            scheduleEntity = scheduleUiState.currentScheduleData.settledScheduleEntity,
             periodicEvents = scheduleUiState.currentScheduleData.periodicEventsForCalendar,
             nonPeriodicEvents = scheduleUiState.currentScheduleData.nonPeriodicEventsForCalendar,
             eventsExtraData = scheduleUiState.currentScheduleData.eventsExtraData,

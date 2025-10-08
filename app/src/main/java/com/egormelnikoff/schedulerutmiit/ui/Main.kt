@@ -34,7 +34,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.DataStore
+import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventDialog
@@ -66,7 +66,7 @@ fun Main(
     scheduleViewModel: ScheduleViewModel,
     newsViewModel: NewsViewModel,
     settingsViewModel: SettingsViewModel,
-    preferencesDataStore: DataStore,
+    preferencesDataStore: PreferencesDataStore,
 
     appSettings: AppSettings,
 ) {
@@ -339,6 +339,7 @@ fun Main(
                 entry<Routes.Review> {
                     ReviewScreen(
                         externalPadding = externalPadding,
+                        today = today,
                         navigateToSearch = {
                             appBackStack.navigateToDialog(Routes.SearchDialog)
                         },
@@ -434,6 +435,7 @@ fun Main(
 
                 entry<Routes.NewsList> {
                     NewsScreen(
+                        externalPadding = externalPadding,
                         onGetNewsList = { value ->
                             newsViewModel.getNewsList(value)
                         },
@@ -444,8 +446,7 @@ fun Main(
                             appBackStack.navigateToDialog(Routes.NewsDialog)
                         },
                         newsUiState = newsUiState,
-                        newsGridListState = newsListState,
-                        paddingValues = externalPadding
+                        newsGridListState = newsListState
                     )
                 }
 
@@ -471,6 +472,9 @@ fun Main(
                     EventDialog(
                         externalPadding = externalPadding,
                         onBack = { appBackStack.onBack() },
+                        navigateToSchedule = {
+                            appBackStack.navigateToPage(Routes.Schedule)
+                        },
                         onSearchNamedSchedule = { value ->
                             scheduleViewModel.getNamedScheduleFromApi(
                                 name = value.first,

@@ -62,7 +62,7 @@ fun ExpandedMenu(
                     onClick = {
                         setDefaultSchedule(
                             Triple(
-                                scheduleUiState.currentScheduleData.namedSchedule!!.namedScheduleEntity.id,
+                                scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.id,
                                 schedule.scheduleEntity.id,
                                 schedule.scheduleEntity.timetableId
                             )
