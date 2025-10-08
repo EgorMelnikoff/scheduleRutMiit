@@ -159,7 +159,7 @@ fun HorizontalCalendar(
                     }
                     Text(
                         textAlign = TextAlign.Center,
-                        text = "${LocalContext.current.getString(R.string.week)} $selectedWeek",
+                        text = "${LocalContext.current.getString(R.string.week).replaceFirstChar { it.lowercase() }} $selectedWeek",
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onBackground
                     )
