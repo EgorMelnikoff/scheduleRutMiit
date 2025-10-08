@@ -7,42 +7,29 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.ui.Main
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsViewModelImpl
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModelImpl
 import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModelImpl
 import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModelImpl
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var container: AppContainer
+    private val scheduleViewModel: ScheduleViewModelImpl by viewModels()
+    private val searchViewModel: SearchViewModelImpl by viewModels()
+    private val newsViewModel: NewsViewModelImpl by viewModels()
+    private  val settingsViewModel: SettingsViewModelImpl by viewModels()
+
+    @Inject
+    lateinit var preferencesDataStore: PreferencesDataStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        container = (applicationContext as ScheduleApplication).container
-
-        val searchViewModel: SearchViewModelImpl by viewModels {
-            SearchViewModelImpl.provideFactory(
-                container = container
-            )
-        }
-        val scheduleViewModel: ScheduleViewModelImpl by viewModels {
-            ScheduleViewModelImpl.provideFactory(
-                container = container
-            )
-        }
-        val newsViewModel: NewsViewModelImpl by viewModels {
-            NewsViewModelImpl.provideFactory(
-                container = container
-            )
-        }
-        val settingsViewModel: SettingsViewModelImpl by viewModels {
-            SettingsViewModelImpl.provideFactory(
-                container = container
-            )
-        }
 
         setContent {
             val appSettings by settingsViewModel.appSettings.collectAsStateWithLifecycle()
@@ -54,7 +41,7 @@ class MainActivity : ComponentActivity() {
                         scheduleViewModel = scheduleViewModel,
                         newsViewModel = newsViewModel,
                         settingsViewModel = settingsViewModel,
-                        preferencesDataStore = container.dataStore,
+                        preferencesDataStore = preferencesDataStore,
                         appSettings = settings
                     )
                 }
