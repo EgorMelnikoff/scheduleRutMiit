@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -69,7 +68,9 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeRed
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeViolet
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeYellow
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleUiState
+import java.time.DayOfWeek
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -79,7 +80,7 @@ import java.util.Locale
 @Composable
 fun ReviewScreen(
     externalPadding: PaddingValues,
-
+    today: LocalDate,
     navigateToAddSchedule: () -> Unit,
     navigateToSearch: () -> Unit,
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
@@ -150,18 +151,17 @@ fun ReviewScreen(
                         top = innerPadding.calculateTopPadding() + 16.dp,
                         bottom = externalPadding.calculateBottomPadding()
                     ),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (
                     scheduleUiState.defaultScheduleData?.namedSchedule != null
                     && scheduleUiState.defaultScheduleData.settledScheduleEntity != null
-                    && scheduleUiState.isSaved
                 ) {
                     EventsReview(
+                        displayedDate = today.plusDays(1),
                         navigateToEvent = navigateToEvent,
                         scheduleUiState = scheduleUiState
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
                 }
                 ExpandedItem(
                     title = LocalContext.current.getString(R.string.saved_schedules),
@@ -188,7 +188,7 @@ fun ReviewScreen(
                         onChangeVisibility = onChangeHiddenEventsVisibility
                     ) {
                         ColumnGroup(
-                            items = scheduleUiState.currentScheduleData!!.hiddenEvents.map {
+                            items = scheduleUiState.currentScheduleData.hiddenEvents.map {
                                 {
                                     val eventExtraData =
                                         scheduleUiState.currentScheduleData.eventsExtraData.find { event -> it.id == event.id }
@@ -246,7 +246,8 @@ fun ReviewScreen(
                 },
                 onDismiss = {
                     showNamedScheduleDialog = null
-                }
+                },
+                isSavedNamedSchedule = true
             )
         }
 
@@ -304,10 +305,7 @@ fun ExpandedItem(
             )
             Icon(
                 modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(8.dp)
+                    .size(24.dp)
                     .graphicsLayer(
                         rotationZ = rotationAngle
                     ),
@@ -331,8 +329,10 @@ fun ExpandedItem(
 
 @Composable
 fun EventsReview(
-    scheduleUiState: ScheduleUiState,
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
+    displayedDate: LocalDate,
+    scheduleUiState: ScheduleUiState,
+
 ) {
     Column(
         modifier = Modifier
@@ -353,8 +353,11 @@ fun EventsReview(
                     )
                 }, {
                     EventsCount(
-                        title = LocalContext.current.getString(R.string.week)
-                            .replaceFirstChar { it.uppercase() },
+                        title = if (displayedDate.dayOfWeek != DayOfWeek.SUNDAY) {
+                            LocalContext.current.getString(R.string.week)
+                        } else {
+                            LocalContext.current.getString(R.string.next_week)
+                        },
                         value = scheduleUiState.defaultScheduleData!!.countEventsForWeek.toString(),
                         comment = LocalResources.current.getQuantityString(
                             R.plurals.events,
@@ -562,7 +565,7 @@ fun NamedScheduleItem(
             )
             if (namedScheduleEntity.type != 3) {
                 Text(
-                    text = "${LocalContext.current.getString(R.string.Current_on)} $lastTimeUpdate",
+                    text = "${LocalContext.current.getString(R.string.current_on)} $lastTimeUpdate",
                     fontSize = 12.sp,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1, style = TextStyle(
