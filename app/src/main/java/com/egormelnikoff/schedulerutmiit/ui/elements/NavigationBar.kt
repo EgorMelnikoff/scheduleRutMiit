@@ -40,8 +40,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.ui.AppBackStack
-import com.egormelnikoff.schedulerutmiit.ui.Routes
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Routes
 
 data class BarItem(
     val title: String,

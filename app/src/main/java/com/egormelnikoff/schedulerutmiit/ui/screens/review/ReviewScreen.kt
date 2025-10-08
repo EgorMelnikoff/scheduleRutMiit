@@ -165,6 +165,7 @@ fun ReviewScreen(
                 }
                 ExpandedItem(
                     title = LocalContext.current.getString(R.string.saved_schedules),
+                    imageVector = ImageVector.vectorResource(R.drawable.save),
                     visible = visibleSavedSchedules,
                     onChangeVisibility = onChangeSavedSchedulesVisibility
                 ) {
@@ -184,6 +185,7 @@ fun ReviewScreen(
                 if (!scheduleUiState.currentScheduleData?.hiddenEvents.isNullOrEmpty()) {
                     ExpandedItem(
                         title = LocalContext.current.getString(R.string.hidden_events),
+                        imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
                         visible = visibleHiddenEvents,
                         onChangeVisibility = onChangeHiddenEventsVisibility
                     ) {
@@ -275,6 +277,7 @@ fun ReviewScreen(
 @Composable
 fun ExpandedItem(
     title: String,
+    imageVector: ImageVector? = null,
     visible: Boolean,
     onChangeVisibility: (Boolean) -> Unit,
     content: @Composable () -> Unit
@@ -294,6 +297,14 @@ fun ExpandedItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            if (imageVector != null) {
+                Icon(
+                    modifier = Modifier.size(20.dp),
+                    imageVector = imageVector,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = null
+                )
+            }
             Text(
                 modifier = Modifier.weight(1f),
                 text = title,

@@ -45,6 +45,8 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.BarItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Routes
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleCalendarState
