@@ -39,7 +39,9 @@ fun DialogNamedScheduleActions(
     onSelectDefault: () -> Unit,
     onDelete: () -> Unit,
     onLoadInitialData: (() -> Unit)? = null,
+    onSaveCurrentNamedSchedule: (() -> Unit)? = null,
     namedScheduleEntity: NamedScheduleEntity,
+    isSavedNamedSchedule: Boolean,
 ) {
     CustomModalBottomSheet(
         modifier = Modifier.padding(horizontal = 8.dp),
@@ -79,16 +81,28 @@ fun DialogNamedScheduleActions(
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
         }
+        if (isSavedNamedSchedule) {
+            ActionDialogButton(
+                onClick = {
+                    onDelete()
+                    onDismiss(null)
+                },
+                icon = ImageVector.vectorResource(R.drawable.delete),
+                title = LocalContext.current.getString(R.string.delete),
+                contentColor = MaterialTheme.colorScheme.error
+            )
+        } else if (onSaveCurrentNamedSchedule != null) {
+            ActionDialogButton(
+                onClick = {
+                    onSaveCurrentNamedSchedule()
+                    onDismiss(null)
+                },
+                icon = ImageVector.vectorResource(R.drawable.save),
+                title = LocalContext.current.getString(R.string.save),
+                contentColor = MaterialTheme.colorScheme.onBackground
+            )
+        }
 
-        ActionDialogButton(
-            onClick = {
-                onDelete()
-                onDismiss(null)
-            },
-            icon = ImageVector.vectorResource(R.drawable.delete),
-            title = LocalContext.current.getString(R.string.delete),
-            contentColor = MaterialTheme.colorScheme.error
-        )
         if (onLoadInitialData != null) {
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
