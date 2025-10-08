@@ -62,6 +62,7 @@ import java.time.ZoneOffset
 fun EventDialog(
     externalPadding: PaddingValues,
     onBack: () -> Unit,
+    navigateToSchedule: () -> Unit,
     onSearchNamedSchedule: (Triple<String, String, Int>) -> Unit,
     onEventExtraChange: (Pair<String, Int>) -> Unit,
     onDeleteEvent: (Long) -> Unit,
@@ -94,7 +95,7 @@ fun EventDialog(
     }"
 
     val eventString = StringBuilder().apply {
-        append("${LocalContext.current.getString(R.string.Class)}: ${event.name}")
+        append("${LocalContext.current.getString(R.string._class)}: ${event.name}")
         if (event.typeName != null) {
             append("\n${LocalContext.current.getString(R.string.class_type)}: ${event.typeName}")
         }
@@ -109,7 +110,7 @@ fun EventDialog(
         }
 
         if (!event.lecturers.isNullOrEmpty()) {
-            append("\n${LocalContext.current.getString(R.string.Lecturers)}: ${event.lecturers.joinToString { it.shortFio.toString() }}")
+            append("\n${LocalContext.current.getString(R.string.lecturers)}: ${event.lecturers.joinToString { it.shortFio.toString() }}")
         }
 
         if (!event.groups.isNullOrEmpty()) {
@@ -213,7 +214,7 @@ fun EventDialog(
             )
             if (!event.rooms.isNullOrEmpty()) {
                 ColumnGroup(
-                    title = context.getString(R.string.Room),
+                    title = context.getString(R.string.room),
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = event.rooms.map { room ->
                         {
@@ -221,7 +222,7 @@ fun EventDialog(
                                 title = room.hint.toString(),
                                 onClick = if (!isCustomSchedule) {
                                     {
-                                        onBack()
+                                        navigateToSchedule()
                                         onSearchNamedSchedule(
                                             Triple(
                                                 room.name!!,
@@ -239,7 +240,7 @@ fun EventDialog(
             }
             if (!event.groups.isNullOrEmpty() && !isCustomSchedule) {
                 ColumnGroup(
-                    title = context.getString(R.string.Groups),
+                    title = context.getString(R.string.groups),
                     titleColor = MaterialTheme.colorScheme.primary,
                     withBackground = false,
                     items = listOf {
@@ -258,7 +259,7 @@ fun EventDialog(
                                         .defaultMinSize(minWidth = 80.dp)
                                         .clickable(
                                             onClick = {
-                                                onBack()
+                                                navigateToSchedule()
                                                 onSearchNamedSchedule(
                                                     Triple(
                                                         group.name!!,
@@ -286,7 +287,7 @@ fun EventDialog(
             }
             if (!event.lecturers.isNullOrEmpty()) {
                 ColumnGroup(
-                    title = context.getString(R.string.Lecturers),
+                    title = context.getString(R.string.lecturers),
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = event.lecturers.map { lecturer ->
                         {
@@ -294,7 +295,7 @@ fun EventDialog(
                                 title = lecturer.fullFio.toString(),
                                 onClick = if (!isCustomSchedule) {
                                     {
-                                        onBack()
+                                        navigateToSchedule()
                                         onSearchNamedSchedule(
                                             Triple(
                                                 lecturer.fullFio!!,
@@ -329,7 +330,7 @@ fun EventDialog(
                                 autoCorrectEnabled = false,
                                 imeAction = ImeAction.Default
                             ),
-                            placeholderText = LocalContext.current.getString(R.string.Enter_comment),
+                            placeholderText = LocalContext.current.getString(R.string.enter_comment),
                             trailingIcon = {
                                 AnimatedVisibility(
                                     visible = comment != "",
@@ -354,7 +355,7 @@ fun EventDialog(
                     }
                 )
                 ColumnGroup(
-                    title = LocalContext.current.getString(R.string.Tag),
+                    title = LocalContext.current.getString(R.string.tag),
                     titleColor = MaterialTheme.colorScheme.primary,
                     withBackground = false,
                     items = listOf {
