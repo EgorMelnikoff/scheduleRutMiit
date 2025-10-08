@@ -17,6 +17,7 @@ import okio.IOException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
+import javax.inject.Inject
 
 interface Parser {
     suspend fun parsePeople(url: String): Result<List<Person>>
@@ -25,7 +26,7 @@ interface Parser {
     fun parseNews(news: News): News
 }
 
-class ParserImpl : Parser {
+class ParserImpl @Inject constructor() : Parser {
     override suspend fun parsePeople(url: String): Result<List<Person>> {
         return withContext(Dispatchers.IO) {
             val document = Jsoup.connect(url).get()
