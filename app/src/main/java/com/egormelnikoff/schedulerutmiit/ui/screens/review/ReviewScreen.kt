@@ -1,10 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.review
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,9 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
@@ -57,6 +50,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
+import com.egormelnikoff.schedulerutmiit.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
@@ -147,21 +141,22 @@ fun ReviewScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(
-                        start = 8.dp, end = 8.dp,
+                        start = 16.dp, end = 16.dp,
                         top = innerPadding.calculateTopPadding() + 16.dp,
                         bottom = externalPadding.calculateBottomPadding()
                     ),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (
                     scheduleUiState.defaultScheduleData?.namedSchedule != null
                     && scheduleUiState.defaultScheduleData.settledScheduleEntity != null
                 ) {
                     EventsReview(
-                        displayedDate = today.plusDays(1),
+                        displayedDate = today,
                         navigateToEvent = navigateToEvent,
                         scheduleUiState = scheduleUiState
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
                 ExpandedItem(
                     title = LocalContext.current.getString(R.string.saved_schedules),
@@ -274,80 +269,15 @@ fun ReviewScreen(
     }
 }
 
-@Composable
-fun ExpandedItem(
-    title: String,
-    imageVector: ImageVector? = null,
-    visible: Boolean,
-    onChangeVisibility: (Boolean) -> Unit,
-    content: @Composable () -> Unit
-) {
-    val rotationAngle by animateFloatAsState(
-        targetValue = if (visible) 180f else 0f,
-    )
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .clickable { onChangeVisibility(!visible) }
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            if (imageVector != null) {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    imageVector = imageVector,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    contentDescription = null
-                )
-            }
-            Text(
-                modifier = Modifier.weight(1f),
-                text = title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Icon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .graphicsLayer(
-                        rotationZ = rotationAngle
-                    ),
-                imageVector = ImageVector.vectorResource(R.drawable.down),
-                contentDescription = null
-            )
-        }
-        Spacer(
-            modifier = Modifier.height(8.dp)
-        )
-        AnimatedVisibility(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            visible = visible,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
-            content.invoke()
-        }
-    }
-}
 
 @Composable
 fun EventsReview(
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
     displayedDate: LocalDate,
-    scheduleUiState: ScheduleUiState,
-
+    scheduleUiState: ScheduleUiState
 ) {
     Column(
         modifier = Modifier
-            .padding(horizontal = 8.dp)
             .animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
