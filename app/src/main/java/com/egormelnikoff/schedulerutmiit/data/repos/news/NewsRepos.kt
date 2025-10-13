@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.news
 
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.Api
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.model.News
 import com.egormelnikoff.schedulerutmiit.model.NewsList
@@ -14,7 +14,7 @@ interface NewsRepos {
 }
 
 class NewsReposImpl @Inject constructor(
-    private val api: Api,
+    private val miitApi: MiitApi,
     private val parser: Parser
 ) : NewsRepos {
     override fun parseNews(news: News): News {
@@ -23,7 +23,7 @@ class NewsReposImpl @Inject constructor(
 
     override suspend fun getNewsList(page: String): Result<NewsList> {
         return try {
-            val newsList = api.getNewsList(fromPage = page, toPage = page)
+            val newsList = miitApi.getNewsList(fromPage = page, toPage = page)
             if (newsList.isSuccessful && newsList.body() != null) {
                 Result.Success(newsList.body()!!)
             } else {
@@ -36,7 +36,7 @@ class NewsReposImpl @Inject constructor(
 
     override suspend fun getNewsById(id: Long): Result<News> {
         return try {
-            val news = api.getNewsById(id)
+            val news = miitApi.getNewsById(id)
             if (news.isSuccessful && news.body() != null) {
                 Result.Success(news.body()!!)
             } else {

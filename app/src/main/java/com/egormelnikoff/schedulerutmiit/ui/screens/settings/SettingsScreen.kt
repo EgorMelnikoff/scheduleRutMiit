@@ -35,8 +35,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup

@@ -314,7 +314,8 @@ fun ClickableItem(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
-                    else -> { }
+
+                    else -> {}
                 }
             }
         } ?: imageVector?.let {

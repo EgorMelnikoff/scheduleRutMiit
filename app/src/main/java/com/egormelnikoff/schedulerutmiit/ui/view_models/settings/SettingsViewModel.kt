@@ -3,8 +3,8 @@ package com.egormelnikoff.schedulerutmiit.ui.view_models.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.AUTHOR_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.data.repos.settings.SettingsRepos
 import com.egormelnikoff.schedulerutmiit.model.TelegramPage

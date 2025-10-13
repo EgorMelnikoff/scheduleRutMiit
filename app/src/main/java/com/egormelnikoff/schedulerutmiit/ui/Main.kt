@@ -33,8 +33,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.datasource.datastore.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventDialog
@@ -181,7 +181,7 @@ fun Main(
         BarItem(
             title = LocalContext.current.getString(R.string.review),
             icon = ImageVector.vectorResource(R.drawable.review),
-            selectedIcon = ImageVector.vectorResource(R.drawable.review),
+            selectedIcon = ImageVector.vectorResource(R.drawable.review_fill),
             route = Routes.Review,
             onClick = {
                 if (appBackStack.last() is Routes.SearchDialog || appBackStack.last() is Routes.AddScheduleDialog) {

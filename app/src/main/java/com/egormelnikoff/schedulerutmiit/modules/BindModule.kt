@@ -38,5 +38,4 @@ abstract class BindModule {
     @Binds
     @Singleton
     abstract fun bindParser(parserImpl: ParserImpl): Parser
-
 }

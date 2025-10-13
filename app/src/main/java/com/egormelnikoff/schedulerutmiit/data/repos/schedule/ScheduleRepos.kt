@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.schedule
 
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.NamedScheduleDao
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.Api
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedScheduleDao
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
@@ -110,9 +110,9 @@ interface ScheduleRepos {
 }
 
 class ScheduleReposImpl @Inject constructor(
-    private val namedScheduleDao: NamedScheduleDao,
-    private val api: Api,
-    private val parser: Parser
+    private val miitApi: MiitApi,
+    private val parser: Parser,
+    private val namedScheduleDao: NamedScheduleDao
 ) : ScheduleRepos {
     companion object {
         val SCHEDULE_UPDATE_THRESHOLD_MS = TimeUnit.HOURS.toMillis(6)
@@ -263,9 +263,9 @@ class ScheduleReposImpl @Inject constructor(
                     val schedules = mutableListOf<Schedule>()
                     for (timetable in timetables.data.timetables) {
                         val schedule = when (type) {
-                            0 -> api.getSchedule(type = "group", apiId = apiId, timetable.id)
-                            1 -> api.getSchedule(type = "person", apiId = apiId, timetable.id)
-                            2 -> api.getSchedule(type = "room", apiId = apiId, timetable.id)
+                            0 -> miitApi.getSchedule(type = "group", apiId = apiId, timetable.id)
+                            1 -> miitApi.getSchedule(type = "person", apiId = apiId, timetable.id)
+                            2 -> miitApi.getSchedule(type = "room", apiId = apiId, timetable.id)
                             else -> Response.success(null)
                         }
 
@@ -317,9 +317,9 @@ class ScheduleReposImpl @Inject constructor(
     ): Result<Timetables> {
         return try {
             val timetables = when (type) {
-                0 -> api.getTimetables("group", apiId)
-                1 -> api.getTimetables("person", apiId)
-                2 -> api.getTimetables("room", apiId)
+                0 -> miitApi.getTimetables("group", apiId)
+                1 -> miitApi.getTimetables("person", apiId)
+                2 -> miitApi.getTimetables("room", apiId)
                 else -> Response.success(null)
             }
             if (timetables.isSuccessful && timetables.body() != null) {
