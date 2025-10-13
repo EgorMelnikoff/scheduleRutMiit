@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.api
 
-object ApiRoutes {
+object MiitApiRoutes {
     const val BASE_URL = "https://rut-miit.ru/"
     private const val DATA = "data-service/data/"
 

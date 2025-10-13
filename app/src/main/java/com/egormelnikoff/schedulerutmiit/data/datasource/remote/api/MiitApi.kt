@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.api
 
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.GROUPS
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.NEWS
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.NEWS_CATALOG
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.SCHEDULE
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiRoutes.TIMETABLE
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiRoutes.GROUPS
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiRoutes.NEWS
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiRoutes.NEWS_CATALOG
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiRoutes.SCHEDULE
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiRoutes.TIMETABLE
 import com.egormelnikoff.schedulerutmiit.model.Institutes
 import com.egormelnikoff.schedulerutmiit.model.News
 import com.egormelnikoff.schedulerutmiit.model.NewsList
@@ -15,8 +15,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-
-interface Api {
+interface MiitApi {
     @GET(GROUPS)
     suspend fun getInstitutes(): Response<Institutes>
 
