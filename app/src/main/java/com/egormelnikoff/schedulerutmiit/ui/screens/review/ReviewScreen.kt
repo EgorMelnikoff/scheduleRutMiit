@@ -2,14 +2,11 @@ package com.egormelnikoff.schedulerutmiit.ui.screens.review
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,6 +43,7 @@ import com.egormelnikoff.schedulerutmiit.data.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.DialogNamedScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
@@ -93,6 +91,8 @@ fun ReviewScreen(
 ) {
     var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
     var showDeleteNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    val dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:MM")
 
     Scaffold(
         topBar = {
@@ -156,7 +156,7 @@ fun ReviewScreen(
                         navigateToEvent = navigateToEvent,
                         scheduleUiState = scheduleUiState
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
                 ExpandedItem(
                     title = LocalContext.current.getString(R.string.saved_schedules),
@@ -167,11 +167,34 @@ fun ReviewScreen(
                     ColumnGroup(
                         items = scheduleUiState.savedNamedSchedules.map { namedScheduleEntity ->
                             {
-                                NamedScheduleItem(
-                                    namedScheduleEntity = namedScheduleEntity,
-                                    onShowActionsDialog = {
+                                val formatter =
+                                    DateTimeFormatter.ofPattern("d MMM, HH:mm", Locale.getDefault())
+                                val lastTimeUpdate =
+                                    formatter.format(
+                                        LocalDateTime.ofInstant(
+                                            Instant.ofEpochMilli(namedScheduleEntity.lastTimeUpdate),
+                                            ZoneId.systemDefault()
+                                        )
+                                    )
+
+                                ClickableItem(
+                                    title = namedScheduleEntity.shortName,
+                                    subtitle = if (namedScheduleEntity.type != 3) {
+                                        "${LocalContext.current.getString(R.string.current_on)} $lastTimeUpdate"
+                                    } else null,
+                                    onClick = {
                                         showNamedScheduleDialog = namedScheduleEntity
-                                    }
+                                    },
+                                    trailingIcon = if (namedScheduleEntity.isDefault) {
+                                        {
+                                            Icon(
+                                                modifier = Modifier.size(20.dp),
+                                                imageVector = ImageVector.vectorResource(R.drawable.check),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    } else null
                                 )
                             }
                         }
@@ -189,11 +212,42 @@ fun ReviewScreen(
                                 {
                                     val eventExtraData =
                                         scheduleUiState.currentScheduleData.eventsExtraData.find { event -> it.id == event.id }
-
-                                    HiddenEvent(
-                                        event = it,
-                                        onShowEvent = onShowEvent,
-                                        navigateToEvent = {
+                                    ClickableItem(
+                                        title = it.name!!,
+                                        subtitle = if (it.recurrenceRule != null) {
+                                            val day = it.startDatetime!!.dayOfWeek.getDisplayName(
+                                                java.time.format.TextStyle.FULL,
+                                                Locale.getDefault()
+                                            ).replaceFirstChar { c -> c.uppercase() }
+                                            val startTime = it.startDatetime.atZone(ZoneOffset.UTC)
+                                                .withZoneSameInstant(ZoneId.systemDefault())
+                                                .toLocalTime().format(timeFormatter)
+                                            val endTime = it.endDatetime!!.atZone(ZoneOffset.UTC)
+                                                .withZoneSameInstant(ZoneId.systemDefault())
+                                                .toLocalTime().format(timeFormatter)
+                                            "$day, $startTime - $endTime"
+                                        } else {
+                                            it.startDatetime!!.format(dateTimeFormatter)
+                                        },
+                                        trailingIcon = {
+                                            IconButton(
+                                                onClick = {
+                                                    onShowEvent(it.id)
+                                                },
+                                                colors = IconButtonDefaults.iconButtonColors().copy(
+                                                    contentColor = MaterialTheme.colorScheme.onSurface
+                                                )
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier
+                                                        .size(24.dp),
+                                                    imageVector = ImageVector.vectorResource(R.drawable.visibility),
+                                                    contentDescription = null
+                                                )
+                                            }
+                                        },
+                                        showClickLabel = false,
+                                        onClick = {
                                             navigateToEvent(Pair(it, eventExtraData))
                                         }
                                     )
@@ -323,10 +377,34 @@ fun EventsReview(
 
                     if (eventExtraData != null && eventExtraData.comment != "") {
                         {
-                            EventExtra(
-                                event = event,
-                                eventExtraData = eventExtraData,
-                                onCLick = {
+                            ClickableItem(
+                                title = event.name!!,
+                                subtitle = eventExtraData.comment,
+                                showClickLabel = false,
+                                subtitleLabel = if (eventExtraData.tag != 0) {
+                                    val color = when (eventExtraData.tag) {
+                                        1 -> darkThemeRed
+                                        2 -> darkThemeOrange
+                                        3 -> darkThemeYellow
+                                        4 -> darkThemeGreen
+                                        5 -> darkThemeLightBlue
+                                        6 -> darkThemeBlue
+                                        7 -> darkThemeViolet
+                                        8 -> darkThemePink
+                                        else -> Color.Unspecified
+                                    }
+                                    {
+                                        Canvas(
+                                            modifier = Modifier.size(8.dp)
+                                        ) {
+                                            drawCircle(
+                                                color = color,
+                                                center = center
+                                            )
+                                        }
+                                    }
+                                } else null,
+                                onClick = {
                                     navigateToEvent(Pair(event, eventExtraData))
                                 }
                             )
@@ -392,228 +470,6 @@ fun EventsCount(
                 ),
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
-}
-
-@Composable
-fun EventExtra(
-    event: Event,
-    eventExtraData: EventExtraData,
-    onCLick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onCLick() }
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = event.name!!,
-            fontSize = 16.sp,
-            maxLines = 2,
-            fontWeight = FontWeight.Bold,
-            style = TextStyle(
-                platformStyle = PlatformTextStyle(
-                    includeFontPadding = false
-                )
-            ),
-            overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        if (eventExtraData.comment != "") {
-            val color = when (eventExtraData.tag) {
-                1 -> darkThemeRed
-                2 -> darkThemeOrange
-                3 -> darkThemeYellow
-                4 -> darkThemeGreen
-                5 -> darkThemeLightBlue
-                6 -> darkThemeBlue
-                7 -> darkThemeViolet
-                8 -> darkThemePink
-                else -> Color.Unspecified
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (eventExtraData.tag != 0) {
-                    Canvas(
-                        modifier = Modifier.size(8.dp)
-                    ) {
-                        drawCircle(
-                            color = color,
-                            center = center
-                        )
-                    }
-                }
-                Text(
-                    text = eventExtraData.comment,
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    style = TextStyle(
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        )
-                    ),
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun NamedScheduleItem(
-    onShowActionsDialog: () -> Unit,
-    namedScheduleEntity: NamedScheduleEntity
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
-            .clickable {
-                onShowActionsDialog()
-            }
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .defaultMinSize(minHeight = 52.dp),
-    ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            val instant = Instant.ofEpochMilli(namedScheduleEntity.lastTimeUpdate)
-            val formatter = DateTimeFormatter.ofPattern("d MMM, HH:mm", Locale.getDefault())
-            val lastTimeUpdate =
-                formatter.format(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()))
-            Text(
-                text = namedScheduleEntity.shortName,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            if (namedScheduleEntity.type != 3) {
-                Text(
-                    text = "${LocalContext.current.getString(R.string.current_on)} $lastTimeUpdate",
-                    fontSize = 12.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1, style = TextStyle(
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        )
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
-        if (namedScheduleEntity.isDefault) {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.check),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-        Icon(
-            modifier = Modifier.size(24.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.right),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface
-        )
-    }
-}
-
-@Composable
-fun HiddenEvent(
-    event: Event,
-    navigateToEvent: () -> Unit,
-    onShowEvent: (Long) -> Unit,
-) {
-    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-    val dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:MM")
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { navigateToEvent() }
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Text(
-                text = event.name!!,
-                fontSize = 16.sp,
-                maxLines = 2,
-                fontWeight = FontWeight.Bold,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = if (event.recurrenceRule != null) {
-                        val day = event.startDatetime!!.dayOfWeek.getDisplayName(
-                            java.time.format.TextStyle.FULL,
-                            Locale.getDefault()
-                        ).replaceFirstChar { it.uppercase() }
-                        val startTime = event.startDatetime.atZone(ZoneOffset.UTC)
-                            .withZoneSameInstant(ZoneId.systemDefault())
-                            .toLocalTime().format(timeFormatter)
-                        val endTime = event.endDatetime!!.atZone(ZoneOffset.UTC)
-                            .withZoneSameInstant(ZoneId.systemDefault())
-                            .toLocalTime().format(timeFormatter)
-                        "$day, $startTime - $endTime"
-                    } else {
-                        event.startDatetime!!.format(dateTimeFormatter)
-                    },
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    style = TextStyle(
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        )
-                    ),
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-        }
-        IconButton(
-            onClick = {
-                onShowEvent(event.id)
-            },
-            colors = IconButtonDefaults.iconButtonColors().copy(
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
-        ) {
-            Icon(
-                modifier = Modifier
-                    .size(24.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.visibility),
-                contentDescription = null
             )
         }
     }
