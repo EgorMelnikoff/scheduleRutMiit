@@ -1,46 +1,21 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local
+package com.egormelnikoff.schedulerutmiit.data.datasource.local.database
 
+import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.egormelnikoff.schedulerutmiit.data.entity.Group
 import com.egormelnikoff.schedulerutmiit.data.entity.Lecturer
 import com.egormelnikoff.schedulerutmiit.data.entity.Room
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonPrimitive
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonSerializer
-
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.lang.reflect.Type
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-
-class LocalDateTimeSerializer : JsonSerializer<LocalDateTime> {
-    override fun serialize(
-        src: LocalDateTime?,
-        typeOfSrc: Type?,
-        context: JsonSerializationContext?
-    ): JsonElement {
-        val formattedDateTime = src?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-        return JsonPrimitive(formattedDateTime)
-    }
-}
-
-class Converters {
-
-    private val gson = GsonBuilder()
-        .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-        .registerTypeAdapter(
-            LocalDateTime::class.java,
-            JsonDeserializer { json, _, _ ->
-                LocalDateTime.parse(json.asString, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-            }
-        ).create()
-
-
+@ProvidedTypeConverter
+class Converters @Inject constructor(
+    private val gson: Gson
+) {
     @TypeConverter
     fun fromListLecturer(lecturers: List<Lecturer>?): String? {
         if (lecturers == null) {
@@ -94,7 +69,7 @@ class Converters {
 
 
     @TypeConverter
-    fun toLocalDateString (localDate: LocalDate?): String? {
+    fun toLocalDateString(localDate: LocalDate?): String? {
         if (localDate != null) {
             return localDate.format(DateTimeFormatter.ISO_DATE)
         }
@@ -102,7 +77,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun toLocalDate (localDateString: String?): LocalDate? {
+    fun toLocalDate(localDateString: String?): LocalDate? {
         if (localDateString != null) {
             return LocalDate.parse(localDateString, DateTimeFormatter.ISO_DATE)
         }
@@ -110,7 +85,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun toLocalDateTimeString (localDateTime: LocalDateTime?): String? {
+    fun toLocalDateTimeString(localDateTime: LocalDateTime?): String? {
         if (localDateTime != null) {
             return localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         }
@@ -118,7 +93,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun toLocalDateTime (localDateTimeString: String?): LocalDateTime? {
+    fun toLocalDateTime(localDateTimeString: String?): LocalDateTime? {
         if (localDateTimeString != null) {
             return LocalDateTime.parse(localDateTimeString, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         }

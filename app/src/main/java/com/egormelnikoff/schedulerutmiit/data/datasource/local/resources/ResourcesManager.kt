@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.resources
+package com.egormelnikoff.schedulerutmiit.data.datasource.local.resources
 
 import android.content.Context
 import android.graphics.drawable.Drawable
