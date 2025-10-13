@@ -180,6 +180,7 @@ fun SearchScheduleDialog(
                                     ClickableItem(
                                         padding = 8.dp,
                                         title = group.name!!,
+                                        showClickLabel = false,
                                         onClick = {
                                             onSearchSchedule(
                                                 Triple(
@@ -213,6 +214,7 @@ fun SearchScheduleDialog(
                                         title = person.name!!,
                                         subtitle = person.position!!,
                                         subtitleMaxLines = 3,
+                                        showClickLabel = false,
                                         imageUrl = "https://www.miit.ru/content/e${person.id}.jpg?id_fe=${person.id}&SWidth=100",
                                         imageUrlErrorTextSize = 20,
                                         imageSize = 60.dp,
