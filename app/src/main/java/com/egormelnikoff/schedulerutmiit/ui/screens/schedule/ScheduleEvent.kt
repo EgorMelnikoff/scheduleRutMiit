@@ -408,7 +408,7 @@ fun Comment(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(top = 4.dp)
     ) {
         Icon(
             modifier = Modifier
