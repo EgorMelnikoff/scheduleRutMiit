@@ -19,7 +19,7 @@ roomRuntime = "2.8.2"
 runtimeLivedata = "1.9.3"
 ksp = "2.2.20-2.0.3"
 material3 = "1.4.0"
-navigation3 = "1.0.0-alpha11"
+navigation3 = "1.0.0-alpha10"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
