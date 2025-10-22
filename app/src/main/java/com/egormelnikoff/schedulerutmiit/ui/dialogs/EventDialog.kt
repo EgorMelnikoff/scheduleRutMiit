@@ -47,8 +47,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -220,6 +220,7 @@ fun EventDialog(
                         {
                             ClickableItem(
                                 title = room.hint.toString(),
+                                titleMaxLines = 2,
                                 onClick = if (!isCustomSchedule) {
                                     {
                                         navigateToSchedule()
@@ -293,6 +294,7 @@ fun EventDialog(
                         {
                             ClickableItem(
                                 title = lecturer.fullFio.toString(),
+                                titleMaxLines = 2,
                                 onClick = if (!isCustomSchedule) {
                                     {
                                         navigateToSchedule()
@@ -381,6 +383,7 @@ fun EventDialog(
             },
             onConfirmation = {
                 onDeleteEvent(event.id)
+                onBack()
             }
         )
     }
@@ -406,7 +409,6 @@ fun EventDialog(
             onDeleteEvent = if (event.isCustomEvent) {
                 {
                     showEventDeleteDialog = true
-                    onBack()
                 }
             } else null,
             onHideEvent = if (!event.isHidden) {

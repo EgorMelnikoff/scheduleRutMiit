@@ -43,7 +43,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchUiState
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchUiState
 
 enum class Options {
     ALL, GROUPS, PEOPLE
@@ -137,6 +137,13 @@ fun SearchScheduleDialog(
                     paddingBottom = externalPadding.calculateBottomPadding()
                 )
 
+                searchUiState.error != null -> {
+                    Empty(
+                        subtitle = searchUiState.error,
+                        paddingBottom = externalPadding.calculateBottomPadding()
+                    )
+                }
+
                 searchUiState.isEmptyQuery -> {
                     Empty(
                         imageVector = ImageVector.vectorResource(R.drawable.search),
@@ -212,12 +219,13 @@ fun SearchScheduleDialog(
                                     ClickableItem(
                                         padding = 8.dp,
                                         title = person.name!!,
+                                        titleMaxLines = 2,
                                         subtitle = person.position!!,
                                         subtitleMaxLines = 3,
-                                        showClickLabel = false,
                                         imageUrl = "https://www.miit.ru/content/e${person.id}.jpg?id_fe=${person.id}&SWidth=100",
                                         imageUrlErrorTextSize = 20,
                                         imageSize = 60.dp,
+                                        showClickLabel = false,
                                         onClick = {
                                             onSearchSchedule(
                                                 Triple(
