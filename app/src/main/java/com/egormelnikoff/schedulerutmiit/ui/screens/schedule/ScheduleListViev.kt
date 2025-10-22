@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,9 +29,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.entity.Recurrence
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.Recurrence
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -152,16 +151,12 @@ fun DateHeader(
             color = color
         )
         if (currentWeek != null) {
-            Canvas(
-                modifier = Modifier
-                    .size(3.dp)
-
-            ) {
-                drawCircle(
-                    color = color,
-                    center = center
-                )
-            }
+            Icon(
+                modifier = Modifier.size(3.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.circle),
+                contentDescription = null,
+                tint = color
+            )
             Text(
                 text = "${LocalContext.current.getString(R.string.week).replaceFirstChar { it.lowercase() }} $currentWeek",
                 fontSize = 16.sp,

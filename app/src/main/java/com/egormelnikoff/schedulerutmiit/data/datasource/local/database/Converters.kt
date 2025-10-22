@@ -2,9 +2,9 @@ package com.egormelnikoff.schedulerutmiit.data.datasource.local.database
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.egormelnikoff.schedulerutmiit.data.entity.Group
-import com.egormelnikoff.schedulerutmiit.data.entity.Lecturer
-import com.egormelnikoff.schedulerutmiit.data.entity.Room
+import com.egormelnikoff.schedulerutmiit.app.model.Group
+import com.egormelnikoff.schedulerutmiit.app.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.app.model.Room
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.time.LocalDate

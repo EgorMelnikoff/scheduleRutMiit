@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore
+package com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore

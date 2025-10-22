@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.ui.navigation
 
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 
 sealed class Routes(val isDialog: Boolean) {
     data object Review : Routes(false)

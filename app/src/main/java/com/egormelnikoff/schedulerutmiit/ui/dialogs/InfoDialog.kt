@@ -36,13 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_GITHUB_REPOS
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.CLOUD_TIPS
+import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_GITHUB_REPOS
+import com.egormelnikoff.schedulerutmiit.app.AppConst.CLOUD_TIPS
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.AppInfoState
+import com.egormelnikoff.schedulerutmiit.view_models.settings.AppInfoState
 
 @Composable
 fun InfoDialog(

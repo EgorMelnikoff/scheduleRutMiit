@@ -31,11 +31,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.Group
-import com.egormelnikoff.schedulerutmiit.data.entity.Lecturer
-import com.egormelnikoff.schedulerutmiit.data.entity.Room
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.Group
+import com.egormelnikoff.schedulerutmiit.app.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.app.model.Room
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup

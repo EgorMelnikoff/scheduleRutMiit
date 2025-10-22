@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.format.DateTimeFormatter
 
 @Composable

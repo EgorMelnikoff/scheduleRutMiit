@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.settings
 
+import com.egormelnikoff.schedulerutmiit.app.model.TelegramPage
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
-import com.egormelnikoff.schedulerutmiit.model.TelegramPage
 import javax.inject.Inject
 
 interface SettingsRepos {

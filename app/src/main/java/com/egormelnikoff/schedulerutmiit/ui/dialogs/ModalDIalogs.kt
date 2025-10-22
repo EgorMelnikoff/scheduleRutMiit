@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +59,7 @@ fun DialogNamedScheduleActions(
             overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.height(12.dp))
-        if (!namedScheduleEntity.isDefault) {
+        if (!namedScheduleEntity.isDefault && isSavedNamedSchedule) {
             ActionDialogButton(
                 onClick = {
                     onSelectDefault()

@@ -1,10 +1,10 @@
-package com.egormelnikoff.schedulerutmiit.ui.view_models.schedule
+package com.egormelnikoff.schedulerutmiit.view_models.schedule
 
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
 import java.time.DayOfWeek
@@ -12,7 +12,7 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
-class ScheduleData(
+data class ScheduleData(
     val namedSchedule: NamedScheduleFormatted? = null,
     val settledScheduleEntity: ScheduleEntity? = null,
 
@@ -116,7 +116,7 @@ class ScheduleData(
             } else null
         }
 
-        private fun findCurrentSchedule(
+        fun findCurrentSchedule(
             namedSchedule: NamedScheduleFormatted?,
             scheduleId: Long?
         ): ScheduleFormatted? {
@@ -164,7 +164,7 @@ class ScheduleData(
             return Triple(defaultDate, weeksStartIndex, daysStartIndex)
         }
 
-        private fun calculatePeriodicEventsForCalendar(
+        fun calculatePeriodicEventsForCalendar(
             currentSchedule: ScheduleFormatted
         ): Map<Int, Map<DayOfWeek, List<Event>>> {
             return buildMap {
@@ -286,7 +286,7 @@ class ScheduleData(
             return Pair(eventsForTomorrow, countEventsForWeek)
         }
 
-        private fun getEventsCountForWeek(
+        fun getEventsCountForWeek(
             today: LocalDate,
             events: Map<LocalDate, List<Event>>
         ): Int {

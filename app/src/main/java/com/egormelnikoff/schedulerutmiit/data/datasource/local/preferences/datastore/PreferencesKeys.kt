@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore
+package com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
