@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.entity
+package com.egormelnikoff.schedulerutmiit.app.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
@@ -99,7 +99,7 @@ data class Event(
     val rooms: List<Room>?,
     val groups: List<Group>?
 ) {
-    private fun customHashCode(): Int {
+    fun customHashCode(): Int {
         val hashString = if (recurrenceRule != null) {
             "$name$typeName${startDatetime!!.dayOfWeek}${startDatetime.toLocalTime()}${recurrenceRule.interval}$periodNumber$groups"
         } else {
@@ -127,32 +127,4 @@ data class EventExtraData(
     val eventStartDatetime: LocalDateTime?,
     val comment: String = "",
     val tag: Int = 0
-)
-
-
-data class RecurrenceRule(
-    val frequency: String,
-    val interval: Int
-)
-
-data class Lecturer(
-    val id: Int?,
-    val shortFio: String?,
-    val fullFio: String?,
-    val description: String?,
-    val url: String?,
-    val hint: String?
-)
-
-data class Room(
-    val id: Int?,
-    val name: String?,
-    val url: String?,
-    val hint: String?
-)
-
-data class Group(
-    val id: Int?,
-    val name: String?,
-    val url: String?,
 )
