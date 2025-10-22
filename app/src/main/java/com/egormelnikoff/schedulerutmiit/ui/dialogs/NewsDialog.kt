@@ -41,11 +41,11 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.model.News
+import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
-import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsState
+import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
 
 @Composable
 fun NewsDialog(
@@ -59,13 +59,14 @@ fun NewsDialog(
         when {
             newsUiState.isLoading -> LoadingScreen(
                 paddingTop = 0.dp,
-                paddingBottom = 0.dp
+                paddingBottom = externalPadding.calculateBottomPadding()
             )
 
-            newsUiState.isError -> Empty(
-                subtitle = LocalContext.current.getString(R.string.error),
+            newsUiState.error != null -> Empty(
+                title = LocalContext.current.getString(R.string.error),
+                subtitle = newsUiState.error,
                 paddingTop = 0.dp,
-                paddingBottom = 0.dp
+                paddingBottom = externalPadding.calculateBottomPadding()
             )
 
             newsUiState.currentNews != null -> {

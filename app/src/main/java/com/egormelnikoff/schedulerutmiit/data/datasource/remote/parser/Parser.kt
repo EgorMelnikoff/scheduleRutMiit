@@ -7,13 +7,13 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
+import com.egormelnikoff.schedulerutmiit.app.logger.Logger
+import com.egormelnikoff.schedulerutmiit.app.model.News
+import com.egormelnikoff.schedulerutmiit.app.model.Person
+import com.egormelnikoff.schedulerutmiit.app.model.TelegramPage
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.model.News
-import com.egormelnikoff.schedulerutmiit.model.Person
-import com.egormelnikoff.schedulerutmiit.model.TelegramPage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okio.IOException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
@@ -26,51 +26,70 @@ interface Parser {
     fun parseNews(news: News): News
 }
 
-class ParserImpl @Inject constructor() : Parser {
+class ParserImpl @Inject constructor(
+    private val logger: Logger
+) : Parser {
     override suspend fun parsePeople(url: String): Result<List<Person>> {
         return withContext(Dispatchers.IO) {
-            val document = Jsoup.connect(url).get()
-            try {
-                val people = mutableListOf<Person>()
-                val searchPeople = document.select("div.search__people")
-                if (searchPeople.isNotEmpty()) {
-                    for (searchPerson in searchPeople) {
-                        val aElement = searchPerson.selectFirst("a.mb-2")
-                        val spanElement = searchPerson.selectFirst("span[itemprop=Post]")
-                        if (aElement != null && spanElement != null) {
-                            val name = aElement.text()
-                            val id =
-                                aElement.attr("href").substringAfter("/people/").toIntOrNull()
-                                    ?: -1
-                            val position = spanElement.text().trim()
-                            people.add(Person(name, id, position))
+            val document = ParserHelper.callParserWithExceptions(
+                logger = logger,
+                type = "People ($url)"
+            ) {
+                Jsoup.connect(url).get()
+            }
+            when (document) {
+                is Result.Success -> {
+                    val people = mutableListOf<Person>()
+                    val searchPeople = document.data.select("div.search__people")
+                    if (searchPeople.isNotEmpty()) {
+                        for (searchPerson in searchPeople) {
+                            val aElement = searchPerson.selectFirst("a.mb-2")
+                            val spanElement = searchPerson.selectFirst("span[itemprop=Post]")
+                            if (aElement != null && spanElement != null) {
+                                val name = aElement.text()
+                                val id =
+                                    aElement.attr("href").substringAfter("/people/").toIntOrNull()
+                                        ?: -1
+                                val position = spanElement.text().trim()
+                                people.add(Person(name, id, position))
+                            }
                         }
                     }
+                    Result.Success(people)
                 }
-                Result.Success(people)
-            } catch (e: Exception) {
-                Result.Error(e)
+
+                is Result.Error -> {
+                    Result.Error(document.error)
+                }
             }
         }
     }
 
     override suspend fun parseChannelInfo(url: String): Result<TelegramPage> {
         return withContext(Dispatchers.IO) {
-            val document = Jsoup.connect(url)
-            try {
-                val page = document.get().selectFirst("div.tgme_header_info")
-                val imageUrl = page?.select(".tgme_page_photo_image img")?.attr("src")
-                val title = page?.select("div.tgme_header_title")?.text()
-                Result.Success(
-                    TelegramPage(
-                        url = url,
-                        name = title,
-                        imageUrl = imageUrl
+            val document = ParserHelper.callParserWithExceptions(
+                logger = logger,
+                type = "ChannelInfo ($url)"
+            ) {
+                Jsoup.connect(url).get()
+            }
+            when (document) {
+                is Result.Success -> {
+                    val page = document.data.selectFirst("div.tgme_header_info")
+                    val imageUrl = page?.select(".tgme_page_photo_image img")?.attr("src")
+                    val title = page?.select("div.tgme_header_title")?.text()
+                    Result.Success(
+                        TelegramPage(
+                            url = url,
+                            name = title,
+                            imageUrl = imageUrl
+                        )
                     )
-                )
+                }
 
-            } catch (e: IOException) {
-                Result.Error(e)
+                is Result.Error -> {
+                    Result.Error(document.error)
+                }
             }
         }
     }
@@ -124,13 +143,28 @@ class ParserImpl @Inject constructor() : Parser {
 
     override suspend fun parseCurrentWeek(url: String): Int {
         return withContext(Dispatchers.IO) {
-            val document = Jsoup.connect(url).get()
-            val activeLink = document.select(".nav-link.active").first()
-            val weekText = activeLink?.text()
-            val weekNumber = weekText?.split(" ")?.get(0)
-            val romanToArabic = mapOf("I" to 1, "II" to 2, "III" to 3, "IV" to 4, "V" to 5)
-            val weekNumberInt = romanToArabic[weekNumber]
-            weekNumberInt ?: 1
+
+            val document = ParserHelper.callParserWithExceptions(
+                logger = logger,
+                type = "Current week ($url)"
+            ) {
+                Jsoup.connect(url).get()
+            }
+            when (document) {
+                is Result.Success -> {
+                    val activeLink = document.data.select(".nav-link.active").first()
+                    val weekText = activeLink?.text()
+                    val weekNumber = weekText?.split(" ")?.get(0)
+                    val romanToArabic = mapOf("I" to 1, "II" to 2, "III" to 3, "IV" to 4, "V" to 5)
+                    val weekNumberInt = romanToArabic[weekNumber]
+                    weekNumberInt ?: 1
+                }
+
+                is Result.Error -> {
+                    1
+                }
+            }
+
         }
     }
 

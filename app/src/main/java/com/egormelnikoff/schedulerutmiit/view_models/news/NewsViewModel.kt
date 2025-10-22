@@ -1,11 +1,13 @@
-package com.egormelnikoff.schedulerutmiit.ui.view_models.news
+package com.egormelnikoff.schedulerutmiit.view_models.news
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.egormelnikoff.schedulerutmiit.app.model.News
+import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
+import com.egormelnikoff.schedulerutmiit.data.Error
 import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.news.NewsRepos
-import com.egormelnikoff.schedulerutmiit.model.News
-import com.egormelnikoff.schedulerutmiit.model.NewsShort
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -18,20 +20,21 @@ import javax.inject.Inject
 
 interface NewsViewModel {
     val uiState: StateFlow<NewsState>
-    fun getNewsList(page: Int)
+    fun getNewsList(pageNumber: Int)
     fun getNewsById(id: Long)
 }
 
 data class NewsState(
     val newsList: List<NewsShort> = listOf(),
     val currentNews: News? = null,
-    val isError: Boolean = false,
+    val error: String? = null,
     val isLoading: Boolean = false
 )
 
 @HiltViewModel
 class NewsViewModelImpl @Inject constructor(
-    private val newsRepos: NewsRepos
+    private val newsRepos: NewsRepos,
+    private val resourcesManager: ResourcesManager
 ) : ViewModel(), NewsViewModel {
 
     private val _uiState = MutableStateFlow(NewsState())
@@ -43,17 +46,19 @@ class NewsViewModelImpl @Inject constructor(
         getNewsList(1)
     }
 
-    override fun getNewsList(page: Int) {
-        _uiState.update { it.copy(isLoading = true, isError = false) }
+    override fun getNewsList(pageNumber: Int) {
+        _uiState.update { it.copy(isLoading = true, error = null) }
         val newNewsListJob = viewModelScope.launch {
             newsJob?.cancelAndJoin()
-            val newsList = newsRepos.getNewsList(page = page.toString())
-            println(newsList)
+            val newsList = newsRepos.getNewsList(pageNumber = pageNumber)
             when (newsList) {
                 is Result.Error -> _uiState.update {
                     it.copy(
                         isLoading = false,
-                        isError = true
+                        error = Error.getErrorMessage(
+                            resourcesManager = resourcesManager,
+                            data = newsList.error
+                        )
                     )
                 }
 
@@ -64,7 +69,7 @@ class NewsViewModelImpl @Inject constructor(
                     _uiState.update { state ->
                         state.copy(
                             isLoading = false,
-                            isError = false,
+                            error = null,
                             newsList = updatedItems.filter { it.secondary.text != "Наши защиты" }
                         )
                     }
@@ -82,7 +87,10 @@ class NewsViewModelImpl @Inject constructor(
                 is Result.Error -> _uiState.update {
                     it.copy(
                         isLoading = false,
-                        isError = true
+                        error = Error.getErrorMessage(
+                            resourcesManager = resourcesManager,
+                            data = news.error
+                        )
                     )
                 }
 
@@ -90,7 +98,7 @@ class NewsViewModelImpl @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            isError = false,
+                            error = null,
                             currentNews = newsRepos.parseNews(news.data)
                         )
                     }

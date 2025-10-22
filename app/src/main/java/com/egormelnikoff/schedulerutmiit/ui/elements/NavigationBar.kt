@@ -1,10 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -19,7 +20,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,15 +29,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
@@ -55,6 +59,24 @@ fun CustomNavigationBar(
     appBackStack: AppBackStack<Routes.Schedule>,
     barItems: Array<BarItem>
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val shadowRadius by animateDpAsState(
+        targetValue = if (isPressed) 6.dp else 8.dp,
+        animationSpec = tween(durationMillis = 150)
+    )
+
+    val shadowOffsetX by animateDpAsState(
+        targetValue = if (isPressed) 1.dp else 2.dp,
+        animationSpec = tween(durationMillis = 150)
+    )
+    val shadowOffsetY by animateDpAsState(
+        targetValue = if (isPressed) 1.dp else 2.dp,
+        animationSpec = tween(durationMillis = 150)
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -72,21 +94,29 @@ fun CustomNavigationBar(
             .padding(
                 top = 12.dp,
                 bottom = WindowInsets.navigationBars.asPaddingValues()
-                    .calculateBottomPadding() + 8.dp
+                    .calculateBottomPadding() + 4.dp
             ),
         contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier
-                .border(
-                    0.1.dp,
-                    MaterialTheme.colorScheme.outline,
-                    RoundedCornerShape(16.dp)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) {}
+                .dropShadow(
+                    shape = CircleShape,
+                    shadow = Shadow(
+                        radius = shadowRadius,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                        offset = DpOffset(shadowOffsetX, shadowOffsetY)
+                    )
                 )
                 .background(
                     color = MaterialTheme.colorScheme.background,
-                    shape = RoundedCornerShape(16.dp))
-                .padding(8.dp),
+                    shape = CircleShape
+                )
+                .padding(12.dp),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
         ) {
