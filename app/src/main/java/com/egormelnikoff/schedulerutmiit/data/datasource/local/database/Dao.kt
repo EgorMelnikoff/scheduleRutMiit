@@ -4,12 +4,12 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleFormatted
 
 @Dao
 interface NamedScheduleDao {
@@ -61,6 +61,8 @@ interface NamedScheduleDao {
     suspend fun getNamedScheduleByApiId(apiId: Int): NamedScheduleFormatted?
     @Query("SELECT * FROM NamedSchedules WHERE NamedScheduleId = :id")
     suspend fun getNamedScheduleById(id: Long): NamedScheduleFormatted?
+    @Query("SELECT * FROM NamedSchedules WHERE isDefaultNamedSchedule = 1")
+    suspend fun getDefaultNamedScheduleEntity(): NamedScheduleEntity?
     @Query("SELECT * FROM EventsExtraData WHERE EventExtraId = :primaryKey")
     suspend fun getEventExtraByEventId(primaryKey: Long): EventExtraData?
     @Query("SELECT ScheduleId FROM Schedules WHERE NamedScheduleId = :primaryKey")
