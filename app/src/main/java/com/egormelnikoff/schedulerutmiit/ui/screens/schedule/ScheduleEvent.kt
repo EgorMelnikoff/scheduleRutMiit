@@ -1,14 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -38,8 +34,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
@@ -144,28 +140,6 @@ fun ScheduleSingleEvent(
                 }
             )
     ) {
-        if (eventExtraData != null) {
-            Canvas(Modifier.fillMaxWidth()) {
-                drawLine(
-                    start = Offset(x = 0f, y = 0f),
-                    end = Offset(x = size.width, y = 0f),
-                    color = when (eventExtraData.tag) {
-                        1 -> darkThemeRed
-                        2 -> darkThemeOrange
-                        3 -> darkThemeYellow
-                        4 -> darkThemeGreen
-                        5 -> darkThemeLightBlue
-                        6 -> darkThemeBlue
-                        7 -> darkThemeViolet
-                        8 -> darkThemePink
-                        else -> Color.Unspecified
-                    },
-                    strokeWidth = 24f
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -290,12 +264,12 @@ fun ScheduleSingleEvent(
             }
             if (eventExtraData != null && eventExtraData.comment != "") {
                 HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 2.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     color = MaterialTheme.colorScheme.outline,
                     thickness = 0.5.dp
                 )
                 Comment(
-                    message = eventExtraData.comment
+                    eventExtraData = eventExtraData
                 )
             }
         }
@@ -400,25 +374,35 @@ fun ScheduleSingleEvent(
 
 @Composable
 fun Comment(
-    message: String,
+    eventExtraData: EventExtraData,
     color: Color? = null
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 4.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Icon(
-            modifier = Modifier
-                .size(14.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.comment),
-            contentDescription = null,
-            tint = color ?: MaterialTheme.colorScheme.onBackground
-        )
+        if (eventExtraData.tag != 0) {
+            val color = when (eventExtraData.tag) {
+                1 -> darkThemeRed
+                2 -> darkThemeOrange
+                3 -> darkThemeYellow
+                4 -> darkThemeGreen
+                5 -> darkThemeLightBlue
+                6 -> darkThemeBlue
+                7 -> darkThemeViolet
+                8 -> darkThemePink
+                else -> Color.Unspecified
+            }
+            Icon(
+                modifier = Modifier.size(12.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.circle),
+                contentDescription = null,
+                tint = color
+            )
+        }
         Text(
-            text = message,
+            text = eventExtraData.comment,
             fontSize = 12.sp,
             maxLines = 2,
             style = TextStyle(
