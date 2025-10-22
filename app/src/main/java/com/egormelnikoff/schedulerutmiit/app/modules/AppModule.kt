@@ -1,9 +1,14 @@
-package com.egormelnikoff.schedulerutmiit.modules
+package com.egormelnikoff.schedulerutmiit.app.modules
 
 import android.content.Context
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.PreferencesDataStore
+import androidx.work.WorkManager
+import com.egormelnikoff.schedulerutmiit.app.logger.Logger
+import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdaterImpl
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.shared_prefs.SharedPreferencesManager
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManagerImpl
+import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
@@ -30,8 +35,34 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideSharedPreferencesManager(@ApplicationContext context: Context): SharedPreferencesManager {
+        return SharedPreferencesManager(context)
+    }
+
+    @Provides
+    @Singleton
     fun provideResourcesManager(@ApplicationContext context: Context): ResourcesManager {
         return ResourcesManagerImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
+        return WorkManager.getInstance(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWidgetUpdater(
+        @ApplicationContext context: Context,
+        scheduleRepos: ScheduleRepos,
+        gson: Gson
+    ): WidgetDataUpdaterImpl {
+        return WidgetDataUpdaterImpl(
+            context = context,
+            scheduleRepos = scheduleRepos,
+            gson = gson
+        )
     }
 
     @Provides
@@ -61,5 +92,10 @@ object AppModule {
                     JsonPrimitive(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(src))
                 }
             ).create()
+    }
+    @Provides
+    @Singleton
+    fun provideLogger(@ApplicationContext context: Context, resourcesManager: ResourcesManager): Logger {
+        return Logger(context, resourcesManager)
     }
 }

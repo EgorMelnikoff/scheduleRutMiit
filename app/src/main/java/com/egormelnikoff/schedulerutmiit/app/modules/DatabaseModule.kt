@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.modules
+package com.egormelnikoff.schedulerutmiit.app.modules
 
 import android.content.Context
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.AppDatabase

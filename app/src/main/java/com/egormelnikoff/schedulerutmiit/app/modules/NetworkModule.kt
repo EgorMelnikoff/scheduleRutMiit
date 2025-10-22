@@ -1,7 +1,10 @@
-package com.egormelnikoff.schedulerutmiit.modules
+package com.egormelnikoff.schedulerutmiit.app.modules
 
+import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiRoutes.BASE_URL
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper.Companion.BASE_URL
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserImpl
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -50,5 +53,11 @@ object NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): MiitApi {
         return retrofit.create(MiitApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideParser (logger: Logger): Parser {
+        return ParserImpl(logger)
     }
 }
