@@ -31,6 +31,7 @@
     <string name="empty_base">Save at least one schedule to display it</string>
     <string name="empty_day">There are no classes scheduled for this day</string>
     <string name="empty_here">It`s empty here</string>
+    <string name="empty_response">Empty response</string>
     <string name="end_date">Start date</string>
     <string name="end_time">Start time</string>
     <string name="enter_comment">Enter comment</string>
@@ -63,6 +64,7 @@
     <string name="my">My</string>
     <string name="news">News</string>
     <string name="news_updates">News, updates</string>
+    <string name="network_error">Network error</string>
     <string name="next_week">Next week</string>
     <string name="no">No</string>
     <string name="no_classes">There are no more classes planned</string>
@@ -95,6 +97,9 @@
     <string name="schedules">Schedules</string>
     <string name="search">Search</string>
     <string name="search_or_create">Search or create</string>
+    <string name="server_error">Server error</string>
+    <string name="serialization_error">Serialization error</string>
+    <string name="send_logs_by_email">Send logs by email</string>
     <string name="settings">Settings</string>
     <string name="show_count_classes">Show count classes</string>
     <string name="show_event">Show class</string>
@@ -103,6 +108,13 @@
     <string name="start_time">Start time</string>
     <string name="support">Support</string>
     <string name="tag">Tag</string>
+    <string name="send_logs">Send logs</string>
+    <string name="update">Update</string>
+    <string name="today">Today</string>
+    <string name="logs_not_found">Logs not found</string>
+    <string name="error_sending_logs">Error sending logs</string>
+    <string name="error_adding_log_to_file">Error adding log to file</string>
+    <string name="illegal_argument">Illegal argument</string>
     <string name="telegram" translatable="false">Telegram</string>
     <string name="theme">Theme</string>
     <string name="time">Time</string>
@@ -110,6 +122,8 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="unable_load_news_list">Unable to load news list</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="today_schedule">Today schedule</string>
+    <string name="summary">Summary</string>
     <string name="week">Week</string>
     <string name="yes">Yes</string>
 </resources>

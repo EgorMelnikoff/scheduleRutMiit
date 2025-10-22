@@ -31,6 +31,7 @@
     <string name="empty_base">Сохраните как минимум одно расписание для его отображения</string>
     <string name="empty_day">На это день пары не запланированы</string>
     <string name="empty_here">Здесь пусто</string>
+    <string name="empty_response">Пустой ответ</string>
     <string name="end_date">Дата окончания</string>
     <string name="end_time">Время окончания</string>
     <string name="enter_comment">Введите комментарий</string>
@@ -61,6 +62,7 @@
     <string name="my">Мои</string>
     <string name="news">Новости</string>
     <string name="news_updates">Новости и обновления</string>
+    <string name="network_error">Ошибка сети</string>
     <string name="next_week">Следующая неделя</string>
     <string name="no">Нет</string>
     <string name="no_classes">Занятий больше не планируется</string>
@@ -93,6 +95,9 @@
     <string name="schedules">Расписания</string>
     <string name="search">Поиск</string>
     <string name="search_or_create">Найти или создать</string>
+    <string name="server_error">Ошибка сервера</string>
+    <string name="serialization_error">Ошибка сериализации</string>
+    <string name="send_logs_by_email">Отправить журнал по эл. почте</string>
     <string name="settings">Настройки</string>
     <string name="show_count_classes">Количество пар</string>
     <string name="show_event">Показать пару</string>
@@ -101,10 +106,19 @@
     <string name="start_time">Время начала</string>
     <string name="support">Поддержать</string>
     <string name="tag">Тег</string>
+    <string name="send_logs">Отправить журнал</string>
+    <string name="logs_not_found">Журнал не найден</string>
+    <string name="error_sending_logs">Ошибка при отправке журнала</string>
+    <string name="error_adding_log_to_file">Ошибка записи лога в файл</string>
+    <string name="illegal_argument">Невозможный аргумент</string>
     <string name="theme">Тема</string>
+    <string name="update">Обновить</string>
+    <string name="today">Сегодня</string>
     <string name="time">Время</string>
     <string name="time_is_chosen_incorrectly">Некорректно указано время</string>
     <string name="tomorrow">Завтра</string>
+    <string name="today_schedule">Сегодняшнее расписание</string>
+    <string name="summary">Сводка</string>
     <string name="unable_load_news_list">Не удалось загрузить список новостей</string>
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="week">Неделя</string>
