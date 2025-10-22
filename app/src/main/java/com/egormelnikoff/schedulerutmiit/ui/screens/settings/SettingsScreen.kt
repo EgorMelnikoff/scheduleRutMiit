@@ -23,7 +23,6 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,14 +34,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserRoutes.APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 data class Theme(
     val name: String,
@@ -54,13 +50,14 @@ data class Theme(
 fun SettingsScreen(
     externalPadding: PaddingValues,
     onShowDialogInfo: () -> Unit,
+    onSendLogs: () -> Unit,
     onOpenUri: (String) -> Unit,
-
-    preferencesDataStore: PreferencesDataStore,
+    onSetViewEvent: (Boolean) -> Unit,
+    onSetShowCountClasses: (Boolean) -> Unit,
+    onSetTheme: (String) -> Unit,
+    onSetDecorColor: (Int) -> Unit,
     appSettings: AppSettings,
-
-    settingsListState: LazyStaggeredGridState,
-    scope: CoroutineScope
+    settingsListState: LazyStaggeredGridState
 ) {
     LazyVerticalStaggeredGrid(
         modifier = Modifier
@@ -84,9 +81,7 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                scope.launch {
-                                    preferencesDataStore.setViewEvent(!appSettings.eventView)
-                                }
+                                onSetViewEvent(!appSettings.eventView)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.compact),
                             text = LocalContext.current.getString(R.string.compact_view)
@@ -94,9 +89,7 @@ fun SettingsScreen(
                             CustomSwitch(
                                 checked = appSettings.eventView,
                                 onCheckedChange = {
-                                    scope.launch {
-                                        preferencesDataStore.setViewEvent(it)
-                                    }
+                                    onSetViewEvent(it)
                                 }
                             )
                         }
@@ -104,9 +97,7 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                scope.launch {
-                                    preferencesDataStore.setShowCountClasses(!appSettings.showCountClasses)
-                                }
+                                onSetShowCountClasses(!appSettings.showCountClasses)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.count),
                             text = LocalContext.current.getString(R.string.show_count_classes)
@@ -114,9 +105,7 @@ fun SettingsScreen(
                             CustomSwitch(
                                 checked = appSettings.showCountClasses,
                                 onCheckedChange = {
-                                    scope.launch {
-                                        preferencesDataStore.setShowCountClasses(it)
-                                    }
+                                    onSetShowCountClasses(it)
                                 }
                             )
                         }
@@ -136,7 +125,7 @@ fun SettingsScreen(
                             horizontal = false
                         ) {
                             ThemeSelector(
-                                preferences = preferencesDataStore,
+                                setTheme = onSetTheme,
                                 currentTheme = appSettings.theme
                             )
                         }
@@ -151,9 +140,7 @@ fun SettingsScreen(
                             ColorSelector(
                                 currentSelected = appSettings.decorColorIndex,
                                 onColorSelect = { value ->
-                                    scope.launch {
-                                        preferencesDataStore.setDecorColor(value)
-                                    }
+                                    onSetDecorColor(value)
                                 }
                             )
                         }
@@ -174,6 +161,14 @@ fun SettingsScreen(
                             text = LocalContext.current.getString(R.string.report_a_problem),
                         )
                     }, {
+                        SettingsItem(
+                            onClick = {
+                                onSendLogs()
+                            },
+                            imageVector = ImageVector.vectorResource(R.drawable.bug_report),
+                            text = LocalContext.current.getString(R.string.send_logs_by_email),
+                        )
+                    },{
                         SettingsItem(
                             onClick = {
                                 onShowDialogInfo()
@@ -242,7 +237,7 @@ fun SettingsItem(
 
 @Composable
 fun ThemeSelector(
-    preferences: PreferencesDataStore,
+    setTheme: (String) -> Unit,
     currentTheme: String
 ) {
     val themes = arrayOf(
@@ -263,7 +258,6 @@ fun ThemeSelector(
         ),
     )
 
-    val scope = rememberCoroutineScope()
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
         SingleChoiceSegmentedButtonRow(
             modifier = Modifier.fillMaxWidth()
@@ -285,9 +279,7 @@ fun ThemeSelector(
                         baseShape = RoundedCornerShape(12.dp)
                     ),
                     onClick = {
-                        scope.launch {
-                            preferences.setTheme(theme.name)
-                        }
+                        setTheme(theme.name)
                     },
                     selected = theme.name == currentTheme,
                     icon = {},

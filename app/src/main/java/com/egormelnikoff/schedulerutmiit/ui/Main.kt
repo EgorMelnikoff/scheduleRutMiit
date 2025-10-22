@@ -33,8 +33,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.app.logger.Logger
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventDialog
@@ -53,11 +54,11 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleCalendarSta
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
-import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.UiEvent
-import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.UiEvent
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -69,7 +70,7 @@ fun Main(
     newsViewModel: NewsViewModel,
     settingsViewModel: SettingsViewModel,
     preferencesDataStore: PreferencesDataStore,
-
+    logger: Logger,
     appSettings: AppSettings,
 ) {
     val appBackStack by remember {
@@ -82,6 +83,7 @@ fun Main(
     val today by remember { mutableStateOf(LocalDate.now()) }
     val focusManager = LocalFocusManager.current
     val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -201,7 +203,9 @@ fun Main(
                     scope.launch {
                         if (appSettings.calendarView) {
                             selectedDate = scheduleUiState.currentScheduleData?.defaultDate ?: today
-                            pagerWeeksState.animateScrollToPage(scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0)
+                            pagerWeeksState.animateScrollToPage(
+                                scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0
+                            )
                         } else {
                             scheduleListState.animateScrollToItem(0)
                         }
@@ -255,13 +259,13 @@ fun Main(
         }
         appBackStack.navigateToPage(Routes.Schedule)
     }
-    val onDeleteNamedSchedule: ( Pair<Long, Boolean>) -> Unit = { value ->
+    val onDeleteNamedSchedule: (Pair<Long, Boolean>) -> Unit = { value ->
         scheduleViewModel.deleteNamedSchedule(
             primaryKeyNamedSchedule = value.first,
             isDefault = value.second
         )
     }
-    val onSetDefaultSchedule: ( Triple<Long, Long, String>) -> Unit = { value ->
+    val onSetDefaultSchedule: (Triple<Long, Long, String>) -> Unit = { value ->
         scheduleViewModel.setDefaultSchedule(
             primaryKeyNamedSchedule = value.first,
             primaryKeySchedule = value.second,
@@ -458,15 +462,34 @@ fun Main(
                         onShowDialogInfo = {
                             appBackStack.navigateToDialog(Routes.InfoDialog)
                         },
+                        onSendLogs = {
+                            logger.sendLogFile(context)
+                        },
                         onOpenUri = { value ->
                             uriHandler.openUri(value)
                         },
-
-                        preferencesDataStore = preferencesDataStore,
+                        onSetViewEvent = { value ->
+                            scope.launch {
+                                preferencesDataStore.setViewEvent(value)
+                            }
+                        },
+                        onSetShowCountClasses = { value ->
+                            scope.launch {
+                                preferencesDataStore.setShowCountClasses(value)
+                            }
+                        },
+                        onSetTheme = { value ->
+                            scope.launch {
+                                preferencesDataStore.setTheme(value)
+                            }
+                        },
+                        onSetDecorColor = { value ->
+                            scope.launch {
+                                preferencesDataStore.setDecorColor(value)
+                            }
+                        },
                         appSettings = appSettings,
-
-                        settingsListState = settingsListState,
-                        scope = scope
+                        settingsListState = settingsListState
                     )
                 }
 
