@@ -45,6 +45,7 @@ fun ClickableItem(
     onClick: (() -> Unit)? = null,
     padding: Dp = 12.dp,
     title: String,
+    titleMaxLines: Int = 1,
     subtitle: String? = null,
     subtitleMaxLines: Int = 1,
     subtitleLabel: (@Composable () -> Unit)? = null,
@@ -133,7 +134,7 @@ fun ClickableItem(
                 text = title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                maxLines = 1,
+                maxLines = titleMaxLines,
                 style = TextStyle(
                     platformStyle = PlatformTextStyle(
                         includeFontPadding = false
