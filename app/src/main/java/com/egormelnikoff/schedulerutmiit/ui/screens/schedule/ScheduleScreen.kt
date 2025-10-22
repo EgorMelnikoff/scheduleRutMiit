@@ -1,11 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
@@ -13,11 +10,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,11 +25,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.prefs_datastore.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.DialogNamedScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
@@ -43,7 +37,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ScheduleTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
@@ -88,22 +82,6 @@ fun ScreenSchedule(
             )
         }
 
-        scheduleUiState.isError -> {
-            ErrorScreen(
-                title = LocalContext.current.getString(R.string.error),
-                subtitle = LocalContext.current.getString(R.string.error_load_schedule),
-                paddingTop = externalPadding.calculateTopPadding(),
-                button = {
-                    CustomButton(
-                        buttonTitle = LocalContext.current.getString(R.string.return_default),
-                        imageVector = ImageVector.vectorResource(R.drawable.back),
-                        onClick = { onLoadInitialData() },
-                    )
-                },
-                paddingBottom = externalPadding.calculateBottomPadding()
-            )
-        }
-
         scheduleUiState.currentScheduleData?.namedSchedule != null -> {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -127,17 +105,6 @@ fun ScreenSchedule(
                         .fillMaxSize()
                         .padding(top = padding.calculateTopPadding())
                 ) {
-                    AnimatedVisibility(
-                        visible = scheduleUiState.isUpdating,
-                        enter = expandVertically(),
-                        exit = shrinkVertically()
-                    ) {
-                        LinearProgressIndicator(
-                            modifier = Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.primary,
-                            trackColor = MaterialTheme.colorScheme.surface
-                        )
-                    }
                     ExpandedMenu(
                         setDefaultSchedule = onSetDefaultSchedule,
                         scheduleUiState = scheduleUiState,
@@ -220,6 +187,22 @@ fun ScreenSchedule(
                     }
                 },
                 paddingTop = externalPadding.calculateTopPadding(),
+                paddingBottom = externalPadding.calculateBottomPadding()
+            )
+        }
+
+        else -> {
+            ErrorScreen(
+                title = LocalContext.current.getString(R.string.error),
+                subtitle = LocalContext.current.getString(R.string.error_load_schedule),
+                paddingTop = externalPadding.calculateTopPadding(),
+                button = {
+                    CustomButton(
+                        buttonTitle = LocalContext.current.getString(R.string.return_default),
+                        imageVector = ImageVector.vectorResource(R.drawable.back),
+                        onClick = { onLoadInitialData() },
+                    )
+                },
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
         }
