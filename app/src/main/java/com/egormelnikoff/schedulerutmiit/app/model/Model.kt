@@ -1,12 +1,8 @@
-package com.egormelnikoff.schedulerutmiit.model
+package com.egormelnikoff.schedulerutmiit.app.model
 
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.Group
-import com.egormelnikoff.schedulerutmiit.data.entity.Recurrence
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-//Schedule
 data class Schedule (
     val timetable: Timetable?,
     val periodicContent: PeriodicContent?,
@@ -44,7 +40,6 @@ enum class TimetableType(val type: String?) {
     SESSION("SESSION")
 }
 
-//News
 data class NewsList (
     val items: List<NewsShort>
 )
@@ -56,6 +51,7 @@ data class NewsShort (
     var thumbnail: String,
     val secondary: Secondary
 )
+
 data class Secondary (
     val text: String
 )
@@ -69,7 +65,6 @@ data class News (
     var images: MutableList<String>?
 )
 
-//Institutes
 data class Institutes(
     val institutes: List<Institute>?
 )
@@ -92,17 +87,41 @@ data class Specialty(
     val groups: List<Group>?
 )
 
-//Person
+data class Group(
+    val id: Int?,
+    val name: String?,
+    val url: String?,
+)
+
 data class Person (
     val name: String?,
     val id: Int?,
     val position: String?
 )
 
-//TelegramPage
+data class Lecturer(
+    val id: Int?,
+    val shortFio: String?,
+    val fullFio: String?,
+    val description: String?,
+    val url: String?,
+    val hint: String?
+)
+
+data class Room(
+    val id: Int?,
+    val name: String?,
+    val url: String?,
+    val hint: String?
+)
+
 data class TelegramPage (
     val url: String?,
     val name: String?,
     val imageUrl: String?
 )
 
+data class RecurrenceRule(
+    val frequency: String,
+    val interval: Int
+)
