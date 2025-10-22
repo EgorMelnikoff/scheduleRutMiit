@@ -20,6 +20,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.ui.theme.Black
 import com.egormelnikoff.schedulerutmiit.ui.theme.White
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeBlue
@@ -40,7 +41,11 @@ fun Empty(
             text = title,
             style = TextStyle(
                 fontSize = 12.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = ColorProvider(
+                    day = Black,
+                    night = White
+                ),
             )
         )
         if (onClick != null) {
