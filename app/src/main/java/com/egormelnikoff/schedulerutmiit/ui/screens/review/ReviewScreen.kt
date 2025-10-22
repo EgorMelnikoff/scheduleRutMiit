@@ -1,7 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.review
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,9 +38,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.DialogNamedScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -59,7 +58,7 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemePink
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeRed
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeViolet
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeYellow
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -168,7 +167,7 @@ fun ReviewScreen(
                         items = scheduleUiState.savedNamedSchedules.map { namedScheduleEntity ->
                             {
                                 val formatter =
-                                    DateTimeFormatter.ofPattern("d MMM, HH:mm", Locale.getDefault())
+                                    DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault())
                                 val lastTimeUpdate =
                                     formatter.format(
                                         LocalDateTime.ofInstant(
@@ -179,6 +178,7 @@ fun ReviewScreen(
 
                                 ClickableItem(
                                     title = namedScheduleEntity.shortName,
+                                    titleMaxLines = 2,
                                     subtitle = if (namedScheduleEntity.type != 3) {
                                         "${LocalContext.current.getString(R.string.current_on)} $lastTimeUpdate"
                                     } else null,
@@ -214,6 +214,7 @@ fun ReviewScreen(
                                         scheduleUiState.currentScheduleData.eventsExtraData.find { event -> it.id == event.id }
                                     ClickableItem(
                                         title = it.name!!,
+                                        titleMaxLines = 2,
                                         subtitle = if (it.recurrenceRule != null) {
                                             val day = it.startDatetime!!.dayOfWeek.getDisplayName(
                                                 java.time.format.TextStyle.FULL,
@@ -372,8 +373,8 @@ fun EventsReview(
             ColumnGroup(
                 title = LocalContext.current.getString(R.string.comments_on_tomorrow_events),
                 items = scheduleUiState.defaultScheduleData.eventsForTomorrow.mapNotNull { event ->
-                    val eventExtraData =
-                        scheduleUiState.defaultScheduleData.eventsExtraData.find { it.id == event.id }
+                    val eventExtraData = scheduleUiState.defaultScheduleData.eventsExtraData
+                        .find { it.id == event.id }
 
                     if (eventExtraData != null && eventExtraData.comment != "") {
                         {
@@ -394,14 +395,12 @@ fun EventsReview(
                                         else -> Color.Unspecified
                                     }
                                     {
-                                        Canvas(
-                                            modifier = Modifier.size(8.dp)
-                                        ) {
-                                            drawCircle(
-                                                color = color,
-                                                center = center
-                                            )
-                                        }
+                                        Icon(
+                                            modifier = Modifier.size(8.dp),
+                                            imageVector = ImageVector.vectorResource(R.drawable.circle),
+                                            contentDescription = null,
+                                            tint = color
+                                        )
                                     }
                                 } else null,
                                 onClick = {

@@ -1,13 +1,15 @@
-package com.egormelnikoff.schedulerutmiit.ui.view_models.search
+package com.egormelnikoff.schedulerutmiit.view_models.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.egormelnikoff.schedulerutmiit.app.model.Group
+import com.egormelnikoff.schedulerutmiit.app.model.Institute
+import com.egormelnikoff.schedulerutmiit.app.model.Institutes
+import com.egormelnikoff.schedulerutmiit.app.model.Person
+import com.egormelnikoff.schedulerutmiit.data.Error
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.entity.Group
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
-import com.egormelnikoff.schedulerutmiit.model.Institute
-import com.egormelnikoff.schedulerutmiit.model.Institutes
-import com.egormelnikoff.schedulerutmiit.model.Person
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.Options
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -29,13 +31,15 @@ data class SearchUiState(
     val institutes: Institutes? = null,
     val groups: List<Group> = listOf(),
     val people: List<Person> = listOf(),
+    val error: String? = null,
     val isEmptyQuery: Boolean = true,
     val isLoading: Boolean = false
 )
 
 @HiltViewModel
 class SearchViewModelImpl @Inject constructor(
-    private val searchRepos: SearchRepos
+    private val searchRepos: SearchRepos,
+    private val resourcesManager: ResourcesManager
 ) : ViewModel(), SearchViewModel {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -52,35 +56,44 @@ class SearchViewModelImpl @Inject constructor(
                 var people = listOf<Person>()
 
                 if (selectedOptions == Options.ALL || selectedOptions == Options.GROUPS) {
-                    groups = searchGroup(query)
+                    val groupsRes = searchGroup(query)
+                    when (groupsRes) {
+                        is Result.Success -> {
+                            groups = groupsRes.data
+                        }
+                        is Result.Error -> {
+                            setErrorState(groupsRes.error)
+                            return@launch
+                        }
+                    }
                 }
                 if (selectedOptions == Options.ALL || selectedOptions == Options.PEOPLE) {
-                    people = searchPerson(query)
+                    val peopleRes = searchPerson(query)
+                    when (peopleRes) {
+                        is Result.Success -> {
+                            people = peopleRes.data
+                        }
+                        is Result.Error -> {
+                            setErrorState(peopleRes.error)
+                            return@launch
+                        }
+                    }
                 }
 
-                if (groups.isNotEmpty() || people.isNotEmpty()) {
-                    _uiState.update {
-                        it.copy(
-                            groups = groups,
-                            people = people,
-                            isEmptyQuery = false,
-                            isLoading = false
-                        )
-                    }
-                } else {
-                    _uiState.update {
-                        it.copy(
-                            groups = listOf(),
-                            people = listOf(),
-                            isEmptyQuery = false,
-                            isLoading = false
-                        )
-                    }
+                _uiState.update {
+                    it.copy(
+                        groups = groups,
+                        people = people,
+                        error = null,
+                        isEmptyQuery = false,
+                        isLoading = false
+                    )
                 }
             } else {
                 setDefaultSearchState()
             }
         }
+
         searchJob = newSearchJob
     }
 
@@ -89,21 +102,35 @@ class SearchViewModelImpl @Inject constructor(
             it.copy(
                 isEmptyQuery = true,
                 isLoading = false,
+                error = null,
                 groups = listOf(),
                 people = listOf()
             )
         }
     }
 
-    private suspend fun searchGroup(query: String): List<Group> {
+    fun setErrorState (
+        data: Error
+    ) {
+        _uiState.update {
+            it.copy(
+                error = Error.getErrorMessage(
+                    resourcesManager = resourcesManager,
+                    data = data
+                ),
+                isEmptyQuery = false,
+                isLoading = false
+            )
+        }
+    }
+
+
+
+    private suspend fun searchGroup(query: String): Result<List<Group>> {
         if (_uiState.value.institutes == null) {
             when (val institutes = searchRepos.getInstitutes()) {
                 is Result.Error -> {
-                    _uiState.update {
-                        it.copy(
-                            institutes = null
-                        )
-                    }
+                    return institutes
                 }
 
                 is Result.Success -> {
@@ -122,10 +149,10 @@ class SearchViewModelImpl @Inject constructor(
                     .filter {
                         compareValues(it.name ?: "", query)
                     }
-                return filteredGroups
+                return Result.Success(filteredGroups)
             }
         }
-        return emptyList()
+        return Result.Error(Error.EmptyBodyError)
     }
 
     private fun compareValues(comparableValue: String, query: String): Boolean {
@@ -142,10 +169,7 @@ class SearchViewModelImpl @Inject constructor(
         }
     }
 
-    private suspend fun searchPerson(query: String): List<Person> {
-        return when (val professors = searchRepos.getPeople(query)) {
-            is Result.Success -> professors.data
-            is Result.Error -> emptyList()
-        }
+    private suspend fun searchPerson(query: String): Result<List<Person>> {
+        return searchRepos.getPeople(query)
     }
 }
