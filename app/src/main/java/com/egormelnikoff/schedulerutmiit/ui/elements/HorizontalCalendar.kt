@@ -38,9 +38,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeBlue
@@ -51,7 +51,7 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemePink
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeRed
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeViolet
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeYellow
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -147,16 +147,12 @@ fun HorizontalCalendar(
                         interval = scheduleEntity.recurrence.interval!!
                     )
                     val color = MaterialTheme.colorScheme.onSurface
-                    Canvas(
-                        modifier = Modifier
-                            .size(3.dp)
-
-                    ) {
-                        drawCircle(
-                            color = color,
-                            center = center
-                        )
-                    }
+                    Icon(
+                        modifier = Modifier.size(3.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.circle),
+                        contentDescription = null,
+                        tint = color
+                    )
                     Text(
                         textAlign = TextAlign.Center,
                         text = "${LocalContext.current.getString(R.string.week).replaceFirstChar { it.lowercase() }} $selectedWeek",
