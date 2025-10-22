@@ -14,10 +14,10 @@ android {
     
     defaultConfig {
         applicationId = "com.egormelnikoff.schedulerutmiit"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 36
-        versionCode = 17
-        versionName = "1.4.3"
+        versionCode = 18
+        versionName = "1.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -46,26 +46,35 @@ android {
 }
 
 dependencies {
-    implementation (libs.google.gson)
-    implementation (libs.jsoup)
     implementation(libs.androidx.room.ktx)
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
     implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.room.compiler)
+    annotationProcessor(libs.androidx.room.room.compiler)
+
+    implementation (libs.google.gson)
+    implementation(libs.converter.gson)
+
+    implementation(libs.retrofit)
+    implementation (libs.jsoup)
+
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
-    implementation (libs.androidx.runtime.livedata)
     implementation (libs.androidx.datastore.preferences)
-    annotationProcessor(libs.androidx.room.room.compiler)
-    ksp(libs.androidx.room.room.compiler)
-    implementation (libs.hilt.android)
-    ksp (libs.hilt.android.compiler)
 
+    implementation(libs.androidx.work.runtime.ktx)
+
+    implementation (libs.hilt.android)
     implementation (libs.androidx.hilt.lifecycle.viewmodel )
+    ksp (libs.hilt.android.compiler)
     ksp (libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.work)
+    
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
 
     implementation(libs.coil.compose)
     implementation(libs.androidx.core.ktx)
+    implementation (libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
