@@ -55,11 +55,13 @@ object AppModule {
     @Singleton
     fun provideWidgetUpdater(
         @ApplicationContext context: Context,
+        logger: Logger,
         scheduleRepos: ScheduleRepos,
         gson: Gson
     ): WidgetDataUpdaterImpl {
         return WidgetDataUpdaterImpl(
             context = context,
+            logger = logger,
             scheduleRepos = scheduleRepos,
             gson = gson
         )
