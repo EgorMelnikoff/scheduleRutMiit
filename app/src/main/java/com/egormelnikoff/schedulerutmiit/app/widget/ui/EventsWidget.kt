@@ -228,9 +228,8 @@ class EventsWidget : GlanceAppWidget() {
                         )
                     )
                 }
-
-                Spacer(modifier = GlanceModifier.height(12.dp))
                 if (displayedEvents.isNotEmpty()) {
+                    Spacer(modifier = GlanceModifier.height(12.dp))
                     LazyColumn {
                         itemsIndexed(displayedEvents) { index, events ->
                             Column {
