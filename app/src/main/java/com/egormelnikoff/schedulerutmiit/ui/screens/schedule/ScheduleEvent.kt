@@ -289,7 +289,10 @@ fun ScheduleSingleEvent(
                         text = LocalContext.current.getString(R.string.open)
                     )
                 },
-                onClick = { navigateToEvent(Pair(event, eventExtraData)) }
+                onClick = {
+                    showExpandedMenu = false
+                    navigateToEvent(Pair(event, eventExtraData))
+                }
             )
             if (isSavedSchedule) {
                 DropdownMenuItem(
