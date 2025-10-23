@@ -328,9 +328,9 @@ class EventsWidget : GlanceAppWidget() {
         event: Event,
         eventExtraData: EventExtraData?
     ) {
-        if (event.typeName != null) {
+        event.typeName?.let {
             Text(
-                text = event.typeName,
+                text = it,
                 style = TextStyle(
                     fontSize = 10.sp,
                     color = ColorProvider(

@@ -102,7 +102,7 @@ fun PagedDays(
     ) { index ->
         val currentDate = scheduleEntity.startDate.plusDays(index.toLong())
 
-        val eventsForDay = if (periodicEvents != null) {
+        val eventsForDay = periodicEvents?.let {
             val currentWeek = calculateCurrentWeek(
                 date = currentDate,
                 startDate = scheduleEntity.startDate,
@@ -112,7 +112,7 @@ fun PagedDays(
             periodicEvents[currentWeek]?.filter {
                 it.key == currentDate.dayOfWeek
             }!!.values.flatten()
-        } else nonPeriodicEvents?.filter {
+        } ?: nonPeriodicEvents?.filter {
             it.key == currentDate
         }?.values?.flatten()
             ?: emptyList()

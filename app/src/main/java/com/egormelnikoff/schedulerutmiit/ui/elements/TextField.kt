@@ -60,20 +60,20 @@ fun CustomTextField(
         ),
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
-        placeholder = if (placeholderText != null){
+        placeholder = placeholderText?.let {
             {
                 Text(
-                    text = placeholderText,
+                    text = it,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
-        } else null,
+        },
         visualTransformation = visualTransformation ?: VisualTransformation.None,
         onValueChange = { newQuery ->
-            if (onValueChanged != null) {
-                onValueChanged(newQuery)
+            onValueChanged?.let {
+                it(newQuery)
             }
         },
         shape = RoundedCornerShape(12.dp),
@@ -83,9 +83,7 @@ fun CustomTextField(
                 keyboardController?.hide()
             },
             onSearch = {
-                if (action != null) {
-                    action()
-                }
+                action?.invoke()
                 keyboardController?.hide()
             }
         )

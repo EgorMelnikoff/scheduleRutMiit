@@ -43,21 +43,21 @@ fun ErrorScreen(
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            if (title != null) {
+            title?.let {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
-                    text = title,
+                    text = it,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
-            if (subtitle != null) {
+            subtitle?.let {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
-                    text = subtitle,
+                    text = it,
                     style = TextStyle(
                         platformStyle = PlatformTextStyle(
                             includeFontPadding = false

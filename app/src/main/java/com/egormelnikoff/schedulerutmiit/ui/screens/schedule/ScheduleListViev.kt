@@ -76,14 +76,14 @@ fun ScheduleListView(
 
                 stickyHeader {
                     DateHeader(
-                        currentWeek = if (recurrence != null) {
+                        currentWeek = recurrence?.let {
                             calculateCurrentWeek(
                                 date = events.first,
                                 startDate = startDate,
                                 firstPeriodNumber = recurrence.firstWeekNumber,
                                 interval = recurrence.interval!!
                             )
-                        } else null,
+                        },
                         date = events.first,
                         formatter = formatter
                     )
@@ -151,7 +151,7 @@ fun DateHeader(
             fontSize = 16.sp,
             color = color
         )
-        if (currentWeek != null) {
+        currentWeek?.let {
             Icon(
                 modifier = Modifier.size(3.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.circle),

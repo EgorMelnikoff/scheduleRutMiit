@@ -19,9 +19,8 @@ class ScheduleWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val namedScheduleEntity = scheduleRepos.getDefaultNamedScheduleEntity()
         logger.i("ScheduleWorker", "Default schedule:\n$namedScheduleEntity")
-        if (namedScheduleEntity == null) {
-            return Result.failure()
-        }
+        namedScheduleEntity ?: return Result.failure()
+
         return try {
             val result = scheduleRepos.updateSavedNamedSchedule(
                 namedScheduleEntity = namedScheduleEntity,

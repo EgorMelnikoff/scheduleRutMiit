@@ -158,10 +158,10 @@ fun ExpandedMenuItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        if (leadingIcon != null) {
+        leadingIcon?.let {
             Icon(
                 modifier = Modifier.size(20.dp),
-                imageVector = leadingIcon,
+                imageVector = it,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -171,7 +171,7 @@ fun ExpandedMenuItem(
         ) {
             title?.invoke()
         }
-        if (trailingIcon != null) {
+        trailingIcon?.let {
             Icon(
                 modifier = Modifier
                     .size(20.dp)

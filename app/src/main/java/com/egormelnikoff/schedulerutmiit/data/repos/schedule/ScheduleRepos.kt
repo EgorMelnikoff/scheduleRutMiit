@@ -235,9 +235,11 @@ class ScheduleReposImpl @Inject constructor(
             return
         }
         val checkEventExtra = namedScheduleDao.getEventExtraByEventId(event.id)
+
         if (checkEventExtra != null) {
             namedScheduleDao.updateCommentEvent(scheduleId, event.id, comment)
             namedScheduleDao.updateTagEvent(scheduleId, event.id, tag)
+
         } else {
             namedScheduleDao.insertEventExtraData(
                 EventExtraData(
@@ -542,7 +544,7 @@ class ScheduleReposImpl @Inject constructor(
                     namedScheduleId = id,
                     startDate = oldSchedule.timetable?.startDate!!,
                     endDate = oldSchedule.timetable.endDate!!,
-                    recurrence = if (oldSchedule.periodicContent != null) {
+                    recurrence = oldSchedule.periodicContent?.let {
                         if (today > oldSchedule.timetable.startDate) {
                             val currentWeekIndex = abs(
                                 ChronoUnit.WEEKS.between(
@@ -570,7 +572,7 @@ class ScheduleReposImpl @Inject constructor(
                                     ?: 1
                             )
                         }
-                    } else null,
+                    },
                     typeName = oldSchedule.timetable.typeName!!,
                     downloadUrl = oldSchedule.timetable.downloadUrl!!,
                     startName = oldSchedule.timetable.name!!,
@@ -593,16 +595,11 @@ class ScheduleReposImpl @Inject constructor(
     }
 
     private fun String.getShortName(type: Int): String {
-        return if (type == 1) {
-            val nameParts = this.split(" ")
-            if (nameParts.size == 3) {
-                "${nameParts.first()} ${nameParts[1][0]}. ${nameParts[2][0]}."
-            } else {
-                this
-            }
-        } else {
-            this
+        val nameParts = this.split(" ")
+        if (type == 1 && nameParts.size == 3) {
+           return "${nameParts.first()} ${nameParts[1][0]}. ${nameParts[2][0]}."
         }
+        return this
     }
 
     private fun LocalDateTime.getTimeslotName(): String? {

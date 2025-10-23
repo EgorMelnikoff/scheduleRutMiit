@@ -59,9 +59,9 @@ fun CustomTopAppBar(
             }
         },
         navigationIcon = {
-            if (navAction != null) {
+            navAction?.let {
                 IconButton(
-                    onClick = navAction
+                    onClick = it
                 ) {
                     Icon(
                         imageVector = navImageVector,
@@ -82,7 +82,7 @@ fun CustomTopAppBar(
 }
 
 @Composable
-fun ScheduleTopAppBar (
+fun ScheduleTopAppBar(
     navigateToAddEvent: (ScheduleEntity) -> Unit,
     scheduleUiState: ScheduleUiState,
     calendarView: Boolean,
@@ -92,9 +92,11 @@ fun ScheduleTopAppBar (
     onSetScheduleView: (Boolean) -> Unit,
     onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit
 ) {
-    val isNotEmpty = scheduleUiState.currentScheduleData!!.namedSchedule!!.schedules.isNotEmpty() && scheduleUiState.currentScheduleData.settledScheduleEntity != null
+    val isNotEmpty =
+        scheduleUiState.currentScheduleData!!.namedSchedule!!.schedules.isNotEmpty() && scheduleUiState.currentScheduleData.settledScheduleEntity != null
     val isSomeSchedules = scheduleUiState.currentScheduleData.namedSchedule.schedules.size > 1
-    val isCustomSchedule = scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.type == 3
+    val isCustomSchedule =
+        scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.type == 3
     val rotationAngle by animateFloatAsState(
         targetValue = if (expandedSchedulesMenu) 180f else 0f
     )
@@ -102,18 +104,16 @@ fun ScheduleTopAppBar (
     CustomTopAppBar(
         titleContent = {
             Row(
-                modifier = Modifier.let {
-                    if (isSomeSchedules) {
-                        it
-                            .clip(RoundedCornerShape(8.dp))
-                            .clickable(
-                                onClick = {
-                                    onShowExpandedMenu(!expandedSchedulesMenu)
-                                }
-                            )
-                    } else {
-                        it
-                    }
+                modifier = if (isSomeSchedules) {
+                    Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable(
+                            onClick = {
+                                onShowExpandedMenu(!expandedSchedulesMenu)
+                            }
+                        )
+                } else {
+                    Modifier
                 },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -153,7 +153,8 @@ fun ScheduleTopAppBar (
             if (isNotEmpty && !isCustomSchedule) {
                 IconButton(
                     onClick = {
-                        val url = scheduleUiState.currentScheduleData.settledScheduleEntity.downloadUrl
+                        val url =
+                            scheduleUiState.currentScheduleData.settledScheduleEntity.downloadUrl
                         val intent = Intent(Intent.ACTION_VIEW, url?.toUri())
                         context.startActivity(intent)
                     }

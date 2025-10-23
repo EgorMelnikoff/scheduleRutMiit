@@ -48,14 +48,14 @@ fun Empty(
                 ),
             )
         )
-        if (onClick != null) {
+        onClick?.let {
             Spacer(
                 modifier = GlanceModifier.height(8.dp)
             )
             Button(
                 modifier = GlanceModifier.cornerRadius(12.dp),
                 text = LocalContext.current.getString(R.string.update),
-                onClick = onClick,
+                onClick = it,
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp

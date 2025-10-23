@@ -70,10 +70,10 @@ fun DialogNamedScheduleActions(
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
         }
-        if (onSetSchedule != null) {
+        onSetSchedule?.let {
             ActionDialogButton(
                 onClick = {
-                    onSetSchedule()
+                    it()
                     onDismiss(null)
                 },
                 icon = ImageVector.vectorResource(R.drawable.open),
@@ -103,7 +103,7 @@ fun DialogNamedScheduleActions(
             )
         }
 
-        if (onLoadInitialData != null) {
+        onLoadInitialData?.let {
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
                 thickness = 0.5.dp,
@@ -111,7 +111,7 @@ fun DialogNamedScheduleActions(
             )
             ActionDialogButton(
                 onClick = {
-                    onLoadInitialData()
+                    it()
                     onDismiss(null)
                 },
                 icon = ImageVector.vectorResource(R.drawable.back),
@@ -147,10 +147,10 @@ fun DialogEventActions(
             overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.height(12.dp))
-        if (onHideEvent != null) {
+        onHideEvent?.let {
             ActionDialogButton(
                 onClick = {
-                    onHideEvent()
+                    it()
                     onDismiss(null)
                 },
                 icon = ImageVector.vectorResource(R.drawable.visibility_off),
@@ -158,10 +158,10 @@ fun DialogEventActions(
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
         }
-        if (onShowEvent != null) {
+        onShowEvent?.let {
             ActionDialogButton(
                 onClick = {
-                    onShowEvent()
+                    it()
                     onDismiss(null)
                 },
                 icon = ImageVector.vectorResource(R.drawable.visibility),
@@ -169,10 +169,10 @@ fun DialogEventActions(
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
         }
-        if (onDeleteEvent != null) {
+        onDeleteEvent?.let {
             ActionDialogButton(
                 onClick = {
-                    onDeleteEvent()
+                    it()
                     onDismiss(null)
                 },
                 icon = ImageVector.vectorResource(R.drawable.delete),

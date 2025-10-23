@@ -42,20 +42,20 @@ fun Empty(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
     ) {
-        if (imageVector != null) {
+        imageVector?.let {
             Icon(
                 modifier = Modifier.size(100.dp),
-                imageVector = imageVector,
+                imageVector = it,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
 
-        if (title != null) {
+        title?.let {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = title,
+                text = it,
                 fontSize = 20.sp,
                 fontWeight = if (isBoldTitle) {
                     FontWeight.Bold
@@ -63,11 +63,11 @@ fun Empty(
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
-        if (subtitle != null) {
+        subtitle?.let {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = subtitle,
+                text = it,
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
