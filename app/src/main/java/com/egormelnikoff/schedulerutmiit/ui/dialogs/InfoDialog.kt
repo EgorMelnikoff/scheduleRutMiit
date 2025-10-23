@@ -82,10 +82,8 @@ fun InfoDialog(
                 Icon(
                     modifier = Modifier
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .scale(0.6f)
                         .size(84.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.logo),
+                    imageVector = ImageVector.vectorResource(R.drawable.logo_app),
                     contentDescription = null,
                     tint = Color.Unspecified
                 )
@@ -171,15 +169,15 @@ fun InfoDialog(
                 }
 
                 is AppInfoState.Loaded -> {
-                    appInfoState.authorTelegramPage?.let {
+                    appInfoState.authorTelegramPage?.let { author ->
                         ColumnGroup(
                             items = listOf {
                                 ClickableItem(
-                                    title = it.name!!,
+                                    title = author.name!!,
                                     subtitle = LocalContext.current.getString(R.string.author),
-                                    imageUrl = it.imageUrl!!,
+                                    imageUrl = author.imageUrl!!,
                                     onClick = {
-                                      it.url?.let {
+                                        author.url?.let {
                                             onOpenUri(it)
                                         }
                                     }
