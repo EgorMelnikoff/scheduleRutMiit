@@ -96,10 +96,10 @@ class ScheduleViewModelImpl @Inject constructor(
             val defaultNamedScheduleEntity = savedNamedSchedules.find { it.isDefault }
                 ?: savedNamedSchedules.firstOrNull()
 
-            if (defaultNamedScheduleEntity != null) {
+            defaultNamedScheduleEntity?.let {
                 updateNamedScheduleUiState(
                     namedSchedule = scheduleRepos.getSavedNamedScheduleById(
-                        defaultNamedScheduleEntity.id
+                        it.id
                     )
                 )
             }
@@ -128,9 +128,9 @@ class ScheduleViewModelImpl @Inject constructor(
             updateUiState(isLoading = true)
 
             val localNamedSchedule = scheduleRepos.getSavedNamedScheduleByApiId(apiId)
-            if (localNamedSchedule != null) {
+            localNamedSchedule?.let {
                 updateNamedScheduleUiState(
-                    namedSchedule = localNamedSchedule
+                    namedSchedule = it
                 )
                 updateUiState(
                     isError = false,
@@ -183,12 +183,12 @@ class ScheduleViewModelImpl @Inject constructor(
             }
             val namedSchedule = scheduleRepos.getSavedNamedScheduleById(primaryKeyNamedSchedule)
 
-            if (namedSchedule != null) {
+            namedSchedule?.let {
                 if (setDefault) {
                     widgetDataUpdater.updateAll()
                 }
                 updateNamedScheduleUiState(
-                    namedSchedule = namedSchedule
+                    namedSchedule = it
                 )
                 updateUiState(
                     savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules(),

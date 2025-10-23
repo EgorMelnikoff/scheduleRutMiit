@@ -139,12 +139,12 @@ fun HorizontalCalendar(
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                if (scheduleEntity.recurrence != null) {
+                scheduleEntity.recurrence?.let { recurrence ->
                     val selectedWeek = calculateCurrentWeek(
                         date = firstDayOfCurrentWeek,
                         startDate = scheduleEntity.startDate,
-                        firstPeriodNumber = scheduleEntity.recurrence.firstWeekNumber,
-                        interval = scheduleEntity.recurrence.interval!!
+                        firstPeriodNumber = recurrence.firstWeekNumber,
+                        interval = recurrence.interval!!
                     )
                     val color = MaterialTheme.colorScheme.onSurface
                     Icon(
@@ -155,7 +155,10 @@ fun HorizontalCalendar(
                     )
                     Text(
                         textAlign = TextAlign.Center,
-                        text = "${LocalContext.current.getString(R.string.week).replaceFirstChar { it.lowercase() }} $selectedWeek",
+                        text = "${
+                            LocalContext.current.getString(R.string.week)
+                                .replaceFirstChar { it.lowercase() }
+                        } $selectedWeek",
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -202,21 +205,19 @@ fun HorizontalCalendar(
 
                 for (date in 0 until 7) {
                     val currentDate = firstDayOfWeek.plusDays(date.toLong())
-                    val eventsByDay = if (scheduleData.periodicEventsForCalendar != null) {
+                    val eventsByDay = scheduleData.periodicEventsForCalendar?.let { events ->
                         val currentWeek = calculateCurrentWeek(
                             date = firstDayOfWeek,
                             startDate = scheduleEntity.startDate,
                             firstPeriodNumber = scheduleEntity.recurrence!!.firstWeekNumber,
                             interval = scheduleEntity.recurrence.interval!!
                         )
-                        scheduleData.periodicEventsForCalendar[currentWeek]?.filter {
+                        events[currentWeek]?.filter {
                             it.key == currentDate.dayOfWeek
                         }!!.values.flatten()
-                    } else if (scheduleData.nonPeriodicEventsForCalendar != null) {
-                        scheduleData.nonPeriodicEventsForCalendar.filter {
-                            it.key == currentDate
-                        }.values.flatten()
-                    } else emptyList()
+                    } ?: scheduleData.nonPeriodicEventsForCalendar?.filter {
+                        it.key == currentDate
+                    }?.values?.flatten() ?: emptyList()
 
                     HorizontalCalendarItem(
                         selectDate = selectDate,

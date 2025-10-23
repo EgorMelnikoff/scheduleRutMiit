@@ -32,10 +32,10 @@ fun GridGroup(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        if (title != null) {
+        title?.let {
             Text(
                 modifier = Modifier.padding(horizontal = 4.dp),
-                text = title,
+                text = it,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = titleColor ?: MaterialTheme.colorScheme.onSurface
@@ -109,10 +109,10 @@ fun ColumnGroup(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        if (title != null) {
+        title?.let {
             Text(
                 modifier = Modifier.padding(horizontal = 4.dp),
-                text = title,
+                text = it,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = titleColor ?: MaterialTheme.colorScheme.onSurface
@@ -178,10 +178,10 @@ fun RowGroup(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        if (title != null) {
+        title?.let {
             Text(
                 modifier = Modifier.padding(horizontal = 4.dp),
-                text = title,
+                text = it,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = titleColor ?: MaterialTheme.colorScheme.onSurface

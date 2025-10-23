@@ -35,22 +35,22 @@ data class ScheduleData(
             scheduleId: Long?
         ): ScheduleData? {
             val scheduleFormatted = findCurrentSchedule(namedSchedule, scheduleId)
-            return if (scheduleFormatted != null) {
+            return scheduleFormatted?.let { schedule ->
                 val today = LocalDate.now()
                 val weeksCount = ChronoUnit.WEEKS.between(
-                    scheduleFormatted.scheduleEntity.startDate.calculateFirstDayOfWeek(),
-                    scheduleFormatted.scheduleEntity.endDate.calculateFirstDayOfWeek()
+                    schedule.scheduleEntity.startDate.calculateFirstDayOfWeek(),
+                    schedule.scheduleEntity.endDate.calculateFirstDayOfWeek()
                 ).plus(1).toInt()
 
                 val defaultParams = calculateDefaultParams(
                     today = today,
                     weeksCount = weeksCount,
-                    scheduleEntity = scheduleFormatted.scheduleEntity
+                    scheduleEntity = schedule.scheduleEntity
                 )
-                val scheduleWithoutHiddenEvents = scheduleFormatted.copy(
-                    events = scheduleFormatted.events.filter { !it.isHidden }
+                val scheduleWithoutHiddenEvents = schedule.copy(
+                    events = schedule.events.filter { !it.isHidden }
                 )
-                val hiddenEvents = scheduleFormatted.events.filter { it.isHidden }
+                val hiddenEvents = schedule.events.filter { it.isHidden }
 
                 if (scheduleWithoutHiddenEvents.scheduleEntity.recurrence != null) {
                     val periodicEventsForCalendar =
@@ -65,11 +65,11 @@ data class ScheduleData(
                         today = today,
                         periodicEventsForCalendar = periodicEventsForCalendar,
                         nonPeriodicEventsForCalendar = null,
-                        scheduleEntity = scheduleFormatted.scheduleEntity
+                        scheduleEntity = schedule.scheduleEntity
                     )
                     ScheduleData(
                         namedSchedule = namedSchedule,
-                        settledScheduleEntity = scheduleFormatted.scheduleEntity,
+                        settledScheduleEntity = schedule.scheduleEntity,
                         periodicEventsForCalendar = periodicEventsForCalendar,
                         nonPeriodicEventsForCalendar = null,
                         eventsExtraData = scheduleWithoutHiddenEvents.eventsExtraData,
@@ -88,18 +88,18 @@ data class ScheduleData(
                     val eventsForList = calculateEventsForList(
                         today = today,
                         periodicEventsForCalendar = null,
-                        nonPeriodicEvents = scheduleFormatted.events,
+                        nonPeriodicEvents = schedule.events,
                         scheduleEntity = scheduleWithoutHiddenEvents.scheduleEntity,
                     )
                     val reviewParams = calculateReviewParams(
                         today = today,
                         periodicEventsForCalendar = null,
                         nonPeriodicEventsForCalendar = nonPeriodicEventsForCalendar,
-                        scheduleEntity = scheduleFormatted.scheduleEntity
+                        scheduleEntity = schedule.scheduleEntity
                     )
                     ScheduleData(
                         namedSchedule = namedSchedule,
-                        settledScheduleEntity = scheduleFormatted.scheduleEntity,
+                        settledScheduleEntity = schedule.scheduleEntity,
                         periodicEventsForCalendar = null,
                         nonPeriodicEventsForCalendar = nonPeriodicEventsForCalendar,
                         eventsExtraData = scheduleWithoutHiddenEvents.eventsExtraData,
@@ -113,7 +113,7 @@ data class ScheduleData(
                         daysStartIndex = defaultParams.third
                     )
                 }
-            } else null
+            }
         }
 
         fun findCurrentSchedule(

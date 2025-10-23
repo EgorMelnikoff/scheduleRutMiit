@@ -28,9 +28,6 @@ class ScheduleApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var workScheduler: WorkScheduler
 
-    @Inject
-    lateinit var widgetDataUpdater: WidgetDataUpdater
-
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
@@ -56,8 +53,6 @@ class ScheduleApplication : Application(), Configuration.Provider {
         )
 
         applicationScope.launch {
-            widgetDataUpdater.updateAll()
-
             if (!isUpdateWidgetsWorkScheduled) {
                 workScheduler.startPeriodicWidgetUpdating()
             }

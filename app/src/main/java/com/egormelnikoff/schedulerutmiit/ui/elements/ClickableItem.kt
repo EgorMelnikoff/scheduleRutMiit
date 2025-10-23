@@ -143,7 +143,7 @@ fun ClickableItem(
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            if (subtitle != null) {
+            subtitle?.let {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)

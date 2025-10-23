@@ -459,13 +459,13 @@ fun checkEventParams(
         if (name.isEmpty()) {
             append("${context.getString(R.string.no_name_specified)}\n")
         }
-        if (date == null) {
+        date?.let {
             append("${context.getString(R.string.no_date_specified)}\n")
         }
-        if (startTime == null) {
+        startTime?.let {
             append("${context.getString(R.string.no_start_time_specified)}\n")
         }
-        if (endTime == null) {
+        endTime?.let {
             append("${context.getString(R.string.no_end_time_specified)}\n")
         }
 

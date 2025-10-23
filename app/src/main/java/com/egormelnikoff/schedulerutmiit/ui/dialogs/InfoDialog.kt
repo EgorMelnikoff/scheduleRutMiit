@@ -171,15 +171,15 @@ fun InfoDialog(
                 }
 
                 is AppInfoState.Loaded -> {
-                    if (appInfoState.authorTelegramPage != null) {
+                    appInfoState.authorTelegramPage?.let {
                         ColumnGroup(
                             items = listOf {
                                 ClickableItem(
-                                    title = appInfoState.authorTelegramPage.name!!,
+                                    title = it.name!!,
                                     subtitle = LocalContext.current.getString(R.string.author),
-                                    imageUrl = appInfoState.authorTelegramPage.imageUrl!!,
+                                    imageUrl = it.imageUrl!!,
                                     onClick = {
-                                        appInfoState.authorTelegramPage.url?.let {
+                                      it.url?.let {
                                             onOpenUri(it)
                                         }
                                     }

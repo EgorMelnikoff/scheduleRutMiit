@@ -206,7 +206,7 @@ fun ScreenSchedule(
         }
     }
 
-    if (showNamedScheduleDialog != null) {
+    showNamedScheduleDialog?.let {
         DialogNamedScheduleActions(
             namedScheduleEntity = showNamedScheduleDialog!!,
             onSelectDefault = {

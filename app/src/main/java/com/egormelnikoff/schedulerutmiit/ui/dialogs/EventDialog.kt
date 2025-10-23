@@ -89,13 +89,13 @@ fun EventDialog(
 
     val eventString = StringBuilder().apply {
         append("${LocalContext.current.getString(R.string._class)}: ${event.name}")
-        if (event.typeName != null) {
-            append("\n${LocalContext.current.getString(R.string.class_type)}: ${event.typeName}")
+        event.typeName?.let {
+            append("\n${LocalContext.current.getString(R.string.class_type)}: $it")
         }
         append("\n${LocalContext.current.getString(R.string.time)}: $startTime - $endTime")
 
-        if (event.timeSlotName != null) {
-            append(" (${event.timeSlotName})")
+        event.timeSlotName?.let {
+            append(" ($it)")
         }
 
         if (!event.rooms.isNullOrEmpty()) {
@@ -179,9 +179,9 @@ fun EventDialog(
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            if (event.typeName != null) {
+            event.typeName?.let {
                 Text(
-                    text = event.typeName,
+                    text = it,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,

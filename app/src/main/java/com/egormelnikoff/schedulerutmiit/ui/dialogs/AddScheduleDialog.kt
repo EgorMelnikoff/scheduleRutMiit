@@ -164,10 +164,10 @@ fun checkScheduleParams(
         if (name.isEmpty()) {
             append("${context.getString(R.string.no_name_specified)}\n")
         }
-        if (startDate == null) {
+        startDate?.let {
             append("${context.getString(R.string.no_start_date_specified)}\n")
         }
-        if (endDate == null) {
+        endDate?.let {
             append("${context.getString(R.string.no_end_date_specified)}\n")
         }
     }.trimEnd()
