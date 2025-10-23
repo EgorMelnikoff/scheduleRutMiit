@@ -43,10 +43,11 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
+import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.app.modules.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetData
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.ui.theme.Black
 import com.egormelnikoff.schedulerutmiit.ui.theme.DarkGrey
 import com.egormelnikoff.schedulerutmiit.ui.theme.Grey
@@ -68,8 +69,6 @@ import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 class EventsWidget : GlanceAppWidget() {
@@ -115,10 +114,6 @@ class EventsWidget : GlanceAppWidget() {
         onUpdate: () -> Unit
     ) {
         val today = LocalDateTime.now()
-        val time = today
-            .atZone(ZoneId.systemDefault())
-            .withZoneSameInstant(ZoneOffset.UTC)
-            .toLocalTime()
 
         val formatter = DateTimeFormatter.ofPattern("d MMMM")
 
@@ -158,10 +153,12 @@ class EventsWidget : GlanceAppWidget() {
                     periodicEvents = periodicEvents,
                     nonPeriodicEvents = nonPeriodicEvents
                 )
-                val lastEventTime =
-                    eventsForToday.last().endDatetime!!.toLocalTime().plusMinutes(30)
 
-                if (eventsForToday.isNotEmpty() && time.isAfter(lastEventTime) || today.dayOfWeek == DayOfWeek.SUNDAY) {
+                val isFinishedEvents = eventsForToday.isNotEmpty()
+                        && today.toLocalTime()
+                            .isAfter(eventsForToday.last().endDatetime!!.toLocaleTimeWithTimeZone())
+
+                if (isFinishedEvents || today.dayOfWeek == DayOfWeek.SUNDAY) {
                     val tomorrow = today.toLocalDate().plusDays(1)
                     eventsForToday = calculateEvents(
                         scheduleEntity = scheduleEntity,
@@ -284,15 +281,9 @@ class EventsWidget : GlanceAppWidget() {
         ) {
             Text(
                 text = "${
-                    events.first().startDatetime!!
-                        .atZone(ZoneOffset.UTC)
-                        .withZoneSameInstant(ZoneId.systemDefault())
-                        .toLocalTime()
+                    events.first().startDatetime!!.toLocaleTimeWithTimeZone()
                 }\n${
-                    events.first().endDatetime!!
-                        .atZone(ZoneOffset.UTC)
-                        .withZoneSameInstant(ZoneId.systemDefault())
-                        .toLocalTime()
+                    events.first().endDatetime!!.toLocaleTimeWithTimeZone()
                 }",
                 style = TextStyle(
                     color = ColorProvider(
