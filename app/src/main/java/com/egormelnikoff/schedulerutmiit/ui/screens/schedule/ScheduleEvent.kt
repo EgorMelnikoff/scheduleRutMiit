@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
@@ -46,8 +47,6 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemePink
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeRed
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeViolet
 import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeYellow
-import java.time.ZoneId
-import java.time.ZoneOffset
 
 @Composable
 fun ScheduleEvent(
@@ -78,15 +77,9 @@ fun ScheduleEvent(
             Text(
                 text =
                     "${
-                        events.first().startDatetime!!
-                            .atZone(ZoneOffset.UTC)
-                            .withZoneSameInstant(ZoneId.systemDefault())
-                            .toLocalTime()
+                        events.first().startDatetime!!.toLocaleTimeWithTimeZone()
                     } - ${
-                        events.first().endDatetime!!
-                            .atZone(ZoneOffset.UTC)
-                            .withZoneSameInstant(ZoneId.systemDefault())
-                            .toLocalTime()
+                        events.first().endDatetime!!.toLocaleTimeWithTimeZone()
                     }",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,

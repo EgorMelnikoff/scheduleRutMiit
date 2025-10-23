@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateCurrentWeek
+import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
 import java.time.DayOfWeek
 import java.time.LocalDate

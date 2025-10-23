@@ -32,6 +32,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.Recurrence
+import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

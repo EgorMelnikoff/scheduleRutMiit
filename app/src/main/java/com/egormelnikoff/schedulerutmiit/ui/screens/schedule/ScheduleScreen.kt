@@ -39,8 +39,6 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
-import kotlin.math.abs
 
 @Composable
 fun ScreenSchedule(
@@ -246,18 +244,4 @@ fun ScreenSchedule(
             }
         )
     }
-}
-
-fun calculateFirstDayOfWeek(date: LocalDate): LocalDate {
-    return date.minusDays(date.dayOfWeek.value - 1L)
-}
-
-fun calculateCurrentWeek(
-    date: LocalDate,
-    startDate: LocalDate,
-    firstPeriodNumber: Int,
-    interval: Int
-): Int {
-    val weeksFromStart = abs(ChronoUnit.WEEKS.between(date, startDate)).plus(1).toInt()
-    return ((weeksFromStart + firstPeriodNumber) % interval).plus(1)
 }

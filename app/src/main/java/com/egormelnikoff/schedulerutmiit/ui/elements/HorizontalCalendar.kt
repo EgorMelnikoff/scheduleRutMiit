@@ -41,8 +41,8 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateCurrentWeek
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
+import com.egormelnikoff.schedulerutmiit.app.model.calculateFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeGreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeLightBlue
@@ -73,13 +73,13 @@ fun HorizontalCalendar(
         pagerWeeksState.currentPage,
         scheduleEntity
     ) {
-        calculateFirstDayOfWeek(
-            scheduleEntity.startDate.plusWeeks(pagerWeeksState.currentPage.toLong())
-        )
+        scheduleEntity.startDate
+            .plusWeeks(pagerWeeksState.currentPage.toLong())
+            .calculateFirstDayOfWeek()
     }
 
     val displayMonth =
-        if (firstDayOfCurrentWeek == calculateFirstDayOfWeek(selectedDate))
+        if (firstDayOfCurrentWeek == selectedDate.calculateFirstDayOfWeek())
             selectedDate
         else
             firstDayOfCurrentWeek.plusDays(4L)
@@ -196,9 +196,9 @@ fun HorizontalCalendar(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val firstDayOfWeek = calculateFirstDayOfWeek(
-                    scheduleEntity.startDate.plusWeeks(index.toLong())
-                )
+                val firstDayOfWeek = scheduleEntity.startDate
+                    .plusWeeks(index.toLong())
+                    .calculateFirstDayOfWeek()
 
                 for (date in 0 until 7) {
                     val currentDate = firstDayOfWeek.plusDays(date.toLong())

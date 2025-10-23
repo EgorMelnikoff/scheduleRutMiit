@@ -49,14 +49,13 @@ import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
-import java.time.ZoneId
-import java.time.ZoneOffset
 
 @Composable
 fun EventDialog(
@@ -82,16 +81,10 @@ fun EventDialog(
     var comment by remember { mutableStateOf(eventExtraData?.comment ?: "") }
 
     val startTime = "${
-        event.startDatetime!!
-            .atZone(ZoneOffset.UTC)
-            .withZoneSameInstant(ZoneId.systemDefault())
-            .toLocalTime()
+        event.startDatetime!!.toLocaleTimeWithTimeZone()
     }"
     val endTime = "${
-        event.endDatetime!!
-            .atZone(ZoneOffset.UTC)
-            .withZoneSameInstant(ZoneId.systemDefault())
-            .toLocalTime()
+        event.endDatetime!!.toLocaleTimeWithTimeZone()
     }"
 
     val eventString = StringBuilder().apply {

@@ -18,6 +18,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.ui.elements.HorizontalCalendar
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState

@@ -41,6 +41,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.DialogNamedScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -64,7 +65,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -220,12 +220,8 @@ fun ReviewScreen(
                                                 java.time.format.TextStyle.FULL,
                                                 Locale.getDefault()
                                             ).replaceFirstChar { c -> c.uppercase() }
-                                            val startTime = it.startDatetime.atZone(ZoneOffset.UTC)
-                                                .withZoneSameInstant(ZoneId.systemDefault())
-                                                .toLocalTime().format(timeFormatter)
-                                            val endTime = it.endDatetime!!.atZone(ZoneOffset.UTC)
-                                                .withZoneSameInstant(ZoneId.systemDefault())
-                                                .toLocalTime().format(timeFormatter)
+                                            val startTime = it.startDatetime.toLocaleTimeWithTimeZone().format(timeFormatter)
+                                            val endTime = it.endDatetime!!.toLocaleTimeWithTimeZone().format(timeFormatter)
                                             "$day, $startTime - $endTime"
                                         } else {
                                             it.startDatetime!!.format(dateTimeFormatter)

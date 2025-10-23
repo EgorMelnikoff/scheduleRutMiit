@@ -34,6 +34,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
+import com.egormelnikoff.schedulerutmiit.app.model.calculateFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddEventDialog
@@ -52,7 +53,6 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleCalendarState
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
@@ -169,8 +169,9 @@ fun Main(
             selectedDate = newSelectedDate
 
             val targetWeekIndex = ChronoUnit.WEEKS.between(
-                calculateFirstDayOfWeek(scheduleUiState.currentScheduleData.settledScheduleEntity.startDate),
-                calculateFirstDayOfWeek(newSelectedDate)
+                scheduleUiState.currentScheduleData.settledScheduleEntity.startDate
+                    .calculateFirstDayOfWeek(),
+                newSelectedDate.calculateFirstDayOfWeek()
             ).toInt()
 
             if (pagerWeeksState.currentPage != targetWeekIndex) {

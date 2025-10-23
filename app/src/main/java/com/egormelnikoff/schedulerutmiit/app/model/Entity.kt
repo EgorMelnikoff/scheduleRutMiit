@@ -7,6 +7,11 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
+import kotlin.math.abs
 
 
 data class NamedScheduleFormatted(
@@ -113,7 +118,6 @@ data class Event(
     }
 }
 
-
 @Entity(tableName = "EventsExtraData")
 data class EventExtraData(
     @ColumnInfo(name = "EventExtraId")
@@ -128,3 +132,23 @@ data class EventExtraData(
     val comment: String = "",
     val tag: Int = 0
 )
+
+fun LocalDateTime.toLocaleTimeWithTimeZone(): LocalTime {
+    return this.atZone(ZoneOffset.UTC)
+        .withZoneSameInstant(ZoneId.systemDefault())
+        .toLocalTime()
+}
+
+fun LocalDate.calculateFirstDayOfWeek(): LocalDate {
+    return this.minusDays(this.dayOfWeek.value - 1L)
+}
+
+fun calculateCurrentWeek(
+    date: LocalDate,
+    startDate: LocalDate,
+    firstPeriodNumber: Int,
+    interval: Int
+): Int {
+    val weeksFromStart = abs(ChronoUnit.WEEKS.between(date, startDate)).plus(1).toInt()
+    return ((weeksFromStart + firstPeriodNumber) % interval).plus(1)
+}

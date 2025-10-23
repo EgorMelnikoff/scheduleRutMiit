@@ -5,8 +5,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateCurrentWeek
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
+import com.egormelnikoff.schedulerutmiit.app.model.calculateFirstDayOfWeek
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -38,8 +38,8 @@ data class ScheduleData(
             return if (scheduleFormatted != null) {
                 val today = LocalDate.now()
                 val weeksCount = ChronoUnit.WEEKS.between(
-                    calculateFirstDayOfWeek(scheduleFormatted.scheduleEntity.startDate),
-                    calculateFirstDayOfWeek(scheduleFormatted.scheduleEntity.endDate)
+                    scheduleFormatted.scheduleEntity.startDate.calculateFirstDayOfWeek(),
+                    scheduleFormatted.scheduleEntity.endDate.calculateFirstDayOfWeek()
                 ).plus(1).toInt()
 
                 val defaultParams = calculateDefaultParams(
@@ -141,8 +141,8 @@ data class ScheduleData(
             if (today in scheduleEntity.startDate..scheduleEntity.endDate) {
                 weeksStartIndex = abs(
                     ChronoUnit.WEEKS.between(
-                        calculateFirstDayOfWeek(scheduleEntity.startDate),
-                        calculateFirstDayOfWeek(today)
+                        scheduleEntity.startDate.calculateFirstDayOfWeek(),
+                        today.calculateFirstDayOfWeek()
                     ).toInt()
                 )
                 daysStartIndex = abs(
@@ -226,13 +226,13 @@ data class ScheduleData(
             scheduleEntity: ScheduleEntity
         ): List<Int> {
             val weeksCount = ChronoUnit.WEEKS.between(
-                calculateFirstDayOfWeek(scheduleEntity.startDate),
-                calculateFirstDayOfWeek(scheduleEntity.endDate)
+                scheduleEntity.startDate.calculateFirstDayOfWeek(),
+                scheduleEntity.endDate.calculateFirstDayOfWeek()
             ).toInt() + 1
             val weeksRemaining =
                 ChronoUnit.WEEKS.between(
-                    calculateFirstDayOfWeek(startDate),
-                    calculateFirstDayOfWeek(scheduleEntity.endDate)
+                    startDate.calculateFirstDayOfWeek(),
+                    scheduleEntity.endDate.calculateFirstDayOfWeek()
                 )
                     .toInt() + 1
             val recurrence = scheduleEntity.recurrence ?: return emptyList()
@@ -291,7 +291,7 @@ data class ScheduleData(
             events: Map<LocalDate, List<Event>>
         ): Int {
             var count = 0
-            val firstDayOfWeek = calculateFirstDayOfWeek(today)
+            val firstDayOfWeek = today.calculateFirstDayOfWeek()
             for (date in 0 until 7) {
                 val currentDate = firstDayOfWeek.plusDays(date.toLong())
                 val eventPerDay = events[currentDate]?.distinctBy { it.startDatetime }

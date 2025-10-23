@@ -8,13 +8,13 @@ import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.model.calculateFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.egormelnikoff.schedulerutmiit.data.Error
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calculateFirstDayOfWeek
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -342,8 +342,8 @@ class ScheduleViewModelImpl @Inject constructor(
         endDate: LocalDate
     ) {
         viewModelScope.launch {
-            val fixedStartDate = calculateFirstDayOfWeek(startDate)
-            val fixedEndDate = calculateFirstDayOfWeek(endDate).plusDays(6)
+            val fixedStartDate = startDate.calculateFirstDayOfWeek()
+            val fixedEndDate = endDate.calculateFirstDayOfWeek().plusDays(6)
             val namedSchedule = NamedScheduleFormatted(
                 namedScheduleEntity = NamedScheduleEntity(
                     id = 0,
