@@ -80,6 +80,22 @@ fun ScreenSchedule(
             )
         }
 
+        scheduleUiState.isError -> {
+            ErrorScreen(
+                title = LocalContext.current.getString(R.string.error),
+                subtitle = LocalContext.current.getString(R.string.error_load_schedule),
+                paddingTop = externalPadding.calculateTopPadding(),
+                button = {
+                    CustomButton(
+                        buttonTitle = LocalContext.current.getString(R.string.return_default),
+                        imageVector = ImageVector.vectorResource(R.drawable.back),
+                        onClick = { onLoadInitialData() },
+                    )
+                },
+                paddingBottom = externalPadding.calculateBottomPadding()
+            )
+        }
+
         scheduleUiState.currentScheduleData?.namedSchedule != null -> {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -163,7 +179,7 @@ fun ScreenSchedule(
             }
         }
 
-        scheduleUiState.savedNamedSchedules.isEmpty() -> {
+        else -> {
             ErrorScreen(
                 title = LocalContext.current.getString(R.string.no_saved_schedule),
                 subtitle = LocalContext.current.getString(R.string.empty_base),
@@ -185,22 +201,6 @@ fun ScreenSchedule(
                     }
                 },
                 paddingTop = externalPadding.calculateTopPadding(),
-                paddingBottom = externalPadding.calculateBottomPadding()
-            )
-        }
-
-        else -> {
-            ErrorScreen(
-                title = LocalContext.current.getString(R.string.error),
-                subtitle = LocalContext.current.getString(R.string.error_load_schedule),
-                paddingTop = externalPadding.calculateTopPadding(),
-                button = {
-                    CustomButton(
-                        buttonTitle = LocalContext.current.getString(R.string.return_default),
-                        imageVector = ImageVector.vectorResource(R.drawable.back),
-                        onClick = { onLoadInitialData() },
-                    )
-                },
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
         }
