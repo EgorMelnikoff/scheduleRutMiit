@@ -15,13 +15,13 @@ junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.9.4"
 activityCompose = "1.11.0"
-composeBom = "2025.10.00"
-roomRuntime = "2.8.2"
-runtimeLivedata = "1.9.3"
+composeBom = "2025.10.01"
+roomRuntime = "2.8.3"
+runtimeLivedata = "1.9.4"
 ksp = "2.2.20-2.0.3"
 material3 = "1.4.0"
-navigation3 = "1.0.0-alpha10"
-workRuntimeKtx = "2.10.5"
+navigation3 = "1.0.0-beta01"
+workRuntimeKtx = "2.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
