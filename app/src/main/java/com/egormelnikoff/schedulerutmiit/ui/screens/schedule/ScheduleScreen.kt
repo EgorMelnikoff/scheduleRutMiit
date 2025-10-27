@@ -1,19 +1,32 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
@@ -119,6 +133,10 @@ fun ScreenSchedule(
                         .fillMaxSize()
                         .padding(top = padding.calculateTopPadding())
                 ) {
+                    IsSavedAlert(
+                        isSaved = scheduleUiState.isSaved,
+                        onSave = onSaveCurrentNamedSchedule
+                    )
                     ExpandedMenu(
                         setDefaultSchedule = onSetDefaultSchedule,
                         scheduleUiState = scheduleUiState,
@@ -179,7 +197,7 @@ fun ScreenSchedule(
             }
         }
 
-        else -> {
+        scheduleUiState.savedNamedSchedules.isEmpty() -> {
             ErrorScreen(
                 title = LocalContext.current.getString(R.string.no_saved_schedule),
                 subtitle = LocalContext.current.getString(R.string.empty_base),
@@ -189,7 +207,7 @@ fun ScreenSchedule(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         CustomButton(
-                            buttonTitle = LocalContext.current.getString(R.string.search),
+                            buttonTitle = LocalContext.current.getString(R.string.find),
                             imageVector = ImageVector.vectorResource(R.drawable.search),
                             onClick = { navigateToSearch() },
                         )
@@ -200,7 +218,13 @@ fun ScreenSchedule(
                         )
                     }
                 },
-                paddingTop = externalPadding.calculateTopPadding(),
+                paddingBottom = externalPadding.calculateBottomPadding()
+            )
+        }
+
+        else -> {
+            ErrorScreen(
+                title = LocalContext.current.getString(R.string.error),
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
         }
@@ -243,5 +267,53 @@ fun ScreenSchedule(
                 )
             }
         )
+    }
+}
+
+@Composable
+fun IsSavedAlert (
+    isSaved: Boolean,
+    onSave: () -> Unit
+) {
+    AnimatedVisibility(
+        visible = !isSaved,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.error)
+                .padding(horizontal = 12.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.alert),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = LocalContext.current.getString(R.string.schedule_is_not_saved),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                IconButton(
+                    onClick = onSave
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.save),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        }
     }
 }
