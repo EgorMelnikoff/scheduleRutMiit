@@ -360,7 +360,7 @@ class EventsWidget : GlanceAppWidget() {
                     text = eventExtraData.comment,
                     style = TextStyle(
                         fontSize = 10.sp,
-                        color = GlanceTheme.colors.secondaryContainer
+                        color = GlanceTheme.colors.onSecondaryContainer
                     ),
                     maxLines = 1
                 )
