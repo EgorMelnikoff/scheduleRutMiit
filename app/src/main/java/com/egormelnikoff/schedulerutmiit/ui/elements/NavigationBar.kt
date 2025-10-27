@@ -1,14 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,16 +35,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Routes
+import com.egormelnikoff.schedulerutmiit.ui.theme.Grey
 
 data class BarItem(
     val title: String,
@@ -57,26 +54,16 @@ data class BarItem(
 @Composable
 fun CustomNavigationBar(
     appBackStack: AppBackStack<Routes.Schedule>,
-    barItems: Array<BarItem>
+    barItems: Array<BarItem>,
+    theme: String
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    val shadowRadius by animateDpAsState(
-        targetValue = if (isPressed) 6.dp else 8.dp,
-        animationSpec = tween(durationMillis = 150)
-    )
-
-    val shadowOffsetX by animateDpAsState(
-        targetValue = if (isPressed) 1.dp else 2.dp,
-        animationSpec = tween(durationMillis = 150)
-    )
-    val shadowOffsetY by animateDpAsState(
-        targetValue = if (isPressed) 1.dp else 2.dp,
-        animationSpec = tween(durationMillis = 150)
-    )
-
+    val darkTheme = when (theme) {
+        "dark" -> true
+        "light" -> false
+        else -> {
+            isSystemInDarkTheme()
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -101,17 +88,32 @@ fun CustomNavigationBar(
         Row(
             modifier = Modifier
                 .clickable(
-                    interactionSource = interactionSource,
-                    indication = null
+                    enabled = false
                 ) {}
-                .dropShadow(
-                    shape = CircleShape,
-                    shadow = Shadow(
-                        radius = shadowRadius,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
-                        offset = DpOffset(shadowOffsetX, shadowOffsetY)
-                    )
-                )
+                .let {
+                    if (darkTheme) {
+                        it.border(
+                            width = 0.5.dp,
+                            shape = CircleShape,
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.3f),
+                                    Color.Transparent,
+                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.2f)
+                                )
+                            )
+                        )
+                    } else {
+                        it.dropShadow(
+                            shape = CircleShape,
+                            shadow = Shadow(
+                                radius = 8.dp,
+                                color = Grey.copy(0.5f),
+                                offset = DpOffset(2.dp, 2.dp)
+                            )
+                        )
+                    }
+                }
                 .background(
                     color = MaterialTheme.colorScheme.background,
                     shape = CircleShape
@@ -169,23 +171,16 @@ fun CustomNavigationItem(
             imageVector = if (isSelected) barItem.selectedIcon else barItem.icon,
             contentDescription = barItem.title,
             tint = if (isSelected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.onSurface
+            else MaterialTheme.colorScheme.onSecondaryContainer
         )
         Text(
             text = barItem.title,
-            fontSize = 8.sp,
-            fontWeight = if (isSelected) FontWeight.Bold
-            else FontWeight.Normal,
-            style = TextStyle(
-                platformStyle = PlatformTextStyle(
-                    includeFontPadding = false
-                )
-            ),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.bodySmall,
             color = if (isSelected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.onSurface
+            else MaterialTheme.colorScheme.onSecondaryContainer,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            textAlign = TextAlign.Center
         )
     }
 }

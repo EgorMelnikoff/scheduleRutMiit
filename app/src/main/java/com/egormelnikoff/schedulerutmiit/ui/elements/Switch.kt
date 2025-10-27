@@ -24,9 +24,9 @@ fun CustomSwitch (
             colors = colors ?: SwitchDefaults.colors().copy(
                 checkedTrackColor = MaterialTheme.colorScheme.primary,
                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                uncheckedBorderColor = MaterialTheme.colorScheme.onSurface,
-                uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
-                uncheckedTrackColor = MaterialTheme.colorScheme.surface
+                uncheckedBorderColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                uncheckedThumbColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                uncheckedTrackColor = MaterialTheme.colorScheme.secondaryContainer
             )
         )
     }

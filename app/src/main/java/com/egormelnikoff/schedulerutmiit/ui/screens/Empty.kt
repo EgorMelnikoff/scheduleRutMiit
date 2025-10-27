@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun Empty(
@@ -54,22 +53,22 @@ fun Empty(
         title?.let {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
                 text = it,
-                fontSize = 20.sp,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = if (isBoldTitle) {
                     FontWeight.Bold
                 } else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.onBackground
+                textAlign = TextAlign.Center
             )
         }
         subtitle?.let {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
                 text = it,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                textAlign = TextAlign.Center
             )
         }
     }

@@ -34,7 +34,10 @@ fun CustomAlertDialog(
 
         } else null,
         text = {
-            Text(text = dialogText)
+            Text(
+                text = dialogText,
+                style = MaterialTheme.typography.bodyLarge,
+            )
         },
         onDismissRequest = {
             onDismissRequest()
@@ -48,6 +51,7 @@ fun CustomAlertDialog(
             ) {
                 Text(
                     text = confirmText ?: LocalContext.current.getString(R.string.yes),
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -60,13 +64,14 @@ fun CustomAlertDialog(
             ) {
                 Text(
                     text = dismissText ?: LocalContext.current.getString(R.string.no),
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
         },
         containerColor = MaterialTheme.colorScheme.background,
-        iconContentColor = MaterialTheme.colorScheme.onSurface,
         titleContentColor = MaterialTheme.colorScheme.onBackground,
-        textContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        iconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
     )
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -39,13 +39,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
@@ -168,43 +164,28 @@ fun EventDialog(
 
             Text(
                 text = event.name!!,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground
+                maxLines = 2
             )
             event.typeName?.let {
                 Text(
                     text = it,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium,
+                    overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
-                    style = TextStyle(
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        )
-                    ),
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
             Text(
                 text = "$startTime - $endTime",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium,
+                overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
                 color = MaterialTheme.colorScheme.onBackground
             )
+            Spacer(modifier = Modifier.height(0.dp))
             if (!event.rooms.isNullOrEmpty()) {
                 ColumnGroup(
                     title = context.getString(R.string.room),
@@ -248,8 +229,8 @@ fun EventDialog(
                                 Box(
                                     contentAlignment = Alignment.Center,
                                     modifier = Modifier
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(MaterialTheme.colorScheme.surface)
+                                        .clip(MaterialTheme.shapes.extraSmall)
+                                        .background(MaterialTheme.colorScheme.secondaryContainer)
                                         .defaultMinSize(minWidth = 80.dp)
                                         .clickable(
                                             onClick = {
@@ -263,15 +244,14 @@ fun EventDialog(
                                                 )
                                             }
                                         )
-                                        .padding(horizontal = 8.dp)
+                                        .padding(8.dp)
                                 ) {
                                     Text(
                                         text = group.name.toString(),
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        maxLines = 2,
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = MaterialTheme.colorScheme.onBackground,
                                         overflow = TextOverflow.Ellipsis,
-                                        color = MaterialTheme.colorScheme.onBackground
+                                        maxLines = 2
                                     )
                                 }
                             }

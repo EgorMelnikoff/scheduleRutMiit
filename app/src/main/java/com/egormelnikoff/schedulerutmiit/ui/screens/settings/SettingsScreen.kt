@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
@@ -29,10 +28,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
@@ -214,16 +211,15 @@ fun SettingsItem(
                 modifier = Modifier.size(20.dp),
                 imageVector = imageVector,
                 contentDescription = text,
-                tint = MaterialTheme.colorScheme.onSurface
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
             Text(
                 modifier = Modifier.weight(1f),
                 text = text,
-                fontSize = 16.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.titleMedium,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
             if (horizontal) {
                 content?.invoke()
@@ -271,12 +267,12 @@ fun ThemeSelector(
                         activeContentColor = MaterialTheme.colorScheme.onPrimary,
                         inactiveContainerColor = MaterialTheme.colorScheme.background,
                         inactiveBorderColor = Color.Transparent,
-                        inactiveContentColor = MaterialTheme.colorScheme.onSurface
+                        inactiveContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     ),
                     shape = SegmentedButtonDefaults.itemShape(
                         index = index,
                         count = themes.size,
-                        baseShape = RoundedCornerShape(12.dp)
+                        baseShape = MaterialTheme.shapes.medium
                     ),
                     onClick = {
                         setTheme(theme.name)
@@ -294,7 +290,7 @@ fun ThemeSelector(
                         } else {
                             Text(
                                 text = theme.displayedName,
-                                fontSize = 12.sp,
+                                style = MaterialTheme.typography.titleSmall
                             )
                         }
                     }

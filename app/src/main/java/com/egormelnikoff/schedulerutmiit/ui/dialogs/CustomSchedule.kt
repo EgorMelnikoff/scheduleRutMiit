@@ -20,12 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 
 @Composable
@@ -51,16 +47,15 @@ fun ChooseDateTimeButton(
             imageVector = imageVector ?: ImageVector.vectorResource(R.drawable.calendar),
             contentDescription = null,
             tint = if (enabled) MaterialTheme.colorScheme.onBackground
-            else MaterialTheme.colorScheme.onSurface
+            else MaterialTheme.colorScheme.onSecondaryContainer
         )
         Text(
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
             text = title,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleSmall,
             color = if (enabled) MaterialTheme.colorScheme.onBackground
-            else MaterialTheme.colorScheme.onSurface
+            else MaterialTheme.colorScheme.onSecondaryContainer,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
         )
     }
 }
@@ -84,17 +79,11 @@ fun <T> ListParam(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
                 text = title,
-                fontSize = 12.sp,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
 
             OutlinedIconButton(

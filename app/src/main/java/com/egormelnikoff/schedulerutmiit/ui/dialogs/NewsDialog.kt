@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -31,13 +31,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
@@ -105,7 +101,7 @@ fun NewsDialogContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
                     .alpha(transition),
                 painter = model,
                 contentScale = ContentScale.Crop,
@@ -119,19 +115,21 @@ fun NewsDialogContent(
             Spacer(modifier = Modifier.height(spacerHeight))
             Column(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .clip(
+                        MaterialTheme.shapes.extraLarge.copy(
+                            bottomStart = CornerSize(0), bottomEnd = CornerSize(0)
+                        )
+                    )
                     .background(MaterialTheme.colorScheme.background)
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    modifier = Modifier,
                     text = news.title.trim(),
-                    fontSize = 20.sp,
-                    maxLines = 4,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
                     overflow = TextOverflow.Ellipsis,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
+                    maxLines = 4
                 )
                 DateNews(
                     date = news.hisdateDisplay
@@ -148,9 +146,8 @@ fun NewsDialogContent(
                                 val text = element.second as AnnotatedString
                                 Text(
                                     text = text,
-                                    style = MaterialTheme.typography.bodyLarge.copy(
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onBackground
                                 )
                             }
 
@@ -165,14 +162,10 @@ fun NewsDialogContent(
                                     tableRow.forEach { text ->
                                         Text(
                                             text = text.toString(),
-                                            style = TextStyle(
-                                                platformStyle = PlatformTextStyle(
-                                                    includeFontPadding = false
-                                                )
-                                            ),
-                                            fontSize = 14.sp,
-                                            overflow = TextOverflow.Ellipsis,
-                                            color = MaterialTheme.colorScheme.onBackground
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                     }
                                 }
@@ -195,7 +188,7 @@ fun NewsDialogContent(
                                 modifier = Modifier
                                     .height(200.dp)
                                     .maskClip(MaterialTheme.shapes.extraLarge)
-                                    .background(MaterialTheme.colorScheme.surface),
+                                    .background(MaterialTheme.colorScheme.secondaryContainer),
                                 painter = modelListImages,
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -23,17 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_CHANNEL_URL
@@ -92,24 +86,20 @@ fun InfoDialog(
                 ) {
                     Text(
                         text = LocalContext.current.getString(R.string.app_name),
-                        fontSize = 20.sp,
-                        style = TextStyle(
-                            platformStyle = PlatformTextStyle(
-                                includeFontPadding = false
-                            )
-                        ),
+                        style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                     Text(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
-                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                            .background(
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = MaterialTheme.shapes.small
+                            )
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
                         text = "${packageInfo.versionName} (${getLongVersionCode(packageInfo)})",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimary,
                         overflow = TextOverflow.Ellipsis
                     )

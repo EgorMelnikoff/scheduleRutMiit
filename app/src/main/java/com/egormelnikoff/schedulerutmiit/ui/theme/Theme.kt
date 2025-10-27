@@ -21,79 +21,39 @@ fun ScheduleRutMiitTheme(
     appSettings: AppSettings?,
     content: @Composable () -> Unit
 ) {
-    val primaryColors = arrayOf(
-        Pair(lightThemeBlue, darkThemeBlue),
-        Pair(lightThemeRed, darkThemeRed),
-        Pair(lightThemeOrange, darkThemeOrange),
-        Pair(lightThemeYellow, darkThemeYellow),
-        Pair(lightThemeGreen, darkThemeGreen),
-        Pair(lightThemeLightBlue, darkThemeLightBlue),
-        Pair(lightThemeBlue, darkThemeBlue),
-        Pair(lightThemeViolet, darkThemeViolet),
-        Pair(lightThemePink, darkThemePink),
-    )
-
-    val backGroundColors = arrayOf(
-        Pair(White, darkThemeNeutralSurface),
-        Pair(lightThemeRedBackground, darkThemeRedBackground),
-        Pair(lightThemeOrangeBackground, darkThemeOrangeBackground),
-        Pair(lightThemeYellowBackground, darkThemeYellowBackground),
-        Pair(lightThemeGreenBackground, darkThemeGreenBackground),
-        Pair(lightThemeLightBlueBackground, darkThemeLightBlueBackground),
-        Pair(lightThemeBlueBackground, darkThemeBlueBackground),
-        Pair(lightThemeVioletBackground, darkThemeVioletBackground),
-        Pair(lightThemePinkBackground, darkThemePinkBackground),
-    )
-
-    val surfaceColors = arrayOf(
-        Pair(lightThemeNeutralSurface, DarkGrey),
-        Pair(lightThemeRedSurface, darkThemeRedSurface),
-        Pair(lightThemeOrangeSurface, darkThemeOrangeSurface),
-        Pair(lightThemeYellowSurface, darkThemeYellowSurface),
-        Pair(lightThemeGreenSurface, darkThemeGreenSurface),
-        Pair(lightThemeLightBlueSurface, darkThemeLightBlueSurface),
-        Pair(lightThemeBlueSurface, darkThemeBlueSurface),
-        Pair(lightThemeVioletSurface, darkThemeVioletSurface),
-        Pair(lightThemePinkSurface, darkThemePinkSurface),
-    )
-
     val currentPrimary = primaryColors[appSettings?.decorColorIndex ?: 0]
-    val currentBackground = backGroundColors[appSettings?.decorColorIndex ?: 0]
-    val currentSurface = surfaceColors[appSettings?.decorColorIndex ?: 0]
-
+    val currentBackground = backgroundColors[appSettings?.decorColorIndex ?: 0]
+    val currentSecondaryContainer = secondaryContainerColors[appSettings?.decorColorIndex ?: 0]
 
     val lightColorScheme = lightColorScheme(
+        primary = currentPrimary,
+        onPrimary = White,
+
         background = currentBackground.first,
         onBackground = Black,
 
-        primary = currentPrimary.first,
+        secondaryContainer = currentSecondaryContainer.first,
+        onSecondaryContainer = Grey,
+
+        outline = if (appSettings?.decorColorIndex == 0) LightGrey
+        else currentPrimary,
+
+        error = Red
+    )
+    val darkColorScheme = darkColorScheme(
+        primary = currentPrimary,
         onPrimary = White,
 
-        surface = currentSurface.first,
-        onSurface = Grey,
-
-        outline =  if (appSettings?.decorColorIndex == 0) LightGrey
-        else currentPrimary.first,
-
-        error = darkThemeRed
-    )
-
-
-    val darkColorScheme = darkColorScheme(
         background = currentBackground.second,
         onBackground = White,
 
-        primary = currentPrimary.second,
-        onPrimary = White,
-
-
-        surface = currentSurface.second,
-        onSurface = LightGrey,
+        secondaryContainer = currentSecondaryContainer.second,
+        onSecondaryContainer = LightGrey,
 
         outline = if (appSettings?.decorColorIndex == 0) LightGrey
-        else currentPrimary.second,
+        else currentPrimary,
 
-        error = darkThemeRed
+        error = Red
     )
 
     val darkTheme = when (appSettings?.theme) {
@@ -103,45 +63,45 @@ fun ScheduleRutMiitTheme(
             isSystemInDarkTheme()
         }
     }
-
     val colorScheme = if (darkTheme) darkColorScheme
     else lightColorScheme
 
     val animation = SpringSpec<Color>(stiffness = Spring.StiffnessMediumLow)
-
-    val background by animateColorAsState(colorScheme.background, animation)
-    val onBackground by animateColorAsState(colorScheme.onBackground, animation)
     val primary by animateColorAsState(colorScheme.primary, animation)
     val onPrimary by animateColorAsState(colorScheme.onPrimary, animation)
-    val surface by animateColorAsState(colorScheme.surface, animation)
-    val onSurface by animateColorAsState(colorScheme.onSurface, animation)
+    val background by animateColorAsState(colorScheme.background, animation)
+    val onBackground by animateColorAsState(colorScheme.onBackground, animation)
+    val secondaryContainer by animateColorAsState(colorScheme.secondaryContainer, animation)
+    val onSecondaryContainer by animateColorAsState(colorScheme.onSecondaryContainer, animation)
     val outline by animateColorAsState(colorScheme.outline, animation)
     val error by animateColorAsState(colorScheme.error, animation)
 
-
-    val animatedColors = colorScheme.copy(
+    val animatedColorScheme = colorScheme.copy(
         background = background,
         onBackground = onBackground,
+
         primary = primary,
         onPrimary = onPrimary,
-        surface = surface,
-        onSurface = onSurface,
+
+        secondaryContainer = secondaryContainer,
+        onSecondaryContainer = onSecondaryContainer,
+
         outline = outline,
         error = error,
     )
 
     val view = LocalView.current
     if (!view.isInEditMode) {
-        SideEffect  {
+        SideEffect {
             val window = (view.context as Activity).window
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 
     MaterialTheme(
-        colorScheme = animatedColors,
+        colorScheme = animatedColorScheme,
         typography = Typography,
+        shapes = Shapes,
         content = content
     )
-
 }

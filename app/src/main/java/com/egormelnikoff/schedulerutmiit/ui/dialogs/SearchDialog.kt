@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,10 +32,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
@@ -90,7 +87,7 @@ fun SearchScheduleDialog(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.search),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 },
                 trailingIcon = {
@@ -175,14 +172,13 @@ fun SearchScheduleDialog(
                                 Text(
                                     modifier = Modifier.padding(horizontal = 8.dp),
                                     text = LocalContext.current.getString(R.string.groups),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                             }
                             items(searchUiState.groups) { group ->
                                 Box(
-                                    modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                                    modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                 ) {
                                     ClickableItem(
                                         padding = 8.dp,
@@ -207,14 +203,13 @@ fun SearchScheduleDialog(
                                 Text(
                                     modifier = Modifier.padding(horizontal = 8.dp),
                                     text = LocalContext.current.getString(R.string.people),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                             }
                             items(searchUiState.people) { person ->
                                 Box(
-                                    modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                                    modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                 ) {
                                     ClickableItem(
                                         padding = 8.dp,

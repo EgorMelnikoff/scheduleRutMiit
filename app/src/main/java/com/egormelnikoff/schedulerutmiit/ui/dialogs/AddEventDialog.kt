@@ -147,11 +147,10 @@ fun AddEventDialog(
                         imeAction = ImeAction.Done
                     )
                 )
-
                 ColumnGroup(
                     title = LocalContext.current.getString(R.string.class_type),
                     withBackground = false,
-                    items = listOf{
+                    items = listOf {
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(
@@ -459,16 +458,15 @@ fun checkEventParams(
         if (name.isEmpty()) {
             append("${context.getString(R.string.no_name_specified)}\n")
         }
-        date?.let {
+        if (date == null) {
             append("${context.getString(R.string.no_date_specified)}\n")
         }
-        startTime?.let {
+        if (startTime == null) {
             append("${context.getString(R.string.no_start_time_specified)}\n")
         }
-        endTime?.let {
+        if (endTime == null) {
             append("${context.getString(R.string.no_end_time_specified)}\n")
         }
-
         if (startTime != null && endTime != null && startTime >= endTime) {
             append("${context.getString(R.string.time_is_chosen_incorrectly)}\n")
         }

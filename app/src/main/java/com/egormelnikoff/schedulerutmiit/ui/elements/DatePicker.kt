@@ -87,7 +87,7 @@ fun BottomSheetDatePicker(
                     unfocusedContainerColor = MaterialTheme.colorScheme.background,
 
                     focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
 
                     focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                     unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,

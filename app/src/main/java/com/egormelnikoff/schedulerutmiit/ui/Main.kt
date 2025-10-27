@@ -300,7 +300,8 @@ fun Main(
         bottomBar = {
             CustomNavigationBar(
                 appBackStack = appBackStack,
-                barItems = barItems
+                barItems = barItems,
+                theme = appSettings.theme
             )
         },
         snackbarHost = {

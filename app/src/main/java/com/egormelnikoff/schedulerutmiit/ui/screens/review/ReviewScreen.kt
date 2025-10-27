@@ -31,12 +31,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
@@ -51,14 +47,14 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeLightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeOrange
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemePink
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeRed
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeViolet
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeYellow
+import com.egormelnikoff.schedulerutmiit.ui.theme.Blue
+import com.egormelnikoff.schedulerutmiit.ui.theme.Green
+import com.egormelnikoff.schedulerutmiit.ui.theme.LightBlue
+import com.egormelnikoff.schedulerutmiit.ui.theme.Orange
+import com.egormelnikoff.schedulerutmiit.ui.theme.Pink
+import com.egormelnikoff.schedulerutmiit.ui.theme.Red
+import com.egormelnikoff.schedulerutmiit.ui.theme.Violet
+import com.egormelnikoff.schedulerutmiit.ui.theme.Yellow
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.DayOfWeek
 import java.time.Instant
@@ -182,6 +178,7 @@ fun ReviewScreen(
                                     subtitle = if (namedScheduleEntity.type != 3) {
                                         "${LocalContext.current.getString(R.string.current_on)} $lastTimeUpdate"
                                     } else null,
+                                    defaultMinHeight = 40.dp,
                                     onClick = {
                                         showNamedScheduleDialog = namedScheduleEntity
                                     },
@@ -220,8 +217,12 @@ fun ReviewScreen(
                                                 java.time.format.TextStyle.FULL,
                                                 Locale.getDefault()
                                             ).replaceFirstChar { c -> c.uppercase() }
-                                            val startTime = it.startDatetime.toLocaleTimeWithTimeZone().format(timeFormatter)
-                                            val endTime = it.endDatetime!!.toLocaleTimeWithTimeZone().format(timeFormatter)
+                                            val startTime =
+                                                it.startDatetime.toLocaleTimeWithTimeZone()
+                                                    .format(timeFormatter)
+                                            val endTime =
+                                                it.endDatetime!!.toLocaleTimeWithTimeZone()
+                                                    .format(timeFormatter)
                                             "$day, $startTime - $endTime"
                                         } else {
                                             it.startDatetime!!.format(dateTimeFormatter)
@@ -232,7 +233,7 @@ fun ReviewScreen(
                                                     onShowEvent(it.id)
                                                 },
                                                 colors = IconButtonDefaults.iconButtonColors().copy(
-                                                    contentColor = MaterialTheme.colorScheme.onSurface
+                                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                                                 )
                                             ) {
                                                 Icon(
@@ -264,7 +265,7 @@ fun ReviewScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         CustomButton(
-                            buttonTitle = LocalContext.current.getString(R.string.search),
+                            buttonTitle = LocalContext.current.getString(R.string.find),
                             imageVector = ImageVector.vectorResource(R.drawable.search),
                             onClick = { navigateToSearch() },
                         )
@@ -275,7 +276,6 @@ fun ReviewScreen(
                         )
                     }
                 },
-                paddingTop = innerPadding.calculateTopPadding(),
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
         }
@@ -380,14 +380,14 @@ fun EventsReview(
                                 showClickLabel = false,
                                 subtitleLabel = if (eventExtraData.tag != 0) {
                                     val color = when (eventExtraData.tag) {
-                                        1 -> darkThemeRed
-                                        2 -> darkThemeOrange
-                                        3 -> darkThemeYellow
-                                        4 -> darkThemeGreen
-                                        5 -> darkThemeLightBlue
-                                        6 -> darkThemeBlue
-                                        7 -> darkThemeViolet
-                                        8 -> darkThemePink
+                                        1 -> Red
+                                        2 -> Orange
+                                        3 -> Yellow
+                                        4 -> Green
+                                        5 -> LightBlue
+                                        6 -> Blue
+                                        7 -> Violet
+                                        8 -> Pink
                                         else -> Color.Unspecified
                                     }
                                     {
@@ -423,48 +423,33 @@ fun EventsCount(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(2.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             modifier = Modifier,
             text = title,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
             overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onSurface
+            maxLines = 1
         )
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
             Text(
                 text = value,
-                fontSize = 36.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground
+                maxLines = 1
             )
             Text(
                 text = comment,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 maxLines = 1,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurface
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

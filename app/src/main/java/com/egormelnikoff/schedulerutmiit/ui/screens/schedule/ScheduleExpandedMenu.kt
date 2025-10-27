@@ -28,10 +28,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.format.DateTimeFormatter
@@ -69,14 +67,15 @@ fun ExpandedMenu(
                         )
                     },
                     title = {
-                        Column {
+                        Column (
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ){
                             Text(
                                 text = schedule.scheduleEntity.typeName,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.onBackground
+                                maxLines = 1
                             )
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -86,10 +85,10 @@ fun ExpandedMenu(
                                     text = schedule.scheduleEntity.startDate.format(
                                         DateTimeFormatter.ofPattern("dd.MM.yyyy")
                                     ),
-                                    maxLines = 1,
-                                    fontSize = 12.sp,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    maxLines = 1
                                 )
                                 Icon(
                                     modifier = Modifier.size(12.dp),
@@ -100,17 +99,17 @@ fun ExpandedMenu(
                                     text = schedule.scheduleEntity.endDate.format(
                                         DateTimeFormatter.ofPattern("dd.MM.yyyy")
                                     ),
-                                    maxLines = 1,
-                                    fontSize = 12.sp,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    maxLines = 1
                                 )
                             }
                         }
                     },
                     scale = scale,
                     trailingIcon = ImageVector.vectorResource(R.drawable.check),
-                    verticalPadding = 4,
+                    verticalPadding = 8,
                     trailingIconColor = MaterialTheme.colorScheme.primary
                 )
             }
@@ -121,9 +120,8 @@ fun ExpandedMenu(
                 title = {
                     Text(
                         text = LocalContext.current.getString(R.string.collapse),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 },
                 trailingIcon = ImageVector.vectorResource(R.drawable.up),
@@ -153,7 +151,7 @@ fun ExpandedMenuItem(
             .clickable {
                 onClick()
             }
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.secondaryContainer)
             .padding(horizontal = 16.dp, vertical = verticalPadding.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -182,7 +180,7 @@ fun ExpandedMenuItem(
                     },
                 imageVector = trailingIcon,
                 contentDescription = null,
-                tint = trailingIconColor ?: MaterialTheme.colorScheme.onSurface
+                tint = trailingIconColor ?: MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
     }

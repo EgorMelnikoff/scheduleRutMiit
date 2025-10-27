@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,9 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -55,6 +53,7 @@ fun ClickableItem(
     imageVector: ImageVector? = null,
     imageVectorColor: Color? = null,
     showClickLabel: Boolean = true,
+    defaultMinHeight: Dp? = null,
     trailingIcon: (@Composable () -> Unit)? = null
 ) {
     Row(
@@ -67,7 +66,14 @@ fun ClickableItem(
                     it
                 }
             }
-            .padding(padding),
+            .padding(padding)
+            .let{
+                if (defaultMinHeight != null) {
+                    it.defaultMinSize(
+                        minHeight = defaultMinHeight
+                    )
+                } else it
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -80,7 +86,7 @@ fun ClickableItem(
                 modifier = Modifier
                     .size(imageSize)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface),
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -88,7 +94,7 @@ fun ClickableItem(
                         .size(imageSize)
                         .let {
                             if (model.state !is AsyncImagePainter.State.Success) {
-                                it.border(0.5.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+                                it.border(0.5.dp, MaterialTheme.colorScheme.onSecondaryContainer, CircleShape)
                             } else it
                         }
                         .alpha(transition),
@@ -108,10 +114,10 @@ fun ClickableItem(
                     is AsyncImagePainter.State.Error, AsyncImagePainter.State.Empty -> {
                         Text(
                             text = title.first().toString(),
-                            fontSize = imageUrlErrorTextSize.sp,
-                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
                             maxLines = 1,
-                            color = MaterialTheme.colorScheme.onSurface
+                            fontSize = imageUrlErrorTextSize.sp
                         )
                     }
 
@@ -132,16 +138,10 @@ fun ClickableItem(
         ) {
             Text(
                 text = title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = titleMaxLines,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground
+                maxLines = titleMaxLines
             )
             subtitle?.let {
                 Row(
@@ -151,15 +151,10 @@ fun ClickableItem(
                     subtitleLabel?.invoke()
                     Text(
                         text = subtitle,
-                        fontSize = 12.sp,
-                        maxLines = subtitleMaxLines,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
                         overflow = TextOverflow.Ellipsis,
-                        style = TextStyle(
-                            platformStyle = PlatformTextStyle(
-                                includeFontPadding = false
-                            )
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
+                        maxLines = subtitleMaxLines
                     )
                 }
             }
@@ -174,7 +169,7 @@ fun ClickableItem(
                 modifier = Modifier.size(24.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.right),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
     }

@@ -3,6 +3,7 @@ package com.egormelnikoff.schedulerutmiit.ui.elements
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +17,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomModalBottomSheet (
+fun CustomModalBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState? = null,
@@ -36,9 +37,11 @@ fun CustomModalBottomSheet (
         }
     ) {
         Column(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
             horizontalAlignment = horizontalAlignment,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             content.invoke()
         }

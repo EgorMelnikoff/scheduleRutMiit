@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,10 +23,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
@@ -48,11 +45,10 @@ fun CustomTopAppBar(
             titleText?.let {
                 Text(
                     text = titleText,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground
+                    maxLines = 1
                 )
             } ?: titleContent?.let {
                 titleContent.invoke()
@@ -106,7 +102,7 @@ fun ScheduleTopAppBar(
             Row(
                 modifier = if (isSomeSchedules) {
                     Modifier
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(MaterialTheme.shapes.small)
                         .clickable(
                             onClick = {
                                 onShowExpandedMenu(!expandedSchedulesMenu)
@@ -118,22 +114,23 @@ fun ScheduleTopAppBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Column {
+                Column (
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ){
                     Text(
                         text = scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.shortName,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
                         overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onBackground
+                        maxLines = 1,
                     )
                     if (scheduleUiState.currentScheduleData.settledScheduleEntity != null && !isCustomSchedule) {
                         Text(
                             text = scheduleUiState.currentScheduleData.settledScheduleEntity.typeName,
-                            fontSize = 12.sp,
-                            maxLines = 1,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
                             overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colorScheme.onSurface
+                            maxLines = 1
                         )
                     }
                 }

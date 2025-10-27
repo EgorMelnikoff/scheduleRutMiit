@@ -9,16 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -36,21 +33,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.model.calculateFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeGreen
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeLightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeOrange
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemePink
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeRed
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeViolet
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeYellow
+import com.egormelnikoff.schedulerutmiit.ui.theme.Blue
+import com.egormelnikoff.schedulerutmiit.ui.theme.Green
+import com.egormelnikoff.schedulerutmiit.ui.theme.LightBlue
+import com.egormelnikoff.schedulerutmiit.ui.theme.Orange
+import com.egormelnikoff.schedulerutmiit.ui.theme.Pink
+import com.egormelnikoff.schedulerutmiit.ui.theme.Red
+import com.egormelnikoff.schedulerutmiit.ui.theme.Violet
+import com.egormelnikoff.schedulerutmiit.ui.theme.Yellow
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -106,7 +102,7 @@ fun HorizontalCalendar(
                     containerColor = Color.Unspecified,
                     contentColor = MaterialTheme.colorScheme.onBackground,
                     disabledContainerColor = Color.Unspecified,
-                    disabledContentColor = MaterialTheme.colorScheme.onSurface
+                    disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             ) {
                 Icon(
@@ -117,7 +113,7 @@ fun HorizontalCalendar(
             Row(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(MaterialTheme.shapes.small)
                     .clickable(
                         onClick = {
                             scope.launch {
@@ -126,18 +122,18 @@ fun HorizontalCalendar(
                             selectDate(scheduleData.defaultDate)
                         }
                     )
-                    .padding(horizontal = 4.dp),
+                    .padding(4.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)
             ) {
                 Text(
-                    textAlign = TextAlign.Center,
                     text = displayMonth.month.getDisplayName(
                         TextStyle.FULL_STANDALONE,
                         Locale.getDefault()
                     ).replaceFirstChar { it.uppercase() },
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onBackground
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
                 )
                 scheduleEntity.recurrence?.let { recurrence ->
                     val selectedWeek = calculateCurrentWeek(
@@ -146,7 +142,7 @@ fun HorizontalCalendar(
                         firstPeriodNumber = recurrence.firstWeekNumber,
                         interval = recurrence.interval!!
                     )
-                    val color = MaterialTheme.colorScheme.onSurface
+                    val color = MaterialTheme.colorScheme.onSecondaryContainer
                     Icon(
                         modifier = Modifier.size(3.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.circle),
@@ -154,13 +150,13 @@ fun HorizontalCalendar(
                         tint = color
                     )
                     Text(
-                        textAlign = TextAlign.Center,
                         text = "${
                             LocalContext.current.getString(R.string.week)
                                 .replaceFirstChar { it.lowercase() }
                         } $selectedWeek",
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onBackground
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -176,7 +172,7 @@ fun HorizontalCalendar(
                     containerColor = Color.Unspecified,
                     contentColor = MaterialTheme.colorScheme.onBackground,
                     disabledContainerColor = Color.Unspecified,
-                    disabledContentColor = MaterialTheme.colorScheme.onSurface
+                    disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             ) {
                 Icon(
@@ -251,15 +247,16 @@ fun HorizontalCalendarItem(
 
     Column(
         modifier = Modifier.width(40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             text = dayOfWeek.take(2).lowercase(),
-            fontSize = 12.sp,
-            color = if (isDisabled) MaterialTheme.colorScheme.surface
+            style = MaterialTheme.typography.bodyMedium,
+            color = if (isDisabled) MaterialTheme.colorScheme.secondaryContainer
             else if (currentDate.dayOfWeek.value == 7) {
                 MaterialTheme.colorScheme.error
-            } else MaterialTheme.colorScheme.onSurface
+            } else MaterialTheme.colorScheme.onSecondaryContainer
         )
         Box(
             contentAlignment = Alignment.Center,
@@ -268,7 +265,7 @@ fun HorizontalCalendarItem(
                 .size(36.dp)
                 .background(
                     if (isSelected) MaterialTheme.colorScheme.primary
-                    else if (isToday) MaterialTheme.colorScheme.surface
+                    else if (isToday) MaterialTheme.colorScheme.secondaryContainer
                     else Color.Unspecified
                 )
                 .let {
@@ -283,16 +280,15 @@ fun HorizontalCalendarItem(
         ) {
             Text(
                 text = currentDate.dayOfMonth.toString(),
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 color =
-                    if (isDisabled) MaterialTheme.colorScheme.surface
+                    if (isDisabled) MaterialTheme.colorScheme.secondaryContainer
                     else if (isSelected) MaterialTheme.colorScheme.onPrimary
                     else if (currentDate.dayOfWeek.value == 7) MaterialTheme.colorScheme.error
-                    else MaterialTheme.colorScheme.onSurface
+                    else MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
         if (isShowCountClasses) {
-            Spacer(modifier = Modifier.height(8.dp))
             val eventsByStartTime = events
                 .sortedBy { it.startDatetime!!.toLocalTime() }
                 .groupBy { event ->
@@ -314,14 +310,14 @@ fun HorizontalCalendarItem(
                                 it.id == event.id
                             }
                             val color = when (eventExtraData?.tag) {
-                                1 -> lightThemeRed
-                                2 -> lightThemeOrange
-                                3 -> lightThemeYellow
-                                4 -> lightThemeGreen
-                                5 -> lightThemeLightBlue
-                                6 -> lightThemeBlue
-                                7 -> lightThemeViolet
-                                8 -> lightThemePink
+                                1 -> Red
+                                2 -> Orange
+                                3 -> Yellow
+                                4 -> Green
+                                5 -> LightBlue
+                                6 -> Blue
+                                7 -> Violet
+                                8 -> Pink
                                 else -> MaterialTheme.colorScheme.onBackground
                             }
                             Canvas(

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -22,10 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
@@ -52,13 +49,12 @@ fun DialogNamedScheduleActions(
         Text(
             modifier = Modifier.padding(horizontal = 8.dp),
             text = namedScheduleEntity.fullName,
-            fontSize = 18.sp,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(0.dp))
         if (!namedScheduleEntity.isDefault && isSavedNamedSchedule) {
             ActionDialogButton(
                 onClick = {
@@ -140,13 +136,12 @@ fun DialogEventActions(
         Text(
             modifier = Modifier.padding(horizontal = 8.dp),
             text = event.name!!,
-            fontSize = 18.sp,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(0.dp))
         onHideEvent?.let {
             ActionDialogButton(
                 onClick = {
@@ -193,7 +188,7 @@ fun ActionDialogButton(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
             .padding(horizontal = 8.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -207,11 +202,10 @@ fun ActionDialogButton(
         )
         Text(
             text = title,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.titleMedium,
             color = contentColor,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
         )
     }
 }

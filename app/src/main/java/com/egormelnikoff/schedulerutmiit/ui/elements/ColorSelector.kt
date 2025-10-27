@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
@@ -17,15 +16,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.ui.theme.Blue
+import com.egormelnikoff.schedulerutmiit.ui.theme.Green
+import com.egormelnikoff.schedulerutmiit.ui.theme.LightBlue
 import com.egormelnikoff.schedulerutmiit.ui.theme.LightGrey
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeLightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeOrange
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemePink
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeRed
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeViolet
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeYellow
+import com.egormelnikoff.schedulerutmiit.ui.theme.Orange
+import com.egormelnikoff.schedulerutmiit.ui.theme.Pink
+import com.egormelnikoff.schedulerutmiit.ui.theme.Red
+import com.egormelnikoff.schedulerutmiit.ui.theme.Violet
+import com.egormelnikoff.schedulerutmiit.ui.theme.Yellow
 
 @Composable
 fun ColorSelector(
@@ -34,14 +33,14 @@ fun ColorSelector(
 ) {
     val colors = arrayOf(
         LightGrey,
-        darkThemeRed,
-        darkThemeOrange,
-        darkThemeYellow,
-        darkThemeGreen,
-        darkThemeLightBlue,
-        darkThemeBlue,
-        darkThemeViolet,
-        darkThemePink,
+        Red,
+        Orange,
+        Yellow,
+        Green,
+        LightBlue,
+        Blue,
+        Violet,
+        Pink,
     )
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
         SingleChoiceSegmentedButtonRow(
@@ -61,7 +60,7 @@ fun ColorSelector(
                     shape = SegmentedButtonDefaults.itemShape(
                         index = index,
                         count = colors.size,
-                        baseShape = RoundedCornerShape(12.dp)
+                        baseShape = MaterialTheme.shapes.medium
                     ),
                     onClick = {
                         onColorSelect(index)

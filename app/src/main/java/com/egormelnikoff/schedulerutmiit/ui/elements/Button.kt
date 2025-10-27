@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun CustomButton(
@@ -33,15 +31,15 @@ fun CustomButton(
         border = if (!enabled) {
             BorderStroke(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.surface
+                color = MaterialTheme.colorScheme.secondaryContainer
             )
         } else null,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = ButtonDefaults.outlinedButtonColors().copy(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
             disabledContainerColor = MaterialTheme.colorScheme.background,
-            disabledContentColor = MaterialTheme.colorScheme.surface
+            disabledContentColor = MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
         Row (
@@ -59,7 +57,7 @@ fun CustomButton(
 
             Text(
                 text = buttonTitle,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }

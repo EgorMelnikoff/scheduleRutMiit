@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,12 +32,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
@@ -141,8 +136,8 @@ fun NewsShort(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surface)
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.secondaryContainer)
             .clickable(
                 onClick = onClick
             )
@@ -152,7 +147,7 @@ fun NewsShort(
                 .fillMaxWidth()
                 .alpha(transition)
                 .height(150.dp)
-                .background(MaterialTheme.colorScheme.surface),
+                .background(MaterialTheme.colorScheme.secondaryContainer),
             contentScale = ContentScale.Crop,
             painter = model,
             contentDescription = null,
@@ -165,16 +160,10 @@ fun NewsShort(
         ) {
             Text(
                 text = newsShort.title.trim(),
-                fontSize = 16.sp,
-                maxLines = 3,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    )
-                ),
-                color = MaterialTheme.colorScheme.onBackground
+                maxLines = 3
             )
             DateNews(
                 date = newsShort.date.format(formatter)
@@ -189,9 +178,9 @@ fun DateNews(
 ) {
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(MaterialTheme.shapes.small)
             .background(MaterialTheme.colorScheme.primary)
-            .padding(horizontal = 8.dp, vertical = 2.dp),
+            .padding(8.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -203,11 +192,10 @@ fun DateNews(
         )
         Text(
             text = date,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onPrimary,
             overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onPrimary
+            maxLines = 1
         )
     }
 }

@@ -41,17 +41,17 @@ fun BottomSheetTimePicker(
         TimePicker(
             state = timePickerState,
             colors = TimePickerDefaults.colors(
-                clockDialColor = MaterialTheme.colorScheme.surface,
+                clockDialColor = MaterialTheme.colorScheme.secondaryContainer,
                 clockDialSelectedContentColor = MaterialTheme.colorScheme.onPrimary,
-                clockDialUnselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                clockDialUnselectedContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 selectorColor = MaterialTheme.colorScheme.primary,
                 containerColor = MaterialTheme.colorScheme.background,
 
                 timeSelectorSelectedContainerColor = MaterialTheme.colorScheme.primary,
                 timeSelectorSelectedContentColor = MaterialTheme.colorScheme.onPrimary,
 
-                timeSelectorUnselectedContainerColor = MaterialTheme.colorScheme.surface,
-                timeSelectorUnselectedContentColor = MaterialTheme.colorScheme.onSurface
+                timeSelectorUnselectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                timeSelectorUnselectedContentColor = MaterialTheme.colorScheme.onSecondaryContainer
             )
         )
 

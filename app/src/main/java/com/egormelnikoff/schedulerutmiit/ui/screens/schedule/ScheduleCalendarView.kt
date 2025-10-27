@@ -115,7 +115,7 @@ fun PagedDays(
         } ?: nonPeriodicEvents?.filter {
             it.key == currentDate
         }?.values?.flatten()
-            ?: emptyList()
+        ?: emptyList()
 
         val eventsForDayGrouped = eventsForDay
             .filter { !it.isHidden }

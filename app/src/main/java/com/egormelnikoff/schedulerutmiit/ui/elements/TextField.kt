@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -11,11 +10,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun CustomTextField(
@@ -38,14 +33,14 @@ fun CustomTextField(
         maxLines = maxLines ?: Int.MAX_VALUE,
         modifier = modifier,
         colors = colors ?: TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
 
             focusedTextColor = MaterialTheme.colorScheme.onBackground,
             unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
 
-            focusedIndicatorColor = MaterialTheme.colorScheme.surface,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
+            focusedIndicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.secondaryContainer,
 
             focusedLeadingIconColor = MaterialTheme.colorScheme.onBackground,
             unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary,
@@ -54,18 +49,14 @@ fun CustomTextField(
             disabledIndicatorColor = MaterialTheme.colorScheme.outline,
             disabledTextColor = MaterialTheme.colorScheme.outline
         ),
-        textStyle = TextStyle(
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
-        ),
+        textStyle = MaterialTheme.typography.titleSmall,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         placeholder = placeholderText?.let {
             {
                 Text(
                     text = it,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
@@ -76,7 +67,7 @@ fun CustomTextField(
                 it(newQuery)
             }
         },
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         keyboardOptions = keyboardOptions ?: KeyboardOptions.Default,
         keyboardActions = KeyboardActions(
             onDone = {

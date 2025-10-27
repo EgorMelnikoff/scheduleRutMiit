@@ -27,8 +27,8 @@ fun CustomChip(
         FilterChip(
             border = null,
             colors = FilterChipDefaults.filterChipColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                labelColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
 
                 selectedContainerColor = MaterialTheme.colorScheme.primary,
                 selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
@@ -49,7 +49,10 @@ fun CustomChip(
                         )
                     }
 
-                    Text(title)
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleSmall
+                    )
                 }
             },
             selected = selected,

@@ -24,10 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
@@ -147,8 +145,7 @@ fun DateHeader(
                     Locale.getDefault()
                 ).replaceFirstChar { it.uppercase() }
             }, ${formatter.format(date)}",
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.titleMedium,
             color = color
         )
         currentWeek?.let {
@@ -159,8 +156,11 @@ fun DateHeader(
                 tint = color
             )
             Text(
-                text = "${LocalContext.current.getString(R.string.week).replaceFirstChar { it.lowercase() }} $currentWeek",
-                fontSize = 16.sp,
+                text = "${
+                    LocalContext.current.getString(R.string.week)
+                        .replaceFirstChar { it.lowercase() }
+                } $currentWeek",
+                style = MaterialTheme.typography.bodyLarge,
                 color = color
             )
         }
