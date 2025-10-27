@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
@@ -22,7 +23,6 @@ import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.itemsIndexed
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
-import androidx.glance.color.ColorProvider
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
@@ -48,21 +48,15 @@ import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.app.modules.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetData
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
-import com.egormelnikoff.schedulerutmiit.ui.theme.Black
-import com.egormelnikoff.schedulerutmiit.ui.theme.DarkGrey
-import com.egormelnikoff.schedulerutmiit.ui.theme.Grey
-import com.egormelnikoff.schedulerutmiit.ui.theme.LightGrey
-import com.egormelnikoff.schedulerutmiit.ui.theme.White
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeGreen
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeLightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeNeutralSurface
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeOrange
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemePink
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeRed
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeViolet
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeYellow
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeNeutralSurface
+import com.egormelnikoff.schedulerutmiit.app.widget.ui.theme.ScheduleGlanceTheme
+import com.egormelnikoff.schedulerutmiit.ui.theme.Blue
+import com.egormelnikoff.schedulerutmiit.ui.theme.Green
+import com.egormelnikoff.schedulerutmiit.ui.theme.LightBlue
+import com.egormelnikoff.schedulerutmiit.ui.theme.Orange
+import com.egormelnikoff.schedulerutmiit.ui.theme.Pink
+import com.egormelnikoff.schedulerutmiit.ui.theme.Red
+import com.egormelnikoff.schedulerutmiit.ui.theme.Violet
+import com.egormelnikoff.schedulerutmiit.ui.theme.Yellow
 import com.google.gson.Gson
 import dagger.hilt.EntryPoints
 import kotlinx.coroutines.launch
@@ -97,14 +91,16 @@ class EventsWidget : GlanceAppWidget() {
                 widgetDataStringTest,
                 WidgetData::class.java
             )
-            EventsWidgetContent(
-                widgetData = widgetDataTest,
-                onUpdate = {
-                    scope.launch {
-                        widgetDataUpdater.updateAll()
+            ScheduleGlanceTheme {
+                EventsWidgetContent(
+                    widgetData = widgetDataTest,
+                    onUpdate = {
+                        scope.launch {
+                            widgetDataUpdater.updateAll()
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 
@@ -129,11 +125,10 @@ class EventsWidget : GlanceAppWidget() {
         Column(
             modifier = GlanceModifier.Companion
                 .fillMaxSize()
-                .cornerRadius(16.dp)
                 .background(
-                    colorProvider = ColorProvider(
-                        day = White,
-                        night = DarkGrey
+                    imageProvider = ImageProvider(R.drawable.large_rounded),
+                    colorFilter = ColorFilter.tint(
+                        GlanceTheme.colors.background
                     )
                 )
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
@@ -191,10 +186,7 @@ class EventsWidget : GlanceAppWidget() {
                         Text(
                             text = header,
                             style = TextStyle(
-                                color = ColorProvider(
-                                    day = Black,
-                                    night = White
-                                ),
+                                color = GlanceTheme.colors.onBackground,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             ),
@@ -203,10 +195,7 @@ class EventsWidget : GlanceAppWidget() {
                         Text(
                             text = subHeader,
                             style = TextStyle(
-                                color = ColorProvider(
-                                    day = Grey,
-                                    night = LightGrey
-                                ),
+                                color = GlanceTheme.colors.onSecondaryContainer,
                                 fontSize = 10.sp
                             ),
                             maxLines = 1
@@ -214,17 +203,16 @@ class EventsWidget : GlanceAppWidget() {
                     }
                     Image(
                         modifier = GlanceModifier
+                            .cornerRadius(8.dp)
                             .clickable {
                                 onUpdate()
                             }
-                            .size(20.dp),
+                            .size(32.dp)
+                            .padding(8.dp),
                         provider = ImageProvider(R.drawable.refresh),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(
-                            colorProvider = ColorProvider(
-                                day = Black,
-                                night = White
-                            ),
+                            colorProvider = GlanceTheme.colors.onBackground
                         )
                     )
                 }
@@ -268,11 +256,10 @@ class EventsWidget : GlanceAppWidget() {
         Row(
             modifier = GlanceModifier.Companion
                 .fillMaxWidth()
-                .cornerRadius(12.dp)
                 .background(
-                    colorProvider = ColorProvider(
-                        day = lightThemeNeutralSurface,
-                        night = darkThemeNeutralSurface
+                    imageProvider = ImageProvider(R.drawable.medium_rounded),
+                    colorFilter = ColorFilter.tint(
+                        colorProvider = GlanceTheme.colors.secondaryContainer
                     )
                 )
                 .padding(8.dp),
@@ -285,10 +272,7 @@ class EventsWidget : GlanceAppWidget() {
                     events.first().endDatetime!!.toLocaleTimeWithTimeZone()
                 }",
                 style = TextStyle(
-                    color = ColorProvider(
-                        day = Black,
-                        night = White
-                    ),
+                    color = GlanceTheme.colors.onBackground,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 ),
@@ -299,10 +283,7 @@ class EventsWidget : GlanceAppWidget() {
                 modifier = GlanceModifier.Companion
                     .width(0.5.dp)
                     .background(
-                        colorProvider = ColorProvider(
-                            day = Grey,
-                            night = LightGrey
-                        )
+                        colorProvider = GlanceTheme.colors.onSecondaryContainer
                     )
 
             )
@@ -332,10 +313,7 @@ class EventsWidget : GlanceAppWidget() {
                 text = it,
                 style = TextStyle(
                     fontSize = 10.sp,
-                    color = ColorProvider(
-                        day = Grey,
-                        night = LightGrey
-                    ),
+                    color = GlanceTheme.colors.onSecondaryContainer
                 ),
                 maxLines = 1
             )
@@ -345,10 +323,7 @@ class EventsWidget : GlanceAppWidget() {
             style = TextStyle(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = ColorProvider(
-                    day = Black,
-                    night = White
-                )
+                color = GlanceTheme.colors.onBackground
             ),
             maxLines = 1
         )
@@ -359,14 +334,14 @@ class EventsWidget : GlanceAppWidget() {
             ) {
                 if (eventExtraData.tag != 0) {
                     val color = when (eventExtraData.tag) {
-                        1 -> darkThemeRed
-                        2 -> darkThemeOrange
-                        3 -> darkThemeYellow
-                        4 -> darkThemeGreen
-                        5 -> darkThemeLightBlue
-                        6 -> darkThemeBlue
-                        7 -> darkThemeViolet
-                        8 -> darkThemePink
+                        1 -> Red
+                        2 -> Orange
+                        3 -> Yellow
+                        4 -> Green
+                        5 -> LightBlue
+                        6 -> Blue
+                        7 -> Violet
+                        8 -> Pink
                         else -> Color.Unspecified
                     }
                     Image(
@@ -385,10 +360,7 @@ class EventsWidget : GlanceAppWidget() {
                     text = eventExtraData.comment,
                     style = TextStyle(
                         fontSize = 10.sp,
-                        color = ColorProvider(
-                            day = Grey,
-                            night = LightGrey
-                        )
+                        color = GlanceTheme.colors.secondaryContainer
                     ),
                     maxLines = 1
                 )

@@ -7,9 +7,9 @@ import androidx.compose.ui.unit.sp
 import androidx.glance.Button
 import androidx.glance.ButtonDefaults
 import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.cornerRadius
-import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.Spacer
@@ -20,11 +20,6 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.ui.theme.Black
-import com.egormelnikoff.schedulerutmiit.ui.theme.White
-import com.egormelnikoff.schedulerutmiit.ui.theme.darkThemeBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.lightThemeBlue
-
 
 @SuppressLint("RestrictedApi")
 @Composable
@@ -42,10 +37,7 @@ fun Empty(
             style = TextStyle(
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
-                color = ColorProvider(
-                    day = Black,
-                    night = White
-                ),
+                color = GlanceTheme.colors.onBackground,
             )
         )
         onClick?.let {
@@ -61,13 +53,8 @@ fun Empty(
                     fontSize = 16.sp
                 ),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = ColorProvider(
-                        lightThemeBlue,
-                        darkThemeBlue
-                    ),
-                    contentColor = androidx.glance.unit.ColorProvider(
-                        White
-                    )
+                    backgroundColor = GlanceTheme.colors.primary,
+                    contentColor = GlanceTheme.colors.onPrimary
                 )
             )
         }
