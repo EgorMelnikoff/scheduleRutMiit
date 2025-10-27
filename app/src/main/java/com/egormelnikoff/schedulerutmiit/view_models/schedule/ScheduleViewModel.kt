@@ -217,7 +217,7 @@ class ScheduleViewModelImpl @Inject constructor(
             updateNamedScheduleUiState(
                 namedSchedule = namedSchedule,
 
-            )
+                )
             updateUiState(
                 savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules(),
                 isSaved = true
@@ -235,13 +235,21 @@ class ScheduleViewModelImpl @Inject constructor(
             if (savedNamedSchedules.isEmpty()) {
                 workScheduler.cancelPeriodicScheduleUpdating()
                 workScheduler.cancelPeriodicWidgetUpdating()
+                _uiState.update {
+                    it.copy(
+                        savedNamedSchedules = emptyList(),
+                        currentScheduleData = null,
+                        defaultScheduleData = null
+                    )
+                }
+                return@launch
             }
             if (isDefault) {
                 val defaultNamedSchedule = savedNamedSchedules.find { it.isDefault }
                     ?: savedNamedSchedules.firstOrNull()
                 defaultNamedSchedule?.let {
                     updateNamedScheduleUiState(
-                        namedSchedule = scheduleRepos.getSavedNamedScheduleById(it.id)
+                        namedSchedule = null
                     )
                 }
             } else {
