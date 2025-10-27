@@ -51,6 +51,7 @@
     <string name="event_visibility_alert">Please note, class will no longer appear in the schedule</string>
     <string name="events_count_error">The maximum number of classes per day has been reached</string>
     <string name="failed_update">Failed to update schedule</string>
+    <string name="find">Find</string>
     <string name="full_name_of_lecturer">Full name of lecturer</string>
     <string name="general">General</string>
     <string name="github" translatable="false">GitHub</string>
@@ -99,6 +100,7 @@
     <string name="schedule">Schedule</string>
     <string name="schedule_name">Schedule name</string>
     <string name="schedules">Schedules</string>
+    <string name="schedule_is_not_saved">Schedule is not saved</string>
     <string name="search">Search</string>
     <string name="search_or_create">Search or create</string>
     <string name="send_logs">Send logs</string>

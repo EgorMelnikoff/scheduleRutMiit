@@ -50,6 +50,7 @@
     <string name="event_visibility_alert">Будьте внимательны, занятие перестанет отображаться в расписании</string>
     <string name="events_count_error">Достигнуто максимальное количество пар на день</string>
     <string name="failed_update">Не удалось обновить расписание</string>
+    <string name="find">Найти</string>
     <string name="full_name_of_lecturer">ФИО преподавателя</string>
     <string name="general">Общее</string>
     <string name="group_number">Номер группы</string>
@@ -97,6 +98,7 @@
     <string name="schedule">Расписание</string>
     <string name="schedule_name">Название</string>
     <string name="schedules">Расписания</string>
+    <string name="schedule_is_not_saved">Расписание не сохранено</string>
     <string name="search">Поиск</string>
     <string name="search_or_create">Найти или создать</string>
     <string name="send_logs">Отправить журнал</string>
