@@ -200,9 +200,8 @@ data class ScheduleData(
                         val eventsInWeek = periodicEventsForCalendar[week]?.values.orEmpty().flatten()
                         val currentWeekStartDate = startDate.plusWeeks(index.toLong())
                         eventsInWeek.forEach { event ->
-                            val eventStartDayOfWeek = event.startDatetime?.dayOfWeek?.value ?: return@forEach
-                            val newEventDate = currentWeekStartDate.plusDays(eventStartDayOfWeek - 1L)
-                            if (newEventDate.isAfter(scheduleEntity.endDate)) return@forEach
+                            val daysToAdd = event.startDatetime!!.dayOfWeek.value - today.dayOfWeek.value
+                            val newEventDate = currentWeekStartDate.plusDays(daysToAdd.toLong())
                             val newEvent = event.copy(
                                 startDatetime = newEventDate.atTime(event.startDatetime.toLocalTime()),
                                 endDatetime = newEventDate.atTime(event.endDatetime?.toLocalTime()),
