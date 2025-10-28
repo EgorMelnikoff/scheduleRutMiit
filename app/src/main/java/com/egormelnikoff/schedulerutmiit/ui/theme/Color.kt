@@ -13,7 +13,7 @@ val Orange = Color(0xFFe78450)
 val Yellow = Color(0xFFd0a844)
 val Green = Color(0xFF3e9682)
 val LightBlue = Color(0xFF3c98c4)
-val Blue = Color(0xFF3b66e3)
+val Blue = Color(0xFF4f74e0)
 val Violet = Color(0xFF9848c2)
 val Pink = Color(0xFFdc53c1)
 
