@@ -18,12 +18,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+val edgeCorner: Dp = 16.dp
+val interiorCorner: Dp = 4.dp
+
 @Composable
 fun GridGroup(
     title: String? = null,
     titleColor: Color? = null,
-    edgeCorner: Dp = 16.dp,
-    interiorCorner: Dp = 4.dp,
     items: List<List<@Composable () -> Unit>>
 ) {
     Column(
@@ -98,8 +99,6 @@ fun ColumnGroup(
     title: String? = null,
     titleColor: Color? = null,
     withBackground: Boolean = true,
-    edgeCorner: Dp = 16.dp,
-    interiorCorner: Dp = 4.dp,
     items: List<@Composable () -> Unit>
 ) {
     Column(
@@ -166,8 +165,6 @@ fun ColumnGroup(
 fun RowGroup(
     title: String? = null,
     titleColor: Color? = null,
-    edgeCorner: Dp = 16.dp,
-    interiorCorner: Dp = 4.dp,
     items: List<@Composable () -> Unit>
 ) {
     Column(
