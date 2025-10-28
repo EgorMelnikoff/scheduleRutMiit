@@ -53,7 +53,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".app.widget.receivers.EventsWidgetReceiver"
+        <receiver
+            android:name=".app.widget.receivers.EventsWidgetReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
