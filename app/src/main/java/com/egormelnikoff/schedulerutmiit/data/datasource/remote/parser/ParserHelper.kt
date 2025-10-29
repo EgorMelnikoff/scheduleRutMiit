@@ -8,7 +8,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 object ParserHelper {
-    private const val BASE_URL = "https://www.miit.ru/depts/37/professors?"
+    private const val BASE_URL = "https://www.miit.ru/people?"
     const val PEOPLE = "${BASE_URL}query="
 
     suspend fun callParserWithExceptions(
