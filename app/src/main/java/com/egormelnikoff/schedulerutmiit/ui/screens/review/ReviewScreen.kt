@@ -151,7 +151,7 @@ fun ReviewScreen(
                         navigateToEvent = navigateToEvent,
                         scheduleUiState = scheduleUiState
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                 }
                 ExpandedItem(
                     title = LocalContext.current.getString(R.string.saved_schedules),
@@ -330,7 +330,7 @@ fun EventsReview(
     Column(
         modifier = Modifier
             .animateContentSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         RowGroup(
             items = listOf(
