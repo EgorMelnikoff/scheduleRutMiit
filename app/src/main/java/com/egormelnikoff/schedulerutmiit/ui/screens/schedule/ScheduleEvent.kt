@@ -1,11 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenu
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -127,6 +130,31 @@ fun ScheduleSingleEvent(
                 }
             )
     ) {
+        if (eventExtraData?.tag != null) {
+            Canvas(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(2.dp)
+            ) {
+                drawLine(
+                    start = Offset(x = 0f, y = 0f),
+                    end = Offset(x = size.width, y = 0f),
+                    color = when (eventExtraData.tag) {
+                        1 -> Red
+                        2 -> Orange
+                        3 -> Yellow
+                        4 -> Green
+                        5 -> LightBlue
+                        6 -> Blue
+                        7 -> Violet
+                        8 -> Pink
+                        else -> Color.Unspecified
+                    },
+                    strokeWidth = 20f
+                )
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -341,29 +369,16 @@ fun Comment(
     color: Color? = null
 ) {
     Row(
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        modifier = Modifier.fillMaxWidth()
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        if (eventExtraData.tag != 0) {
-            val color = when (eventExtraData.tag) {
-                1 -> Red
-                2 -> Orange
-                3 -> Yellow
-                4 -> Green
-                5 -> LightBlue
-                6 -> Blue
-                7 -> Violet
-                8 -> Pink
-                else -> Color.Unspecified
-            }
-            Icon(
-                modifier = Modifier.size(12.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.circle),
-                contentDescription = null,
-                tint = color
-            )
-        }
+        Icon(
+            modifier = Modifier.size(16.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.comment),
+            contentDescription = null,
+            tint = color ?: MaterialTheme.colorScheme.onBackground
+        )
         Text(
             text = eventExtraData.comment,
             style = MaterialTheme.typography.bodyMedium,
