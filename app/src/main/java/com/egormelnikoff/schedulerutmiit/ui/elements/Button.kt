@@ -57,8 +57,7 @@ fun CustomButton(
 
             Text(
                 text = buttonTitle,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onPrimary
+                style = MaterialTheme.typography.titleSmall
             )
         }
     }
