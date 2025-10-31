@@ -64,5 +64,4 @@
                 android:resource="@xml/events_widget_info" />
         </receiver>
     </application>
-
 </manifest>
