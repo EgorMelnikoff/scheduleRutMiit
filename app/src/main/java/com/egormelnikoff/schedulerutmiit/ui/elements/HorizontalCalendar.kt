@@ -39,14 +39,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.model.calculateFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.ui.theme.Blue
-import com.egormelnikoff.schedulerutmiit.ui.theme.Green
-import com.egormelnikoff.schedulerutmiit.ui.theme.LightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.Orange
-import com.egormelnikoff.schedulerutmiit.ui.theme.Pink
-import com.egormelnikoff.schedulerutmiit.ui.theme.Red
-import com.egormelnikoff.schedulerutmiit.ui.theme.Violet
-import com.egormelnikoff.schedulerutmiit.ui.theme.Yellow
+import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -243,7 +236,7 @@ fun HorizontalCalendarItem(
     events: List<Event>,
     eventsExtraData: List<EventExtraData>
 ) {
-    val dayOfWeek = currentDate.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+    val dayOfWeekName = currentDate.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
 
     Column(
         modifier = Modifier.width(40.dp),
@@ -251,7 +244,7 @@ fun HorizontalCalendarItem(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = dayOfWeek.take(2).lowercase(),
+            text = dayOfWeekName.take(2).lowercase(),
             style = MaterialTheme.typography.bodyMedium,
             color = if (isDisabled) MaterialTheme.colorScheme.secondaryContainer
             else if (currentDate.dayOfWeek.value == 7) {
@@ -304,22 +297,17 @@ fun HorizontalCalendarItem(
             ) {
                 for (groupedEvents in eventsByStartTime) {
                     var offset = 0
-                    Box {
-                        for (event in groupedEvents.value) {
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        groupedEvents.value.forEach { event ->
                             val eventExtraData = eventsExtraData.find {
                                 it.id == event.id
                             }
-                            val color = when (eventExtraData?.tag) {
-                                1 -> Red
-                                2 -> Orange
-                                3 -> Yellow
-                                4 -> Green
-                                5 -> LightBlue
-                                6 -> Blue
-                                7 -> Violet
-                                8 -> Pink
-                                else -> MaterialTheme.colorScheme.onBackground
-                            }
+                            val color = getColorByIndex(
+                                index = eventExtraData?.tag,
+                                defaultColor = MaterialTheme.colorScheme.onBackground
+                            )
                             Canvas(
                                 modifier = Modifier
                                     .padding(start = offset.dp)

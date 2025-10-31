@@ -37,14 +37,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.ui.theme.Blue
-import com.egormelnikoff.schedulerutmiit.ui.theme.Green
-import com.egormelnikoff.schedulerutmiit.ui.theme.LightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.Orange
-import com.egormelnikoff.schedulerutmiit.ui.theme.Pink
-import com.egormelnikoff.schedulerutmiit.ui.theme.Red
-import com.egormelnikoff.schedulerutmiit.ui.theme.Violet
-import com.egormelnikoff.schedulerutmiit.ui.theme.Yellow
+import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
 
 @Composable
 fun ScheduleEvent(
@@ -139,17 +132,7 @@ fun ScheduleSingleEvent(
                 drawLine(
                     start = Offset(x = 0f, y = 0f),
                     end = Offset(x = size.width, y = 0f),
-                    color = when (eventExtraData.tag) {
-                        1 -> Red
-                        2 -> Orange
-                        3 -> Yellow
-                        4 -> Green
-                        5 -> LightBlue
-                        6 -> Blue
-                        7 -> Violet
-                        8 -> Pink
-                        else -> Color.Unspecified
-                    },
+                    color = getColorByIndex(eventExtraData.tag),
                     strokeWidth = 20f
                 )
             }

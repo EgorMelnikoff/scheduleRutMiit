@@ -52,6 +52,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
+import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
 
 @Composable
 fun EventDialog(
@@ -374,7 +375,7 @@ fun EventDialog(
         )
     }
     if (showEventActionsDialog) {
-        DialogEventActions(
+        ModalDialogEvent(
             event = event,
             onDismiss = {
                 showEventActionsDialog = false
