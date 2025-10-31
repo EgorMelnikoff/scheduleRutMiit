@@ -3,17 +3,17 @@ package com.egormelnikoff.schedulerutmiit.app.model
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-data class Schedule (
+data class Schedule(
     val timetable: Timetable?,
     val periodicContent: PeriodicContent?,
     val nonPeriodicContent: NonPeriodicContent?
 )
 
-data class Timetables (
+data class Timetables(
     val timetables: List<Timetable>
 )
 
-data class Timetable (
+data class Timetable(
     val id: String?,
     val name: String?,
     val type: String?,
@@ -25,12 +25,12 @@ data class Timetable (
     val selected: Boolean,
 )
 
-data class PeriodicContent (
+data class PeriodicContent(
     val events: List<Event>?,
     val recurrence: Recurrence?
 )
 
-data class NonPeriodicContent (
+data class NonPeriodicContent(
     val events: List<Event>?,
 )
 
@@ -40,11 +40,12 @@ enum class TimetableType(val type: String?) {
     SESSION("SESSION")
 }
 
-data class NewsList (
+data class NewsList(
+    val maxPage: Int,
     val items: List<NewsShort>
 )
 
-data class NewsShort (
+data class NewsShort(
     val idInformation: Long,
     val title: String,
     val date: LocalDateTime,
@@ -52,11 +53,11 @@ data class NewsShort (
     val secondary: Secondary
 )
 
-data class Secondary (
+data class Secondary(
     val text: String
 )
 
-data class News (
+data class News(
     val idInformation: Long,
     val title: String,
     val hisdateDisplay: String,
@@ -93,7 +94,7 @@ data class Group(
     val url: String?,
 )
 
-data class Person (
+data class Person(
     val name: String?,
     val id: Int?,
     val position: String?
@@ -115,7 +116,7 @@ data class Room(
     val hint: String?
 )
 
-data class TelegramPage (
+data class TelegramPage(
     val url: String?,
     val name: String?,
     val imageUrl: String?

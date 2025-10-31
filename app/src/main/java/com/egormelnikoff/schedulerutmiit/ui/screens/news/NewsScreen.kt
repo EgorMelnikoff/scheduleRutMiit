@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,7 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +36,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
@@ -42,23 +47,54 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
+import kotlinx.coroutines.flow.Flow
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun NewsScreen(
     onShowDialogNews: () -> Unit,
-    onGetNewsList: (Int) -> Unit,
+    //onGetNewsList: (Int) -> Unit,
     onGetNewsById: (Long) -> Unit,
 
     newsUiState: NewsState,
+    newsListFLow: Flow<PagingData<NewsShort>>,
     newsGridListState: LazyStaggeredGridState,
     externalPadding: PaddingValues,
 ) {
-    Box {
-        when {
-            newsUiState.newsList.isNotEmpty() -> {
-                LazyVerticalStaggeredGrid (
-                    modifier = Modifier.fillMaxWidth(),
+    val newsList = newsListFLow.collectAsLazyPagingItems()
+
+    when {
+        newsUiState.isLoading || newsList.loadState.refresh is LoadState.Loading -> {
+            LoadingScreen(
+                paddingTop = 0.dp,
+                paddingBottom = externalPadding.calculateBottomPadding()
+            )
+        }
+
+        newsUiState.error != null || newsList.loadState.refresh is LoadState.Error -> {
+            val e = newsList.loadState.refresh as LoadState.Error
+
+            ErrorScreen(
+                title = LocalContext.current.getString(R.string.error),
+                subtitle = newsUiState.error ?: e.error.localizedMessage,
+                button = {
+                    CustomButton(
+                        buttonTitle = LocalContext.current.getString(R.string.repeat),
+                        imageVector = ImageVector.vectorResource(R.drawable.refresh),
+                        onClick = {
+                            newsList.refresh()
+                        }
+                    )
+                },
+                paddingTop = 0.dp,
+                paddingBottom = externalPadding.calculateBottomPadding()
+            )
+        }
+
+        else -> {
+            Box {
+                LazyVerticalStaggeredGrid(
+                    modifier = Modifier.fillMaxSize(),
                     columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
                     verticalItemSpacing = 12.dp,
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -70,55 +106,52 @@ fun NewsScreen(
                     ),
                     state = newsGridListState
                 ) {
-                    items(newsUiState.newsList) { newsShort ->
-                        NewsShort(
-                            newsShort = newsShort,
-                            onClick = {
-                                onGetNewsById(newsShort.idInformation)
-                                onShowDialogNews()
+                    items(newsList.itemCount) { index ->
+                        val newsShort = newsList[index]
+                        if (newsShort != null) {
+                            NewsShort(
+                                newsShort = newsShort,
+                                onClick = {
+                                    onGetNewsById(newsShort.idInformation)
+                                    onShowDialogNews()
+                                }
+                            )
+                        }
+                    }
+                    if (newsList.loadState.append is LoadState.Loading) {
+                        item(
+                            span = StaggeredGridItemSpan.FullLine
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 32.dp),
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.align(Alignment.Center),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
                             }
-                        )
+                        }
                     }
                 }
             }
-
-            newsUiState.isLoading -> LoadingScreen(
-                paddingTop = 0.dp,
-                paddingBottom = externalPadding.calculateBottomPadding()
-            )
-
-            newsUiState.error != null ->
-                ErrorScreen(
-                    title = LocalContext.current.getString(R.string.error),
-                    subtitle = newsUiState.error,
-                    button = {
-                        CustomButton(
-                            buttonTitle = LocalContext.current.getString(R.string.repeat),
-                            imageVector = ImageVector.vectorResource(R.drawable.refresh),
-                            onClick = {
-                                onGetNewsList(1)
-                            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.background,
+                                Color.Transparent
+                            ),
+                            startY = 0f,
+                            endY = 200f
                         )
-                    },
-                    paddingTop = 0.dp,
-                    paddingBottom = externalPadding.calculateBottomPadding()
-                )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.background,
-                            Color.Transparent
-                        ),
-                        startY = 0f,
-                        endY = 200f
                     )
-                )
-        )
+            )
+        }
     }
 }
 
