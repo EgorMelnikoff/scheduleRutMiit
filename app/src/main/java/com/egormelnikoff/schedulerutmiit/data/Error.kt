@@ -5,6 +5,13 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.Resourc
 import okio.IOException
 
 sealed class Error {
+    data class NetworkError(val exception: IOException) : Error()
+    data class HttpError(val code: Int, val message: String? = null) : Error()
+    data class SerializationError(val exception: Exception) : Error()
+    data class IllegalArgumentError(val exception: Exception) : Error()
+    data class UnexpectedError(val exception: Throwable) : Error()
+    object EmptyBodyError : Error()
+
     companion object {
         fun getErrorMessage(
             resourcesManager: ResourcesManager,
@@ -16,13 +23,11 @@ sealed class Error {
                         R.string.network_error
                     )
                 }
-
                 is HttpError -> {
                     "${resourcesManager.getString(
                         R.string.server_error
                     )}: ${data.code}"
                 }
-
                 is SerializationError -> {
                     resourcesManager.getString(
                         R.string.serialization_error
@@ -38,7 +43,6 @@ sealed class Error {
                         R.string.empty_response
                     )
                 }
-
                 is UnexpectedError -> {
                     resourcesManager.getString(
                         R.string.unknown_error
@@ -47,11 +51,4 @@ sealed class Error {
             }
         }
     }
-
-    data class NetworkError(val exception: IOException) : Error()
-    data class HttpError(val code: Int, val message: String? = null) : Error()
-    data class SerializationError(val exception: Exception) : Error()
-    data class IllegalArgumentError(val exception: Exception) : Error()
-    data class UnexpectedError(val exception: Throwable) : Error()
-    object EmptyBodyError : Error()
 }
