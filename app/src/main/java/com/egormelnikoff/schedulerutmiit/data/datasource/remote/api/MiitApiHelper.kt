@@ -20,12 +20,13 @@ class MiitApiHelper @Inject constructor(
         const val TIMETABLE = "${DATA}timetable/v2/{type}/{apiId}"
         const val SCHEDULE = "${DATA}timetable/v2/{type}/{apiId}/{timetableId}"
 
-        const val NEWS_CATALOG = "${DATA}news?idk_information_category=2&page_size=20"
+        const val NEWS_CATALOG = "${DATA}news?idk_information_category=2"
         const val NEWS = "${DATA}news/{newsId}"
     }
 
     suspend fun <T : Any> callApiWithExceptions(
-        type: String,
+        fetchDataType: String,
+        message: String,
         call: suspend () -> Response<T>
     ): Result<T> {
         return try {
@@ -33,14 +34,14 @@ class MiitApiHelper @Inject constructor(
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null) {
-                    logger.i("API", "Success fetched data ($type)")
+                    logger.i("API", "Success fetched data ($fetchDataType):\n$message")
                     Result.Success(body)
                 } else {
-                    logger.i("API", "Empty body ($type)")
+                    logger.i("API", "Empty body ($fetchDataType)")
                     Result.Error(Error.EmptyBodyError)
                 }
             } else {
-                logger.i("API", "Http error ($type)")
+                logger.i("API", "Http error ($fetchDataType)")
                 Result.Error(
                     Error.HttpError(
                         code = response.code(),
@@ -49,7 +50,7 @@ class MiitApiHelper @Inject constructor(
                 )
             }
         } catch (e: HttpException) {
-            logger.e("API", "HttpException ($type)", e)
+            logger.e("API", "Http error ($fetchDataType)", e)
             Result.Error(
                 Error.HttpError(
                     code = e.code(),
@@ -57,13 +58,13 @@ class MiitApiHelper @Inject constructor(
                 )
             )
         } catch (e: IOException) {
-            logger.e("API", "IOException ($type)", e)
+            logger.e("API", "IOException ($fetchDataType)", e)
             Result.Error(Error.NetworkError(e))
         } catch (e: SerializationException) {
-            logger.e("API", "SerializationError ($type)", e)
+            logger.e("API", "Serialization error ($fetchDataType)", e)
             Result.Error(Error.SerializationError(e))
         } catch (e: Throwable) {
-            logger.e("API", "UnexpectedError ($type)", e)
+            logger.e("API", "Unexpected error ($fetchDataType)", e)
             Result.Error(Error.UnexpectedError(e))
         }
     }
