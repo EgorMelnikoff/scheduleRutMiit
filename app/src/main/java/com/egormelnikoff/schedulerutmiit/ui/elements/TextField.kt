@@ -16,7 +16,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 fun CustomTextField(
     modifier: Modifier,
     value: String,
-    onValueChanged: ((String) -> Unit)? = null,
+    maxSymbols: Int = 200,
+    onValueChanged: (String) -> Unit,
     keyboardOptions: KeyboardOptions? = null,
     colors: TextFieldColors? = null,
     maxLines: Int? = null,
@@ -63,8 +64,8 @@ fun CustomTextField(
         },
         visualTransformation = visualTransformation ?: VisualTransformation.None,
         onValueChange = { newQuery ->
-            onValueChanged?.let {
-                it(newQuery)
+            if (newQuery.length <= maxSymbols) {
+                onValueChanged(newQuery)
             }
         },
         shape = MaterialTheme.shapes.medium,
