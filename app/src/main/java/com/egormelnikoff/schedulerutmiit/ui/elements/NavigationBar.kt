@@ -35,10 +35,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Routes
 import com.egormelnikoff.schedulerutmiit.ui.theme.Grey
@@ -53,7 +56,7 @@ data class BarItem(
 
 @Composable
 fun CustomNavigationBar(
-    appBackStack: AppBackStack<Routes.Schedule>,
+    appBackStack: AppBackStack<Routes>,
     barItems: Array<BarItem>,
     theme: String
 ) {
@@ -128,7 +131,11 @@ fun CustomNavigationBar(
                     isSelected = appBackStack.lastPage() == barItem.route,
                     onClick = {
                         if (barItem.route == appBackStack.lastPage()) {
-                            barItem.onClick?.invoke()
+                            if (appBackStack.last().isDialog) {
+                                appBackStack.onBack()
+                            } else {
+                                barItem.onClick?.invoke()
+                            }
                         } else {
                             appBackStack.navigateToPage(barItem.route)
                         }
@@ -183,4 +190,43 @@ fun CustomNavigationItem(
             textAlign = TextAlign.Center
         )
     }
+}
+
+
+@Composable
+fun rememberBarItems(
+    onScheduleClick: () -> Unit,
+    onNewsClick: () -> Unit,
+    onSettingsClick: () -> Unit
+): Array<BarItem> {
+    return arrayOf(
+        BarItem(
+            title = LocalContext.current.getString(R.string.review),
+            icon = ImageVector.vectorResource(R.drawable.review),
+            selectedIcon = ImageVector.vectorResource(R.drawable.review_fill),
+            route = Routes.Review,
+            onClick = null
+        ),
+        BarItem(
+            title = LocalContext.current.getString(R.string.schedule),
+            icon = ImageVector.vectorResource(R.drawable.schedule),
+            selectedIcon = ImageVector.vectorResource(R.drawable.schedule_fill),
+            route = Routes.Schedule,
+            onClick = onScheduleClick
+        ),
+        BarItem(
+            title = LocalContext.current.getString(R.string.news),
+            icon = ImageVector.vectorResource(R.drawable.news),
+            selectedIcon = ImageVector.vectorResource(R.drawable.news_fill),
+            route = Routes.NewsList,
+            onClick = onNewsClick
+        ),
+        BarItem(
+            title = LocalContext.current.getString(R.string.settings),
+            icon = ImageVector.vectorResource(R.drawable.settings),
+            selectedIcon = ImageVector.vectorResource(R.drawable.settings_fill),
+            route = Routes.Settings,
+            onClick = onSettingsClick
+        )
+    )
 }
