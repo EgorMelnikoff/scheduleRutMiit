@@ -21,16 +21,10 @@ import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.ui.elements.HorizontalCalendar
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
+import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.DayOfWeek
 import java.time.LocalDate
-
-data class ScheduleCalendarState(
-    val pagerDaysState: PagerState,
-    val pagerWeeksState: PagerState,
-    val selectedDate: LocalDate,
-    val selectDate: (LocalDate) -> Unit
-)
 
 @Composable
 fun ScheduleCalendarView(
@@ -38,9 +32,8 @@ fun ScheduleCalendarView(
     onDeleteEvent: (Long) -> Unit,
     onUpdateHiddenEvent: (Long) -> Unit,
     scheduleUiState: ScheduleUiState,
-    scheduleCalendarState: ScheduleCalendarState,
+    scheduleState: ScheduleState,
     today: LocalDate,
-    isSavedSchedule: Boolean,
     isShortEvent: Boolean,
     isShowCountClasses: Boolean,
     paddingBottom: Dp
@@ -56,10 +49,10 @@ fun ScheduleCalendarView(
             today = today,
             scheduleData = scheduleUiState.currentScheduleData,
 
-            pagerWeeksState = scheduleCalendarState.pagerWeeksState,
-            selectedDate = scheduleCalendarState.selectedDate,
+            pagerWeeksState = scheduleState.pagerWeeksState,
+            selectedDate = scheduleState.selectedDate,
 
-            selectDate = scheduleCalendarState.selectDate
+            selectDate = scheduleState.onDateChange
         )
         PagedDays(
             navigateToEvent = navigateToEvent,
@@ -70,8 +63,8 @@ fun ScheduleCalendarView(
             nonPeriodicEvents = scheduleUiState.currentScheduleData.nonPeriodicEventsForCalendar,
             eventsExtraData = scheduleUiState.currentScheduleData.eventsExtraData,
 
-            pagerDaysState = scheduleCalendarState.pagerDaysState,
-            isSavedSchedule = isSavedSchedule,
+            pagerDaysState = scheduleState.pagerDaysState,
+            isSavedSchedule = scheduleUiState.isSaved,
             isShortEvent = isShortEvent,
             paddingBottom = paddingBottom
         )
@@ -118,7 +111,6 @@ fun PagedDays(
         ?: emptyList()
 
         val eventsForDayGrouped = eventsForDay
-            .filter { !it.isHidden }
             .sortedBy { event -> event.startDatetime!!.toLocalTime() }
             .groupBy { event ->
                 Pair(

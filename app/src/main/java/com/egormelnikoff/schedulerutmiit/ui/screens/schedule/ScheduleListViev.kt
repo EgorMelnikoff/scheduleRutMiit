@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,9 +28,10 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
+import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -42,26 +42,22 @@ fun ScheduleListView(
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
     onDeleteEvent: (Long) -> Unit,
     onUpdateHiddenEvent: (Long) -> Unit,
-    eventsForList: List<Pair<LocalDate, List<Event>>>,
-    eventsExtraData: List<EventExtraData>,
 
-    startDate: LocalDate,
-    recurrence: Recurrence?,
-
-    scheduleListState: LazyListState,
-    isSavedSchedule: Boolean,
+    scheduleUiState: ScheduleUiState,
+    scheduleState: ScheduleState,
     isShortEvent: Boolean,
     paddingBottom: Dp
 ) {
-    if (eventsForList.isNotEmpty()) {
+    val scheduleData = scheduleUiState.currentScheduleData!!
+    if (scheduleData.eventForList.isNotEmpty()) {
         LazyColumn(
-            state = scheduleListState,
+            state = scheduleState.scheduleListState,
             contentPadding = PaddingValues(bottom = paddingBottom),
             modifier = Modifier.fillMaxSize(),
         ) {
-            val lastIndex = eventsForList.lastIndex
+            val lastIndex = scheduleData.eventForList.lastIndex
             val formatter = DateTimeFormatter.ofPattern("d MMMM")
-            eventsForList.forEachIndexed { index, events ->
+            scheduleData.eventForList.forEachIndexed { index, events ->
                 val eventsForDayGrouped = events.second
                     .sortedBy { event -> event.startDatetime!!.toLocalTime() }
                     .groupBy { event ->
@@ -74,12 +70,12 @@ fun ScheduleListView(
 
                 stickyHeader {
                     DateHeader(
-                        currentWeek = recurrence?.let {
+                        currentWeek = scheduleData.settledScheduleEntity?.recurrence?.let {
                             calculateCurrentWeek(
                                 date = events.first,
-                                startDate = startDate,
-                                firstPeriodNumber = recurrence.firstWeekNumber,
-                                interval = recurrence.interval!!
+                                startDate = scheduleData.settledScheduleEntity.startDate,
+                                firstPeriodNumber = scheduleData.settledScheduleEntity.recurrence.firstWeekNumber,
+                                interval = scheduleData.settledScheduleEntity.recurrence.interval!!
                             )
                         },
                         date = events.first,
@@ -96,8 +92,8 @@ fun ScheduleListView(
                             onDeleteEvent = onDeleteEvent,
                             onUpdateHiddenEvent = onUpdateHiddenEvent,
                             events = eventsGrouped.second,
-                            eventsExtraData = eventsExtraData,
-                            isSavedSchedule = isSavedSchedule,
+                            eventsExtraData = scheduleData.eventsExtraData,
+                            isSavedSchedule = scheduleUiState.isSaved,
                             isShortEvent = isShortEvent
                         )
                     }
@@ -127,7 +123,7 @@ fun DateHeader(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {

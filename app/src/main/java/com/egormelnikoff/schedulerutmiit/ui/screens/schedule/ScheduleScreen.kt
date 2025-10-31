@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -44,25 +43,24 @@ import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.ui.dialogs.DialogNamedScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.ScheduleTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.LocalDate
 
 @Composable
 fun ScreenSchedule(
-    externalPadding: PaddingValues,
-    today: LocalDate,
-
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
     navigateToAddSchedule: () -> Unit,
     navigateToSearch: () -> Unit,
     navigateToAddEvent: (ScheduleEntity) -> Unit,
+    navigateToRenameDialog: (NamedScheduleEntity) -> Unit,
 
     onDeleteEvent: (Long) -> Unit,
     onHideEvent: (Long) -> Unit,
@@ -72,16 +70,13 @@ fun ScreenSchedule(
     onSelectDefaultNamedSchedule: (Long) -> Unit,
     onDeleteNamedSchedule: (Pair<Long, Boolean>) -> Unit,
     onSetDefaultSchedule: (Triple<Long, Long, String>) -> Unit,
-
     onSetScheduleView: (Boolean) -> Unit,
-    onShowExpandedMenu: (Boolean) -> Unit,
 
-    expandedSchedulesMenu: Boolean,
-    appSettings: AppSettings,
-
+    today: LocalDate,
     scheduleUiState: ScheduleUiState,
-    scheduleCalendarState: ScheduleCalendarState,
-    scheduleListState: LazyListState,
+    scheduleState: ScheduleState,
+    appSettings: AppSettings,
+    externalPadding: PaddingValues
 ) {
     var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
     var showDeleteNamedScheduleDialog by remember { mutableStateOf(false) }
@@ -117,13 +112,13 @@ fun ScreenSchedule(
                     ScheduleTopAppBar(
                         navigateToAddEvent = navigateToAddEvent,
                         onSetScheduleView = onSetScheduleView,
-                        onShowExpandedMenu = onShowExpandedMenu,
+                        onShowExpandedMenu = scheduleState.onExpandSchedulesMenu,
                         onShowNamedScheduleDialog = { newValue ->
                             showNamedScheduleDialog = newValue
                         },
                         scheduleUiState = scheduleUiState,
                         calendarView = appSettings.calendarView,
-                        expandedSchedulesMenu = expandedSchedulesMenu,
+                        expandedSchedulesMenu = scheduleState.expandedSchedulesMenu,
                         context = LocalContext.current
                     )
                 }
@@ -140,8 +135,8 @@ fun ScreenSchedule(
                     ExpandedMenu(
                         setDefaultSchedule = onSetDefaultSchedule,
                         scheduleUiState = scheduleUiState,
-                        expandedSchedulesMenu = expandedSchedulesMenu,
-                        onShowExpandedMenu = onShowExpandedMenu
+                        expandedSchedulesMenu = scheduleState.expandedSchedulesMenu,
+                        onShowExpandedMenu = scheduleState.onExpandSchedulesMenu
                     )
                     if (scheduleUiState.currentScheduleData.settledScheduleEntity != null) {
                         AnimatedContent(
@@ -160,13 +155,12 @@ fun ScreenSchedule(
                                     navigateToEvent = navigateToEvent,
                                     onDeleteEvent = onDeleteEvent,
                                     onUpdateHiddenEvent = onHideEvent,
-                                    isSavedSchedule = scheduleUiState.isSaved,
+
+                                    today = today,
+                                    scheduleUiState = scheduleUiState,
+                                    scheduleState = scheduleState,
                                     isShowCountClasses = appSettings.showCountClasses,
                                     isShortEvent = appSettings.eventView,
-
-                                    scheduleUiState = scheduleUiState,
-                                    today = today,
-                                    scheduleCalendarState = scheduleCalendarState,
                                     paddingBottom = externalPadding.calculateBottomPadding()
                                 )
                             } else {
@@ -174,14 +168,11 @@ fun ScreenSchedule(
                                     navigateToEvent = navigateToEvent,
                                     onDeleteEvent = onDeleteEvent,
                                     onUpdateHiddenEvent = onHideEvent,
-                                    isSavedSchedule = scheduleUiState.isSaved,
-                                    recurrence = scheduleUiState.currentScheduleData.settledScheduleEntity.recurrence,
-                                    startDate = scheduleUiState.currentScheduleData.settledScheduleEntity.startDate,
-                                    eventsForList = scheduleUiState.currentScheduleData.eventForList,
-                                    eventsExtraData = scheduleUiState.currentScheduleData.eventsExtraData,
-                                    scheduleListState = scheduleListState,
+
+                                    scheduleUiState = scheduleUiState,
+                                    scheduleState = scheduleState,
                                     isShortEvent = appSettings.eventView,
-                                    paddingBottom = externalPadding.calculateBottomPadding(),
+                                    paddingBottom = externalPadding.calculateBottomPadding()
                                 )
                             }
                         }
@@ -231,7 +222,7 @@ fun ScreenSchedule(
     }
 
     showNamedScheduleDialog?.let {
-        DialogNamedScheduleActions(
+        ModalDialogNamedSchedule(
             namedScheduleEntity = showNamedScheduleDialog!!,
             onSelectDefault = {
                 onSelectDefaultNamedSchedule(showNamedScheduleDialog!!.id)
@@ -245,6 +236,9 @@ fun ScreenSchedule(
             onLoadInitialData = if (!scheduleUiState.currentScheduleData!!.namedSchedule!!.namedScheduleEntity.isDefault) {
                 onLoadInitialData
             } else null,
+            navigateToRenameDialog = {
+                navigateToRenameDialog(showNamedScheduleDialog!!)
+            },
             isSavedNamedSchedule = scheduleUiState.isSaved,
             onSaveCurrentNamedSchedule = onSaveCurrentNamedSchedule
         )
