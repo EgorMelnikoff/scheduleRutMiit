@@ -34,8 +34,9 @@ interface MiitApi {
 
     @GET(NEWS_CATALOG)
     suspend fun getNewsList(
-        @Query("from") fromPage: String,
-        @Query("to") toPage: String
+        @Query("page_size") pageSize: Int,
+        @Query("from") fromPage: Int,
+        @Query("to") toPage: Int
     ): Response<NewsList>
 
     @GET(NEWS)
