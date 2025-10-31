@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.data.datasource.local.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Transaction
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
@@ -13,7 +12,6 @@ import com.egormelnikoff.schedulerutmiit.app.model.ScheduleFormatted
 
 @Dao
 interface NamedScheduleDao {
-    @Insert
     suspend fun insertNamedSchedule(namedScheduleFormatted: NamedScheduleFormatted): Long {
         val namedScheduleId = insertNamedScheduleEntity(namedScheduleFormatted.namedScheduleEntity)
         for (schedule in namedScheduleFormatted.schedules) {
@@ -25,7 +23,6 @@ interface NamedScheduleDao {
         return namedScheduleId
     }
 
-    @Insert
     suspend fun insertScheduleWithEvents(
         namedScheduleId: Long,
         scheduleFormatted: ScheduleFormatted,
@@ -53,10 +50,8 @@ interface NamedScheduleDao {
     suspend fun insertEventExtraData(eventExtraData: EventExtraData)
 
 
-    @Transaction
     @Query("SELECT * FROM NamedSchedules")
     suspend fun getAll(): List<NamedScheduleEntity>
-    @Transaction
     @Query("SELECT * FROM NamedSchedules WHERE apiId = :apiId")
     suspend fun getNamedScheduleByApiId(apiId: Int): NamedScheduleFormatted?
     @Query("SELECT * FROM NamedSchedules WHERE NamedScheduleId = :id")
@@ -73,7 +68,6 @@ interface NamedScheduleDao {
     @Query("SELECT COUNT(*) FROM Events WHERE eventScheduleId = :scheduleId AND SUBSTRING(startDatetime, 1, 10) = :date")
     suspend fun getCountEventsPerDate(date: String, scheduleId: Long): Int
 
-    @Transaction
     suspend fun delete(primaryKey: Long) {
         deleteNamedScheduleById(primaryKey)
         val schedulesId = getScheduleId(primaryKey)
@@ -99,29 +93,36 @@ interface NamedScheduleDao {
     suspend fun deleteEventExtraByEventId(id: Long)
 
 
-    @Query("UPDATE eventsextradata SET tag = :priority WHERE eventExtraScheduleId = :scheduleId AND EventExtraId = :eventId")
+    @Query("UPDATE eventsextradata SET tag = :priority WHERE eventExtraScheduleId = :schedulePrimaryKey AND EventExtraId = :eventPrimaryKey")
     suspend fun updateTagEvent(
-        scheduleId: Long,
-        eventId: Long,
+        schedulePrimaryKey: Long,
+        eventPrimaryKey: Long,
         priority: Int
     )
-    @Query("UPDATE eventsextradata SET comment = :comment WHERE eventExtraScheduleId = :scheduleId AND EventExtraId = :eventId")
+    @Query("UPDATE eventsextradata SET comment = :comment WHERE eventExtraScheduleId = :schedulePrimaryKey AND EventExtraId = :eventPrimaryKey")
     suspend fun updateCommentEvent(
-        scheduleId: Long,
-        eventId: Long,
+        schedulePrimaryKey: Long,
+        eventPrimaryKey: Long,
         comment: String
     )
 
-    @Query("UPDATE Events SET isHidden = :isHidden WHERE EventId = :eventId")
+    @Query("UPDATE Events SET isHidden = :isHidden WHERE EventId = :eventPrimaryKey")
     suspend fun updateEventHidden(
-        eventId: Long,
+        eventPrimaryKey: Long,
         isHidden: Boolean
     )
 
-    @Query("UPDATE namedschedules SET lastTimeUpdate = :lastTimeUpdate WHERE NamedScheduleId = :namedScheduleId")
+    @Query("UPDATE namedschedules SET lastTimeUpdate = :lastTimeUpdate WHERE NamedScheduleId = :primaryKeyNamedSchedule")
     suspend fun updateLastTimeUpdate(
-        namedScheduleId: Long,
+        primaryKeyNamedSchedule: Long,
         lastTimeUpdate: Long
+    )
+
+    @Query("UPDATE namedschedules SET fullName = :fullName, shortName = :shortName WHERE NamedScheduleId = :primaryKeyNamedSchedule")
+    suspend fun updateName(
+        primaryKeyNamedSchedule: Long,
+        fullName: String,
+        shortName: String
     )
 
     @Query("UPDATE NamedSchedules SET isDefaultNamedSchedule = 1 WHERE NamedScheduleId = :primaryKey")

@@ -20,7 +20,6 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedSch
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
-import retrofit2.Response
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -33,11 +32,6 @@ interface ScheduleRepos {
     suspend fun insertNamedSchedule(
         namedSchedule: NamedScheduleFormatted
     ): Long
-
-    suspend fun insertSchedule(
-        namedScheduleId: Long,
-        scheduleFormatted: ScheduleFormatted
-    )
 
     suspend fun insertEvent(
         event: Event
@@ -62,6 +56,7 @@ interface ScheduleRepos {
     )
 
     suspend fun getAllSavedNamedSchedules(): List<NamedScheduleEntity>
+
     suspend fun getSavedNamedScheduleByApiId(
         apiId: String
     ): NamedScheduleFormatted?
@@ -69,8 +64,15 @@ interface ScheduleRepos {
     suspend fun getDefaultNamedScheduleEntity(): NamedScheduleEntity?
 
     suspend fun getSavedNamedScheduleById(idNamedSchedule: Long): NamedScheduleFormatted?
+
     suspend fun updatePrioritySavedNamedSchedules(
         id: Long
+    )
+
+    suspend fun renameNamedSchedule(
+        primaryKeyNamedSchedule: Long,
+        type: Int,
+        newName: String
     )
 
     suspend fun updatePrioritySavedSchedules(
@@ -83,11 +85,6 @@ interface ScheduleRepos {
         event: Event,
         tag: Int,
         comment: String
-    )
-
-    suspend fun updateLastTimeUpdate(
-        namedScheduleId: Long,
-        lastTimeUpdate: Long
     )
 
     suspend fun getNewNamedSchedule(
@@ -115,7 +112,7 @@ class ScheduleReposImpl @Inject constructor(
     private val namedScheduleDao: NamedScheduleDao
 ) : ScheduleRepos {
     companion object {
-        val SCHEDULE_UPDATE_THRESHOLD_MS = TimeUnit.HOURS.toMillis(10)
+        private val SCHEDULE_UPDATE_THRESHOLD_MS = TimeUnit.HOURS.toMillis(10)
         const val CUSTOM_SCHEDULE_TYPE = 3
         const val MAX_EVENTS_COUNT = 10
     }
@@ -136,7 +133,7 @@ class ScheduleReposImpl @Inject constructor(
         return namedScheduleId
     }
 
-    override suspend fun insertSchedule(
+    private suspend fun insertSchedule(
         namedScheduleId: Long,
         scheduleFormatted: ScheduleFormatted
     ) {
@@ -209,6 +206,18 @@ class ScheduleReposImpl @Inject constructor(
         namedScheduleDao.setNonDefaultNamedSchedule(id)
     }
 
+    override suspend fun renameNamedSchedule(
+        primaryKeyNamedSchedule: Long,
+        type: Int,
+        newName: String
+    ) {
+        namedScheduleDao.updateName(
+            primaryKeyNamedSchedule = primaryKeyNamedSchedule,
+            fullName = newName,
+            shortName = newName.getShortName(type)
+        )
+    }
+
     override suspend fun updatePrioritySavedSchedules(
         primaryKeyNamedSchedule: Long,
         primaryKeySchedule: Long
@@ -218,10 +227,6 @@ class ScheduleReposImpl @Inject constructor(
             primaryKeyNamedSchedule = primaryKeyNamedSchedule,
             primaryKeySchedule = primaryKeySchedule
         )
-    }
-
-    override suspend fun updateLastTimeUpdate(namedScheduleId: Long, lastTimeUpdate: Long) {
-        namedScheduleDao.updateLastTimeUpdate(namedScheduleId, lastTimeUpdate)
     }
 
     override suspend fun updateEventExtra(
@@ -260,47 +265,32 @@ class ScheduleReposImpl @Inject constructor(
         apiId: String,
         type: Int
     ): Result<NamedScheduleFormatted> {
-        return when (val timetables = getTimetables(apiId = apiId, type = type)) {
-            is Result.Error -> timetables
+        when (val timetables = getTimetables(apiId = apiId, type = type)) {
+            is Result.Error -> {
+                return Result.Error(timetables.error)
+            }
+
             is Result.Success -> {
                 val schedules = mutableListOf<Schedule>()
-                for (timetable in timetables.data.timetables) {
+                timetables.data.timetables.forEach { timetable ->
                     val schedule = miitApiHelper.callApiWithExceptions(
-                        type = "Schedule ($name $apiId $type)"
+                        fetchDataType = "Schedule",
+                        message = "Type: $type; ApiId: $apiId; TimetableId: ${timetable.id}"
                     ) {
-                        when (type) {
-                            0 -> miitApi.getSchedule(
-                                type = "group",
-                                apiId = apiId,
-                                timetableId = timetable.id
-                            )
-
-                            1 -> miitApi.getSchedule(
-                                type = "person",
-                                apiId = apiId,
-                                timetableId = timetable.id
-                            )
-
-                            2 -> miitApi.getSchedule(
-                                type = "room",
-                                apiId = apiId,
-                                timetableId = timetable.id
-                            )
-
-                            else -> Response.success(null)
-                        }
+                        miitApi.getSchedule(type.getApiTypeById(), apiId, timetable.id)
                     }
+
                     when (schedule) {
                         is Result.Success -> {
                             schedules.add(schedule.data.fixApiIssuance(apiId, timetable))
                         }
 
                         is Result.Error -> {
-                            Result.Error(schedule.error)
+                            return Result.Error(schedule.error)
                         }
                     }
                 }
-                Result.Success(
+                return Result.Success(
                     schedules.migrateToNewModel(
                         id = namedScheduleId,
                         name = name,
@@ -318,26 +308,16 @@ class ScheduleReposImpl @Inject constructor(
         type: Int
     ): Result<Timetables> {
         return miitApiHelper.callApiWithExceptions(
-            type = "Timetables $apiId"
+            fetchDataType = "Timetables",
+            message = "Type: $type; ApiId: $apiId"
         ) {
-            when (type) {
-                0 -> miitApi.getTimetables("group", apiId)
-                1 -> miitApi.getTimetables("person", apiId)
-                2 -> miitApi.getTimetables("room", apiId)
-                else -> Response.success(null)
-            }
+            miitApi.getTimetables(type.getApiTypeById(), apiId)
         }
     }
 
     override suspend fun isEventAddingUnavailable(date: LocalDate, scheduleId: Long): Boolean {
-        return getCountEventsPerDate(date, scheduleId) >= MAX_EVENTS_COUNT
-    }
-
-    private suspend fun getCountEventsPerDate(
-        date: LocalDate,
-        scheduleId: Long
-    ): Int {
-        return namedScheduleDao.getCountEventsPerDate(date.toString(), scheduleId)
+        val eventsCount = namedScheduleDao.getCountEventsPerDate(date.toString(), scheduleId)
+        return eventsCount >= MAX_EVENTS_COUNT
     }
 
     override suspend fun updateSavedNamedSchedule(
@@ -348,7 +328,7 @@ class ScheduleReposImpl @Inject constructor(
             onStartUpdate()
             return performNamedScheduleUpdate(namedScheduleEntity)
         }
-        return Result.Success("Success update")
+        return Result.Success("No schedule update required")
     }
 
     private fun shouldUpdateNamedSchedule(namedScheduleEntity: NamedScheduleEntity): Boolean {
@@ -360,16 +340,16 @@ class ScheduleReposImpl @Inject constructor(
     private suspend fun performNamedScheduleUpdate(
         namedScheduleEntity: NamedScheduleEntity
     ): Result<String> {
-        val remoteResult = getNewNamedSchedule(
+        val updatedNamedSchedule = getNewNamedSchedule(
             namedScheduleId = namedScheduleEntity.id,
             name = namedScheduleEntity.shortName,
             apiId = namedScheduleEntity.apiId!!,
             type = namedScheduleEntity.type
         )
 
-        return when (remoteResult) {
+        return when (updatedNamedSchedule) {
             is Result.Error -> {
-                Result.Error(remoteResult.error)
+                Result.Error(updatedNamedSchedule.error)
             }
 
             is Result.Success -> {
@@ -377,7 +357,7 @@ class ScheduleReposImpl @Inject constructor(
                 if (oldNamedSchedule != null) {
                     mergeAndUpdateSchedules(
                         oldNamedSchedule = oldNamedSchedule,
-                        newNamedSchedule = remoteResult.data
+                        newNamedSchedule = updatedNamedSchedule.data
                     )
                     Result.Success("Success update")
                 } else {
@@ -392,11 +372,11 @@ class ScheduleReposImpl @Inject constructor(
         oldNamedSchedule: NamedScheduleFormatted,
         newNamedSchedule: NamedScheduleFormatted
     ) {
-        val oldNamedSchedulesMap =
+        val oldSchedulesMap =
             oldNamedSchedule.schedules.associateBy { it.scheduleEntity.timetableId }
 
         newNamedSchedule.schedules.forEach { updatedSchedule ->
-            val oldSchedule = oldNamedSchedulesMap[updatedSchedule.scheduleEntity.timetableId]
+            val oldSchedule = oldSchedulesMap[updatedSchedule.scheduleEntity.timetableId]
             if (oldSchedule != null) {
                 val updatedScheduleEntity =
                     if (oldSchedule.scheduleEntity.recurrence?.currentNumber != updatedSchedule.scheduleEntity.recurrence?.currentNumber) {
@@ -444,6 +424,16 @@ class ScheduleReposImpl @Inject constructor(
         updateLastTimeUpdate(
             oldNamedSchedule.namedScheduleEntity.id,
             System.currentTimeMillis()
+        )
+    }
+
+    private suspend fun updateLastTimeUpdate(
+        namedScheduleId: Long,
+        lastTimeUpdate: Long
+    ) {
+        namedScheduleDao.updateLastTimeUpdate(
+            primaryKeyNamedSchedule = namedScheduleId,
+            lastTimeUpdate = lastTimeUpdate
         )
     }
 
@@ -595,11 +585,11 @@ class ScheduleReposImpl @Inject constructor(
     }
 
     private fun String.getShortName(type: Int): String {
+        if (type != 1) return this
         val nameParts = this.split(" ")
-        if (type == 1 && nameParts.size == 3) {
-           return "${nameParts.first()} ${nameParts[1][0]}. ${nameParts[2][0]}."
-        }
-        return this
+        return if (nameParts.size == 3) {
+            "${nameParts.first()} ${nameParts[1][0]}. ${nameParts[2][0]}."
+        } else this
     }
 
     private fun LocalDateTime.getTimeslotName(): String? {
@@ -617,4 +607,12 @@ class ScheduleReposImpl @Inject constructor(
             else -> null
         }
     }
+
+    private fun Int.getApiTypeById() =
+        when (this) {
+            0 -> "group"
+            1 -> "person"
+            else -> "room"
+        }
+
 }
