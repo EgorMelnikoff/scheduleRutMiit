@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
@@ -38,23 +37,17 @@ import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.ui.dialogs.DialogNamedScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ExpandedItem
+import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.ui.theme.Blue
-import com.egormelnikoff.schedulerutmiit.ui.theme.Green
-import com.egormelnikoff.schedulerutmiit.ui.theme.LightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.Orange
-import com.egormelnikoff.schedulerutmiit.ui.theme.Pink
-import com.egormelnikoff.schedulerutmiit.ui.theme.Red
-import com.egormelnikoff.schedulerutmiit.ui.theme.Violet
-import com.egormelnikoff.schedulerutmiit.ui.theme.Yellow
+import com.egormelnikoff.schedulerutmiit.ui.state.ReviewState
+import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.DayOfWeek
 import java.time.Instant
@@ -71,17 +64,14 @@ fun ReviewScreen(
     navigateToAddSchedule: () -> Unit,
     navigateToSearch: () -> Unit,
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
+    navigateToRenameDialog: (NamedScheduleEntity) -> Unit,
 
     onSetNamedSchedule: (Long) -> Unit,
     onSelectDefaultNamedSchedule: (Long) -> Unit,
     onDeleteNamedSchedule: (Pair<Long, Boolean>) -> Unit,
     onShowEvent: (Long) -> Unit,
 
-    onChangeSavedSchedulesVisibility: (Boolean) -> Unit,
-    onChangeHiddenEventsVisibility: (Boolean) -> Unit,
-
-    visibleSavedSchedules: Boolean,
-    visibleHiddenEvents: Boolean,
+    reviewState: ReviewState,
     scheduleUiState: ScheduleUiState
 ) {
     var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
@@ -156,8 +146,8 @@ fun ReviewScreen(
                 ExpandedItem(
                     title = LocalContext.current.getString(R.string.saved_schedules),
                     imageVector = ImageVector.vectorResource(R.drawable.save),
-                    visible = visibleSavedSchedules,
-                    onChangeVisibility = onChangeSavedSchedulesVisibility
+                    visible = reviewState.visibleSavedSchedules,
+                    onChangeVisibility = reviewState.onChangeVisibilitySavedSchedules
                 ) {
                     ColumnGroup(
                         items = scheduleUiState.savedNamedSchedules.map { namedScheduleEntity ->
@@ -201,8 +191,8 @@ fun ReviewScreen(
                     ExpandedItem(
                         title = LocalContext.current.getString(R.string.hidden_events),
                         imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
-                        visible = visibleHiddenEvents,
-                        onChangeVisibility = onChangeHiddenEventsVisibility
+                        visible = reviewState.visibleHiddenEvents,
+                        onChangeVisibility = reviewState.onChangeVisibilityHiddenEvents
                     ) {
                         ColumnGroup(
                             items = scheduleUiState.currentScheduleData.hiddenEvents.map {
@@ -281,7 +271,7 @@ fun ReviewScreen(
         }
 
         if (showNamedScheduleDialog != null) {
-            DialogNamedScheduleActions(
+            ModalDialogNamedSchedule(
                 namedScheduleEntity = showNamedScheduleDialog!!,
                 onSetSchedule = {
                     onSetNamedSchedule(showNamedScheduleDialog!!.id)
@@ -294,6 +284,9 @@ fun ReviewScreen(
                 },
                 onDismiss = {
                     showNamedScheduleDialog = null
+                },
+                navigateToRenameDialog = {
+                    navigateToRenameDialog(showNamedScheduleDialog!!)
                 },
                 isSavedNamedSchedule = true
             )
@@ -379,23 +372,12 @@ fun EventsReview(
                                 subtitle = eventExtraData.comment,
                                 showClickLabel = false,
                                 subtitleLabel = if (eventExtraData.tag != 0) {
-                                    val color = when (eventExtraData.tag) {
-                                        1 -> Red
-                                        2 -> Orange
-                                        3 -> Yellow
-                                        4 -> Green
-                                        5 -> LightBlue
-                                        6 -> Blue
-                                        7 -> Violet
-                                        8 -> Pink
-                                        else -> Color.Unspecified
-                                    }
                                     {
                                         Icon(
                                             modifier = Modifier.size(8.dp),
                                             imageVector = ImageVector.vectorResource(R.drawable.circle),
                                             contentDescription = null,
-                                            tint = color
+                                            tint = getColorByIndex(eventExtraData.tag)
                                         )
                                     }
                                 } else null,

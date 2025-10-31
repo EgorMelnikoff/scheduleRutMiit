@@ -64,6 +64,7 @@ interface ScheduleViewModel {
     fun addCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
     fun updateEventHidden(scheduleEntity: ScheduleEntity, eventPrimaryKey: Long, isHidden: Boolean)
     fun deleteCustomEvent(scheduleEntity: ScheduleEntity, primaryKeyEvent: Long)
+    fun renameNamedSchedule(namedScheduleEntity: NamedScheduleEntity, newName: String)
 }
 
 @HiltViewModel
@@ -340,6 +341,32 @@ class ScheduleViewModelImpl @Inject constructor(
             updateNamedScheduleUiState(
                 namedSchedule = updatedNamedSchedule,
                 scheduleId = scheduleEntity.id
+            )
+        }
+    }
+
+    override fun renameNamedSchedule(
+        namedScheduleEntity: NamedScheduleEntity,
+        newName: String
+    ) {
+        if (newName == namedScheduleEntity.fullName) {
+            return
+        }
+        viewModelScope.launch {
+            scheduleRepos.renameNamedSchedule(
+                primaryKeyNamedSchedule = namedScheduleEntity.id,
+                type = namedScheduleEntity.type,
+                newName = newName
+            )
+            val updatedNamedSchedule =
+                scheduleRepos.getSavedNamedScheduleById(namedScheduleEntity.id)
+
+            updateUiState(
+                savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
+            )
+            updateNamedScheduleUiState(
+                namedSchedule = updatedNamedSchedule,
+                scheduleId = null
             )
         }
     }

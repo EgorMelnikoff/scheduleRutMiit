@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.ui.navigation
 
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 
 sealed class Routes(val isDialog: Boolean) {
@@ -20,4 +21,7 @@ sealed class Routes(val isDialog: Boolean) {
     ) : Routes(true)
     data object SearchDialog : Routes(true)
     data object AddScheduleDialog : Routes(true)
+    data class RenameNamedSchedule(
+        val namedScheduleEntity: NamedScheduleEntity
+    ) : Routes(true)
 }
