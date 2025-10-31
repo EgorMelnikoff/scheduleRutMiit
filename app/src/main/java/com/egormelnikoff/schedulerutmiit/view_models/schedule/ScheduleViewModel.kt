@@ -358,16 +358,19 @@ class ScheduleViewModelImpl @Inject constructor(
                 type = namedScheduleEntity.type,
                 newName = newName
             )
-            val updatedNamedSchedule =
-                scheduleRepos.getSavedNamedScheduleById(namedScheduleEntity.id)
 
             updateUiState(
                 savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
             )
-            updateNamedScheduleUiState(
-                namedSchedule = updatedNamedSchedule,
-                scheduleId = null
-            )
+            if (namedScheduleEntity.isDefault) {
+                val updatedNamedSchedule =
+                    scheduleRepos.getSavedNamedScheduleById(namedScheduleEntity.id)
+
+                updateNamedScheduleUiState(
+                    namedSchedule = updatedNamedSchedule,
+                    scheduleId = null
+                )
+            }
         }
     }
 
