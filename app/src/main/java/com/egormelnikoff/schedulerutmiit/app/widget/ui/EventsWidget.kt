@@ -39,6 +39,7 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
@@ -63,6 +64,7 @@ import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class EventsWidget : GlanceAppWidget() {
@@ -70,7 +72,8 @@ class EventsWidget : GlanceAppWidget() {
     private lateinit var widgetDataUpdater: WidgetDataUpdater
 
     companion object {
-        val widget_data_key = stringPreferencesKey("widget_data")
+        val eveningTime: LocalTime = LocalTime.of(18, 0)
+        val widgetDataKey = stringPreferencesKey("widget_data")
     }
 
     override var stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
@@ -86,14 +89,14 @@ class EventsWidget : GlanceAppWidget() {
         provideContent {
             val scope = rememberCoroutineScope()
             val prefs = currentState<Preferences>()
-            val widgetDataStringTest = prefs[widget_data_key]
-            val widgetDataTest = gson.fromJson(
-                widgetDataStringTest,
+            val widgetDataString = prefs[widgetDataKey]
+            val widgetData = gson.fromJson(
+                widgetDataString,
                 WidgetData::class.java
             )
             ScheduleGlanceTheme {
                 EventsWidgetContent(
-                    widgetData = widgetDataTest,
+                    widgetData = widgetData,
                     onUpdate = {
                         scope.launch {
                             widgetDataUpdater.updateAll()
@@ -150,10 +153,14 @@ class EventsWidget : GlanceAppWidget() {
                 )
 
                 val isFinishedEvents = eventsForToday.isNotEmpty()
-                        && today.toLocalTime()
-                            .isAfter(eventsForToday.last().endDatetime!!.toLocaleTimeWithTimeZone())
+                        && today.toLocalTime().isAfter(
+                    eventsForToday.last().endDatetime!!.toLocaleTimeWithTimeZone()
+                )
 
-                if (isFinishedEvents || today.dayOfWeek == DayOfWeek.SUNDAY) {
+                val nextDay = eventsForToday.isEmpty()
+                        && today.toLocalTime().isAfter(eveningTime)
+
+                if (isFinishedEvents || nextDay || today.dayOfWeek == DayOfWeek.SUNDAY) {
                     val tomorrow = today.toLocalDate().plusDays(1)
                     eventsForToday = calculateEvents(
                         scheduleEntity = scheduleEntity,
@@ -161,8 +168,7 @@ class EventsWidget : GlanceAppWidget() {
                         periodicEvents = periodicEvents,
                         nonPeriodicEvents = nonPeriodicEvents
                     )
-                    header = LocalContext.current.getString(R.string.tomorrow) +
-                            ", ${tomorrow.format(formatter)}"
+                    header = LocalContext.current.getString(R.string.tomorrow) + ", ${tomorrow.format(formatter)}"
                 }
 
                 val displayedEvents = eventsForToday
@@ -349,7 +355,7 @@ class EventsWidget : GlanceAppWidget() {
                         provider = ImageProvider(R.drawable.circle),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(
-                            colorProvider = androidx.glance.unit.ColorProvider(
+                            colorProvider = ColorProvider(
                                 color = color
                             )
                         )
@@ -367,7 +373,6 @@ class EventsWidget : GlanceAppWidget() {
             }
         }
     }
-
 
     fun calculateEvents(
         scheduleEntity: ScheduleEntity,
@@ -390,7 +395,6 @@ class EventsWidget : GlanceAppWidget() {
         }?.values?.flatten()
         ?: emptyList()
         return events
-            .filter { !it.isHidden }
             .sortedBy { event -> event.startDatetime!!.toLocalTime() }
     }
 }
