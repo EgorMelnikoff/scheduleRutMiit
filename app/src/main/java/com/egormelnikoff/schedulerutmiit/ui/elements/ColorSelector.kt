@@ -16,44 +16,25 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.ui.theme.Blue
-import com.egormelnikoff.schedulerutmiit.ui.theme.Green
-import com.egormelnikoff.schedulerutmiit.ui.theme.LightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.LightGrey
-import com.egormelnikoff.schedulerutmiit.ui.theme.Orange
-import com.egormelnikoff.schedulerutmiit.ui.theme.Pink
-import com.egormelnikoff.schedulerutmiit.ui.theme.Red
-import com.egormelnikoff.schedulerutmiit.ui.theme.Violet
-import com.egormelnikoff.schedulerutmiit.ui.theme.Yellow
+import com.egormelnikoff.schedulerutmiit.ui.theme.colors
 
 @Composable
 fun ColorSelector(
     currentSelected: Int,
     onColorSelect: (Int) -> Unit,
 ) {
-    val colors = arrayOf(
-        LightGrey,
-        Red,
-        Orange,
-        Yellow,
-        Green,
-        LightBlue,
-        Blue,
-        Violet,
-        Pink,
-    )
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
         SingleChoiceSegmentedButtonRow(
             modifier = Modifier.fillMaxWidth()
         ) {
-            colors.forEachIndexed { index, color ->
+            colors.entries.forEachIndexed { index, color ->
                 SegmentedButton(
                     border = BorderStroke(width = 0.dp, Color.Transparent),
                     colors = SegmentedButtonDefaults.colors().copy(
-                        activeContainerColor = color,
+                        activeContainerColor = color.value,
                         activeBorderColor = Color.Transparent,
                         activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                        inactiveContainerColor = color,
+                        inactiveContainerColor = color.value,
                         inactiveBorderColor = Color.Transparent,
                         inactiveContentColor = Color.Transparent
                     ),
@@ -63,9 +44,9 @@ fun ColorSelector(
                         baseShape = MaterialTheme.shapes.medium
                     ),
                     onClick = {
-                        onColorSelect(index)
+                        onColorSelect(color.key)
                     },
-                    selected = index == currentSelected,
+                    selected = color.key == currentSelected,
                     icon = {},
                     label = {
                         Icon(
