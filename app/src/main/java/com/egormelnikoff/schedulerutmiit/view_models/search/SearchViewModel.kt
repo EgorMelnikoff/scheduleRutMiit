@@ -10,7 +10,7 @@ import com.egormelnikoff.schedulerutmiit.data.Error
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
-import com.egormelnikoff.schedulerutmiit.ui.dialogs.Options
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 interface SearchViewModel {
     val uiState: StateFlow<SearchUiState>
-    fun search(query: String, selectedOptions: Options)
+    fun search(query: String, selectedSearchOption: SearchOption)
     fun setDefaultSearchState()
 }
 
@@ -47,7 +47,7 @@ class SearchViewModelImpl @Inject constructor(
 
     private var searchJob: Job? = null
 
-    override fun search(query: String, selectedOptions: Options) {
+    override fun search(query: String, selectedSearchOption: SearchOption) {
         _uiState.update { it.copy(isLoading = true) }
         val newSearchJob = viewModelScope.launch {
             searchJob?.cancelAndJoin()
@@ -55,7 +55,7 @@ class SearchViewModelImpl @Inject constructor(
                 var groups = listOf<Group>()
                 var people = listOf<Person>()
 
-                if (selectedOptions == Options.ALL || selectedOptions == Options.GROUPS) {
+                if (selectedSearchOption == SearchOption.ALL || selectedSearchOption == SearchOption.GROUPS) {
                     val groupsRes = searchGroup(query)
                     when (groupsRes) {
                         is Result.Success -> {
@@ -67,7 +67,7 @@ class SearchViewModelImpl @Inject constructor(
                         }
                     }
                 }
-                if (selectedOptions == Options.ALL || selectedOptions == Options.PEOPLE) {
+                if (selectedSearchOption == SearchOption.ALL || selectedSearchOption == SearchOption.PEOPLE) {
                     val peopleRes = searchPerson(query)
                     when (peopleRes) {
                         is Result.Success -> {

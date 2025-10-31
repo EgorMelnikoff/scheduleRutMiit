@@ -40,23 +40,20 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.state.ReviewState
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchUiState
 
-enum class Options {
+enum class SearchOption {
     ALL, GROUPS, PEOPLE
 }
 
 @Composable
 fun SearchScheduleDialog(
     externalPadding: PaddingValues,
-    onSearch: (Pair<String, Options>) -> Unit,
+    onSearch: (Pair<String, SearchOption>) -> Unit,
     onSetDefaultState: () -> Unit,
     onSearchSchedule: (Triple<String, String, Int>) -> Unit,
-    onChangeQuery: (String) -> Unit,
-    onSelectOption: (Options) -> Unit,
-
-    searchQuery: String,
-    selectedOption: Options,
+    reviewState: ReviewState,
     searchUiState: SearchUiState
 ) {
     Column(
@@ -77,10 +74,10 @@ fun SearchScheduleDialog(
             CustomTextField(
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1,
-                value = searchQuery,
-                onValueChanged = onChangeQuery,
+                value = reviewState.searchQuery,
+                onValueChanged = reviewState.onChangeQuery,
                 action = {
-                    onSearch(Pair(searchQuery.trim(), selectedOption))
+                    onSearch(Pair(reviewState.searchQuery.trim(), reviewState.selectedSearchOption))
                 },
                 placeholderText = LocalContext.current.getString(R.string.search),
                 leadingIcon = {
@@ -92,13 +89,13 @@ fun SearchScheduleDialog(
                 },
                 trailingIcon = {
                     AnimatedVisibility(
-                        visible = searchQuery != "",
+                        visible = reviewState.searchQuery != "",
                         enter = scaleIn(animationSpec = tween(300)),
                         exit = fadeOut(animationSpec = tween(500))
                     ) {
                         IconButton(
                             onClick = {
-                                onChangeQuery("")
+                                reviewState.onChangeQuery("")
                                 onSetDefaultState()
                             }
                         ) {
@@ -117,8 +114,8 @@ fun SearchScheduleDialog(
             )
 
             FilterRow(
-                selectedOption = selectedOption,
-                onSelectOption = onSelectOption
+                selectedOption = reviewState.selectedSearchOption,
+                onSelectOption = reviewState.onSelectSearchOption
             )
         }
         AnimatedContent(
@@ -167,7 +164,7 @@ fun SearchScheduleDialog(
                         ),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        if (searchUiState.groups.isNotEmpty() && (selectedOption == Options.ALL || selectedOption == Options.GROUPS)) {
+                        if (searchUiState.groups.isNotEmpty() && (reviewState.selectedSearchOption == SearchOption.ALL || reviewState.selectedSearchOption == SearchOption.GROUPS)) {
                             item {
                                 Text(
                                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -198,7 +195,7 @@ fun SearchScheduleDialog(
 
                             }
                         }
-                        if (searchUiState.people.isNotEmpty() && (selectedOption == Options.ALL || selectedOption == Options.PEOPLE)) {
+                        if (searchUiState.people.isNotEmpty() && (reviewState.selectedSearchOption == SearchOption.ALL || reviewState.selectedSearchOption == SearchOption.PEOPLE)) {
                             item {
                                 Text(
                                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -243,8 +240,8 @@ fun SearchScheduleDialog(
 
 @Composable
 fun FilterRow(
-    selectedOption: Options,
-    onSelectOption: (Options) -> Unit
+    selectedOption: SearchOption,
+    onSelectOption: (SearchOption) -> Unit
 ) {
     Row(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -253,25 +250,25 @@ fun FilterRow(
         CustomChip(
             title = LocalContext.current.getString(R.string.all),
             imageVector = null,
-            selected = selectedOption == Options.ALL,
+            selected = selectedOption == SearchOption.ALL,
             onSelect = {
-                onSelectOption(Options.ALL)
+                onSelectOption(SearchOption.ALL)
             }
         )
         CustomChip(
             title = LocalContext.current.getString(R.string.groups),
             imageVector = ImageVector.vectorResource(R.drawable.group),
-            selected = selectedOption == Options.GROUPS,
+            selected = selectedOption == SearchOption.GROUPS,
             onSelect = {
-                onSelectOption(Options.GROUPS)
+                onSelectOption(SearchOption.GROUPS)
             }
         )
         CustomChip(
             title = LocalContext.current.getString(R.string.people),
             imageVector = ImageVector.vectorResource(R.drawable.person),
-            selected = selectedOption == Options.PEOPLE,
+            selected = selectedOption == SearchOption.PEOPLE,
             onSelect = {
-                onSelectOption(Options.PEOPLE)
+                onSelectOption(SearchOption.PEOPLE)
             }
         )
     }
