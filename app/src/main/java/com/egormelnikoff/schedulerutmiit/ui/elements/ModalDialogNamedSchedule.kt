@@ -1,36 +1,27 @@
-package com.egormelnikoff.schedulerutmiit.ui.dialogs
+package com.egormelnikoff.schedulerutmiit.ui.elements
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DialogNamedScheduleActions(
+fun ModalDialogNamedSchedule(
+    navigateToRenameDialog: () -> Unit,
     onDismiss: (NamedScheduleEntity?) -> Unit,
     onSetSchedule: (() -> Unit)? = null,
     onSelectDefault: () -> Unit,
@@ -80,6 +71,15 @@ fun DialogNamedScheduleActions(
         if (isSavedNamedSchedule) {
             ActionDialogButton(
                 onClick = {
+                    navigateToRenameDialog()
+                    onDismiss(null)
+                },
+                icon = ImageVector.vectorResource(R.drawable.edit),
+                title = LocalContext.current.getString(R.string.rename),
+                contentColor = MaterialTheme.colorScheme.onBackground
+            )
+            ActionDialogButton(
+                onClick = {
                     onDelete()
                     onDismiss(null)
                 },
@@ -115,97 +115,5 @@ fun DialogNamedScheduleActions(
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DialogEventActions(
-    onDismiss: (Event?) -> Unit,
-    event: Event,
-    onHideEvent: (() -> Unit)? = null,
-    onDeleteEvent: (() -> Unit)? = null,
-    onShowEvent: (() -> Unit)? = null
-) {
-    CustomModalBottomSheet(
-        modifier = Modifier.padding(horizontal = 8.dp),
-        onDismiss = {
-            onDismiss(null)
-        }
-    ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            text = event.name!!,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
-        Spacer(modifier = Modifier.height(0.dp))
-        onHideEvent?.let {
-            ActionDialogButton(
-                onClick = {
-                    it()
-                    onDismiss(null)
-                },
-                icon = ImageVector.vectorResource(R.drawable.visibility_off),
-                title = LocalContext.current.getString(R.string.hide_event),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            )
-        }
-        onShowEvent?.let {
-            ActionDialogButton(
-                onClick = {
-                    it()
-                    onDismiss(null)
-                },
-                icon = ImageVector.vectorResource(R.drawable.visibility),
-                title = LocalContext.current.getString(R.string.show_event),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            )
-        }
-        onDeleteEvent?.let {
-            ActionDialogButton(
-                onClick = {
-                    it()
-                    onDismiss(null)
-                },
-                icon = ImageVector.vectorResource(R.drawable.delete),
-                title = LocalContext.current.getString(R.string.delete_event),
-                contentColor = MaterialTheme.colorScheme.error
-            )
-        }
-    }
-}
-
-@Composable
-fun ActionDialogButton(
-    onClick: () -> Unit,
-    icon: ImageVector,
-    title: String,
-    contentColor: Color
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 8.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Icon(
-            modifier = Modifier.size(24.dp),
-            imageVector = icon,
-            contentDescription = null,
-            tint = contentColor
-        )
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            color = contentColor,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
     }
 }
