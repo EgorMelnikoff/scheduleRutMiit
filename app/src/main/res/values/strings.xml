@@ -67,6 +67,7 @@
     <string name="logs_not_found">Logs not found</string>
     <string name="make_default">Make default</string>
     <string name="my">My</string>
+    <string name="name">Name</string>
     <string name="network_error">Network error</string>
     <string name="news">News</string>
     <string name="news_updates">News, updates</string>
@@ -87,6 +88,8 @@
     <string name="place">Place</string>
     <string name="provide_the_names_of_all_lecturers">Provide the names of all lecturers</string>
     <string name="provide_the_numbers_of_all_groups">Provide the numbers of all groups</string>
+    <string name="rename">Rename</string>
+    <string name="renaming">Renaming</string>
     <string name="repeat">Repeat</string>
     <string name="report_a_problem">Report a problem</string>
     <string name="return_default">Return default</string>

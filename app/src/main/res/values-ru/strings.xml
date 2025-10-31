@@ -65,6 +65,7 @@
     <string name="logs_not_found">Журнал не найден</string>
     <string name="make_default">Сделать основным</string>
     <string name="my">Мои</string>
+    <string name="name">Name</string>
     <string name="network_error">Ошибка сети</string>
     <string name="news">Новости</string>
     <string name="news_updates">Новости и обновления</string>
@@ -85,6 +86,8 @@
     <string name="place">Место</string>
     <string name="provide_the_names_of_all_lecturers">Укажите имена всех преподавателей</string>
     <string name="provide_the_numbers_of_all_groups">Укажите номера всех групп</string>
+    <string name="rename">Переименовать</string>
+    <string name="renaming">Переименование</string>
     <string name="repeat">Повторить</string>
     <string name="report_a_problem">Сообщить о проблеме</string>
     <string name="return_default">Вернуть основное</string>
