@@ -7,7 +7,6 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.app.model.TelegramPage
@@ -27,13 +26,13 @@ interface Parser {
 }
 
 class ParserImpl @Inject constructor(
-    private val logger: Logger
+    private val parserHelper: ParserHelper
 ) : Parser {
     override suspend fun parsePeople(url: String): Result<List<Person>> {
         return withContext(Dispatchers.IO) {
-            val document = ParserHelper.callParserWithExceptions(
-                logger = logger,
-                type = "People ($url)"
+            val document = parserHelper.callParserWithExceptions(
+                fetchDataType = "Person",
+                message = "URL: $url"
             ) {
                 Jsoup.connect(url).get()
             }
@@ -67,9 +66,9 @@ class ParserImpl @Inject constructor(
 
     override suspend fun parseChannelInfo(url: String): Result<TelegramPage> {
         return withContext(Dispatchers.IO) {
-            val document = ParserHelper.callParserWithExceptions(
-                logger = logger,
-                type = "ChannelInfo ($url)"
+            val document = parserHelper.callParserWithExceptions(
+                fetchDataType = "ChannelInfo",
+                message = "URL: $url"
             ) {
                 Jsoup.connect(url).get()
             }
@@ -144,9 +143,9 @@ class ParserImpl @Inject constructor(
     override suspend fun parseCurrentWeek(url: String): Int {
         return withContext(Dispatchers.IO) {
 
-            val document = ParserHelper.callParserWithExceptions(
-                logger = logger,
-                type = "Current week ($url)"
+            val document = parserHelper.callParserWithExceptions(
+                fetchDataType = "Current week",
+                message = "URL: $url"
             ) {
                 Jsoup.connect(url).get()
             }

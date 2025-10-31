@@ -6,24 +6,29 @@ import com.egormelnikoff.schedulerutmiit.data.Result
 import org.jsoup.nodes.Document
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-object ParserHelper {
-    private const val BASE_URL = "https://www.miit.ru/people?"
-    const val PEOPLE = "${BASE_URL}query="
+class ParserHelper @Inject constructor(
+    private val logger: Logger
+) {
+    companion object {
+        private const val BASE_URL = "https://www.miit.ru/people?"
+        const val PEOPLE = "${BASE_URL}query="
+    }
 
     suspend fun callParserWithExceptions(
-        logger: Logger,
-        type: String,
+        fetchDataType: String,
+        message: String,
         call: suspend () -> Document
     ): Result<Document> {
         return try {
             val document = call()
-            logger.i("PARSER", "Success parsed data ($type)")
+            logger.i("PARSER", "Success parsed data ($fetchDataType):\n$message")
             Result.Success(
                 data = document
             )
         } catch (e: HttpException) {
-            logger.e("PARSER", "HttpException ($type)", e)
+            logger.e("PARSER", "Http error ($fetchDataType)", e)
             Result.Error(
                 Error.HttpError(
                     code = e.code(),
@@ -31,13 +36,13 @@ object ParserHelper {
                 )
             )
         } catch (e: IOException) {
-            logger.e("PARSER", "IOException ($type)", e)
+            logger.e("PARSER", "Network error ($fetchDataType)", e)
             Result.Error(Error.NetworkError(e))
         } catch (e: IllegalArgumentException) {
-            logger.e("PARSER", "IllegalArgumentException ($type)", e)
+            logger.e("PARSER", "Illegal argument error ($fetchDataType)", e)
             Result.Error(Error.IllegalArgumentError(e))
-        }catch (e: Throwable) {
-            logger.e("PARSER", "UnexpectedError ($type)", e)
+        } catch (e: Throwable) {
+            logger.e("PARSER", "Unexpected error ($fetchDataType)", e)
             Result.Error(Error.UnexpectedError(e))
         }
     }
