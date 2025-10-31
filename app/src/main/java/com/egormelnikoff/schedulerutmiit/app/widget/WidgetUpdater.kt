@@ -40,7 +40,7 @@ class WidgetDataUpdaterImpl @Inject constructor(
 
     private suspend fun updateWidgetState(glanceId: GlanceId, widgetData: WidgetData) {
         updateAppWidgetState(context, glanceId) { prefs ->
-            prefs[EventsWidget.widget_data_key] = gson.toJson(widgetData)
+            prefs[EventsWidget.widgetDataKey] = gson.toJson(widgetData)
         }
         EventsWidget().update(context, glanceId)
     }

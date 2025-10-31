@@ -12,7 +12,5 @@ interface SettingsRepos {
 class SettingsReposImpl @Inject constructor(
     private val parser: Parser
 ) : SettingsRepos {
-    override suspend fun getTgChannelInfo(url: String): Result<TelegramPage> {
-        return parser.parseChannelInfo(url)
-    }
+    override suspend fun getTgChannelInfo(url: String) = parser.parseChannelInfo(url)
 }
