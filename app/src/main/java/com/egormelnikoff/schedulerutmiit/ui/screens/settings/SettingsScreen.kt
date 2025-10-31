@@ -37,7 +37,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
 
-data class Theme(
+data class ThemeSelectorItemContent(
     val name: String,
     val imageVector: ImageVector,
     val displayedName: String
@@ -237,17 +237,17 @@ fun ThemeSelector(
     currentTheme: String
 ) {
     val themes = arrayOf(
-        Theme(
+        ThemeSelectorItemContent(
             name = "light",
             imageVector = ImageVector.vectorResource(R.drawable.sun),
             displayedName = LocalContext.current.getString(R.string.light)
         ),
-        Theme(
+        ThemeSelectorItemContent(
             name = "dark",
             imageVector = ImageVector.vectorResource(R.drawable.moon),
             displayedName = LocalContext.current.getString(R.string.dark)
         ),
-        Theme(
+        ThemeSelectorItemContent(
             name = "system",
             imageVector = ImageVector.vectorResource(R.drawable.error),
             displayedName = LocalContext.current.getString(R.string.auto)
