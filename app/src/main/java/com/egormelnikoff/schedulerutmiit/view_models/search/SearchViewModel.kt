@@ -93,7 +93,6 @@ class SearchViewModelImpl @Inject constructor(
                 setDefaultSearchState()
             }
         }
-
         searchJob = newSearchJob
     }
 

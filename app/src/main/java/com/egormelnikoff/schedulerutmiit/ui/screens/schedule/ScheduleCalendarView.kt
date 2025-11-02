@@ -38,9 +38,7 @@ fun ScheduleCalendarView(
     isShowCountClasses: Boolean,
     paddingBottom: Dp
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Column {
         HorizontalCalendar(
             scheduleEntity = scheduleUiState.currentScheduleData!!.settledScheduleEntity!!,
             eventsExtraData = scheduleUiState.currentScheduleData.eventsExtraData,
@@ -118,7 +116,6 @@ fun PagedDays(
                     event.endDatetime!!.toLocalTime()
                 )
             }
-            .toList()
 
         if (eventsForDayGrouped.isNotEmpty()) {
             Column(
@@ -136,7 +133,7 @@ fun PagedDays(
                         navigateToEvent = navigateToEvent,
                         onDeleteEvent = onDeleteEvent,
                         onUpdateHiddenEvent = onUpdateHiddenEvent,
-                        events = events.second,
+                        events = events.value,
                         isSavedSchedule = isSavedSchedule,
                         isShortEvent = isShortEvent,
                         eventsExtraData = eventsExtraData
