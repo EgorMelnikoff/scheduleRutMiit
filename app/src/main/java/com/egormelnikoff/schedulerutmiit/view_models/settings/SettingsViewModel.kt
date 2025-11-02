@@ -13,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,6 +21,7 @@ import javax.inject.Inject
 interface SettingsViewModel {
     val stateAppInfo: StateFlow<AppInfoState>
     val appSettings: StateFlow<AppSettings?>
+    val isDataLoading: StateFlow<Boolean>
     fun getAppInfo()
 }
 
@@ -35,17 +37,24 @@ class SettingsViewModelImpl @Inject constructor(
     private val settingsRepos: SettingsRepos,
     private val dataStore: PreferencesDataStore
 ) : ViewModel(), SettingsViewModel {
-    private val _stateAppInfo = MutableStateFlow<AppInfoState>(AppInfoState.Loading)
-    private val _appSettings = MutableStateFlow<AppSettings?>(null)
 
+    private val _stateAppInfo = MutableStateFlow<AppInfoState>(AppInfoState.Loading)
     override val stateAppInfo: StateFlow<AppInfoState> = _stateAppInfo
+
+    private val _appSettings = MutableStateFlow<AppSettings?>(null)
     override val appSettings: StateFlow<AppSettings?> = _appSettings
+
+    private val _isDataLoading = MutableStateFlow(true)
+    override val isDataLoading: StateFlow<Boolean> = _isDataLoading.asStateFlow()
 
     private var infoJob: Job? = null
 
     init {
         getAppInfo()
         collectSettings()
+        if (_isDataLoading.value) {
+            _isDataLoading.value = false
+        }
     }
 
     override fun getAppInfo() {

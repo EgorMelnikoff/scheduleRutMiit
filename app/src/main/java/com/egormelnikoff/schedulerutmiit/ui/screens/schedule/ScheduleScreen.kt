@@ -74,7 +74,7 @@ fun ScreenSchedule(
 
     today: LocalDate,
     scheduleUiState: ScheduleUiState,
-    scheduleState: ScheduleState,
+    scheduleState: ScheduleState?,
     appSettings: AppSettings,
     externalPadding: PaddingValues
 ) {
@@ -105,7 +105,7 @@ fun ScreenSchedule(
             )
         }
 
-        scheduleUiState.currentScheduleData?.namedSchedule != null -> {
+        scheduleUiState.currentScheduleData?.namedSchedule != null && scheduleState != null -> {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {

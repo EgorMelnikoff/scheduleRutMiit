@@ -24,39 +24,41 @@ data class ScheduleState(
 
 @Composable
 fun rememberScheduleState(
-    scheduleUiState: ScheduleUiState,
-    today: LocalDate
-): ScheduleState {
-    val scheduleListState = rememberLazyListState()
-    val pagerDaysState = rememberPagerState(
-        pageCount = { scheduleUiState.currentScheduleData?.weeksCount?.times(7) ?: 0 },
-        initialPage = scheduleUiState.currentScheduleData?.daysStartIndex ?: 0
-    )
-    val pagerWeeksState = rememberPagerState(
-        pageCount = { scheduleUiState.currentScheduleData?.weeksCount ?: 0 },
-        initialPage = scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0
-    )
-
-    var selectedDate by remember(
-        scheduleUiState.currentScheduleData?.namedSchedule?.namedScheduleEntity?.apiId
-    ) {
-        mutableStateOf(
-            scheduleUiState.currentScheduleData?.defaultDate ?: today
+    scheduleUiState: ScheduleUiState
+): ScheduleState? {
+    return if (scheduleUiState.currentScheduleData?.namedSchedule != null) {
+        val scheduleListState = rememberLazyListState()
+        val pagerDaysState = rememberPagerState(
+            pageCount = { scheduleUiState.currentScheduleData.weeksCount.times(7) },
+            initialPage = scheduleUiState.currentScheduleData.daysStartIndex
         )
-    }
-    var expandedSchedulesMenu by remember { mutableStateOf(false) }
+        val pagerWeeksState = rememberPagerState(
+            pageCount = { scheduleUiState.currentScheduleData.weeksCount },
+            initialPage = scheduleUiState.currentScheduleData.weeksStartIndex
+        )
 
-    return ScheduleState(
-        scheduleListState = scheduleListState,
-        pagerWeeksState = pagerWeeksState,
-        pagerDaysState = pagerDaysState,
-        selectedDate = selectedDate,
-        onDateChange = { newDate ->
-            selectedDate = newDate
-        },
-        expandedSchedulesMenu = expandedSchedulesMenu,
-        onExpandSchedulesMenu = { newValue ->
-            expandedSchedulesMenu = newValue
+        var selectedDate by remember(
+            scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.apiId
+        ) {
+            mutableStateOf(
+                scheduleUiState.currentScheduleData.defaultDate
+            )
         }
-    )
+        var expandedSchedulesMenu by remember { mutableStateOf(false) }
+
+        ScheduleState(
+            scheduleListState = scheduleListState,
+            pagerWeeksState = pagerWeeksState,
+            pagerDaysState = pagerDaysState,
+            selectedDate = selectedDate,
+            onDateChange = { newDate ->
+                selectedDate = newDate
+            },
+            expandedSchedulesMenu = expandedSchedulesMenu,
+            onExpandSchedulesMenu = { newValue ->
+                expandedSchedulesMenu = newValue
+            }
+        )
+    } else null
+
 }

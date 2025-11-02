@@ -74,7 +74,7 @@ fun Main(
     val appInfoState = settingsViewModel.stateAppInfo.collectAsState().value
 
     val appState = rememberAppState()
-    val scheduleState = rememberScheduleState(scheduleUiState, today)
+    val scheduleState = rememberScheduleState(scheduleUiState)
     val reviewState = rememberReviewState()
 
     UiEventProcessor(
@@ -96,14 +96,14 @@ fun Main(
                     onScheduleClick = {
                         appState.scope.launch {
                             if (appSettings.calendarView) {
-                                scheduleState.onDateChange(
+                                scheduleState?.onDateChange(
                                     scheduleUiState.currentScheduleData?.defaultDate ?: today
                                 )
-                                scheduleState.pagerWeeksState.animateScrollToPage(
+                                scheduleState?.pagerWeeksState?.animateScrollToPage(
                                     scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0
                                 )
                             } else {
-                                scheduleState.scheduleListState.animateScrollToItem(0)
+                                scheduleState?.scheduleListState?.animateScrollToItem(0)
                             }
                         }
                     },
@@ -299,9 +299,8 @@ fun Main(
                         },
 
                         appSettings = appSettings,
-
+                        scheduleState = scheduleState,
                         scheduleUiState = scheduleUiState,
-                        scheduleState = scheduleState
                     )
                 }
 
@@ -549,22 +548,21 @@ fun UiEventProcessor(
 @Composable
 fun ScheduleStateSynchronizer(
     scheduleUiState: ScheduleUiState,
-    scheduleState: ScheduleState,
+    scheduleState: ScheduleState?,
     reviewState: ReviewState
 ) {
-    LaunchedEffect(
-        scheduleUiState.currentScheduleData?.namedSchedule?.namedScheduleEntity?.apiId,
-        scheduleUiState.currentScheduleData?.settledScheduleEntity?.timetableId
-    ) {
-        scheduleState.onExpandSchedulesMenu(false)
-        reviewState.onChangeVisibilityHiddenEvents(false)
-        scheduleState.pagerDaysState.scrollToPage(
-            scheduleUiState.currentScheduleData?.daysStartIndex ?: 0
-        )
-        scheduleState.scheduleListState.scrollToItem(0)
-    }
-
-    if (scheduleUiState.currentScheduleData?.settledScheduleEntity != null) {
+    if (scheduleUiState.currentScheduleData?.settledScheduleEntity != null && scheduleState != null) {
+        LaunchedEffect(
+            scheduleUiState.currentScheduleData.namedSchedule!!.namedScheduleEntity.apiId,
+            scheduleUiState.currentScheduleData.settledScheduleEntity.timetableId
+        ) {
+            scheduleState.onExpandSchedulesMenu(false)
+            reviewState.onChangeVisibilityHiddenEvents(false)
+            scheduleState.pagerDaysState.scrollToPage(
+                scheduleUiState.currentScheduleData.daysStartIndex
+            )
+            scheduleState.scheduleListState.scrollToItem(0)
+        }
         LaunchedEffect(scheduleState.selectedDate) {
             val targetPage = ChronoUnit.DAYS.between(
                 scheduleUiState.currentScheduleData.settledScheduleEntity.startDate,

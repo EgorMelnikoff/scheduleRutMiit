@@ -295,11 +295,11 @@ fun HorizontalCalendarItem(
                 horizontalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterHorizontally),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                for (groupedEvents in eventsByStartTime) {
+                eventsByStartTime.forEach { groupedEvents ->
                     var offset = 0
-                    Row (
+                    Row(
                         verticalAlignment = Alignment.CenterVertically
-                    ){
+                    ) {
                         groupedEvents.value.forEach { event ->
                             val eventExtraData = eventsExtraData.find {
                                 it.id == event.id
