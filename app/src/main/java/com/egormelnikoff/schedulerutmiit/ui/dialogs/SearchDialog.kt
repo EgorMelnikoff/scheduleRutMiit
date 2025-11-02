@@ -178,7 +178,8 @@ fun SearchScheduleDialog(
                                     modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                 ) {
                                     ClickableItem(
-                                        padding = 8.dp,
+                                        verticalPadding = 8.dp,
+                                        horizontalPadding = 8.dp,
                                         title = group.name!!,
                                         showClickLabel = false,
                                         onClick = {
@@ -209,7 +210,8 @@ fun SearchScheduleDialog(
                                     modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                 ) {
                                     ClickableItem(
-                                        padding = 8.dp,
+                                        verticalPadding = 8.dp,
+                                        horizontalPadding = 8.dp,
                                         title = person.name!!,
                                         titleMaxLines = 2,
                                         subtitle = person.position!!,
