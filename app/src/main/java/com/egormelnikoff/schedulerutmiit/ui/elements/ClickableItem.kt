@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -41,9 +42,12 @@ import com.egormelnikoff.schedulerutmiit.R
 @Composable
 fun ClickableItem(
     onClick: (() -> Unit)? = null,
-    padding: Dp = 12.dp,
+    horizontalPadding: Dp = 12.dp,
+    verticalPadding: Dp = 12.dp,
     title: String,
+    titleTypography: TextStyle? = null,
     titleMaxLines: Int = 1,
+    titleColor: Color? = null,
     subtitle: String? = null,
     subtitleMaxLines: Int = 1,
     subtitleLabel: (@Composable () -> Unit)? = null,
@@ -66,8 +70,8 @@ fun ClickableItem(
                     it
                 }
             }
-            .padding(padding)
-            .let{
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding)
+            .let {
                 if (defaultMinHeight != null) {
                     it.defaultMinSize(
                         minHeight = defaultMinHeight
@@ -94,7 +98,11 @@ fun ClickableItem(
                         .size(imageSize)
                         .let {
                             if (model.state !is AsyncImagePainter.State.Success) {
-                                it.border(0.5.dp, MaterialTheme.colorScheme.onSecondaryContainer, CircleShape)
+                                it.border(
+                                    0.5.dp,
+                                    MaterialTheme.colorScheme.onSecondaryContainer,
+                                    CircleShape
+                                )
                             } else it
                         }
                         .alpha(transition),
@@ -138,8 +146,8 @@ fun ClickableItem(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = titleTypography ?: MaterialTheme.typography.titleMedium,
+                color = titleColor ?: MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = titleMaxLines
             )
