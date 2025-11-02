@@ -31,10 +31,9 @@ data class ScheduleData(
 ) {
     companion object {
         fun calculateScheduleData(
-            namedSchedule: NamedScheduleFormatted?,
-            scheduleId: Long?
+            namedSchedule: NamedScheduleFormatted?
         ): ScheduleData? {
-            val scheduleFormatted = findCurrentSchedule(namedSchedule, scheduleId)
+            val scheduleFormatted = findCurrentSchedule(namedSchedule)
             return scheduleFormatted?.let { schedule ->
                 val today = LocalDate.now()
                 val weeksCount = ChronoUnit.WEEKS.between(
@@ -88,7 +87,7 @@ data class ScheduleData(
                     val eventsForList = calculateEventsForList(
                         today = today,
                         periodicEventsForCalendar = null,
-                        nonPeriodicEvents = schedule.events,
+                        nonPeriodicEvents = scheduleWithoutHiddenEvents.events,
                         scheduleEntity = scheduleWithoutHiddenEvents.scheduleEntity,
                     )
                     val reviewParams = calculateReviewParams(
@@ -117,16 +116,12 @@ data class ScheduleData(
         }
 
         fun findCurrentSchedule(
-            namedSchedule: NamedScheduleFormatted?,
-            scheduleId: Long?
+            namedSchedule: NamedScheduleFormatted?
         ): ScheduleFormatted? {
             if (namedSchedule == null) return null
-            if (scheduleId == null) {
-                val schedule = namedSchedule.schedules.find { it.scheduleEntity.isDefault }
-                    ?: namedSchedule.schedules.firstOrNull()
-                return schedule
-            }
-            return namedSchedule.schedules.firstOrNull { s -> s.scheduleEntity.id == scheduleId }
+            return namedSchedule.schedules
+                .find { it.scheduleEntity.isDefault }
+                ?: namedSchedule.schedules.firstOrNull()
         }
 
         private fun calculateDefaultParams(
@@ -197,10 +192,12 @@ data class ScheduleData(
                 val periodicEvents = buildList {
                     val weeksNumbers = getWeeksNumbers(startDate, scheduleEntity)
                     weeksNumbers.forEachIndexed { index, week ->
-                        val eventsInWeek = periodicEventsForCalendar[week]?.values.orEmpty().flatten()
+                        val eventsInWeek =
+                            periodicEventsForCalendar[week]?.values.orEmpty().flatten()
                         val currentWeekStartDate = startDate.plusWeeks(index.toLong())
                         eventsInWeek.forEach { event ->
-                            val daysToAdd = event.startDatetime!!.dayOfWeek.value - today.dayOfWeek.value
+                            val daysToAdd =
+                                event.startDatetime!!.dayOfWeek.value - today.dayOfWeek.value
                             val newEventDate = currentWeekStartDate.plusDays(daysToAdd.toLong())
                             val newEvent = event.copy(
                                 startDatetime = newEventDate.atTime(event.startDatetime.toLocalTime()),
@@ -243,7 +240,7 @@ data class ScheduleData(
                 .drop((weeksCount - weeksRemaining))
         }
 
-        private fun calculateReviewParams (
+        private fun calculateReviewParams(
             today: LocalDate,
             periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>?,
             nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>?,

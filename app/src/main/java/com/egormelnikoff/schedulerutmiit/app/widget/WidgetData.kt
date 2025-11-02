@@ -17,10 +17,10 @@ data class WidgetData(
     val eventsExtraData: List<EventExtraData> = listOf(),
     var countEventsForWeek: Int = 0,
 ) {
-    companion object{
+    companion object {
         fun calculateWidgetData(namedSchedule: NamedScheduleFormatted): WidgetData? {
             val today = LocalDate.now()
-            val scheduleFormatted = ScheduleData.findCurrentSchedule(namedSchedule, null)
+            val scheduleFormatted = ScheduleData.findCurrentSchedule(namedSchedule)
             return if (scheduleFormatted != null) {
                 val scheduleWithoutHiddenEvents = scheduleFormatted.copy(
                     events = scheduleFormatted.events.filter { !it.isHidden }
@@ -36,7 +36,7 @@ data class WidgetData(
                         firstPeriodNumber = scheduleWithoutHiddenEvents.scheduleEntity.recurrence.firstWeekNumber,
                         interval = scheduleWithoutHiddenEvents.scheduleEntity.recurrence.interval!!
                     )
-                    val countEventsForWeek  = periodicEventsForCalendar[currentWeek]!!
+                    val countEventsForWeek = periodicEventsForCalendar[currentWeek]!!
                         .flatMap { it.value }
                         .distinctBy { it.startDatetime }
                         .size
@@ -62,7 +62,7 @@ data class WidgetData(
                         settledScheduleEntity = scheduleWithoutHiddenEvents.scheduleEntity,
                         periodicEventsForCalendar = null,
                         nonPeriodicEventsForCalendar = nonPeriodicEventsForCalendar,
-                        countEventsForWeek =countEventsForWeek,
+                        countEventsForWeek = countEventsForWeek,
                         eventsExtraData = scheduleWithoutHiddenEvents.eventsExtraData
                     )
                 }
