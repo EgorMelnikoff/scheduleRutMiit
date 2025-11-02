@@ -22,12 +22,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface NewsViewModel {
-    val uiState: StateFlow<NewsState>
+    val uiState: StateFlow<NewsUiState>
     val newsListFlow: Flow<PagingData<NewsShort>>
     fun getNewsById(id: Long)
 }
 
-data class NewsState(
+data class NewsUiState(
     val currentNews: News? = null,
     val isLoading: Boolean = false,
     val error: String? = null
@@ -39,7 +39,7 @@ class NewsViewModelImpl @Inject constructor(
     private val resourcesManager: ResourcesManager
 ) : ViewModel(), NewsViewModel {
 
-    private val _uiState = MutableStateFlow(NewsState())
+    private val _uiState = MutableStateFlow(NewsUiState())
     override val uiState = _uiState.asStateFlow()
 
     private var newsJob: Job? = null
