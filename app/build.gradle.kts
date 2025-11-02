@@ -16,8 +16,8 @@ android {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 29
         targetSdk = 36
-        versionCode = 24
-        versionName = "1.6.0"
+        versionCode = 26
+        versionName = "1.6.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -75,7 +75,10 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
 
+    implementation(libs.androidx.core.splashscreen)
+
     implementation(libs.coil.compose)
+
     implementation(libs.androidx.core.ktx)
     implementation (libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.runtime.ktx)

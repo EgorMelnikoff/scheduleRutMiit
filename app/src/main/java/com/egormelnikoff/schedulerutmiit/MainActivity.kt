@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore.PreferencesDataStore
@@ -32,8 +33,12 @@ class MainActivity : ComponentActivity() {
     lateinit var logger: Logger
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        splashScreen.setKeepOnScreenCondition {
+            scheduleViewModel.isDataLoading.value || settingsViewModel.isDataLoading.value
+        }
 
         setContent {
             val appSettings by settingsViewModel.appSettings.collectAsStateWithLifecycle()
