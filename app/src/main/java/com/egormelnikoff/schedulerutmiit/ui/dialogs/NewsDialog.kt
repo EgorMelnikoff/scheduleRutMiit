@@ -26,8 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
@@ -41,40 +39,36 @@ import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
-import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
+import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
+import com.egormelnikoff.schedulerutmiit.view_models.news.NewsUiState
 
 @Composable
 fun NewsDialog(
-    newsUiState: NewsState,
+    newsUiState: NewsUiState,
     externalPadding: PaddingValues
 ) {
-    Box(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        when {
-            newsUiState.isLoading -> LoadingScreen(
-                paddingTop = 0.dp,
+    when {
+        newsUiState.isLoading -> LoadingScreen(
+            paddingTop = 0.dp,
+            paddingBottom = externalPadding.calculateBottomPadding()
+        )
+
+        newsUiState.error != null -> Empty(
+            title = LocalContext.current.getString(R.string.error),
+            subtitle = newsUiState.error,
+            paddingTop = 0.dp,
+            paddingBottom = externalPadding.calculateBottomPadding()
+        )
+
+        newsUiState.currentNews != null -> {
+            NewsDialogContent(
+                news = newsUiState.currentNews,
+                paddingTop = externalPadding.calculateTopPadding(),
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
-
-            newsUiState.error != null -> Empty(
-                title = LocalContext.current.getString(R.string.error),
-                subtitle = newsUiState.error,
-                paddingTop = 0.dp,
-                paddingBottom = externalPadding.calculateBottomPadding()
-            )
-
-            newsUiState.currentNews != null -> {
-                NewsDialogContent(
-                    news = newsUiState.currentNews,
-                    paddingTop = externalPadding.calculateTopPadding(),
-                    paddingBottom = externalPadding.calculateBottomPadding()
-                )
-            }
         }
     }
-
+    StatusBarProtection()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -201,21 +195,5 @@ fun NewsDialogContent(
                 )
             }
         }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.background,
-                            Color.Transparent
-                        ),
-                        startY = 0f,
-                        endY = 200f
-                    )
-                )
-        )
     }
 }

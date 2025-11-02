@@ -28,8 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -46,23 +44,22 @@ import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
+import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
+import com.egormelnikoff.schedulerutmiit.view_models.news.NewsUiState
 import kotlinx.coroutines.flow.Flow
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun NewsScreen(
     onShowDialogNews: () -> Unit,
-    //onGetNewsList: (Int) -> Unit,
     onGetNewsById: (Long) -> Unit,
 
-    newsUiState: NewsState,
+    newsUiState: NewsUiState,
     newsListFLow: Flow<PagingData<NewsShort>>,
     newsGridListState: LazyStaggeredGridState,
     externalPadding: PaddingValues,
 ) {
     val newsList = newsListFLow.collectAsLazyPagingItems()
-
     when {
         newsUiState.isLoading || newsList.loadState.refresh is LoadState.Loading -> {
             LoadingScreen(
@@ -92,67 +89,51 @@ fun NewsScreen(
         }
 
         else -> {
-            Box {
-                LazyVerticalStaggeredGrid(
-                    modifier = Modifier.fillMaxSize(),
-                    columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
-                    verticalItemSpacing = 12.dp,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = externalPadding.calculateTopPadding() + 16.dp,
-                        bottom = externalPadding.calculateBottomPadding()
-                    ),
-                    state = newsGridListState
-                ) {
-                    items(newsList.itemCount) { index ->
-                        val newsShort = newsList[index]
-                        if (newsShort != null) {
-                            NewsShort(
-                                newsShort = newsShort,
-                                onClick = {
-                                    onGetNewsById(newsShort.idInformation)
-                                    onShowDialogNews()
-                                }
-                            )
-                        }
-                    }
-                    if (newsList.loadState.append is LoadState.Loading) {
-                        item(
-                            span = StaggeredGridItemSpan.FullLine
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 32.dp),
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.align(Alignment.Center),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
+            LazyVerticalStaggeredGrid(
+                modifier = Modifier.fillMaxSize(),
+                columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
+                verticalItemSpacing = 12.dp,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = externalPadding.calculateTopPadding() + 16.dp,
+                    bottom = externalPadding.calculateBottomPadding()
+                ),
+                state = newsGridListState
+            ) {
+                items(newsList.itemCount) { index ->
+                    val newsShort = newsList[index]
+                    if (newsShort != null) {
+                        NewsShort(
+                            newsShort = newsShort,
+                            onClick = {
+                                onGetNewsById(newsShort.idInformation)
+                                onShowDialogNews()
                             }
+                        )
+                    }
+                }
+                if (newsList.loadState.append is LoadState.Loading) {
+                    item(
+                        span = StaggeredGridItemSpan.FullLine
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 32.dp),
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.Center),
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.background,
-                                Color.Transparent
-                            ),
-                            startY = 0f,
-                            endY = 200f
-                        )
-                    )
-            )
         }
     }
+    StatusBarProtection()
 }
 
 @Composable
