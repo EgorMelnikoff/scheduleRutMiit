@@ -5,32 +5,20 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.format.DateTimeFormatter
 
@@ -41,22 +29,27 @@ fun ExpandedMenu(
     expandedSchedulesMenu: Boolean,
     onShowExpandedMenu: (Boolean) -> Unit
 ) {
+    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     AnimatedVisibility(
         visible = expandedSchedulesMenu,
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        Column {
-            Spacer(modifier = Modifier.height(8.dp))
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outline,
-                thickness = 0.5.dp
-            )
+        Column(
+            modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
+        ) {
             scheduleUiState.currentScheduleData!!.namedSchedule!!.schedules.forEach { schedule ->
                 val scale by animateFloatAsState(
                     targetValue = if (schedule.scheduleEntity.isDefault) 1f else 0f
                 )
-                ExpandedMenuItem(
+                ClickableItem(
+                    title = schedule.scheduleEntity.typeName,
+                    subtitle = "${schedule.scheduleEntity.startDate.format(formatter)} - ${
+                        schedule.scheduleEntity.endDate.format(
+                            formatter
+                        )
+                    }",
+                    verticalPadding = 4.dp,
                     onClick = {
                         setDefaultSchedule(
                             Triple(
@@ -66,121 +59,36 @@ fun ExpandedMenu(
                             )
                         )
                     },
-                    title = {
-                        Column (
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ){
-                            Text(
-                                text = schedule.scheduleEntity.typeName,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Text(
-                                    text = schedule.scheduleEntity.startDate.format(
-                                        DateTimeFormatter.ofPattern("dd.MM.yyyy")
-                                    ),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1
-                                )
-                                Icon(
-                                    modifier = Modifier.size(12.dp),
-                                    imageVector = ImageVector.vectorResource(R.drawable.forward),
-                                    contentDescription = null
-                                )
-                                Text(
-                                    text = schedule.scheduleEntity.endDate.format(
-                                        DateTimeFormatter.ofPattern("dd.MM.yyyy")
-                                    ),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1
-                                )
-                            }
-                        }
-                    },
-                    scale = scale,
-                    trailingIcon = ImageVector.vectorResource(R.drawable.check),
-                    verticalPadding = 8,
-                    trailingIconColor = MaterialTheme.colorScheme.primary
+                    showClickLabel = false,
+                    trailingIcon = {
+                        Icon(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .graphicsLayer(scaleX = scale, scaleY = scale),
+                            imageVector = ImageVector.vectorResource(R.drawable.check),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 )
             }
-            ExpandedMenuItem(
+            ClickableItem(
+                verticalPadding = 4.dp,
+                title = LocalContext.current.getString(R.string.collapse),
+                titleColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                titleTypography = MaterialTheme.typography.titleSmall,
                 onClick = {
                     onShowExpandedMenu(false)
                 },
-                title = {
-                    Text(
-                        text = LocalContext.current.getString(R.string.collapse),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                showClickLabel = false,
+                trailingIcon = {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.up),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
-                },
-                trailingIcon = ImageVector.vectorResource(R.drawable.up),
-                verticalPadding = 4
-            )
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outline,
-                thickness = 0.5.dp
-            )
-        }
-    }
-}
-
-@Composable
-fun ExpandedMenuItem(
-    onClick: () -> Unit,
-    leadingIcon: ImageVector? = null,
-    title: @Composable (() -> Unit)? = null,
-    trailingIcon: ImageVector? = null,
-    scale: Float? = null,
-    verticalPadding: Int,
-    trailingIconColor: Color? = null
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            }
-            .background(MaterialTheme.colorScheme.secondaryContainer)
-            .padding(horizontal = 16.dp, vertical = verticalPadding.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        leadingIcon?.let {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                imageVector = it,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-        Box(
-            modifier = Modifier.weight(1f)
-        ) {
-            title?.invoke()
-        }
-        trailingIcon?.let {
-            Icon(
-                modifier = Modifier
-                    .size(20.dp)
-                    .let {
-                        if (scale != null)
-                            it.graphicsLayer(scaleX = scale, scaleY = scale)
-                        else it
-                    },
-                imageVector = trailingIcon,
-                contentDescription = null,
-                tint = trailingIconColor ?: MaterialTheme.colorScheme.onSecondaryContainer
+                }
             )
         }
     }
