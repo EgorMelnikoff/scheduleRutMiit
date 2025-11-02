@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,11 +21,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -37,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -51,9 +55,9 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDialog(
     externalPadding: PaddingValues,
@@ -69,6 +73,8 @@ fun EventDialog(
     isSavedSchedule: Boolean,
     isCustomSchedule: Boolean,
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     var showEventActionsDialog by remember { mutableStateOf(false) }
     var showEventDeleteDialog by remember { mutableStateOf(false) }
     var showEventHideDialog by remember { mutableStateOf(false) }
@@ -84,70 +90,114 @@ fun EventDialog(
         event.endDatetime!!.toLocaleTimeWithTimeZone()
     }"
 
-    val eventString = StringBuilder().apply {
-        append("${LocalContext.current.getString(R.string._class)}: ${event.name}")
+    val subtitle = StringBuilder().apply {
         event.typeName?.let {
-            append("\n${LocalContext.current.getString(R.string.class_type)}: $it")
+            append("${it}, ")
         }
-        append("\n${LocalContext.current.getString(R.string.time)}: $startTime - $endTime")
+        append("$startTime - $endTime")
+    }.toString()
 
-        event.timeSlotName?.let {
-            append(" ($it)")
-        }
-
-        if (!event.rooms.isNullOrEmpty()) {
-            append("\n${LocalContext.current.getString(R.string.place)}: ${event.rooms.joinToString { it.name.toString() }}")
-        }
-
-        if (!event.lecturers.isNullOrEmpty()) {
-            append("\n${LocalContext.current.getString(R.string.lecturers)}: ${event.lecturers.joinToString { it.shortFio.toString() }}")
-        }
-
-        if (!event.groups.isNullOrEmpty()) {
-            append("\n${LocalContext.current.getString(R.string.groups)}: ${event.groups.joinToString { it.name.toString() }}")
-        }
-    }
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CustomTopAppBar(
-                navAction = {
-                    onBack()
-                }
-            ) {
-                IconButton(
-                    onClick = {
-                        val sendIntent: Intent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, eventString.toString())
-                            type = "text/plain"
-                        }
-                        val shareIntent = Intent.createChooser(sendIntent, null)
-                        context.startActivity(shareIntent)
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.share),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-                if (isSavedSchedule) {
+            MediumTopAppBar(
+                expandedHeight = TopAppBarDefaults.MediumAppBarExpandedHeight + 16.dp,
+                navigationIcon = {
                     IconButton(
-                        onClick = {
-                            showEventActionsDialog = true
-                        }
+                        onClick = { onBack() }
                     ) {
                         Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.more_vert),
+                            imageVector = ImageVector.vectorResource(R.drawable.back),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
-                }
-            }
+                },
+                title = {
+                    Column (
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ){
+                        Text(
+                            text = event.name!!,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            val eventString = StringBuilder().apply {
+                                append("${context.getString(R.string._class)}: ${event.name}")
+                                event.typeName?.let {
+                                    append("\n${context.getString(R.string.class_type)}: $it")
+                                }
+                                append("\n${context.getString(R.string.time)}: $startTime - $endTime")
+
+                                event.timeSlotName?.let {
+                                    append(" ($it)")
+                                }
+
+                                if (!event.rooms.isNullOrEmpty()) {
+                                    append("\n${context.getString(R.string.place)}: ${event.rooms.joinToString { it.name.toString() }}")
+                                }
+
+                                if (!event.lecturers.isNullOrEmpty()) {
+                                    append("\n${context.getString(R.string.lecturers)}: ${event.lecturers.joinToString { it.shortFio.toString() }}")
+                                }
+
+                                if (!event.groups.isNullOrEmpty()) {
+                                    append("\n${context.getString(R.string.groups)}: ${event.groups.joinToString { it.name.toString() }}")
+                                }
+                            }
+                            val sendIntent: Intent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, eventString.toString())
+                                type = "text/plain"
+                            }
+                            val shareIntent = Intent.createChooser(sendIntent, null)
+                            context.startActivity(shareIntent)
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.share),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    if (isSavedSchedule) {
+                        IconButton(
+                            onClick = {
+                                showEventActionsDialog = true
+                            }
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                imageVector = ImageVector.vectorResource(R.drawable.more_vert),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors().copy(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background
+                ),
+                scrollBehavior = scrollBehavior
+            )
         }
     ) { innerPadding ->
         Column(
@@ -162,31 +212,6 @@ fun EventDialog(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
-            Text(
-                text = event.name!!,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 2
-            )
-            event.typeName?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.titleMedium,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-            Text(
-                text = "$startTime - $endTime",
-                style = MaterialTheme.typography.titleMedium,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(modifier = Modifier.height(0.dp))
             if (!event.rooms.isNullOrEmpty()) {
                 ColumnGroup(
                     title = context.getString(R.string.room),
@@ -289,7 +314,7 @@ fun EventDialog(
             }
             if (isSavedSchedule) {
                 ColumnGroup(
-                    title = LocalContext.current.getString(R.string.comment),
+                    title = context.getString(R.string.comment),
                     titleColor = MaterialTheme.colorScheme.primary,
                     withBackground = false,
                     items = listOf {
@@ -306,7 +331,7 @@ fun EventDialog(
                                 autoCorrectEnabled = false,
                                 imeAction = ImeAction.Default
                             ),
-                            placeholderText = LocalContext.current.getString(R.string.enter_comment),
+                            placeholderText = context.getString(R.string.enter_comment),
                             trailingIcon = {
                                 AnimatedVisibility(
                                     visible = comment != "",
@@ -331,7 +356,7 @@ fun EventDialog(
                     }
                 )
                 ColumnGroup(
-                    title = LocalContext.current.getString(R.string.tag),
+                    title = context.getString(R.string.tag),
                     titleColor = MaterialTheme.colorScheme.primary,
                     withBackground = false,
                     items = listOf {
@@ -350,8 +375,8 @@ fun EventDialog(
     if (showEventDeleteDialog) {
         CustomAlertDialog(
             dialogIcon = ImageVector.vectorResource(R.drawable.delete),
-            dialogTitle = "${LocalContext.current.getString(R.string.delete_event)}?",
-            dialogText = LocalContext.current.getString(R.string.event_deleting_alert),
+            dialogTitle = "${context.getString(R.string.delete_event)}?",
+            dialogText = context.getString(R.string.event_deleting_alert),
             onDismissRequest = {
                 showEventDeleteDialog = false
             },
@@ -364,8 +389,8 @@ fun EventDialog(
     if (showEventHideDialog) {
         CustomAlertDialog(
             dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),
-            dialogTitle = "${LocalContext.current.getString(R.string.hide_event)}?",
-            dialogText = LocalContext.current.getString(R.string.event_visibility_alert),
+            dialogTitle = "${context.getString(R.string.hide_event)}?",
+            dialogText = context.getString(R.string.event_visibility_alert),
             onDismissRequest = {
                 showEventHideDialog = false
             },
