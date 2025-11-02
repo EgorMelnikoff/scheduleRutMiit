@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.ui.elements
 import android.content.Context
 import android.content.Intent
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -100,23 +98,11 @@ fun ScheduleTopAppBar(
     CustomTopAppBar(
         titleContent = {
             Row(
-                modifier = if (isSomeSchedules) {
-                    Modifier
-                        .clip(MaterialTheme.shapes.small)
-                        .clickable(
-                            onClick = {
-                                onShowExpandedMenu(!expandedSchedulesMenu)
-                            }
-                        )
-                } else {
-                    Modifier
-                },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column (
+                Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
-                ){
+                ) {
                     Text(
                         text = scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.shortName,
                         style = MaterialTheme.typography.titleLarge,
@@ -135,14 +121,22 @@ fun ScheduleTopAppBar(
                     }
                 }
                 if (isSomeSchedules) {
-                    Icon(
-                        modifier = Modifier.graphicsLayer(
-                            rotationZ = rotationAngle
-                        ),
-                        imageVector = ImageVector.vectorResource(R.drawable.down),
-                        tint = MaterialTheme.colorScheme.onBackground,
-                        contentDescription = null
-                    )
+                    IconButton(
+                        onClick = {
+                            onShowExpandedMenu(!expandedSchedulesMenu)
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .graphicsLayer(
+                                    rotationZ = rotationAngle
+                                )
+                                .size(24.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.down),
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         },
