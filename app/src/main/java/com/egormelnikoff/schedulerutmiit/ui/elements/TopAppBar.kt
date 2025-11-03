@@ -11,9 +11,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -206,5 +208,63 @@ fun ScheduleTopAppBar(
                 )
             }
         }
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EventTopAppBar(
+    title: String,
+    subtitle: String,
+    scrollBehavior: TopAppBarScrollBehavior,
+    navAction: (() -> Unit)? = null,
+    navImageVector: ImageVector = ImageVector.vectorResource(R.drawable.back),
+    actions: @Composable (() -> Unit)? = null,
+) {
+    MediumTopAppBar(
+        expandedHeight = TopAppBarDefaults.MediumAppBarExpandedHeight + 16.dp,
+        navigationIcon = {
+            navAction?.let {
+                IconButton(
+                    onClick = it
+                ) {
+                    Icon(
+                        imageVector = navImageVector,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+        },
+        title = {
+            Column (
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            }
+
+        },
+        actions = {
+            actions?.invoke()
+        },
+        colors = TopAppBarDefaults.topAppBarColors().copy(
+            containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background
+        ),
+        scrollBehavior = scrollBehavior
     )
 }
