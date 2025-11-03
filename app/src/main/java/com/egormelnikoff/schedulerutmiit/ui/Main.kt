@@ -33,7 +33,7 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.InfoDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.NewsDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.RenameDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchOption
-import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchScheduleDialog
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.ui.elements.rememberBarItems
@@ -448,10 +448,12 @@ fun Main(
                 }
 
                 entry<Routes.SearchDialog> {
-                    SearchScheduleDialog(
+                    SearchDialog(
                         externalPadding = externalPadding,
                         onSetDefaultState = {
                             searchViewModel.setDefaultSearchState()
+                            reviewState.onChangeQuery("")
+                            reviewState.onSelectSearchOption(SearchOption.ALL)
                         },
                         onSearchSchedule = { value ->
                             scheduleViewModel.getNamedScheduleFromApi(
@@ -465,7 +467,10 @@ fun Main(
                             reviewState.onSelectSearchOption(SearchOption.ALL)
                         },
                         onSearch = { value ->
-                            searchViewModel.search(value.first, value.second)
+                            searchViewModel.search(
+                                query = value.first,
+                                selectedSearchOption = value.second
+                            )
                         },
                         searchUiState = searchUiState,
                         reviewState = reviewState
