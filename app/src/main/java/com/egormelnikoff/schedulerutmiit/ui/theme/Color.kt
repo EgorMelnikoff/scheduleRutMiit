@@ -4,13 +4,17 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.ui.graphics.Color
 
-val Black = Color(0xFF000000)
 val White = Color(0xFFFFFFFF)
+val LightGrey = Color(0xFFb5b3b3)
 val Grey = Color(0xFF595959)
 val DarkGrey = Color(0xFF111111)
-val LightGrey = Color(0xFFb5b3b3)
-val NeutralSecondary = Color(0xFFEEEEEE)
-val NeutralSecondaryDark = Color(0xFF212121)
+val Black = Color(0xFF000000)
+
+val NeutralPrimaryContainer = Color(0xFFe0e0e0)
+val NeutralPrimaryContainerDark = Color(0xFF2e2e2e)
+
+val NeutralSecondaryContainer = Color(0xFFEEEEEE)
+val NeutralSecondaryContainerDark = Color(0xFF212121)
 
 val Red = Color(0xFFcc584c)
 val Orange = Color(0xFFe78450)
@@ -45,148 +49,149 @@ val animation: SpringSpec<Color> = SpringSpec(stiffness = Spring.StiffnessMedium
 
 val defaultColorTheme = Theme(
     animation = animation,
-    light = ColorTheme(
-        primary = Blue,
-        onPrimary = White,
-        background = White,
-        onBackground = Black,
-        secondaryContainer = NeutralSecondary,
-        onSecondaryContainer = Grey,
-        outline = LightGrey,
-        error = Red
+    light = createLightTheme(
+        primaryColor = Blue,
+        backgroundColor = White,
+        primaryContainerColor = NeutralPrimaryContainer,
+        secondaryContainerColor = NeutralSecondaryContainer
     ),
-    dark = ColorTheme(
-        primary = Blue,
-        onPrimary = White,
-        background = DarkGrey,
-        onBackground = White,
-        secondaryContainer = NeutralSecondaryDark,
-        onSecondaryContainer = LightGrey,
-        outline = LightGrey,
-        error = Red
+    dark = createDarkTheme(
+        primaryColor = Blue,
+        backgroundColor = DarkGrey,
+        primaryContainerColor = NeutralPrimaryContainerDark,
+        secondaryContainerColor = NeutralSecondaryContainerDark
     )
 )
 
 val colorThemes = mapOf(
-    0 to defaultColorTheme, //Neutral
+    //Neutral
+    0 to defaultColorTheme,
+    //Red
     1 to Theme(
         animation = animation,
         light = createLightTheme(
             primaryColor = Red,
             backgroundColor = Color(0xFFfcdcd9),
-            secondaryContainerColor = Color(0xFFfcc3bd),
-            outlineColor = Red
+            primaryContainerColor = Color(0xFFf5b8b0),
+            secondaryContainerColor = Color(0xFFfcc3bd)
         ),
         dark = createDarkTheme(
             primaryColor = Red,
             backgroundColor = Color(0xFF2e0000),
-            secondaryContainerColor = Color(0xFF420101),
-            outlineColor = Red
+            primaryContainerColor = Color(0xFF4f0000),
+            secondaryContainerColor = Color(0xFF420101)
         )
-    ), //Red
+    ),
+    //Orange
     2 to Theme(
         animation = animation,
         light = createLightTheme(
             primaryColor = Orange,
             backgroundColor = Color(0xFFffd8c4),
-            secondaryContainerColor = Color(0xFFfac6ac),
-            outlineColor = Orange
+            primaryContainerColor = Color(0xFFf2ba9b),
+            secondaryContainerColor = Color(0xFFfac6ac)
         ),
         dark = createDarkTheme(
             primaryColor = Orange,
             backgroundColor = Color(0xFF260e01),
-            secondaryContainerColor = Color(0xFF421801),
-            outlineColor = Orange
+            primaryContainerColor = Color(0xFF5e2100),
+            secondaryContainerColor = Color(0xFF421801)
         )
-    ), //Orange
+    ),
+    //Yellow
     3 to Theme(
         animation = animation,
         light = createLightTheme(
             primaryColor = Yellow,
             backgroundColor = Color(0xFFfff3d4),
-            secondaryContainerColor = Color(0xFFf7e4b2),
-            outlineColor = Yellow
+            primaryContainerColor = Color(0xFFf0d8a1),
+            secondaryContainerColor = Color(0xFFf7e4b2)
         ),
         dark = createDarkTheme(
             primaryColor = Yellow,
             backgroundColor = Color(0xFF472e00),
-            secondaryContainerColor = Color(0xFF6b4601),
-            outlineColor = Yellow
+            primaryContainerColor = Color(0xFF7a5000),
+            secondaryContainerColor = Color(0xFF6b4601)
         )
-    ), //Yellow
+    ),
+    //Green
     4 to Theme(
         animation = animation,
         light = createLightTheme(
             primaryColor = Green,
             backgroundColor = Color(0xFFe1fce1),
-            secondaryContainerColor = Color(0xFFcbf2c9),
-            outlineColor = Green
+            primaryContainerColor = Color(0xFFb8e3b6),
+            secondaryContainerColor = Color(0xFFcbf2c9)
         ),
         dark = createDarkTheme(
             primaryColor = Green,
             backgroundColor = Color(0xFF001f18),
-            secondaryContainerColor = Color(0xFF013629),
-            outlineColor = Green
+            primaryContainerColor = Color(0xFF004534),
+            secondaryContainerColor = Color(0xFF013629)
         )
-    ), //Green
+    ),
+    //LightBlue
     5 to Theme(
         animation = animation,
         light = createLightTheme(
             primaryColor = LightBlue,
             backgroundColor = Color(0xFFdcf2fc),
-            secondaryContainerColor = Color(0xFFc0e9fc),
-            outlineColor = LightBlue
+            primaryContainerColor = Color(0xFFa2e0fc),
+            secondaryContainerColor = Color(0xFFc0e9fc)
         ),
         dark = createDarkTheme(
             primaryColor = LightBlue,
             backgroundColor = Color(0xFF01131c),
-            secondaryContainerColor = Color(0xFF01273b),
-            outlineColor = LightBlue
+            primaryContainerColor = Color(0xFF003a59),
+            secondaryContainerColor = Color(0xFF01304a)
         )
-    ), //LightBlue
+    ),
+    //Blue
     6 to Theme(
         animation = animation,
         light = createLightTheme(
             primaryColor = Blue,
             backgroundColor = Color(0xFFdee6ff),
-            secondaryContainerColor = Color(0xFFcdd7fa),
-            outlineColor = Blue
+            primaryContainerColor = Color(0xFFb9c7fa),
+            secondaryContainerColor = Color(0xFFcdd7fa)
         ),
         dark = createDarkTheme(
             primaryColor = Blue,
             backgroundColor = Color(0xFF010e24),
-            secondaryContainerColor = Color(0xFF011840),
-            outlineColor = Blue
+            primaryContainerColor = Color(0xFF011e52),
+            secondaryContainerColor = Color(0xFF011840)
         )
-    ), //Blue
+    ),
+    //Violet
     7 to Theme(
         animation = animation,
         light = createLightTheme(
             primaryColor = Violet,
             backgroundColor = Color(0xFFeed7fa),
-            secondaryContainerColor = Color(0xFFeac4ff),
-            outlineColor = Violet
+            primaryContainerColor = Color(0xFFe1b1fa),
+            secondaryContainerColor = Color(0xFFeac4ff)
         ),
         dark = createDarkTheme(
             primaryColor = Violet,
             backgroundColor = Color(0xFF180024),
-            secondaryContainerColor = Color(0xFF290040),
-            outlineColor = Violet
+            primaryContainerColor = Color(0xFF340152),
+            secondaryContainerColor = Color(0xFF290040)
         )
-    ), //Violet
+    ),
+    //Pink
     8 to Theme(
         animation = animation,
         light = createLightTheme(
             primaryColor = Pink,
             backgroundColor = Color(0xFFffd4f6),
-            secondaryContainerColor = Color(0xFFffbff2),
-            outlineColor = Pink
+            primaryContainerColor = Color(0xFFfca9ec),
+            secondaryContainerColor = Color(0xFFffbff2)
         ),
         dark = createDarkTheme(
             primaryColor = Pink,
             backgroundColor = Color(0xFF21001b),
-            secondaryContainerColor = Color(0xFF450038),
-            outlineColor = Pink
+            primaryContainerColor = Color(0xFF590049),
+            secondaryContainerColor = Color(0xFF450038)
         )
-    ) //Pink
+    )
 )

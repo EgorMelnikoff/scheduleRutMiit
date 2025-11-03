@@ -24,6 +24,8 @@ data class Theme(
         val onPrimary by animateColorAsState(theme.onPrimary, animation)
         val background by animateColorAsState(theme.background, animation)
         val onBackground by animateColorAsState(theme.onBackground, animation)
+        val primaryContainer by animateColorAsState(theme.primaryContainer, animation)
+        val onPrimaryContainer by animateColorAsState(theme.onPrimaryContainer, animation)
         val secondaryContainer by animateColorAsState(theme.secondaryContainer, animation)
         val onSecondaryContainer by animateColorAsState(theme.onSecondaryContainer, animation)
         val outline by animateColorAsState(theme.outline, animation)
@@ -35,6 +37,9 @@ data class Theme(
 
             primary = primary,
             onPrimary = onPrimary,
+
+            primaryContainer = primaryContainer,
+            onPrimaryContainer = onPrimaryContainer,
 
             secondaryContainer = secondaryContainer,
             onSecondaryContainer = onSecondaryContainer,
@@ -50,6 +55,8 @@ data class ColorTheme(
     val onPrimary: Color,
     val background: Color,
     val onBackground: Color,
+    val primaryContainer: Color,
+    val onPrimaryContainer: Color,
     val secondaryContainer: Color,
     val onSecondaryContainer: Color,
     val outline: Color,
@@ -59,31 +66,35 @@ data class ColorTheme(
 fun createLightTheme(
     primaryColor: Color,
     backgroundColor: Color,
-    secondaryContainerColor: Color,
-    outlineColor: Color
+    primaryContainerColor: Color,
+    secondaryContainerColor: Color
 ) = ColorTheme(
     primary = primaryColor,
     onPrimary = White,
     background = backgroundColor,
     onBackground = Black,
+    primaryContainer = primaryContainerColor,
+    onPrimaryContainer = Grey,
     secondaryContainer = secondaryContainerColor,
     onSecondaryContainer = Grey,
-    outline = outlineColor,
+    outline = LightGrey.copy(alpha = 0.7f),
     error = Red
 )
 
 fun createDarkTheme(
     primaryColor: Color,
     backgroundColor: Color,
-    secondaryContainerColor: Color,
-    outlineColor: Color
+    primaryContainerColor: Color,
+    secondaryContainerColor: Color
 ) = ColorTheme(
     primary = primaryColor,
     background = backgroundColor,
-    secondaryContainer = secondaryContainerColor,
-    outline = outlineColor,
+    outline = LightGrey.copy(alpha = 0.5f),
     onPrimary = White,
     onBackground = White,
+    primaryContainer = primaryContainerColor,
+    onPrimaryContainer = Grey,
+    secondaryContainer = secondaryContainerColor,
     onSecondaryContainer = LightGrey,
     error = Red
 )

@@ -11,8 +11,8 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.Blue
 import com.egormelnikoff.schedulerutmiit.ui.theme.DarkGrey
 import com.egormelnikoff.schedulerutmiit.ui.theme.Grey
 import com.egormelnikoff.schedulerutmiit.ui.theme.LightGrey
-import com.egormelnikoff.schedulerutmiit.ui.theme.NeutralSecondary
-import com.egormelnikoff.schedulerutmiit.ui.theme.NeutralSecondaryDark
+import com.egormelnikoff.schedulerutmiit.ui.theme.NeutralSecondaryContainer
+import com.egormelnikoff.schedulerutmiit.ui.theme.NeutralSecondaryContainerDark
 import com.egormelnikoff.schedulerutmiit.ui.theme.Red
 import com.egormelnikoff.schedulerutmiit.ui.theme.White
 
@@ -23,7 +23,7 @@ private val LightColorScheme = lightColorScheme(
     background = White,
     onBackground = Black,
 
-    secondaryContainer = NeutralSecondary,
+    secondaryContainer = NeutralSecondaryContainer,
     onSecondaryContainer = Grey,
 
     outline = LightGrey,
@@ -37,7 +37,7 @@ private val DarkColorScheme = darkColorScheme(
     background = DarkGrey,
     onBackground = White,
 
-    secondaryContainer = NeutralSecondaryDark,
+    secondaryContainer = NeutralSecondaryContainerDark,
     onSecondaryContainer = LightGrey,
 
     outline = LightGrey,
