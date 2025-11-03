@@ -36,6 +36,8 @@ import com.egormelnikoff.schedulerutmiit.app.AppConst.CLOUD_TIPS
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
+import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingAsyncImage
+import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.view_models.settings.AppInfoState
 
 @Composable
@@ -111,7 +113,11 @@ fun InfoDialog(
                         ClickableItem(
                             title = LocalContext.current.getString(R.string.telegram),
                             subtitle = LocalContext.current.getString(R.string.news_updates),
-                            imageVector = ImageVector.vectorResource(R.drawable.logo_telegram),
+                            leadingIcon = {
+                                LeadingIcon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.logo_telegram)
+                                )
+                            },
                             onClick = {
                                 onOpenUri(APP_CHANNEL_URL)
                             }
@@ -120,8 +126,12 @@ fun InfoDialog(
                         ClickableItem(
                             title = LocalContext.current.getString(R.string.github),
                             subtitle = LocalContext.current.getString(R.string.source_code),
-                            imageVector = ImageVector.vectorResource(R.drawable.logo_github),
-                            imageVectorColor = MaterialTheme.colorScheme.onBackground,
+                            leadingIcon ={
+                                LeadingIcon(
+                                    imageVector =  ImageVector.vectorResource(R.drawable.logo_github),
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            },
                             onClick = {
                                 onOpenUri(APP_GITHUB_REPOS)
                             },
@@ -135,8 +145,12 @@ fun InfoDialog(
                 items = listOf {
                     ClickableItem(
                         title = LocalContext.current.getString(R.string.support),
-                        imageVector = ImageVector.vectorResource(R.drawable.ruble),
-                        imageVectorColor = MaterialTheme.colorScheme.onBackground,
+                        leadingIcon = {
+                            LeadingIcon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ruble),
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
                         onClick = {
                             onOpenUri(CLOUD_TIPS)
                         }
@@ -165,7 +179,12 @@ fun InfoDialog(
                                 ClickableItem(
                                     title = author.name!!,
                                     subtitle = LocalContext.current.getString(R.string.author),
-                                    imageUrl = author.imageUrl!!,
+                                    leadingIcon = {
+                                        LeadingAsyncImage(
+                                            title = author.name,
+                                            imageUrl = author.imageUrl!!
+                                        )
+                                    },
                                     onClick = {
                                         author.url?.let {
                                             onOpenUri(it)

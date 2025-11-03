@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +32,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
@@ -44,21 +44,22 @@ fun ClickableItem(
     onClick: (() -> Unit)? = null,
     horizontalPadding: Dp = 12.dp,
     verticalPadding: Dp = 12.dp,
+    defaultMinHeight: Dp? = null,
+
     title: String,
     titleTypography: TextStyle? = null,
     titleMaxLines: Int = 1,
     titleColor: Color? = null,
+
     subtitle: String? = null,
+    subtitleTypography: TextStyle? = null,
     subtitleMaxLines: Int = 1,
+    subtitleColor: Color? = null,
     subtitleLabel: (@Composable () -> Unit)? = null,
-    imageSize: Dp = 36.dp,
-    imageUrl: String? = null,
-    imageUrlErrorTextSize: Int = 12,
-    imageVector: ImageVector? = null,
-    imageVectorColor: Color? = null,
+
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     showClickLabel: Boolean = true,
-    defaultMinHeight: Dp? = null,
-    trailingIcon: (@Composable () -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
@@ -81,64 +82,8 @@ fun ClickableItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        imageUrl?.let {
-            val model = rememberAsyncImagePainter(imageUrl)
-            val transition by animateFloatAsState(
-                targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
-            )
-            Box(
-                modifier = Modifier
-                    .size(imageSize)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    modifier = Modifier
-                        .size(imageSize)
-                        .let {
-                            if (model.state !is AsyncImagePainter.State.Success) {
-                                it.border(
-                                    0.5.dp,
-                                    MaterialTheme.colorScheme.onSecondaryContainer,
-                                    CircleShape
-                                )
-                            } else it
-                        }
-                        .alpha(transition),
-                    contentScale = ContentScale.Crop,
-                    painter = model,
-                    contentDescription = null,
-                )
-                when (model.state) {
-                    is AsyncImagePainter.State.Loading -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-
-                    is AsyncImagePainter.State.Error, AsyncImagePainter.State.Empty -> {
-                        Text(
-                            text = title.first().toString(),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            maxLines = 1,
-                            fontSize = imageUrlErrorTextSize.sp
-                        )
-                    }
-
-                    else -> {}
-                }
-            }
-        } ?: imageVector?.let {
-            Icon(
-                modifier = Modifier.size(imageSize),
-                imageVector = imageVector,
-                contentDescription = null,
-                tint = imageVectorColor ?: Color.Unspecified
-            )
+        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+           leadingIcon?.invoke()
         }
         Column(
             modifier = Modifier.weight(1f),
@@ -159,8 +104,8 @@ fun ClickableItem(
                     subtitleLabel?.invoke()
                     Text(
                         text = subtitle,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        style = subtitleTypography ?: MaterialTheme.typography.bodyMedium,
+                        color = subtitleColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = subtitleMaxLines
                     )
@@ -169,7 +114,7 @@ fun ClickableItem(
         }
         trailingIcon?.let {
             CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                trailingIcon.invoke()
+                it.invoke()
             }
         }
         if (showClickLabel && onClick != null) {
@@ -181,4 +126,79 @@ fun ClickableItem(
             )
         }
     }
+}
+
+@Composable
+fun LeadingAsyncImage(
+    title: String,
+    imageUrl: String? = null,
+    imageSize: Dp = 32.dp,
+    titleSize: TextUnit = 12.sp,
+) {
+    val model = rememberAsyncImagePainter(imageUrl)
+    val transition by animateFloatAsState(
+        targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
+    )
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            modifier = Modifier
+                .size(imageSize)
+                .clip(CircleShape)
+                .alpha(transition),
+            contentScale = ContentScale.Crop,
+            painter = model,
+            contentDescription = title,
+        )
+        if (model.state !is AsyncImagePainter.State.Success) {
+            LeadingTitle(
+                title = title,
+                titleSize = titleSize,
+                imageSize = imageSize,
+            )
+        }
+    }
+}
+
+@Composable
+fun LeadingTitle(
+    title: String,
+    titleSize: TextUnit = 12.sp,
+    imageSize: Dp = 32.dp
+){
+    Box(
+        modifier = Modifier
+            .size(imageSize)
+            .border(
+                0.5.dp,
+                MaterialTheme.colorScheme.onSecondaryContainer,
+                CircleShape
+            )
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.secondaryContainer),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = title.first().toString(),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            maxLines = 1,
+            fontSize = titleSize
+        )
+    }
+}
+
+@Composable
+fun LeadingIcon(
+    imageVector: ImageVector,
+    iconSize: Dp = 36.dp,
+    color: Color = Color.Unspecified
+) {
+    Icon(
+        modifier = Modifier.size(iconSize),
+        imageVector = imageVector,
+        contentDescription = null,
+        tint = color
+    )
 }

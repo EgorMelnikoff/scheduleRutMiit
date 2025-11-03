@@ -25,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -55,6 +54,8 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
+import com.egormelnikoff.schedulerutmiit.ui.elements.EventTopAppBar
+import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,50 +92,22 @@ fun EventDialog(
     }"
 
     val subtitle = StringBuilder().apply {
-        event.typeName?.let {
-            append("${it}, ")
-        }
         append("$startTime - $endTime")
+        event.typeName?.let {
+            append("  |  ")
+            append(it)
+        }
+
     }.toString()
 
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            MediumTopAppBar(
-                expandedHeight = TopAppBarDefaults.MediumAppBarExpandedHeight + 16.dp,
-                navigationIcon = {
-                    IconButton(
-                        onClick = { onBack() }
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.back),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                title = {
-                    Column (
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ){
-                        Text(
-                            text = event.name!!,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-                        Text(
-                            text = subtitle,
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-                    }
-
-                },
+            EventTopAppBar(
+                title = event.name!!,
+                subtitle = subtitle,
+                scrollBehavior = scrollBehavior,
                 actions = {
                     IconButton(
                         onClick = {
@@ -191,12 +164,7 @@ fun EventDialog(
                             )
                         }
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors().copy(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background
-                ),
-                scrollBehavior = scrollBehavior
+                }
             )
         }
     ) { innerPadding ->
@@ -212,33 +180,6 @@ fun EventDialog(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            if (!event.rooms.isNullOrEmpty()) {
-                ColumnGroup(
-                    title = context.getString(R.string.room),
-                    titleColor = MaterialTheme.colorScheme.primary,
-                    items = event.rooms.map { room ->
-                        {
-                            ClickableItem(
-                                title = room.hint.toString(),
-                                titleMaxLines = 2,
-                                onClick = if (!isCustomSchedule) {
-                                    {
-                                        navigateToSchedule()
-                                        onSearchNamedSchedule(
-                                            Triple(
-                                                room.name!!,
-                                                room.id.toString(),
-                                                2
-                                            )
-                                        )
-                                    }
-                                } else null
-                            )
-                        }
-                    }
-
-                )
-            }
             if (!event.groups.isNullOrEmpty() && !isCustomSchedule) {
                 ColumnGroup(
                     title = context.getString(R.string.groups),
@@ -285,6 +226,34 @@ fun EventDialog(
                     }
                 )
             }
+            if (!event.rooms.isNullOrEmpty()) {
+                ColumnGroup(
+                    title = context.getString(R.string.room),
+                    titleColor = MaterialTheme.colorScheme.primary,
+                    items = event.rooms.map { room ->
+                        {
+                            ClickableItem(
+                                title = room.hint.toString(),
+                                titleMaxLines = 2,
+                                defaultMinHeight = 32.dp,
+                                onClick = if (!isCustomSchedule) {
+                                    {
+                                        navigateToSchedule()
+                                        onSearchNamedSchedule(
+                                            Triple(
+                                                room.name!!,
+                                                room.id.toString(),
+                                                2
+                                            )
+                                        )
+                                    }
+                                } else null
+                            )
+                        }
+                    }
+
+                )
+            }
             if (!event.lecturers.isNullOrEmpty()) {
                 ColumnGroup(
                     title = context.getString(R.string.lecturers),
@@ -294,6 +263,7 @@ fun EventDialog(
                             ClickableItem(
                                 title = lecturer.fullFio.toString(),
                                 titleMaxLines = 2,
+                                defaultMinHeight = 32.dp,
                                 onClick = if (!isCustomSchedule) {
                                     {
                                         navigateToSchedule()
@@ -306,7 +276,11 @@ fun EventDialog(
                                         )
                                     }
                                 } else null,
-                                imageUrl = if (lecturer.id != null && lecturer.url != null) "https://www.miit.ru/content/e${lecturer.id}.jpg?id_fe=${lecturer.id}&SWidth=100" else null
+                                leadingIcon = {
+                                    LeadingTitle(
+                                        title = lecturer.fullFio.toString()
+                                    )
+                                }
                             )
                         }
                     }
