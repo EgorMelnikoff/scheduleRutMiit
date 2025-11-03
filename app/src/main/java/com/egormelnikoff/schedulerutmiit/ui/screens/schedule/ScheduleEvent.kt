@@ -357,7 +357,7 @@ fun Comment(
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Icon(
-            modifier = Modifier.size(16.dp),
+            modifier = Modifier.size(14.dp),
             imageVector = ImageVector.vectorResource(R.drawable.comment),
             contentDescription = null,
             tint = color ?: MaterialTheme.colorScheme.onBackground
