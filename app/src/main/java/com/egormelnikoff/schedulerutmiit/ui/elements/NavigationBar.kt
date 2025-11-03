@@ -1,15 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -95,65 +88,59 @@ fun CustomNavigationBar(
             ),
         contentAlignment = Alignment.Center
     ) {
-        AnimatedVisibility(
-            visible = !appBackStack.last().isDialog,
-            enter = expandVertically() + slideInVertically(initialOffsetY = { it }) + fadeIn(),
-            exit = shrinkVertically() + slideOutVertically(targetOffsetY = { it }) + fadeOut()
+        Row(
+            modifier = Modifier
+                .clickable(
+                    enabled = false
+                ) {}
+                .let {
+                    if (darkTheme) {
+                        it.border(
+                            width = 0.5.dp,
+                            shape = CircleShape,
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.3f),
+                                    Color.Transparent,
+                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.2f)
+                                )
+                            )
+                        )
+                    } else {
+                        it.dropShadow(
+                            shape = CircleShape,
+                            shadow = Shadow(
+                                radius = 8.dp,
+                                color = Grey.copy(0.5f),
+                                offset = DpOffset(2.dp, 2.dp)
+                            )
+                        )
+                    }
+                }
+                .background(
+                    color = MaterialTheme.colorScheme.background,
+                    shape = CircleShape
+                )
+                .padding(12.dp),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
         ) {
-            Row(
-                modifier = Modifier
-                    .clickable(
-                        enabled = false
-                    ) {}
-                    .let {
-                        if (darkTheme) {
-                            it.border(
-                                width = 0.5.dp,
-                                shape = CircleShape,
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(
-                                        MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.3f),
-                                        Color.Transparent,
-                                        MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.2f)
-                                    )
-                                )
-                            )
+            barItems.forEach { barItem ->
+                CustomNavigationItem(
+                    barItem = barItem,
+                    isSelected = appBackStack.lastPage() == barItem.route,
+                    onClick = {
+                        if (barItem.route == appBackStack.lastPage()) {
+                            if (appBackStack.last().isDialog) {
+                                appBackStack.onBack()
+                            } else {
+                                barItem.onClick?.invoke()
+                            }
                         } else {
-                            it.dropShadow(
-                                shape = CircleShape,
-                                shadow = Shadow(
-                                    radius = 8.dp,
-                                    color = Grey.copy(0.5f),
-                                    offset = DpOffset(2.dp, 2.dp)
-                                )
-                            )
+                            appBackStack.navigateToPage(barItem.route)
                         }
                     }
-                    .background(
-                        color = MaterialTheme.colorScheme.background,
-                        shape = CircleShape
-                    )
-                    .padding(12.dp),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
-            ) {
-                barItems.forEach { barItem ->
-                    CustomNavigationItem(
-                        barItem = barItem,
-                        isSelected = appBackStack.lastPage() == barItem.route,
-                        onClick = {
-                            if (barItem.route == appBackStack.lastPage()) {
-                                if (appBackStack.last().isDialog) {
-                                    appBackStack.onBack()
-                                } else {
-                                    barItem.onClick?.invoke()
-                                }
-                            } else {
-                                appBackStack.navigateToPage(barItem.route)
-                            }
-                        }
-                    )
-                }
+                )
             }
         }
     }
