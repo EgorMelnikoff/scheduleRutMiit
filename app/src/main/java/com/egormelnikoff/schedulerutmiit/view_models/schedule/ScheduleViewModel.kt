@@ -8,7 +8,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.app.model.calculateFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.egormelnikoff.schedulerutmiit.data.Error
@@ -19,6 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,8 +37,8 @@ sealed interface UiEvent {
 
 data class ScheduleUiState(
     val savedNamedSchedules: List<NamedScheduleEntity> = emptyList(),
-    val defaultScheduleData: ScheduleData? = null,
-    val currentScheduleData: ScheduleData? = null,
+    val defaultNamedScheduleData: NamedScheduleData? = null,
+    val currentNamedScheduleData: NamedScheduleData? = null,
     val isUpdating: Boolean = false,
     val isError: Boolean = false,
     val isLoading: Boolean = false,
@@ -48,7 +49,7 @@ interface ScheduleViewModel {
     val uiState: StateFlow<ScheduleUiState>
     val uiEvent: Flow<UiEvent>
     val isDataLoading: StateFlow<Boolean>
-    fun loadInitialData(showLoading: Boolean = true)
+    fun loadInitialData(showLoading: Boolean = true, showUpdating: Boolean = false)
     fun getNamedScheduleFromApi(name: String, apiId: String, type: Int)
     fun getNamedScheduleFromDb(primaryKeyNamedSchedule: Long, setDefault: Boolean = false)
     fun saveCurrentNamedSchedule()
@@ -89,17 +90,18 @@ class ScheduleViewModelImpl @Inject constructor(
         loadInitialData()
     }
 
-    override fun loadInitialData(showLoading: Boolean) {
+    override fun loadInitialData(showLoading: Boolean, showUpdating: Boolean) {
         viewModelScope.launch {
             updateUiState(
                 isLoading = showLoading,
-                isUpdating = false,
+                isUpdating = showUpdating,
                 isError = false,
             )
             val savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
             val defaultNamedScheduleEntity = savedNamedSchedules.find { it.isDefault }
                 ?: savedNamedSchedules.firstOrNull()
 
+            if (showUpdating) delay(500)
             defaultNamedScheduleEntity?.let { namedScheduleEntity ->
                 updateNamedScheduleUiState(
                     namedSchedule = scheduleRepos
@@ -108,16 +110,13 @@ class ScheduleViewModelImpl @Inject constructor(
                         )
                 )
             }
-
             updateUiState(
                 savedNamedSchedules = savedNamedSchedules,
                 isLoading = false,
+                isUpdating = false,
                 isSaved = defaultNamedScheduleEntity != null,
             )
-
-            if (isDataLoading.value) {
-                _isDataLoading.value = false
-            }
+            if (isDataLoading.value) _isDataLoading.value = false
         }
     }
 
@@ -207,7 +206,7 @@ class ScheduleViewModelImpl @Inject constructor(
     override fun saveCurrentNamedSchedule() {
         viewModelScope.launch {
             val currentNamedSchedule =
-                _uiState.value.currentScheduleData?.namedSchedule ?: return@launch
+                _uiState.value.currentNamedScheduleData?.namedSchedule ?: return@launch
 
             val namedScheduleId = scheduleRepos.insertNamedSchedule(currentNamedSchedule)
 
@@ -241,8 +240,8 @@ class ScheduleViewModelImpl @Inject constructor(
                 _uiState.update {
                     it.copy(
                         savedNamedSchedules = emptyList(),
-                        currentScheduleData = null,
-                        defaultScheduleData = null
+                        currentNamedScheduleData = null,
+                        defaultNamedScheduleData = null
                     )
                 }
                 return@launch
@@ -258,7 +257,7 @@ class ScheduleViewModelImpl @Inject constructor(
             } else {
                 _uiState.update {
                     it.copy(
-                        currentScheduleData = _uiState.value.defaultScheduleData
+                        currentNamedScheduleData = _uiState.value.defaultNamedScheduleData
                     )
                 }
             }
@@ -277,7 +276,7 @@ class ScheduleViewModelImpl @Inject constructor(
         viewModelScope.launch {
             val currentState = _uiState.value
             val currentNamedSchedule =
-                currentState.currentScheduleData?.namedSchedule ?: return@launch
+                currentState.currentNamedScheduleData?.namedSchedule ?: return@launch
 
             if (currentState.isSaved) {
                 scheduleRepos.updatePrioritySavedSchedules(
@@ -311,10 +310,10 @@ class ScheduleViewModelImpl @Inject constructor(
     ) {
         viewModelScope.launch {
             val namedScheduleId =
-                _uiState.value.currentScheduleData?.namedSchedule?.namedScheduleEntity?.id
+                _uiState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id
                     ?: return@launch
             val scheduleId =
-                _uiState.value.currentScheduleData?.settledScheduleEntity?.id ?: return@launch
+                _uiState.value.currentNamedScheduleData?.settledScheduleEntity?.id ?: return@launch
 
             scheduleRepos.updateEventExtra(
                 scheduleId = scheduleId,
@@ -379,8 +378,8 @@ class ScheduleViewModelImpl @Inject constructor(
         endDate: LocalDate
     ) {
         viewModelScope.launch {
-            val fixedStartDate = startDate.calculateFirstDayOfWeek()
-            val fixedEndDate = endDate.calculateFirstDayOfWeek().plusDays(6)
+            val fixedStartDate = startDate.getFirstDayOfWeek()
+            val fixedEndDate = endDate.getFirstDayOfWeek().plusDays(6)
             val namedSchedule = NamedScheduleFormatted(
                 namedScheduleEntity = NamedScheduleEntity(
                     id = 0,
@@ -476,18 +475,18 @@ class ScheduleViewModelImpl @Inject constructor(
     private fun updateNamedScheduleUiState(
         namedSchedule: NamedScheduleFormatted?
     ) {
-        val scheduleData = ScheduleData.calculateScheduleData(
+        val namedScheduleData = NamedScheduleData.getNamedScheduleData(
             namedSchedule = namedSchedule
         )
         _uiState.update {
             it.copy(
-                currentScheduleData = scheduleData
+                currentNamedScheduleData = namedScheduleData
             )
         }
         if (namedSchedule != null && namedSchedule.namedScheduleEntity.isDefault) {
             _uiState.update {
                 it.copy(
-                    defaultScheduleData = scheduleData
+                    defaultNamedScheduleData = namedScheduleData
                 )
             }
         }
