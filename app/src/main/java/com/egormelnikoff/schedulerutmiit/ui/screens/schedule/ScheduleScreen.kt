@@ -45,6 +45,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomPullToRefreshBox
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.ScheduleTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
@@ -52,7 +53,6 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
-import java.time.LocalDate
 
 @Composable
 fun ScreenSchedule(
@@ -66,13 +66,13 @@ fun ScreenSchedule(
     onHideEvent: (Long) -> Unit,
 
     onLoadInitialData: () -> Unit,
+    onRefreshState: () -> Unit,
     onSaveCurrentNamedSchedule: () -> Unit,
     onSelectDefaultNamedSchedule: (Long) -> Unit,
     onDeleteNamedSchedule: (Pair<Long, Boolean>) -> Unit,
     onSetDefaultSchedule: (Triple<Long, Long, String>) -> Unit,
     onSetScheduleView: (Boolean) -> Unit,
 
-    today: LocalDate,
     scheduleUiState: ScheduleUiState,
     scheduleState: ScheduleState?,
     appSettings: AppSettings,
@@ -105,7 +105,7 @@ fun ScreenSchedule(
             )
         }
 
-        scheduleUiState.currentScheduleData?.namedSchedule != null && scheduleState != null -> {
+        scheduleUiState.currentNamedScheduleData?.namedSchedule != null && scheduleState != null -> {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
@@ -123,68 +123,74 @@ fun ScreenSchedule(
                     )
                 }
             ) { padding ->
-                Column(
+                CustomPullToRefreshBox(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = padding.calculateTopPadding())
+                        .padding(top = padding.calculateTopPadding()),
+                    isRefreshing = scheduleUiState.isUpdating,
+                    onRefresh = {
+                        onRefreshState()
+                    },
                 ) {
-                    IsSavedAlert(
-                        isSaved = scheduleUiState.isSaved,
-                        onSave = onSaveCurrentNamedSchedule
-                    )
-                    ExpandedMenu(
-                        setDefaultSchedule = onSetDefaultSchedule,
-                        scheduleUiState = scheduleUiState,
-                        expandedSchedulesMenu = scheduleState.expandedSchedulesMenu,
-                        onShowExpandedMenu = scheduleState.onExpandSchedulesMenu
-                    )
-                    if (scheduleUiState.currentScheduleData.settledScheduleEntity != null) {
-                        AnimatedContent(
-                            targetState = appSettings.calendarView,
-                            transitionSpec = {
-                                fadeIn() + slideInVertically(
-                                    initialOffsetY = { it / 2 }
-                                ) togetherWith fadeOut() +
-                                        slideOutVertically(
-                                            targetOffsetY = { it / 2 }
-                                        )
-                            }
-                        ) { targetState ->
-                            if (targetState) {
-                                ScheduleCalendarView(
-                                    navigateToEvent = navigateToEvent,
-                                    onDeleteEvent = onDeleteEvent,
-                                    onUpdateHiddenEvent = onHideEvent,
-
-                                    today = today,
-                                    scheduleUiState = scheduleUiState,
-                                    scheduleState = scheduleState,
-                                    isShowCountClasses = appSettings.showCountClasses,
-                                    isShortEvent = appSettings.eventView,
-                                    paddingBottom = externalPadding.calculateBottomPadding()
-                                )
-                            } else {
-                                ScheduleListView(
-                                    navigateToEvent = navigateToEvent,
-                                    onDeleteEvent = onDeleteEvent,
-                                    onUpdateHiddenEvent = onHideEvent,
-
-                                    scheduleUiState = scheduleUiState,
-                                    scheduleState = scheduleState,
-                                    isShortEvent = appSettings.eventView,
-                                    paddingBottom = externalPadding.calculateBottomPadding()
-                                )
-                            }
-                        }
-                    } else {
-                        Empty(
-                            title = "¯\\_(ツ)_/¯",
-                            subtitle = LocalContext.current.getString(R.string.empty_here),
-                            isBoldTitle = false,
-                            paddingBottom = externalPadding.calculateBottomPadding()
+                    Column{
+                        IsSavedAlert(
+                            isSaved = scheduleUiState.isSaved,
+                            onSave = onSaveCurrentNamedSchedule
                         )
+                        ExpandedMenu(
+                            setDefaultSchedule = onSetDefaultSchedule,
+                            scheduleUiState = scheduleUiState,
+                            expandedSchedulesMenu = scheduleState.expandedSchedulesMenu,
+                            onShowExpandedMenu = scheduleState.onExpandSchedulesMenu
+                        )
+                        if (scheduleUiState.currentNamedScheduleData.settledScheduleEntity != null) {
+                            AnimatedContent(
+                                targetState = appSettings.calendarView,
+                                transitionSpec = {
+                                    fadeIn() + slideInVertically(
+                                        initialOffsetY = { it / 2 }
+                                    ) togetherWith fadeOut() +
+                                            slideOutVertically(
+                                                targetOffsetY = { it / 2 }
+                                            )
+                                }
+                            ) { targetState ->
+                                if (targetState) {
+                                    ScheduleCalendarView(
+                                        navigateToEvent = navigateToEvent,
+                                        onDeleteEvent = onDeleteEvent,
+                                        onUpdateHiddenEvent = onHideEvent,
+
+                                        scheduleUiState = scheduleUiState,
+                                        scheduleState = scheduleState,
+                                        isShowCountClasses = appSettings.showCountClasses,
+                                        isShortEvent = appSettings.eventView,
+                                        paddingBottom = externalPadding.calculateBottomPadding()
+                                    )
+                                } else {
+                                    ScheduleListView(
+                                        navigateToEvent = navigateToEvent,
+                                        onDeleteEvent = onDeleteEvent,
+                                        onUpdateHiddenEvent = onHideEvent,
+
+                                        scheduleUiState = scheduleUiState,
+                                        scheduleState = scheduleState,
+                                        isShortEvent = appSettings.eventView,
+                                        paddingBottom = externalPadding.calculateBottomPadding()
+                                    )
+                                }
+                            }
+                        } else {
+                            Empty(
+                                title = "¯\\_(ツ)_/¯",
+                                subtitle = LocalContext.current.getString(R.string.empty_here),
+                                isBoldTitle = false,
+                                paddingBottom = externalPadding.calculateBottomPadding()
+                            )
+                        }
                     }
                 }
+
             }
         }
 
@@ -233,7 +239,7 @@ fun ScreenSchedule(
             onDismiss = {
                 showNamedScheduleDialog = null
             },
-            onLoadInitialData = if (!scheduleUiState.currentScheduleData!!.namedSchedule!!.namedScheduleEntity.isDefault) {
+            onLoadInitialData = if (!scheduleUiState.currentNamedScheduleData!!.namedSchedule!!.namedScheduleEntity.isDefault) {
                 onLoadInitialData
             } else null,
             navigateToRenameDialog = {
@@ -255,8 +261,8 @@ fun ScreenSchedule(
             onConfirmation = {
                 onDeleteNamedSchedule(
                     Pair(
-                        scheduleUiState.currentScheduleData!!.namedSchedule!!.namedScheduleEntity.id,
-                        scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.isDefault
+                        scheduleUiState.currentNamedScheduleData!!.namedSchedule!!.namedScheduleEntity.id,
+                        scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault
                     )
                 )
             }

@@ -11,8 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -41,6 +40,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomPullToRefreshBox
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
@@ -48,6 +48,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewState
 import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ReviewData
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.DayOfWeek
 import java.time.Instant
@@ -60,12 +61,12 @@ import java.util.Locale
 @Composable
 fun ReviewScreen(
     externalPadding: PaddingValues,
-    today: LocalDate,
     navigateToAddSchedule: () -> Unit,
     navigateToSearch: () -> Unit,
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
     navigateToRenameDialog: (NamedScheduleEntity) -> Unit,
 
+    onRefreshState: () -> Unit,
     onSetNamedSchedule: (Long) -> Unit,
     onSelectDefaultNamedSchedule: (Long) -> Unit,
     onDeleteNamedSchedule: (Pair<Long, Boolean>) -> Unit,
@@ -121,128 +122,151 @@ fun ReviewScreen(
         }
     ) { innerPadding ->
         if (scheduleUiState.savedNamedSchedules.isNotEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(
+            CustomPullToRefreshBox(
+                modifier = Modifier.fillMaxSize(),
+                isRefreshing = scheduleUiState.isUpdating,
+                onRefresh = {
+                    onRefreshState()
+                },
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
                         start = 16.dp, end = 16.dp,
                         top = innerPadding.calculateTopPadding() + 16.dp,
                         bottom = externalPadding.calculateBottomPadding()
                     ),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (
-                    scheduleUiState.defaultScheduleData?.namedSchedule != null
-                    && scheduleUiState.defaultScheduleData.settledScheduleEntity != null
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    EventsReview(
-                        displayedDate = today,
-                        navigateToEvent = navigateToEvent,
-                        scheduleUiState = scheduleUiState
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                }
-                ExpandedItem(
-                    title = LocalContext.current.getString(R.string.saved_schedules),
-                    imageVector = ImageVector.vectorResource(R.drawable.save),
-                    visible = reviewState.visibleSavedSchedules,
-                    onChangeVisibility = reviewState.onChangeVisibilitySavedSchedules
-                ) {
-                    ColumnGroup(
-                        items = scheduleUiState.savedNamedSchedules.map { namedScheduleEntity ->
-                            {
-                                val formatter =
-                                    DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault())
-                                val lastTimeUpdate =
-                                    formatter.format(
-                                        LocalDateTime.ofInstant(
-                                            Instant.ofEpochMilli(namedScheduleEntity.lastTimeUpdate),
-                                            ZoneId.systemDefault()
-                                        )
-                                    )
+                    if (
+                        scheduleUiState.defaultNamedScheduleData?.namedSchedule != null
+                        && scheduleUiState.defaultNamedScheduleData.settledScheduleEntity != null
+                    ) {
+                        item {
+                            EventsReview(
+                                navigateToEvent = navigateToEvent,
+                                reviewData = scheduleUiState.defaultNamedScheduleData.reviewData,
+                                eventsExtraData = scheduleUiState.defaultNamedScheduleData.eventsExtraData
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(2.dp))
+                        }
+                    }
+                    item {
+                        ExpandedItem(
+                            title = LocalContext.current.getString(R.string.saved_schedules),
+                            imageVector = ImageVector.vectorResource(R.drawable.save),
+                            visible = reviewState.visibleSavedSchedules,
+                            onChangeVisibility = reviewState.onChangeVisibilitySavedSchedules
+                        ) {
+                            ColumnGroup(
+                                items = scheduleUiState.savedNamedSchedules.map { namedScheduleEntity ->
+                                    {
+                                        val formatter =
+                                            DateTimeFormatter.ofPattern(
+                                                "d MMMM",
+                                                Locale.getDefault()
+                                            )
+                                        val lastTimeUpdate =
+                                            formatter.format(
+                                                LocalDateTime.ofInstant(
+                                                    Instant.ofEpochMilli(namedScheduleEntity.lastTimeUpdate),
+                                                    ZoneId.systemDefault()
+                                                )
+                                            )
 
-                                ClickableItem(
-                                    title = namedScheduleEntity.shortName,
-                                    titleMaxLines = 2,
-                                    subtitle = if (namedScheduleEntity.type != 3) {
-                                        "${LocalContext.current.getString(R.string.current_on)} $lastTimeUpdate"
-                                    } else null,
-                                    defaultMinHeight = 40.dp,
-                                    onClick = {
-                                        showNamedScheduleDialog = namedScheduleEntity
-                                    },
-                                    trailingIcon = if (namedScheduleEntity.isDefault) {
+                                        ClickableItem(
+                                            title = namedScheduleEntity.shortName,
+                                            titleMaxLines = 2,
+                                            subtitle = if (namedScheduleEntity.type != 3) {
+                                                "${LocalContext.current.getString(R.string.current_on)} $lastTimeUpdate"
+                                            } else null,
+                                            defaultMinHeight = 40.dp,
+                                            onClick = {
+                                                showNamedScheduleDialog = namedScheduleEntity
+                                            },
+                                            trailingIcon = if (namedScheduleEntity.isDefault) {
+                                                {
+                                                    Icon(
+                                                        modifier = Modifier.size(20.dp),
+                                                        imageVector = ImageVector.vectorResource(R.drawable.check),
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            } else null
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
+
+                    if (!scheduleUiState.currentNamedScheduleData?.hiddenEvents.isNullOrEmpty()) {
+                        item {
+                            ExpandedItem(
+                                title = LocalContext.current.getString(R.string.hidden_events),
+                                imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
+                                visible = reviewState.visibleHiddenEvents,
+                                onChangeVisibility = reviewState.onChangeVisibilityHiddenEvents
+                            ) {
+                                ColumnGroup(
+                                    items = scheduleUiState.currentNamedScheduleData.hiddenEvents.map {
                                         {
-                                            Icon(
-                                                modifier = Modifier.size(20.dp),
-                                                imageVector = ImageVector.vectorResource(R.drawable.check),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
+                                            val eventExtraData =
+                                                scheduleUiState.currentNamedScheduleData.eventsExtraData.find { event -> it.id == event.id }
+                                            ClickableItem(
+                                                title = it.name!!,
+                                                titleMaxLines = 2,
+                                                subtitle = if (it.recurrenceRule != null) {
+                                                    val day =
+                                                        it.startDatetime!!.dayOfWeek.getDisplayName(
+                                                            java.time.format.TextStyle.FULL,
+                                                            Locale.getDefault()
+                                                        ).replaceFirstChar { c -> c.uppercase() }
+                                                    val startTime =
+                                                        it.startDatetime.toLocaleTimeWithTimeZone()
+                                                            .format(timeFormatter)
+                                                    val endTime =
+                                                        it.endDatetime!!.toLocaleTimeWithTimeZone()
+                                                            .format(timeFormatter)
+                                                    "$day, $startTime - $endTime"
+                                                } else {
+                                                    it.startDatetime!!.format(dateTimeFormatter)
+                                                },
+                                                trailingIcon = {
+                                                    IconButton(
+                                                        onClick = {
+                                                            onShowEvent(it.id)
+                                                        },
+                                                        colors = IconButtonDefaults.iconButtonColors()
+                                                            .copy(
+                                                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                                            )
+                                                    ) {
+                                                        Icon(
+                                                            modifier = Modifier
+                                                                .size(24.dp),
+                                                            imageVector = ImageVector.vectorResource(
+                                                                R.drawable.visibility
+                                                            ),
+                                                            contentDescription = null
+                                                        )
+                                                    }
+                                                },
+                                                showClickLabel = false,
+                                                onClick = {
+                                                    navigateToEvent(Pair(it, eventExtraData))
+                                                }
                                             )
                                         }
-                                    } else null
+                                    }
                                 )
                             }
                         }
-                    )
-                }
-                if (!scheduleUiState.currentScheduleData?.hiddenEvents.isNullOrEmpty()) {
-                    ExpandedItem(
-                        title = LocalContext.current.getString(R.string.hidden_events),
-                        imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
-                        visible = reviewState.visibleHiddenEvents,
-                        onChangeVisibility = reviewState.onChangeVisibilityHiddenEvents
-                    ) {
-                        ColumnGroup(
-                            items = scheduleUiState.currentScheduleData.hiddenEvents.map {
-                                {
-                                    val eventExtraData =
-                                        scheduleUiState.currentScheduleData.eventsExtraData.find { event -> it.id == event.id }
-                                    ClickableItem(
-                                        title = it.name!!,
-                                        titleMaxLines = 2,
-                                        subtitle = if (it.recurrenceRule != null) {
-                                            val day = it.startDatetime!!.dayOfWeek.getDisplayName(
-                                                java.time.format.TextStyle.FULL,
-                                                Locale.getDefault()
-                                            ).replaceFirstChar { c -> c.uppercase() }
-                                            val startTime =
-                                                it.startDatetime.toLocaleTimeWithTimeZone()
-                                                    .format(timeFormatter)
-                                            val endTime =
-                                                it.endDatetime!!.toLocaleTimeWithTimeZone()
-                                                    .format(timeFormatter)
-                                            "$day, $startTime - $endTime"
-                                        } else {
-                                            it.startDatetime!!.format(dateTimeFormatter)
-                                        },
-                                        trailingIcon = {
-                                            IconButton(
-                                                onClick = {
-                                                    onShowEvent(it.id)
-                                                },
-                                                colors = IconButtonDefaults.iconButtonColors().copy(
-                                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                                )
-                                            ) {
-                                                Icon(
-                                                    modifier = Modifier
-                                                        .size(24.dp),
-                                                    imageVector = ImageVector.vectorResource(R.drawable.visibility),
-                                                    contentDescription = null
-                                                )
-                                            }
-                                        },
-                                        showClickLabel = false,
-                                        onClick = {
-                                            navigateToEvent(Pair(it, eventExtraData))
-                                        }
-                                    )
-                                }
-                            }
-                        )
                     }
+
                 }
             }
         } else {
@@ -317,9 +341,10 @@ fun ReviewScreen(
 @Composable
 fun EventsReview(
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
-    displayedDate: LocalDate,
-    scheduleUiState: ScheduleUiState
+    reviewData: ReviewData,
+    eventsExtraData: List<EventExtraData>
 ) {
+    val today = LocalDate.now()
     Column(
         modifier = Modifier
             .animateContentSize(),
@@ -329,40 +354,52 @@ fun EventsReview(
             items = listOf(
                 {
                     EventsCount(
-                        title = LocalContext.current.getString(R.string.tomorrow),
-                        value = scheduleUiState.defaultScheduleData!!.eventsForTomorrow.size.toString(),
+                        title = when (reviewData.displayedDate) {
+                            today -> {
+                                LocalContext.current.getString(R.string.today)
+                            }
+
+                            today.plusDays(1) -> {
+                                LocalContext.current.getString(R.string.tomorrow)
+                            }
+
+                            else -> {
+                                reviewData.displayedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                            }
+                        },
+                        value = reviewData.events.size.toString(),
                         comment = LocalResources.current.getQuantityString(
                             R.plurals.events,
-                            scheduleUiState.defaultScheduleData.eventsForTomorrow.size
+                            reviewData.events.size
                         )
                     )
                 }, {
                     EventsCount(
-                        title = if (displayedDate.dayOfWeek != DayOfWeek.SUNDAY) {
+                        title = if (reviewData.displayedDate.dayOfWeek != DayOfWeek.SUNDAY) {
                             LocalContext.current.getString(R.string.week)
                         } else {
                             LocalContext.current.getString(R.string.next_week)
                         },
-                        value = scheduleUiState.defaultScheduleData!!.countEventsForWeek.toString(),
+                        value = reviewData.countEventsForWeek.toString(),
                         comment = LocalResources.current.getQuantityString(
                             R.plurals.events,
-                            scheduleUiState.defaultScheduleData.countEventsForWeek
+                            reviewData.countEventsForWeek
                         )
                     )
                 }
             )
         )
-        val haveAnyEventsExtraData = scheduleUiState.defaultScheduleData!!.eventsForTomorrow.any {
-            scheduleUiState.defaultScheduleData.eventsExtraData.find { eventExtraData ->
+        val haveAnyEventsExtraData = reviewData.events.values.flatten().any {
+            eventsExtraData.find { eventExtraData ->
                 it.id == eventExtraData.id && eventExtraData.comment != ""
             } != null
         }
 
-        if (scheduleUiState.defaultScheduleData.eventsForTomorrow.isNotEmpty() && haveAnyEventsExtraData) {
+        if (reviewData.events.isNotEmpty() && haveAnyEventsExtraData) {
             ColumnGroup(
                 title = LocalContext.current.getString(R.string.comments_on_tomorrow_events),
-                items = scheduleUiState.defaultScheduleData.eventsForTomorrow.mapNotNull { event ->
-                    val eventExtraData = scheduleUiState.defaultScheduleData.eventsExtraData
+                items = reviewData.events.values.flatten().mapNotNull { event ->
+                    val eventExtraData = eventsExtraData
                         .find { it.id == event.id }
 
                     if (eventExtraData != null && eventExtraData.comment != "") {

@@ -16,14 +16,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.app.model.calculateFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddEventDialog
@@ -32,8 +29,8 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.InfoDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.NewsDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.RenameDialog
-import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchOption
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchDialog
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchOption
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.ui.elements.rememberBarItems
@@ -54,7 +51,6 @@ import com.egormelnikoff.schedulerutmiit.view_models.schedule.UiEvent
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 @Composable
@@ -67,7 +63,6 @@ fun Main(
     logger: Logger,
     appSettings: AppSettings,
 ) {
-    val today by remember { mutableStateOf(LocalDate.now()) }
     val searchUiState = searchViewModel.uiState.collectAsState().value
     val scheduleUiState = scheduleViewModel.uiState.collectAsState().value
     val newsUiState = newsViewModel.uiState.collectAsState().value
@@ -95,15 +90,19 @@ fun Main(
                 barItems = rememberBarItems(
                     onScheduleClick = {
                         appState.scope.launch {
-                            if (appSettings.calendarView) {
-                                scheduleState?.onDateChange(
-                                    scheduleUiState.currentScheduleData?.defaultDate ?: today
-                                )
-                                scheduleState?.pagerWeeksState?.animateScrollToPage(
-                                    scheduleUiState.currentScheduleData?.weeksStartIndex ?: 0
-                                )
-                            } else {
-                                scheduleState?.scheduleListState?.animateScrollToItem(0)
+                            when {
+                                scheduleState != null && appSettings.calendarView -> {
+                                    scheduleState.onSelectDate(
+                                        scheduleUiState.currentNamedScheduleData!!.schedulePagerData.defaultDate
+                                    )
+                                    scheduleState.pagerWeeksState.animateScrollToPage(
+                                        scheduleUiState.currentNamedScheduleData.schedulePagerData.weeksStartIndex
+                                    )
+                                }
+
+                                scheduleState != null && !appSettings.calendarView -> {
+                                    scheduleState.scheduleListState.animateScrollToItem(0)
+                                }
                             }
                         }
                     },
@@ -164,7 +163,6 @@ fun Main(
                 entry<Routes.Review> {
                     ReviewScreen(
                         externalPadding = externalPadding,
-                        today = today,
                         navigateToSearch = {
                             appState.appBackStack.navigateToDialog(Routes.SearchDialog)
                         },
@@ -187,8 +185,14 @@ fun Main(
                             )
                         },
 
+                        onRefreshState = {
+                            scheduleViewModel.loadInitialData(
+                                showLoading = false,
+                                showUpdating = true
+                            )
+                        },
                         onSetNamedSchedule = { value ->
-                            if (value != scheduleUiState.currentScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
+                            if (value != scheduleUiState.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
                                 scheduleViewModel.getNamedScheduleFromDb(
                                     primaryKeyNamedSchedule = value
                                 )
@@ -209,7 +213,7 @@ fun Main(
                         },
                         onShowEvent = { primaryKey ->
                             scheduleViewModel.updateEventHidden(
-                                scheduleEntity = scheduleUiState.currentScheduleData!!.settledScheduleEntity!!,
+                                scheduleEntity = scheduleUiState.currentNamedScheduleData!!.settledScheduleEntity!!,
                                 eventPrimaryKey = primaryKey,
                                 isHidden = false
                             )
@@ -223,7 +227,6 @@ fun Main(
                 entry<Routes.Schedule> {
                     ScreenSchedule(
                         externalPadding = externalPadding,
-                        today = today,
                         navigateToSearch = {
                             appState.appBackStack.navigateToDialog(Routes.SearchDialog)
                         },
@@ -256,6 +259,12 @@ fun Main(
                         onLoadInitialData = {
                             scheduleViewModel.loadInitialData(false)
                         },
+                        onRefreshState = {
+                            scheduleViewModel.loadInitialData(
+                                showLoading = false,
+                                showUpdating = true
+                            )
+                        },
                         onSaveCurrentNamedSchedule = {
                             scheduleViewModel.saveCurrentNamedSchedule()
                         },
@@ -273,13 +282,13 @@ fun Main(
                         },
                         onDeleteEvent = { primaryKey ->
                             scheduleViewModel.deleteCustomEvent(
-                                scheduleEntity = scheduleUiState.currentScheduleData!!.settledScheduleEntity!!,
+                                scheduleEntity = scheduleUiState.currentNamedScheduleData!!.settledScheduleEntity!!,
                                 primaryKeyEvent = primaryKey
                             )
                         },
                         onHideEvent = { primaryKey ->
                             scheduleViewModel.updateEventHidden(
-                                scheduleEntity = scheduleUiState.currentScheduleData!!.settledScheduleEntity!!,
+                                scheduleEntity = scheduleUiState.currentNamedScheduleData!!.settledScheduleEntity!!,
                                 eventPrimaryKey = primaryKey,
                                 isHidden = true
                             )
@@ -379,20 +388,20 @@ fun Main(
                         },
                         onDeleteEvent = { primaryKey ->
                             scheduleViewModel.deleteCustomEvent(
-                                scheduleEntity = scheduleUiState.currentScheduleData.settledScheduleEntity!!,
+                                scheduleEntity = scheduleUiState.currentNamedScheduleData.settledScheduleEntity!!,
                                 primaryKeyEvent = primaryKey
                             )
                         },
                         onHideEvent = { primaryKey ->
                             scheduleViewModel.updateEventHidden(
-                                scheduleEntity = scheduleUiState.currentScheduleData.settledScheduleEntity!!,
+                                scheduleEntity = scheduleUiState.currentNamedScheduleData.settledScheduleEntity!!,
                                 eventPrimaryKey = primaryKey,
                                 isHidden = true
                             )
                         },
                         onShowEvent = { primaryKey ->
                             scheduleViewModel.updateEventHidden(
-                                scheduleEntity = scheduleUiState.currentScheduleData.settledScheduleEntity!!,
+                                scheduleEntity = scheduleUiState.currentNamedScheduleData.settledScheduleEntity!!,
                                 eventPrimaryKey = primaryKey,
                                 isHidden = false
                             )
@@ -400,7 +409,7 @@ fun Main(
                         event = key.event,
                         eventExtraData = key.eventExtraData,
                         isSavedSchedule = scheduleUiState.isSaved,
-                        isCustomSchedule = scheduleUiState.currentScheduleData!!.namedSchedule!!.namedScheduleEntity.type == 3
+                        isCustomSchedule = scheduleUiState.currentNamedScheduleData!!.namedSchedule!!.namedScheduleEntity.type == 3
                     )
                 }
 
@@ -556,21 +565,21 @@ fun ScheduleStateSynchronizer(
     scheduleState: ScheduleState?,
     reviewState: ReviewState
 ) {
-    if (scheduleUiState.currentScheduleData?.settledScheduleEntity != null && scheduleState != null) {
+    if (scheduleUiState.currentNamedScheduleData?.settledScheduleEntity != null && scheduleState != null) {
         LaunchedEffect(
-            scheduleUiState.currentScheduleData.namedSchedule!!.namedScheduleEntity.apiId,
-            scheduleUiState.currentScheduleData.settledScheduleEntity.timetableId
+            scheduleUiState.currentNamedScheduleData.namedSchedule!!.namedScheduleEntity.apiId,
+            scheduleUiState.currentNamedScheduleData.settledScheduleEntity.timetableId
         ) {
             scheduleState.onExpandSchedulesMenu(false)
             reviewState.onChangeVisibilityHiddenEvents(false)
             scheduleState.pagerDaysState.scrollToPage(
-                scheduleUiState.currentScheduleData.daysStartIndex
+                scheduleUiState.currentNamedScheduleData.schedulePagerData.daysStartIndex
             )
             scheduleState.scheduleListState.scrollToItem(0)
         }
         LaunchedEffect(scheduleState.selectedDate) {
             val targetPage = ChronoUnit.DAYS.between(
-                scheduleUiState.currentScheduleData.settledScheduleEntity.startDate,
+                scheduleUiState.currentNamedScheduleData.settledScheduleEntity.startDate,
                 scheduleState.selectedDate
             ).toInt()
 
@@ -581,15 +590,15 @@ fun ScheduleStateSynchronizer(
 
         LaunchedEffect(scheduleState.pagerDaysState.currentPage) {
             val newSelectedDate =
-                scheduleUiState.currentScheduleData.settledScheduleEntity.startDate.plusDays(
+                scheduleUiState.currentNamedScheduleData.settledScheduleEntity.startDate.plusDays(
                     scheduleState.pagerDaysState.currentPage.toLong()
                 )
-            scheduleState.onDateChange(newSelectedDate)
+            scheduleState.onSelectDate(newSelectedDate)
 
             val targetWeekIndex = ChronoUnit.WEEKS.between(
-                scheduleUiState.currentScheduleData.settledScheduleEntity.startDate
-                    .calculateFirstDayOfWeek(),
-                newSelectedDate.calculateFirstDayOfWeek()
+                scheduleUiState.currentNamedScheduleData.settledScheduleEntity.startDate
+                    .getFirstDayOfWeek(),
+                newSelectedDate.getFirstDayOfWeek()
             ).toInt()
 
             if (scheduleState.pagerWeeksState.currentPage != targetWeekIndex) {
