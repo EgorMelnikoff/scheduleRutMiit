@@ -40,7 +40,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
 
 @Composable
-fun ScheduleEvent(
+fun Event(
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
     onDeleteEvent: (Long) -> Unit,
     onUpdateHiddenEvent: (Long) -> Unit,
