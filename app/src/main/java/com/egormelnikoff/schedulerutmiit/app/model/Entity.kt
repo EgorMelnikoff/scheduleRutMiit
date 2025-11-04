@@ -153,7 +153,7 @@ fun getCurrentWeek(
     return ((weeksFromStart + recurrence.firstWeekNumber) % recurrence.interval!!).plus(1)
 }
 
-fun List<Event>.getGroupedEvents(): Map<Pair<LocalTime, LocalTime>, List<Event>> {
+fun List<Event>.getGroupedEvents(): Map<String, List<Event>> {
     if (this.isEmpty()) return mapOf()
     return this
         .sortedBy { event ->
@@ -162,7 +162,7 @@ fun List<Event>.getGroupedEvents(): Map<Pair<LocalTime, LocalTime>, List<Event>>
             Pair(
                 event.startDatetime!!.toLocalTime(),
                 event.endDatetime!!.toLocalTime()
-            )
+            ).toString()
         }
 }
 
@@ -170,7 +170,7 @@ fun LocalDate.getEventsForDate(
     scheduleEntity: ScheduleEntity,
     periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
     nonPeriodicEvents: Map<LocalDate, List<Event>>?
-): Map<Pair<LocalTime, LocalTime>, List<Event>> {
+): Map<String, List<Event>> {
     var displayedEvents = listOf<Event>()
 
     when {

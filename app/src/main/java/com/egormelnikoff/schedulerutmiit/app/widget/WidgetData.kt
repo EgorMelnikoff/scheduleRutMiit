@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.app.widget
 
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
@@ -12,9 +13,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class WidgetData(
-    val namedSchedule: NamedScheduleFormatted? = null,
+    val namedScheduleEntity: NamedScheduleEntity? = null,
     val settledScheduleEntity: ScheduleEntity? = null,
-    val reviewData: ReviewData,
+    val reviewData: ReviewData? = null,
     val eventsExtraData: List<EventExtraData> = listOf(),
 ) {
     companion object {
@@ -43,7 +44,7 @@ data class WidgetData(
                     nonPeriodicEvents = nonPeriodicEvents
                 )
                 WidgetData(
-                    namedSchedule = namedSchedule,
+                    namedScheduleEntity = namedSchedule.namedScheduleEntity,
                     settledScheduleEntity = scheduleFormatted.scheduleEntity,
                     eventsExtraData = scheduleFormatted.eventsExtraData,
                     reviewData = reviewData

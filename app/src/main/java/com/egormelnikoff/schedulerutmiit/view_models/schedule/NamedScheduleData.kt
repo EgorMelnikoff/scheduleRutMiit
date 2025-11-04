@@ -13,7 +13,6 @@ import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget.Companion.ev
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
@@ -242,7 +241,7 @@ data class SchedulePagerData(
 
 data class ReviewData(
     val displayedDate: LocalDate,
-    val events: Map<Pair<LocalTime, LocalTime>, List<Event>> = mapOf(),
+    val events: Map<String, List<Event>> = mapOf(),
     val countEventsForWeek: Int = 0
 ) {
     companion object {

@@ -112,8 +112,8 @@ class EventsWidget : GlanceAppWidget() {
         val formatter = DateTimeFormatter.ofPattern("d MMMM")
 
         val subHeader = StringBuilder().apply {
-            if (widgetData?.namedSchedule != null) {
-                append(widgetData.namedSchedule.namedScheduleEntity.shortName)
+            if (widgetData?.namedScheduleEntity != null) {
+                append(widgetData.namedScheduleEntity.shortName)
             }
             if (widgetData?.settledScheduleEntity != null) {
                 append(" (${widgetData.settledScheduleEntity.typeName})")
@@ -133,7 +133,7 @@ class EventsWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (widgetData?.settledScheduleEntity != null) {
+            if (widgetData?.settledScheduleEntity != null && widgetData.reviewData != null) {
                 val header = when (widgetData.reviewData.displayedDate) {
                     today -> {
                        "${LocalContext.current.getString(R.string.today)}, " +

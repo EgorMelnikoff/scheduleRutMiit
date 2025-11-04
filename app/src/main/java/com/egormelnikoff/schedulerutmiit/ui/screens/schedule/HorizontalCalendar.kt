@@ -43,7 +43,6 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -221,7 +220,7 @@ fun HorizontalCalendarItem(
     isSelected: Boolean,
     isShowCountClasses: Boolean,
     isToday: Boolean,
-    events: Map<Pair<LocalTime, LocalTime>, List<Event>>,
+    events: Map<String, List<Event>>,
     eventsExtraData: List<EventExtraData>
 ) {
     val dayOfWeekName = currentDate.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
