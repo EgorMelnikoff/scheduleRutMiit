@@ -17,7 +17,7 @@ data class ScheduleState(
     val pagerWeeksState: PagerState,
     val pagerDaysState: PagerState,
     val selectedDate: LocalDate,
-    val onDateChange: (LocalDate) -> Unit,
+    val onSelectDate: (LocalDate) -> Unit,
     val expandedSchedulesMenu: Boolean,
     val onExpandSchedulesMenu: (Boolean) -> Unit
 )
@@ -26,22 +26,22 @@ data class ScheduleState(
 fun rememberScheduleState(
     scheduleUiState: ScheduleUiState
 ): ScheduleState? {
-    return if (scheduleUiState.currentScheduleData?.namedSchedule != null) {
+    return scheduleUiState.currentNamedScheduleData?.namedSchedule?.let {
         val scheduleListState = rememberLazyListState()
         val pagerDaysState = rememberPagerState(
-            pageCount = { scheduleUiState.currentScheduleData.weeksCount.times(7) },
-            initialPage = scheduleUiState.currentScheduleData.daysStartIndex
+            pageCount = { scheduleUiState.currentNamedScheduleData.schedulePagerData.weeksCount.times(7) },
+            initialPage = scheduleUiState.currentNamedScheduleData.schedulePagerData.daysStartIndex
         )
         val pagerWeeksState = rememberPagerState(
-            pageCount = { scheduleUiState.currentScheduleData.weeksCount },
-            initialPage = scheduleUiState.currentScheduleData.weeksStartIndex
+            pageCount = { scheduleUiState.currentNamedScheduleData.schedulePagerData.weeksCount },
+            initialPage = scheduleUiState.currentNamedScheduleData.schedulePagerData.weeksStartIndex
         )
 
         var selectedDate by remember(
-            scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.apiId
+            scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.apiId
         ) {
             mutableStateOf(
-                scheduleUiState.currentScheduleData.defaultDate
+                scheduleUiState.currentNamedScheduleData.schedulePagerData.defaultDate
             )
         }
         var expandedSchedulesMenu by remember { mutableStateOf(false) }
@@ -51,7 +51,7 @@ fun rememberScheduleState(
             pagerWeeksState = pagerWeeksState,
             pagerDaysState = pagerDaysState,
             selectedDate = selectedDate,
-            onDateChange = { newDate ->
+            onSelectDate = { newDate ->
                 selectedDate = newDate
             },
             expandedSchedulesMenu = expandedSchedulesMenu,
@@ -59,6 +59,5 @@ fun rememberScheduleState(
                 expandedSchedulesMenu = newValue
             }
         )
-    } else null
-
+    }
 }

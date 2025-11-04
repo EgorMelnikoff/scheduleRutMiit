@@ -89,10 +89,10 @@ fun ScheduleTopAppBar(
     onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit
 ) {
     val isNotEmpty =
-        scheduleUiState.currentScheduleData!!.namedSchedule!!.schedules.isNotEmpty() && scheduleUiState.currentScheduleData.settledScheduleEntity != null
-    val isSomeSchedules = scheduleUiState.currentScheduleData.namedSchedule.schedules.size > 1
+        scheduleUiState.currentNamedScheduleData!!.namedSchedule!!.schedules.isNotEmpty() && scheduleUiState.currentNamedScheduleData.settledScheduleEntity != null
+    val isSomeSchedules = scheduleUiState.currentNamedScheduleData.namedSchedule.schedules.size > 1
     val isCustomSchedule =
-        scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.type == 3
+        scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.type == 3
     val rotationAngle by animateFloatAsState(
         targetValue = if (expandedSchedulesMenu) 180f else 0f
     )
@@ -106,15 +106,15 @@ fun ScheduleTopAppBar(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.shortName,
+                        text = scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.shortName,
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
                     )
-                    if (scheduleUiState.currentScheduleData.settledScheduleEntity != null && !isCustomSchedule) {
+                    if (scheduleUiState.currentNamedScheduleData.settledScheduleEntity != null && !isCustomSchedule) {
                         Text(
-                            text = scheduleUiState.currentScheduleData.settledScheduleEntity.typeName,
+                            text = scheduleUiState.currentNamedScheduleData.settledScheduleEntity.typeName,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             overflow = TextOverflow.Ellipsis,
@@ -147,7 +147,7 @@ fun ScheduleTopAppBar(
                 IconButton(
                     onClick = {
                         val url =
-                            scheduleUiState.currentScheduleData.settledScheduleEntity.downloadUrl
+                            scheduleUiState.currentNamedScheduleData.settledScheduleEntity.downloadUrl
                         val intent = Intent(Intent.ACTION_VIEW, url?.toUri())
                         context.startActivity(intent)
                     }
@@ -164,7 +164,7 @@ fun ScheduleTopAppBar(
             if (isNotEmpty && isCustomSchedule) {
                 IconButton(
                     onClick = {
-                        navigateToAddEvent(scheduleUiState.currentScheduleData.settledScheduleEntity)
+                        navigateToAddEvent(scheduleUiState.currentNamedScheduleData.settledScheduleEntity)
                     }
                 ) {
                     Icon(
@@ -196,7 +196,7 @@ fun ScheduleTopAppBar(
             IconButton(
                 onClick = {
                     onShowNamedScheduleDialog(
-                        scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity
+                        scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity
                     )
                 }
             ) {

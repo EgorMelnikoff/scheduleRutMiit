@@ -26,7 +26,7 @@ class WidgetDataUpdaterImpl @Inject constructor(
             ?: return ListenableWorker.Result.failure()
         logger.i("WidgetDataUpdater", "Default schedule:\n$namedScheduleEntity")
         val namedSchedule = scheduleRepos.getSavedNamedScheduleById(namedScheduleEntity.id)!!
-        val widgetData = WidgetData.calculateWidgetData(namedSchedule)
+        val widgetData = WidgetData.getWidgetData(namedSchedule)
         if (widgetData != null) {
             logger.i("WidgetDataUpdater", "Start widget update")
             GlanceAppWidgetManager(context).getGlanceIds(EventsWidget::class.java)

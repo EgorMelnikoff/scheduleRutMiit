@@ -38,7 +38,7 @@ fun ExpandedMenu(
         Column(
             modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
         ) {
-            scheduleUiState.currentScheduleData!!.namedSchedule!!.schedules.forEach { schedule ->
+            scheduleUiState.currentNamedScheduleData!!.namedSchedule!!.schedules.forEach { schedule ->
                 val scale by animateFloatAsState(
                     targetValue = if (schedule.scheduleEntity.isDefault) 1f else 0f
                 )
@@ -53,7 +53,7 @@ fun ExpandedMenu(
                     onClick = {
                         setDefaultSchedule(
                             Triple(
-                                scheduleUiState.currentScheduleData.namedSchedule.namedScheduleEntity.id,
+                                scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
                                 schedule.scheduleEntity.id,
                                 schedule.scheduleEntity.timetableId
                             )

@@ -13,7 +13,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.model.Timetable
 import com.egormelnikoff.schedulerutmiit.app.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.model.Timetables
-import com.egormelnikoff.schedulerutmiit.app.model.calculateFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.data.Error
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedScheduleDao
@@ -538,8 +538,8 @@ class ScheduleReposImpl @Inject constructor(
                         if (today > oldSchedule.timetable.startDate) {
                             val currentWeekIndex = abs(
                                 ChronoUnit.WEEKS.between(
-                                    oldSchedule.timetable.startDate.calculateFirstDayOfWeek(),
-                                    LocalDate.now().calculateFirstDayOfWeek()
+                                    oldSchedule.timetable.startDate.getFirstDayOfWeek(),
+                                    LocalDate.now().getFirstDayOfWeek()
                                 )
                             ).plus(1)
                             val firstWeekNumber =
