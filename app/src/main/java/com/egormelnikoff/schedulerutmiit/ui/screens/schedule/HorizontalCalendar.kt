@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.elements
+package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,43 +35,40 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
-import com.egormelnikoff.schedulerutmiit.app.model.calculateFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.app.model.getCurrentWeek
+import com.egormelnikoff.schedulerutmiit.app.model.getEventsForDate
+import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
 fun HorizontalCalendar(
     isShowCountClasses: Boolean,
-    today: LocalDate,
-    scheduleData: ScheduleData,
-    scheduleEntity: ScheduleEntity,
-    eventsExtraData: List<EventExtraData>,
-    pagerWeeksState: PagerState,
-    selectedDate: LocalDate,
-    selectDate: (LocalDate) -> Unit
+
+    scheduleData: NamedScheduleData,
+    scheduleState: ScheduleState,
 ) {
+    val scheduleEntity = scheduleData.settledScheduleEntity!!
+
     val scope = rememberCoroutineScope()
     val firstDayOfCurrentWeek = remember(
-        pagerWeeksState.currentPage,
+        scheduleState.pagerWeeksState.currentPage,
         scheduleEntity
     ) {
         scheduleEntity.startDate
-            .plusWeeks(pagerWeeksState.currentPage.toLong())
-            .calculateFirstDayOfWeek()
+            .plusWeeks(scheduleState.pagerWeeksState.currentPage.toLong())
+            .getFirstDayOfWeek()
     }
 
-    val displayMonth =
-        if (firstDayOfCurrentWeek == selectedDate.calculateFirstDayOfWeek())
-            selectedDate
-        else
-            firstDayOfCurrentWeek.plusDays(4L)
-
+    val displayDate = if (firstDayOfCurrentWeek == scheduleState.selectedDate.getFirstDayOfWeek())
+        scheduleState.selectedDate
+    else firstDayOfCurrentWeek.plusDays(4L)
 
     Column(
         modifier = Modifier
@@ -85,10 +81,10 @@ fun HorizontalCalendar(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                enabled = pagerWeeksState.currentPage != 0,
+                enabled = scheduleState.pagerWeeksState.currentPage != 0,
                 onClick = {
                     scope.launch {
-                        pagerWeeksState.animateScrollToPage(pagerWeeksState.currentPage - 1)
+                        scheduleState.pagerWeeksState.animateScrollToPage(scheduleState.pagerWeeksState.currentPage - 1)
                     }
                 },
                 colors = IconButtonColors(
@@ -110,9 +106,9 @@ fun HorizontalCalendar(
                     .clickable(
                         onClick = {
                             scope.launch {
-                                pagerWeeksState.animateScrollToPage(scheduleData.weeksStartIndex)
+                                scheduleState.pagerWeeksState.animateScrollToPage(scheduleData.schedulePagerData.weeksStartIndex)
                             }
-                            selectDate(scheduleData.defaultDate)
+                            scheduleState.onSelectDate(scheduleData.schedulePagerData.defaultDate)
                         }
                     )
                     .padding(4.dp),
@@ -120,7 +116,7 @@ fun HorizontalCalendar(
                 horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)
             ) {
                 Text(
-                    text = displayMonth.month.getDisplayName(
+                    text = displayDate.month.getDisplayName(
                         TextStyle.FULL_STANDALONE,
                         Locale.getDefault()
                     ).replaceFirstChar { it.uppercase() },
@@ -128,12 +124,11 @@ fun HorizontalCalendar(
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
-                scheduleEntity.recurrence?.let { recurrence ->
-                    val selectedWeek = calculateCurrentWeek(
+                scheduleData.settledScheduleEntity.recurrence?.let { recurrence ->
+                    val selectedWeek = getCurrentWeek(
                         date = firstDayOfCurrentWeek,
                         startDate = scheduleEntity.startDate,
-                        firstPeriodNumber = recurrence.firstWeekNumber,
-                        interval = recurrence.interval!!
+                        recurrence = recurrence
                     )
                     val color = MaterialTheme.colorScheme.onSecondaryContainer
                     Icon(
@@ -155,10 +150,10 @@ fun HorizontalCalendar(
             }
 
             IconButton(
-                enabled = pagerWeeksState.currentPage != scheduleData.weeksCount - 1,
+                enabled = scheduleState.pagerWeeksState.currentPage != scheduleData.schedulePagerData.weeksCount - 1,
                 onClick = {
                     scope.launch {
-                        pagerWeeksState.animateScrollToPage(pagerWeeksState.currentPage + 1)
+                        scheduleState.pagerWeeksState.animateScrollToPage(scheduleState.pagerWeeksState.currentPage + 1)
                     }
                 },
                 colors = IconButtonColors(
@@ -176,7 +171,7 @@ fun HorizontalCalendar(
         }
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
-            state = pagerWeeksState,
+            state = scheduleState.pagerWeeksState,
             verticalAlignment = Alignment.Top,
             pageSpacing = 16.dp,
             contentPadding = PaddingValues(
@@ -190,34 +185,27 @@ fun HorizontalCalendar(
             ) {
                 val firstDayOfWeek = scheduleEntity.startDate
                     .plusWeeks(index.toLong())
-                    .calculateFirstDayOfWeek()
+                    .getFirstDayOfWeek()
 
                 for (date in 0 until 7) {
                     val currentDate = firstDayOfWeek.plusDays(date.toLong())
-                    val eventsByDay = scheduleData.periodicEventsForCalendar?.let { events ->
-                        val currentWeek = calculateCurrentWeek(
-                            date = firstDayOfWeek,
-                            startDate = scheduleEntity.startDate,
-                            firstPeriodNumber = scheduleEntity.recurrence!!.firstWeekNumber,
-                            interval = scheduleEntity.recurrence.interval!!
-                        )
-                        events[currentWeek]?.filter {
-                            it.key == currentDate.dayOfWeek
-                        }!!.values.flatten()
-                    } ?: scheduleData.nonPeriodicEventsForCalendar?.filter {
-                        it.key == currentDate
-                    }?.values?.flatten() ?: emptyList()
+
+                    val eventsForDate = currentDate.getEventsForDate(
+                        scheduleEntity = scheduleEntity,
+                        periodicEvents = scheduleData.periodicEvents,
+                        nonPeriodicEvents = scheduleData.nonPeriodicEvents
+                    )
 
                     HorizontalCalendarItem(
-                        selectDate = selectDate,
+                        selectDate = scheduleState.onSelectDate,
                         currentDate = currentDate,
-                        events = eventsByDay,
-                        eventsExtraData = eventsExtraData,
+                        events = eventsForDate,
+                        eventsExtraData = scheduleData.eventsExtraData,
 
                         isShowCountClasses = isShowCountClasses,
                         isDisabled = currentDate !in scheduleEntity.startDate..scheduleEntity.endDate,
-                        isSelected = currentDate == selectedDate,
-                        isToday = (currentDate == today)
+                        isSelected = currentDate == scheduleState.selectedDate,
+                        isToday = (currentDate == scheduleData.schedulePagerData.today)
                     )
                 }
             }
@@ -233,7 +221,7 @@ fun HorizontalCalendarItem(
     isSelected: Boolean,
     isShowCountClasses: Boolean,
     isToday: Boolean,
-    events: List<Event>,
+    events: Map<Pair<LocalTime, LocalTime>, List<Event>>,
     eventsExtraData: List<EventExtraData>
 ) {
     val dayOfWeekName = currentDate.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
@@ -257,15 +245,19 @@ fun HorizontalCalendarItem(
                 .clip(CircleShape)
                 .size(36.dp)
                 .background(
-                    if (isSelected) MaterialTheme.colorScheme.primary
-                    else if (isToday) MaterialTheme.colorScheme.secondaryContainer
-                    else Color.Unspecified
+                    color = when {
+                        isSelected -> MaterialTheme.colorScheme.primary
+                        isToday -> MaterialTheme.colorScheme.secondaryContainer
+                        else -> Color.Unspecified
+                    }
                 )
                 .let {
                     if (!isDisabled) {
-                        it.clickable(onClick = {
-                            selectDate(currentDate)
-                        })
+                        it.clickable(
+                            onClick = {
+                                selectDate(currentDate)
+                            }
+                        )
                     } else {
                         it
                     }
@@ -274,28 +266,22 @@ fun HorizontalCalendarItem(
             Text(
                 text = currentDate.dayOfMonth.toString(),
                 style = MaterialTheme.typography.bodyMedium,
-                color =
-                    if (isDisabled) MaterialTheme.colorScheme.secondaryContainer
-                    else if (isSelected) MaterialTheme.colorScheme.onPrimary
-                    else if (currentDate.dayOfWeek.value == 7) MaterialTheme.colorScheme.error
-                    else MaterialTheme.colorScheme.onSecondaryContainer
+                color = when {
+                    isDisabled -> MaterialTheme.colorScheme.secondaryContainer
+                    isSelected -> MaterialTheme.colorScheme.onPrimary
+                    currentDate.dayOfWeek.value == 7 -> MaterialTheme.colorScheme.error
+                    else -> MaterialTheme.colorScheme.onSecondaryContainer
+                }
+
             )
         }
         if (isShowCountClasses) {
-            val eventsByStartTime = events
-                .sortedBy { it.startDatetime!!.toLocalTime() }
-                .groupBy { event ->
-                    Pair(
-                        event.startDatetime!!.toLocalTime(),
-                        event.endDatetime!!.toLocalTime()
-                    )
-                }
             FlowRow(
                 maxItemsInEachRow = if (events.size in 6..8) 4 else 5,
                 horizontalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterHorizontally),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                eventsByStartTime.forEach { groupedEvents ->
+                events.forEach { groupedEvents ->
                     var offset = 0
                     Row(
                         verticalAlignment = Alignment.CenterVertically

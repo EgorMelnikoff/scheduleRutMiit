@@ -4,68 +4,50 @@ import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData.Companion.getPeriodicEvents
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ReviewData
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class WidgetData(
     val namedSchedule: NamedScheduleFormatted? = null,
     val settledScheduleEntity: ScheduleEntity? = null,
-    val periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null,
-    val nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>? = null,
+    val reviewData: ReviewData,
     val eventsExtraData: List<EventExtraData> = listOf(),
-    var countEventsForWeek: Int = 0,
 ) {
     companion object {
-        fun calculateWidgetData(namedSchedule: NamedScheduleFormatted): WidgetData? {
-            val today = LocalDate.now()
-            val scheduleFormatted = ScheduleData.findCurrentSchedule(namedSchedule)
+        fun getWidgetData(namedSchedule: NamedScheduleFormatted): WidgetData? {
+            val scheduleFormatted = NamedScheduleData.findCurrentSchedule(namedSchedule)
             return if (scheduleFormatted != null) {
-                val scheduleWithoutHiddenEvents = scheduleFormatted.copy(
-                    events = scheduleFormatted.events.filter { !it.isHidden }
-                )
-                if (scheduleWithoutHiddenEvents.scheduleEntity.recurrence != null) {
-                    val periodicEventsForCalendar =
-                        ScheduleData.calculatePeriodicEventsForCalendar(
-                            scheduleWithoutHiddenEvents
-                        )
-                    val currentWeek = calculateCurrentWeek(
-                        date = today,
-                        startDate = scheduleWithoutHiddenEvents.scheduleEntity.startDate,
-                        firstPeriodNumber = scheduleWithoutHiddenEvents.scheduleEntity.recurrence.firstWeekNumber,
-                        interval = scheduleWithoutHiddenEvents.scheduleEntity.recurrence.interval!!
-                    )
-                    val countEventsForWeek = periodicEventsForCalendar[currentWeek]!!
-                        .flatMap { it.value }
-                        .distinctBy { it.startDatetime }
-                        .size
+                val today = LocalDateTime.now()
+                val splitEvents = scheduleFormatted.events.partition { it.isHidden }
 
-                    WidgetData(
-                        namedSchedule = namedSchedule,
-                        settledScheduleEntity = scheduleWithoutHiddenEvents.scheduleEntity,
-                        periodicEventsForCalendar = periodicEventsForCalendar,
-                        nonPeriodicEventsForCalendar = null,
-                        countEventsForWeek = countEventsForWeek,
-                        eventsExtraData = scheduleWithoutHiddenEvents.eventsExtraData
+                var periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null
+                var nonPeriodicEvents: Map<LocalDate, List<Event>>? = null
+
+                if (scheduleFormatted.scheduleEntity.recurrence != null) {
+                    periodicEvents = splitEvents.second.getPeriodicEvents(
+                        scheduleFormatted.scheduleEntity.recurrence.interval!!,
                     )
                 } else {
-                    val nonPeriodicEventsForCalendar = scheduleWithoutHiddenEvents.events
-                        .groupBy { it.startDatetime!!.toLocalDate() }
-
-                    val countEventsForWeek = ScheduleData.getEventsCountForWeek(
-                        today = today,
-                        events = nonPeriodicEventsForCalendar
-                    )
-                    WidgetData(
-                        namedSchedule = namedSchedule,
-                        settledScheduleEntity = scheduleWithoutHiddenEvents.scheduleEntity,
-                        periodicEventsForCalendar = null,
-                        nonPeriodicEventsForCalendar = nonPeriodicEventsForCalendar,
-                        countEventsForWeek = countEventsForWeek,
-                        eventsExtraData = scheduleWithoutHiddenEvents.eventsExtraData
-                    )
+                    nonPeriodicEvents = splitEvents.second.groupBy {
+                        it.startDatetime!!.toLocalDate()
+                    }
                 }
+                val reviewData = ReviewData.getReviewData(
+                    date = today,
+                    scheduleEntity = scheduleFormatted.scheduleEntity,
+                    periodicEvents = periodicEvents,
+                    nonPeriodicEvents = nonPeriodicEvents
+                )
+                WidgetData(
+                    namedSchedule = namedSchedule,
+                    settledScheduleEntity = scheduleFormatted.scheduleEntity,
+                    eventsExtraData = scheduleFormatted.eventsExtraData,
+                    reviewData = reviewData
+                )
             } else null
         }
     }

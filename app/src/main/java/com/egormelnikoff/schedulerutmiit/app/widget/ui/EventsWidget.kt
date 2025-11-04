@@ -43,8 +43,6 @@ import androidx.glance.unit.ColorProvider
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.app.modules.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetData
@@ -61,9 +59,7 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.Yellow
 import com.google.gson.Gson
 import dagger.hilt.EntryPoints
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -112,8 +108,7 @@ class EventsWidget : GlanceAppWidget() {
         widgetData: WidgetData?,
         onUpdate: () -> Unit
     ) {
-        val today = LocalDateTime.now()
-
+        val today = LocalDate.now()
         val formatter = DateTimeFormatter.ofPattern("d MMMM")
 
         val subHeader = StringBuilder().apply {
@@ -139,47 +134,21 @@ class EventsWidget : GlanceAppWidget() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (widgetData?.settledScheduleEntity != null) {
-                val scheduleEntity = widgetData.settledScheduleEntity
-                val periodicEvents = widgetData.periodicEventsForCalendar
-                val nonPeriodicEvents = widgetData.nonPeriodicEventsForCalendar
-
-                var header = LocalContext.current.getString(R.string.today) +
-                        ", ${today.format(formatter)}"
-                var eventsForToday = calculateEvents(
-                    scheduleEntity = scheduleEntity,
-                    date = today.toLocalDate(),
-                    periodicEvents = periodicEvents,
-                    nonPeriodicEvents = nonPeriodicEvents
-                )
-
-                val isFinishedEvents = eventsForToday.isNotEmpty()
-                        && today.toLocalTime().isAfter(
-                    eventsForToday.last().endDatetime!!.toLocaleTimeWithTimeZone()
-                )
-
-                val nextDay = eventsForToday.isEmpty()
-                        && today.toLocalTime().isAfter(eveningTime)
-
-                if (isFinishedEvents || nextDay || today.dayOfWeek == DayOfWeek.SUNDAY) {
-                    val tomorrow = today.toLocalDate().plusDays(1)
-                    eventsForToday = calculateEvents(
-                        scheduleEntity = scheduleEntity,
-                        date = tomorrow,
-                        periodicEvents = periodicEvents,
-                        nonPeriodicEvents = nonPeriodicEvents
-                    )
-                    header = LocalContext.current.getString(R.string.tomorrow) + ", ${tomorrow.format(formatter)}"
-                }
-
-                val displayedEvents = eventsForToday
-                    .groupBy { event ->
-                        Pair(
-                            event.startDatetime!!.toLocalTime(),
-                            event.endDatetime!!.toLocalTime()
-                        )
+                val header = when (widgetData.reviewData.displayedDate) {
+                    today -> {
+                       "${LocalContext.current.getString(R.string.today)}, " +
+                               "${widgetData.reviewData.displayedDate.format(formatter)}"
                     }
-                    .toList()
 
+                    today.plusDays(1) -> {
+                        "${LocalContext.current.getString(R.string.tomorrow)}, " +
+                                "${widgetData.reviewData.displayedDate.format(formatter)}"
+                    }
+
+                    else -> {
+                        widgetData.reviewData.displayedDate.format(formatter)
+                    }
+                }
 
                 Row(
                     modifier = GlanceModifier.fillMaxWidth(),
@@ -222,6 +191,8 @@ class EventsWidget : GlanceAppWidget() {
                         )
                     )
                 }
+                val displayedEvents = widgetData.reviewData.events.toList()
+
                 if (displayedEvents.isNotEmpty()) {
                     Spacer(modifier = GlanceModifier.height(12.dp))
                     LazyColumn {
@@ -372,29 +343,5 @@ class EventsWidget : GlanceAppWidget() {
                 )
             }
         }
-    }
-
-    fun calculateEvents(
-        scheduleEntity: ScheduleEntity,
-        date: LocalDate,
-        periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
-        nonPeriodicEvents: Map<LocalDate, List<Event>>?
-    ): List<Event> {
-        val events = periodicEvents?.let {
-            val currentWeek = calculateCurrentWeek(
-                date = date,
-                startDate = scheduleEntity.startDate,
-                firstPeriodNumber = scheduleEntity.recurrence!!.firstWeekNumber,
-                interval = scheduleEntity.recurrence.interval!!
-            )
-            periodicEvents[currentWeek]?.filter {
-                it.key == date.dayOfWeek
-            }!!.values.flatten()
-        } ?: nonPeriodicEvents?.filter {
-            it.key == date
-        }?.values?.flatten()
-        ?: emptyList()
-        return events
-            .sortedBy { event -> event.startDatetime!!.toLocalTime() }
     }
 }

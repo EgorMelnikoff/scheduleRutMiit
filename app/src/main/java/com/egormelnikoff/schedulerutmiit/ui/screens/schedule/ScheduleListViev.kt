@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.calculateCurrentWeek
+import com.egormelnikoff.schedulerutmiit.app.model.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
@@ -48,46 +47,29 @@ fun ScheduleListView(
     isShortEvent: Boolean,
     paddingBottom: Dp
 ) {
-    val scheduleData = scheduleUiState.currentScheduleData!!
+    val scheduleData = scheduleUiState.currentNamedScheduleData!!
+    val formatter = DateTimeFormatter.ofPattern("d MMMM")
+
     if (scheduleData.eventForList.isNotEmpty()) {
         LazyColumn(
             state = scheduleState.scheduleListState,
             contentPadding = PaddingValues(bottom = paddingBottom),
             modifier = Modifier.fillMaxSize(),
         ) {
-            val lastIndex = scheduleData.eventForList.lastIndex
-            val formatter = DateTimeFormatter.ofPattern("d MMMM")
             scheduleData.eventForList.forEachIndexed { index, events ->
-                val eventsForDayGrouped = events.second
-                    .sortedBy { event -> event.startDatetime!!.toLocalTime() }
-                    .groupBy { event ->
-                        Pair(
-                            event.startDatetime!!.toLocalTime(),
-                            event.endDatetime!!.toLocalTime()
-                        )
-                    }
-                    .toList()
-
+                val eventsForDay = events.second.getGroupedEvents().toList()
                 stickyHeader {
                     DateHeader(
-                        currentWeek = scheduleData.settledScheduleEntity?.recurrence?.let {
-                            calculateCurrentWeek(
-                                date = events.first,
-                                startDate = scheduleData.settledScheduleEntity.startDate,
-                                firstPeriodNumber = scheduleData.settledScheduleEntity.recurrence.firstWeekNumber,
-                                interval = scheduleData.settledScheduleEntity.recurrence.interval!!
-                            )
-                        },
                         date = events.first,
                         formatter = formatter
                     )
                 }
 
-                items(eventsForDayGrouped) { eventsGrouped ->
+                items(eventsForDay) { eventsGrouped ->
                     Box(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
-                        ScheduleEvent(
+                        Event(
                             navigateToEvent = navigateToEvent,
                             onDeleteEvent = onDeleteEvent,
                             onUpdateHiddenEvent = onUpdateHiddenEvent,
@@ -97,7 +79,7 @@ fun ScheduleListView(
                             isShortEvent = isShortEvent
                         )
                     }
-                    if (index != lastIndex) {
+                    if (index != scheduleData.eventForList.lastIndex) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
@@ -115,7 +97,6 @@ fun ScheduleListView(
 
 @Composable
 fun DateHeader(
-    currentWeek: Int?,
     date: LocalDate,
     formatter: DateTimeFormatter
 ) {
@@ -144,21 +125,5 @@ fun DateHeader(
             style = MaterialTheme.typography.titleMedium,
             color = color
         )
-        currentWeek?.let {
-            Icon(
-                modifier = Modifier.size(3.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.circle),
-                contentDescription = null,
-                tint = color
-            )
-            Text(
-                text = "${
-                    LocalContext.current.getString(R.string.week)
-                        .replaceFirstChar { it.lowercase() }
-                } $currentWeek",
-                style = MaterialTheme.typography.bodyLarge,
-                color = color
-            )
-        }
     }
 }
