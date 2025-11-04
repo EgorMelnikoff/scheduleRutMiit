@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Empty(
+    modifier: Modifier = Modifier,
     imageVector: ImageVector? = null,
     title: String? = null,
     subtitle: String? = null,
@@ -29,7 +30,7 @@ fun Empty(
     paddingBottom: Dp? = null
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(
