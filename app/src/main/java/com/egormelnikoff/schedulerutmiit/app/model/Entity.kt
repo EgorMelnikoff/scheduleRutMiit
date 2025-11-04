@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -139,16 +140,60 @@ fun LocalDateTime.toLocaleTimeWithTimeZone(): LocalTime {
         .toLocalTime()
 }
 
-fun LocalDate.calculateFirstDayOfWeek(): LocalDate {
+fun LocalDate.getFirstDayOfWeek(): LocalDate {
     return this.minusDays(this.dayOfWeek.value - 1L)
 }
 
-fun calculateCurrentWeek(
+fun getCurrentWeek(
     date: LocalDate,
     startDate: LocalDate,
-    firstPeriodNumber: Int,
-    interval: Int
+    recurrence: Recurrence
 ): Int {
     val weeksFromStart = abs(ChronoUnit.WEEKS.between(date, startDate)).plus(1).toInt()
-    return ((weeksFromStart + firstPeriodNumber) % interval).plus(1)
+    return ((weeksFromStart + recurrence.firstWeekNumber) % recurrence.interval!!).plus(1)
+}
+
+fun List<Event>.getGroupedEvents(): Map<Pair<LocalTime, LocalTime>, List<Event>> {
+    if (this.isEmpty()) return mapOf()
+    return this
+        .sortedBy { event ->
+            event.startDatetime!!.toLocalTime()
+        }.groupBy { event ->
+            Pair(
+                event.startDatetime!!.toLocalTime(),
+                event.endDatetime!!.toLocalTime()
+            )
+        }
+}
+
+fun LocalDate.getEventsForDate(
+    scheduleEntity: ScheduleEntity,
+    periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
+    nonPeriodicEvents: Map<LocalDate, List<Event>>?
+): Map<Pair<LocalTime, LocalTime>, List<Event>> {
+    var displayedEvents = listOf<Event>()
+
+    when {
+        (periodicEvents != null) -> {
+            val currentWeek = getCurrentWeek(
+                date = this,
+                startDate = scheduleEntity.startDate,
+                recurrence = scheduleEntity.recurrence!!
+            )
+            val events = periodicEvents[currentWeek]!!.filter {
+                it.key == this.dayOfWeek
+            }.values.flatten()
+
+            displayedEvents = events
+        }
+
+        (nonPeriodicEvents != null) -> {
+            val events = nonPeriodicEvents.filter {
+                it.key == this
+            }
+            displayedEvents = events.values.flatten()
+        }
+    }
+
+    return displayedEvents.getGroupedEvents()
 }
