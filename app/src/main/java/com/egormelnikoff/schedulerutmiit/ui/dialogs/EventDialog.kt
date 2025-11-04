@@ -108,6 +108,9 @@ fun EventDialog(
                 title = event.name!!,
                 subtitle = subtitle,
                 scrollBehavior = scrollBehavior,
+                navAction = {
+                    onBack()
+                },
                 actions = {
                     IconButton(
                         onClick = {
