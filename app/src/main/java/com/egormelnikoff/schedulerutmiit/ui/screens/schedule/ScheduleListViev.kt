@@ -50,13 +50,13 @@ fun ScheduleListView(
     val scheduleData = scheduleUiState.currentNamedScheduleData!!
     val formatter = DateTimeFormatter.ofPattern("d MMMM")
 
-    if (scheduleData.eventForList.isNotEmpty()) {
+    if (scheduleData.fullEventList.isNotEmpty()) {
         LazyColumn(
             state = scheduleState.scheduleListState,
             contentPadding = PaddingValues(bottom = paddingBottom),
             modifier = Modifier.fillMaxSize(),
         ) {
-            scheduleData.eventForList.forEachIndexed { index, events ->
+            scheduleData.fullEventList.forEachIndexed { index, events ->
                 val eventsForDay = events.second.getGroupedEvents().toList()
                 stickyHeader {
                     DateHeader(
@@ -79,7 +79,7 @@ fun ScheduleListView(
                             isShortEvent = isShortEvent
                         )
                     }
-                    if (index != scheduleData.eventForList.lastIndex) {
+                    if (index != scheduleData.fullEventList.lastIndex) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }

@@ -16,13 +16,12 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
-
 data class NamedScheduleData(
     val namedSchedule: NamedScheduleFormatted? = null,
     val settledScheduleEntity: ScheduleEntity? = null,
     val periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null,
     val nonPeriodicEvents: Map<LocalDate, List<Event>>? = null,
-    val eventForList: List<Pair<LocalDate, List<Event>>> = listOf(),
+    val fullEventList: List<Pair<LocalDate, List<Event>>> = listOf(),
     val hiddenEvents: List<Event> = listOf(),
     val eventsExtraData: List<EventExtraData> = listOf(),
     val schedulePagerData: SchedulePagerData,
@@ -39,9 +38,8 @@ data class NamedScheduleData(
         fun getNamedScheduleData(
             namedSchedule: NamedScheduleFormatted?
         ): NamedScheduleData? {
-            if (namedSchedule == null || namedSchedule.schedules.isEmpty()) {
-                return null
-            }
+            if (namedSchedule == null || namedSchedule.schedules.isEmpty()) return null
+
             val scheduleFormatted = findCurrentSchedule(namedSchedule)
             return scheduleFormatted?.let { schedule ->
                 val today = LocalDateTime.now()
@@ -64,7 +62,7 @@ data class NamedScheduleData(
                         }
                 }
 
-                val eventsForList = getFullEventsList(
+                val fullEventList = getFullEventsList(
                     today = today.toLocalDate(),
                     periodicEvents = periodicEventsForCalendar,
                     eventsList = visibleEvents,
@@ -91,7 +89,7 @@ data class NamedScheduleData(
                     periodicEvents = periodicEventsForCalendar,
                     schedulePagerData = schedulePagerData,
                     nonPeriodicEvents = nonPeriodicEventsForCalendar,
-                    eventForList = eventsForList,
+                    fullEventList = fullEventList,
 
                     eventsExtraData = schedule.eventsExtraData,
                     hiddenEvents = hiddenEvents,
@@ -175,8 +173,7 @@ data class NamedScheduleData(
             ).toInt()
 
             return (weeksCount - weeksRemaining..weeksCount).map { week ->
-                ((week + scheduleEntity.recurrence!!.firstWeekNumber)
-                        % scheduleEntity.recurrence.interval!!)
+                ((week + scheduleEntity.recurrence!!.firstWeekNumber) % scheduleEntity.recurrence.interval!!)
                     .plus(1)
             }
         }
