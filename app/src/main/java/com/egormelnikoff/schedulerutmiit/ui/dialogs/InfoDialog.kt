@@ -44,12 +44,13 @@ import com.egormelnikoff.schedulerutmiit.view_models.settings.AppInfoState
 fun InfoDialog(
     externalPadding: PaddingValues,
     onBack: () -> Unit,
+    onLoadAppInfoState: () -> Unit,
     onOpenUri: (String) -> Unit,
     appInfoState: AppInfoState
 ) {
     val context = LocalContext.current
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-
+    onLoadAppInfoState()
     Scaffold(
         topBar = {
             CustomTopAppBar(

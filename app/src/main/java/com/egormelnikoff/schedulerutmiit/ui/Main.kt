@@ -49,6 +49,7 @@ import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.UiEvent
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.settings.AppInfoState
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import kotlinx.coroutines.launch
 import java.time.temporal.ChronoUnit
@@ -424,6 +425,11 @@ fun Main(
                     InfoDialog(
                         externalPadding = externalPadding,
                         onBack = { appState.appBackStack.onBack() },
+                        onLoadAppInfoState = {
+                            if (appInfoState !is AppInfoState.Loaded) {
+                                settingsViewModel.getAppInfo()
+                            }
+                        },
                         onOpenUri = { value ->
                             appState.uriHandler.openUri(value)
                         },
