@@ -26,8 +26,9 @@ fun ScheduleRutMiitTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !isDarkTheme
             window.isNavigationBarContrastEnforced = false
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !isDarkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !isDarkTheme
         }
     }
 
