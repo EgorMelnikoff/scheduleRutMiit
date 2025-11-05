@@ -46,17 +46,19 @@ data class NamedScheduleData(
             return scheduleFormatted?.let { schedule ->
                 val today = LocalDateTime.now()
                 val splitEvents = schedule.events.partition { it.isHidden }
+                val hiddenEvents = splitEvents.first
+                val visibleEvents = splitEvents.second
 
                 var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
                 var nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>? = null
 
                 if (schedule.scheduleEntity.recurrence != null) {
-                    periodicEventsForCalendar = splitEvents.second
+                    periodicEventsForCalendar = visibleEvents
                         .getPeriodicEvents(
                             schedule.scheduleEntity.recurrence.interval!!
                         )
                 } else {
-                    nonPeriodicEventsForCalendar = splitEvents.second
+                    nonPeriodicEventsForCalendar = visibleEvents
                         .groupBy {
                             it.startDatetime!!.toLocalDate()
                         }
@@ -79,7 +81,7 @@ data class NamedScheduleData(
                     date = today,
                     scheduleEntity = schedule.scheduleEntity,
                     periodicEvents = periodicEventsForCalendar,
-                    nonPeriodicEvents = null
+                    nonPeriodicEvents = nonPeriodicEventsForCalendar
                 )
 
                 NamedScheduleData(
@@ -92,7 +94,7 @@ data class NamedScheduleData(
                     eventForList = eventsForList,
 
                     eventsExtraData = schedule.eventsExtraData,
-                    hiddenEvents = splitEvents.first,
+                    hiddenEvents = hiddenEvents,
                     reviewData = reviewData,
                 )
             }
@@ -307,7 +309,7 @@ data class ReviewData(
                         startDate = scheduleEntity.startDate,
                         recurrence = scheduleEntity.recurrence!!
                     )
-                    eventsCountForWeek = periodicEvents[currentWeek]?.values?.size ?: 0
+                    eventsCountForWeek = periodicEvents[currentWeek]?.values?.flatten()?.size ?: 0
                 }
 
                 (nonPeriodicEvents != null) -> {
