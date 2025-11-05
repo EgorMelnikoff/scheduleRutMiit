@@ -67,7 +67,7 @@ data class NamedScheduleData(
                 val eventsForList = getFullEventsList(
                     today = today.toLocalDate(),
                     periodicEvents = periodicEventsForCalendar,
-                    nonPeriodicEvents = schedule.events,
+                    eventsList = visibleEvents,
                     scheduleEntity = schedule.scheduleEntity,
                 )
 
@@ -88,8 +88,8 @@ data class NamedScheduleData(
                     namedSchedule = namedSchedule,
                     settledScheduleEntity = schedule.scheduleEntity,
 
-                    schedulePagerData = schedulePagerData,
                     periodicEvents = periodicEventsForCalendar,
+                    schedulePagerData = schedulePagerData,
                     nonPeriodicEvents = nonPeriodicEventsForCalendar,
                     eventForList = eventsForList,
 
@@ -120,11 +120,11 @@ data class NamedScheduleData(
             today: LocalDate,
             scheduleEntity: ScheduleEntity,
             periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
-            nonPeriodicEvents: List<Event>?
+            eventsList: List<Event>?
         ): List<Pair<LocalDate, List<Event>>> {
             var fullEventsList = listOf<Event>()
             when {
-                (periodicEvents == null && nonPeriodicEvents == null) -> return listOf()
+                (periodicEvents == null && eventsList == null) -> return listOf()
                 (periodicEvents != null) -> {
                     val currentStartDate = maxOf(today, scheduleEntity.startDate)
                     val events = buildList {
@@ -149,8 +149,8 @@ data class NamedScheduleData(
                     fullEventsList = events
                 }
 
-                (nonPeriodicEvents != null) -> {
-                    fullEventsList = nonPeriodicEvents
+                (eventsList != null) -> {
+                    fullEventsList = eventsList
                 }
             }
 
