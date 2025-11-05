@@ -36,6 +36,7 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSe
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
+import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 
 data class ThemeSelectorItemContent(
     val name: String,
@@ -178,6 +179,7 @@ fun SettingsScreen(
             )
         }
     }
+    StatusBarProtection()
 }
 
 @Composable
