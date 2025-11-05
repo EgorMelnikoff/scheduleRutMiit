@@ -26,7 +26,7 @@ fun CustomPullToRefreshBox(
             Indicator(
                 modifier = Modifier.align(Alignment.TopCenter),
                 isRefreshing = isRefreshing,
-                containerColor = MaterialTheme.colorScheme.background,
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 color = MaterialTheme.colorScheme.primary,
                 state = state
             )
