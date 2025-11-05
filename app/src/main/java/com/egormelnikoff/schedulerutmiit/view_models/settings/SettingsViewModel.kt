@@ -37,7 +37,6 @@ class SettingsViewModelImpl @Inject constructor(
     private val settingsRepos: SettingsRepos,
     private val dataStore: PreferencesDataStore
 ) : ViewModel(), SettingsViewModel {
-
     private val _stateAppInfo = MutableStateFlow<AppInfoState>(AppInfoState.Loading)
     override val stateAppInfo: StateFlow<AppInfoState> = _stateAppInfo
 
@@ -50,7 +49,6 @@ class SettingsViewModelImpl @Inject constructor(
     private var infoJob: Job? = null
 
     init {
-        getAppInfo()
         collectSettings()
         if (_isDataLoading.value) {
             _isDataLoading.value = false
