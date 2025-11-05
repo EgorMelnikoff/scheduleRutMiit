@@ -100,7 +100,6 @@ fun HorizontalCalendar(
             }
             Row(
                 modifier = Modifier
-                    .weight(1f)
                     .clip(MaterialTheme.shapes.small)
                     .clickable(
                         onClick = {
@@ -110,7 +109,7 @@ fun HorizontalCalendar(
                             scheduleState.onSelectDate(scheduleData.schedulePagerData.defaultDate)
                         }
                     )
-                    .padding(4.dp),
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)
             ) {
