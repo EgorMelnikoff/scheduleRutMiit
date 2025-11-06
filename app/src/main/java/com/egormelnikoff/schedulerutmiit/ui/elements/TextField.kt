@@ -50,7 +50,7 @@ fun CustomTextField(
             disabledIndicatorColor = MaterialTheme.colorScheme.outline,
             disabledTextColor = MaterialTheme.colorScheme.outline
         ),
-        textStyle = MaterialTheme.typography.titleSmall,
+        textStyle = MaterialTheme.typography.bodyLarge,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         placeholder = placeholderText?.let {
