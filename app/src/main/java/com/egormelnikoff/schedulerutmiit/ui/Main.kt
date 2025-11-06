@@ -26,6 +26,7 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datas
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventDialog
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.HiddenEventsDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.InfoDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.NewsDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.RenameDialog
@@ -180,16 +181,9 @@ fun Main(
                         },
                         navigateToRenameDialog = { namedScheduleEntity ->
                             appState.appBackStack.navigateToDialog(
-                                Routes.RenameNamedSchedule(
+                                Routes.RenameNamedScheduleDialog(
                                     namedScheduleEntity = namedScheduleEntity
                                 )
-                            )
-                        },
-
-                        onRefreshState = {
-                            scheduleViewModel.loadInitialData(
-                                showLoading = false,
-                                showUpdating = true
                             )
                         },
                         onSetNamedSchedule = { value ->
@@ -210,13 +204,6 @@ fun Main(
                             scheduleViewModel.deleteNamedSchedule(
                                 primaryKeyNamedSchedule = value.first,
                                 isDefault = value.second
-                            )
-                        },
-                        onShowEvent = { primaryKey ->
-                            scheduleViewModel.updateEventHidden(
-                                scheduleEntity = scheduleUiState.currentNamedScheduleData!!.settledScheduleEntity!!,
-                                eventPrimaryKey = primaryKey,
-                                isHidden = false
                             )
                         },
 
@@ -251,19 +238,25 @@ fun Main(
                         },
                         navigateToRenameDialog = { namedScheduleEntity ->
                             appState.appBackStack.navigateToDialog(
-                                Routes.RenameNamedSchedule(
+                                Routes.RenameNamedScheduleDialog(
                                     namedScheduleEntity = namedScheduleEntity
                                 )
+                            )
+                        },
+                        navigateToHiddenEvents = {
+                            appState.appBackStack.navigateToDialog(
+                                Routes.HiddenEventsDialog
                             )
                         },
 
                         onLoadInitialData = {
                             scheduleViewModel.loadInitialData(false)
                         },
-                        onRefreshState = {
+                        onRefreshState = { primaryKey ->
                             scheduleViewModel.loadInitialData(
                                 showLoading = false,
-                                showUpdating = true
+                                showUpdating = true,
+                                namedSchedulePrimaryKey = primaryKey
                             )
                         },
                         onSaveCurrentNamedSchedule = {
@@ -518,7 +511,7 @@ fun Main(
                     )
                 }
 
-                entry<Routes.RenameNamedSchedule> { key ->
+                entry<Routes.RenameNamedScheduleDialog> { key ->
                     RenameDialog(
                         oldName = key.namedScheduleEntity.fullName,
                         onBack = {
@@ -531,6 +524,23 @@ fun Main(
                             )
                             appState.appBackStack.onBack()
                         },
+                        externalPadding = externalPadding
+                    )
+                }
+
+                entry<Routes.HiddenEventsDialog> {
+                    HiddenEventsDialog(
+                        onBack = {
+                            appState.appBackStack.onBack()
+                        },
+                        onShowEvent = { primaryKey ->
+                            scheduleViewModel.updateEventHidden(
+                                scheduleEntity = scheduleUiState.currentNamedScheduleData.settledScheduleEntity!!,
+                                eventPrimaryKey = primaryKey,
+                                isHidden = false
+                            )
+                        },
+                        hiddenEvents = scheduleUiState.currentNamedScheduleData!!.hiddenEvents,
                         externalPadding = externalPadding
                     )
                 }

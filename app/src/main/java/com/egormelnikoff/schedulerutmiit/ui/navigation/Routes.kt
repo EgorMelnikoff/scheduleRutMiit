@@ -21,7 +21,8 @@ sealed class Routes(val isDialog: Boolean) {
     ) : Routes(true)
     data object SearchDialog : Routes(true)
     data object AddScheduleDialog : Routes(true)
-    data class RenameNamedSchedule(
+    data class RenameNamedScheduleDialog(
         val namedScheduleEntity: NamedScheduleEntity
     ) : Routes(true)
+    data object HiddenEventsDialog : Routes(true)
 }

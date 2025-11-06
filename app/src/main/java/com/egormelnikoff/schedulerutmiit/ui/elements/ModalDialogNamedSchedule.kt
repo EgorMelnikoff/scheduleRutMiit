@@ -22,12 +22,14 @@ import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 @Composable
 fun ModalDialogNamedSchedule(
     navigateToRenameDialog: () -> Unit,
+    navigateToHiddenEvents: (() -> Unit)? = null,
     onDismiss: (NamedScheduleEntity?) -> Unit,
     onSetSchedule: (() -> Unit)? = null,
     onSelectDefault: () -> Unit,
     onDelete: () -> Unit,
     onLoadInitialData: (() -> Unit)? = null,
     onSaveCurrentNamedSchedule: (() -> Unit)? = null,
+
     namedScheduleEntity: NamedScheduleEntity,
     isSavedNamedSchedule: Boolean,
 ) {
@@ -78,6 +80,17 @@ fun ModalDialogNamedSchedule(
                 title = LocalContext.current.getString(R.string.rename),
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
+            navigateToHiddenEvents?.let {
+                ActionDialogButton(
+                    onClick = {
+                        it()
+                        onDismiss(null)
+                    },
+                    icon = ImageVector.vectorResource(R.drawable.visibility_off),
+                    title = LocalContext.current.getString(R.string.hidden_events),
+                    contentColor = MaterialTheme.colorScheme.onBackground
+                )
+            }
             ActionDialogButton(
                 onClick = {
                     onDelete()

@@ -66,7 +66,8 @@ fun ScreenSchedule(
     onHideEvent: (Long) -> Unit,
 
     onLoadInitialData: () -> Unit,
-    onRefreshState: () -> Unit,
+    onRefreshState: (Long) -> Unit,
+    navigateToHiddenEvents: () -> Unit,
     onSaveCurrentNamedSchedule: () -> Unit,
     onSelectDefaultNamedSchedule: (Long) -> Unit,
     onDeleteNamedSchedule: (Pair<Long, Boolean>) -> Unit,
@@ -129,7 +130,7 @@ fun ScreenSchedule(
                         .padding(top = padding.calculateTopPadding()),
                     isRefreshing = scheduleUiState.isUpdating,
                     onRefresh = {
-                        onRefreshState()
+                        onRefreshState(scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id)
                     },
                 ) {
                     Column{
@@ -245,6 +246,9 @@ fun ScreenSchedule(
             navigateToRenameDialog = {
                 navigateToRenameDialog(showNamedScheduleDialog!!)
             },
+            navigateToHiddenEvents = if (scheduleUiState.currentNamedScheduleData.hiddenEvents.isNotEmpty()) {
+                navigateToHiddenEvents
+            } else null,
             isSavedNamedSchedule = scheduleUiState.isSaved,
             onSaveCurrentNamedSchedule = onSaveCurrentNamedSchedule
         )
