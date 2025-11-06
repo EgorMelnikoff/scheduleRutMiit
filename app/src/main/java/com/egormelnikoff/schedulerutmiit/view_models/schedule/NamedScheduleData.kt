@@ -24,8 +24,8 @@ data class NamedScheduleData(
     val fullEventList: List<Pair<LocalDate, List<Event>>> = listOf(),
     val hiddenEvents: List<Event> = listOf(),
     val eventsExtraData: List<EventExtraData> = listOf(),
-    val schedulePagerData: SchedulePagerData,
-    val reviewData: ReviewData
+    val schedulePagerData: SchedulePagerData? = null,
+    val reviewData: ReviewData? = null
 ) {
     companion object {
         fun findCurrentSchedule(
@@ -38,10 +38,10 @@ data class NamedScheduleData(
         fun getNamedScheduleData(
             namedSchedule: NamedScheduleFormatted?
         ): NamedScheduleData? {
-            if (namedSchedule == null || namedSchedule.schedules.isEmpty()) return null
+            if (namedSchedule == null) return null
 
-            val scheduleFormatted = findCurrentSchedule(namedSchedule)
-            return scheduleFormatted?.let { schedule ->
+            val schedule = findCurrentSchedule(namedSchedule)
+            return schedule?.let {
                 val today = LocalDateTime.now()
                 val splitEvents = schedule.events.partition { it.isHidden }
                 val hiddenEvents = splitEvents.first
@@ -95,7 +95,7 @@ data class NamedScheduleData(
                     hiddenEvents = hiddenEvents,
                     reviewData = reviewData,
                 )
-            }
+            } ?: NamedScheduleData(namedSchedule)
         }
 
         fun List<Event>.getPeriodicEvents(
@@ -134,7 +134,8 @@ data class NamedScheduleData(
                             val eventsInWeek = periodicEvents[week]?.values.orEmpty().flatten()
                             val currentWeekStartDate = currentStartDate.plusWeeks(index.toLong())
                             eventsInWeek.forEach { event ->
-                                val daysToAdd = event.startDatetime!!.dayOfWeek.value - today.dayOfWeek.value
+                                val daysToAdd =
+                                    event.startDatetime!!.dayOfWeek.value - today.dayOfWeek.value
                                 val newEventDate = currentWeekStartDate.plusDays(daysToAdd.toLong())
                                 val newEvent = event.copy(
                                     startDatetime = newEventDate.atTime(event.startDatetime.toLocalTime()),

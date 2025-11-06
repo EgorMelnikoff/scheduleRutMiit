@@ -31,8 +31,8 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 sealed interface UiEvent {
-    data class ShowErrorMessage(val message: String) : UiEvent
-    data class ShowInfoMessage(val message: String) : UiEvent
+    data class ErrorMessage(val message: String) : UiEvent
+    data class InfoMessage(val message: String) : UiEvent
 }
 
 data class ScheduleUiState(
@@ -54,6 +54,7 @@ interface ScheduleViewModel {
         showUpdating: Boolean = false,
         namedSchedulePrimaryKey: Long? = null
     )
+
     fun getNamedScheduleFromApi(name: String, apiId: String, type: Int)
     fun getNamedScheduleFromDb(primaryKeyNamedSchedule: Long, setDefault: Boolean = false)
     fun saveCurrentNamedSchedule()
@@ -230,10 +231,7 @@ class ScheduleViewModelImpl @Inject constructor(
                 workScheduler.startPeriodicWidgetUpdating()
             }
 
-            updateNamedScheduleUiState(
-                namedSchedule = namedSchedule,
-
-                )
+            updateNamedScheduleUiState(namedSchedule = namedSchedule)
             updateUiState(
                 savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules(),
                 isSaved = true
@@ -265,7 +263,7 @@ class ScheduleViewModelImpl @Inject constructor(
                     ?: savedNamedSchedules.firstOrNull()
                 defaultNamedSchedule?.let {
                     updateNamedScheduleUiState(
-                        namedSchedule = null
+                        namedSchedule = scheduleRepos.getSavedNamedScheduleById(it.id)
                     )
                 }
             } else {
@@ -375,7 +373,7 @@ class ScheduleViewModelImpl @Inject constructor(
             updateUiState(
                 savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
             )
-            if (namedScheduleEntity.isDefault) {
+            if (namedScheduleEntity.id == _uiState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
                 val updatedNamedSchedule =
                     scheduleRepos.getSavedNamedScheduleById(namedScheduleEntity.id)
 
@@ -510,7 +508,7 @@ class ScheduleViewModelImpl @Inject constructor(
         message: String?
     ) {
         _uiEventChannel.send(
-            UiEvent.ShowErrorMessage(
+            UiEvent.ErrorMessage(
                 message ?: resourcesManager.getString(R.string.unknown_error)!!
             )
         )

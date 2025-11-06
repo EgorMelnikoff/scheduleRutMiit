@@ -26,7 +26,7 @@ data class ScheduleState(
 fun rememberScheduleState(
     scheduleUiState: ScheduleUiState
 ): ScheduleState? {
-    return scheduleUiState.currentNamedScheduleData?.namedSchedule?.let {
+    return if (scheduleUiState.currentNamedScheduleData?.namedSchedule != null && scheduleUiState.currentNamedScheduleData.schedulePagerData != null) {
         val scheduleListState = rememberLazyListState()
         val pagerDaysState = rememberPagerState(
             pageCount = { scheduleUiState.currentNamedScheduleData.schedulePagerData.weeksCount.times(7) },
@@ -59,5 +59,5 @@ fun rememberScheduleState(
                 expandedSchedulesMenu = newValue
             }
         )
-    }
+    } else null
 }

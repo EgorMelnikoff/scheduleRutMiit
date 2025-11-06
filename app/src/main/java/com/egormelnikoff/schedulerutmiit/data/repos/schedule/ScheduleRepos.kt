@@ -271,6 +271,9 @@ class ScheduleReposImpl @Inject constructor(
             }
 
             is Result.Success -> {
+                if (timetables.data.timetables.isEmpty()) {
+                    return Result.Error(Error.EmptyBodyError)
+                }
                 val schedules = mutableListOf<Schedule>()
                 timetables.data.timetables.forEach { timetable ->
                     val schedule = miitApiHelper.callApiWithExceptions(
@@ -484,7 +487,7 @@ class ScheduleReposImpl @Inject constructor(
                             events = checkedEvents,
                             recurrence = Recurrence(
                                 frequency = "WEEKLY",
-                                currentNumber = parser.parseCurrentWeek("https://www.miit.ru/timetable/$apiId"),
+                                currentNumber = parser.parseCurrentWeek("https://www.miit.ru/people/$apiId/timetable"),
                                 interval = weeksIndexes.size,
                                 firstWeekNumber = 1
                             )
@@ -542,11 +545,10 @@ class ScheduleReposImpl @Inject constructor(
                                     LocalDate.now().getFirstDayOfWeek()
                                 )
                             ).plus(1)
-                            val firstWeekNumber =
-                                ((currentWeekIndex + oldSchedule.periodicContent.recurrence!!.currentNumber!!)
-                                        % oldSchedule.periodicContent.recurrence.interval!!)
-                                    .toInt()
-                                    .plus(1)
+                            val firstWeekNumber = ((currentWeekIndex + (oldSchedule.periodicContent.recurrence!!.currentNumber ?: 1))
+                                    % oldSchedule.periodicContent.recurrence.interval!!)
+                                .toInt()
+                                .plus(1)
                             Recurrence(
                                 frequency = oldSchedule.periodicContent.recurrence.frequency,
                                 interval = oldSchedule.periodicContent.recurrence.interval,
@@ -558,8 +560,7 @@ class ScheduleReposImpl @Inject constructor(
                                 frequency = oldSchedule.periodicContent.recurrence!!.frequency,
                                 interval = oldSchedule.periodicContent.recurrence.interval,
                                 currentNumber = oldSchedule.periodicContent.recurrence.currentNumber,
-                                firstWeekNumber = oldSchedule.periodicContent.recurrence.currentNumber
-                                    ?: 1
+                                firstWeekNumber = oldSchedule.periodicContent.recurrence.currentNumber ?: 1
                             )
                         }
                     },

@@ -1,14 +1,23 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -17,21 +26,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModalDialogNamedSchedule(
-    navigateToRenameDialog: () -> Unit,
+    navigateToRenameDialog: (() -> Unit)? = null,
     navigateToHiddenEvents: (() -> Unit)? = null,
     onDismiss: (NamedScheduleEntity?) -> Unit,
-    onSetSchedule: (() -> Unit)? = null,
-    onSelectDefault: () -> Unit,
-    onDelete: () -> Unit,
+    onOpenNamedSchedule: (() -> Unit)? = null,
+    onSetDefaultNamedSchedule: (() -> Unit)? = null,
+    onDeleteNamedSchedule: (() -> Unit)? = null,
     onLoadInitialData: (() -> Unit)? = null,
     onSaveCurrentNamedSchedule: (() -> Unit)? = null,
-
     namedScheduleEntity: NamedScheduleEntity,
-    isSavedNamedSchedule: Boolean,
+    scheduleEntity: ScheduleEntity? = null
 ) {
     CustomModalBottomSheet(
         modifier = Modifier.padding(horizontal = 8.dp),
@@ -39,68 +48,93 @@ fun ModalDialogNamedSchedule(
             onDismiss(null)
         }
     ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            text = namedScheduleEntity.fullName,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
-        Spacer(modifier = Modifier.height(0.dp))
-        if (!namedScheduleEntity.isDefault && isSavedNamedSchedule) {
-            ActionDialogButton(
-                onClick = {
-                    onSelectDefault()
-                    onDismiss(null)
-                },
-                icon = ImageVector.vectorResource(R.drawable.check),
-                title = LocalContext.current.getString(R.string.make_default),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            )
-        }
-        onSetSchedule?.let {
-            ActionDialogButton(
-                onClick = {
-                    it()
-                    onDismiss(null)
-                },
-                icon = ImageVector.vectorResource(R.drawable.open),
-                title = LocalContext.current.getString(R.string.open),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            )
-        }
-        if (isSavedNamedSchedule) {
-            ActionDialogButton(
-                onClick = {
-                    navigateToRenameDialog()
-                    onDismiss(null)
-                },
-                icon = ImageVector.vectorResource(R.drawable.edit),
-                title = LocalContext.current.getString(R.string.rename),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    text = namedScheduleEntity.fullName,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+                if (scheduleEntity != null && namedScheduleEntity.type != 3) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        text = scheduleEntity.typeName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                }
+            }
             navigateToHiddenEvents?.let {
-                ActionDialogButton(
+                NamedScheduleIconButton(
                     onClick = {
-                        it()
+                        navigateToHiddenEvents()
                         onDismiss(null)
                     },
+                    colors = IconButtonDefaults.iconButtonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onBackground
+                    ),
                     icon = ImageVector.vectorResource(R.drawable.visibility_off),
-                    title = LocalContext.current.getString(R.string.hidden_events),
-                    contentColor = MaterialTheme.colorScheme.onBackground
+                    contentDescription = LocalContext.current.getString(R.string.hidden_events)
                 )
             }
-            ActionDialogButton(
-                onClick = {
-                    onDelete()
-                    onDismiss(null)
-                },
-                icon = ImageVector.vectorResource(R.drawable.delete),
-                title = LocalContext.current.getString(R.string.delete),
-                contentColor = MaterialTheme.colorScheme.error
+            navigateToRenameDialog?.let {
+                NamedScheduleIconButton(
+                    onClick = {
+                        navigateToRenameDialog()
+                        onDismiss(null)
+                    },
+                    colors = IconButtonDefaults.iconButtonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onBackground
+                    ),
+                    icon = ImageVector.vectorResource(R.drawable.edit),
+                    contentDescription = LocalContext.current.getString(R.string.rename)
+                )
+            }
+            onDeleteNamedSchedule?.let {
+                NamedScheduleIconButton(
+                    onClick = {
+                        onDeleteNamedSchedule()
+                        onDismiss(null)
+                    },
+                    colors = IconButtonDefaults.iconButtonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    icon = ImageVector.vectorResource(R.drawable.delete),
+                    contentDescription = LocalContext.current.getString(R.string.delete)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(0.dp))
+        if (arrayOf(
+                onSaveCurrentNamedSchedule,
+                onSetDefaultNamedSchedule,
+                onLoadInitialData,
+                onOpenNamedSchedule
+            ).any { it != null }
+        ) {
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outline
             )
-        } else if (onSaveCurrentNamedSchedule != null) {
+        }
+        onSaveCurrentNamedSchedule?.let {
             ActionDialogButton(
                 onClick = {
                     onSaveCurrentNamedSchedule()
@@ -111,16 +145,32 @@ fun ModalDialogNamedSchedule(
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
         }
-
-        onLoadInitialData?.let {
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                thickness = 0.5.dp,
-                color = MaterialTheme.colorScheme.outline
-            )
+        onOpenNamedSchedule?.let {
             ActionDialogButton(
                 onClick = {
-                    it()
+                    onOpenNamedSchedule()
+                    onDismiss(null)
+                },
+                icon = ImageVector.vectorResource(R.drawable.open),
+                title = LocalContext.current.getString(R.string.open),
+                contentColor = MaterialTheme.colorScheme.onBackground
+            )
+        }
+        onSetDefaultNamedSchedule?.let {
+            ActionDialogButton(
+                onClick = {
+                    onSetDefaultNamedSchedule()
+                    onDismiss(null)
+                },
+                icon = ImageVector.vectorResource(R.drawable.check),
+                title = LocalContext.current.getString(R.string.make_default),
+                contentColor = MaterialTheme.colorScheme.onBackground
+            )
+        }
+        onLoadInitialData?.let {
+            ActionDialogButton(
+                onClick = {
+                    onLoadInitialData()
                     onDismiss(null)
                 },
                 icon = ImageVector.vectorResource(R.drawable.back),
@@ -128,5 +178,25 @@ fun ModalDialogNamedSchedule(
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
         }
+    }
+}
+
+@Composable
+fun NamedScheduleIconButton(
+    onClick: () -> Unit,
+    colors: IconButtonColors,
+    icon: ImageVector,
+    contentDescription: String
+) {
+    IconButton(
+        modifier = Modifier.size(48.dp),
+        onClick = onClick,
+        colors = colors
+    ) {
+        Icon(
+            modifier = Modifier.size(24.dp),
+            imageVector = icon,
+            contentDescription = contentDescription
+        )
     }
 }

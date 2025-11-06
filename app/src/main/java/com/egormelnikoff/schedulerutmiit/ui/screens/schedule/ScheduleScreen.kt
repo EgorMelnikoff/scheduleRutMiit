@@ -106,45 +106,46 @@ fun ScreenSchedule(
             )
         }
 
-        scheduleUiState.currentNamedScheduleData?.namedSchedule != null && scheduleState != null -> {
+        scheduleUiState.currentNamedScheduleData?.namedSchedule != null -> {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
                     ScheduleTopAppBar(
                         navigateToAddEvent = navigateToAddEvent,
                         onSetScheduleView = onSetScheduleView,
-                        onShowExpandedMenu = scheduleState.onExpandSchedulesMenu,
+                        onShowExpandedMenu = scheduleState?.onExpandSchedulesMenu,
                         onShowNamedScheduleDialog = { newValue ->
                             showNamedScheduleDialog = newValue
                         },
                         scheduleUiState = scheduleUiState,
                         calendarView = appSettings.calendarView,
-                        expandedSchedulesMenu = scheduleState.expandedSchedulesMenu,
+                        expandedSchedulesMenu = scheduleState?.expandedSchedulesMenu,
                         context = LocalContext.current
                     )
                 }
             ) { padding ->
-                CustomPullToRefreshBox(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = padding.calculateTopPadding()),
-                    isRefreshing = scheduleUiState.isUpdating,
-                    onRefresh = {
-                        onRefreshState(scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id)
-                    },
-                ) {
-                    Column{
-                        IsSavedAlert(
-                            isSaved = scheduleUiState.isSaved,
-                            onSave = onSaveCurrentNamedSchedule
-                        )
-                        ExpandedMenu(
-                            setDefaultSchedule = onSetDefaultSchedule,
-                            scheduleUiState = scheduleUiState,
-                            expandedSchedulesMenu = scheduleState.expandedSchedulesMenu,
-                            onShowExpandedMenu = scheduleState.onExpandSchedulesMenu
-                        )
-                        if (scheduleUiState.currentNamedScheduleData.settledScheduleEntity != null) {
+                if (scheduleState != null && scheduleUiState.currentNamedScheduleData.settledScheduleEntity != null) {
+                    CustomPullToRefreshBox(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = padding.calculateTopPadding()),
+                        isRefreshing = scheduleUiState.isUpdating,
+                        onRefresh = {
+                            onRefreshState(scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id)
+                        },
+                    ) {
+                        Column {
+                            IsSavedAlert(
+                                isSaved = scheduleUiState.isSaved,
+                                onSave = onSaveCurrentNamedSchedule
+                            )
+                            ExpandedMenu(
+                                setDefaultSchedule = onSetDefaultSchedule,
+                                scheduleUiState = scheduleUiState,
+                                expandedSchedulesMenu = scheduleState.expandedSchedulesMenu,
+                                onShowExpandedMenu = scheduleState.onExpandSchedulesMenu
+                            )
+
                             AnimatedContent(
                                 targetState = appSettings.calendarView,
                                 transitionSpec = {
@@ -181,17 +182,16 @@ fun ScreenSchedule(
                                     )
                                 }
                             }
-                        } else {
-                            Empty(
-                                title = "¯\\_(ツ)_/¯",
-                                subtitle = LocalContext.current.getString(R.string.empty_here),
-                                isBoldTitle = false,
-                                paddingBottom = externalPadding.calculateBottomPadding()
-                            )
                         }
                     }
+                } else {
+                    Empty(
+                        title = "¯\\_(ツ)_/¯",
+                        subtitle = LocalContext.current.getString(R.string.empty_here),
+                        isBoldTitle = false,
+                        paddingBottom = externalPadding.calculateBottomPadding()
+                    )
                 }
-
             }
         }
 
@@ -229,29 +229,44 @@ fun ScreenSchedule(
     }
 
     showNamedScheduleDialog?.let {
-        ModalDialogNamedSchedule(
-            namedScheduleEntity = showNamedScheduleDialog!!,
-            onSelectDefault = {
-                onSelectDefaultNamedSchedule(showNamedScheduleDialog!!.id)
-            },
-            onDelete = {
-                showDeleteNamedScheduleDialog = true
-            },
-            onDismiss = {
-                showNamedScheduleDialog = null
-            },
-            onLoadInitialData = if (!scheduleUiState.currentNamedScheduleData!!.namedSchedule!!.namedScheduleEntity.isDefault) {
-                onLoadInitialData
-            } else null,
-            navigateToRenameDialog = {
-                navigateToRenameDialog(showNamedScheduleDialog!!)
-            },
-            navigateToHiddenEvents = if (scheduleUiState.currentNamedScheduleData.hiddenEvents.isNotEmpty()) {
-                navigateToHiddenEvents
-            } else null,
-            isSavedNamedSchedule = scheduleUiState.isSaved,
-            onSaveCurrentNamedSchedule = onSaveCurrentNamedSchedule
-        )
+        if (scheduleUiState.isSaved) {
+            ModalDialogNamedSchedule(
+                namedScheduleEntity = showNamedScheduleDialog!!,
+                scheduleEntity = scheduleUiState.currentNamedScheduleData?.settledScheduleEntity,
+                navigateToRenameDialog = {
+                    navigateToRenameDialog(showNamedScheduleDialog!!)
+                },
+                navigateToHiddenEvents = if (!scheduleUiState.currentNamedScheduleData?.hiddenEvents.isNullOrEmpty()) {
+                    navigateToHiddenEvents
+                } else null,
+                onDismiss = {
+                    showNamedScheduleDialog = null
+                },
+                onSetDefaultNamedSchedule = if (!showNamedScheduleDialog!!.isDefault) {
+                    { onSelectDefaultNamedSchedule(showNamedScheduleDialog!!.id) }
+                } else null,
+                onDeleteNamedSchedule = {
+                    showDeleteNamedScheduleDialog = true
+                },
+                onLoadInitialData = if (!showNamedScheduleDialog!!.isDefault) {
+                    onLoadInitialData
+                } else null
+
+            )
+        } else {
+            ModalDialogNamedSchedule(
+                namedScheduleEntity = showNamedScheduleDialog!!,
+                scheduleEntity = scheduleUiState.currentNamedScheduleData?.settledScheduleEntity,
+                onDismiss = {
+                    showNamedScheduleDialog = null
+                },
+                onSaveCurrentNamedSchedule = onSaveCurrentNamedSchedule,
+                onLoadInitialData = if (!showNamedScheduleDialog!!.isDefault) {
+                    onLoadInitialData
+                } else null,
+
+                )
+        }
     }
 
     if (showDeleteNamedScheduleDialog) {
@@ -275,7 +290,7 @@ fun ScreenSchedule(
 }
 
 @Composable
-fun IsSavedAlert (
+fun IsSavedAlert(
     isSaved: Boolean,
     onSave: () -> Unit
 ) {
@@ -284,7 +299,7 @@ fun IsSavedAlert (
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.error)

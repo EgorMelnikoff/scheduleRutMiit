@@ -125,7 +125,8 @@ fun ReviewScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (
-                    scheduleUiState.defaultNamedScheduleData?.namedSchedule != null
+                    scheduleUiState.defaultNamedScheduleData?.reviewData != null &&
+                    scheduleUiState.defaultNamedScheduleData.namedSchedule != null
                     && scheduleUiState.defaultNamedScheduleData.settledScheduleEntity != null
                 ) {
                     item {
@@ -219,23 +220,21 @@ fun ReviewScreen(
         if (showNamedScheduleDialog != null) {
             ModalDialogNamedSchedule(
                 namedScheduleEntity = showNamedScheduleDialog!!,
-                onSetSchedule = {
-                    onSetNamedSchedule(showNamedScheduleDialog!!.id)
-                },
-                onSelectDefault = {
-                    onSelectDefaultNamedSchedule(showNamedScheduleDialog!!.id)
-                },
-                onDelete = {
-                    showDeleteNamedScheduleDialog = showNamedScheduleDialog!!
+                navigateToRenameDialog = {
+                    navigateToRenameDialog(showNamedScheduleDialog!!)
                 },
                 onDismiss = {
                     showNamedScheduleDialog = null
                 },
-                navigateToRenameDialog = {
-                    navigateToRenameDialog(showNamedScheduleDialog!!)
+                onOpenNamedSchedule = {
+                    onSetNamedSchedule(showNamedScheduleDialog!!.id)
                 },
-                navigateToHiddenEvents = null,
-                isSavedNamedSchedule = true
+                onSetDefaultNamedSchedule = if (!showNamedScheduleDialog!!.isDefault) {
+                    { onSelectDefaultNamedSchedule(showNamedScheduleDialog!!.id) }
+                } else null,
+                onDeleteNamedSchedule = {
+                    showDeleteNamedScheduleDialog = showNamedScheduleDialog!!
+                }
             )
         }
 

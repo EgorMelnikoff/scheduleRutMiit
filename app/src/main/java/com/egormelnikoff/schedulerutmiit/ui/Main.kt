@@ -93,9 +93,9 @@ fun Main(
                     onScheduleClick = {
                         appState.scope.launch {
                             when {
-                                scheduleState != null && appSettings.calendarView -> {
+                                scheduleState != null && scheduleUiState.currentNamedScheduleData!!.schedulePagerData != null && appSettings.calendarView -> {
                                     scheduleState.onSelectDate(
-                                        scheduleUiState.currentNamedScheduleData!!.schedulePagerData.defaultDate
+                                        scheduleUiState.currentNamedScheduleData.schedulePagerData.defaultDate
                                     )
                                     scheduleState.pagerWeeksState.animateScrollToPage(
                                         scheduleUiState.currentNamedScheduleData.schedulePagerData.weeksStartIndex
@@ -557,14 +557,14 @@ fun UiEventProcessor(
     LaunchedEffect(Unit) {
         scheduleViewModel.uiEvent.collect { info ->
             when (info) {
-                is UiEvent.ShowErrorMessage -> {
+                is UiEvent.ErrorMessage -> {
                     snackBarHostState.showSnackbar(
                         message = info.message,
                         duration = SnackbarDuration.Long
                     )
                 }
 
-                is UiEvent.ShowInfoMessage -> {
+                is UiEvent.InfoMessage -> {
                     snackBarHostState.showSnackbar(
                         message = info.message,
                         duration = SnackbarDuration.Short
@@ -581,7 +581,7 @@ fun ScheduleStateSynchronizer(
     scheduleState: ScheduleState?,
     reviewState: ReviewState
 ) {
-    if (scheduleUiState.currentNamedScheduleData?.settledScheduleEntity != null && scheduleState != null) {
+    if (scheduleUiState.currentNamedScheduleData?.settledScheduleEntity != null && scheduleUiState.currentNamedScheduleData.schedulePagerData != null && scheduleState != null) {
         LaunchedEffect(
             scheduleUiState.currentNamedScheduleData.namedSchedule!!.namedScheduleEntity.apiId,
             scheduleUiState.currentNamedScheduleData.settledScheduleEntity.timetableId

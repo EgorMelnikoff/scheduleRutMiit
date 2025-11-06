@@ -80,13 +80,14 @@ fun CustomTopAppBar(
 @Composable
 fun ScheduleTopAppBar(
     navigateToAddEvent: (ScheduleEntity) -> Unit,
+    onShowExpandedMenu: ((Boolean) -> Unit)?,
+    onSetScheduleView: (Boolean) -> Unit,
+    onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit,
+
     scheduleUiState: ScheduleUiState,
     calendarView: Boolean,
     context: Context,
-    expandedSchedulesMenu: Boolean,
-    onShowExpandedMenu: (Boolean) -> Unit,
-    onSetScheduleView: (Boolean) -> Unit,
-    onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit
+    expandedSchedulesMenu: Boolean?
 ) {
     val isNotEmpty =
         scheduleUiState.currentNamedScheduleData!!.namedSchedule!!.schedules.isNotEmpty() && scheduleUiState.currentNamedScheduleData.settledScheduleEntity != null
@@ -94,7 +95,7 @@ fun ScheduleTopAppBar(
     val isCustomSchedule =
         scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.type == 3
     val rotationAngle by animateFloatAsState(
-        targetValue = if (expandedSchedulesMenu) 180f else 0f
+        targetValue = if (expandedSchedulesMenu == true) 180f else 0f
     )
 
     CustomTopAppBar(
@@ -125,7 +126,7 @@ fun ScheduleTopAppBar(
                 if (isSomeSchedules) {
                     IconButton(
                         onClick = {
-                            onShowExpandedMenu(!expandedSchedulesMenu)
+                            expandedSchedulesMenu?.let { onShowExpandedMenu?.invoke(!it) }
                         }
                     ) {
                         Icon(

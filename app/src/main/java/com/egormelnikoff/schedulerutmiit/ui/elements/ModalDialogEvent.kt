@@ -20,10 +20,10 @@ import com.egormelnikoff.schedulerutmiit.app.model.Event
 @Composable
 fun ModalDialogEvent(
     onDismiss: (Event?) -> Unit,
-    event: Event,
     onHideEvent: (() -> Unit)? = null,
     onDeleteEvent: (() -> Unit)? = null,
-    onShowEvent: (() -> Unit)? = null
+    onShowEvent: (() -> Unit)? = null,
+    event: Event,
 ) {
     CustomModalBottomSheet(
         modifier = Modifier.padding(horizontal = 8.dp),
@@ -43,7 +43,7 @@ fun ModalDialogEvent(
         onHideEvent?.let {
             ActionDialogButton(
                 onClick = {
-                    it()
+                    onHideEvent()
                     onDismiss(null)
                 },
                 icon = ImageVector.vectorResource(R.drawable.visibility_off),
@@ -54,7 +54,7 @@ fun ModalDialogEvent(
         onShowEvent?.let {
             ActionDialogButton(
                 onClick = {
-                    it()
+                    onShowEvent()
                     onDismiss(null)
                 },
                 icon = ImageVector.vectorResource(R.drawable.visibility),
@@ -65,7 +65,7 @@ fun ModalDialogEvent(
         onDeleteEvent?.let {
             ActionDialogButton(
                 onClick = {
-                    it()
+                    onDeleteEvent()
                     onDismiss(null)
                 },
                 icon = ImageVector.vectorResource(R.drawable.delete),

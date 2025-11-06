@@ -49,7 +49,6 @@ import java.util.Locale
 @Composable
 fun HorizontalCalendar(
     isShowCountClasses: Boolean,
-
     scheduleData: NamedScheduleData,
     scheduleState: ScheduleState,
 ) {
@@ -104,9 +103,9 @@ fun HorizontalCalendar(
                     .clickable(
                         onClick = {
                             scope.launch {
-                                scheduleState.pagerWeeksState.animateScrollToPage(scheduleData.schedulePagerData.weeksStartIndex)
+                                scheduleState.pagerWeeksState.animateScrollToPage(scheduleData.schedulePagerData!!.weeksStartIndex)
                             }
-                            scheduleState.onSelectDate(scheduleData.schedulePagerData.defaultDate)
+                            scheduleState.onSelectDate(scheduleData.schedulePagerData!!.defaultDate)
                         }
                     )
                     .padding(horizontal = 8.dp, vertical = 4.dp),
@@ -148,7 +147,7 @@ fun HorizontalCalendar(
             }
 
             IconButton(
-                enabled = scheduleState.pagerWeeksState.currentPage != scheduleData.schedulePagerData.weeksCount - 1,
+                enabled = scheduleState.pagerWeeksState.currentPage != scheduleData.schedulePagerData!!.weeksCount - 1,
                 onClick = {
                     scope.launch {
                         scheduleState.pagerWeeksState.animateScrollToPage(scheduleState.pagerWeeksState.currentPage + 1)
@@ -203,7 +202,7 @@ fun HorizontalCalendar(
                         isShowCountClasses = isShowCountClasses,
                         isDisabled = currentDate !in scheduleEntity.startDate..scheduleEntity.endDate,
                         isSelected = currentDate == scheduleState.selectedDate,
-                        isToday = (currentDate == scheduleData.schedulePagerData.today)
+                        isToday = (currentDate == scheduleData.schedulePagerData!!.today)
                     )
                 }
             }
