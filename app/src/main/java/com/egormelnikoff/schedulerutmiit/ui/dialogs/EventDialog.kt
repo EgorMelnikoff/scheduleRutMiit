@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +58,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.EventTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,7 +102,10 @@ fun EventDialog(
 
     }.toString()
 
-
+    LaunchedEffect(comment, tag) {
+        delay(300)
+        onEventExtraChange(Pair(comment, tag))
+    }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -302,12 +307,12 @@ fun EventDialog(
                             value = comment,
                             onValueChanged = { newValue ->
                                 comment = newValue
-                                onEventExtraChange(Pair(newValue, tag))
                             },
                             keyboardOptions = KeyboardOptions(
                                 autoCorrectEnabled = false,
                                 imeAction = ImeAction.Default
                             ),
+                            maxSymbols = 100,
                             placeholderText = context.getString(R.string.enter_comment),
                             trailingIcon = {
                                 AnimatedVisibility(
@@ -341,7 +346,6 @@ fun EventDialog(
                             currentSelected = tag,
                             onColorSelect = { value ->
                                 tag = value
-                                onEventExtraChange(Pair(comment, value))
                             }
                         )
                     }
