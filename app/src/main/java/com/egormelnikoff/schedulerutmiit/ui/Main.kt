@@ -250,10 +250,10 @@ fun Main(
                         },
 
                         onLoadInitialData = {
-                            scheduleViewModel.loadInitialData(false)
+                            scheduleViewModel.refreshScheduleState(false)
                         },
                         onRefreshState = { primaryKey ->
-                            scheduleViewModel.loadInitialData(
+                            scheduleViewModel.refreshScheduleState(
                                 showLoading = false,
                                 showUpdating = true,
                                 namedSchedulePrimaryKey = primaryKey

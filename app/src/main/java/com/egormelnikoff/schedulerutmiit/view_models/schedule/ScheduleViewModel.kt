@@ -49,7 +49,11 @@ interface ScheduleViewModel {
     val uiState: StateFlow<ScheduleUiState>
     val uiEvent: Flow<UiEvent>
     val isDataLoading: StateFlow<Boolean>
-    fun loadInitialData(showLoading: Boolean = true, showUpdating: Boolean = false)
+    fun refreshScheduleState(
+        showLoading: Boolean = true,
+        showUpdating: Boolean = false,
+        namedSchedulePrimaryKey: Long? = null
+    )
     fun getNamedScheduleFromApi(name: String, apiId: String, type: Int)
     fun getNamedScheduleFromDb(primaryKeyNamedSchedule: Long, setDefault: Boolean = false)
     fun saveCurrentNamedSchedule()
@@ -87,10 +91,14 @@ class ScheduleViewModelImpl @Inject constructor(
     private var fetchScheduleJob: Job? = null
 
     init {
-        loadInitialData()
+        refreshScheduleState()
     }
 
-    override fun loadInitialData(showLoading: Boolean, showUpdating: Boolean) {
+    override fun refreshScheduleState(
+        showLoading: Boolean,
+        showUpdating: Boolean,
+        namedSchedulePrimaryKey: Long?
+    ) {
         viewModelScope.launch {
             updateUiState(
                 isLoading = showLoading,
@@ -98,7 +106,13 @@ class ScheduleViewModelImpl @Inject constructor(
                 isError = false,
             )
             val savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
-            val defaultNamedScheduleEntity = savedNamedSchedules.find { it.isDefault }
+            val defaultNamedScheduleEntity = savedNamedSchedules.find {
+                if (namedSchedulePrimaryKey != null) {
+                    it.id == namedSchedulePrimaryKey
+                } else {
+                    it.isDefault
+                }
+            }
                 ?: savedNamedSchedules.firstOrNull()
 
             if (showUpdating) delay(500)
