@@ -66,7 +66,6 @@ fun ReviewScreen(
     onSetNamedSchedule: (Long) -> Unit,
     onSelectDefaultNamedSchedule: (Long) -> Unit,
     onDeleteNamedSchedule: (Pair<Long, Boolean>) -> Unit,
-
     reviewState: ReviewState,
     scheduleUiState: ScheduleUiState
 ) {
@@ -299,10 +298,14 @@ fun EventsReview(
                     )
                 }, {
                     EventsCount(
-                        title = if (reviewData.displayedDate.dayOfWeek != DayOfWeek.SUNDAY) {
-                            LocalContext.current.getString(R.string.week)
-                        } else {
-                            LocalContext.current.getString(R.string.next_week)
+                        title = when {
+                            reviewData.displayedDate == today.plusDays(1)
+                                    && reviewData.displayedDate.dayOfWeek == DayOfWeek.MONDAY  -> {
+                                LocalContext.current.getString(R.string.next_week)
+                            }
+                            else -> {
+                                LocalContext.current.getString(R.string.week)
+                            }
                         },
                         value = reviewData.countEventsForWeek.toString(),
                         comment = LocalResources.current.getQuantityString(
