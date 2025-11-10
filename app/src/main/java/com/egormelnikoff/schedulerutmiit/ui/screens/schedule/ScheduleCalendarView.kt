@@ -9,6 +9,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -79,11 +82,20 @@ fun PagedDays(
     ) { index ->
         val currentDate = scheduleEntity.startDate.plusDays(index.toLong())
 
-        val eventsForDate = currentDate.getEventsForDate(
-            scheduleEntity = scheduleEntity,
-            periodicEvents = scheduleData.periodicEvents,
-            nonPeriodicEvents = scheduleData.nonPeriodicEvents
-        ).toList()
+        val eventsForDate by remember (
+            scheduleData.namedSchedule,
+            scheduleData.settledScheduleEntity,
+            scheduleData.periodicEvents,
+            scheduleData.nonPeriodicEvents
+        ){
+            mutableStateOf(
+                currentDate.getEventsForDate(
+                    scheduleEntity = scheduleEntity,
+                    periodicEvents = scheduleData.periodicEvents,
+                    nonPeriodicEvents = scheduleData.nonPeriodicEvents
+                ).toList()
+            )
+        }
 
         LazyColumn(
             contentPadding = PaddingValues(
@@ -94,7 +106,9 @@ fun PagedDays(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (eventsForDate.isNotEmpty()) {
-                items(eventsForDate) { events ->
+                items(
+                    items = eventsForDate
+                ) { events ->
                     Event(
                         navigateToEvent = navigateToEvent,
                         onDeleteEvent = onDeleteEvent,
