@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.egormelnikoff.schedulerutmiit" />
+                  <option name="mobileSdkAppId" value="1:734684526178:android:de761b362f1a44954f033b" />
+                  <option name="projectId" value="schedulerutmiit" />
+                  <option name="projectNumber" value="734684526178" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
