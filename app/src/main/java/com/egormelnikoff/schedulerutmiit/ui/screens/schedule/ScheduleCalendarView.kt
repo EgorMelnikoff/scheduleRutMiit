@@ -126,8 +126,7 @@ fun PagedDays(
                     Empty(
                         modifier = Modifier.fillParentMaxSize(),
                         title = LocalContext.current.getString(R.string.day_off),
-                        subtitle = LocalContext.current.getString(R.string.empty_day),
-                        paddingBottom = paddingBottom
+                        subtitle = LocalContext.current.getString(R.string.empty_day)
                     )
                 }
             }
