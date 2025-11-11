@@ -61,13 +61,12 @@ fun ScreenSchedule(
     navigateToSearch: () -> Unit,
     navigateToAddEvent: (ScheduleEntity) -> Unit,
     navigateToRenameDialog: (NamedScheduleEntity) -> Unit,
+    navigateToHiddenEvents: () -> Unit,
 
     onDeleteEvent: (Long) -> Unit,
     onHideEvent: (Long) -> Unit,
-
     onLoadInitialData: () -> Unit,
     onRefreshState: (Long) -> Unit,
-    navigateToHiddenEvents: () -> Unit,
     onSaveCurrentNamedSchedule: () -> Unit,
     onSelectDefaultNamedSchedule: (Long) -> Unit,
     onDeleteNamedSchedule: (Pair<Long, Boolean>) -> Unit,

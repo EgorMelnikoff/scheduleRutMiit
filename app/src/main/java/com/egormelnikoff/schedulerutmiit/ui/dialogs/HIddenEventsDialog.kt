@@ -21,6 +21,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
@@ -31,8 +32,10 @@ import java.util.Locale
 @Composable
 fun HiddenEventsDialog(
     onBack: () -> Unit,
+    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
     onShowEvent: (Long) -> Unit,
     hiddenEvents: List<Event>,
+    eventsExtraData: List <EventExtraData>,
     externalPadding: PaddingValues
 ) {
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -58,36 +61,38 @@ fun HiddenEventsDialog(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (hiddenEvents.isNotEmpty()) {
-                items(hiddenEvents) {
+                items(hiddenEvents) { event ->
+                    val eventExtraData = eventsExtraData.find { it.id == event.id }
                     Box(
                         modifier = Modifier
                             .clip(MaterialTheme.shapes.medium)
                             .background(MaterialTheme.colorScheme.secondaryContainer)
                     ) {
                         ClickableItem(
-                            title = it.name!!,
+                            title = event.name!!,
                             titleMaxLines = 1,
-                            subtitle = if (it.recurrenceRule != null) {
-                                val day =
-                                    it.startDatetime!!.dayOfWeek.getDisplayName(
+                            subtitle = if (event.recurrenceRule != null) {
+                                val day = event.startDatetime!!.dayOfWeek.getDisplayName(
                                         java.time.format.TextStyle.FULL,
                                         Locale.getDefault()
                                     ).replaceFirstChar { c -> c.uppercase() }
-                                val startTime =
-                                    it.startDatetime.toLocaleTimeWithTimeZone()
+                                val startTime = event.startDatetime.toLocaleTimeWithTimeZone()
                                         .format(timeFormatter)
-                                val endTime =
-                                    it.endDatetime!!.toLocaleTimeWithTimeZone()
+                                val endTime = event.endDatetime!!.toLocaleTimeWithTimeZone()
                                         .format(timeFormatter)
-                                "${it.typeName} ($day, $startTime - $endTime)"
+                                "${event.typeName} ($day, $startTime - $endTime)"
                             } else {
-                                "${it.typeName} (${it.startDatetime!!.format(dateTimeFormatter)})"
+                                "${event.typeName} (${event.startDatetime!!.format(dateTimeFormatter)})"
                             },
                             subtitleMaxLines = 2,
+                            onClick = {
+                                navigateToEvent(Pair(event, eventExtraData))
+                            },
+                            showClickLabel = false,
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
-                                        onShowEvent(it.id)
+                                        onShowEvent(event.id)
                                     },
                                     colors = IconButtonDefaults.iconButtonColors()
                                         .copy(
