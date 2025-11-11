@@ -144,7 +144,7 @@ fun Main(
                 fadeIn() togetherWith fadeOut()
             },
             popTransitionSpec = {
-                fadeIn() togetherWith slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth })
+                fadeIn() togetherWith fadeOut()
             },
             predictivePopTransitionSpec = {
                 when (it) {
@@ -533,6 +533,14 @@ fun Main(
                         onBack = {
                             appState.appBackStack.onBack()
                         },
+                        navigateToEvent = { value ->
+                            appState.appBackStack.navigateToDialog(
+                                Routes.EventDialog(
+                                    event = value.first,
+                                    eventExtraData = value.second
+                                )
+                            )
+                        },
                         onShowEvent = { primaryKey ->
                             scheduleViewModel.updateEventHidden(
                                 scheduleEntity = scheduleUiState.currentNamedScheduleData.settledScheduleEntity!!,
@@ -541,6 +549,7 @@ fun Main(
                             )
                         },
                         hiddenEvents = scheduleUiState.currentNamedScheduleData!!.hiddenEvents,
+                        eventsExtraData = scheduleUiState.currentNamedScheduleData.eventsExtraData,
                         externalPadding = externalPadding
                     )
                 }
