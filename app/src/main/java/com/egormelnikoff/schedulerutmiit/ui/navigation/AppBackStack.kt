@@ -15,12 +15,9 @@ class AppBackStack<T : Routes>(
         backStack.removeAt(backStack.lastIndex)
     }
 
-    fun navigateToPage(route: Routes) {
-        if (last().isDialog) {
-            onBack()
-        }
-        backStack.removeAt(0)
-        backStack.add(route)
+    fun navigateToPage(page: Routes) {
+        backStack.removeIf { it.isDialog }
+        backStack[backStack.lastIndex] = page
     }
 
     fun navigateToDialog(dialog: Routes) {
