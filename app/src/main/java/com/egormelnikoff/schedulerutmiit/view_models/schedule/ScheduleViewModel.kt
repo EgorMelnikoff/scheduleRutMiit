@@ -107,12 +107,10 @@ class ScheduleViewModelImpl @Inject constructor(
                 isError = false,
             )
             val savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
-            val defaultNamedScheduleEntity = savedNamedSchedules.find {
-                if (namedSchedulePrimaryKey != null) {
-                    it.id == namedSchedulePrimaryKey
-                } else {
-                    it.isDefault
-                }
+            val defaultNamedScheduleEntity = savedNamedSchedules.find { namedScheduleEntity ->
+                namedSchedulePrimaryKey?.let {
+                    namedScheduleEntity.id == it
+                } ?: namedScheduleEntity.isDefault
             }
                 ?: savedNamedSchedules.firstOrNull()
 
