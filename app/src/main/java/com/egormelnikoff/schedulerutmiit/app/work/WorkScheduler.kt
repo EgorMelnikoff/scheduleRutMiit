@@ -13,8 +13,8 @@ import javax.inject.Inject
 
 interface WorkScheduler {
     fun cancelPeriodicScheduleUpdating()
-    fun startPeriodicScheduleUpdating()
     fun cancelPeriodicWidgetUpdating()
+    fun startPeriodicScheduleUpdating()
     fun startPeriodicWidgetUpdating()
 }
 
@@ -31,10 +31,10 @@ class WorkSchedulerImpl @Inject constructor(
 
     override fun cancelPeriodicScheduleUpdating() {
         workManager.cancelUniqueWork(UPDATING_SCHEDULE_PERIODICALLY)
-        sharedPreferencesManager.editBooleanPreference(
-            name = "update_schedule_scheduled",
-            value = false
-        )
+    }
+
+    override fun cancelPeriodicWidgetUpdating() {
+        workManager.cancelUniqueWork(UPDATING_WIDGET_PERIODICALLY)
     }
 
     override fun startPeriodicScheduleUpdating() {
@@ -59,14 +59,6 @@ class WorkSchedulerImpl @Inject constructor(
         sharedPreferencesManager.editBooleanPreference(
             name = "update_schedule_scheduled",
             value = true
-        )
-    }
-
-    override fun cancelPeriodicWidgetUpdating() {
-        workManager.cancelUniqueWork(UPDATING_WIDGET_PERIODICALLY)
-        sharedPreferencesManager.editBooleanPreference(
-            name = "update_widgets_scheduled",
-            value = false
         )
     }
 
