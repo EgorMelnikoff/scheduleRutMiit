@@ -58,7 +58,7 @@ class ParserImpl @Inject constructor(
                 }
 
                 is Result.Error -> {
-                    Result.Error(document.error)
+                    Result.Error(document.typedError)
                 }
             }
         }
@@ -87,7 +87,7 @@ class ParserImpl @Inject constructor(
                 }
 
                 is Result.Error -> {
-                    Result.Error(document.error)
+                    Result.Error(document.typedError)
                 }
             }
         }

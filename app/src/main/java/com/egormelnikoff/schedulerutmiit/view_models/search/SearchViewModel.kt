@@ -1,12 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.view_models.search
 
+import androidx.annotation.Keep
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.app.model.Group
 import com.egormelnikoff.schedulerutmiit.app.model.Institute
 import com.egormelnikoff.schedulerutmiit.app.model.Institutes
 import com.egormelnikoff.schedulerutmiit.app.model.Person
-import com.egormelnikoff.schedulerutmiit.data.Error
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
@@ -27,6 +28,7 @@ interface SearchViewModel {
     fun setDefaultSearchState()
 }
 
+@Keep
 data class SearchUiState(
     val institutes: Institutes? = null,
     val groups: List<Group> = listOf(),
@@ -62,7 +64,7 @@ class SearchViewModelImpl @Inject constructor(
                             groups = groupsRes.data
                         }
                         is Result.Error -> {
-                            setErrorState(groupsRes.error)
+                            setErrorState(groupsRes.typedError)
                             return@launch
                         }
                     }
@@ -74,7 +76,7 @@ class SearchViewModelImpl @Inject constructor(
                             people = peopleRes.data
                         }
                         is Result.Error -> {
-                            setErrorState(peopleRes.error)
+                            setErrorState(peopleRes.typedError)
                             return@launch
                         }
                     }
@@ -109,13 +111,13 @@ class SearchViewModelImpl @Inject constructor(
     }
 
     fun setErrorState (
-        data: Error
+        data: TypedError
     ) {
         _uiState.update {
             it.copy(
-                error = Error.getErrorMessage(
+                error = TypedError.getErrorMessage(
                     resourcesManager = resourcesManager,
-                    data = data
+                    typedError = data
                 ),
                 isEmptyQuery = false,
                 isLoading = false
@@ -151,7 +153,7 @@ class SearchViewModelImpl @Inject constructor(
                 return Result.Success(filteredGroups)
             }
         }
-        return Result.Error(Error.EmptyBodyError)
+        return Result.Error(TypedError.EmptyBodyError)
     }
 
     private fun compareValues(comparableValue: String, query: String): Boolean {

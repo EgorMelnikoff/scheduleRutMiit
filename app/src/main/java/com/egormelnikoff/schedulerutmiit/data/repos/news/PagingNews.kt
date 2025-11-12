@@ -3,12 +3,11 @@ package com.egormelnikoff.schedulerutmiit.data.repos.news
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
-import com.egormelnikoff.schedulerutmiit.data.Error
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper
-
 
 class PagingNewsSource (
     private val miitApi: MiitApi,
@@ -37,7 +36,7 @@ class PagingNewsSource (
 
         return when (response) {
             is Result.Error -> {
-                LoadResult.Error(Exception(Error.getErrorMessage(resourcesManager, response.error)))
+                LoadResult.Error(Exception(TypedError.getErrorMessage(resourcesManager, response.typedError)))
             }
 
             is Result.Success -> {

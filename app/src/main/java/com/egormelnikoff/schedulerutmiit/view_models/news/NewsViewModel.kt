@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
-import com.egormelnikoff.schedulerutmiit.data.Error
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.news.NewsRepos
@@ -56,9 +56,9 @@ class NewsViewModelImpl @Inject constructor(
                 is Result.Error -> _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = Error.getErrorMessage(
+                        error = TypedError.getErrorMessage(
                             resourcesManager = resourcesManager,
-                            data = news.error
+                            typedError = news.typedError
                         )
                     )
                 }

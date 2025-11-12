@@ -14,7 +14,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.Timetable
 import com.egormelnikoff.schedulerutmiit.app.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.model.Timetables
 import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.data.Error
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedScheduleDao
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
@@ -267,12 +267,12 @@ class ScheduleReposImpl @Inject constructor(
     ): Result<NamedScheduleFormatted> {
         when (val timetables = getTimetables(apiId = apiId, type = type)) {
             is Result.Error -> {
-                return Result.Error(timetables.error)
+                return Result.Error(timetables.typedError)
             }
 
             is Result.Success -> {
                 if (timetables.data.timetables.isEmpty()) {
-                    return Result.Error(Error.EmptyBodyError)
+                    return Result.Error(TypedError.EmptyBodyError)
                 }
                 val schedules = mutableListOf<Schedule>()
                 timetables.data.timetables.forEach { timetable ->
@@ -289,7 +289,7 @@ class ScheduleReposImpl @Inject constructor(
                         }
 
                         is Result.Error -> {
-                            return Result.Error(schedule.error)
+                            return Result.Error(schedule.typedError)
                         }
                     }
                 }
@@ -352,7 +352,7 @@ class ScheduleReposImpl @Inject constructor(
 
         return when (updatedNamedSchedule) {
             is Result.Error -> {
-                Result.Error(updatedNamedSchedule.error)
+                Result.Error(updatedNamedSchedule.typedError)
             }
 
             is Result.Success -> {
@@ -364,7 +364,7 @@ class ScheduleReposImpl @Inject constructor(
                     )
                     Result.Success("Success update")
                 } else {
-                    Result.Error(Error.UnexpectedError(Exception("Cannot find schedule")))
+                    Result.Error(TypedError.UnexpectedError(Exception("Cannot find schedule")))
                 }
             }
         }

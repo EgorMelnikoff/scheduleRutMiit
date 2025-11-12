@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser
 
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.data.Error
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
 import org.jsoup.nodes.Document
 import retrofit2.HttpException
@@ -30,20 +30,20 @@ class ParserHelper @Inject constructor(
         } catch (e: HttpException) {
             logger.e("PARSER", "Http error ($fetchDataType)", e)
             Result.Error(
-                Error.HttpError(
+                TypedError.HttpError(
                     code = e.code(),
                     message = e.message(),
                 )
             )
         } catch (e: IOException) {
             logger.e("PARSER", "Network error ($fetchDataType)", e)
-            Result.Error(Error.NetworkError(e))
+            Result.Error(TypedError.NetworkError(e))
         } catch (e: IllegalArgumentException) {
             logger.e("PARSER", "Illegal argument error ($fetchDataType)", e)
-            Result.Error(Error.IllegalArgumentError(e))
+            Result.Error(TypedError.IllegalArgumentError(e))
         } catch (e: Throwable) {
             logger.e("PARSER", "Unexpected error ($fetchDataType)", e)
-            Result.Error(Error.UnexpectedError(e))
+            Result.Error(TypedError.UnexpectedError(e))
         }
     }
 }

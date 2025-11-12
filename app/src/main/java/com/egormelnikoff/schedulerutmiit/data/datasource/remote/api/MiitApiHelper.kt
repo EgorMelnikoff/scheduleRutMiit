@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.api
 
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.data.Error
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
 import kotlinx.serialization.SerializationException
 import retrofit2.HttpException
@@ -38,12 +38,12 @@ class MiitApiHelper @Inject constructor(
                     Result.Success(body)
                 } else {
                     logger.i("API", "Empty body ($fetchDataType)")
-                    Result.Error(Error.EmptyBodyError)
+                    Result.Error(TypedError.EmptyBodyError)
                 }
             } else {
                 logger.i("API", "Http error ($fetchDataType)")
                 Result.Error(
-                    Error.HttpError(
+                    TypedError.HttpError(
                         code = response.code(),
                         message = response.message()
                     )
@@ -52,20 +52,20 @@ class MiitApiHelper @Inject constructor(
         } catch (e: HttpException) {
             logger.e("API", "Http error ($fetchDataType)", e)
             Result.Error(
-                Error.HttpError(
+                TypedError.HttpError(
                     code = e.code(),
                     message = e.message(),
                 )
             )
         } catch (e: IOException) {
             logger.e("API", "IOException ($fetchDataType)", e)
-            Result.Error(Error.NetworkError(e))
+            Result.Error(TypedError.NetworkError(e))
         } catch (e: SerializationException) {
             logger.e("API", "Serialization error ($fetchDataType)", e)
-            Result.Error(Error.SerializationError(e))
+            Result.Error(TypedError.SerializationError(e))
         } catch (e: Throwable) {
             logger.e("API", "Unexpected error ($fetchDataType)", e)
-            Result.Error(Error.UnexpectedError(e))
+            Result.Error(TypedError.UnexpectedError(e))
         }
     }
 }
