@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.data.Result as ApiResult
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -21,21 +22,21 @@ class ScheduleWorker @AssistedInject constructor(
         logger.i("ScheduleWorker", "Default schedule:\n$namedScheduleEntity")
         namedScheduleEntity ?: return Result.failure()
 
-        return try {
-            val result = scheduleRepos.updateSavedNamedSchedule(
-                namedScheduleEntity = namedScheduleEntity,
-                onStartUpdate = {
-                    logger.i("ScheduleWorker", "Start schedule update")
-                }
-            )
-            if (result is com.egormelnikoff.schedulerutmiit.data.Result.Success) {
-                Result.success()
-            } else {
-                Result.failure()
+        val updateResult = scheduleRepos.updateSavedNamedSchedule(
+            namedScheduleEntity = namedScheduleEntity,
+            onStartUpdate = {
+                logger.i("ScheduleWorker", "Start schedule update")
             }
-        } catch (e: Exception) {
-            logger.e("ScheduleWorker", "Failed to update schedule", e)
-            Result.failure()
+        )
+
+        return when(updateResult) {
+            is ApiResult.Success -> {
+                Result.success()
+            }
+
+            is ApiResult.Error -> {
+                Result.retry()
+            }
         }
     }
 }
