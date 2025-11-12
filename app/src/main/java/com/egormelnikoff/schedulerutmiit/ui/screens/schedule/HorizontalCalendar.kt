@@ -76,7 +76,7 @@ fun HorizontalCalendar(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             IconButton(
                 enabled = scheduleState.pagerWeeksState.currentPage != 0,
@@ -89,7 +89,7 @@ fun HorizontalCalendar(
                     containerColor = Color.Unspecified,
                     contentColor = MaterialTheme.colorScheme.onBackground,
                     disabledContainerColor = Color.Unspecified,
-                    disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    disabledContentColor = MaterialTheme.colorScheme.secondaryContainer
                 )
             ) {
                 Icon(
@@ -99,6 +99,7 @@ fun HorizontalCalendar(
             }
             Row(
                 modifier = Modifier
+                    .weight(1f)
                     .clip(MaterialTheme.shapes.small)
                     .clickable(
                         onClick = {
@@ -157,7 +158,7 @@ fun HorizontalCalendar(
                     containerColor = Color.Unspecified,
                     contentColor = MaterialTheme.colorScheme.onBackground,
                     disabledContainerColor = Color.Unspecified,
-                    disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    disabledContentColor = MaterialTheme.colorScheme.secondaryContainer
                 )
             ) {
                 Icon(
@@ -184,8 +185,8 @@ fun HorizontalCalendar(
                     .plusWeeks(index.toLong())
                     .getFirstDayOfWeek()
 
-                for (date in 0 until 7) {
-                    val currentDate = firstDayOfWeek.plusDays(date.toLong())
+                for (date in 0L until 7L) {
+                    val currentDate = firstDayOfWeek.plusDays(date)
 
                     val eventsForDate = currentDate.getEventsForDate(
                         scheduleEntity = scheduleEntity,
