@@ -40,7 +40,6 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
-import com.egormelnikoff.schedulerutmiit.ui.state.ReviewState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.ui.state.rememberAppState
 import com.egormelnikoff.schedulerutmiit.ui.state.rememberReviewState
@@ -62,8 +61,8 @@ fun Main(
     newsViewModel: NewsViewModel,
     settingsViewModel: SettingsViewModel,
     preferencesDataStore: PreferencesDataStore,
-    logger: Logger,
     appSettings: AppSettings,
+    logger: Logger
 ) {
     val searchUiState = searchViewModel.uiState.collectAsState().value
     val scheduleUiState = scheduleViewModel.uiState.collectAsState().value
@@ -80,8 +79,7 @@ fun Main(
     )
     ScheduleStateSynchronizer(
         scheduleUiState = scheduleUiState,
-        scheduleState = scheduleState,
-        reviewState = reviewState
+        scheduleState = scheduleState
     )
 
     Scaffold(
@@ -256,7 +254,7 @@ fun Main(
                             scheduleViewModel.refreshScheduleState(
                                 showLoading = false,
                                 showUpdating = true,
-                                namedSchedulePrimaryKey = primaryKey
+                                primaryKeyNamedSchedule = primaryKey
                             )
                         },
                         onSaveCurrentNamedSchedule = {
@@ -277,7 +275,7 @@ fun Main(
                         onDeleteEvent = { primaryKey ->
                             scheduleViewModel.deleteCustomEvent(
                                 scheduleEntity = scheduleUiState.currentNamedScheduleData!!.settledScheduleEntity!!,
-                                primaryKeyEvent = primaryKey
+                                eventPrimaryKey = primaryKey
                             )
                         },
                         onHideEvent = { primaryKey ->
@@ -383,7 +381,7 @@ fun Main(
                         onDeleteEvent = { primaryKey ->
                             scheduleViewModel.deleteCustomEvent(
                                 scheduleEntity = scheduleUiState.currentNamedScheduleData.settledScheduleEntity!!,
-                                primaryKeyEvent = primaryKey
+                                eventPrimaryKey = primaryKey
                             )
                         },
                         onHideEvent = { primaryKey ->
@@ -492,7 +490,7 @@ fun Main(
                             appState.appBackStack.onBack()
                         },
                         onAddCustomSchedule = { value ->
-                            scheduleViewModel.addCustomSchedule(
+                            scheduleViewModel.addCustomNamedSchedule(
                                 name = value.first,
                                 startDate = value.second,
                                 endDate = value.third,
@@ -587,8 +585,7 @@ fun UiEventProcessor(
 @Composable
 fun ScheduleStateSynchronizer(
     scheduleUiState: ScheduleUiState,
-    scheduleState: ScheduleState?,
-    reviewState: ReviewState
+    scheduleState: ScheduleState?
 ) {
     if (scheduleUiState.currentNamedScheduleData?.settledScheduleEntity != null && scheduleUiState.currentNamedScheduleData.schedulePagerData != null && scheduleState != null) {
         LaunchedEffect(
@@ -596,7 +593,6 @@ fun ScheduleStateSynchronizer(
             scheduleUiState.currentNamedScheduleData.settledScheduleEntity.timetableId
         ) {
             scheduleState.onExpandSchedulesMenu(false)
-            reviewState.onChangeVisibilityHiddenEvents(false)
             scheduleState.pagerDaysState.scrollToPage(
                 scheduleUiState.currentNamedScheduleData.schedulePagerData.daysStartIndex
             )

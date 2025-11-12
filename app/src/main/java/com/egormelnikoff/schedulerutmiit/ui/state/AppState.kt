@@ -51,5 +51,4 @@ fun rememberAppState(): AppState {
         newsListState = newsListState,
         settingsListState = settingsListState
     )
-
 }
