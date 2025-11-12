@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.dialogs
+package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
