@@ -8,10 +8,9 @@ import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
-import com.egormelnikoff.schedulerutmiit.data.Error
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
@@ -30,21 +29,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
-sealed interface UiEvent {
-    data class ErrorMessage(val message: String) : UiEvent
-    data class InfoMessage(val message: String) : UiEvent
-}
-
-data class ScheduleUiState(
-    val savedNamedSchedules: List<NamedScheduleEntity> = emptyList(),
-    val defaultNamedScheduleData: NamedScheduleData? = null,
-    val currentNamedScheduleData: NamedScheduleData? = null,
-    val isUpdating: Boolean = false,
-    val isError: Boolean = false,
-    val isLoading: Boolean = false,
-    val isSaved: Boolean = false
-)
-
 interface ScheduleViewModel {
     val uiState: StateFlow<ScheduleUiState>
     val uiEvent: Flow<UiEvent>
@@ -52,25 +36,23 @@ interface ScheduleViewModel {
     fun refreshScheduleState(
         showLoading: Boolean = true,
         showUpdating: Boolean = false,
-        namedSchedulePrimaryKey: Long? = null
+        primaryKeyNamedSchedule: Long? = null
     )
-
     fun getNamedScheduleFromApi(name: String, apiId: String, type: Int)
     fun getNamedScheduleFromDb(primaryKeyNamedSchedule: Long, setDefault: Boolean = false)
     fun saveCurrentNamedSchedule()
+    fun renameNamedSchedule(namedScheduleEntity: NamedScheduleEntity, newName: String)
     fun deleteNamedSchedule(primaryKeyNamedSchedule: Long, isDefault: Boolean)
     fun setDefaultSchedule(
         primaryKeyNamedSchedule: Long,
         primaryKeySchedule: Long,
         timetableId: String
     )
-
+    fun addCustomNamedSchedule(name: String, startDate: LocalDate, endDate: LocalDate)
     fun updateEventExtra(event: Event, comment: String, tag: Int)
-    fun addCustomSchedule(name: String, startDate: LocalDate, endDate: LocalDate)
     fun addCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
     fun updateEventHidden(scheduleEntity: ScheduleEntity, eventPrimaryKey: Long, isHidden: Boolean)
-    fun deleteCustomEvent(scheduleEntity: ScheduleEntity, primaryKeyEvent: Long)
-    fun renameNamedSchedule(namedScheduleEntity: NamedScheduleEntity, newName: String)
+    fun deleteCustomEvent(scheduleEntity: ScheduleEntity, eventPrimaryKey: Long)
 }
 
 @HiltViewModel
@@ -98,7 +80,7 @@ class ScheduleViewModelImpl @Inject constructor(
     override fun refreshScheduleState(
         showLoading: Boolean,
         showUpdating: Boolean,
-        namedSchedulePrimaryKey: Long?
+        primaryKeyNamedSchedule: Long?
     ) {
         viewModelScope.launch {
             updateUiState(
@@ -108,7 +90,7 @@ class ScheduleViewModelImpl @Inject constructor(
             )
             val savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
             val defaultNamedScheduleEntity = savedNamedSchedules.find { namedScheduleEntity ->
-                namedSchedulePrimaryKey?.let {
+                primaryKeyNamedSchedule?.let {
                     namedScheduleEntity.id == it
                 } ?: namedScheduleEntity.isDefault
             }
@@ -177,9 +159,9 @@ class ScheduleViewModelImpl @Inject constructor(
                         isLoading = false
                     )
                     sendErrorUiEvent(
-                        message = Error.getErrorMessage(
+                        message = TypedError.getErrorMessage(
                             resourcesManager = resourcesManager,
-                            data = newNamedSchedule.error
+                            typedError = newNamedSchedule.typedError
                         )
                     )
                 }
@@ -278,6 +260,34 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
+    override fun renameNamedSchedule(
+        namedScheduleEntity: NamedScheduleEntity,
+        newName: String
+    ) {
+        if (newName == namedScheduleEntity.fullName) {
+            return
+        }
+        viewModelScope.launch {
+            scheduleRepos.renameNamedSchedule(
+                primaryKeyNamedSchedule = namedScheduleEntity.id,
+                type = namedScheduleEntity.type,
+                newName = newName
+            )
+
+            updateUiState(
+                savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
+            )
+            if (namedScheduleEntity.id == _uiState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
+                val updatedNamedSchedule =
+                    scheduleRepos.getSavedNamedScheduleById(namedScheduleEntity.id)
+
+                updateNamedScheduleUiState(
+                    namedSchedule = updatedNamedSchedule
+                )
+            }
+        }
+    }
+
     override fun setDefaultSchedule(
         primaryKeyNamedSchedule: Long,
         primaryKeySchedule: Long,
@@ -310,6 +320,50 @@ class ScheduleViewModelImpl @Inject constructor(
                         .copy(schedules = updatedSchedules)
                 )
             }
+        }
+    }
+
+    override fun addCustomNamedSchedule(
+        name: String,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ) {
+        viewModelScope.launch {
+            val namedSchedule = NamedScheduleFormatted(
+                namedScheduleEntity = NamedScheduleEntity(
+                    id = 0,
+                    fullName = name,
+                    shortName = name,
+                    apiId = null,
+                    type = 3,
+                    isDefault = false,
+                    lastTimeUpdate = 0L
+                ),
+                schedules = listOf(
+                    ScheduleFormatted(
+                        scheduleEntity = ScheduleEntity(
+                            id = 0,
+                            namedScheduleId = 0,
+                            timetableId = "d=${startDate}",
+                            typeName = "Разовое",
+                            startName = "с $startDate",
+                            downloadUrl = null,
+                            startDate = startDate,
+                            endDate = endDate,
+                            recurrence = null
+                        ),
+                        events = listOf(),
+                        eventsExtraData = listOf()
+                    )
+                )
+            )
+            val namedScheduleId = scheduleRepos.insertNamedSchedule(namedSchedule)
+            updateUiState(
+                savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
+            )
+            updateNamedScheduleUiState(
+                namedSchedule = scheduleRepos.getSavedNamedScheduleById(namedScheduleId)
+            )
         }
     }
 
@@ -354,80 +408,6 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun renameNamedSchedule(
-        namedScheduleEntity: NamedScheduleEntity,
-        newName: String
-    ) {
-        if (newName == namedScheduleEntity.fullName) {
-            return
-        }
-        viewModelScope.launch {
-            scheduleRepos.renameNamedSchedule(
-                primaryKeyNamedSchedule = namedScheduleEntity.id,
-                type = namedScheduleEntity.type,
-                newName = newName
-            )
-
-            updateUiState(
-                savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
-            )
-            if (namedScheduleEntity.id == _uiState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
-                val updatedNamedSchedule =
-                    scheduleRepos.getSavedNamedScheduleById(namedScheduleEntity.id)
-
-                updateNamedScheduleUiState(
-                    namedSchedule = updatedNamedSchedule
-                )
-            }
-        }
-    }
-
-    override fun addCustomSchedule(
-        name: String,
-        startDate: LocalDate,
-        endDate: LocalDate
-    ) {
-        viewModelScope.launch {
-            val fixedStartDate = startDate.getFirstDayOfWeek()
-            val fixedEndDate = endDate.getFirstDayOfWeek().plusDays(6)
-            val namedSchedule = NamedScheduleFormatted(
-                namedScheduleEntity = NamedScheduleEntity(
-                    id = 0,
-                    fullName = name,
-                    shortName = name,
-                    apiId = null,
-                    type = 3,
-                    isDefault = false,
-                    lastTimeUpdate = 0L
-                ),
-                schedules = listOf(
-                    ScheduleFormatted(
-                        scheduleEntity = ScheduleEntity(
-                            id = 0,
-                            namedScheduleId = 0,
-                            timetableId = "d=${fixedStartDate}",
-                            typeName = resourcesManager.getString(R.string.my)!!,
-                            startName = "с $fixedStartDate",
-                            downloadUrl = null,
-                            startDate = fixedStartDate,
-                            endDate = fixedEndDate,
-                            recurrence = null
-                        ),
-                        events = listOf(),
-                        eventsExtraData = listOf()
-                    )
-                )
-            )
-            val namedScheduleId = scheduleRepos.insertNamedSchedule(namedSchedule)
-            updateUiState(
-                savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
-            )
-            updateNamedScheduleUiState(
-                namedSchedule = scheduleRepos.getSavedNamedScheduleById(namedScheduleId)
-            )
-        }
-    }
-
     override fun addCustomEvent(
         scheduleEntity: ScheduleEntity,
         event: Event
@@ -454,10 +434,10 @@ class ScheduleViewModelImpl @Inject constructor(
 
     override fun deleteCustomEvent(
         scheduleEntity: ScheduleEntity,
-        primaryKeyEvent: Long
+        eventPrimaryKey: Long
     ) {
         viewModelScope.launch {
-            scheduleRepos.deleteSavedEvent(primaryKeyEvent)
+            scheduleRepos.deleteSavedEvent(eventPrimaryKey)
             updateNamedScheduleUiState(
                 namedSchedule = scheduleRepos.getSavedNamedScheduleById(scheduleEntity.namedScheduleId)
             )

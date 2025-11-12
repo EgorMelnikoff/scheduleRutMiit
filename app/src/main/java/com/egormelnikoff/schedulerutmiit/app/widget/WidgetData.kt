@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.app.widget
 
+import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
@@ -12,6 +13,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@Keep
 data class WidgetData(
     val namedScheduleEntity: NamedScheduleEntity? = null,
     val settledScheduleEntity: ScheduleEntity? = null,

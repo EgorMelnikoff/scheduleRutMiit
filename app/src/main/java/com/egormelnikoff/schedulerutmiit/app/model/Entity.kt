@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.app.model
 
+import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
@@ -14,7 +15,7 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
-
+@Keep
 data class NamedScheduleFormatted(
     @Embedded
     val namedScheduleEntity: NamedScheduleEntity,
@@ -26,6 +27,7 @@ data class NamedScheduleFormatted(
     val schedules: List<ScheduleFormatted>
 )
 
+@Keep
 data class ScheduleFormatted(
     @Embedded
     val scheduleEntity: ScheduleEntity,
@@ -43,6 +45,7 @@ data class ScheduleFormatted(
     val eventsExtraData: List<EventExtraData>
 )
 
+@Keep
 @Entity(tableName = "NamedSchedules")
 data class NamedScheduleEntity(
     @ColumnInfo(name = "NamedScheduleId")
@@ -57,6 +60,7 @@ data class NamedScheduleEntity(
     var lastTimeUpdate: Long
 )
 
+@Keep
 @Entity(tableName = "Schedules")
 data class ScheduleEntity(
     @ColumnInfo(name = "ScheduleId")
@@ -76,7 +80,7 @@ data class ScheduleEntity(
     var isDefault: Boolean = false,
 )
 
-
+@Keep
 data class Recurrence(
     val frequency: String?,
     val interval: Int?,
@@ -84,6 +88,7 @@ data class Recurrence(
     val firstWeekNumber: Int
 )
 
+@Keep
 @Entity(tableName = "Events")
 data class Event(
     @ColumnInfo(name = "EventId")
@@ -119,6 +124,7 @@ data class Event(
     }
 }
 
+@Keep
 @Entity(tableName = "EventsExtraData")
 data class EventExtraData(
     @ColumnInfo(name = "EventExtraId")

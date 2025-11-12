@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.view_models.schedule
 
+import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
@@ -16,6 +17,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
+@Keep
 data class NamedScheduleData(
     val namedSchedule: NamedScheduleFormatted? = null,
     val settledScheduleEntity: ScheduleEntity? = null,
@@ -181,13 +183,14 @@ data class NamedScheduleData(
     }
 }
 
-
+@Keep
 data class SchedulePagerData(
     val today: LocalDate,
     val defaultDate: LocalDate,
-    val daysStartIndex: Int,
+    val weeksCount: Int,
     val weeksStartIndex: Int,
-    val weeksCount: Int
+    val daysCount: Int,
+    val daysStartIndex: Int,
 ) {
     companion object {
         fun getSchedulePagerData(
@@ -198,6 +201,11 @@ data class SchedulePagerData(
             val weeksCount = ChronoUnit.WEEKS.between(
                 startDate.getFirstDayOfWeek(),
                 endDate.getFirstDayOfWeek()
+            ).plus(1).toInt()
+
+            val daysCount = ChronoUnit.DAYS.between(
+                startDate,
+                endDate
             ).plus(1).toInt()
 
             val defaultDate: LocalDate
@@ -229,16 +237,17 @@ data class SchedulePagerData(
             }
             return SchedulePagerData(
                 today = today,
-                weeksCount = weeksCount,
                 defaultDate = defaultDate,
+                weeksCount = weeksCount,
                 weeksStartIndex = weeksStartIndex,
+                daysCount = daysCount,
                 daysStartIndex = daysStartIndex
             )
         }
     }
 }
 
-
+@Keep
 data class ReviewData(
     val displayedDate: LocalDate,
     val events: Map<String, List<Event>> = mapOf(),

@@ -26,7 +26,6 @@ ksp = "2.2.20-2.0.3"
 material3 = "1.4.0"
 navigation3 = "1.0.0-rc01"
 workRuntimeKtx = "2.11.0"
-firebaseMessagingKtx = "25.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -69,8 +68,6 @@ androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedat
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
-firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
-
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

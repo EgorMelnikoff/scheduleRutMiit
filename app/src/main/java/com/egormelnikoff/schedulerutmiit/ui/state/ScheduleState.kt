@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.state
 
+import androidx.annotation.Keep
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
@@ -12,6 +13,7 @@ import androidx.compose.runtime.setValue
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
 import java.time.LocalDate
 
+@Keep
 data class ScheduleState(
     val scheduleListState: LazyListState,
     val pagerWeeksState: PagerState,
@@ -29,7 +31,7 @@ fun rememberScheduleState(
     return if (scheduleUiState.currentNamedScheduleData?.namedSchedule != null && scheduleUiState.currentNamedScheduleData.schedulePagerData != null) {
         val scheduleListState = rememberLazyListState()
         val pagerDaysState = rememberPagerState(
-            pageCount = { scheduleUiState.currentNamedScheduleData.schedulePagerData.weeksCount.times(7) },
+            pageCount = { scheduleUiState.currentNamedScheduleData.schedulePagerData.daysCount },
             initialPage = scheduleUiState.currentNamedScheduleData.schedulePagerData.daysStartIndex
         )
         val pagerWeeksState = rememberPagerState(

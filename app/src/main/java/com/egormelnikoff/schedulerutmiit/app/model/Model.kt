@@ -1,18 +1,22 @@
 package com.egormelnikoff.schedulerutmiit.app.model
 
+import androidx.annotation.Keep
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@Keep
 data class Schedule(
     val timetable: Timetable?,
     val periodicContent: PeriodicContent?,
     val nonPeriodicContent: NonPeriodicContent?
 )
 
+@Keep
 data class Timetables(
     val timetables: List<Timetable>
 )
 
+@Keep
 data class Timetable(
     val id: String?,
     val name: String?,
@@ -25,26 +29,31 @@ data class Timetable(
     val selected: Boolean,
 )
 
+@Keep
 data class PeriodicContent(
     val events: List<Event>?,
     val recurrence: Recurrence?
 )
 
+@Keep
 data class NonPeriodicContent(
     val events: List<Event>?,
 )
 
+@Keep
 enum class TimetableType(val type: String?) {
     PERIODIC("PERIODIC"),
     NON_PERIODIC("NON_PERIODIC"),
     SESSION("SESSION")
 }
 
+@Keep
 data class NewsList(
     val maxPage: Int,
     val items: List<NewsShort>
 )
 
+@Keep
 data class NewsShort(
     val idInformation: Long,
     val title: String,
@@ -53,10 +62,12 @@ data class NewsShort(
     val secondary: Secondary
 )
 
+@Keep
 data class Secondary(
     val text: String
 )
 
+@Keep
 data class News(
     val idInformation: Long,
     val title: String,
@@ -66,10 +77,12 @@ data class News(
     var images: MutableList<String>?
 )
 
+@Keep
 data class Institutes(
     val institutes: List<Institute>?
 )
 
+@Keep
 data class Institute(
     val id: Int?,
     val name: String?,
@@ -77,29 +90,34 @@ data class Institute(
     val courses: List<Course>?
 )
 
+@Keep
 data class Course(
     val course: String?,
     val specialties: List<Specialty>?
 )
 
+@Keep
 data class Specialty(
     val name: String?,
     val abbreviation: String?,
     val groups: List<Group>?
 )
 
+@Keep
 data class Group(
     val id: Int?,
     val name: String?,
     val url: String?,
 )
 
+@Keep
 data class Person(
     val name: String?,
     val id: Int?,
     val position: String?
 )
 
+@Keep
 data class Lecturer(
     val id: Int?,
     val shortFio: String?,
@@ -109,6 +127,7 @@ data class Lecturer(
     val hint: String?
 )
 
+@Keep
 data class Room(
     val id: Int?,
     val name: String?,
@@ -116,12 +135,14 @@ data class Room(
     val hint: String?
 )
 
+@Keep
 data class TelegramPage(
     val url: String?,
     val name: String?,
     val imageUrl: String?
 )
 
+@Keep
 data class RecurrenceRule(
     val frequency: String,
     val interval: Int
