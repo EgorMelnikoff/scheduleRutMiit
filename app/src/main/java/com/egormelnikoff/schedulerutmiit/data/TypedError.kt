@@ -4,20 +4,20 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import okio.IOException
 
-sealed class Error {
-    data class NetworkError(val exception: IOException) : Error()
-    data class HttpError(val code: Int, val message: String? = null) : Error()
-    data class SerializationError(val exception: Exception) : Error()
-    data class IllegalArgumentError(val exception: Exception) : Error()
-    data class UnexpectedError(val exception: Throwable) : Error()
-    object EmptyBodyError : Error()
+sealed class TypedError {
+    data class NetworkError(val exception: IOException) : TypedError()
+    data class HttpError(val code: Int, val message: String? = null) : TypedError()
+    data class SerializationError(val exception: Exception) : TypedError()
+    data class IllegalArgumentError(val exception: Exception) : TypedError()
+    data class UnexpectedError(val exception: Throwable) : TypedError()
+    object EmptyBodyError : TypedError()
 
     companion object {
         fun getErrorMessage(
             resourcesManager: ResourcesManager,
-            data: Error
+            typedError: TypedError
         ): String? {
-            return when (data) {
+            return when (typedError) {
                 is NetworkError -> {
                     resourcesManager.getString(
                         R.string.network_error
@@ -26,7 +26,7 @@ sealed class Error {
                 is HttpError -> {
                     "${resourcesManager.getString(
                         R.string.server_error
-                    )}: ${data.code}"
+                    )}: ${typedError.code}"
                 }
                 is SerializationError -> {
                     resourcesManager.getString(

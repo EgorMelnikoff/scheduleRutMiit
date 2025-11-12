@@ -53,9 +53,6 @@ fun BottomSheetDatePicker(
     val today = LocalDate.now()
     val minDate = startDate ?: today
     val maxDate = endDate ?: today.plusYears(1)
-    val minMillis = minDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-    val maxMillis = maxDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val datePickerState = rememberDatePickerState(
@@ -65,7 +62,10 @@ fun BottomSheetDatePicker(
             ?.toInstant()
             ?.toEpochMilli(),
         initialDisplayMode = DisplayMode.Picker,
-        selectableDates = DateRangeSelectableDates(minMillis, maxMillis)
+        selectableDates = DateRangeSelectableDates(
+            minDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(),
+            maxDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+        )
     )
     CustomModalBottomSheet(
         modifier = Modifier.verticalScroll(rememberScrollState()),
