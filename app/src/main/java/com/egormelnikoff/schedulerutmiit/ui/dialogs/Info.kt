@@ -49,9 +49,10 @@ fun InfoDialog(
     settingsActions: SettingsActions,
     externalPadding: PaddingValues,
 ) {
+
     val context = LocalContext.current
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    settingsActions.onLoadAppInfoState
+    settingsActions.onLoadAppInfoState()
     Scaffold(
         topBar = {
             CustomTopAppBar(
