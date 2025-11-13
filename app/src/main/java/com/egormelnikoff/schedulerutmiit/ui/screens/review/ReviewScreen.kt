@@ -43,11 +43,13 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.ui.state.ReviewState
+import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ReviewData
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -58,29 +60,24 @@ import java.util.Locale
 
 @Composable
 fun ReviewScreen(
-    externalPadding: PaddingValues,
-    navigateToAddSchedule: () -> Unit,
-    navigateToSearch: () -> Unit,
-    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
-    navigateToRenameDialog: (NamedScheduleEntity) -> Unit,
-    onSetNamedSchedule: (Long) -> Unit,
-    onSelectDefaultNamedSchedule: (Long) -> Unit,
-    onDeleteNamedSchedule: (Pair<Long, Boolean>) -> Unit,
-    reviewState: ReviewState,
-    scheduleUiState: ScheduleUiState
+    scheduleState: ScheduleState,
+    reviewUiState: ReviewUiState,
+    navigationActions: NavigationActions,
+    scheduleActions: ScheduleActions,
+    externalPadding: PaddingValues
 ) {
     var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
     var showDeleteNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
 
     Scaffold(
         topBar = {
-            if (scheduleUiState.savedNamedSchedules.isNotEmpty()) {
+            if (scheduleState.savedNamedSchedules.isNotEmpty()) {
                 CustomTopAppBar(
                     titleText = LocalContext.current.getString(R.string.review),
                     actions = {
                         IconButton(
                             onClick = {
-                                navigateToAddSchedule()
+                                navigationActions.navigateToAddSchedule()
                             },
                             colors = IconButtonDefaults.iconButtonColors().copy(
                                 contentColor = MaterialTheme.colorScheme.onBackground
@@ -95,7 +92,7 @@ fun ReviewScreen(
                         }
                         IconButton(
                             onClick = {
-                                navigateToSearch()
+                                navigationActions.navigateToSearch()
                             },
                             colors = IconButtonDefaults.iconButtonColors().copy(
                                 contentColor = MaterialTheme.colorScheme.onBackground
@@ -113,7 +110,7 @@ fun ReviewScreen(
             }
         }
     ) { innerPadding ->
-        if (scheduleUiState.savedNamedSchedules.isNotEmpty()) {
+        if (scheduleState.savedNamedSchedules.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
@@ -124,17 +121,17 @@ fun ReviewScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (
-                    scheduleUiState.defaultNamedScheduleData?.reviewData != null &&
-                    scheduleUiState.defaultNamedScheduleData.namedSchedule != null
-                    && scheduleUiState.defaultNamedScheduleData.settledScheduleEntity != null
+                    scheduleState.defaultNamedScheduleData?.reviewData != null &&
+                    scheduleState.defaultNamedScheduleData.namedSchedule != null
+                    && scheduleState.defaultNamedScheduleData.settledScheduleEntity != null
                 ) {
                     item {
                         EventsReview(
-                            navigateToEvent = navigateToEvent,
-                            reviewData = scheduleUiState.defaultNamedScheduleData.reviewData,
-                            eventsExtraData = scheduleUiState.defaultNamedScheduleData.eventsExtraData,
-                            title = "${scheduleUiState.defaultNamedScheduleData.namedSchedule.namedScheduleEntity.shortName} " +
-                                    "(${scheduleUiState.defaultNamedScheduleData.settledScheduleEntity.typeName})"
+                            navigateToEvent = navigationActions.navigateToEvent,
+                            reviewData = scheduleState.defaultNamedScheduleData.reviewData,
+                            eventsExtraData = scheduleState.defaultNamedScheduleData.eventsExtraData,
+                            title = "${scheduleState.defaultNamedScheduleData.namedSchedule.namedScheduleEntity.shortName} " +
+                                    "(${scheduleState.defaultNamedScheduleData.settledScheduleEntity.typeName})"
                         )
                     }
                     item {
@@ -145,11 +142,11 @@ fun ReviewScreen(
                     ExpandedItem(
                         title = LocalContext.current.getString(R.string.saved_schedules),
                         imageVector = ImageVector.vectorResource(R.drawable.save),
-                        visible = reviewState.visibleSavedSchedules,
-                        onChangeVisibility = reviewState.onChangeVisibilitySavedSchedules
+                        visible = reviewUiState.visibleSavedSchedules,
+                        onChangeVisibility = reviewUiState.onChangeVisibilitySavedSchedules
                     ) {
                         ColumnGroup(
-                            items = scheduleUiState.savedNamedSchedules.map { namedScheduleEntity ->
+                            items = scheduleState.savedNamedSchedules.map { namedScheduleEntity ->
                                 {
                                     val formatter =
                                         DateTimeFormatter.ofPattern(
@@ -203,12 +200,12 @@ fun ReviewScreen(
                         CustomButton(
                             buttonTitle = LocalContext.current.getString(R.string.find),
                             imageVector = ImageVector.vectorResource(R.drawable.search),
-                            onClick = { navigateToSearch() },
+                            onClick = { navigationActions.navigateToSearch() },
                         )
                         CustomButton(
                             buttonTitle = LocalContext.current.getString(R.string.create),
                             imageVector = ImageVector.vectorResource(R.drawable.add),
-                            onClick = { navigateToAddSchedule() },
+                            onClick = { navigationActions.navigateToAddSchedule() },
                         )
                     }
                 },
@@ -220,16 +217,17 @@ fun ReviewScreen(
             ModalDialogNamedSchedule(
                 namedScheduleEntity = showNamedScheduleDialog!!,
                 navigateToRenameDialog = {
-                    navigateToRenameDialog(showNamedScheduleDialog!!)
+                    navigationActions.navigateToRenameDialog(showNamedScheduleDialog!!)
                 },
                 onDismiss = {
                     showNamedScheduleDialog = null
                 },
                 onOpenNamedSchedule = {
-                    onSetNamedSchedule(showNamedScheduleDialog!!.id)
+                    scheduleActions.onOpenNamedSchedule(showNamedScheduleDialog!!.id)
+                    navigationActions.navigateToSchedule()
                 },
                 onSetDefaultNamedSchedule = if (!showNamedScheduleDialog!!.isDefault) {
-                    { onSelectDefaultNamedSchedule(showNamedScheduleDialog!!.id) }
+                    { scheduleActions.onSelectDefaultNamedSchedule(showNamedScheduleDialog!!.id) }
                 } else null,
                 onDeleteNamedSchedule = {
                     showDeleteNamedScheduleDialog = showNamedScheduleDialog!!
@@ -246,7 +244,7 @@ fun ReviewScreen(
                     showDeleteNamedScheduleDialog = null
                 },
                 onConfirmation = {
-                    onDeleteNamedSchedule(
+                    scheduleActions.onDeleteNamedSchedule(
                         Pair(
                             showDeleteNamedScheduleDialog!!.id,
                             showDeleteNamedScheduleDialog!!.isDefault
@@ -300,9 +298,10 @@ fun EventsReview(
                     EventsCount(
                         title = when {
                             reviewData.displayedDate == today.plusDays(1)
-                                    && reviewData.displayedDate.dayOfWeek == DayOfWeek.MONDAY  -> {
+                                    && reviewData.displayedDate.dayOfWeek == DayOfWeek.MONDAY -> {
                                 LocalContext.current.getString(R.string.next_week)
                             }
+
                             else -> {
                                 LocalContext.current.getString(R.string.week)
                             }

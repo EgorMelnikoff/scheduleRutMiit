@@ -19,13 +19,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun ExpandedMenu(
     setDefaultSchedule: (Triple<Long, Long, String>) -> Unit,
-    scheduleUiState: ScheduleUiState,
+    scheduleState: ScheduleState,
     expandedSchedulesMenu: Boolean,
     onShowExpandedMenu: (Boolean) -> Unit
 ) {
@@ -38,7 +38,7 @@ fun ExpandedMenu(
         Column(
             modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
         ) {
-            scheduleUiState.currentNamedScheduleData!!.namedSchedule!!.schedules.forEach { schedule ->
+            scheduleState.currentNamedScheduleData!!.namedSchedule!!.schedules.forEach { schedule ->
                 val scale by animateFloatAsState(
                     targetValue = if (schedule.scheduleEntity.isDefault) 1f else 0f
                 )
@@ -53,7 +53,7 @@ fun ExpandedMenu(
                     onClick = {
                         setDefaultSchedule(
                             Triple(
-                                scheduleUiState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
+                                scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
                                 schedule.scheduleEntity.id,
                                 schedule.scheduleEntity.timetableId
                             )

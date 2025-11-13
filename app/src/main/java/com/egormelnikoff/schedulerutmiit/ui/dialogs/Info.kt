@@ -38,24 +38,25 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingIcon
-import com.egormelnikoff.schedulerutmiit.view_models.settings.AppInfoState
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions
+import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsState
 
 @Composable
 fun InfoDialog(
+    settingsState: SettingsState,
+    navigationActions: NavigationActions,
+    settingsActions: SettingsActions,
     externalPadding: PaddingValues,
-    onBack: () -> Unit,
-    onLoadAppInfoState: () -> Unit,
-    onOpenUri: (String) -> Unit,
-    appInfoState: AppInfoState
 ) {
     val context = LocalContext.current
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    onLoadAppInfoState()
+    settingsActions.onLoadAppInfoState
     Scaffold(
         topBar = {
             CustomTopAppBar(
                 titleText = LocalContext.current.getString(R.string.about_app),
-                navAction = { onBack() }
+                navAction = { navigationActions.onBack() }
             )
         }
     ) { innerPadding ->
@@ -120,7 +121,7 @@ fun InfoDialog(
                                 )
                             },
                             onClick = {
-                                onOpenUri(APP_CHANNEL_URL)
+                                settingsActions.onOpenUri(APP_CHANNEL_URL)
                             }
                         )
                     }, {
@@ -134,7 +135,7 @@ fun InfoDialog(
                                 )
                             },
                             onClick = {
-                                onOpenUri(APP_GITHUB_REPOS)
+                                settingsActions.onOpenUri(APP_GITHUB_REPOS)
                             },
 
                         )
@@ -153,14 +154,14 @@ fun InfoDialog(
                             )
                         },
                         onClick = {
-                            onOpenUri(CLOUD_TIPS)
+                            settingsActions.onOpenUri(CLOUD_TIPS)
                         }
                     )
                 }
             )
 
-            when (appInfoState) {
-                is AppInfoState.Loading -> {
+            when (settingsState) {
+                is SettingsState.Loading -> {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -173,8 +174,8 @@ fun InfoDialog(
 
                 }
 
-                is AppInfoState.Loaded -> {
-                    appInfoState.authorTelegramPage?.let { author ->
+                is SettingsState.Loaded -> {
+                    settingsState.authorTelegramPage?.let { author ->
                         ColumnGroup(
                             items = listOf {
                                 ClickableItem(
@@ -188,7 +189,7 @@ fun InfoDialog(
                                     },
                                     onClick = {
                                         author.url?.let {
-                                            onOpenUri(it)
+                                            settingsActions.onOpenUri(it)
                                         }
                                     }
                                 )

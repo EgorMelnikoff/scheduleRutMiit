@@ -18,7 +18,7 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Routes
 import kotlinx.coroutines.CoroutineScope
 
-data class AppState(
+data class AppUiState(
     val appBackStack: AppBackStack<Routes>,
     val snackBarHostState: SnackbarHostState,
     val focusManager: FocusManager,
@@ -27,28 +27,30 @@ data class AppState(
     val scope: CoroutineScope,
     val newsListState: LazyStaggeredGridState,
     val settingsListState: LazyStaggeredGridState
-)
+) {
+    companion object {
+        @Composable
+        fun rememberAppUiState(): AppUiState {
+            val appBackStack by remember { mutableStateOf(AppBackStack<Routes>(startRoute = Routes.Schedule)) }
+            val snackBarHostState = remember { SnackbarHostState() }
+            val scope = rememberCoroutineScope()
+            val focusManager = LocalFocusManager.current
+            val uriHandler = LocalUriHandler.current
+            val context = LocalContext.current
 
-@Composable
-fun rememberAppState(): AppState {
-    val appBackStack by remember { mutableStateOf(AppBackStack<Routes>(startRoute = Routes.Schedule)) }
-    val snackBarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val focusManager = LocalFocusManager.current
-    val uriHandler = LocalUriHandler.current
-    val context = LocalContext.current
+            val newsListState = rememberLazyStaggeredGridState()
+            val settingsListState = rememberLazyStaggeredGridState()
 
-    val newsListState = rememberLazyStaggeredGridState()
-    val settingsListState = rememberLazyStaggeredGridState()
-
-    return AppState(
-        appBackStack = appBackStack,
-        snackBarHostState = snackBarHostState,
-        focusManager = focusManager,
-        uriHandler = uriHandler,
-        context = context,
-        scope = scope,
-        newsListState = newsListState,
-        settingsListState = settingsListState
-    )
+            return AppUiState(
+                appBackStack = appBackStack,
+                snackBarHostState = snackBarHostState,
+                focusManager = focusManager,
+                uriHandler = uriHandler,
+                context = context,
+                scope = scope,
+                newsListState = newsListState,
+                settingsListState = settingsListState
+            )
+        }
+    }
 }

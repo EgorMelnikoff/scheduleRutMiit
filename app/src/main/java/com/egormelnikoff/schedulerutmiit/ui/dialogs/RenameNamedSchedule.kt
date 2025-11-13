@@ -30,24 +30,27 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
 
 @Composable
 fun RenameDialog(
-    oldName: String,
-    onBack: () -> Unit,
-    onConfirm: (String) -> Unit,
+    namedScheduleEntity: NamedScheduleEntity,
+    navigationActions: NavigationActions,
+    scheduleActions: ScheduleActions,
     externalPadding: PaddingValues
 ) {
-    var newName by remember { mutableStateOf(oldName) }
+    var newName by remember { mutableStateOf(namedScheduleEntity.fullName) }
     Scaffold(
         topBar = {
             CustomTopAppBar(
                 titleText = LocalContext.current.getString(R.string.renaming),
                 navAction = {
-                    onBack()
+                    navigationActions.onBack()
                 }
             )
         }
@@ -100,7 +103,8 @@ fun RenameDialog(
                 buttonTitle = LocalContext.current.getString(R.string.save),
                 enabled = newName != "",
                 onClick = {
-                    onConfirm(newName.trim())
+                    scheduleActions.onConfirmRenameNamedSchedule(Pair(namedScheduleEntity, newName.trim()))
+                    navigationActions.onBack()
                 }
             )
         }

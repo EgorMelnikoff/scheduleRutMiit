@@ -22,25 +22,25 @@ import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
-import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 
 @Composable
 fun ScheduleCalendarView(
     navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
     onDeleteEvent: (Long) -> Unit,
     onUpdateHiddenEvent: (Long) -> Unit,
-    scheduleUiState: ScheduleUiState,
     scheduleState: ScheduleState,
+    scheduleUiState: ScheduleUiState,
     isShortEvent: Boolean,
     isShowCountClasses: Boolean,
     paddingBottom: Dp
 ) {
     Column {
         HorizontalCalendar(
-            scheduleData = scheduleUiState.currentNamedScheduleData!!,
-            scheduleState = scheduleState,
+            scheduleData = scheduleState.currentNamedScheduleData!!,
+            scheduleUiState = scheduleUiState,
             isShowCountClasses = isShowCountClasses
         )
         PagedDays(
@@ -48,10 +48,10 @@ fun ScheduleCalendarView(
             onDeleteEvent = onDeleteEvent,
             onUpdateHiddenEvent = onUpdateHiddenEvent,
 
-            scheduleData = scheduleUiState.currentNamedScheduleData,
-            pagerDaysState = scheduleState.pagerDaysState,
+            scheduleData = scheduleState.currentNamedScheduleData,
+            pagerDaysState = scheduleUiState.pagerDaysState,
 
-            isSavedSchedule = scheduleUiState.isSaved,
+            isSavedSchedule = scheduleState.isSaved,
             isShortEvent = isShortEvent,
             paddingBottom = paddingBottom
         )

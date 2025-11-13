@@ -25,17 +25,18 @@ import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.EventActions
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
 fun HiddenEventsDialog(
-    onBack: () -> Unit,
-    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
-    onShowEvent: (Long) -> Unit,
     hiddenEvents: List<Event>,
     eventsExtraData: List <EventExtraData>,
+    navigationActions: NavigationActions,
+    eventActions: EventActions,
     externalPadding: PaddingValues
 ) {
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -46,7 +47,7 @@ fun HiddenEventsDialog(
             CustomTopAppBar(
                 titleText = LocalContext.current.getString(R.string.hidden_events),
                 navAction = {
-                    onBack()
+                    navigationActions.onBack()
                 }
             )
         }
@@ -86,13 +87,13 @@ fun HiddenEventsDialog(
                             },
                             subtitleMaxLines = 2,
                             onClick = {
-                                navigateToEvent(Pair(event, eventExtraData))
+                                navigationActions.navigateToEvent(Pair(event, eventExtraData))
                             },
                             showClickLabel = false,
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
-                                        onShowEvent(event.id)
+                                        eventActions.onShowEvent(event.id)
                                     },
                                     colors = IconButtonDefaults.iconButtonColors()
                                         .copy(

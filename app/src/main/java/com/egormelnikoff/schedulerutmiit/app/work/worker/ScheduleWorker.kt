@@ -6,9 +6,9 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.data.Result as ApiResult
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import com.egormelnikoff.schedulerutmiit.data.Result as ApiResult
 
 @HiltWorker
 class ScheduleWorker @AssistedInject constructor(

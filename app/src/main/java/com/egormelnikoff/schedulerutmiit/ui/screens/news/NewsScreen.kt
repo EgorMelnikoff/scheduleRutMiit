@@ -42,38 +42,39 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.news.NewsActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
-import com.egormelnikoff.schedulerutmiit.view_models.news.NewsUiState
+import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
 import kotlinx.coroutines.flow.Flow
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun NewsScreen(
-    onShowDialogNews: () -> Unit,
-    onGetNewsById: (Long) -> Unit,
-
-    newsUiState: NewsUiState,
+    newsState: NewsState,
     newsListFLow: Flow<PagingData<NewsShort>>,
     newsGridListState: LazyStaggeredGridState,
-    externalPadding: PaddingValues,
+    navigationActions: NavigationActions,
+    newsActions: NewsActions,
+    externalPadding: PaddingValues
 ) {
     val newsList = newsListFLow.collectAsLazyPagingItems()
     when {
-        newsUiState.isLoading || newsList.loadState.refresh is LoadState.Loading -> {
+        newsState.isLoading || newsList.loadState.refresh is LoadState.Loading -> {
             LoadingScreen(
                 paddingTop = 0.dp,
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
         }
 
-        newsUiState.error != null || newsList.loadState.refresh is LoadState.Error -> {
+        newsState.error != null || newsList.loadState.refresh is LoadState.Error -> {
             val e = newsList.loadState.refresh as LoadState.Error
 
             ErrorScreen(
                 title = LocalContext.current.getString(R.string.error),
-                subtitle = newsUiState.error ?: e.error.localizedMessage,
+                subtitle = newsState.error ?: e.error.localizedMessage,
                 button = {
                     CustomButton(
                         buttonTitle = LocalContext.current.getString(R.string.repeat),
@@ -108,8 +109,8 @@ fun NewsScreen(
                         NewsShort(
                             newsShort = newsShort,
                             onClick = {
-                                onGetNewsById(newsShort.idInformation)
-                                onShowDialogNews()
+                                newsActions.onGetNewsById(newsShort.idInformation)
+                                navigationActions.navigateToNewsDialog()
                             }
                         )
                     }

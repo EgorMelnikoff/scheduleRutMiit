@@ -58,23 +58,20 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.EventTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDialog(
-    externalPadding: PaddingValues,
-    onBack: () -> Unit,
-    navigateToSchedule: () -> Unit,
-    onSearchNamedSchedule: (Triple<String, String, Int>) -> Unit,
-    onEventExtraChange: (Pair<String, Int>) -> Unit,
-    onDeleteEvent: (Long) -> Unit,
-    onHideEvent: (Long) -> Unit,
-    onShowEvent: (Long) -> Unit,
     event: Event,
     eventExtraData: EventExtraData?,
     isSavedSchedule: Boolean,
     isCustomSchedule: Boolean,
+    navigationActions: NavigationActions,
+    scheduleActions: ScheduleActions,
+    externalPadding: PaddingValues
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
@@ -104,7 +101,7 @@ fun EventDialog(
 
     LaunchedEffect(comment, tag) {
         delay(300)
-        onEventExtraChange(Pair(comment, tag))
+        scheduleActions.eventActions.onEventExtraChange(Triple(event, comment, tag))
     }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -114,7 +111,7 @@ fun EventDialog(
                 subtitle = subtitle,
                 scrollBehavior = scrollBehavior,
                 navAction = {
-                    onBack()
+                    navigationActions.onBack()
                 },
                 actions = {
                     IconButton(
@@ -209,8 +206,8 @@ fun EventDialog(
                                         .defaultMinSize(minWidth = 80.dp)
                                         .clickable(
                                             onClick = {
-                                                navigateToSchedule()
-                                                onSearchNamedSchedule(
+                                                navigationActions.navigateToSchedule()
+                                                scheduleActions.onGetNamedSchedule(
                                                     Triple(
                                                         group.name!!,
                                                         group.id.toString(),
@@ -246,8 +243,8 @@ fun EventDialog(
                                 defaultMinHeight = 32.dp,
                                 onClick = if (!isCustomSchedule) {
                                     {
-                                        navigateToSchedule()
-                                        onSearchNamedSchedule(
+                                        navigationActions.navigateToSchedule()
+                                        scheduleActions.onGetNamedSchedule(
                                             Triple(
                                                 room.name!!,
                                                 room.id.toString(),
@@ -274,8 +271,8 @@ fun EventDialog(
                                 defaultMinHeight = 32.dp,
                                 onClick = if (!isCustomSchedule) {
                                     {
-                                        navigateToSchedule()
-                                        onSearchNamedSchedule(
+                                        navigationActions.navigateToSchedule()
+                                        scheduleActions.onGetNamedSchedule(
                                             Triple(
                                                 lecturer.fullFio!!,
                                                 lecturer.id.toString(),
@@ -323,7 +320,7 @@ fun EventDialog(
                                     IconButton(
                                         onClick = {
                                             comment = ""
-                                            onEventExtraChange(Pair("", tag))
+                                            scheduleActions.eventActions.onEventExtraChange(Triple(event,"", tag))
                                         }
                                     ) {
                                         Icon(
@@ -362,8 +359,8 @@ fun EventDialog(
                 showEventDeleteDialog = false
             },
             onConfirmation = {
-                onDeleteEvent(event.id)
-                onBack()
+                scheduleActions.eventActions.onDeleteEvent(event.id)
+                navigationActions.onBack()
             }
         )
     }
@@ -376,7 +373,7 @@ fun EventDialog(
                 showEventHideDialog = false
             },
             onConfirmation = {
-                onHideEvent(event.id)
+                scheduleActions.eventActions.onHideEvent(event.id)
             }
         )
     }
@@ -400,7 +397,7 @@ fun EventDialog(
             } else null,
             onShowEvent = if (event.isHidden) {
                 {
-                    onShowEvent(event.id)
+                    scheduleActions.eventActions.onShowEvent(event.id)
                     event.isHidden = false
                 }
             } else null

@@ -10,7 +10,7 @@ sealed class TypedError {
     data class SerializationError(val exception: Exception) : TypedError()
     data class IllegalArgumentError(val exception: Exception) : TypedError()
     data class UnexpectedError(val exception: Throwable) : TypedError()
-    object EmptyBodyError : TypedError()
+    data object EmptyBodyError : TypedError()
 
     companion object {
         fun getErrorMessage(

@@ -9,7 +9,7 @@ sealed interface UiEvent {
 }
 
 @Keep
-data class ScheduleUiState(
+data class ScheduleState(
     val savedNamedSchedules: List<NamedScheduleEntity> = emptyList(),
     val defaultNamedScheduleData: NamedScheduleData? = null,
     val currentNamedScheduleData: NamedScheduleData? = null,

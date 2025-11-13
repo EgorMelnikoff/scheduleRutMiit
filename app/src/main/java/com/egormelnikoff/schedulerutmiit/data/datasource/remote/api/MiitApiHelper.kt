@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.api
 
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import kotlinx.serialization.SerializationException
 import retrofit2.HttpException
 import retrofit2.Response
@@ -26,7 +26,7 @@ class MiitApiHelper @Inject constructor(
 
     suspend fun <T : Any> callApiWithExceptions(
         fetchDataType: String,
-        message: String,
+        message: String? = null,
         call: suspend () -> Response<T>
     ): Result<T> {
         return try {

@@ -6,8 +6,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
-import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.news.NewsRepos
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,12 +22,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface NewsViewModel {
-    val uiState: StateFlow<NewsUiState>
+    val newsState: StateFlow<NewsState>
     val newsListFlow: Flow<PagingData<NewsShort>>
     fun getNewsById(id: Long)
 }
 
-data class NewsUiState(
+data class NewsState(
     val currentNews: News? = null,
     val isLoading: Boolean = false,
     val error: String? = null
@@ -38,9 +38,8 @@ class NewsViewModelImpl @Inject constructor(
     private val newsRepos: NewsRepos,
     private val resourcesManager: ResourcesManager
 ) : ViewModel(), NewsViewModel {
-
-    private val _uiState = MutableStateFlow(NewsUiState())
-    override val uiState = _uiState.asStateFlow()
+    private val _newsState = MutableStateFlow(NewsState())
+    override val newsState = _newsState.asStateFlow()
 
     private var newsJob: Job? = null
 
@@ -49,11 +48,11 @@ class NewsViewModelImpl @Inject constructor(
         .cachedIn(viewModelScope)
 
     override fun getNewsById(id: Long) {
-        _uiState.update { it.copy(isLoading = true) }
+        _newsState.update { it.copy(isLoading = true) }
         val newNewsJob = viewModelScope.launch {
             newsJob?.cancelAndJoin()
             when (val news = newsRepos.getNewsById(id)) {
-                is Result.Error -> _uiState.update {
+                is Result.Error -> _newsState.update {
                     it.copy(
                         isLoading = false,
                         error = TypedError.getErrorMessage(
@@ -64,7 +63,7 @@ class NewsViewModelImpl @Inject constructor(
                 }
 
                 is Result.Success -> {
-                    _uiState.update {
+                    _newsState.update {
                         it.copy(
                             isLoading = false,
                             error = null,

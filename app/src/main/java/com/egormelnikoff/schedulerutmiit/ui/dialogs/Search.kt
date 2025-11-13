@@ -42,10 +42,13 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingAsyncImage
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.state.ReviewState
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchUiState
+import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchState
 
 enum class SearchOption {
     ALL, GROUPS, PEOPLE
@@ -53,12 +56,12 @@ enum class SearchOption {
 
 @Composable
 fun SearchDialog(
+    searchState: SearchState,
+    navigationActions: NavigationActions,
+    searchActions: SearchActions,
+    scheduleActions: ScheduleActions,
+    reviewUiState: ReviewUiState,
     externalPadding: PaddingValues,
-    onSearch: (Pair<String, SearchOption>) -> Unit,
-    onSetDefaultState: () -> Unit,
-    onSearchSchedule: (Triple<String, String, Int>) -> Unit,
-    reviewState: ReviewState,
-    searchUiState: SearchUiState
 ) {
     Column(
         modifier = Modifier
@@ -78,10 +81,10 @@ fun SearchDialog(
             CustomTextField(
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1,
-                value = reviewState.searchQuery,
-                onValueChanged = reviewState.onChangeQuery,
+                value = reviewUiState.searchQuery,
+                onValueChanged = reviewUiState.onChangeQuery,
                 action = {
-                    onSearch(Pair(reviewState.searchQuery.trim(), reviewState.selectedSearchOption))
+                    searchActions.onSearchSchedule(Pair(reviewUiState.searchQuery.trim(), reviewUiState.selectedSearchOption))
                 },
                 placeholderText = LocalContext.current.getString(R.string.search),
                 leadingIcon = {
@@ -93,14 +96,14 @@ fun SearchDialog(
                 },
                 trailingIcon = {
                     AnimatedVisibility(
-                        visible = reviewState.searchQuery != "",
+                        visible = reviewUiState.searchQuery != "",
                         enter = scaleIn(animationSpec = tween(300)),
                         exit = fadeOut(animationSpec = tween(500))
                     ) {
                         IconButton(
                             onClick = {
-                                reviewState.onChangeQuery("")
-                                onSetDefaultState()
+                                reviewUiState.onChangeQuery("")
+                                searchActions.onSetDefaultSearchState()
                             }
                         ) {
                             Icon(
@@ -118,31 +121,31 @@ fun SearchDialog(
             )
 
             FilterRow(
-                selectedOption = reviewState.selectedSearchOption,
-                onSelectOption = reviewState.onSelectSearchOption
+                selectedOption = reviewUiState.selectedSearchOption,
+                onSelectOption = reviewUiState.onSelectSearchOption
             )
         }
         AnimatedContent(
             modifier = Modifier.fillMaxSize(),
-            targetState = searchUiState,
+            targetState = searchState,
             transitionSpec = {
                 fadeIn() togetherWith fadeOut()
             }
-        ) { searchUiState ->
+        ) { searchState ->
             when {
-                searchUiState.isLoading -> LoadingScreen(
+                searchState.isLoading -> LoadingScreen(
                     paddingTop = 0.dp,
                     paddingBottom = externalPadding.calculateBottomPadding()
                 )
 
-                searchUiState.error != null -> {
+                searchState.error != null -> {
                     Empty(
-                        subtitle = searchUiState.error,
+                        subtitle = searchState.error,
                         paddingBottom = externalPadding.calculateBottomPadding()
                     )
                 }
 
-                searchUiState.isEmptyQuery -> {
+                searchState.isEmptyQuery -> {
                     Empty(
                         imageVector = ImageVector.vectorResource(R.drawable.search),
                         subtitle = LocalContext.current.getString(R.string.enter_your_query),
@@ -150,7 +153,7 @@ fun SearchDialog(
                     )
                 }
 
-                searchUiState.groups.isEmpty() && searchUiState.people.isEmpty() ->
+                searchState.groups.isEmpty() && searchState.people.isEmpty() ->
                     Empty(
                         subtitle = LocalContext.current.getString(R.string.nothing_found),
                         paddingBottom = externalPadding.calculateBottomPadding()
@@ -168,7 +171,7 @@ fun SearchDialog(
                         ),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        if (searchUiState.groups.isNotEmpty() && (reviewState.selectedSearchOption == SearchOption.ALL || reviewState.selectedSearchOption == SearchOption.GROUPS)) {
+                        if (searchState.groups.isNotEmpty() && (reviewUiState.selectedSearchOption == SearchOption.ALL || reviewUiState.selectedSearchOption == SearchOption.GROUPS)) {
                             item {
                                 Text(
                                     text = LocalContext.current.getString(R.string.groups),
@@ -176,7 +179,7 @@ fun SearchDialog(
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                             }
-                            items(searchUiState.groups) { group ->
+                            items(searchState.groups) { group ->
                                 Box(
                                     modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                 ) {
@@ -186,13 +189,17 @@ fun SearchDialog(
                                         title = group.name!!,
                                         showClickLabel = false,
                                         onClick = {
-                                            onSearchSchedule(
+                                            navigationActions.navigateToSchedule()
+                                            scheduleActions.onGetNamedSchedule(
                                                 Triple(
                                                     group.name,
                                                     group.id.toString(),
                                                     0
                                                 )
                                             )
+                                            searchActions.onSetDefaultSearchState()
+                                            reviewUiState.onChangeQuery("")
+                                            reviewUiState.onSelectSearchOption(SearchOption.ALL)
                                         }
                                     )
                                 }
@@ -201,7 +208,7 @@ fun SearchDialog(
                                 Spacer(modifier = Modifier.height(2.dp))
                             }
                         }
-                        if (searchUiState.people.isNotEmpty() && (reviewState.selectedSearchOption == SearchOption.ALL || reviewState.selectedSearchOption == SearchOption.PEOPLE)) {
+                        if (searchState.people.isNotEmpty() && (reviewUiState.selectedSearchOption == SearchOption.ALL || reviewUiState.selectedSearchOption == SearchOption.PEOPLE)) {
                             item {
                                 Text(
                                     text = LocalContext.current.getString(R.string.people),
@@ -209,7 +216,7 @@ fun SearchDialog(
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                             }
-                            items(searchUiState.people) { person ->
+                            items(searchState.people) { person ->
                                 Box(
                                     modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                 ) {
@@ -230,13 +237,17 @@ fun SearchDialog(
                                         },
                                         showClickLabel = false,
                                         onClick = {
-                                            onSearchSchedule(
+                                            navigationActions.navigateToSchedule()
+                                            scheduleActions.onGetNamedSchedule(
                                                 Triple(
                                                     person.name,
                                                     person.id.toString(),
                                                     1
                                                 )
                                             )
+                                            searchActions.onSetDefaultSearchState()
+                                            reviewUiState.onChangeQuery("")
+                                            reviewUiState.onSelectSearchOption(SearchOption.ALL)
                                         }
                                     )
                                 }

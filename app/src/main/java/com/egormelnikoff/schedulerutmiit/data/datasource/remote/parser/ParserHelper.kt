@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser
 
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import org.jsoup.nodes.Document
 import retrofit2.HttpException
 import java.io.IOException

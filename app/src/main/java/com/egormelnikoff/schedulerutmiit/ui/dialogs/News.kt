@@ -40,29 +40,29 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
-import com.egormelnikoff.schedulerutmiit.view_models.news.NewsUiState
+import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
 
 @Composable
 fun NewsDialog(
-    newsUiState: NewsUiState,
+    newsState: NewsState,
     externalPadding: PaddingValues
 ) {
     when {
-        newsUiState.isLoading -> LoadingScreen(
+        newsState.isLoading -> LoadingScreen(
             paddingTop = 0.dp,
             paddingBottom = externalPadding.calculateBottomPadding()
         )
 
-        newsUiState.error != null -> Empty(
+        newsState.error != null -> Empty(
             title = LocalContext.current.getString(R.string.error),
-            subtitle = newsUiState.error,
+            subtitle = newsState.error,
             paddingTop = 0.dp,
             paddingBottom = externalPadding.calculateBottomPadding()
         )
 
-        newsUiState.currentNews != null -> {
+        newsState.currentNews != null -> {
             NewsDialogContent(
-                news = newsUiState.currentNews,
+                news = newsState.currentNews,
                 paddingTop = externalPadding.calculateTopPadding(),
                 paddingBottom = externalPadding.calculateBottomPadding()
             )

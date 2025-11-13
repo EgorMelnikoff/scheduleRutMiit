@@ -199,8 +199,12 @@ fun RowGroup(
                 val topEndRadius = if (isLast) edgeCorner else interiorCorner
                 val bottomEndRadius = if (isLast) edgeCorner else interiorCorner
 
-                val shape =
-                    remember(topStartRadius, topEndRadius, bottomStartRadius, bottomEndRadius) {
+                val shape = remember(
+                    topStartRadius,
+                    topEndRadius,
+                    bottomStartRadius,
+                    bottomEndRadius
+                ) {
                         RoundedCornerShape(
                             topStart = topStartRadius,
                             topEnd = topEndRadius,

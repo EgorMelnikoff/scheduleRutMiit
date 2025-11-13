@@ -22,8 +22,7 @@ class SearchReposImpl @Inject constructor(
     override suspend fun getPeople(query: String) = parser.parsePeople("$PEOPLE$query")
 
     override suspend fun getInstitutes() = miitApiHelper.callApiWithExceptions(
-        fetchDataType = "Institutes",
-        message = ""
+        fetchDataType = "Institutes"
     ) {
         miitApi.getInstitutes()
     }

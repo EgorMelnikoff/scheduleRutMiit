@@ -30,16 +30,16 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun AddScheduleDialog(
-    onBack: () -> Unit,
-    onAddCustomSchedule: (Triple<String, LocalDate, LocalDate>) -> Unit,
-    onShowErrorMessage: (String) -> Unit,
-
     focusManager: FocusManager,
+    navigationActions: NavigationActions,
+    scheduleActions: ScheduleActions,
     externalPadding: PaddingValues
 ) {
     val context = LocalContext.current
@@ -55,7 +55,7 @@ fun AddScheduleDialog(
         topBar = {
             CustomTopAppBar(
                 titleText = LocalContext.current.getString(R.string.adding_a_schedule),
-                navAction = { onBack() }
+                navAction = { navigationActions.onBack() }
             )
         }
     ) { innerPadding ->
@@ -120,9 +120,10 @@ fun AddScheduleDialog(
                     val errorMessages =
                         checkScheduleParams(context, nameSchedule, startDate, endDate)
                     if (errorMessages.isEmpty()) {
-                        onAddCustomSchedule(Triple(nameSchedule.trim(), startDate!!, endDate!!))
+                        scheduleActions.onAddCustomSchedule(Triple(nameSchedule.trim(), startDate!!, endDate!!))
+                        navigationActions.navigateToSchedule()
                     } else {
-                        onShowErrorMessage(errorMessages)
+                        scheduleActions.onShowErrorMessage(errorMessages)
                     }
                 }
             )

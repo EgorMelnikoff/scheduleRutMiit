@@ -36,6 +36,8 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSe
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 
 data class ThemeSelectorItemContent(
@@ -46,16 +48,11 @@ data class ThemeSelectorItemContent(
 
 @Composable
 fun SettingsScreen(
-    externalPadding: PaddingValues,
-    onShowDialogInfo: () -> Unit,
-    onSendLogs: () -> Unit,
-    onOpenUri: (String) -> Unit,
-    onSetViewEvent: (Boolean) -> Unit,
-    onSetShowCountClasses: (Boolean) -> Unit,
-    onSetTheme: (String) -> Unit,
-    onSetDecorColor: (Int) -> Unit,
+    settingsListState: LazyStaggeredGridState,
     appSettings: AppSettings,
-    settingsListState: LazyStaggeredGridState
+    navigationActions: NavigationActions,
+    settingsActions: SettingsActions,
+    externalPadding: PaddingValues
 ) {
     LazyVerticalStaggeredGrid(
         modifier = Modifier
@@ -79,7 +76,7 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                onSetViewEvent(!appSettings.eventView)
+                                settingsActions.onSetViewEvent(!appSettings.eventView)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.compact),
                             text = LocalContext.current.getString(R.string.compact_view)
@@ -87,7 +84,7 @@ fun SettingsScreen(
                             CustomSwitch(
                                 checked = appSettings.eventView,
                                 onCheckedChange = {
-                                    onSetViewEvent(it)
+                                    settingsActions.onSetViewEvent(it)
                                 }
                             )
                         }
@@ -95,7 +92,7 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                onSetShowCountClasses(!appSettings.showCountClasses)
+                                settingsActions.onSetShowCountClasses(!appSettings.showCountClasses)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.count),
                             text = LocalContext.current.getString(R.string.show_count_classes)
@@ -103,7 +100,7 @@ fun SettingsScreen(
                             CustomSwitch(
                                 checked = appSettings.showCountClasses,
                                 onCheckedChange = {
-                                    onSetShowCountClasses(it)
+                                    settingsActions.onSetShowCountClasses(it)
                                 }
                             )
                         }
@@ -123,7 +120,7 @@ fun SettingsScreen(
                             horizontal = false
                         ) {
                             ThemeSelector(
-                                setTheme = onSetTheme,
+                                setTheme = settingsActions.onSetTheme,
                                 currentTheme = appSettings.theme
                             )
                         }
@@ -138,7 +135,7 @@ fun SettingsScreen(
                             ColorSelector(
                                 currentSelected = appSettings.decorColorIndex,
                                 onColorSelect = { value ->
-                                    onSetDecorColor(value)
+                                    settingsActions.onSetDecorColor(value)
                                 }
                             )
                         }
@@ -153,7 +150,7 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                onOpenUri(APP_CHANNEL_URL)
+                                settingsActions.onOpenUri(APP_CHANNEL_URL)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.send),
                             text = LocalContext.current.getString(R.string.report_a_problem),
@@ -161,7 +158,7 @@ fun SettingsScreen(
                     }, {
                         SettingsItem(
                             onClick = {
-                                onSendLogs()
+                                settingsActions.onSendLogs()
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.bug_report),
                             text = LocalContext.current.getString(R.string.send_logs_by_email),
@@ -169,7 +166,7 @@ fun SettingsScreen(
                     },{
                         SettingsItem(
                             onClick = {
-                                onShowDialogInfo()
+                                navigationActions.navigateToInfoDialog()
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.info),
                             text = LocalContext.current.getString(R.string.about_app),

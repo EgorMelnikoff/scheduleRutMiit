@@ -3,8 +3,8 @@ package com.egormelnikoff.schedulerutmiit.data.repos.news
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
-import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper

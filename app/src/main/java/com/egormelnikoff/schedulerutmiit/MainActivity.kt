@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.ui.Main
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModelImpl
@@ -27,9 +26,6 @@ class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModelImpl by viewModels()
 
     @Inject
-    lateinit var preferencesDataStore: PreferencesDataStore
-
-    @Inject
     lateinit var logger: Logger
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +33,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition {
-            scheduleViewModel.isDataLoading.value || settingsViewModel.isDataLoading.value
+            scheduleViewModel.isDataLoading.value || settingsViewModel.appSettings.value == null
         }
 
         setContent {
@@ -50,7 +46,6 @@ class MainActivity : ComponentActivity() {
                         scheduleViewModel = scheduleViewModel,
                         newsViewModel = newsViewModel,
                         settingsViewModel = settingsViewModel,
-                        preferencesDataStore = preferencesDataStore,
                         logger = logger,
                         appSettings = settings
                     )

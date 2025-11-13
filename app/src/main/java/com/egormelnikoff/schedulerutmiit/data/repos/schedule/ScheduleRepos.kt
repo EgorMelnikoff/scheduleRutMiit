@@ -14,8 +14,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.Timetable
 import com.egormelnikoff.schedulerutmiit.app.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.model.Timetables
 import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedScheduleDao
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper

@@ -10,8 +10,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
-import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +30,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 interface ScheduleViewModel {
-    val uiState: StateFlow<ScheduleUiState>
+    val scheduleState: StateFlow<ScheduleState>
     val uiEvent: Flow<UiEvent>
     val isDataLoading: StateFlow<Boolean>
     fun refreshScheduleState(
@@ -62,10 +62,10 @@ class ScheduleViewModelImpl @Inject constructor(
     private val workScheduler: WorkScheduler,
     private val widgetDataUpdater: WidgetDataUpdater
 ) : ViewModel(), ScheduleViewModel {
-    private val _uiState = MutableStateFlow(ScheduleUiState())
-    private val _uiEventChannel = Channel<UiEvent>()
+    private val _scheduleState = MutableStateFlow(ScheduleState())
+    override val scheduleState = _scheduleState.asStateFlow()
 
-    override val uiState = _uiState.asStateFlow()
+    private val _uiEventChannel = Channel<UiEvent>()
     override val uiEvent = _uiEventChannel.receiveAsFlow()
 
     private val _isDataLoading = MutableStateFlow(true)
@@ -201,7 +201,7 @@ class ScheduleViewModelImpl @Inject constructor(
     override fun saveCurrentNamedSchedule() {
         viewModelScope.launch {
             val currentNamedSchedule =
-                _uiState.value.currentNamedScheduleData?.namedSchedule ?: return@launch
+                _scheduleState.value.currentNamedScheduleData?.namedSchedule ?: return@launch
 
             val namedScheduleId = scheduleRepos.insertNamedSchedule(currentNamedSchedule)
 
@@ -229,7 +229,7 @@ class ScheduleViewModelImpl @Inject constructor(
             if (savedNamedSchedules.isEmpty()) {
                 workScheduler.cancelPeriodicScheduleUpdating()
                 workScheduler.cancelPeriodicWidgetUpdating()
-                _uiState.update {
+                _scheduleState.update {
                     it.copy(
                         savedNamedSchedules = emptyList(),
                         currentNamedScheduleData = null,
@@ -247,9 +247,9 @@ class ScheduleViewModelImpl @Inject constructor(
                     )
                 }
             } else {
-                _uiState.update {
+                _scheduleState.update {
                     it.copy(
-                        currentNamedScheduleData = _uiState.value.defaultNamedScheduleData
+                        currentNamedScheduleData = _scheduleState.value.defaultNamedScheduleData
                     )
                 }
             }
@@ -277,7 +277,7 @@ class ScheduleViewModelImpl @Inject constructor(
             updateUiState(
                 savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
             )
-            if (namedScheduleEntity.id == _uiState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
+            if (namedScheduleEntity.id == _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
                 val updatedNamedSchedule =
                     scheduleRepos.getSavedNamedScheduleById(namedScheduleEntity.id)
 
@@ -294,7 +294,7 @@ class ScheduleViewModelImpl @Inject constructor(
         timetableId: String
     ) {
         viewModelScope.launch {
-            val currentState = _uiState.value
+            val currentState = _scheduleState.value
             val currentNamedSchedule =
                 currentState.currentNamedScheduleData?.namedSchedule ?: return@launch
 
@@ -374,10 +374,10 @@ class ScheduleViewModelImpl @Inject constructor(
     ) {
         viewModelScope.launch {
             val namedScheduleId =
-                _uiState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id
+                _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id
                     ?: return@launch
             val scheduleId =
-                _uiState.value.currentNamedScheduleData?.settledScheduleEntity?.id ?: return@launch
+                _scheduleState.value.currentNamedScheduleData?.settledScheduleEntity?.id ?: return@launch
 
             scheduleRepos.updateEventExtra(
                 scheduleId = scheduleId,
@@ -451,7 +451,7 @@ class ScheduleViewModelImpl @Inject constructor(
         isLoading: Boolean? = null,
         isSaved: Boolean? = null
     ) {
-        _uiState.update {
+        _scheduleState.update {
             it.copy(
                 savedNamedSchedules = savedNamedSchedules ?: it.savedNamedSchedules,
                 isUpdating = isUpdating ?: it.isUpdating,
@@ -468,13 +468,13 @@ class ScheduleViewModelImpl @Inject constructor(
         val namedScheduleData = NamedScheduleData.getNamedScheduleData(
             namedSchedule = namedSchedule
         )
-        _uiState.update {
+        _scheduleState.update {
             it.copy(
                 currentNamedScheduleData = namedScheduleData
             )
         }
         if (namedSchedule != null && namedSchedule.namedScheduleEntity.isDefault) {
-            _uiState.update {
+            _scheduleState.update {
                 it.copy(
                     defaultNamedScheduleData = namedScheduleData
                 )

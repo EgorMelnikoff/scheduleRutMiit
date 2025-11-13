@@ -47,6 +47,8 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.ListParam
 import com.egormelnikoff.schedulerutmiit.ui.elements.RemoveButton
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -90,11 +92,10 @@ object DefaultEventParams {
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun AddEventDialog(
-    onBack: () -> Unit,
-    onAddCustomEvent: (Event) -> Unit,
-    onShowErrorMessage: (String) -> Unit,
     scheduleEntity: ScheduleEntity,
     focusManager: FocusManager,
+    navigationActions: NavigationActions,
+    scheduleActions: ScheduleActions,
     externalPadding: PaddingValues,
 ) {
     val context = LocalContext.current
@@ -117,7 +118,7 @@ fun AddEventDialog(
             CustomTopAppBar(
                 titleText = LocalContext.current.getString(R.string.adding_a_class),
                 navAction = {
-                    onBack()
+                    navigationActions.onBack()
                 }
             )
         }
@@ -322,10 +323,10 @@ fun AddEventDialog(
                             recurrenceRule = null,
                             periodNumber = null
                         )
-                        onAddCustomEvent(event)
-                        onBack()
+                        scheduleActions.eventActions.onAddCustomEvent(Pair(scheduleEntity, event))
+                        navigationActions.onBack()
                     } else {
-                        onShowErrorMessage(errorMessages)
+                        scheduleActions.onShowErrorMessage(errorMessages)
                     }
                 }
             )

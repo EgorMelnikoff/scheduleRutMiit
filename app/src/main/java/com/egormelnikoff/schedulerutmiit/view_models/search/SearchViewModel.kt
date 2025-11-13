@@ -7,8 +7,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.Group
 import com.egormelnikoff.schedulerutmiit.app.model.Institute
 import com.egormelnikoff.schedulerutmiit.app.model.Institutes
 import com.egormelnikoff.schedulerutmiit.app.model.Person
-import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchOption
@@ -23,13 +23,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface SearchViewModel {
-    val uiState: StateFlow<SearchUiState>
+    val searchState: StateFlow<SearchState>
     fun search(query: String, selectedSearchOption: SearchOption)
     fun setDefaultSearchState()
 }
 
 @Keep
-data class SearchUiState(
+data class SearchState(
     val institutes: Institutes? = null,
     val groups: List<Group> = listOf(),
     val people: List<Person> = listOf(),
@@ -44,13 +44,13 @@ class SearchViewModelImpl @Inject constructor(
     private val resourcesManager: ResourcesManager
 ) : ViewModel(), SearchViewModel {
 
-    private val _uiState = MutableStateFlow(SearchUiState())
-    override val uiState = _uiState.asStateFlow()
+    private val _searchState = MutableStateFlow(SearchState())
+    override val searchState = _searchState.asStateFlow()
 
     private var searchJob: Job? = null
 
     override fun search(query: String, selectedSearchOption: SearchOption) {
-        _uiState.update { it.copy(isLoading = true) }
+        _searchState.update { it.copy(isLoading = true) }
         val newSearchJob = viewModelScope.launch {
             searchJob?.cancelAndJoin()
             if (query.isNotEmpty()) {
@@ -82,7 +82,7 @@ class SearchViewModelImpl @Inject constructor(
                     }
                 }
 
-                _uiState.update {
+                _searchState.update {
                     it.copy(
                         groups = groups,
                         people = people,
@@ -99,7 +99,7 @@ class SearchViewModelImpl @Inject constructor(
     }
 
     override fun setDefaultSearchState() {
-        _uiState.update {
+        _searchState.update {
             it.copy(
                 isEmptyQuery = true,
                 isLoading = false,
@@ -113,7 +113,7 @@ class SearchViewModelImpl @Inject constructor(
     fun setErrorState (
         data: TypedError
     ) {
-        _uiState.update {
+        _searchState.update {
             it.copy(
                 error = TypedError.getErrorMessage(
                     resourcesManager = resourcesManager,
@@ -128,14 +128,14 @@ class SearchViewModelImpl @Inject constructor(
 
 
     private suspend fun searchGroup(query: String): Result<List<Group>> {
-        if (_uiState.value.institutes == null) {
+        if (_searchState.value.institutes == null) {
             when (val institutes = searchRepos.getInstitutes()) {
                 is Result.Error -> {
                     return institutes
                 }
 
                 is Result.Success -> {
-                    _uiState.update {
+                    _searchState.update {
                         it.copy(
                             institutes = institutes.data
                         )
@@ -143,8 +143,8 @@ class SearchViewModelImpl @Inject constructor(
                 }
             }
         }
-        if (_uiState.value.institutes != null) {
-            val groups = (_uiState.value.institutes)!!.institutes?.let { getGroups(it) }
+        if (_searchState.value.institutes != null) {
+            val groups = (_searchState.value.institutes)!!.institutes?.let { getGroups(it) }
             if (groups != null) {
                 val filteredGroups = groups
                     .filter {

@@ -29,8 +29,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
-import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -42,17 +42,17 @@ fun ScheduleListView(
     onDeleteEvent: (Long) -> Unit,
     onUpdateHiddenEvent: (Long) -> Unit,
 
-    scheduleUiState: ScheduleUiState,
     scheduleState: ScheduleState,
+    scheduleUiState: ScheduleUiState,
     isShortEvent: Boolean,
     paddingBottom: Dp
 ) {
-    val scheduleData = scheduleUiState.currentNamedScheduleData!!
+    val scheduleData = scheduleState.currentNamedScheduleData!!
     val formatter = DateTimeFormatter.ofPattern("d MMMM")
 
     if (scheduleData.fullEventList.isNotEmpty()) {
         LazyColumn(
-            state = scheduleState.scheduleListState,
+            state = scheduleUiState.scheduleListState,
             contentPadding = PaddingValues(bottom = paddingBottom),
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -75,7 +75,7 @@ fun ScheduleListView(
                             onUpdateHiddenEvent = onUpdateHiddenEvent,
                             events = eventsGrouped.second,
                             eventsExtraData = scheduleData.eventsExtraData,
-                            isSavedSchedule = scheduleUiState.isSaved,
+                            isSavedSchedule = scheduleState.isSaved,
                             isShortEvent = isShortEvent
                         )
                     }
