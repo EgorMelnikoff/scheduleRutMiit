@@ -13,23 +13,26 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface SettingsViewModel {
-    val stateAppInfo: StateFlow<AppInfoState>
+    val settingsState: StateFlow<SettingsState>
     val appSettings: StateFlow<AppSettings?>
-    val isDataLoading: StateFlow<Boolean>
     fun getAppInfo()
+    fun onSetViewEvent(viewEvent: Boolean)
+    fun onSetShowCountClasses(showCountClasses: Boolean)
+    fun onSetTheme(theme: String)
+    fun onSetDecorColor(decorColor: Int)
+    fun onSetScheduleView(scheduleView: Boolean)
 }
 
-sealed interface AppInfoState {
-    data object Loading : AppInfoState
+sealed interface SettingsState {
+    data object Loading : SettingsState
     data class Loaded(
         val authorTelegramPage: TelegramPage? = null,
-    ) : AppInfoState
+    ) : SettingsState
 }
 
 @HiltViewModel
@@ -37,31 +40,25 @@ class SettingsViewModelImpl @Inject constructor(
     private val settingsRepos: SettingsRepos,
     private val dataStore: PreferencesDataStore
 ) : ViewModel(), SettingsViewModel {
-    private val _stateAppInfo = MutableStateFlow<AppInfoState>(AppInfoState.Loading)
-    override val stateAppInfo: StateFlow<AppInfoState> = _stateAppInfo
+    private val _settingsState = MutableStateFlow<SettingsState>(SettingsState.Loading)
+    override val settingsState: StateFlow<SettingsState> = _settingsState
 
     private val _appSettings = MutableStateFlow<AppSettings?>(null)
     override val appSettings: StateFlow<AppSettings?> = _appSettings
-
-    private val _isDataLoading = MutableStateFlow(true)
-    override val isDataLoading: StateFlow<Boolean> = _isDataLoading.asStateFlow()
 
     private var infoJob: Job? = null
 
     init {
         collectSettings()
-        if (_isDataLoading.value) {
-            _isDataLoading.value = false
-        }
     }
 
     override fun getAppInfo() {
         val newInfoJob = viewModelScope.launch {
             infoJob?.cancelAndJoin()
-            _stateAppInfo.value = AppInfoState.Loading
+            _settingsState.value = SettingsState.Loading
             val authorInfo = settingsRepos.getTgChannelInfo(AUTHOR_CHANNEL_URL)
 
-            _stateAppInfo.value = AppInfoState.Loaded(
+            _settingsState.value = SettingsState.Loaded(
                 authorTelegramPage = when (authorInfo) {
                     is Result.Error -> null
                     is Result.Success -> authorInfo.data
@@ -79,10 +76,10 @@ class SettingsViewModelImpl @Inject constructor(
                 dataStore.scheduleViewFlow,
                 dataStore.viewEventFlow,
                 dataStore.showCountClassesFlow
-            ) { theme, primaryColorIndex, isCalendarView, isShortEventView, isShowCountClasses ->
+            ) { theme, decorColorIndex, isCalendarView, isShortEventView, isShowCountClasses ->
                 AppSettings(
                     theme = theme,
-                    decorColorIndex = primaryColorIndex,
+                    decorColorIndex = decorColorIndex,
                     eventView = isShortEventView,
                     calendarView = isCalendarView,
                     showCountClasses = isShowCountClasses,
@@ -90,6 +87,46 @@ class SettingsViewModelImpl @Inject constructor(
             }.collect { settings ->
                 _appSettings.value = settings
             }
+        }
+    }
+
+    override fun onSetViewEvent(
+        viewEvent: Boolean
+    ) {
+        viewModelScope.launch {
+            dataStore.setViewEvent(viewEvent)
+        }
+    }
+
+    override fun onSetShowCountClasses(
+        showCountClasses: Boolean
+    ) {
+        viewModelScope.launch {
+            dataStore.setShowCountClasses(showCountClasses)
+        }
+    }
+
+    override fun onSetTheme(
+        theme: String
+    ) {
+        viewModelScope.launch {
+            dataStore.setTheme(theme)
+        }
+    }
+
+    override fun onSetDecorColor(
+        decorColor: Int
+    ) {
+        viewModelScope.launch {
+            dataStore.setDecorColor(decorColor)
+        }
+    }
+
+    override fun onSetScheduleView(
+        scheduleView: Boolean
+    ) {
+        viewModelScope.launch {
+            dataStore.setScheduleView(scheduleView)
         }
     }
 }
