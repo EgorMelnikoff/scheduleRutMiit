@@ -21,8 +21,8 @@ object NetworkModule {
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(50, TimeUnit.SECONDS)
+            .writeTimeout(20, TimeUnit.SECONDS)
             .callTimeout(60, TimeUnit.SECONDS)
             .addInterceptor { chain ->
                 val newRequest = chain.request().newBuilder()
