@@ -28,6 +28,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.getGroupedEvents
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
@@ -44,7 +45,7 @@ fun ScheduleListView(
 
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState,
-    isShortEvent: Boolean,
+    eventView: EventView,
     paddingBottom: Dp
 ) {
     val scheduleData = scheduleState.currentNamedScheduleData!!
@@ -76,7 +77,7 @@ fun ScheduleListView(
                             events = eventsGrouped.second,
                             eventsExtraData = scheduleData.eventsExtraData,
                             isSavedSchedule = scheduleState.isSaved,
-                            isShortEvent = isShortEvent
+                            eventView = eventView
                         )
                     }
                     if (index != scheduleData.fullEventList.lastIndex) {

@@ -35,6 +35,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
@@ -47,7 +48,7 @@ fun Event(
     events: List<Event>,
     eventsExtraData: List<EventExtraData>,
     isSavedSchedule: Boolean,
-    isShortEvent: Boolean
+    eventView: EventView
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -89,7 +90,7 @@ fun Event(
                             it.id == event.id
                         },
                         isSavedSchedule = isSavedSchedule,
-                        isShortEvent = isShortEvent
+                        eventView = eventView
                     )
                 }
             }
@@ -103,7 +104,7 @@ fun ScheduleSingleEvent(
     onDeleteEvent: (Long) -> Unit,
     onUpdateHiddenEvent: (Long) -> Unit,
     isSavedSchedule: Boolean,
-    isShortEvent: Boolean,
+    eventView: EventView,
     event: Event,
     eventExtraData: EventExtraData?
 ) {
@@ -123,7 +124,7 @@ fun ScheduleSingleEvent(
                 }
             )
     ) {
-        if (eventExtraData?.tag != null) {
+        if (eventView.tagVisible && eventExtraData?.tag != null) {
             Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -158,82 +159,83 @@ fun ScheduleSingleEvent(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2
             )
-            if (!isShortEvent) {
-                if (!event.groups.isNullOrEmpty()) {
-                    FlowRow(
-                        itemVerticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(14.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.group),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
 
-                        event.groups.forEach { group ->
-                            Text(
-                                text = group.name!!,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-                        }
-                    }
-                }
-                if (!event.rooms.isNullOrEmpty()) {
-                    FlowRow(
-                        itemVerticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(14.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.room),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+            if (eventView.groupsVisible && !event.groups.isNullOrEmpty()) {
+                FlowRow(
+                    itemVerticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(14.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.group),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    event.groups.forEach { group ->
+                        Text(
+                            text = group.name!!,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
                         )
-                        event.rooms.forEach { room ->
-                            Text(
-                                text = room.name!!,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                style = MaterialTheme.typography.bodyMedium,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-                        }
-                    }
-                }
-                if (!event.lecturers.isNullOrEmpty()) {
-                    FlowRow(
-                        itemVerticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(14.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.person),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                        event.lecturers.forEach { lecturer ->
-                            Text(
-                                text = lecturer.shortFio!!,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                style = MaterialTheme.typography.bodyMedium,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-                        }
                     }
                 }
             }
-            if (eventExtraData != null && eventExtraData.comment != "") {
+
+            if (eventView.roomsVisible && !event.rooms.isNullOrEmpty()) {
+                FlowRow(
+                    itemVerticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(14.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.room),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    event.rooms.forEach { room ->
+                        Text(
+                            text = room.name!!,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            style = MaterialTheme.typography.bodyMedium,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+
+            if (eventView.lecturersVisible && !event.lecturers.isNullOrEmpty()) {
+                FlowRow(
+                    itemVerticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(14.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.person),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    event.lecturers.forEach { lecturer ->
+                        Text(
+                            text = lecturer.shortFio!!,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            style = MaterialTheme.typography.bodyMedium,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+
+            if (eventView.commentVisible && eventExtraData != null && eventExtraData.comment != "") {
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 4.dp),
                     color = MaterialTheme.colorScheme.outline,

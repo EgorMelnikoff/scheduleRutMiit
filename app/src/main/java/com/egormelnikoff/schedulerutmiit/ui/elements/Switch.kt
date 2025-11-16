@@ -18,9 +18,7 @@ fun CustomSwitch (
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
         Switch(
             checked = checked,
-            onCheckedChange = {
-                onCheckedChange(it)
-            },
+            onCheckedChange = onCheckedChange,
             colors = colors ?: SwitchDefaults.colors().copy(
                 checkedTrackColor = MaterialTheme.colorScheme.primary,
                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,

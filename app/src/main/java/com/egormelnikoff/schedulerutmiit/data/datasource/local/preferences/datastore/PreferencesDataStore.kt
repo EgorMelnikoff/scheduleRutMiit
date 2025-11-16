@@ -32,9 +32,32 @@ class PreferencesDataStore @Inject constructor(
         }
     }
 
-    suspend fun setViewEvent(isShort: Boolean) {
+    suspend fun setEventGroupVisibility(visible: Boolean) {
         context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.COMPACT_VIEW_EVENT] = isShort
+            preferences[PreferencesKeys.EVENT_GROUPS_VISIBILITY] = visible
+        }
+    }
+
+    suspend fun setEventRoomsVisibility(visible: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.EVENT_ROOMS_VISIBILITY] = visible
+        }
+    }
+
+    suspend fun setEventLecturersVisibility(visible: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.EVENT_LECTURERS_VISIBILITY] = visible
+        }
+    }
+
+    suspend fun setEventTagVisibility(visible: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.EVENT_TAG_VISIBILITY] = visible
+        }
+    }
+    suspend fun setEventCommentVisibility(visible: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.EVENT_COMMENT_VISIBILITY] = visible
         }
     }
 
@@ -53,15 +76,28 @@ class PreferencesDataStore @Inject constructor(
         preferences[PreferencesKeys.DECOR_COLOR] ?: 0
     }
 
-    val viewEventFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
-        preferences[PreferencesKeys.COMPACT_VIEW_EVENT] ?: false
-    }
-
     val scheduleViewFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.SCHEDULE_VIEW] ?: true
     }
 
     val showCountClassesFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.SHOW_COUNT_CLASSES] ?: true
+    }
+
+    val groupsVisibilityFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.EVENT_GROUPS_VISIBILITY] ?: true
+    }
+
+    val roomsVisibilityFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.EVENT_ROOMS_VISIBILITY] ?: true
+    }
+    val lecturersVisibilityFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.EVENT_LECTURERS_VISIBILITY] ?: true
+    }
+    val tagVisibilityFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.EVENT_TAG_VISIBILITY] ?: true
+    }
+    val commentVisibilityFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.EVENT_COMMENT_VISIBILITY] ?: true
     }
 }

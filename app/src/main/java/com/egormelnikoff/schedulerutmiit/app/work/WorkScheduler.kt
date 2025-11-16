@@ -68,7 +68,6 @@ class WorkSchedulerImpl @Inject constructor(
             UPDATING_WIDGET_INTERVAL,
             TimeUnit.MINUTES
         )
-            .addTag(UPDATING_WIDGET_PERIODICALLY)
             .build()
 
         workManager.enqueueUniquePeriodicWork(

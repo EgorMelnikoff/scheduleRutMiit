@@ -1,40 +1,36 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions
@@ -46,6 +42,7 @@ data class ThemeSelectorItemContent(
     val displayedName: String
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     settingsListState: LazyStaggeredGridState,
@@ -54,6 +51,8 @@ fun SettingsScreen(
     settingsActions: SettingsActions,
     externalPadding: PaddingValues
 ) {
+    var eventViewDialog by remember { mutableStateOf(false) }
+
     LazyVerticalStaggeredGrid(
         modifier = Modifier
             .fillMaxWidth()
@@ -76,17 +75,28 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                settingsActions.onSetViewEvent(!appSettings.eventView)
+                                eventViewDialog = true
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.compact),
                             text = LocalContext.current.getString(R.string.compact_view)
                         ) {
-                            CustomSwitch(
-                                checked = appSettings.eventView,
-                                onCheckedChange = {
-                                    settingsActions.onSetViewEvent(it)
-                                }
-                            )
+                            Row (
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ){
+                                Icon(
+                                    modifier = Modifier.size(24.dp),
+                                    imageVector = ImageVector.vectorResource(R.drawable.right),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                CustomSwitch(
+                                    checked = (!appSettings.eventView.groupsVisible && !appSettings.eventView.roomsVisible && !appSettings.eventView.lecturersVisible && !appSettings.eventView.tagVisible && !appSettings.eventView.commentVisible),
+                                    onCheckedChange = {
+                                        settingsActions.eventActions.onSetEventView(!it)
+                                    }
+                                )
+                            }
                         }
                     },
                     {
@@ -163,7 +173,7 @@ fun SettingsScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.bug_report),
                             text = LocalContext.current.getString(R.string.send_logs_by_email),
                         )
-                    },{
+                    }, {
                         SettingsItem(
                             onClick = {
                                 navigationActions.navigateToInfoDialog()
@@ -177,123 +187,53 @@ fun SettingsScreen(
         }
     }
     StatusBarProtection()
-}
 
-@Composable
-fun SettingsItem(
-    onClick: (() -> Unit)?,
-    text: String,
-    imageVector: ImageVector,
-    horizontal: Boolean = true,
-    content: @Composable (() -> Unit)? = null,
-) {
-    Column(
-        modifier = Modifier
-            .let {
-                if (onClick != null) {
-                    it.clickable(onClick = onClick)
-                } else {
-                    it
-                }
+    if (eventViewDialog) {
+        CustomModalBottomSheet(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            onDismiss = {
+                eventViewDialog = false
             }
-            .padding(horizontal = 16.dp, vertical = 16.dp)
-            .defaultMinSize(minHeight = 36.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
         ) {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                imageVector = imageVector,
-                contentDescription = text,
-                tint = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            Text(
-                modifier = Modifier.weight(1f),
-                text = text,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleMedium,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-            )
-            if (horizontal) {
-                content?.invoke()
+            CheckedItem(
+                text = LocalContext.current.getString(R.string.groups),
+                imageVector = ImageVector.vectorResource(R.drawable.group),
+                checked = appSettings.eventView.groupsVisible
+            ) { visible ->
+                settingsActions.eventActions.onSetEventGroupVisibility(visible)
             }
-        }
-        if (!horizontal) {
-            content?.invoke()
-        }
-    }
-}
-
-@Composable
-fun ThemeSelector(
-    setTheme: (String) -> Unit,
-    currentTheme: String
-) {
-    val themes = arrayOf(
-        ThemeSelectorItemContent(
-            name = "light",
-            imageVector = ImageVector.vectorResource(R.drawable.sun),
-            displayedName = LocalContext.current.getString(R.string.light)
-        ),
-        ThemeSelectorItemContent(
-            name = "dark",
-            imageVector = ImageVector.vectorResource(R.drawable.moon),
-            displayedName = LocalContext.current.getString(R.string.dark)
-        ),
-        ThemeSelectorItemContent(
-            name = "system",
-            imageVector = ImageVector.vectorResource(R.drawable.error),
-            displayedName = LocalContext.current.getString(R.string.auto)
-        ),
-    )
-
-    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-        SingleChoiceSegmentedButtonRow(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            themes.forEachIndexed { index, theme ->
-                SegmentedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = SegmentedButtonDefaults.colors().copy(
-                        activeContainerColor = MaterialTheme.colorScheme.primary,
-                        activeBorderColor = Color.Transparent,
-                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                        inactiveContainerColor = MaterialTheme.colorScheme.background,
-                        inactiveBorderColor = Color.Transparent,
-                        inactiveContentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    ),
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = index,
-                        count = themes.size,
-                        baseShape = MaterialTheme.shapes.medium
-                    ),
-                    onClick = {
-                        setTheme(theme.name)
-                    },
-                    selected = theme.name == currentTheme,
-                    icon = {},
-                    label = {
-                        if (theme.name != "system") {
-                            Icon(
-                                modifier = Modifier
-                                    .size(16.dp),
-                                imageVector = theme.imageVector,
-                                contentDescription = theme.displayedName
-                            )
-                        } else {
-                            Text(
-                                text = theme.displayedName,
-                                style = MaterialTheme.typography.titleSmall
-                            )
-                        }
-                    }
-                )
+            CheckedItem(
+                text = LocalContext.current.getString(R.string.rooms),
+                imageVector = ImageVector.vectorResource(R.drawable.room),
+                checked = appSettings.eventView.roomsVisible
+            ) { visible ->
+                settingsActions.eventActions.onSetEventRoomsVisibility(visible)
+            }
+            CheckedItem(
+                text = LocalContext.current.getString(R.string.lecturers),
+                imageVector = ImageVector.vectorResource(R.drawable.person),
+                checked = appSettings.eventView.lecturersVisible
+            ) { visible ->
+                settingsActions.eventActions.onSetEventLecturersVisibility(visible)
+            }
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outline
+            )
+            CheckedItem(
+                text = LocalContext.current.getString(R.string.tag),
+                imageVector = ImageVector.vectorResource(R.drawable.tag),
+                checked = appSettings.eventView.tagVisible
+            ) { visible ->
+                settingsActions.eventActions.onSetEventTagVisibility(visible)
+            }
+            CheckedItem(
+                text = LocalContext.current.getString(R.string.comment),
+                imageVector = ImageVector.vectorResource(R.drawable.comment),
+                checked = appSettings.eventView.commentVisible
+            ) { visible ->
+                settingsActions.eventActions.onSetEventCommentVisibility(visible)
             }
         }
     }

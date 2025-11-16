@@ -6,6 +6,7 @@ import com.egormelnikoff.schedulerutmiit.app.AppConst.AUTHOR_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.app.model.TelegramPage
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.data.repos.settings.SettingsRepos
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,11 +22,17 @@ interface SettingsViewModel {
     val settingsState: StateFlow<SettingsState>
     val appSettings: StateFlow<AppSettings?>
     fun getAppInfo()
-    fun onSetViewEvent(viewEvent: Boolean)
     fun onSetShowCountClasses(showCountClasses: Boolean)
     fun onSetTheme(theme: String)
     fun onSetDecorColor(decorColor: Int)
     fun onSetScheduleView(scheduleView: Boolean)
+
+    fun onSetEventView(visible: Boolean)
+    fun onSetEventGroupVisibility(visible: Boolean)
+    fun onSetEventRoomsVisibility(visible: Boolean)
+    fun onSetEventLecturersVisibility(visible: Boolean)
+    fun onSetEventTagVisibility(visible: Boolean)
+    fun onSetEventCommentVisibility(visible: Boolean)
 }
 
 sealed interface SettingsState {
@@ -70,19 +77,34 @@ class SettingsViewModelImpl @Inject constructor(
 
     private fun collectSettings() {
         viewModelScope.launch {
+            val eventFlow = combine(
+                dataStore.groupsVisibilityFlow,
+                dataStore.roomsVisibilityFlow,
+                dataStore.lecturersVisibilityFlow,
+                dataStore.tagVisibilityFlow,
+                dataStore.commentVisibilityFlow
+            ) { groupsVisibility, roomsVisibility, lecturersVisibility, tagVisibility, commentVisibility ->
+                EventView(
+                    groupsVisible = groupsVisibility,
+                    roomsVisible = roomsVisibility,
+                    lecturersVisible = lecturersVisibility,
+                    tagVisible = tagVisibility,
+                    commentVisible = commentVisibility
+                )
+            }
             combine(
                 dataStore.themeFlow,
                 dataStore.decorColorFlow,
                 dataStore.scheduleViewFlow,
-                dataStore.viewEventFlow,
-                dataStore.showCountClassesFlow
-            ) { theme, decorColorIndex, isCalendarView, isShortEventView, isShowCountClasses ->
+                dataStore.showCountClassesFlow,
+                eventFlow
+            ) { theme, decorColorIndex, isCalendarView, isShowCountClasses, eventView ->
                 AppSettings(
                     theme = theme,
                     decorColorIndex = decorColorIndex,
-                    eventView = isShortEventView,
                     calendarView = isCalendarView,
                     showCountClasses = isShowCountClasses,
+                    eventView = eventView
                 )
             }.collect { settings ->
                 _appSettings.value = settings
@@ -90,11 +112,42 @@ class SettingsViewModelImpl @Inject constructor(
         }
     }
 
-    override fun onSetViewEvent(
-        viewEvent: Boolean
-    ) {
+    override fun onSetEventGroupVisibility(visible: Boolean) {
         viewModelScope.launch {
-            dataStore.setViewEvent(viewEvent)
+            dataStore.setEventGroupVisibility(visible)
+        }
+    }
+
+    override fun onSetEventView(visible: Boolean) {
+        viewModelScope.launch {
+            dataStore.setEventGroupVisibility(visible)
+            dataStore.setEventRoomsVisibility(visible)
+            dataStore.setEventLecturersVisibility(visible)
+            dataStore.setEventTagVisibility(visible)
+            dataStore.setEventCommentVisibility(visible)
+        }
+    }
+    override fun onSetEventRoomsVisibility(visible: Boolean) {
+        viewModelScope.launch {
+            dataStore.setEventRoomsVisibility(visible)
+        }
+    }
+
+    override fun onSetEventLecturersVisibility(visible: Boolean) {
+        viewModelScope.launch {
+            dataStore.setEventLecturersVisibility(visible)
+        }
+    }
+
+    override fun onSetEventTagVisibility(visible: Boolean) {
+        viewModelScope.launch {
+            dataStore.setEventTagVisibility(visible)
+        }
+    }
+
+    override fun onSetEventCommentVisibility(visible: Boolean) {
+        viewModelScope.launch {
+            dataStore.setEventCommentVisibility(visible)
         }
     }
 

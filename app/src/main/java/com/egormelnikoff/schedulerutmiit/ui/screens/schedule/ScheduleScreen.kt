@@ -151,7 +151,7 @@ fun ScreenSchedule(
                                         scheduleState = scheduleState,
                                         scheduleUiState = scheduleUiState,
                                         isShowCountClasses = appSettings.showCountClasses,
-                                        isShortEvent = appSettings.eventView,
+                                        eventView = appSettings.eventView,
                                         paddingBottom = externalPadding.calculateBottomPadding()
                                     )
                                 } else {
@@ -162,7 +162,7 @@ fun ScreenSchedule(
 
                                         scheduleState = scheduleState,
                                         scheduleUiState = scheduleUiState,
-                                        isShortEvent = appSettings.eventView,
+                                        eventView = appSettings.eventView,
                                         paddingBottom = externalPadding.calculateBottomPadding()
                                     )
                                 }
