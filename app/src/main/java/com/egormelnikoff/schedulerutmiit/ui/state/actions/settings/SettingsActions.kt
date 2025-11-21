@@ -1,14 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.ui.state.actions.settings
 
-import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsState
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 
 data class SettingsActions(
     val onSetScheduleView: (Boolean) -> Unit, //isScheduleCalendar
-    val onLoadAppInfoState: () -> Unit,
-    val onOpenUri: (String) -> Unit, //Uri
     val onSendLogs: () -> Unit,
     val onSetShowCountClasses: (Boolean) -> Unit, //isShowCountClasses
     val onSetTheme: (String) -> Unit, // light | dark | system
@@ -17,22 +12,10 @@ data class SettingsActions(
 ) {
     companion object {
         fun getSettingsActions(
-            settingsViewModel: SettingsViewModel,
-            settingsState: SettingsState,
-            logger: Logger,
-            appUiState: AppUiState
+            settingsViewModel: SettingsViewModel
         ) = SettingsActions(
-            onLoadAppInfoState = {
-                if (settingsState !is SettingsState.Loaded) {
-                    settingsViewModel.getAppInfo()
-                }
-            },
-            onOpenUri = { value ->
-                appUiState.uriHandler.openUri(value)
-            },
-
             onSendLogs = {
-                logger.sendLogFile(appUiState.context)
+                settingsViewModel.sendLogsFile()
             },
             eventActions = EventActions.getEventActions(settingsViewModel),
             onSetShowCountClasses = { value ->

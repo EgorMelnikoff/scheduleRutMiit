@@ -2,16 +2,11 @@ package com.egormelnikoff.schedulerutmiit.view_models.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.app.AppConst.AUTHOR_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.app.model.TelegramPage
-import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.data.repos.settings.SettingsRepos
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -19,9 +14,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface SettingsViewModel {
-    val settingsState: StateFlow<SettingsState>
     val appSettings: StateFlow<AppSettings?>
-    fun getAppInfo()
+    fun sendLogsFile()
     fun onSetShowCountClasses(showCountClasses: Boolean)
     fun onSetTheme(theme: String)
     fun onSetDecorColor(decorColor: Int)
@@ -35,44 +29,20 @@ interface SettingsViewModel {
     fun onSetEventCommentVisibility(visible: Boolean)
 }
 
-sealed interface SettingsState {
-    data object Loading : SettingsState
-    data class Loaded(
-        val authorTelegramPage: TelegramPage? = null,
-    ) : SettingsState
-}
-
 @HiltViewModel
 class SettingsViewModelImpl @Inject constructor(
     private val settingsRepos: SettingsRepos,
-    private val dataStore: PreferencesDataStore
+    private val dataStore: PreferencesDataStore,
 ) : ViewModel(), SettingsViewModel {
-    private val _settingsState = MutableStateFlow<SettingsState>(SettingsState.Loading)
-    override val settingsState: StateFlow<SettingsState> = _settingsState
-
     private val _appSettings = MutableStateFlow<AppSettings?>(null)
     override val appSettings: StateFlow<AppSettings?> = _appSettings
-
-    private var infoJob: Job? = null
 
     init {
         collectSettings()
     }
 
-    override fun getAppInfo() {
-        val newInfoJob = viewModelScope.launch {
-            infoJob?.cancelAndJoin()
-            _settingsState.value = SettingsState.Loading
-            val authorInfo = settingsRepos.getTgChannelInfo(AUTHOR_CHANNEL_URL)
-
-            _settingsState.value = SettingsState.Loaded(
-                authorTelegramPage = when (authorInfo) {
-                    is Result.Error -> null
-                    is Result.Success -> authorInfo.data
-                }
-            )
-        }
-        infoJob = newInfoJob
+    override fun sendLogsFile() {
+        settingsRepos.sendLogsFile()
     }
 
     private fun collectSettings() {
@@ -114,40 +84,36 @@ class SettingsViewModelImpl @Inject constructor(
 
     override fun onSetEventGroupVisibility(visible: Boolean) {
         viewModelScope.launch {
-            dataStore.setEventGroupVisibility(visible)
+            settingsRepos.onSetEventGroupVisibility(visible)
         }
     }
 
     override fun onSetEventView(visible: Boolean) {
         viewModelScope.launch {
-            dataStore.setEventGroupVisibility(visible)
-            dataStore.setEventRoomsVisibility(visible)
-            dataStore.setEventLecturersVisibility(visible)
-            dataStore.setEventTagVisibility(visible)
-            dataStore.setEventCommentVisibility(visible)
+            settingsRepos.onSetEventView(visible)
         }
     }
     override fun onSetEventRoomsVisibility(visible: Boolean) {
         viewModelScope.launch {
-            dataStore.setEventRoomsVisibility(visible)
+            settingsRepos.onSetEventRoomsVisibility(visible)
         }
     }
 
     override fun onSetEventLecturersVisibility(visible: Boolean) {
         viewModelScope.launch {
-            dataStore.setEventLecturersVisibility(visible)
+            settingsRepos.onSetEventLecturersVisibility(visible)
         }
     }
 
     override fun onSetEventTagVisibility(visible: Boolean) {
         viewModelScope.launch {
-            dataStore.setEventTagVisibility(visible)
+            settingsRepos.onSetEventTagVisibility(visible)
         }
     }
 
     override fun onSetEventCommentVisibility(visible: Boolean) {
         viewModelScope.launch {
-            dataStore.setEventCommentVisibility(visible)
+            settingsRepos.onSetEventCommentVisibility(visible)
         }
     }
 
@@ -155,7 +121,7 @@ class SettingsViewModelImpl @Inject constructor(
         showCountClasses: Boolean
     ) {
         viewModelScope.launch {
-            dataStore.setShowCountClasses(showCountClasses)
+            settingsRepos.onSetShowCountClasses(showCountClasses)
         }
     }
 
@@ -163,7 +129,7 @@ class SettingsViewModelImpl @Inject constructor(
         theme: String
     ) {
         viewModelScope.launch {
-            dataStore.setTheme(theme)
+            settingsRepos.onSetTheme(theme)
         }
     }
 
@@ -171,7 +137,7 @@ class SettingsViewModelImpl @Inject constructor(
         decorColor: Int
     ) {
         viewModelScope.launch {
-            dataStore.setDecorColor(decorColor)
+            settingsRepos.onSetDecorColor(decorColor)
         }
     }
 
@@ -179,7 +145,7 @@ class SettingsViewModelImpl @Inject constructor(
         scheduleView: Boolean
     ) {
         viewModelScope.launch {
-            dataStore.setScheduleView(scheduleView)
+            settingsRepos.onSetScheduleView(scheduleView)
         }
     }
 }

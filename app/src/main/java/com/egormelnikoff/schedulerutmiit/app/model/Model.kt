@@ -136,13 +136,6 @@ data class Room(
 )
 
 @Keep
-data class TelegramPage(
-    val url: String?,
-    val name: String?,
-    val imageUrl: String?
-)
-
-@Keep
 data class RecurrenceRule(
     val frequency: String,
     val interval: Int

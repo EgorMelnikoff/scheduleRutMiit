@@ -2,18 +2,15 @@ package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,27 +29,25 @@ import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_GITHUB_REPOS
+import com.egormelnikoff.schedulerutmiit.app.AppConst.AUTHOR
+import com.egormelnikoff.schedulerutmiit.app.AppConst.AUTHOR_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.app.AppConst.CLOUD_TIPS
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingIcon
+import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions
-import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsState
+import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 
 @Composable
 fun InfoDialog(
-    settingsState: SettingsState,
+    appUiState: AppUiState,
     navigationActions: NavigationActions,
-    settingsActions: SettingsActions,
     externalPadding: PaddingValues,
 ) {
+    val packageInfo = appUiState.context.packageManager.getPackageInfo(appUiState.context.packageName, 0)
 
-    val context = LocalContext.current
-    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    settingsActions.onLoadAppInfoState()
     Scaffold(
         topBar = {
             CustomTopAppBar(
@@ -122,7 +117,7 @@ fun InfoDialog(
                                 )
                             },
                             onClick = {
-                                settingsActions.onOpenUri(APP_CHANNEL_URL)
+                                appUiState.uriHandler.openUri(APP_CHANNEL_URL)
                             }
                         )
                     }, {
@@ -136,9 +131,8 @@ fun InfoDialog(
                                 )
                             },
                             onClick = {
-                                settingsActions.onOpenUri(APP_GITHUB_REPOS)
-                            },
-
+                                appUiState.uriHandler.openUri(APP_GITHUB_REPOS)
+                            }
                         )
                     }
                 )
@@ -155,50 +149,28 @@ fun InfoDialog(
                             )
                         },
                         onClick = {
-                            settingsActions.onOpenUri(CLOUD_TIPS)
+                            appUiState.uriHandler.openUri(CLOUD_TIPS)
                         }
                     )
                 }
             )
 
-            when (settingsState) {
-                is SettingsState.Loading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-
+            ColumnGroup(
+                items = listOf {
+                    ClickableItem(
+                        title = AUTHOR,
+                        subtitle = LocalContext.current.getString(R.string.author),
+                        leadingIcon = {
+                            LeadingTitle(
+                                title = AUTHOR
+                            )
+                        },
+                        onClick = {
+                            appUiState.uriHandler.openUri(AUTHOR_CHANNEL_URL)
+                        }
+                    )
                 }
-
-                is SettingsState.Loaded -> {
-                    settingsState.authorTelegramPage?.let { author ->
-                        ColumnGroup(
-                            items = listOf {
-                                ClickableItem(
-                                    title = author.name!!,
-                                    subtitle = LocalContext.current.getString(R.string.author),
-                                    leadingIcon = {
-                                        LeadingAsyncImage(
-                                            title = author.name,
-                                            imageUrl = author.imageUrl!!
-                                        )
-                                    },
-                                    onClick = {
-                                        author.url?.let {
-                                            settingsActions.onOpenUri(it)
-                                        }
-                                    }
-                                )
-                            }
-                        )
-                    }
-                }
-            }
+            )
         }
     }
 }
