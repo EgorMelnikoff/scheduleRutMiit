@@ -16,9 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.HiddenEventsDialog
@@ -26,6 +24,7 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.InfoDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.NewsDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.RenameDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchDialog
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event.AddEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.ui.elements.rememberBarItems
@@ -40,14 +39,13 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState.Companion.rememberAppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState.Companion.rememberReviewUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState.Companion.rememberScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.news.NewsActions.Companion.getNewsActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions.Companion.getScheduleActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions.Companion.getSearchActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions.Companion.getSettingsActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.news.NewsActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,40 +53,53 @@ fun Main(
     searchViewModel: SearchViewModel,
     scheduleViewModel: ScheduleViewModel,
     newsViewModel: NewsViewModel,
-    settingsViewModel: SettingsViewModel,
-    appSettings: AppSettings,
-    logger: Logger
+    searchActions: SearchActions,
+    scheduleActions: ScheduleActions,
+    newsActions: NewsActions,
+    settingsActions: SettingsActions,
+    appSettings: AppSettings
 ) {
-    val searchState = searchViewModel.searchState.collectAsState().value
-    val scheduleState = scheduleViewModel.scheduleState.collectAsState().value
-    val newsState = newsViewModel.newsState.collectAsState().value
-    val settingsState = settingsViewModel.settingsState.collectAsState().value
-
     val appUiState = rememberAppUiState()
-    val scheduleUiState = rememberScheduleUiState(scheduleState = scheduleState)
     val reviewUiState = rememberReviewUiState()
-
     val navigationActions = getNavigationActions(
         appBackStack = appUiState.appBackStack
     )
-    val searchActions = getSearchActions(
-        searchViewModel = searchViewModel,
-        reviewUiState = reviewUiState
+
+    val scheduleState = scheduleViewModel.scheduleState.collectAsState().value
+    val scheduleUiState = rememberScheduleUiState(scheduleState = scheduleState)
+    val barItems = rememberBarItems(
+        onScheduleClick = {
+            appUiState.scope.launch {
+                when {
+                    scheduleUiState != null && scheduleState.currentNamedScheduleData?.scheduleData?.schedulePagerData != null && appSettings.calendarView -> {
+                        scheduleUiState.onSelectDate(
+                            scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate
+                        )
+                        scheduleUiState.pagerWeeksState.animateScrollToPage(
+                            scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.weeksStartIndex
+                        )
+                    }
+
+                    scheduleUiState != null && !appSettings.calendarView -> {
+                        scheduleUiState.scheduleListState.animateScrollToItem(0)
+                    }
+                }
+            }
+        },
+        onNewsClick = {
+            appUiState.scope.launch {
+                appUiState.newsListState.animateScrollToItem(0)
+            }
+        },
+        onSettingsClick = {
+            appUiState.scope.launch {
+                appUiState.settingsListState.animateScrollToItem(0)
+            }
+        }
     )
-    val scheduleActions = getScheduleActions(
-        scheduleViewModel = scheduleViewModel,
-        scheduleState = scheduleState,
-        appUiState = appUiState
-    )
-    val newsActions = getNewsActions(
-        newsViewModel = newsViewModel
-    )
-    val settingsActions = getSettingsActions(
-        settingsViewModel = settingsViewModel,
-        settingsState = settingsState,
-        appUiState = appUiState,
-        logger = logger
-    )
+    val searchState = searchViewModel.searchState.collectAsState().value
+    val searchParams = searchViewModel.searchParams.collectAsState().value
+    val newsState = newsViewModel.newsState.collectAsState().value
 
     ScheduleUiEventProcessor(
         scheduleViewModel = scheduleViewModel,
@@ -105,36 +116,7 @@ fun Main(
         bottomBar = {
             CustomNavigationBar(
                 appBackStack = appUiState.appBackStack,
-                barItems = rememberBarItems(
-                    onScheduleClick = {
-                        appUiState.scope.launch {
-                            when {
-                                scheduleUiState != null && scheduleState.currentNamedScheduleData!!.schedulePagerData != null && appSettings.calendarView -> {
-                                    scheduleUiState.onSelectDate(
-                                        scheduleState.currentNamedScheduleData.schedulePagerData.defaultDate
-                                    )
-                                    scheduleUiState.pagerWeeksState.animateScrollToPage(
-                                        scheduleState.currentNamedScheduleData.schedulePagerData.weeksStartIndex
-                                    )
-                                }
-
-                                scheduleUiState != null && !appSettings.calendarView -> {
-                                    scheduleUiState.scheduleListState.animateScrollToItem(0)
-                                }
-                            }
-                        }
-                    },
-                    onNewsClick = {
-                        appUiState.scope.launch {
-                            appUiState.newsListState.animateScrollToItem(0)
-                        }
-                    },
-                    onSettingsClick = {
-                        appUiState.scope.launch {
-                            appUiState.settingsListState.animateScrollToItem(0)
-                        }
-                    }
-                ),
+                barItems = barItems,
                 theme = appSettings.theme
             )
         },
@@ -190,6 +172,7 @@ fun Main(
 
                 entry<Routes.Schedule> {
                     ScreenSchedule(
+                        appUiState = appUiState,
                         scheduleState = scheduleState,
                         scheduleUiState = scheduleUiState,
                         appSettings = appSettings,
@@ -202,7 +185,6 @@ fun Main(
 
                 entry<Routes.NewsList> {
                     NewsScreen(
-                        newsState = newsState,
                         newsListFLow = newsViewModel.newsListFlow,
                         newsGridListState = appUiState.newsListState,
                         navigationActions = navigationActions,
@@ -213,6 +195,7 @@ fun Main(
 
                 entry<Routes.Settings> {
                     SettingsScreen(
+                        appUiState = appUiState,
                         settingsListState = appUiState.settingsListState,
                         appSettings = appSettings,
                         navigationActions = navigationActions,
@@ -223,10 +206,11 @@ fun Main(
 
                 entry<Routes.EventDialog> { key ->
                     EventDialog(
+                        scheduleEntity = key.scheduleEntity,
+                        isSavedSchedule = key.isSavedSchedule,
+                        isCustomSchedule = key.isCustomSchedule,
                         event = key.event,
                         eventExtraData = key.eventExtraData,
-                        isSavedSchedule = scheduleState.isSaved,
-                        isCustomSchedule = scheduleState.currentNamedScheduleData!!.namedSchedule!!.namedScheduleEntity.type == 3,
                         navigationActions = navigationActions,
                         scheduleActions = scheduleActions,
                         externalPadding = externalPadding
@@ -236,23 +220,24 @@ fun Main(
                 entry<Routes.NewsDialog> {
                     NewsDialog(
                         newsState = newsState,
+                        navigationActions = navigationActions,
+                        newsActions = newsActions,
                         externalPadding = externalPadding
                     )
                 }
 
                 entry<Routes.InfoDialog> {
                     InfoDialog(
-                        settingsState = settingsState,
-                        settingsActions = settingsActions,
+                        appUiState = appUiState,
                         navigationActions = navigationActions,
                         externalPadding = externalPadding
                     )
                 }
 
-                entry<Routes.AddEventDialog> {
+                entry<Routes.AddEventDialog> { key ->
                     AddEventDialog(
-                        scheduleEntity = scheduleState.currentNamedScheduleData!!.settledScheduleEntity!!,
-                        focusManager = appUiState.focusManager,
+                        scheduleEntity = key.scheduleEntity,
+                        appUiState = appUiState,
                         navigationActions = navigationActions,
                         scheduleActions = scheduleActions,
                         externalPadding = externalPadding
@@ -262,7 +247,7 @@ fun Main(
                 entry<Routes.SearchDialog> {
                     SearchDialog(
                         searchState = searchState,
-                        reviewUiState = reviewUiState,
+                        searchParams = searchParams,
                         navigationActions = navigationActions,
                         searchActions = searchActions,
                         scheduleActions = scheduleActions,
@@ -272,7 +257,7 @@ fun Main(
 
                 entry<Routes.AddScheduleDialog> {
                     AddScheduleDialog(
-                        focusManager = appUiState.focusManager,
+                        appUiState = appUiState,
                         navigationActions = navigationActions,
                         scheduleActions = scheduleActions,
                         externalPadding = externalPadding
@@ -288,10 +273,10 @@ fun Main(
                     )
                 }
 
-                entry<Routes.HiddenEventsDialog> {
+                entry<Routes.HiddenEventsDialog> { key ->
                     HiddenEventsDialog(
-                        hiddenEvents = scheduleState.currentNamedScheduleData!!.hiddenEvents,
-                        eventsExtraData = scheduleState.currentNamedScheduleData.eventsExtraData,
+                        scheduleEntity = key.scheduleEntity,
+                        hiddenEvents = scheduleState.currentNamedScheduleData!!.scheduleData!!.hiddenEvents,
                         navigationActions = navigationActions,
                         eventActions = scheduleActions.eventActions,
                         externalPadding = externalPadding
