@@ -30,6 +30,7 @@ fun ExpandedMenu(
     onShowExpandedMenu: (Boolean) -> Unit
 ) {
     val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+
     AnimatedVisibility(
         visible = expandedSchedulesMenu,
         enter = expandVertically(),
@@ -38,7 +39,7 @@ fun ExpandedMenu(
         Column(
             modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
         ) {
-            scheduleState.currentNamedScheduleData!!.namedSchedule!!.schedules.forEach { schedule ->
+            scheduleState.currentNamedScheduleData?.namedSchedule?.schedules?.forEach { schedule ->
                 val scale by animateFloatAsState(
                     targetValue = if (schedule.scheduleEntity.isDefault) 1f else 0f
                 )

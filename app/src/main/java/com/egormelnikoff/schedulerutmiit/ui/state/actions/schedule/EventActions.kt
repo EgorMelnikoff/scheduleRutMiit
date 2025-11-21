@@ -2,20 +2,18 @@ package com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 data class EventActions(
     val onAddCustomEvent: (Pair<ScheduleEntity, Event>) -> Unit,
-    val onDeleteEvent: (Long) -> Unit, //EventPK
-    val onHideEvent: (Long) -> Unit, //EventPK
-    val onShowEvent: (Long) -> Unit, //EventPK
+    val onDeleteEvent: (Pair<ScheduleEntity, Long>) -> Unit, //EventPK
+    val onHideEvent: (Pair<ScheduleEntity, Long>) -> Unit, //EventPK
+    val onShowEvent: (Pair<ScheduleEntity, Long>) -> Unit, //EventPK
     val onEventExtraChange: (Triple<Event, String, Int>) -> Unit, //Event, Comment, Tag
 ) {
     companion object {
         fun getEventActions(
-            scheduleViewModel: ScheduleViewModel,
-            scheduleState: ScheduleState,
+            scheduleViewModel: ScheduleViewModel
         ) = EventActions(
             onAddCustomEvent = { event ->
                 scheduleViewModel.addCustomEvent(
@@ -30,23 +28,24 @@ data class EventActions(
                     tag = value.third
                 )
             },
-            onDeleteEvent = { primaryKey ->
+            onDeleteEvent = { event ->
                 scheduleViewModel.deleteCustomEvent(
-                    scheduleEntity = scheduleState.currentNamedScheduleData!!.settledScheduleEntity!!,
-                    eventPrimaryKey = primaryKey
+                    scheduleEntity = event.first,
+                    eventPrimaryKey = event.second
                 )
+
             },
-            onShowEvent = { primaryKey ->
+            onShowEvent = { event ->
                 scheduleViewModel.updateEventHidden(
-                    scheduleEntity = scheduleState.currentNamedScheduleData!!.settledScheduleEntity!!,
-                    eventPrimaryKey = primaryKey,
+                    scheduleEntity = event.first,
+                    eventPrimaryKey = event.second,
                     isHidden = false
                 )
             },
-            onHideEvent = { primaryKey ->
+            onHideEvent = { event ->
                 scheduleViewModel.updateEventHidden(
-                    scheduleEntity = scheduleState.currentNamedScheduleData!!.settledScheduleEntity!!,
-                    eventPrimaryKey = primaryKey,
+                    scheduleEntity = event.first,
+                    eventPrimaryKey = event.second,
                     isHidden = true
                 )
             }

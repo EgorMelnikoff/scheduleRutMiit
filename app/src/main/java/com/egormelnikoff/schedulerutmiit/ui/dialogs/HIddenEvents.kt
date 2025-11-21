@@ -21,7 +21,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
@@ -33,8 +33,8 @@ import java.util.Locale
 
 @Composable
 fun HiddenEventsDialog(
+    scheduleEntity: ScheduleEntity?,
     hiddenEvents: List<Event>,
-    eventsExtraData: List <EventExtraData>,
     navigationActions: NavigationActions,
     eventActions: EventActions,
     externalPadding: PaddingValues
@@ -61,9 +61,8 @@ fun HiddenEventsDialog(
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (hiddenEvents.isNotEmpty()) {
+            if (hiddenEvents.isNotEmpty() && scheduleEntity != null) {
                 items(hiddenEvents) { event ->
-                    val eventExtraData = eventsExtraData.find { it.id == event.id }
                     Box(
                         modifier = Modifier
                             .clip(MaterialTheme.shapes.medium)
@@ -86,14 +85,11 @@ fun HiddenEventsDialog(
                                 "${event.typeName} (${event.startDatetime!!.format(dateTimeFormatter)})"
                             },
                             subtitleMaxLines = 2,
-                            onClick = {
-                                navigationActions.navigateToEvent(Pair(event, eventExtraData))
-                            },
                             showClickLabel = false,
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
-                                        eventActions.onShowEvent(event.id)
+                                        eventActions.onShowEvent(Pair(scheduleEntity, event.id))
                                     },
                                     colors = IconButtonDefaults.iconButtonColors()
                                         .copy(

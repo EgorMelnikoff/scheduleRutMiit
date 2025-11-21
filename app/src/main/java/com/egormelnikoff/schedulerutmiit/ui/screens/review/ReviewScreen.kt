@@ -32,8 +32,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -43,12 +41,12 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigateEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ReviewData
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import java.time.DayOfWeek
 import java.time.Instant
@@ -121,17 +119,16 @@ fun ReviewScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (
-                    scheduleState.defaultNamedScheduleData?.reviewData != null &&
-                    scheduleState.defaultNamedScheduleData.namedSchedule != null
-                    && scheduleState.defaultNamedScheduleData.settledScheduleEntity != null
+                    scheduleState.defaultNamedScheduleData?.scheduleData?.reviewData != null &&
+                    scheduleState.defaultNamedScheduleData.namedSchedule != null &&
+                    scheduleState.defaultNamedScheduleData.scheduleData.scheduleEntity != null
                 ) {
                     item {
                         EventsReview(
                             navigateToEvent = navigationActions.navigateToEvent,
-                            reviewData = scheduleState.defaultNamedScheduleData.reviewData,
-                            eventsExtraData = scheduleState.defaultNamedScheduleData.eventsExtraData,
+                            scheduleState = scheduleState,
                             title = "${scheduleState.defaultNamedScheduleData.namedSchedule.namedScheduleEntity.shortName} " +
-                                    "(${scheduleState.defaultNamedScheduleData.settledScheduleEntity.typeName})"
+                                    "(${scheduleState.defaultNamedScheduleData.scheduleData.scheduleEntity.typeName})"
                         )
                     }
                     item {
@@ -198,11 +195,13 @@ fun ReviewScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         CustomButton(
+                            modifier = Modifier.fillMaxWidth(),
                             buttonTitle = LocalContext.current.getString(R.string.find),
                             imageVector = ImageVector.vectorResource(R.drawable.search),
                             onClick = { navigationActions.navigateToSearch() },
                         )
                         CustomButton(
+                            modifier = Modifier.fillMaxWidth(),
                             buttonTitle = LocalContext.current.getString(R.string.create),
                             imageVector = ImageVector.vectorResource(R.drawable.add),
                             onClick = { navigationActions.navigateToAddSchedule() },
@@ -259,11 +258,13 @@ fun ReviewScreen(
 
 @Composable
 fun EventsReview(
-    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
+    navigateToEvent: (NavigateEventDialog) -> Unit,
     title: String,
-    reviewData: ReviewData,
-    eventsExtraData: List<EventExtraData>
+    scheduleState: ScheduleState
 ) {
+    val scheduleEntity = scheduleState.defaultNamedScheduleData!!.scheduleData!!.scheduleEntity!!
+    val reviewData = scheduleState.defaultNamedScheduleData.scheduleData.reviewData!!
+    val eventsExtraData = scheduleState.defaultNamedScheduleData.scheduleData.eventsExtraData
     val today = LocalDate.now()
     Column(
         modifier = Modifier
@@ -303,7 +304,7 @@ fun EventsReview(
                             }
 
                             else -> {
-                                LocalContext.current.getString(R.string.week)
+                                LocalContext.current.getString(R.string.week, "")
                             }
                         },
                         value = reviewData.countEventsForWeek.toString(),
@@ -323,7 +324,9 @@ fun EventsReview(
 
         if (reviewData.events.isNotEmpty() && haveAnyEventsExtraData) {
             ColumnGroup(
-                title = LocalContext.current.getString(R.string.comments_on_tomorrow_events),
+                title = if (reviewData.displayedDate == today.plusDays(1)) {
+                    LocalContext.current.getString(R.string.comments_on_tomorrow_events)
+                } else LocalContext.current.getString(R.string.comments_on_events),
                 items = reviewData.events.values.flatten().mapNotNull { event ->
                     val eventExtraData = eventsExtraData
                         .find { it.id == event.id }
@@ -345,7 +348,15 @@ fun EventsReview(
                                     }
                                 } else null,
                                 onClick = {
-                                    navigateToEvent(Pair(event, eventExtraData))
+                                    navigateToEvent(
+                                        NavigateEventDialog(
+                                            scheduleEntity = scheduleEntity,
+                                            isSavedSchedule = true,
+                                            isCustomSchedule = scheduleState.defaultNamedScheduleData.namedSchedule?.namedScheduleEntity?.type == 3,
+                                            event = event,
+                                            eventExtraData = eventExtraData
+                                        )
+                                    )
                                 }
                             )
                         }

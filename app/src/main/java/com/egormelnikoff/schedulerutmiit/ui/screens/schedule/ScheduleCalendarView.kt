@@ -18,20 +18,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigateEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
+import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 
 @Composable
 fun ScheduleCalendarView(
-    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
-    onDeleteEvent: (Long) -> Unit,
-    onUpdateHiddenEvent: (Long) -> Unit,
+    navigateToEvent: (NavigateEventDialog) -> Unit,
+    onDeleteEvent: (Pair<ScheduleEntity, Long>) -> Unit,
+    onUpdateHiddenEvent: (Pair<ScheduleEntity, Long>) -> Unit,
+    appUiState: AppUiState,
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState,
     eventView: EventView,
@@ -40,7 +42,8 @@ fun ScheduleCalendarView(
 ) {
     Column {
         HorizontalCalendar(
-            scheduleData = scheduleState.currentNamedScheduleData!!,
+            namedScheduleData = scheduleState.currentNamedScheduleData!!,
+            scope = appUiState.scope,
             scheduleUiState = scheduleUiState,
             isShowCountClasses = isShowCountClasses
         )
@@ -49,7 +52,7 @@ fun ScheduleCalendarView(
             onDeleteEvent = onDeleteEvent,
             onUpdateHiddenEvent = onUpdateHiddenEvent,
 
-            scheduleData = scheduleState.currentNamedScheduleData,
+            namedScheduleData = scheduleState.currentNamedScheduleData,
             pagerDaysState = scheduleUiState.pagerDaysState,
 
             isSavedSchedule = scheduleState.isSaved,
@@ -62,18 +65,18 @@ fun ScheduleCalendarView(
 
 @Composable
 fun PagedDays(
-    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
-    onDeleteEvent: (Long) -> Unit,
-    onUpdateHiddenEvent: (Long) -> Unit,
+    navigateToEvent: (NavigateEventDialog) -> Unit,
+    onDeleteEvent: (Pair<ScheduleEntity, Long>) -> Unit,
+    onUpdateHiddenEvent: (Pair<ScheduleEntity, Long>) -> Unit,
 
-    scheduleData: NamedScheduleData,
+    namedScheduleData: NamedScheduleData,
     pagerDaysState: PagerState,
 
     isSavedSchedule: Boolean,
     eventView: EventView,
     paddingBottom: Dp
 ) {
-    val scheduleEntity = scheduleData.settledScheduleEntity!!
+    val scheduleEntity = namedScheduleData.scheduleData!!.scheduleEntity!!
 
     HorizontalPager(
         modifier = Modifier.fillMaxSize(),
@@ -84,16 +87,14 @@ fun PagedDays(
         val currentDate = scheduleEntity.startDate.plusDays(index.toLong())
 
         val eventsForDate by remember (
-            scheduleData.namedSchedule,
-            scheduleData.settledScheduleEntity,
-            scheduleData.periodicEvents,
-            scheduleData.nonPeriodicEvents
+            namedScheduleData.namedSchedule,
+            namedScheduleData.scheduleData
         ){
             mutableStateOf(
                 currentDate.getEventsForDate(
                     scheduleEntity = scheduleEntity,
-                    periodicEvents = scheduleData.periodicEvents,
-                    nonPeriodicEvents = scheduleData.nonPeriodicEvents
+                    periodicEvents = namedScheduleData.scheduleData.periodicEvents,
+                    nonPeriodicEvents = namedScheduleData.scheduleData.nonPeriodicEvents
                 ).toList()
             )
         }
@@ -116,9 +117,11 @@ fun PagedDays(
                         onUpdateHiddenEvent = onUpdateHiddenEvent,
 
                         events = events.second,
-                        eventsExtraData = scheduleData.eventsExtraData,
+                        scheduleEntity = scheduleEntity,
+                        eventsExtraData = namedScheduleData.scheduleData.eventsExtraData,
 
                         isSavedSchedule = isSavedSchedule,
+                        isCustomSchedule = namedScheduleData.namedSchedule?.namedScheduleEntity?.type == 3,
                         eventView = eventView
                     )
                 }

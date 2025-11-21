@@ -7,8 +7,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData.Companion.getPeriodicEvents
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ReviewData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData.Companion.getPeriodicEvents
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime

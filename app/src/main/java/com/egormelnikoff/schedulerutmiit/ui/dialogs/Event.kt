@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
@@ -67,6 +68,7 @@ import kotlinx.coroutines.delay
 fun EventDialog(
     event: Event,
     eventExtraData: EventExtraData?,
+    scheduleEntity: ScheduleEntity,
     isSavedSchedule: Boolean,
     isCustomSchedule: Boolean,
     navigationActions: NavigationActions,
@@ -185,7 +187,7 @@ fun EventDialog(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            if (!event.groups.isNullOrEmpty() && !isCustomSchedule) {
+            if (!event.groups.isNullOrEmpty()) {
                 ColumnGroup(
                     title = context.getString(R.string.groups),
                     titleColor = MaterialTheme.colorScheme.primary,
@@ -204,18 +206,22 @@ fun EventDialog(
                                         .clip(MaterialTheme.shapes.extraSmall)
                                         .background(MaterialTheme.colorScheme.secondaryContainer)
                                         .defaultMinSize(minWidth = 80.dp)
-                                        .clickable(
-                                            onClick = {
-                                                navigationActions.navigateToSchedule()
-                                                scheduleActions.onGetNamedSchedule(
-                                                    Triple(
-                                                        group.name!!,
-                                                        group.id.toString(),
-                                                        0
-                                                    )
+                                        .let {
+                                            if (!isCustomSchedule) {
+                                                it.clickable(
+                                                    onClick = {
+                                                        navigationActions.navigateToSchedule()
+                                                        scheduleActions.onGetNamedSchedule(
+                                                            Triple(
+                                                                group.name!!,
+                                                                group.id.toString(),
+                                                                0
+                                                            )
+                                                        )
+                                                    }
                                                 )
-                                            }
-                                        )
+                                            } else it
+                                        }
                                         .padding(8.dp)
                                 ) {
                                     Text(
@@ -320,7 +326,13 @@ fun EventDialog(
                                     IconButton(
                                         onClick = {
                                             comment = ""
-                                            scheduleActions.eventActions.onEventExtraChange(Triple(event,"", tag))
+                                            scheduleActions.eventActions.onEventExtraChange(
+                                                Triple(
+                                                    event,
+                                                    "",
+                                                    tag
+                                                )
+                                            )
                                         }
                                     ) {
                                         Icon(
@@ -359,7 +371,7 @@ fun EventDialog(
                 showEventDeleteDialog = false
             },
             onConfirmation = {
-                scheduleActions.eventActions.onDeleteEvent(event.id)
+                scheduleActions.eventActions.onDeleteEvent(Pair(scheduleEntity, event.id))
                 navigationActions.onBack()
             }
         )
@@ -373,7 +385,8 @@ fun EventDialog(
                 showEventHideDialog = false
             },
             onConfirmation = {
-                scheduleActions.eventActions.onHideEvent(event.id)
+                scheduleActions.eventActions.onHideEvent(Pair(scheduleEntity, event.id))
+                navigationActions.onBack()
             }
         )
     }
@@ -392,12 +405,11 @@ fun EventDialog(
                 {
                     showEventHideDialog = true
                     event.isHidden = true
-
                 }
             } else null,
             onShowEvent = if (event.isHidden) {
                 {
-                    scheduleActions.eventActions.onShowEvent(event.id)
+                    scheduleActions.eventActions.onShowEvent(Pair(scheduleEntity, event.id))
                     event.isHidden = false
                 }
             } else null

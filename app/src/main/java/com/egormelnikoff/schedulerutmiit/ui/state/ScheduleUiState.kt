@@ -28,22 +28,22 @@ data class ScheduleUiState(
         fun rememberScheduleUiState(
             scheduleState: ScheduleState
         ): ScheduleUiState? {
-            return if (scheduleState.currentNamedScheduleData?.namedSchedule != null && scheduleState.currentNamedScheduleData.schedulePagerData != null) {
+            return if (scheduleState.currentNamedScheduleData?.namedSchedule != null && scheduleState.currentNamedScheduleData.scheduleData?.schedulePagerData != null) {
                 val scheduleListState = rememberLazyListState()
                 val pagerDaysState = rememberPagerState(
-                    pageCount = { scheduleState.currentNamedScheduleData.schedulePagerData.daysCount },
-                    initialPage = scheduleState.currentNamedScheduleData.schedulePagerData.daysStartIndex
+                    pageCount = { scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.daysCount },
+                    initialPage = scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.daysStartIndex
                 )
                 val pagerWeeksState = rememberPagerState(
-                    pageCount = { scheduleState.currentNamedScheduleData.schedulePagerData.weeksCount },
-                    initialPage = scheduleState.currentNamedScheduleData.schedulePagerData.weeksStartIndex
+                    pageCount = { scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.weeksCount },
+                    initialPage = scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.weeksStartIndex
                 )
 
                 var selectedDate by remember(
                     scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.apiId
                 ) {
                     mutableStateOf(
-                        scheduleState.currentNamedScheduleData.schedulePagerData.defaultDate
+                        scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate
                     )
                 }
                 var expandedSchedulesMenu by remember { mutableStateOf(false) }

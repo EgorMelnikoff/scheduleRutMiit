@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -56,7 +57,7 @@ fun BottomSheetTimePicker(
         )
 
         CustomButton(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             buttonTitle = LocalContext.current.getString(R.string.confirm),
             onClick = {
                 onTimeSelect(LocalTime.of(timePickerState.hour, timePickerState.minute))

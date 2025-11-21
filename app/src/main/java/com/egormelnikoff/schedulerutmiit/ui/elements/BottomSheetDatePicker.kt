@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -102,7 +103,7 @@ fun BottomSheetDatePicker(
             )
         )
         CustomButton(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             enabled = datePickerState.selectedDateMillis != null,
             buttonTitle = LocalContext.current.getString(R.string.confirm),
             onClick = {

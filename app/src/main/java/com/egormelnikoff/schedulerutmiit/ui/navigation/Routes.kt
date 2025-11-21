@@ -3,6 +3,7 @@ package com.egormelnikoff.schedulerutmiit.ui.navigation
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 
 sealed class Routes(val isDialog: Boolean) {
     data object Review : Routes(false)
@@ -10,16 +11,23 @@ sealed class Routes(val isDialog: Boolean) {
     data object NewsList : Routes(false)
     data object Settings : Routes(false)
     data class EventDialog(
+        val scheduleEntity: ScheduleEntity,
+        val isSavedSchedule: Boolean,
+        val isCustomSchedule: Boolean,
         val event: Event,
         val eventExtraData: EventExtraData?
     ) : Routes(true)
-    data object NewsDialog : Routes(true)
-    data object InfoDialog : Routes(true)
-    data object AddEventDialog : Routes(true)
-    data object SearchDialog : Routes(true)
-    data object AddScheduleDialog : Routes(true)
     data class RenameNamedScheduleDialog(
         val namedScheduleEntity: NamedScheduleEntity
     ) : Routes(true)
-    data object HiddenEventsDialog : Routes(true)
+    data class AddEventDialog (
+        val scheduleEntity: ScheduleEntity
+    ) : Routes(true)
+    data class HiddenEventsDialog (
+        val scheduleEntity: ScheduleEntity
+    ): Routes(true)
+    data object NewsDialog : Routes(true)
+    data object InfoDialog : Routes(true)
+    data object SearchDialog : Routes(true)
+    data object AddScheduleDialog : Routes(true)
 }

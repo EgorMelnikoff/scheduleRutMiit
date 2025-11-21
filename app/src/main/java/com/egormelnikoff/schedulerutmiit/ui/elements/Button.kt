@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.ui.elements
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -25,7 +24,7 @@ fun CustomButton(
     onClick: () -> Unit
 ) {
     OutlinedButton(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         onClick = onClick,
         enabled = enabled,
         border = if (!enabled) {
@@ -43,7 +42,6 @@ fun CustomButton(
         )
     ) {
         Row (
-            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ){

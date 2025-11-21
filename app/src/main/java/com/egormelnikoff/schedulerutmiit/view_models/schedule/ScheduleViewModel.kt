@@ -38,6 +38,7 @@ interface ScheduleViewModel {
         showUpdating: Boolean = false,
         primaryKeyNamedSchedule: Long? = null
     )
+
     fun getNamedScheduleFromApi(name: String, apiId: String, type: Int)
     fun getNamedScheduleFromDb(primaryKeyNamedSchedule: Long, setDefault: Boolean = false)
     fun saveCurrentNamedSchedule()
@@ -48,6 +49,7 @@ interface ScheduleViewModel {
         primaryKeySchedule: Long,
         timetableId: String
     )
+
     fun addCustomNamedSchedule(name: String, startDate: LocalDate, endDate: LocalDate)
     fun updateEventExtra(event: Event, comment: String, tag: Int)
     fun addCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
@@ -93,8 +95,7 @@ class ScheduleViewModelImpl @Inject constructor(
                 primaryKeyNamedSchedule?.let {
                     namedScheduleEntity.id == it
                 } ?: namedScheduleEntity.isDefault
-            }
-                ?: savedNamedSchedules.firstOrNull()
+            } ?: savedNamedSchedules.firstOrNull()
 
             if (showUpdating) delay(500)
             defaultNamedScheduleEntity?.let { namedScheduleEntity ->
@@ -175,6 +176,9 @@ class ScheduleViewModelImpl @Inject constructor(
         setDefault: Boolean
     ) {
         viewModelScope.launch {
+            if (primaryKeyNamedSchedule == _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
+                return@launch
+            }
             if (setDefault) {
                 scheduleRepos.updatePrioritySavedNamedSchedules(primaryKeyNamedSchedule)
             }
@@ -204,11 +208,10 @@ class ScheduleViewModelImpl @Inject constructor(
                 _scheduleState.value.currentNamedScheduleData?.namedSchedule ?: return@launch
 
             val namedScheduleId = scheduleRepos.insertNamedSchedule(currentNamedSchedule)
-
             val namedSchedule = scheduleRepos.getSavedNamedScheduleById(namedScheduleId)
+
             if (namedSchedule != null && namedSchedule.namedScheduleEntity.isDefault) {
-                workScheduler.startPeriodicScheduleUpdating()
-                workScheduler.startPeriodicWidgetUpdating()
+                workScheduler.startPeriodicWork()
             }
 
             updateNamedScheduleUiState(namedSchedule = namedSchedule)
@@ -227,8 +230,7 @@ class ScheduleViewModelImpl @Inject constructor(
             scheduleRepos.deleteSavedNamedSchedule(primaryKeyNamedSchedule, isDefault)
             val savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
             if (savedNamedSchedules.isEmpty()) {
-                workScheduler.cancelPeriodicScheduleUpdating()
-                workScheduler.cancelPeriodicWidgetUpdating()
+                workScheduler.cancelPeriodicWork()
                 _scheduleState.update {
                     it.copy(
                         savedNamedSchedules = emptyList(),
@@ -294,32 +296,26 @@ class ScheduleViewModelImpl @Inject constructor(
         timetableId: String
     ) {
         viewModelScope.launch {
-            val currentState = _scheduleState.value
             val currentNamedSchedule =
-                currentState.currentNamedScheduleData?.namedSchedule ?: return@launch
-
-            if (currentState.isSaved) {
+                _scheduleState.value.currentNamedScheduleData?.namedSchedule ?: return@launch
+            if (_scheduleState.value.currentNamedScheduleData?.scheduleData?.scheduleEntity?.id == primaryKeySchedule) return@launch
+            if (_scheduleState.value.isSaved) {
                 scheduleRepos.updatePrioritySavedSchedules(
                     primaryKeyNamedSchedule = primaryKeyNamedSchedule,
                     primaryKeySchedule = primaryKeySchedule
                 )
                 widgetDataUpdater.updateAll()
-                updateNamedScheduleUiState(
-                    namedSchedule = scheduleRepos.getSavedNamedScheduleById(primaryKeyNamedSchedule)
-                )
-            } else {
-                val updatedSchedules = currentNamedSchedule.schedules.map { schedule ->
-                    schedule.copy(
-                        scheduleEntity = schedule.scheduleEntity.copy(
-                            isDefault = schedule.scheduleEntity.timetableId == timetableId
-                        )
+            }
+            val updatedSchedules = currentNamedSchedule.schedules.map { schedule ->
+                schedule.copy(
+                    scheduleEntity = schedule.scheduleEntity.copy(
+                        isDefault = schedule.scheduleEntity.timetableId == timetableId
                     )
-                }
-                updateNamedScheduleUiState(
-                    namedSchedule = currentNamedSchedule
-                        .copy(schedules = updatedSchedules)
                 )
             }
+            updateNamedScheduleUiState(
+                namedSchedule = currentNamedSchedule.copy(schedules = updatedSchedules)
+            )
         }
     }
 
@@ -359,6 +355,7 @@ class ScheduleViewModelImpl @Inject constructor(
             )
             val namedScheduleId = scheduleRepos.insertNamedSchedule(namedSchedule)
             updateUiState(
+                isSaved = true,
                 savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
             )
             updateNamedScheduleUiState(
@@ -377,7 +374,8 @@ class ScheduleViewModelImpl @Inject constructor(
                 _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id
                     ?: return@launch
             val scheduleId =
-                _scheduleState.value.currentNamedScheduleData?.settledScheduleEntity?.id ?: return@launch
+                _scheduleState.value.currentNamedScheduleData?.scheduleData?.scheduleEntity?.id
+                    ?: return@launch
 
             scheduleRepos.updateEventExtra(
                 scheduleId = scheduleId,

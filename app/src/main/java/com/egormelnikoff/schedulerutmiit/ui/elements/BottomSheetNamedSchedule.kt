@@ -27,20 +27,22 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModalDialogNamedSchedule(
+    namedScheduleEntity: NamedScheduleEntity,
+    scheduleData: ScheduleData? = null,
     navigateToRenameDialog: (() -> Unit)? = null,
-    navigateToHiddenEvents: (() -> Unit)? = null,
+    navigateToHiddenEvents: ((ScheduleEntity) -> Unit)? = null,
+    onDownloadCurrentSchedule: (() -> Unit)? = null,
     onDismiss: (NamedScheduleEntity?) -> Unit,
     onOpenNamedSchedule: (() -> Unit)? = null,
     onSetDefaultNamedSchedule: (() -> Unit)? = null,
     onDeleteNamedSchedule: (() -> Unit)? = null,
     onLoadInitialData: (() -> Unit)? = null,
-    onSaveCurrentNamedSchedule: (() -> Unit)? = null,
-    namedScheduleEntity: NamedScheduleEntity,
-    scheduleEntity: ScheduleEntity? = null
+    onSaveCurrentNamedSchedule: (() -> Unit)? = null
 ) {
     CustomModalBottomSheet(
         modifier = Modifier.padding(horizontal = 8.dp),
@@ -64,10 +66,10 @@ fun ModalDialogNamedSchedule(
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
                 )
-                if (scheduleEntity != null && namedScheduleEntity.type != 3) {
+                if (scheduleData?.scheduleEntity != null && namedScheduleEntity.type != 3) {
                     Text(
                         modifier = Modifier.padding(horizontal = 8.dp),
-                        text = scheduleEntity.typeName,
+                        text = scheduleData.scheduleEntity.typeName,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         overflow = TextOverflow.Ellipsis,
@@ -75,18 +77,17 @@ fun ModalDialogNamedSchedule(
                     )
                 }
             }
-            navigateToHiddenEvents?.let {
+            onDownloadCurrentSchedule?.let {
                 NamedScheduleIconButton(
                     onClick = {
-                        navigateToHiddenEvents()
-                        onDismiss(null)
+                        onDownloadCurrentSchedule()
                     },
                     colors = IconButtonDefaults.iconButtonColors().copy(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onBackground
                     ),
-                    icon = ImageVector.vectorResource(R.drawable.visibility_off),
-                    contentDescription = LocalContext.current.getString(R.string.hidden_events)
+                    icon = ImageVector.vectorResource(R.drawable.download),
+                    contentDescription = "Скачать"
                 )
             }
             navigateToRenameDialog?.let {
@@ -120,6 +121,7 @@ fun ModalDialogNamedSchedule(
         }
         Spacer(modifier = Modifier.height(0.dp))
         if (arrayOf(
+                navigateToHiddenEvents,
                 onSaveCurrentNamedSchedule,
                 onSetDefaultNamedSchedule,
                 onLoadInitialData,
@@ -132,6 +134,17 @@ fun ModalDialogNamedSchedule(
                     .padding(horizontal = 8.dp),
                 thickness = 0.5.dp,
                 color = MaterialTheme.colorScheme.outline
+            )
+        }
+        if (navigateToHiddenEvents != null && scheduleData?.scheduleEntity != null) {
+            ActionDialogButton(
+                onClick = {
+                    navigateToHiddenEvents(scheduleData.scheduleEntity)
+                    onDismiss(null)
+                },
+                icon = ImageVector.vectorResource(R.drawable.visibility_off),
+                title = LocalContext.current.getString(R.string.hidden_events),
+                contentColor = MaterialTheme.colorScheme.onBackground
             )
         }
         onSaveCurrentNamedSchedule?.let {

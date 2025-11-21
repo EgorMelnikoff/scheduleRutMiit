@@ -25,10 +25,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigateEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
@@ -39,16 +39,16 @@ import java.util.Locale
 
 @Composable
 fun ScheduleListView(
-    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
-    onDeleteEvent: (Long) -> Unit,
-    onUpdateHiddenEvent: (Long) -> Unit,
+    navigateToEvent: (NavigateEventDialog) -> Unit,
+    onDeleteEvent: (Pair<ScheduleEntity, Long>) -> Unit,
+    onUpdateHiddenEvent: (Pair<ScheduleEntity, Long>) -> Unit,
 
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState,
     eventView: EventView,
     paddingBottom: Dp
 ) {
-    val scheduleData = scheduleState.currentNamedScheduleData!!
+    val scheduleData = scheduleState.currentNamedScheduleData!!.scheduleData!!
     val formatter = DateTimeFormatter.ofPattern("d MMMM")
 
     if (scheduleData.fullEventList.isNotEmpty()) {
@@ -75,8 +75,10 @@ fun ScheduleListView(
                             onDeleteEvent = onDeleteEvent,
                             onUpdateHiddenEvent = onUpdateHiddenEvent,
                             events = eventsGrouped.second,
+                            scheduleEntity = scheduleData.scheduleEntity!!,
                             eventsExtraData = scheduleData.eventsExtraData,
                             isSavedSchedule = scheduleState.isSaved,
+                            isCustomSchedule = scheduleState.currentNamedScheduleData.namedSchedule?.namedScheduleEntity?.type == 3,
                             eventView = eventView
                         )
                     }

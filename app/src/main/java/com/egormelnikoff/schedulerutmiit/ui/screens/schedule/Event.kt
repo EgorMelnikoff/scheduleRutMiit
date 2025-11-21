@@ -25,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -34,20 +33,24 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigateEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
 
 @Composable
 fun Event(
-    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
-    onDeleteEvent: (Long) -> Unit,
-    onUpdateHiddenEvent: (Long) -> Unit,
+    navigateToEvent: (NavigateEventDialog) -> Unit,
+    onDeleteEvent: (Pair<ScheduleEntity, Long>) -> Unit,
+    onUpdateHiddenEvent: (Pair<ScheduleEntity, Long>) -> Unit,
     events: List<Event>,
+    scheduleEntity: ScheduleEntity,
     eventsExtraData: List<EventExtraData>,
     isSavedSchedule: Boolean,
+    isCustomSchedule: Boolean,
     eventView: EventView
 ) {
     Column(
@@ -86,10 +89,12 @@ fun Event(
                         onDeleteEvent = onDeleteEvent,
                         onUpdateHiddenEvent = onUpdateHiddenEvent,
                         event = event,
+                        scheduleEntity = scheduleEntity,
                         eventExtraData = eventsExtraData.find {
                             it.id == event.id
                         },
                         isSavedSchedule = isSavedSchedule,
+                        isCustomSchedule = isCustomSchedule,
                         eventView = eventView
                     )
                 }
@@ -100,10 +105,12 @@ fun Event(
 
 @Composable
 fun ScheduleSingleEvent(
-    navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
-    onDeleteEvent: (Long) -> Unit,
-    onUpdateHiddenEvent: (Long) -> Unit,
+    navigateToEvent: (NavigateEventDialog) -> Unit,
+    onDeleteEvent: (Pair<ScheduleEntity, Long>) -> Unit,
+    onUpdateHiddenEvent: (Pair<ScheduleEntity, Long>) -> Unit,
+    scheduleEntity: ScheduleEntity,
     isSavedSchedule: Boolean,
+    isCustomSchedule: Boolean,
     eventView: EventView,
     event: Event,
     eventExtraData: EventExtraData?
@@ -117,7 +124,15 @@ fun ScheduleSingleEvent(
             .fillMaxWidth()
             .combinedClickable(
                 onClick = {
-                    navigateToEvent(Pair(event, eventExtraData))
+                    navigateToEvent(
+                        NavigateEventDialog(
+                            scheduleEntity = scheduleEntity,
+                            isSavedSchedule = isSavedSchedule,
+                            isCustomSchedule = isCustomSchedule,
+                            event = event,
+                            eventExtraData = eventExtraData
+                        )
+                    )
                 },
                 onLongClick = {
                     showExpandedMenu = true
@@ -241,8 +256,12 @@ fun ScheduleSingleEvent(
                     color = MaterialTheme.colorScheme.outline,
                     thickness = 0.5.dp
                 )
-                Comment(
-                    eventExtraData = eventExtraData
+                Text(
+                    text = eventExtraData.comment,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2
                 )
             }
         }
@@ -271,7 +290,15 @@ fun ScheduleSingleEvent(
                 },
                 onClick = {
                     showExpandedMenu = false
-                    navigateToEvent(Pair(event, eventExtraData))
+                    navigateToEvent(
+                        NavigateEventDialog(
+                            scheduleEntity = scheduleEntity,
+                            isSavedSchedule = isSavedSchedule,
+                            isCustomSchedule = isCustomSchedule,
+                            event = event,
+                            eventExtraData = eventExtraData
+                        )
+                    )
                 }
             )
             if (isSavedSchedule) {
@@ -325,7 +352,7 @@ fun ScheduleSingleEvent(
             CustomAlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 onConfirmation = {
-                    onDeleteEvent(event.id)
+                    onDeleteEvent(Pair(scheduleEntity, event.id))
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                 dialogTitle = "${LocalContext.current.getString(R.string.delete_event)}?",
@@ -336,7 +363,7 @@ fun ScheduleSingleEvent(
             CustomAlertDialog(
                 onDismissRequest = { showHideDialog = false },
                 onConfirmation = {
-                    onUpdateHiddenEvent(event.id)
+                    onUpdateHiddenEvent(Pair(scheduleEntity, event.id))
                     showHideDialog = false
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),
@@ -344,32 +371,5 @@ fun ScheduleSingleEvent(
                 dialogText = LocalContext.current.getString(R.string.event_visibility_alert)
             )
         }
-    }
-}
-
-
-@Composable
-fun Comment(
-    eventExtraData: EventExtraData,
-    color: Color? = null
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        Icon(
-            modifier = Modifier.size(14.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.comment),
-            contentDescription = null,
-            tint = color ?: MaterialTheme.colorScheme.onBackground
-        )
-        Text(
-            text = eventExtraData.comment,
-            style = MaterialTheme.typography.bodyMedium,
-            color = color ?: MaterialTheme.colorScheme.onBackground,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 2
-        )
     }
 }

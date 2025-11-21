@@ -7,6 +7,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import java.time.DayOfWeek
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -202,4 +203,27 @@ fun LocalDate.getEventsForDate(
     }
 
     return displayedEvents.getGroupedEvents()
+}
+
+fun getTimeSlotName(
+    startDateTime: LocalDateTime,
+    endDateTime: LocalDateTime
+): String? {
+    if (Duration.between(startDateTime, endDateTime).toMinutes() != 80L) {
+        return null
+    }
+
+    return when {
+        startDateTime.hour == 5 && startDateTime.minute == 30 -> "1 пара"
+        startDateTime.hour == 7 && startDateTime.minute == 5 -> "2 пара"
+        startDateTime.hour == 8 && startDateTime.minute == 40 -> "3 пара"
+        startDateTime.hour == 10 && startDateTime.minute == 45 -> "4 пара"
+        startDateTime.hour == 12 && startDateTime.minute == 20 -> "5 пара"
+        startDateTime.hour == 13 && startDateTime.minute == 55 -> "6 пара"
+        startDateTime.hour == 15 && startDateTime.minute == 30 -> "7 пара"
+        startDateTime.hour == 17 && startDateTime.minute == 0 -> "8 пара"
+        startDateTime.hour == 18 && startDateTime.minute == 35 -> "9 пара"
+        startDateTime.hour == 20 && startDateTime.minute == 10 -> "10 пара"
+        else -> null
+    }
 }

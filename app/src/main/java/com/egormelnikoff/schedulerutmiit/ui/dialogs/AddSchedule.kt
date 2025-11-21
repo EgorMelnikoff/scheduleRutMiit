@@ -2,8 +2,7 @@ package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
 import android.content.Context
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,13 +12,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -31,13 +30,15 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun AddScheduleDialog(
-    focusManager: FocusManager,
+    appUiState: AppUiState,
     navigationActions: NavigationActions,
     scheduleActions: ScheduleActions,
     externalPadding: PaddingValues
@@ -55,22 +56,48 @@ fun AddScheduleDialog(
         topBar = {
             CustomTopAppBar(
                 titleText = LocalContext.current.getString(R.string.adding_a_schedule),
-                navAction = { navigationActions.onBack() }
+                navAction = { navigationActions.onBack() },
+                actions = {
+                    CustomButton(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        buttonTitle = LocalContext.current.getString(R.string.create),
+                        onClick = {
+                            val errorMessages =
+                                checkScheduleParams(context, nameSchedule, startDate, endDate)
+                            if (errorMessages.isEmpty()) {
+                                scheduleActions.onAddCustomSchedule(
+                                    Triple(
+                                        nameSchedule.trim(),
+                                        startDate!!,
+                                        endDate!!
+                                    )
+                                )
+                                navigationActions.navigateToSchedule()
+                            } else {
+                                appUiState.scope.launch {
+                                    appUiState.snackBarHostState.showSnackbar(
+                                        message = errorMessages,
+                                        duration = SnackbarDuration.Long
+                                    )
+                                }
+                            }
+                        }
+                    )
+                }
             )
         }
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState())
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
                     top = innerPadding.calculateTopPadding(),
                     bottom = externalPadding.calculateBottomPadding()
-                ),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                )
+                .verticalScroll(rememberScrollState())
         ) {
             GridGroup(
                 items = listOf(
@@ -93,7 +120,7 @@ fun AddScheduleDialog(
                             ChooseDateTimeButton(
                                 modifier = Modifier.fillMaxWidth(),
                                 onClick = {
-                                    focusManager.clearFocus()
+                                    appUiState.focusManager.clearFocus()
                                     showDialogStartDate = true
                                 },
                                 title = startDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
@@ -103,7 +130,7 @@ fun AddScheduleDialog(
                             ChooseDateTimeButton(
                                 modifier = Modifier.fillMaxWidth(),
                                 onClick = {
-                                    focusManager.clearFocus()
+                                    appUiState.focusManager.clearFocus()
                                     showDialogEndDate = true
                                 },
                                 title = endDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
@@ -113,19 +140,6 @@ fun AddScheduleDialog(
                         }
                     )
                 )
-            )
-            CustomButton(
-                buttonTitle = LocalContext.current.getString(R.string.create),
-                onClick = {
-                    val errorMessages =
-                        checkScheduleParams(context, nameSchedule, startDate, endDate)
-                    if (errorMessages.isEmpty()) {
-                        scheduleActions.onAddCustomSchedule(Triple(nameSchedule.trim(), startDate!!, endDate!!))
-                        navigationActions.navigateToSchedule()
-                    } else {
-                        scheduleActions.onShowErrorMessage(errorMessages)
-                    }
-                }
             )
         }
 

@@ -20,14 +20,7 @@ import kotlin.math.abs
 @Keep
 data class NamedScheduleData(
     val namedSchedule: NamedScheduleFormatted? = null,
-    val settledScheduleEntity: ScheduleEntity? = null,
-    val periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null,
-    val nonPeriodicEvents: Map<LocalDate, List<Event>>? = null,
-    val fullEventList: List<Pair<LocalDate, List<Event>>> = listOf(),
-    val hiddenEvents: List<Event> = listOf(),
-    val eventsExtraData: List<EventExtraData> = listOf(),
-    val schedulePagerData: SchedulePagerData? = null,
-    val reviewData: ReviewData? = null
+    val scheduleData: ScheduleData? = null
 ) {
     companion object {
         fun findCurrentSchedule(
@@ -41,63 +34,91 @@ data class NamedScheduleData(
             namedSchedule: NamedScheduleFormatted?
         ): NamedScheduleData? {
             if (namedSchedule == null) return null
+            val currentSchedule = findCurrentSchedule(namedSchedule)
+            currentSchedule ?: return NamedScheduleData(
+                namedSchedule = namedSchedule
+            )
+            val today = LocalDateTime.now()
+            val scheduleData = ScheduleData.getScheduleData(
+                today = today,
+                schedule = currentSchedule
+            )
 
-            val schedule = findCurrentSchedule(namedSchedule)
-            return schedule?.let {
-                val today = LocalDateTime.now()
-                val splitEvents = schedule.events.partition { it.isHidden }
-                val hiddenEvents = splitEvents.first
-                val visibleEvents = splitEvents.second
+            return NamedScheduleData(
+                namedSchedule = namedSchedule,
+                scheduleData = scheduleData
+            )
+        }
+    }
+}
 
-                var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
-                var nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>? = null
+@Keep
+data class ScheduleData(
+    val scheduleEntity: ScheduleEntity? = null,
+    val periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null,
+    val nonPeriodicEvents: Map<LocalDate, List<Event>>? = null,
+    val fullEventList: List<Pair<LocalDate, List<Event>>> = listOf(),
+    val hiddenEvents: List<Event> = listOf(),
+    val eventsExtraData: List<EventExtraData> = listOf(),
+    val schedulePagerData: SchedulePagerData? = null,
+    val reviewData: ReviewData? = null
+) {
+    companion object {
+        fun getScheduleData(
+            today: LocalDateTime,
+            schedule: ScheduleFormatted
+        ): ScheduleData {
+            val splitEvents = schedule.events.partition { it.isHidden }
+            val hiddenEvents = splitEvents.first
+            val visibleEvents = splitEvents.second
 
-                if (schedule.scheduleEntity.recurrence != null) {
-                    periodicEventsForCalendar = visibleEvents
-                        .getPeriodicEvents(
-                            schedule.scheduleEntity.recurrence.interval!!
-                        )
-                } else {
-                    nonPeriodicEventsForCalendar = visibleEvents
-                        .groupBy {
-                            it.startDatetime!!.toLocalDate()
-                        }
-                }
+            var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
+            var nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>? = null
 
-                val fullEventList = getFullEventsList(
-                    today = today.toLocalDate(),
-                    periodicEvents = periodicEventsForCalendar,
-                    eventsList = visibleEvents,
-                    scheduleEntity = schedule.scheduleEntity,
-                )
+            if (schedule.scheduleEntity.recurrence != null) {
+                periodicEventsForCalendar = visibleEvents
+                    .getPeriodicEvents(
+                        schedule.scheduleEntity.recurrence.interval!!
+                    )
+            } else {
+                nonPeriodicEventsForCalendar = visibleEvents
+                    .groupBy {
+                        it.startDatetime!!.toLocalDate()
+                    }
+            }
 
-                val schedulePagerData = SchedulePagerData.getSchedulePagerData(
-                    today = today.toLocalDate(),
-                    startDate = schedule.scheduleEntity.startDate,
-                    endDate = schedule.scheduleEntity.endDate
-                )
+            val fullEventList = getFullEventsList(
+                today = today.toLocalDate(),
+                periodicEvents = periodicEventsForCalendar,
+                eventsList = visibleEvents,
+                scheduleEntity = schedule.scheduleEntity,
+            )
 
-                val reviewData = ReviewData.getReviewData(
-                    date = today,
-                    scheduleEntity = schedule.scheduleEntity,
-                    periodicEvents = periodicEventsForCalendar,
-                    nonPeriodicEvents = nonPeriodicEventsForCalendar
-                )
+            val schedulePagerData = SchedulePagerData.getSchedulePagerData(
+                today = today.toLocalDate(),
+                startDate = schedule.scheduleEntity.startDate,
+                endDate = schedule.scheduleEntity.endDate
+            )
 
-                NamedScheduleData(
-                    namedSchedule = namedSchedule,
-                    settledScheduleEntity = schedule.scheduleEntity,
+            val reviewData = ReviewData.getReviewData(
+                date = today,
+                scheduleEntity = schedule.scheduleEntity,
+                periodicEvents = periodicEventsForCalendar,
+                nonPeriodicEvents = nonPeriodicEventsForCalendar
+            )
 
-                    periodicEvents = periodicEventsForCalendar,
-                    schedulePagerData = schedulePagerData,
-                    nonPeriodicEvents = nonPeriodicEventsForCalendar,
-                    fullEventList = fullEventList,
+            return ScheduleData(
+                scheduleEntity = schedule.scheduleEntity,
 
-                    eventsExtraData = schedule.eventsExtraData,
-                    hiddenEvents = hiddenEvents,
-                    reviewData = reviewData,
-                )
-            } ?: NamedScheduleData(namedSchedule)
+                periodicEvents = periodicEventsForCalendar,
+                schedulePagerData = schedulePagerData,
+                nonPeriodicEvents = nonPeriodicEventsForCalendar,
+                fullEventList = fullEventList,
+
+                eventsExtraData = schedule.eventsExtraData,
+                hiddenEvents = hiddenEvents,
+                reviewData = reviewData
+            )
         }
 
         fun List<Event>.getPeriodicEvents(
