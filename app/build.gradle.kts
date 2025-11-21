@@ -18,8 +18,8 @@ android {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 29
         targetSdk = 36
-        versionCode = 37
-        versionName = "1.8.0"
+        versionCode = 38
+        versionName = "1.8.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -49,42 +49,38 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.room.compiler)
-    annotationProcessor(libs.androidx.room.room.compiler)
-
-    implementation (libs.google.gson)
-    implementation(libs.converter.gson)
-
-    implementation(libs.retrofit)
-    implementation (libs.jsoup)
-
-    implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.navigation3.ui)
-    implementation (libs.androidx.datastore.preferences)
-
-    implementation(libs.androidx.work.runtime.ktx)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics.ndk)
 
     implementation (libs.hilt.android)
     implementation (libs.androidx.hilt.lifecycle.viewmodel )
     ksp (libs.hilt.android.compiler)
     ksp (libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.work)
-    
-    implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.glance.material3)
 
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
+    implementation(libs.retrofit)
+    implementation (libs.jsoup)
+    implementation (libs.google.gson)
+    implementation(libs.converter.gson)
+
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.room.compiler)
+    annotationProcessor(libs.androidx.room.room.compiler)
+
+    implementation(libs.androidx.work.runtime.ktx)
+
+    implementation (libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.core.splashscreen)
-
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
     implementation(libs.coil.compose)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics.ndk)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
 
     implementation(libs.androidx.core.ktx)
     implementation (libs.androidx.runtime.livedata)
