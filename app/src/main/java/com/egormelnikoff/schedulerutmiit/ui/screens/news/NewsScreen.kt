@@ -47,13 +47,11 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.news.NewsActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
-import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
 import kotlinx.coroutines.flow.Flow
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun NewsScreen(
-    newsState: NewsState,
     newsListFLow: Flow<PagingData<NewsShort>>,
     newsGridListState: LazyStaggeredGridState,
     navigationActions: NavigationActions,
@@ -61,22 +59,23 @@ fun NewsScreen(
     externalPadding: PaddingValues
 ) {
     val newsList = newsListFLow.collectAsLazyPagingItems()
-    when {
-        newsState.isLoading || newsList.loadState.refresh is LoadState.Loading -> {
+    when (newsList.loadState.refresh) {
+        is LoadState.Loading -> {
             LoadingScreen(
                 paddingTop = 0.dp,
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
         }
 
-        newsState.error != null || newsList.loadState.refresh is LoadState.Error -> {
-            val e = newsList.loadState.refresh as LoadState.Error
+        is LoadState.Error -> {
+            val error = newsList.loadState.refresh as LoadState.Error
 
             ErrorScreen(
                 title = LocalContext.current.getString(R.string.error),
-                subtitle = newsState.error ?: e.error.localizedMessage,
+                subtitle = error.error.localizedMessage,
                 button = {
                     CustomButton(
+                        modifier = Modifier.fillMaxWidth(),
                         buttonTitle = LocalContext.current.getString(R.string.repeat),
                         imageVector = ImageVector.vectorResource(R.drawable.refresh),
                         onClick = {

@@ -26,8 +26,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -36,15 +38,20 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.News
-import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.news.NewsActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
 
 @Composable
 fun NewsDialog(
     newsState: NewsState,
+    navigationActions: NavigationActions,
+    newsActions: NewsActions,
     externalPadding: PaddingValues
 ) {
     when {
@@ -53,9 +60,20 @@ fun NewsDialog(
             paddingBottom = externalPadding.calculateBottomPadding()
         )
 
-        newsState.error != null -> Empty(
+        newsState.error != null -> ErrorScreen(
             title = LocalContext.current.getString(R.string.error),
             subtitle = newsState.error,
+            button = {
+                CustomButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    buttonTitle = LocalContext.current.getString(R.string.back),
+                    imageVector = ImageVector.vectorResource(R.drawable.back),
+                    onClick = {
+                        navigationActions.onBack()
+                        newsActions.onSetDefaultNewsState()
+                    },
+                )
+            },
             paddingTop = 0.dp,
             paddingBottom = externalPadding.calculateBottomPadding()
         )
@@ -163,7 +181,6 @@ fun NewsDialogContent(
                                         )
                                     }
                                 }
-
                             }
                         }
                     }

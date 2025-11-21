@@ -4,6 +4,7 @@ import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 
 data class NewsActions(
     val onGetNewsById: (Long) -> Unit, //NewsId
+    val onSetDefaultNewsState: () -> Unit
 ) {
     companion object {
         fun getNewsActions(
@@ -11,6 +12,9 @@ data class NewsActions(
         ) = NewsActions(
             onGetNewsById = { value ->
                 newsViewModel.getNewsById(value)
+            },
+            onSetDefaultNewsState = {
+                newsViewModel.setDefaultNewsState()
             }
         )
     }

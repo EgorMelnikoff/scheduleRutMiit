@@ -25,6 +25,7 @@ interface NewsViewModel {
     val newsState: StateFlow<NewsState>
     val newsListFlow: Flow<PagingData<NewsShort>>
     fun getNewsById(id: Long)
+    fun setDefaultNewsState()
 }
 
 data class NewsState(
@@ -74,5 +75,15 @@ class NewsViewModelImpl @Inject constructor(
             }
         }
         newsJob = newNewsJob
+    }
+
+    override fun setDefaultNewsState() {
+        _newsState.update {
+            it.copy(
+                isLoading = false,
+                error = null,
+                currentNews = null
+            )
+        }
     }
 }
