@@ -10,11 +10,13 @@
     <string name="app_name">Расписание МИИТ</string>
     <string name="author">Автор</string>
     <string name="auto">Авто</string>
+    <string name="back">Назад</string>
     <string name="class_name">Название</string>
     <string name="class_type">Тип занятия</string>
     <string name="collapse">Свернуть</string>
     <string name="color_style">Цветовое оформление</string>
     <string name="comment">Комментарий</string>
+    <string name="comments_on_events">Комментарии к парам</string>
     <string name="comments_on_tomorrow_events">Комментарии к завтрашним парам</string>
     <string name="compact_view">Компактный вид</string>
     <string name="confirm">Подтвердить</string>
@@ -23,6 +25,7 @@
     <string name="dark">Темная</string>
     <string name="date">Дата</string>
     <string name="date_and_time">Дата и время</string>
+    <string name="day_of_week">День недели</string>
     <string name="day_off">Выходной</string>
     <string name="decor">Оформление</string>
     <string name="delete">Удалить</string>
@@ -34,6 +37,8 @@
         <item quantity="one" tools:ignore="ImpliedQuantity">пара</item>
         <item quantity="other">пар</item>
     </plurals>
+    <string name="every_week">Каждую неделю</string>
+    <string name="once_week">Раз в %1$d недели</string>
     <string name="empty_base">Сохраните как минимум одно расписание для его отображения</string>
     <string name="empty_day">На это день пары не запланированы</string>
     <string name="empty_here">Здесь пусто</string>
@@ -89,6 +94,7 @@
     <string name="rename">Переименовать</string>
     <string name="renaming">Переименование</string>
     <string name="repeat">Повторить</string>
+    <string name="repetition">Повторение</string>
     <string name="report_a_problem">Сообщить о проблеме</string>
     <string name="return_default">Вернуть основное</string>
     <string name="review">Обзор</string>
@@ -126,6 +132,6 @@
     <string name="unable_load_news_list">Не удалось загрузить список новостей</string>
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="update">Обновить</string>
-    <string name="week">Неделя</string>
+    <string name="week">Неделя %1$s</string>
     <string name="yes">Да</string>
 </resources>
