@@ -17,19 +17,16 @@ import javax.inject.Singleton
 object DatabaseModule {
     @Provides
     @Singleton
-    fun provideAppDatabase(@ApplicationContext context: Context, converters: Converters): AppDatabase {
-        return AppDatabase.getDatabase(context, converters)
-    }
+    fun provideAppDatabase(@ApplicationContext context: Context, converters: Converters): AppDatabase =
+        AppDatabase.getDatabase(context, converters)
+
 
     @Provides
     @Singleton
-    fun provideNamedScheduleDao(database: AppDatabase): NamedScheduleDao {
-        return database.namedScheduleDao()
-    }
+    fun provideNamedScheduleDao(database: AppDatabase): NamedScheduleDao = database.namedScheduleDao()
+
 
     @Provides
     @Singleton
-    fun provideConverters(gson: Gson): Converters {
-        return Converters(gson)
-    }
+    fun provideConverters(gson: Gson): Converters = Converters(gson)
 }

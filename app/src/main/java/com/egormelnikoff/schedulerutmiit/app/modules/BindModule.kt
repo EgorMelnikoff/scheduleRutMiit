@@ -4,6 +4,8 @@ import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdaterImpl
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.egormelnikoff.schedulerutmiit.app.work.WorkSchedulerImpl
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManagerImpl
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserImpl
 import com.egormelnikoff.schedulerutmiit.data.repos.news.NewsRepos
@@ -50,4 +52,8 @@ abstract class BindModule {
     @Binds
     @Singleton
     abstract fun bindParser(parserImpl: ParserImpl): Parser
+
+    @Binds
+    @Singleton
+    abstract fun bindResourcesManager(resourcesManagerImpl: ResourcesManagerImpl): ResourcesManager
 }

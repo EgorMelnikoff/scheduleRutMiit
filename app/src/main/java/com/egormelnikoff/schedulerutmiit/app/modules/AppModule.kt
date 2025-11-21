@@ -4,8 +4,7 @@ import android.content.Context
 import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdaterImpl
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.shared_prefs.SharedPreferencesManager
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManagerImpl
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
@@ -29,27 +28,20 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun providePreferencesDataStore(@ApplicationContext context: Context): PreferencesDataStore {
-        return PreferencesDataStore(context)
-    }
+    fun providePreferencesDataStore(@ApplicationContext context: Context): PreferencesDataStore =
+        PreferencesDataStore(context)
 
     @Provides
     @Singleton
-    fun provideSharedPreferencesManager(@ApplicationContext context: Context): SharedPreferencesManager {
-        return SharedPreferencesManager(context)
-    }
+    fun provideResourcesManager(@ApplicationContext context: Context): ResourcesManagerImpl =
+        ResourcesManagerImpl(context)
+
 
     @Provides
     @Singleton
-    fun provideResourcesManager(@ApplicationContext context: Context): ResourcesManager {
-        return ResourcesManagerImpl(context)
-    }
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
+        WorkManager.getInstance(context)
 
-    @Provides
-    @Singleton
-    fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
-        return WorkManager.getInstance(context)
-    }
 
     @Provides
     @Singleton
@@ -57,13 +49,12 @@ object AppModule {
         @ApplicationContext context: Context,
         scheduleRepos: ScheduleRepos,
         gson: Gson
-    ): WidgetDataUpdaterImpl {
-        return WidgetDataUpdaterImpl(
-            context = context,
-            scheduleRepos = scheduleRepos,
-            gson = gson
-        )
-    }
+    ): WidgetDataUpdaterImpl = WidgetDataUpdaterImpl(
+        context = context,
+        scheduleRepos = scheduleRepos,
+        gson = gson
+    )
+
 
     @Provides
     @Singleton
@@ -93,9 +84,9 @@ object AppModule {
                 }
             ).create()
     }
+
     @Provides
     @Singleton
-    fun provideLogger(@ApplicationContext context: Context, resourcesManager: ResourcesManager): Logger {
-        return Logger(context, resourcesManager)
-    }
+    fun provideLogger(@ApplicationContext context: Context, resourcesManager: ResourcesManager): Logger =
+        Logger(context, resourcesManager)
 }

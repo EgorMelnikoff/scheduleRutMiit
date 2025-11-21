@@ -48,7 +48,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): MiitApi {
-        return retrofit.create(MiitApi::class.java)
-    }
+    fun provideApiService(retrofit: Retrofit): MiitApi =
+        retrofit.create(MiitApi::class.java)
 }
