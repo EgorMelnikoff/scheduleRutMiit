@@ -180,7 +180,7 @@ fun LeadingTitle(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = title.first().toString(),
+            text = title.first().uppercase(),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
             maxLines = 1,
