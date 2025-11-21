@@ -7,39 +7,45 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.work.worker.ScheduleWorker
 import com.egormelnikoff.schedulerutmiit.app.work.worker.WidgetWorker
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.shared_prefs.SharedPreferencesManager
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedScheduleDao
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.PreferencesDataStore
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 interface WorkScheduler {
-    fun cancelPeriodicScheduleUpdating()
-    fun cancelPeriodicWidgetUpdating()
-    fun startPeriodicScheduleUpdating()
-    fun startPeriodicWidgetUpdating()
+    suspend fun startPeriodicWork()
+    fun cancelPeriodicWork()
 }
 
 class WorkSchedulerImpl @Inject constructor(
+    private val namedScheduleDao: NamedScheduleDao,
     private val workManager: WorkManager,
-    private val sharedPreferencesManager: SharedPreferencesManager
-): WorkScheduler {
+    private val preferencesDataStore: PreferencesDataStore
+) : WorkScheduler {
     companion object {
         private const val UPDATING_SCHEDULE_PERIODICALLY = "updatingSchedulePeriodically"
-        private const val UPDATING_SCHEDULE_INTERVAL: Long = 10
+        private const val UPDATING_SCHEDULE_INTERVAL: Long = 10 //Hours
         private const val UPDATING_WIDGET_PERIODICALLY = "updatingWidgetPeriodically"
-        private const val UPDATING_WIDGET_INTERVAL: Long = 15
+        private const val UPDATING_WIDGET_INTERVAL: Long = 15 //Minutes
     }
 
-    override fun cancelPeriodicScheduleUpdating() {
-        workManager.cancelUniqueWork(UPDATING_SCHEDULE_PERIODICALLY)
+    override suspend fun startPeriodicWork() {
+        if (!isPeriodicWorkScheduled() && namedScheduleDao.getDefaultNamedScheduleEntity() != null) {
+            cancelPeriodicWork()
+            startPeriodicScheduleUpdating()
+            startPeriodicWidgetUpdating()
+        }
     }
 
-    override fun cancelPeriodicWidgetUpdating() {
-        workManager.cancelUniqueWork(UPDATING_WIDGET_PERIODICALLY)
-    }
-
-    override fun startPeriodicScheduleUpdating() {
+    override fun cancelPeriodicWork() {
         cancelPeriodicScheduleUpdating()
+        cancelPeriodicWidgetUpdating()
+    }
 
+    private suspend fun isPeriodicWorkScheduled() =
+        preferencesDataStore.getScheduledScheduleWork() && preferencesDataStore.getScheduledWidgetWork()
+
+    private suspend fun startPeriodicScheduleUpdating() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -56,14 +62,14 @@ class WorkSchedulerImpl @Inject constructor(
             ExistingPeriodicWorkPolicy.REPLACE,
             scheduleWorkRequest
         )
-        sharedPreferencesManager.editBooleanPreference(
-            name = "update_schedule_scheduled",
-            value = true
-        )
+        preferencesDataStore.setScheduledScheduleWork(true)
     }
 
-    override fun startPeriodicWidgetUpdating() {
-        cancelPeriodicWidgetUpdating()
+    private fun cancelPeriodicScheduleUpdating() {
+        workManager.cancelUniqueWork(UPDATING_SCHEDULE_PERIODICALLY)
+    }
+
+    private suspend fun startPeriodicWidgetUpdating() {
         val widgetWorkRequest = PeriodicWorkRequestBuilder<WidgetWorker>(
             UPDATING_WIDGET_INTERVAL,
             TimeUnit.MINUTES
@@ -75,9 +81,10 @@ class WorkSchedulerImpl @Inject constructor(
             ExistingPeriodicWorkPolicy.KEEP,
             widgetWorkRequest
         )
-        sharedPreferencesManager.editBooleanPreference(
-            name = "update_widgets_scheduled",
-            value = true
-        )
+        preferencesDataStore.setScheduledWidgetWork(true)
+    }
+
+    private fun cancelPeriodicWidgetUpdating() {
+        workManager.cancelUniqueWork(UPDATING_WIDGET_PERIODICALLY)
     }
 }

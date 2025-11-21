@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.datastore
+package com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -55,6 +56,7 @@ class PreferencesDataStore @Inject constructor(
             preferences[PreferencesKeys.EVENT_TAG_VISIBILITY] = visible
         }
     }
+
     suspend fun setEventCommentVisibility(visible: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.EVENT_COMMENT_VISIBILITY] = visible
@@ -66,6 +68,31 @@ class PreferencesDataStore @Inject constructor(
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.SHOW_COUNT_CLASSES] = isShowCountClasses
         }
+    }
+
+    suspend fun setScheduledWidgetWork(value: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SCHEDULED_WIDGET_UPDATE] = value
+        }
+    }
+
+    suspend fun setScheduledScheduleWork(value: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SCHEDULED_SCHEDULE_UPDATE] = value
+        }
+    }
+
+    suspend fun getScheduledWidgetWork(): Boolean {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.SCHEDULED_WIDGET_UPDATE] ?: false
+        }.first()
+    }
+
+
+    suspend fun getScheduledScheduleWork(): Boolean {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.SCHEDULED_SCHEDULE_UPDATE] ?: false
+        }.first()
     }
 
     val themeFlow: Flow<String> = context.dataStore.data.map { preferences ->
