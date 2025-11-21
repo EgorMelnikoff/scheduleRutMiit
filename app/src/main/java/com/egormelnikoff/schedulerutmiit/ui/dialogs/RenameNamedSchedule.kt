@@ -100,6 +100,7 @@ fun RenameDialog(
                 }
             )
             CustomButton(
+                modifier = Modifier.fillMaxWidth(),
                 buttonTitle = LocalContext.current.getString(R.string.save),
                 enabled = newName != "",
                 onClick = {
