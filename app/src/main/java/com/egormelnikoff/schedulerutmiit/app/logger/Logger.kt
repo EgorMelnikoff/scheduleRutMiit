@@ -23,12 +23,12 @@ class Logger @Inject constructor(
         private const val MAX_LOG_SIZE_BYTES = 1024 * 1024L
     }
 
-    fun sendLogFile(activity: Context) {
+    fun sendLogsFile() {
         val logFile = getLogFile()
 
         if (!logFile.exists() || logFile.length() == 0L) {
             Toast.makeText(
-                activity,
+                context,
                 resourcesManager.getString(R.string.logs_not_found),
                 Toast.LENGTH_SHORT
             ).show()
@@ -37,24 +37,26 @@ class Logger @Inject constructor(
 
         try {
             val fileUri = FileProvider.getUriForFile(
-                activity,
-                activity.packageName + ".fileprovider",
+                context,
+                context.packageName + ".fileprovider",
                 logFile
             )
 
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(DEVELOPER_EMAIL))
-                putExtra(Intent.EXTRA_SUBJECT, "logs: ${activity.packageName}")
+                putExtra(Intent.EXTRA_SUBJECT, "logs: ${context.packageName}")
                 putExtra(Intent.EXTRA_STREAM, fileUri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
 
-            activity.startActivity(
+            context.startActivity(
                 Intent.createChooser(
                     intent,
                     resourcesManager.getString(R.string.send_logs)
-                )
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
             )
 
         } catch (e: Exception) {
@@ -64,7 +66,7 @@ class Logger @Inject constructor(
                 e
             )
             Toast.makeText(
-                activity,
+                context,
                 resourcesManager.getString(R.string.error_sending_logs),
                 Toast.LENGTH_LONG
             ).show()
