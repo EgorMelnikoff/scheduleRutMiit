@@ -41,7 +41,7 @@ class MiitApiHelper @Inject constructor(
                     Result.Error(TypedError.EmptyBodyError)
                 }
             } else {
-                logger.i("API", "Http error ($fetchDataType)")
+                logger.i("API", "Http error ($fetchDataType):\n$message\n${response.code()}, ${response.message()}")
                 Result.Error(
                     TypedError.HttpError(
                         code = response.code(),
@@ -50,7 +50,7 @@ class MiitApiHelper @Inject constructor(
                 )
             }
         } catch (e: HttpException) {
-            logger.e("API", "Http error ($fetchDataType)", e)
+            logger.e("API", "Http error ($fetchDataType):\n$message", e)
             Result.Error(
                 TypedError.HttpError(
                     code = e.code(),
@@ -58,13 +58,13 @@ class MiitApiHelper @Inject constructor(
                 )
             )
         } catch (e: IOException) {
-            logger.e("API", "IOException ($fetchDataType)", e)
+            logger.e("API", "IOException ($fetchDataType):\n$message", e)
             Result.Error(TypedError.NetworkError(e))
         } catch (e: SerializationException) {
-            logger.e("API", "Serialization error ($fetchDataType)", e)
+            logger.e("API", "Serialization error ($fetchDataType):\n$message", e)
             Result.Error(TypedError.SerializationError(e))
         } catch (e: Throwable) {
-            logger.e("API", "Unexpected error ($fetchDataType)", e)
+            logger.e("API", "Unexpected error ($fetchDataType):\n$message", e)
             Result.Error(TypedError.UnexpectedError(e))
         }
     }
