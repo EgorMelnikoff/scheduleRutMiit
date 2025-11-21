@@ -24,9 +24,20 @@ import javax.inject.Inject
 
 interface SearchViewModel {
     val searchState: StateFlow<SearchState>
-    fun search(query: String, selectedSearchOption: SearchOption)
+    val searchParams: StateFlow<SearchParams>
+    fun search()
     fun setDefaultSearchState()
+    fun changeSearchParams(
+        query: String? = null,
+        searchOption: SearchOption? = null
+    )
 }
+
+@Keep
+data class SearchParams(
+    val query: String = "",
+    val searchOption: SearchOption = SearchOption.ALL
+)
 
 @Keep
 data class SearchState(
@@ -43,40 +54,44 @@ class SearchViewModelImpl @Inject constructor(
     private val searchRepos: SearchRepos,
     private val resourcesManager: ResourcesManager
 ) : ViewModel(), SearchViewModel {
+    private val _searchParams = MutableStateFlow(SearchParams())
+    override val searchParams = _searchParams.asStateFlow()
 
     private val _searchState = MutableStateFlow(SearchState())
     override val searchState = _searchState.asStateFlow()
 
     private var searchJob: Job? = null
 
-    override fun search(query: String, selectedSearchOption: SearchOption) {
+    override fun search() {
         _searchState.update { it.copy(isLoading = true) }
         val newSearchJob = viewModelScope.launch {
             searchJob?.cancelAndJoin()
-            if (query.isNotEmpty()) {
-                var groups = listOf<Group>()
-                var people = listOf<Person>()
+            if (_searchParams.value.query.isNotEmpty()) {
+                var groupsList = listOf<Group>()
+                var peopleList = listOf<Person>()
 
-                if (selectedSearchOption == SearchOption.ALL || selectedSearchOption == SearchOption.GROUPS) {
-                    val groupsRes = searchGroup(query)
-                    when (groupsRes) {
+                if (_searchParams.value.searchOption == SearchOption.ALL || _searchParams.value.searchOption == SearchOption.GROUPS) {
+                    val groups = searchGroup(_searchParams.value.query)
+                    when (groups) {
                         is Result.Success -> {
-                            groups = groupsRes.data
+                            groupsList = groups.data
                         }
+
                         is Result.Error -> {
-                            setErrorState(groupsRes.typedError)
+                            setErrorState(groups.typedError)
                             return@launch
                         }
                     }
                 }
-                if (selectedSearchOption == SearchOption.ALL || selectedSearchOption == SearchOption.PEOPLE) {
-                    val peopleRes = searchPerson(query)
-                    when (peopleRes) {
+                if (_searchParams.value.searchOption == SearchOption.ALL || _searchParams.value.searchOption == SearchOption.PEOPLE) {
+                    val people = searchPerson(_searchParams.value.query)
+                    when (people) {
                         is Result.Success -> {
-                            people = peopleRes.data
+                            peopleList = people.data
                         }
+
                         is Result.Error -> {
-                            setErrorState(peopleRes.typedError)
+                            setErrorState(people.typedError)
                             return@launch
                         }
                     }
@@ -84,8 +99,8 @@ class SearchViewModelImpl @Inject constructor(
 
                 _searchState.update {
                     it.copy(
-                        groups = groups,
-                        people = people,
+                        groups = groupsList,
+                        people = peopleList,
                         error = null,
                         isEmptyQuery = false,
                         isLoading = false
@@ -99,6 +114,12 @@ class SearchViewModelImpl @Inject constructor(
     }
 
     override fun setDefaultSearchState() {
+        _searchParams.update {
+            it.copy(
+                query = "",
+                searchOption = SearchOption.ALL
+            )
+        }
         _searchState.update {
             it.copy(
                 isEmptyQuery = true,
@@ -110,7 +131,16 @@ class SearchViewModelImpl @Inject constructor(
         }
     }
 
-    fun setErrorState (
+    override fun changeSearchParams(query: String?, searchOption: SearchOption?) {
+        _searchParams.update {
+            it.copy(
+                query = query ?: it.query,
+                searchOption = searchOption ?: it.searchOption
+            )
+        }
+    }
+
+    fun setErrorState(
         data: TypedError
     ) {
         _searchState.update {
@@ -124,8 +154,6 @@ class SearchViewModelImpl @Inject constructor(
             )
         }
     }
-
-
 
     private suspend fun searchGroup(query: String): Result<List<Group>> {
         if (_searchState.value.institutes == null) {
@@ -143,15 +171,12 @@ class SearchViewModelImpl @Inject constructor(
                 }
             }
         }
-        if (_searchState.value.institutes != null) {
-            val groups = (_searchState.value.institutes)!!.institutes?.let { getGroups(it) }
-            if (groups != null) {
-                val filteredGroups = groups
-                    .filter {
-                        compareValues(it.name ?: "", query)
-                    }
-                return Result.Success(filteredGroups)
-            }
+        _searchState.value.institutes?.let {
+            val groups = _searchState.value.institutes!!.institutes?.let { getGroups(it) }
+            val filteredGroups = groups?.filter {
+                compareValues(it.name ?: "", query)
+            } ?: listOf()
+            return Result.Success(filteredGroups)
         }
         return Result.Error(TypedError.EmptyBodyError)
     }

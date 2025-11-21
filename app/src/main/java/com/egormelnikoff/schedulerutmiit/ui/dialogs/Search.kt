@@ -45,9 +45,9 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchState
 
 enum class SearchOption {
@@ -57,10 +57,10 @@ enum class SearchOption {
 @Composable
 fun SearchDialog(
     searchState: SearchState,
+    searchParams: SearchParams,
     navigationActions: NavigationActions,
     searchActions: SearchActions,
     scheduleActions: ScheduleActions,
-    reviewUiState: ReviewUiState,
     externalPadding: PaddingValues,
 ) {
     Column(
@@ -81,10 +81,10 @@ fun SearchDialog(
             CustomTextField(
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1,
-                value = reviewUiState.searchQuery,
-                onValueChanged = reviewUiState.onChangeQuery,
+                value = searchParams.query,
+                onValueChanged = searchActions.onChangeQuery,
                 action = {
-                    searchActions.onSearchSchedule(Pair(reviewUiState.searchQuery.trim(), reviewUiState.selectedSearchOption))
+                    searchActions.onSearchSchedule()
                 },
                 placeholderText = LocalContext.current.getString(R.string.search),
                 leadingIcon = {
@@ -96,13 +96,13 @@ fun SearchDialog(
                 },
                 trailingIcon = {
                     AnimatedVisibility(
-                        visible = reviewUiState.searchQuery != "",
+                        visible = searchParams.query != "",
                         enter = scaleIn(animationSpec = tween(300)),
                         exit = fadeOut(animationSpec = tween(500))
                     ) {
                         IconButton(
                             onClick = {
-                                reviewUiState.onChangeQuery("")
+                                searchActions.onChangeQuery("")
                                 searchActions.onSetDefaultSearchState()
                             }
                         ) {
@@ -121,8 +121,8 @@ fun SearchDialog(
             )
 
             FilterRow(
-                selectedOption = reviewUiState.selectedSearchOption,
-                onSelectOption = reviewUiState.onSelectSearchOption
+                selectedOption = searchParams.searchOption,
+                onSelectOption = searchActions.onSelectSearchOption
             )
         }
         AnimatedContent(
@@ -171,7 +171,7 @@ fun SearchDialog(
                         ),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        if (searchState.groups.isNotEmpty() && (reviewUiState.selectedSearchOption == SearchOption.ALL || reviewUiState.selectedSearchOption == SearchOption.GROUPS)) {
+                        if (searchState.groups.isNotEmpty() && (searchParams.searchOption == SearchOption.ALL || searchParams.searchOption == SearchOption.GROUPS)) {
                             item {
                                 Text(
                                     text = LocalContext.current.getString(R.string.groups),
@@ -198,8 +198,6 @@ fun SearchDialog(
                                                 )
                                             )
                                             searchActions.onSetDefaultSearchState()
-                                            reviewUiState.onChangeQuery("")
-                                            reviewUiState.onSelectSearchOption(SearchOption.ALL)
                                         }
                                     )
                                 }
@@ -208,7 +206,7 @@ fun SearchDialog(
                                 Spacer(modifier = Modifier.height(2.dp))
                             }
                         }
-                        if (searchState.people.isNotEmpty() && (reviewUiState.selectedSearchOption == SearchOption.ALL || reviewUiState.selectedSearchOption == SearchOption.PEOPLE)) {
+                        if (searchState.people.isNotEmpty() && (searchParams.searchOption == SearchOption.ALL || searchParams.searchOption == SearchOption.PEOPLE)) {
                             item {
                                 Text(
                                     text = LocalContext.current.getString(R.string.people),
@@ -246,8 +244,6 @@ fun SearchDialog(
                                                 )
                                             )
                                             searchActions.onSetDefaultSearchState()
-                                            reviewUiState.onChangeQuery("")
-                                            reviewUiState.onSelectSearchOption(SearchOption.ALL)
                                         }
                                     )
                                 }
