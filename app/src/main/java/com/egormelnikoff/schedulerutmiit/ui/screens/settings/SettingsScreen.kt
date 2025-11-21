@@ -33,6 +33,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 
@@ -45,6 +46,7 @@ data class ThemeSelectorItemContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    appUiState: AppUiState,
     settingsListState: LazyStaggeredGridState,
     appSettings: AppSettings,
     navigationActions: NavigationActions,
@@ -160,7 +162,7 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                settingsActions.onOpenUri(APP_CHANNEL_URL)
+                                appUiState.uriHandler.openUri(APP_CHANNEL_URL)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.send),
                             text = LocalContext.current.getString(R.string.report_a_problem),

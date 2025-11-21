@@ -1,18 +1,20 @@
 package com.egormelnikoff.schedulerutmiit.ui.navigation
 
+import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 
 data class NavigationActions(
     val onBack: () -> Unit,
     val navigateToSchedule: () -> Unit,
     val navigateToSearch: () -> Unit,
-    val navigateToEvent: (Pair<Event, EventExtraData?>) -> Unit,
+    val navigateToEvent: (NavigateEventDialog) -> Unit,
     val navigateToRenameDialog: (NamedScheduleEntity) -> Unit,
     val navigateToAddSchedule: () -> Unit,
-    val navigateToAddEvent: () -> Unit,
-    val navigateToHiddenEvents: () -> Unit,
+    val navigateToAddEvent: (ScheduleEntity) -> Unit,
+    val navigateToHiddenEvents: (ScheduleEntity) -> Unit,
     val navigateToInfoDialog: () -> Unit,
     val navigateToNewsDialog: () -> Unit
 ) {
@@ -30,11 +32,14 @@ data class NavigationActions(
             navigateToAddSchedule = {
                 appBackStack.navigateToDialog(Routes.AddScheduleDialog)
             },
-            navigateToEvent = { value ->
+            navigateToEvent = { navigateEventDialog ->
                 appBackStack.navigateToDialog(
                     dialog = Routes.EventDialog(
-                        event = value.first,
-                        eventExtraData = value.second
+                        scheduleEntity = navigateEventDialog.scheduleEntity,
+                        isSavedSchedule = navigateEventDialog.isSavedSchedule,
+                        isCustomSchedule = navigateEventDialog.isCustomSchedule,
+                        event = navigateEventDialog.event,
+                        eventExtraData = navigateEventDialog.eventExtraData
                     )
                 )
             },
@@ -48,11 +53,19 @@ data class NavigationActions(
             navigateToInfoDialog = {
                 appBackStack.navigateToDialog(Routes.InfoDialog)
             },
-            navigateToAddEvent = {
-                appBackStack.navigateToDialog(Routes.AddEventDialog)
+            navigateToAddEvent = { scheduleEntity ->
+                appBackStack.navigateToDialog(
+                    dialog = Routes.AddEventDialog(
+                        scheduleEntity = scheduleEntity
+                    )
+                )
             },
-            navigateToHiddenEvents = {
-                appBackStack.navigateToDialog(Routes.HiddenEventsDialog)
+            navigateToHiddenEvents = { scheduleEntity ->
+                appBackStack.navigateToDialog(
+                    Routes.HiddenEventsDialog(
+                        scheduleEntity = scheduleEntity
+                    )
+                )
             },
             navigateToNewsDialog = {
                 appBackStack.navigateToDialog(Routes.NewsDialog)
@@ -60,3 +73,12 @@ data class NavigationActions(
         )
     }
 }
+
+@Keep
+data class NavigateEventDialog(
+    val scheduleEntity: ScheduleEntity,
+    val isSavedSchedule: Boolean,
+    val isCustomSchedule: Boolean,
+    val event: Event,
+    val eventExtraData: EventExtraData?
+)
