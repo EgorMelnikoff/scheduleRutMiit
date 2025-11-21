@@ -9,7 +9,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.app.model.Person
-import com.egormelnikoff.schedulerutmiit.app.model.TelegramPage
 import com.egormelnikoff.schedulerutmiit.data.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,7 +19,6 @@ import javax.inject.Inject
 
 interface Parser {
     suspend fun parsePeople(url: String): Result<List<Person>>
-    suspend fun parseChannelInfo(url: String): Result<TelegramPage>
     suspend fun parseCurrentWeek(url: String): Int
     fun parseNews(news: News): News
 }
@@ -55,35 +53,6 @@ class ParserImpl @Inject constructor(
                         }
                     }
                     Result.Success(people)
-                }
-
-                is Result.Error -> {
-                    Result.Error(document.typedError)
-                }
-            }
-        }
-    }
-
-    override suspend fun parseChannelInfo(url: String): Result<TelegramPage> {
-        return withContext(Dispatchers.IO) {
-            val document = parserHelper.callParserWithExceptions(
-                fetchDataType = "ChannelInfo",
-                message = "URL: $url"
-            ) {
-                Jsoup.connect(url).get()
-            }
-            when (document) {
-                is Result.Success -> {
-                    val page = document.data.selectFirst("div.tgme_header_info")
-                    val imageUrl = page?.select(".tgme_page_photo_image img")?.attr("src")
-                    val title = page?.select("div.tgme_header_title")?.text()
-                    Result.Success(
-                        TelegramPage(
-                            url = url,
-                            name = title,
-                            imageUrl = imageUrl
-                        )
-                    )
                 }
 
                 is Result.Error -> {
