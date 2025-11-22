@@ -388,7 +388,7 @@ class ScheduleReposImpl @Inject constructor(
                     }
 
                 val updatedEvents = mutableListOf<Event>()
-                val customEvents = oldSchedule.events.filter { !it.isCustomEvent }
+                val customEvents = oldSchedule.events.filter { it.isCustomEvent }
                 val defaultEvents = updatedSchedule.events.map { event ->
                     val oldEvent = oldSchedule.events.find { it.customEquals(event) }
                     event.copy(
