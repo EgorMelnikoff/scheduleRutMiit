@@ -35,7 +35,7 @@ interface ScheduleViewModel {
     val isDataLoading: StateFlow<Boolean>
     fun refreshScheduleState(
         showLoading: Boolean = true,
-        showUpdating: Boolean = false,
+        updating: Boolean = false,
         primaryKeyNamedSchedule: Long? = null
     )
 
@@ -81,13 +81,13 @@ class ScheduleViewModelImpl @Inject constructor(
 
     override fun refreshScheduleState(
         showLoading: Boolean,
-        showUpdating: Boolean,
+        updating: Boolean,
         primaryKeyNamedSchedule: Long?
     ) {
         viewModelScope.launch {
             updateUiState(
                 isLoading = showLoading,
-                isUpdating = showUpdating,
+                isUpdating = updating,
                 isError = false,
             )
             val savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
@@ -97,8 +97,11 @@ class ScheduleViewModelImpl @Inject constructor(
                 } ?: namedScheduleEntity.isDefault
             } ?: savedNamedSchedules.firstOrNull()
 
-            if (showUpdating) delay(500)
             defaultNamedScheduleEntity?.let { namedScheduleEntity ->
+                if (updating) scheduleRepos.updateSavedNamedSchedule(
+                    namedScheduleEntity = namedScheduleEntity,
+                    onShowUpdating = { delay(500) }
+                )
                 updateNamedScheduleUiState(
                     namedSchedule = scheduleRepos
                         .getSavedNamedScheduleById(
@@ -107,7 +110,7 @@ class ScheduleViewModelImpl @Inject constructor(
                 )
             }
             updateUiState(
-                savedNamedSchedules = savedNamedSchedules,
+                savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules(),
                 isLoading = false,
                 isUpdating = false,
                 isSaved = defaultNamedScheduleEntity != null,
