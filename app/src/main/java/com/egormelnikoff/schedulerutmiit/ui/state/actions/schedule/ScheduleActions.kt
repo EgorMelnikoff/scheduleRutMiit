@@ -57,7 +57,7 @@ data class ScheduleActions(
             onRefreshScheduleState = { primaryKey ->
                 scheduleViewModel.refreshScheduleState(
                     showLoading = false,
-                    showUpdating = true,
+                    updating = true,
                     primaryKeyNamedSchedule = primaryKey
                 )
             },
