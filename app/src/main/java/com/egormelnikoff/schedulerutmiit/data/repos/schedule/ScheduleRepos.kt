@@ -96,7 +96,8 @@ interface ScheduleRepos {
 
     suspend fun updateSavedNamedSchedule(
         namedScheduleEntity: NamedScheduleEntity,
-        onStartUpdate: () -> Unit
+        onStartUpdate: (() -> Unit)? = null,
+        onShowUpdating: (suspend () -> Unit)? = null
     ): Result<String>
 
     suspend fun isEventAddingUnavailable(
@@ -319,12 +320,14 @@ class ScheduleReposImpl @Inject constructor(
 
     override suspend fun updateSavedNamedSchedule(
         namedScheduleEntity: NamedScheduleEntity,
-        onStartUpdate: () -> Unit
+        onStartUpdate: (() -> Unit)?,
+        onShowUpdating: (suspend () -> Unit)?
     ): Result<String> {
         if (shouldUpdateNamedSchedule(namedScheduleEntity)) {
-            onStartUpdate()
+            onStartUpdate?.invoke()
             return performNamedScheduleUpdate(namedScheduleEntity)
         }
+        onShowUpdating?.invoke()
         return Result.Success("No schedule update required")
     }
 
