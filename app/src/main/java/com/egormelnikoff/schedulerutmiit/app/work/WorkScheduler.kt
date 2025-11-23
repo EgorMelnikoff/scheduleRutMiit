@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 interface WorkScheduler {
     suspend fun startPeriodicWork()
-    fun cancelPeriodicWork()
+    suspend fun cancelPeriodicWork()
 }
 
 class WorkSchedulerImpl @Inject constructor(
@@ -37,7 +37,7 @@ class WorkSchedulerImpl @Inject constructor(
         }
     }
 
-    override fun cancelPeriodicWork() {
+    override suspend fun cancelPeriodicWork() {
         cancelPeriodicScheduleUpdating()
         cancelPeriodicWidgetUpdating()
     }
@@ -65,8 +65,9 @@ class WorkSchedulerImpl @Inject constructor(
         preferencesDataStore.setScheduledScheduleWork(true)
     }
 
-    private fun cancelPeriodicScheduleUpdating() {
+    private suspend fun cancelPeriodicScheduleUpdating() {
         workManager.cancelUniqueWork(UPDATING_SCHEDULE_PERIODICALLY)
+        preferencesDataStore.setScheduledScheduleWork(false)
     }
 
     private suspend fun startPeriodicWidgetUpdating() {
@@ -84,7 +85,8 @@ class WorkSchedulerImpl @Inject constructor(
         preferencesDataStore.setScheduledWidgetWork(true)
     }
 
-    private fun cancelPeriodicWidgetUpdating() {
+    private suspend fun cancelPeriodicWidgetUpdating() {
         workManager.cancelUniqueWork(UPDATING_WIDGET_PERIODICALLY)
+        preferencesDataStore.setScheduledWidgetWork(false)
     }
 }
