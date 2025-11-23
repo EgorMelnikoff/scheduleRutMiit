@@ -119,7 +119,9 @@ fun ScreenSchedule(
                             .fillMaxSize()
                             .padding(top = padding.calculateTopPadding()),
                         onRefresh = {
-                            scheduleActions.onRefreshScheduleState(scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id)
+                            if (scheduleState.isSaved) {
+                                scheduleActions.onRefreshScheduleState(scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id)
+                            }
                         },
                         isRefreshing = scheduleState.isUpdating
                     ) {
