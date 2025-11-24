@@ -1,8 +1,11 @@
 package com.egormelnikoff.schedulerutmiit
 
 import android.app.Application
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.egormelnikoff.schedulerutmiit.app.widget.receivers.EventsWidgetReceiver
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +36,19 @@ class ScheduleApplication : Application(), Configuration.Provider {
 
     private fun schedulePeriodicDataRefresh() {
         applicationScope.launch {
-            workScheduler.startPeriodicWork()
+            manageWidgetUpdating()
+            workScheduler.startPeriodicScheduleUpdating()
+        }
+    }
+
+
+    private suspend fun manageWidgetUpdating() {
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val widgetIds = appWidgetManager.getAppWidgetIds(
+            ComponentName(this, EventsWidgetReceiver::class.java)
+        )
+        if (widgetIds.isEmpty()) {
+            workScheduler.cancelPeriodicWidgetUpdating()
         }
     }
 }

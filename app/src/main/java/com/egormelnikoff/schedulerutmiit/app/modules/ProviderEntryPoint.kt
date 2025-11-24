@@ -1,6 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.app.modules
 
+import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
+import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
@@ -31,4 +33,8 @@ interface ProviderEntryPoint {
     }
 
     fun widgetDataUpdater(): WidgetDataUpdater
+
+    fun workScheduler(): WorkScheduler
+
+    fun logger(): Logger
 }

@@ -38,7 +38,6 @@ interface ScheduleViewModel {
         updating: Boolean = false,
         primaryKeyNamedSchedule: Long? = null
     )
-
     fun getNamedScheduleFromApi(name: String, apiId: String, type: Int)
     fun getNamedScheduleFromDb(primaryKeyNamedSchedule: Long, setDefault: Boolean = false)
     fun saveCurrentNamedSchedule()
@@ -49,7 +48,6 @@ interface ScheduleViewModel {
         primaryKeySchedule: Long,
         timetableId: String
     )
-
     fun addCustomNamedSchedule(name: String, startDate: LocalDate, endDate: LocalDate)
     fun updateEventExtra(event: Event, comment: String, tag: Int)
     fun addCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
@@ -214,7 +212,7 @@ class ScheduleViewModelImpl @Inject constructor(
             val namedSchedule = scheduleRepos.getSavedNamedScheduleById(namedScheduleId)
 
             if (namedSchedule != null && namedSchedule.namedScheduleEntity.isDefault) {
-                workScheduler.startPeriodicWork()
+                workScheduler.startPeriodicScheduleUpdating()
             }
 
             updateNamedScheduleUiState(namedSchedule = namedSchedule)
@@ -233,7 +231,7 @@ class ScheduleViewModelImpl @Inject constructor(
             scheduleRepos.deleteSavedNamedSchedule(primaryKeyNamedSchedule, isDefault)
             val savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
             if (savedNamedSchedules.isEmpty()) {
-                workScheduler.cancelPeriodicWork()
+                workScheduler.startPeriodicScheduleUpdating()
                 _scheduleState.update {
                     it.copy(
                         savedNamedSchedules = emptyList(),
