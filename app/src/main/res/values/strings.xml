@@ -4,6 +4,7 @@
     <string name="_default">Default</string>
     <string name="about_app">About app</string>
     <string name="add">Add</string>
+    <string name="amoled" translatable="false">AMOLED</string>
     <string name="adding_a_class">Adding a class</string>
     <string name="adding_a_schedule">Adding a schedule</string>
     <string name="all">All</string>
@@ -22,6 +23,7 @@
     <string name="confirm">Confirm</string>
     <string name="create">Create</string>
     <string name="current_on">Current on</string>
+    <string name="download">Download</string>
     <string name="dark">Dark</string>
     <string name="date">Date</string>
     <string name="date_and_time">Date and time</string>
