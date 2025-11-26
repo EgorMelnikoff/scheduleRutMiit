@@ -37,6 +37,8 @@
         <item quantity="one" tools:ignore="ImpliedQuantity">пара</item>
         <item quantity="other">пар</item>
     </plurals>
+    <string name="edit">Редактировать</string>
+    <string name="editing">Редактирование</string>
     <string name="every_week">Каждую неделю</string>
     <string name="once_week">Раз в %1$d недели</string>
     <string name="empty_base">Сохраните как минимум одно расписание для его отображения</string>

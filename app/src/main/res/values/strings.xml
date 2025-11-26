@@ -40,6 +40,8 @@
     </plurals>
     <string name="every_week">Every week</string>
     <string name="once_week">Once every %1$d week</string>
+    <string name="edit">Edit</string>
+    <string name="editing">Editing</string>
     <string name="empty_base">Save at least one schedule to display it</string>
     <string name="empty_day">There are no classes scheduled for this day</string>
     <string name="empty_here">It`s empty here</string>
