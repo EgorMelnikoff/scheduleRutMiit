@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun ExpandedMenu(
-    setDefaultSchedule: (Triple<Long, Long, String>) -> Unit,
+    setDefaultSchedule: (Long, Long, String) -> Unit,
     scheduleState: ScheduleState,
     expandedSchedulesMenu: Boolean,
     onShowExpandedMenu: (Boolean) -> Unit
@@ -53,11 +53,9 @@ fun ExpandedMenu(
                     verticalPadding = 4.dp,
                     onClick = {
                         setDefaultSchedule(
-                            Triple(
-                                scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
-                                schedule.scheduleEntity.id,
-                                schedule.scheduleEntity.timetableId
-                            )
+                            scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
+                            schedule.scheduleEntity.id,
+                            schedule.scheduleEntity.timetableId
                         )
                     },
                     showClickLabel = false,

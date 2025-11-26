@@ -62,16 +62,23 @@ class SettingsViewModelImpl @Inject constructor(
                     commentVisible = commentVisibility
                 )
             }
-            combine(
+
+            val themeFlow = combine(
                 dataStore.themeFlow,
                 dataStore.decorColorFlow,
+            ) { theme, decorColorIndex ->
+                Pair(theme, decorColorIndex)
+            }
+
+            combine(
+                themeFlow,
+                eventFlow,
                 dataStore.scheduleViewFlow,
                 dataStore.showCountClassesFlow,
-                eventFlow
-            ) { theme, decorColorIndex, isCalendarView, isShowCountClasses, eventView ->
+            ) { theme, eventView, isCalendarView, isShowCountClasses ->
                 AppSettings(
-                    theme = theme,
-                    decorColorIndex = decorColorIndex,
+                    theme = theme.first,
+                    decorColorIndex = theme.second,
                     calendarView = isCalendarView,
                     showCountClasses = isShowCountClasses,
                     eventView = eventView
@@ -93,6 +100,7 @@ class SettingsViewModelImpl @Inject constructor(
             settingsRepos.onSetEventView(visible)
         }
     }
+
     override fun onSetEventRoomsVisibility(visible: Boolean) {
         viewModelScope.launch {
             settingsRepos.onSetEventRoomsVisibility(visible)

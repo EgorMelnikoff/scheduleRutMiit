@@ -32,7 +32,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
@@ -41,12 +44,11 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigateEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
-import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import java.time.DayOfWeek
 import java.time.Instant
@@ -218,9 +220,6 @@ fun ReviewScreen(
                 navigateToRenameDialog = {
                     navigationActions.navigateToRenameDialog(showNamedScheduleDialog!!)
                 },
-                onDismiss = {
-                    showNamedScheduleDialog = null
-                },
                 onOpenNamedSchedule = {
                     scheduleActions.onOpenNamedSchedule(showNamedScheduleDialog!!.id)
                     navigationActions.navigateToSchedule()
@@ -231,7 +230,9 @@ fun ReviewScreen(
                 onDeleteNamedSchedule = {
                     showDeleteNamedScheduleDialog = showNamedScheduleDialog!!
                 }
-            )
+            ) {
+                showNamedScheduleDialog = null
+            }
         }
 
         if (showDeleteNamedScheduleDialog != null) {
@@ -244,10 +245,8 @@ fun ReviewScreen(
                 },
                 onConfirmation = {
                     scheduleActions.onDeleteNamedSchedule(
-                        Pair(
-                            showDeleteNamedScheduleDialog!!.id,
-                            showDeleteNamedScheduleDialog!!.isDefault
-                        )
+                        showDeleteNamedScheduleDialog!!.id,
+                        showDeleteNamedScheduleDialog!!.isDefault
                     )
                 }
             )
@@ -258,7 +257,7 @@ fun ReviewScreen(
 
 @Composable
 fun EventsReview(
-    navigateToEvent: (NavigateEventDialog) -> Unit,
+    navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
     title: String,
     scheduleState: ScheduleState
 ) {
@@ -349,13 +348,10 @@ fun EventsReview(
                                 } else null,
                                 onClick = {
                                     navigateToEvent(
-                                        NavigateEventDialog(
-                                            scheduleEntity = scheduleEntity,
-                                            isSavedSchedule = true,
-                                            isCustomSchedule = scheduleState.defaultNamedScheduleData.namedSchedule?.namedScheduleEntity?.type == 3,
-                                            event = event,
-                                            eventExtraData = eventExtraData
-                                        )
+                                        scheduleEntity,
+                                        true,
+                                        event,
+                                        eventExtraData
                                     )
                                 }
                             )

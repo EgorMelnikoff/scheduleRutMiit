@@ -54,8 +54,8 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 
 @Composable
 fun ScreenSchedule(
@@ -65,7 +65,7 @@ fun ScreenSchedule(
     appSettings: AppSettings,
     navigationActions: NavigationActions,
     scheduleActions: ScheduleActions,
-    settingsActions: SettingsActions,
+    settingsViewModel: SettingsViewModel,
     externalPadding: PaddingValues
 ) {
     var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
@@ -102,7 +102,9 @@ fun ScreenSchedule(
                 topBar = {
                     ScheduleTopAppBar(
                         navigateToAddEvent = navigationActions.navigateToAddEvent,
-                        onSetScheduleView = settingsActions.onSetScheduleView,
+                        onSetScheduleView = { value ->
+                            settingsViewModel.onSetScheduleView(value)
+                        },
                         onShowExpandedMenu = scheduleUiState?.onExpandSchedulesMenu,
                         onShowNamedScheduleDialog = { newValue ->
                             showNamedScheduleDialog = newValue
@@ -136,7 +138,6 @@ fun ScreenSchedule(
                                 expandedSchedulesMenu = scheduleUiState.expandedSchedulesMenu,
                                 onShowExpandedMenu = scheduleUiState.onExpandSchedulesMenu
                             )
-
                             AnimatedContent(
                                 targetState = appSettings.calendarView,
                                 transitionSpec = {
@@ -151,6 +152,7 @@ fun ScreenSchedule(
                                 if (targetState) {
                                     ScheduleCalendarView(
                                         navigateToEvent = navigationActions.navigateToEvent,
+                                        navigateToEditEvent = navigationActions.navigateToEditEvent,
                                         onDeleteEvent = scheduleActions.eventActions.onDeleteEvent,
                                         onUpdateHiddenEvent = scheduleActions.eventActions.onHideEvent,
 
@@ -164,6 +166,7 @@ fun ScreenSchedule(
                                 } else {
                                     ScheduleListView(
                                         navigateToEvent = navigationActions.navigateToEvent,
+                                        navigateToEditEvent = navigationActions.navigateToEditEvent,
                                         onDeleteEvent = scheduleActions.eventActions.onDeleteEvent,
                                         onUpdateHiddenEvent = scheduleActions.eventActions.onHideEvent,
 
@@ -186,10 +189,8 @@ fun ScreenSchedule(
                             },
                             onConfirmation = {
                                 scheduleActions.onDeleteNamedSchedule(
-                                    Pair(
-                                        scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
-                                        scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault
-                                    )
+                                    scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
+                                    scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault
                                 )
                             }
                         )
@@ -245,22 +246,19 @@ fun ScreenSchedule(
             scheduleData = scheduleState.currentNamedScheduleData?.scheduleData,
             onDownloadCurrentSchedule = if (scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity?.downloadUrl != null) {
                 {
-                    val uri = scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.downloadUrl.toUri()
                     appUiState.context.startActivity(
                         Intent(
-                            Intent.ACTION_VIEW, uri
+                            Intent.ACTION_VIEW,
+                            scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.downloadUrl.toUri()
                         )
                     )
                 }
             } else null,
-            onDismiss = {
-                showNamedScheduleDialog = null
-            },
             navigateToRenameDialog = if (scheduleState.isSaved) {
                 { navigationActions.navigateToRenameDialog(showNamedScheduleDialog!!) }
             } else null,
             navigateToHiddenEvents = if (!scheduleState.currentNamedScheduleData?.scheduleData?.hiddenEvents.isNullOrEmpty() && scheduleState.isSaved) {
-                    navigationActions.navigateToHiddenEvents
+                navigationActions.navigateToHiddenEvents
             } else null,
             onSetDefaultNamedSchedule =
                 if (!showNamedScheduleDialog!!.isDefault && scheduleState.isSaved) {
@@ -279,7 +277,9 @@ fun ScreenSchedule(
             onLoadInitialData = if (!showNamedScheduleDialog!!.isDefault) {
                 scheduleActions.onLoadInitialScheduleData
             } else null
-        )
+        ) {
+            showNamedScheduleDialog = null
+        }
     }
 
 }

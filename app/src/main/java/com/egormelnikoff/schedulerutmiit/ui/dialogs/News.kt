@@ -43,15 +43,15 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.news.NewsActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
+import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 
 @Composable
 fun NewsDialog(
     newsState: NewsState,
     navigationActions: NavigationActions,
-    newsActions: NewsActions,
+    newsViewModel: NewsViewModel,
     externalPadding: PaddingValues
 ) {
     when {
@@ -70,7 +70,7 @@ fun NewsDialog(
                     imageVector = ImageVector.vectorResource(R.drawable.back),
                     onClick = {
                         navigationActions.onBack()
-                        newsActions.onSetDefaultNewsState()
+                        newsViewModel.setDefaultNewsState()
                     },
                 )
             },

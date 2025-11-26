@@ -46,9 +46,9 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchState
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 
 enum class SearchOption {
     ALL, GROUPS, PEOPLE
@@ -59,7 +59,7 @@ fun SearchDialog(
     searchState: SearchState,
     searchParams: SearchParams,
     navigationActions: NavigationActions,
-    searchActions: SearchActions,
+    searchViewModel: SearchViewModel,
     scheduleActions: ScheduleActions,
     externalPadding: PaddingValues,
 ) {
@@ -82,9 +82,11 @@ fun SearchDialog(
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1,
                 value = searchParams.query,
-                onValueChanged = searchActions.onChangeQuery,
+                onValueChanged = { newValue ->
+                    searchViewModel.changeSearchParams(query = newValue)
+                },
                 action = {
-                    searchActions.onSearchSchedule()
+                    searchViewModel.search()
                 },
                 placeholderText = LocalContext.current.getString(R.string.search),
                 leadingIcon = {
@@ -102,8 +104,7 @@ fun SearchDialog(
                     ) {
                         IconButton(
                             onClick = {
-                                searchActions.onChangeQuery("")
-                                searchActions.onSetDefaultSearchState()
+                                searchViewModel.setDefaultSearchState()
                             }
                         ) {
                             Icon(
@@ -122,7 +123,9 @@ fun SearchDialog(
 
             FilterRow(
                 selectedOption = searchParams.searchOption,
-                onSelectOption = searchActions.onSelectSearchOption
+                onSelectOption = { searchOption ->
+                    searchViewModel.changeSearchParams(searchOption = searchOption)
+                }
             )
         }
         AnimatedContent(
@@ -191,13 +194,11 @@ fun SearchDialog(
                                         onClick = {
                                             navigationActions.navigateToSchedule()
                                             scheduleActions.onGetNamedSchedule(
-                                                Triple(
-                                                    group.name,
-                                                    group.id.toString(),
-                                                    0
-                                                )
+                                                group.name,
+                                                group.id.toString(),
+                                                0
                                             )
-                                            searchActions.onSetDefaultSearchState()
+                                            searchViewModel.setDefaultSearchState()
                                         }
                                     )
                                 }
@@ -237,13 +238,11 @@ fun SearchDialog(
                                         onClick = {
                                             navigationActions.navigateToSchedule()
                                             scheduleActions.onGetNamedSchedule(
-                                                Triple(
-                                                    person.name,
-                                                    person.id.toString(),
-                                                    1
-                                                )
+                                                person.name,
+                                                person.id.toString(),
+                                                1
                                             )
-                                            searchActions.onSetDefaultSearchState()
+                                            searchViewModel.setDefaultSearchState()
                                         }
                                     )
                                 }

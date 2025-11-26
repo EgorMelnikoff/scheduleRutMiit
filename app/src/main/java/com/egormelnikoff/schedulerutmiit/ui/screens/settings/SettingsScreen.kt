@@ -34,12 +34,12 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
+import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 
 data class ThemeSelectorItemContent(
     val name: String,
-    val imageVector: ImageVector,
+    val imageVector: ImageVector?,
     val displayedName: String
 )
 
@@ -50,7 +50,7 @@ fun SettingsScreen(
     settingsListState: LazyStaggeredGridState,
     appSettings: AppSettings,
     navigationActions: NavigationActions,
-    settingsActions: SettingsActions,
+    settingsViewModel: SettingsViewModel,
     externalPadding: PaddingValues
 ) {
     var eventViewDialog by remember { mutableStateOf(false) }
@@ -82,10 +82,10 @@ fun SettingsScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.compact),
                             text = LocalContext.current.getString(R.string.compact_view)
                         ) {
-                            Row (
+                            Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ){
+                            ) {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
                                     imageVector = ImageVector.vectorResource(R.drawable.right),
@@ -95,7 +95,7 @@ fun SettingsScreen(
                                 CustomSwitch(
                                     checked = (!appSettings.eventView.groupsVisible && !appSettings.eventView.roomsVisible && !appSettings.eventView.lecturersVisible && !appSettings.eventView.tagVisible && !appSettings.eventView.commentVisible),
                                     onCheckedChange = {
-                                        settingsActions.eventActions.onSetEventView(!it)
+                                        settingsViewModel.onSetEventView(!it)
                                     }
                                 )
                             }
@@ -104,7 +104,7 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                settingsActions.onSetShowCountClasses(!appSettings.showCountClasses)
+                                settingsViewModel.onSetShowCountClasses(!appSettings.showCountClasses)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.count),
                             text = LocalContext.current.getString(R.string.show_count_classes)
@@ -112,7 +112,7 @@ fun SettingsScreen(
                             CustomSwitch(
                                 checked = appSettings.showCountClasses,
                                 onCheckedChange = {
-                                    settingsActions.onSetShowCountClasses(it)
+                                    settingsViewModel.onSetShowCountClasses(it)
                                 }
                             )
                         }
@@ -132,7 +132,9 @@ fun SettingsScreen(
                             horizontal = false
                         ) {
                             ThemeSelector(
-                                setTheme = settingsActions.onSetTheme,
+                                setTheme = { value ->
+                                    settingsViewModel.onSetTheme(value)
+                                },
                                 currentTheme = appSettings.theme
                             )
                         }
@@ -147,7 +149,7 @@ fun SettingsScreen(
                             ColorSelector(
                                 currentSelected = appSettings.decorColorIndex,
                                 onColorSelect = { value ->
-                                    settingsActions.onSetDecorColor(value)
+                                    settingsViewModel.onSetDecorColor(value)
                                 }
                             )
                         }
@@ -170,7 +172,7 @@ fun SettingsScreen(
                     }, {
                         SettingsItem(
                             onClick = {
-                                settingsActions.onSendLogs()
+                                settingsViewModel.sendLogsFile()
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.bug_report),
                             text = LocalContext.current.getString(R.string.send_logs_by_email),
@@ -202,21 +204,21 @@ fun SettingsScreen(
                 imageVector = ImageVector.vectorResource(R.drawable.group),
                 checked = appSettings.eventView.groupsVisible
             ) { visible ->
-                settingsActions.eventActions.onSetEventGroupVisibility(visible)
+                settingsViewModel.onSetEventGroupVisibility(visible)
             }
             CheckedItem(
                 text = LocalContext.current.getString(R.string.rooms),
                 imageVector = ImageVector.vectorResource(R.drawable.room),
                 checked = appSettings.eventView.roomsVisible
             ) { visible ->
-                settingsActions.eventActions.onSetEventRoomsVisibility(visible)
+                settingsViewModel.onSetEventRoomsVisibility(visible)
             }
             CheckedItem(
                 text = LocalContext.current.getString(R.string.lecturers),
                 imageVector = ImageVector.vectorResource(R.drawable.person),
                 checked = appSettings.eventView.lecturersVisible
             ) { visible ->
-                settingsActions.eventActions.onSetEventLecturersVisibility(visible)
+                settingsViewModel.onSetEventLecturersVisibility(visible)
             }
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -228,14 +230,14 @@ fun SettingsScreen(
                 imageVector = ImageVector.vectorResource(R.drawable.tag),
                 checked = appSettings.eventView.tagVisible
             ) { visible ->
-                settingsActions.eventActions.onSetEventTagVisibility(visible)
+                settingsViewModel.onSetEventTagVisibility(visible)
             }
             CheckedItem(
                 text = LocalContext.current.getString(R.string.comment),
                 imageVector = ImageVector.vectorResource(R.drawable.comment),
                 checked = appSettings.eventView.commentVisible
             ) { visible ->
-                settingsActions.eventActions.onSetEventCommentVisibility(visible)
+                settingsViewModel.onSetEventCommentVisibility(visible)
             }
         }
     }

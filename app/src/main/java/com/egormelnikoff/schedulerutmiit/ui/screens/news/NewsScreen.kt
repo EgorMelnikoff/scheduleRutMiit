@@ -45,8 +45,8 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.news.NewsActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
+import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 import kotlinx.coroutines.flow.Flow
 import java.time.format.DateTimeFormatter
 
@@ -55,7 +55,7 @@ fun NewsScreen(
     newsListFLow: Flow<PagingData<NewsShort>>,
     newsGridListState: LazyStaggeredGridState,
     navigationActions: NavigationActions,
-    newsActions: NewsActions,
+    newsViewModel: NewsViewModel,
     externalPadding: PaddingValues
 ) {
     val newsList = newsListFLow.collectAsLazyPagingItems()
@@ -108,7 +108,7 @@ fun NewsScreen(
                         NewsShort(
                             newsShort = newsShort,
                             onClick = {
-                                newsActions.onGetNewsById(newsShort.idInformation)
+                                newsViewModel.getNewsById(newsShort.idInformation)
                                 navigationActions.navigateToNewsDialog()
                             }
                         )

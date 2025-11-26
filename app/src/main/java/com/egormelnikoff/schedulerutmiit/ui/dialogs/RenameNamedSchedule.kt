@@ -104,7 +104,7 @@ fun RenameDialog(
                 buttonTitle = LocalContext.current.getString(R.string.save),
                 enabled = newName != "",
                 onClick = {
-                    scheduleActions.onConfirmRenameNamedSchedule(Pair(namedScheduleEntity, newName.trim()))
+                    scheduleActions.onConfirmRenameNamedSchedule(namedScheduleEntity, newName.trim())
                     navigationActions.onBack()
                 }
             )
