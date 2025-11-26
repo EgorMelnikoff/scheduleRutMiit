@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,7 +39,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.model.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.theme.getColorByIndex
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -104,7 +105,9 @@ fun HorizontalCalendar(
                     .clickable(
                         onClick = {
                             scope.launch {
-                                scheduleUiState.pagerWeeksState.animateScrollToPage(namedScheduleData.scheduleData.schedulePagerData!!.weeksStartIndex)
+                                scheduleUiState.pagerWeeksState.animateScrollToPage(
+                                    namedScheduleData.scheduleData.schedulePagerData!!.weeksStartIndex
+                                )
                             }
                             scheduleUiState.onSelectDate(namedScheduleData.scheduleData.schedulePagerData!!.defaultDate)
                         }
@@ -136,7 +139,10 @@ fun HorizontalCalendar(
                         tint = color
                     )
                     Text(
-                        text = LocalContext.current.getString(R.string.week, selectedWeek.toString())
+                        text = LocalContext.current.getString(
+                            R.string.week,
+                            selectedWeek.toString()
+                        )
                             .replaceFirstChar { it.lowercase() },
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground,
@@ -175,8 +181,7 @@ fun HorizontalCalendar(
             )
         ) { index ->
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 val firstDayOfWeek = scheduleEntity.startDate
@@ -270,36 +275,41 @@ fun HorizontalCalendarItem(
 
             )
         }
-        if (isShowCountClasses) {
-            FlowRow(
-                maxItemsInEachRow = if (events.size in 6..8) 4 else 5,
-                horizontalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterHorizontally),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                events.forEach { groupedEvents ->
-                    var offset = 0
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        groupedEvents.value.forEach { event ->
-                            val eventExtraData = eventsExtraData.find {
-                                it.id == event.id
-                            }
-                            val color = getColorByIndex(
-                                index = eventExtraData?.tag,
-                                defaultColor = MaterialTheme.colorScheme.onBackground
-                            )
-                            Canvas(
-                                modifier = Modifier
-                                    .padding(start = offset.dp)
-                                    .size(6.dp)
-                            ) {
-                                drawCircle(
-                                    color = color,
-                                    center = center
+        Box(
+            modifier = Modifier.defaultMinSize(minHeight = 6.dp)
+        ) {
+            if (isShowCountClasses) {
+                FlowRow(
+                    maxItemsInEachRow = if (events.size in 6..8) 4 else 5,
+                    horizontalArrangement = Arrangement.spacedBy(
+                        2.dp,
+                        Alignment.CenterHorizontally
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    events.forEach { groupedEvents ->
+                        var offset = 0
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            groupedEvents.value.forEach { event ->
+                                val eventExtraData = eventsExtraData.find { it.id == event.id }
+                                val color = getColorByIndex(
+                                    index = eventExtraData?.tag,
+                                    defaultColor = MaterialTheme.colorScheme.onBackground
                                 )
+                                Canvas(
+                                    modifier = Modifier
+                                        .padding(start = offset.dp)
+                                        .size(6.dp)
+                                ) {
+                                    drawCircle(
+                                        color = color,
+                                        center = center
+                                    )
+                                }
+                                offset += 5
                             }
-                            offset += 5
                         }
                     }
                 }
