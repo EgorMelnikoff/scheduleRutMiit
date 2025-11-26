@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 
@@ -37,8 +38,13 @@ fun ThemeSelector(
         ),
         ThemeSelectorItemContent(
             name = "system",
-            imageVector = ImageVector.vectorResource(R.drawable.error),
+            imageVector = null,
             displayedName = LocalContext.current.getString(R.string.auto)
+        ),
+        ThemeSelectorItemContent(
+            name = "amoled",
+            imageVector = null,
+            displayedName = LocalContext.current.getString(R.string.amoled)
         ),
     )
 
@@ -68,7 +74,7 @@ fun ThemeSelector(
                     selected = theme.name == currentTheme,
                     icon = {},
                     label = {
-                        if (theme.name != "system") {
+                        if (theme.name != "system" && theme.imageVector != null) {
                             Icon(
                                 modifier = Modifier
                                     .size(16.dp),
@@ -78,7 +84,9 @@ fun ThemeSelector(
                         } else {
                             Text(
                                 text = theme.displayedName,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleSmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }

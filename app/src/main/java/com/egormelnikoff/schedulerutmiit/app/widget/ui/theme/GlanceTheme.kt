@@ -6,15 +6,15 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceTheme
 import androidx.glance.material3.ColorProviders
-import com.egormelnikoff.schedulerutmiit.ui.theme.Black
-import com.egormelnikoff.schedulerutmiit.ui.theme.Blue
-import com.egormelnikoff.schedulerutmiit.ui.theme.DarkGrey
-import com.egormelnikoff.schedulerutmiit.ui.theme.Grey
-import com.egormelnikoff.schedulerutmiit.ui.theme.LightGrey
-import com.egormelnikoff.schedulerutmiit.ui.theme.NeutralSecondaryContainer
-import com.egormelnikoff.schedulerutmiit.ui.theme.NeutralSecondaryContainerDark
-import com.egormelnikoff.schedulerutmiit.ui.theme.Red
-import com.egormelnikoff.schedulerutmiit.ui.theme.White
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.Black
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.Blue
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.DarkGrey
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.Grey
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.LightGrey
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.NeutralSecondaryContainer
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.NeutralSecondaryContainerDark
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.Red
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.White
 
 private val LightColorScheme = lightColorScheme(
     primary = Blue,
