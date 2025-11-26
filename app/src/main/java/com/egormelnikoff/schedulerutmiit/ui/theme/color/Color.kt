@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.theme
+package com.egormelnikoff.schedulerutmiit.ui.theme.color
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
@@ -45,17 +45,17 @@ fun getColorByIndex(
     return colors[index] ?: Color.Unspecified
 }
 
-val animation: SpringSpec<Color> = SpringSpec(stiffness = Spring.StiffnessMediumLow)
+val animation: SpringSpec<Color> = SpringSpec(stiffness = Spring.StiffnessMedium)
 
 val defaultColorTheme = Theme(
     animation = animation,
-    light = createLightTheme(
+    light = createLightColorTheme(
         primaryColor = Blue,
         backgroundColor = White,
         primaryContainerColor = NeutralPrimaryContainer,
         secondaryContainerColor = NeutralSecondaryContainer
     ),
-    dark = createDarkTheme(
+    dark = createDarkColorTheme(
         primaryColor = Blue,
         backgroundColor = DarkGrey,
         primaryContainerColor = NeutralPrimaryContainerDark,
@@ -69,13 +69,13 @@ val colorThemes = mapOf(
     //Red
     1 to Theme(
         animation = animation,
-        light = createLightTheme(
+        light = createLightColorTheme(
             primaryColor = Red,
             backgroundColor = Color(0xFFfcdcd9),
             primaryContainerColor = Color(0xFFf5b8b0),
             secondaryContainerColor = Color(0xFFfcc3bd)
         ),
-        dark = createDarkTheme(
+        dark = createDarkColorTheme(
             primaryColor = Red,
             backgroundColor = Color(0xFF2e0000),
             primaryContainerColor = Color(0xFF4f0000),
@@ -85,13 +85,13 @@ val colorThemes = mapOf(
     //Orange
     2 to Theme(
         animation = animation,
-        light = createLightTheme(
+        light = createLightColorTheme(
             primaryColor = Orange,
             backgroundColor = Color(0xFFffd8c4),
             primaryContainerColor = Color(0xFFf2ba9b),
             secondaryContainerColor = Color(0xFFfac6ac)
         ),
-        dark = createDarkTheme(
+        dark = createDarkColorTheme(
             primaryColor = Orange,
             backgroundColor = Color(0xFF260e01),
             primaryContainerColor = Color(0xFF5e2100),
@@ -101,13 +101,13 @@ val colorThemes = mapOf(
     //Yellow
     3 to Theme(
         animation = animation,
-        light = createLightTheme(
+        light = createLightColorTheme(
             primaryColor = Yellow,
             backgroundColor = Color(0xFFfff3d4),
             primaryContainerColor = Color(0xFFf0d8a1),
             secondaryContainerColor = Color(0xFFf7e4b2)
         ),
-        dark = createDarkTheme(
+        dark = createDarkColorTheme(
             primaryColor = Yellow,
             backgroundColor = Color(0xFF472e00),
             primaryContainerColor = Color(0xFF7a5000),
@@ -117,13 +117,13 @@ val colorThemes = mapOf(
     //Green
     4 to Theme(
         animation = animation,
-        light = createLightTheme(
+        light = createLightColorTheme(
             primaryColor = Green,
             backgroundColor = Color(0xFFe1fce1),
             primaryContainerColor = Color(0xFFb8e3b6),
             secondaryContainerColor = Color(0xFFcbf2c9)
         ),
-        dark = createDarkTheme(
+        dark = createDarkColorTheme(
             primaryColor = Green,
             backgroundColor = Color(0xFF001f18),
             primaryContainerColor = Color(0xFF004534),
@@ -133,13 +133,13 @@ val colorThemes = mapOf(
     //LightBlue
     5 to Theme(
         animation = animation,
-        light = createLightTheme(
+        light = createLightColorTheme(
             primaryColor = LightBlue,
             backgroundColor = Color(0xFFdcf2fc),
             primaryContainerColor = Color(0xFFa2e0fc),
             secondaryContainerColor = Color(0xFFc0e9fc)
         ),
-        dark = createDarkTheme(
+        dark = createDarkColorTheme(
             primaryColor = LightBlue,
             backgroundColor = Color(0xFF01131c),
             primaryContainerColor = Color(0xFF003a59),
@@ -149,13 +149,13 @@ val colorThemes = mapOf(
     //Blue
     6 to Theme(
         animation = animation,
-        light = createLightTheme(
+        light = createLightColorTheme(
             primaryColor = Blue,
             backgroundColor = Color(0xFFdee6ff),
             primaryContainerColor = Color(0xFFb9c7fa),
             secondaryContainerColor = Color(0xFFcdd7fa)
         ),
-        dark = createDarkTheme(
+        dark = createDarkColorTheme(
             primaryColor = Blue,
             backgroundColor = Color(0xFF010e24),
             primaryContainerColor = Color(0xFF011e52),
@@ -165,13 +165,13 @@ val colorThemes = mapOf(
     //Violet
     7 to Theme(
         animation = animation,
-        light = createLightTheme(
+        light = createLightColorTheme(
             primaryColor = Violet,
             backgroundColor = Color(0xFFeed7fa),
             primaryContainerColor = Color(0xFFe1b1fa),
             secondaryContainerColor = Color(0xFFeac4ff)
         ),
-        dark = createDarkTheme(
+        dark = createDarkColorTheme(
             primaryColor = Violet,
             backgroundColor = Color(0xFF180024),
             primaryContainerColor = Color(0xFF340152),
@@ -181,13 +181,13 @@ val colorThemes = mapOf(
     //Pink
     8 to Theme(
         animation = animation,
-        light = createLightTheme(
+        light = createLightColorTheme(
             primaryColor = Pink,
             backgroundColor = Color(0xFFffd4f6),
             primaryContainerColor = Color(0xFFfca9ec),
             secondaryContainerColor = Color(0xFFffbff2)
         ),
-        dark = createDarkTheme(
+        dark = createDarkColorTheme(
             primaryColor = Pink,
             backgroundColor = Color(0xFF21001b),
             primaryContainerColor = Color(0xFF590049),

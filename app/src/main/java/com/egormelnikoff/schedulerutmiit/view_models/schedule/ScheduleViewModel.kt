@@ -51,6 +51,7 @@ interface ScheduleViewModel {
     fun addCustomNamedSchedule(name: String, startDate: LocalDate, endDate: LocalDate)
     fun updateEventExtra(event: Event, comment: String, tag: Int)
     fun addCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
+    fun updateCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
     fun updateEventHidden(scheduleEntity: ScheduleEntity, eventPrimaryKey: Long, isHidden: Boolean)
     fun deleteCustomEvent(scheduleEntity: ScheduleEntity, eventPrimaryKey: Long)
 }
@@ -407,6 +408,17 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
+
+    override fun updateCustomEvent(scheduleEntity: ScheduleEntity, event: Event) {
+        viewModelScope.launch {
+            scheduleRepos.deleteSavedEvent(event.id)
+            scheduleRepos.insertEvent(event)
+            updateNamedScheduleUiState(
+                namedSchedule = scheduleRepos.getSavedNamedScheduleById(scheduleEntity.namedScheduleId)
+            )
+        }
+    }
+
     override fun addCustomEvent(
         scheduleEntity: ScheduleEntity,
         event: Event
@@ -423,10 +435,6 @@ class ScheduleViewModelImpl @Inject constructor(
             scheduleRepos.insertEvent(event)
             updateNamedScheduleUiState(
                 namedSchedule = scheduleRepos.getSavedNamedScheduleById(scheduleEntity.namedScheduleId)
-            )
-            updateUiState(
-                savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules(),
-                isSaved = true
             )
         }
     }

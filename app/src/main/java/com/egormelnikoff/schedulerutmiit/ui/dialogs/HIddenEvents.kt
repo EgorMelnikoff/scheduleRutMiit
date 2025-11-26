@@ -89,7 +89,7 @@ fun HiddenEventsDialog(
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
-                                        eventActions.onShowEvent(Pair(scheduleEntity, event.id))
+                                        eventActions.onShowEvent(scheduleEntity, event.id)
                                     },
                                     colors = IconButtonDefaults.iconButtonColors()
                                         .copy(

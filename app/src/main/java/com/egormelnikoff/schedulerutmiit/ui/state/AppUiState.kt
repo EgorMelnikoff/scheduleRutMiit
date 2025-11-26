@@ -15,11 +15,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
-import com.egormelnikoff.schedulerutmiit.ui.navigation.Routes
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import kotlinx.coroutines.CoroutineScope
 
 data class AppUiState(
-    val appBackStack: AppBackStack<Routes>,
+    val appBackStack: AppBackStack<Route>,
     val snackBarHostState: SnackbarHostState,
     val focusManager: FocusManager,
     val uriHandler: UriHandler,
@@ -31,7 +31,7 @@ data class AppUiState(
     companion object {
         @Composable
         fun rememberAppUiState(): AppUiState {
-            val appBackStack by remember { mutableStateOf(AppBackStack<Routes>(startRoute = Routes.Schedule)) }
+            val appBackStack by remember { mutableStateOf(AppBackStack<Route>(startRoute = Route.Page.Schedule)) }
             val snackBarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
             val focusManager = LocalFocusManager.current

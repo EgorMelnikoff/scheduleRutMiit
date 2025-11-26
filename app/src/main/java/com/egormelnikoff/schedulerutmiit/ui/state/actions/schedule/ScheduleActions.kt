@@ -6,18 +6,18 @@ import java.time.LocalDate
 
 data class ScheduleActions(
     val eventActions: EventActions,
-    val onGetNamedSchedule: (Triple<String, String, Int>) -> Unit, //Name, ApiId, Type
+    val onGetNamedSchedule: (String, String, Int) -> Unit, //Name, ApiId, Type
     val onSelectDefaultNamedSchedule: (Long) -> Unit, //NamedSchedulePK
     val onOpenNamedSchedule: (Long) -> Unit, //NamedSchedulePK
     val onSaveCurrentNamedSchedule: () -> Unit,
-    val onDeleteNamedSchedule: (Pair<Long, Boolean>) -> Unit, //NamedSchedulePK, isDefault
-    val onConfirmRenameNamedSchedule: (Pair<NamedScheduleEntity, String>) -> Unit, //NamedScheduleEntity, NewName
+    val onDeleteNamedSchedule: (Long, Boolean) -> Unit, //NamedSchedulePK, isDefault
+    val onConfirmRenameNamedSchedule: (NamedScheduleEntity, String) -> Unit, //NamedScheduleEntity, NewName
 
     val onLoadInitialScheduleData: () -> Unit,
-    val onRefreshScheduleState: (Long) -> Unit, //showIsLoading
+    val onRefreshScheduleState: (Long) -> Unit, //NamedSchedulePK
 
-    val onSetDefaultSchedule: (Triple<Long, Long, String>) -> Unit, //NamedSchedulePK, SchedulePK, timetableId
-    val onAddCustomSchedule: (Triple<String, LocalDate, LocalDate>) -> Unit, //Name, StartDate, EndDate
+    val onSetDefaultSchedule: (Long, Long, String) -> Unit, //NamedSchedulePK, SchedulePK, timetableId
+    val onAddCustomSchedule: (String, LocalDate, LocalDate) -> Unit, //Name, StartDate, EndDate
 ) {
     companion object {
         fun getScheduleActions(
@@ -26,11 +26,11 @@ data class ScheduleActions(
             eventActions = EventActions.getEventActions(
                 scheduleViewModel = scheduleViewModel
             ),
-            onGetNamedSchedule = { value ->
+            onGetNamedSchedule = { name, apiId, type ->
                 scheduleViewModel.getNamedScheduleFromApi(
-                    name = value.first,
-                    apiId = value.second,
-                    type = value.third
+                    name = name,
+                    apiId = apiId,
+                    type = type
                 )
             },
             onOpenNamedSchedule = { value ->
@@ -44,10 +44,10 @@ data class ScheduleActions(
                     setDefault = true
                 )
             },
-            onDeleteNamedSchedule = { value ->
+            onDeleteNamedSchedule = { primaryKeyNamedSchedule, isDefault ->
                 scheduleViewModel.deleteNamedSchedule(
-                    primaryKeyNamedSchedule = value.first,
-                    isDefault = value.second
+                    primaryKeyNamedSchedule = primaryKeyNamedSchedule,
+                    isDefault = isDefault
                 )
             },
 
@@ -65,25 +65,25 @@ data class ScheduleActions(
                 scheduleViewModel.saveCurrentNamedSchedule()
             },
 
-            onSetDefaultSchedule = { value ->
+            onSetDefaultSchedule = { primaryKeyNamedSchedule, primaryKeySchedule, timetableId ->
                 scheduleViewModel.setDefaultSchedule(
-                    primaryKeyNamedSchedule = value.first,
-                    primaryKeySchedule = value.second,
-                    timetableId = value.third
+                    primaryKeyNamedSchedule = primaryKeyNamedSchedule,
+                    primaryKeySchedule = primaryKeySchedule,
+                    timetableId = timetableId
                 )
             },
 
-            onAddCustomSchedule = { value ->
+            onAddCustomSchedule = { name, startDate, endDate ->
                 scheduleViewModel.addCustomNamedSchedule(
-                    name = value.first,
-                    startDate = value.second,
-                    endDate = value.third,
+                    name = name,
+                    startDate = startDate,
+                    endDate = endDate,
                 )
             },
-            onConfirmRenameNamedSchedule = { newName ->
+            onConfirmRenameNamedSchedule = { namedScheduleEntity, newName ->
                 scheduleViewModel.renameNamedSchedule(
-                    namedScheduleEntity = newName.first,
-                    newName = newName.second
+                    namedScheduleEntity = namedScheduleEntity,
+                    newName = newName
                 )
             }
         )

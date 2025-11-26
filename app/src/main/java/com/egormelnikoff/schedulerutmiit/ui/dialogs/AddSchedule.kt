@@ -66,11 +66,9 @@ fun AddScheduleDialog(
                                 checkScheduleParams(context, nameSchedule, startDate, endDate)
                             if (errorMessages.isEmpty()) {
                                 scheduleActions.onAddCustomSchedule(
-                                    Triple(
-                                        nameSchedule.trim(),
-                                        startDate!!,
-                                        endDate!!
-                                    )
+                                    nameSchedule.trim(),
+                                    startDate!!,
+                                    endDate!!
                                 )
                                 navigationActions.navigateToSchedule()
                             } else {

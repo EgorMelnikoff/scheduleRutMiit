@@ -5,47 +5,51 @@ import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 data class EventActions(
-    val onAddCustomEvent: (Pair<ScheduleEntity, Event>) -> Unit,
-    val onDeleteEvent: (Pair<ScheduleEntity, Long>) -> Unit, //EventPK
-    val onHideEvent: (Pair<ScheduleEntity, Long>) -> Unit, //EventPK
-    val onShowEvent: (Pair<ScheduleEntity, Long>) -> Unit, //EventPK
-    val onEventExtraChange: (Triple<Event, String, Int>) -> Unit, //Event, Comment, Tag
+    val onAddCustomEvent: (ScheduleEntity, Event) -> Unit,
+    val onUpdateCustomEvent: (ScheduleEntity, Event) -> Unit,
+    val onDeleteEvent: (ScheduleEntity, Long) -> Unit, //EventPK
+    val onHideEvent: (ScheduleEntity, Long) -> Unit, //EventPK
+    val onShowEvent: (ScheduleEntity, Long) -> Unit, //EventPK
+    val onEventExtraChange: (Event, String, Int) -> Unit, //Event, Comment, Tag
 ) {
     companion object {
         fun getEventActions(
             scheduleViewModel: ScheduleViewModel
         ) = EventActions(
-            onAddCustomEvent = { event ->
+            onUpdateCustomEvent = { scheduleEntity, event ->
+                scheduleViewModel.updateCustomEvent(scheduleEntity, event)
+            },
+            onAddCustomEvent = { scheduleEntity, event ->
                 scheduleViewModel.addCustomEvent(
-                    scheduleEntity = event.first,
-                    event = event.second
+                    scheduleEntity = scheduleEntity,
+                    event = event
                 )
             },
-            onEventExtraChange = { value ->
+            onEventExtraChange = { event, comment, tag ->
                 scheduleViewModel.updateEventExtra(
-                    event = value.first,
-                    comment = value.second,
-                    tag = value.third
+                    event = event,
+                    comment = comment,
+                    tag = tag
                 )
             },
-            onDeleteEvent = { event ->
+            onDeleteEvent = { scheduleEntity, event->
                 scheduleViewModel.deleteCustomEvent(
-                    scheduleEntity = event.first,
-                    eventPrimaryKey = event.second
+                    scheduleEntity = scheduleEntity,
+                    eventPrimaryKey = event
                 )
 
             },
-            onShowEvent = { event ->
+            onShowEvent = { scheduleEntity, event ->
                 scheduleViewModel.updateEventHidden(
-                    scheduleEntity = event.first,
-                    eventPrimaryKey = event.second,
+                    scheduleEntity = scheduleEntity,
+                    eventPrimaryKey = event,
                     isHidden = false
                 )
             },
-            onHideEvent = { event ->
+            onHideEvent = { scheduleEntity, eventPrimaryKey ->
                 scheduleViewModel.updateEventHidden(
-                    scheduleEntity = event.first,
-                    eventPrimaryKey = event.second,
+                    scheduleEntity = scheduleEntity,
+                    eventPrimaryKey = eventPrimaryKey,
                     isHidden = true
                 )
             }

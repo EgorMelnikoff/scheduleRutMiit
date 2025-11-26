@@ -31,10 +31,10 @@ class ScheduleApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        schedulePeriodicDataRefresh()
+        managePeriodicWork()
     }
 
-    private fun schedulePeriodicDataRefresh() {
+    private fun managePeriodicWork() {
         applicationScope.launch {
             manageWidgetUpdating()
             workScheduler.startPeriodicScheduleUpdating()

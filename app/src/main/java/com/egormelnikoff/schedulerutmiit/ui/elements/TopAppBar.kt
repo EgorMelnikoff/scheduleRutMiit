@@ -155,11 +155,7 @@ fun ScheduleTopAppBar(
             }
             IconButton(
                 onClick = {
-                    if (calendarView) {
-                        onSetScheduleView(false)
-                    } else {
-                        onSetScheduleView(true)
-                    }
+                    onSetScheduleView(!calendarView)
                 }
             ) {
                 Icon(

@@ -24,12 +24,11 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.InfoDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.NewsDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.RenameDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchDialog
-import com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event.AddEventDialog
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event.AddEditEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
-import com.egormelnikoff.schedulerutmiit.ui.elements.rememberBarItems
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions.Companion.getNavigationActions
-import com.egormelnikoff.schedulerutmiit.ui.navigation.Routes
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleUiEventProcessor
@@ -39,24 +38,19 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState.Companion.rememberAppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState.Companion.rememberReviewUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState.Companion.rememberScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.news.NewsActions
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
-import kotlinx.coroutines.launch
+import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 
 @Composable
 fun Main(
     searchViewModel: SearchViewModel,
     scheduleViewModel: ScheduleViewModel,
     newsViewModel: NewsViewModel,
-    searchActions: SearchActions,
+    settingsViewModel: SettingsViewModel,
     scheduleActions: ScheduleActions,
-    newsActions: NewsActions,
-    settingsActions: SettingsActions,
     appSettings: AppSettings
 ) {
     val appUiState = rememberAppUiState()
@@ -67,36 +61,7 @@ fun Main(
 
     val scheduleState = scheduleViewModel.scheduleState.collectAsState().value
     val scheduleUiState = rememberScheduleUiState(scheduleState = scheduleState)
-    val barItems = rememberBarItems(
-        onScheduleClick = {
-            appUiState.scope.launch {
-                when {
-                    scheduleUiState != null && scheduleState.currentNamedScheduleData?.scheduleData?.schedulePagerData != null && appSettings.calendarView -> {
-                        scheduleUiState.onSelectDate(
-                            scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate
-                        )
-                        scheduleUiState.pagerWeeksState.animateScrollToPage(
-                            scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.weeksStartIndex
-                        )
-                    }
 
-                    scheduleUiState != null && !appSettings.calendarView -> {
-                        scheduleUiState.scheduleListState.animateScrollToItem(0)
-                    }
-                }
-            }
-        },
-        onNewsClick = {
-            appUiState.scope.launch {
-                appUiState.newsListState.animateScrollToItem(0)
-            }
-        },
-        onSettingsClick = {
-            appUiState.scope.launch {
-                appUiState.settingsListState.animateScrollToItem(0)
-            }
-        }
-    )
     val searchState = searchViewModel.searchState.collectAsState().value
     val searchParams = searchViewModel.searchParams.collectAsState().value
     val newsState = newsViewModel.newsState.collectAsState().value
@@ -115,9 +80,10 @@ fun Main(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             CustomNavigationBar(
-                appBackStack = appUiState.appBackStack,
-                barItems = barItems,
-                theme = appSettings.theme
+                appUiState = appUiState,
+                scheduleUiState = scheduleUiState,
+                scheduleState = scheduleState,
+                appSettings = appSettings
             )
         },
         snackbarHost = {
@@ -160,7 +126,7 @@ fun Main(
                 }
             },
             entryProvider = entryProvider {
-                entry<Routes.Review> {
+                entry<Route.Page.Review> {
                     ReviewScreen(
                         scheduleState = scheduleState,
                         reviewUiState = reviewUiState,
@@ -170,7 +136,7 @@ fun Main(
                     )
                 }
 
-                entry<Routes.Schedule> {
+                entry<Route.Page.Schedule> {
                     ScreenSchedule(
                         appUiState = appUiState,
                         scheduleState = scheduleState,
@@ -178,37 +144,36 @@ fun Main(
                         appSettings = appSettings,
                         navigationActions = navigationActions,
                         scheduleActions = scheduleActions,
-                        settingsActions = settingsActions,
+                        settingsViewModel = settingsViewModel,
                         externalPadding = externalPadding
                     )
                 }
 
-                entry<Routes.NewsList> {
+                entry<Route.Page.NewsList> {
                     NewsScreen(
                         newsListFLow = newsViewModel.newsListFlow,
                         newsGridListState = appUiState.newsListState,
+                        newsViewModel = newsViewModel,
                         navigationActions = navigationActions,
-                        newsActions = newsActions,
                         externalPadding = externalPadding
                     )
                 }
 
-                entry<Routes.Settings> {
+                entry<Route.Page.Settings> {
                     SettingsScreen(
                         appUiState = appUiState,
                         settingsListState = appUiState.settingsListState,
                         appSettings = appSettings,
                         navigationActions = navigationActions,
-                        settingsActions = settingsActions,
+                        settingsViewModel = settingsViewModel,
                         externalPadding = externalPadding
                     )
                 }
 
-                entry<Routes.EventDialog> { key ->
+                entry<Route.Dialog.EventDialog> { key ->
                     EventDialog(
                         scheduleEntity = key.scheduleEntity,
                         isSavedSchedule = key.isSavedSchedule,
-                        isCustomSchedule = key.isCustomSchedule,
                         event = key.event,
                         eventExtraData = key.eventExtraData,
                         navigationActions = navigationActions,
@@ -217,16 +182,16 @@ fun Main(
                     )
                 }
 
-                entry<Routes.NewsDialog> {
+                entry<Route.Dialog.NewsDialog> {
                     NewsDialog(
                         newsState = newsState,
                         navigationActions = navigationActions,
-                        newsActions = newsActions,
+                        newsViewModel = newsViewModel,
                         externalPadding = externalPadding
                     )
                 }
 
-                entry<Routes.InfoDialog> {
+                entry<Route.Dialog.InfoDialog> {
                     InfoDialog(
                         appUiState = appUiState,
                         navigationActions = navigationActions,
@@ -234,9 +199,10 @@ fun Main(
                     )
                 }
 
-                entry<Routes.AddEventDialog> { key ->
-                    AddEventDialog(
+                entry<Route.Dialog.AddEventDialog> { key ->
+                    AddEditEventDialog(
                         scheduleEntity = key.scheduleEntity,
+                        editableEvent = key.event,
                         appUiState = appUiState,
                         navigationActions = navigationActions,
                         scheduleActions = scheduleActions,
@@ -244,18 +210,18 @@ fun Main(
                     )
                 }
 
-                entry<Routes.SearchDialog> {
+                entry<Route.Dialog.SearchDialog> {
                     SearchDialog(
                         searchState = searchState,
                         searchParams = searchParams,
                         navigationActions = navigationActions,
-                        searchActions = searchActions,
+                        searchViewModel = searchViewModel,
                         scheduleActions = scheduleActions,
                         externalPadding = externalPadding
                     )
                 }
 
-                entry<Routes.AddScheduleDialog> {
+                entry<Route.Dialog.AddScheduleDialog> {
                     AddScheduleDialog(
                         appUiState = appUiState,
                         navigationActions = navigationActions,
@@ -264,7 +230,7 @@ fun Main(
                     )
                 }
 
-                entry<Routes.RenameNamedScheduleDialog> { key ->
+                entry<Route.Dialog.RenameNamedScheduleDialog> { key ->
                     RenameDialog(
                         namedScheduleEntity = key.namedScheduleEntity,
                         navigationActions = navigationActions,
@@ -273,7 +239,7 @@ fun Main(
                     )
                 }
 
-                entry<Routes.HiddenEventsDialog> { key ->
+                entry<Route.Dialog.HiddenEventsDialog> { key ->
                     HiddenEventsDialog(
                         scheduleEntity = key.scheduleEntity,
                         hiddenEvents = scheduleState.currentNamedScheduleData!!.scheduleData!!.hiddenEvents,

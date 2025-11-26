@@ -1,13 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.app.work
 
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.egormelnikoff.schedulerutmiit.app.widget.receivers.EventsWidgetReceiver
 import com.egormelnikoff.schedulerutmiit.app.work.worker.ScheduleWorker
 import com.egormelnikoff.schedulerutmiit.app.work.worker.WidgetWorker
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedScheduleDao

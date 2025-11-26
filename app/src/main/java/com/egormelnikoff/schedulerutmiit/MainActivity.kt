@@ -9,10 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.ui.Main
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.news.NewsActions.Companion.getNewsActions
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions.Companion.getScheduleActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions.Companion.getSearchActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.settings.SettingsActions.Companion.getSettingsActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModelImpl
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModelImpl
@@ -38,15 +35,6 @@ class MainActivity : ComponentActivity() {
         val scheduleActions = getScheduleActions(
             scheduleViewModel = scheduleViewModel
         )
-        val searchActions = getSearchActions(
-            searchViewModel = searchViewModel
-        )
-        val newsActions = getNewsActions(
-            newsViewModel = newsViewModel
-        )
-        val settingsActions = getSettingsActions(
-            settingsViewModel = settingsViewModel
-        )
 
         setContent {
             val appSettings by settingsViewModel.appSettings.collectAsStateWithLifecycle()
@@ -57,10 +45,8 @@ class MainActivity : ComponentActivity() {
                         searchViewModel = searchViewModel,
                         scheduleViewModel = scheduleViewModel,
                         newsViewModel = newsViewModel,
-                        searchActions = searchActions,
+                        settingsViewModel = settingsViewModel,
                         scheduleActions = scheduleActions,
-                        newsActions = newsActions,
-                        settingsActions = settingsActions,
                         appSettings = settings
                     )
                 }

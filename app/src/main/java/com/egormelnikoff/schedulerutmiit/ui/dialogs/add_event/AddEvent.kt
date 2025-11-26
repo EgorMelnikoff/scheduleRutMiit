@@ -43,6 +43,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.RecurrenceRule
 import com.egormelnikoff.schedulerutmiit.app.model.Room
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.getTimeSlotName
+import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -64,40 +65,53 @@ import java.time.ZoneOffset
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun AddEventDialog(
+fun AddEditEventDialog(
+    editableEvent: Event? = null,
     appUiState: AppUiState,
     scheduleEntity: ScheduleEntity,
     navigationActions: NavigationActions,
     scheduleActions: ScheduleActions,
-    externalPadding: PaddingValues,
+    externalPadding: PaddingValues
 ) {
-    var currentInterval by remember { mutableIntStateOf(1) }
-    var currentPeriod by remember { mutableIntStateOf(1) }
+    var currentInterval by remember {
+        mutableIntStateOf(
+            editableEvent?.recurrenceRule?.interval ?: 1
+        )
+    }
+    var currentPeriod by remember { mutableIntStateOf(editableEvent?.periodNumber ?: 1) }
     var showDialogDate by remember { mutableStateOf(false) }
     var showDialogStart by remember { mutableStateOf(false) }
     var showDialogEnd by remember { mutableStateOf(false) }
 
-    var nameEvent by remember { mutableStateOf("") }
-    var typeEvent by remember { mutableStateOf(DefaultEventParams.types.first()) }
-    var dateEvent by remember { mutableStateOf<LocalDate?>(null) }
-    var startTime by remember { mutableStateOf<LocalTime?>(null) }
-    var endTime by remember { mutableStateOf<LocalTime?>(null) }
+    var nameEvent by remember { mutableStateOf(editableEvent?.name ?: "") }
+    var typeEvent by remember {
+        mutableStateOf(
+            editableEvent?.typeName ?: DefaultEventParams.types.first()
+        )
+    }
+    var dateEvent by remember { mutableStateOf(editableEvent?.startDatetime?.toLocalDate()) }
+    var startTime by remember { mutableStateOf(editableEvent?.startDatetime?.toLocaleTimeWithTimeZone()) }
+    var endTime by remember { mutableStateOf(editableEvent?.endDatetime?.toLocaleTimeWithTimeZone()) }
 
-    var roomsList by remember { mutableStateOf(listOf<Room>()) }
-    var lecturersList by remember { mutableStateOf(listOf<Lecturer>()) }
-    var groupsList by remember { mutableStateOf(listOf<Group>()) }
+    var roomsList by remember { mutableStateOf(editableEvent?.rooms ?: listOf()) }
+    var lecturersList by remember { mutableStateOf(editableEvent?.lecturers ?: listOf()) }
+    var groupsList by remember { mutableStateOf(editableEvent?.groups ?: listOf()) }
 
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                titleText = LocalContext.current.getString(R.string.adding_a_class),
+                titleText = editableEvent?.let {
+                    appUiState.context.getString(R.string.editing)
+                } ?: appUiState.context.getString(R.string.adding_a_class),
                 navAction = {
                     navigationActions.onBack()
                 },
                 actions = {
                     CustomButton(
                         modifier = Modifier.padding(horizontal = 12.dp),
-                        buttonTitle = appUiState.context.getString(R.string.create),
+                        buttonTitle = editableEvent?.let {
+                            appUiState.context.getString(R.string.save)
+                        } ?: appUiState.context.getString(R.string.create),
                         onClick = {
                             val errorMessages = checkEventParams(
                                 context = appUiState.context,
@@ -120,6 +134,7 @@ fun AddEventDialog(
                                     .toLocalDateTime()
 
                                 val event = Event(
+                                    id = editableEvent?.id ?: 0,
                                     scheduleId = scheduleEntity.id,
                                     name = nameEvent.trim(),
                                     typeName = typeEvent,
@@ -142,11 +157,15 @@ fun AddEventDialog(
                                     },
                                     periodNumber = if (currentInterval > 1) currentPeriod else 1
                                 )
-                                scheduleActions.eventActions.onAddCustomEvent(
-                                    Pair(
-                                        scheduleEntity,
-                                        event
-                                    )
+                                editableEvent?.let {
+                                    if (editableEvent != event) {
+                                        scheduleActions.eventActions.onUpdateCustomEvent(
+                                            scheduleEntity,
+                                            event
+                                        )
+                                    }
+                                } ?: scheduleActions.eventActions.onAddCustomEvent(
+                                    scheduleEntity, event
                                 )
                                 navigationActions.onBack()
                             } else {

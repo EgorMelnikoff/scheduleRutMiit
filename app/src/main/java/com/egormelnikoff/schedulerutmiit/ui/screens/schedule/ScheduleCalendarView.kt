@@ -18,10 +18,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.model.Event
+import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigateEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
@@ -30,9 +31,10 @@ import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 
 @Composable
 fun ScheduleCalendarView(
-    navigateToEvent: (NavigateEventDialog) -> Unit,
-    onDeleteEvent: (Pair<ScheduleEntity, Long>) -> Unit,
-    onUpdateHiddenEvent: (Pair<ScheduleEntity, Long>) -> Unit,
+    navigateToEvent: (ScheduleEntity, Boolean,  Event, EventExtraData?) -> Unit,
+    navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
+    onDeleteEvent: (ScheduleEntity, Long) -> Unit,
+    onUpdateHiddenEvent: (ScheduleEntity, Long) -> Unit,
     appUiState: AppUiState,
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState,
@@ -49,6 +51,7 @@ fun ScheduleCalendarView(
         )
         PagedDays(
             navigateToEvent = navigateToEvent,
+            navigateToEditEvent = navigateToEditEvent,
             onDeleteEvent = onDeleteEvent,
             onUpdateHiddenEvent = onUpdateHiddenEvent,
 
@@ -65,9 +68,10 @@ fun ScheduleCalendarView(
 
 @Composable
 fun PagedDays(
-    navigateToEvent: (NavigateEventDialog) -> Unit,
-    onDeleteEvent: (Pair<ScheduleEntity, Long>) -> Unit,
-    onUpdateHiddenEvent: (Pair<ScheduleEntity, Long>) -> Unit,
+    navigateToEvent: (ScheduleEntity, Boolean,  Event, EventExtraData?) -> Unit,
+    navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
+    onDeleteEvent: (ScheduleEntity, Long) -> Unit,
+    onUpdateHiddenEvent: (ScheduleEntity, Long) -> Unit,
 
     namedScheduleData: NamedScheduleData,
     pagerDaysState: PagerState,
@@ -113,6 +117,7 @@ fun PagedDays(
                 ) { events ->
                     Event(
                         navigateToEvent = navigateToEvent,
+                        navigateToEditEvent = navigateToEditEvent,
                         onDeleteEvent = onDeleteEvent,
                         onUpdateHiddenEvent = onUpdateHiddenEvent,
 
@@ -121,7 +126,6 @@ fun PagedDays(
                         eventsExtraData = namedScheduleData.scheduleData.eventsExtraData,
 
                         isSavedSchedule = isSavedSchedule,
-                        isCustomSchedule = namedScheduleData.namedSchedule?.namedScheduleEntity?.type == 3,
                         eventView = eventView
                     )
                 }
