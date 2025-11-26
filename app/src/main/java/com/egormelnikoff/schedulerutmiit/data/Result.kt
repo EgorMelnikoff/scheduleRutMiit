@@ -1,8 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.data
 
-sealed class Result<out R> {
-    data class Success<out T>(val data: T) : Result<T>()
+sealed interface Result<out R> {
+    data class Success<S>(
+        val data: S
+    ) : Result<S>
+
     data class Error(
         val typedError: TypedError
-    ) : Result<Nothing>()
+    ) : Result<Nothing>
 }
