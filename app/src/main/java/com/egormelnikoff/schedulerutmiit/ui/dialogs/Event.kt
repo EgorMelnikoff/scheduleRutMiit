@@ -70,7 +70,6 @@ fun EventDialog(
     eventExtraData: EventExtraData?,
     scheduleEntity: ScheduleEntity,
     isSavedSchedule: Boolean,
-    isCustomSchedule: Boolean,
     navigationActions: NavigationActions,
     scheduleActions: ScheduleActions,
     externalPadding: PaddingValues
@@ -103,7 +102,7 @@ fun EventDialog(
 
     LaunchedEffect(comment, tag) {
         delay(300)
-        scheduleActions.eventActions.onEventExtraChange(Triple(event, comment, tag))
+        scheduleActions.eventActions.onEventExtraChange(event, comment, tag)
     }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -207,16 +206,14 @@ fun EventDialog(
                                         .background(MaterialTheme.colorScheme.secondaryContainer)
                                         .defaultMinSize(minWidth = 80.dp)
                                         .let {
-                                            if (!isCustomSchedule) {
+                                            if (!event.isCustomEvent) {
                                                 it.clickable(
                                                     onClick = {
                                                         navigationActions.navigateToSchedule()
                                                         scheduleActions.onGetNamedSchedule(
-                                                            Triple(
-                                                                group.name!!,
-                                                                group.id.toString(),
-                                                                0
-                                                            )
+                                                            group.name!!,
+                                                            group.id.toString(),
+                                                            0
                                                         )
                                                     }
                                                 )
@@ -247,15 +244,13 @@ fun EventDialog(
                                 title = room.hint.toString(),
                                 titleMaxLines = 2,
                                 defaultMinHeight = 32.dp,
-                                onClick = if (!isCustomSchedule) {
+                                onClick = if (!event.isCustomEvent) {
                                     {
                                         navigationActions.navigateToSchedule()
                                         scheduleActions.onGetNamedSchedule(
-                                            Triple(
-                                                room.name!!,
-                                                room.id.toString(),
-                                                2
-                                            )
+                                            room.name!!,
+                                            room.id.toString(),
+                                            2
                                         )
                                     }
                                 } else null
@@ -275,15 +270,13 @@ fun EventDialog(
                                 title = lecturer.fullFio.toString(),
                                 titleMaxLines = 2,
                                 defaultMinHeight = 32.dp,
-                                onClick = if (!isCustomSchedule) {
+                                onClick = if (!event.isCustomEvent) {
                                     {
                                         navigationActions.navigateToSchedule()
                                         scheduleActions.onGetNamedSchedule(
-                                            Triple(
-                                                lecturer.fullFio!!,
-                                                lecturer.id.toString(),
-                                                1
-                                            )
+                                            lecturer.fullFio!!,
+                                            lecturer.id.toString(),
+                                            1
                                         )
                                     }
                                 } else null,
@@ -327,11 +320,9 @@ fun EventDialog(
                                         onClick = {
                                             comment = ""
                                             scheduleActions.eventActions.onEventExtraChange(
-                                                Triple(
-                                                    event,
-                                                    "",
-                                                    tag
-                                                )
+                                                event,
+                                                "",
+                                                tag
                                             )
                                         }
                                     ) {
@@ -371,7 +362,7 @@ fun EventDialog(
                 showEventDeleteDialog = false
             },
             onConfirmation = {
-                scheduleActions.eventActions.onDeleteEvent(Pair(scheduleEntity, event.id))
+                scheduleActions.eventActions.onDeleteEvent(scheduleEntity, event.id)
                 navigationActions.onBack()
             }
         )
@@ -385,7 +376,7 @@ fun EventDialog(
                 showEventHideDialog = false
             },
             onConfirmation = {
-                scheduleActions.eventActions.onHideEvent(Pair(scheduleEntity, event.id))
+                scheduleActions.eventActions.onHideEvent(scheduleEntity, event.id)
                 navigationActions.onBack()
             }
         )
@@ -393,9 +384,12 @@ fun EventDialog(
     if (showEventActionsDialog) {
         ModalDialogEvent(
             event = event,
-            onDismiss = {
-                showEventActionsDialog = false
-            },
+            onEditEvent = if (event.isCustomEvent) {
+                {
+                    navigationActions.onBack()
+                    navigationActions.navigateToEditEvent(scheduleEntity, event)
+                }
+            } else null,
             onDeleteEvent = if (event.isCustomEvent) {
                 {
                     showEventDeleteDialog = true
@@ -409,10 +403,12 @@ fun EventDialog(
             } else null,
             onShowEvent = if (event.isHidden) {
                 {
-                    scheduleActions.eventActions.onShowEvent(Pair(scheduleEntity, event.id))
+                    scheduleActions.eventActions.onShowEvent(scheduleEntity, event.id)
                     event.isHidden = false
                 }
             } else null
-        )
+        ) {
+            showEventActionsDialog = false
+        }
     }
 }

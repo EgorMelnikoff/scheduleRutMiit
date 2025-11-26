@@ -19,11 +19,12 @@ import com.egormelnikoff.schedulerutmiit.app.model.Event
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModalDialogEvent(
-    onDismiss: (Event?) -> Unit,
+    event: Event,
     onHideEvent: (() -> Unit)? = null,
     onDeleteEvent: (() -> Unit)? = null,
+    onEditEvent: (() -> Unit)? = null,
     onShowEvent: (() -> Unit)? = null,
-    event: Event,
+    onDismiss: (Event?) -> Unit
 ) {
     CustomModalBottomSheet(
         modifier = Modifier.padding(horizontal = 8.dp),
@@ -59,6 +60,17 @@ fun ModalDialogEvent(
                 },
                 icon = ImageVector.vectorResource(R.drawable.visibility),
                 title = LocalContext.current.getString(R.string.show_event),
+                contentColor = MaterialTheme.colorScheme.onBackground
+            )
+        }
+        onEditEvent?.let {
+            ActionDialogButton(
+                onClick = {
+                    onEditEvent()
+                    onDismiss(null)
+                },
+                icon = ImageVector.vectorResource(R.drawable.edit),
+                title = LocalContext.current.getString(R.string.edit),
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
         }

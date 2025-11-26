@@ -37,12 +37,12 @@ fun ModalDialogNamedSchedule(
     navigateToRenameDialog: (() -> Unit)? = null,
     navigateToHiddenEvents: ((ScheduleEntity) -> Unit)? = null,
     onDownloadCurrentSchedule: (() -> Unit)? = null,
-    onDismiss: (NamedScheduleEntity?) -> Unit,
     onOpenNamedSchedule: (() -> Unit)? = null,
     onSetDefaultNamedSchedule: (() -> Unit)? = null,
     onDeleteNamedSchedule: (() -> Unit)? = null,
     onLoadInitialData: (() -> Unit)? = null,
-    onSaveCurrentNamedSchedule: (() -> Unit)? = null
+    onSaveCurrentNamedSchedule: (() -> Unit)? = null,
+    onDismiss: (NamedScheduleEntity?) -> Unit
 ) {
     CustomModalBottomSheet(
         modifier = Modifier.padding(horizontal = 8.dp),
@@ -87,7 +87,7 @@ fun ModalDialogNamedSchedule(
                         contentColor = MaterialTheme.colorScheme.onBackground
                     ),
                     icon = ImageVector.vectorResource(R.drawable.download),
-                    contentDescription = "Скачать"
+                    contentDescription = LocalContext.current.getString(R.string.download)
                 )
             }
             navigateToRenameDialog?.let {
