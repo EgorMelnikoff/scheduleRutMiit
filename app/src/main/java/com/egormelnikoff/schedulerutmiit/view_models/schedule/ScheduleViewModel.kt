@@ -298,9 +298,7 @@ class ScheduleViewModelImpl @Inject constructor(
         timetableId: String
     ) {
         viewModelScope.launch {
-            val currentNamedSchedule =
-                _scheduleState.value.currentNamedScheduleData?.namedSchedule ?: return@launch
-            if (_scheduleState.value.currentNamedScheduleData?.scheduleData?.scheduleEntity?.id == primaryKeySchedule) return@launch
+            val currentNamedSchedule = _scheduleState.value.currentNamedScheduleData?.namedSchedule ?: return@launch
             if (_scheduleState.value.isSaved) {
                 scheduleRepos.updatePrioritySavedSchedules(
                     primaryKeyNamedSchedule = primaryKeyNamedSchedule,

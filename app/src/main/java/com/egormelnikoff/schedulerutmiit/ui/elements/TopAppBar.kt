@@ -83,7 +83,7 @@ fun ScheduleTopAppBar(
 
     namedScheduleData: NamedScheduleData,
     calendarView: Boolean,
-
+    isSavedSchedule: Boolean,
     expandedSchedulesMenu: Boolean?
 ) {
     val isNotEmpty = namedScheduleData.namedSchedule!!.schedules.isNotEmpty() && namedScheduleData.scheduleData?.scheduleEntity != null
@@ -139,7 +139,7 @@ fun ScheduleTopAppBar(
             }
         },
         actions = {
-            if (isNotEmpty) {
+            if (isSavedSchedule && isNotEmpty) {
                 IconButton(
                     onClick = {
                         navigateToAddEvent(namedScheduleData.scheduleData.scheduleEntity)

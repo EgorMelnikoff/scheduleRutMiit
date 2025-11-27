@@ -292,23 +292,25 @@ fun HorizontalCalendarItem(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            groupedEvents.value.forEach { event ->
-                                val eventExtraData = eventsExtraData.find { it.id == event.id }
-                                val color = getColorByIndex(
-                                    index = eventExtraData?.tag,
-                                    defaultColor = MaterialTheme.colorScheme.onBackground
-                                )
-                                Canvas(
-                                    modifier = Modifier
-                                        .padding(start = offset.dp)
-                                        .size(6.dp)
-                                ) {
-                                    drawCircle(
-                                        color = color,
-                                        center = center
+                            Box {
+                                groupedEvents.value.forEach { event ->
+                                    val eventExtraData = eventsExtraData.find { it.id == event.id }
+                                    val color = getColorByIndex(
+                                        index = eventExtraData?.tag,
+                                        defaultColor = MaterialTheme.colorScheme.onBackground
                                     )
+                                    Canvas(
+                                        modifier = Modifier
+                                            .padding(start = offset.dp)
+                                            .size(6.dp)
+                                    ) {
+                                        drawCircle(
+                                            color = color,
+                                            center = center
+                                        )
+                                    }
+                                    offset += 5
                                 }
-                                offset += 5
                             }
                         }
                     }
