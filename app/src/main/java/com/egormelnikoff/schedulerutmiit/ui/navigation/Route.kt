@@ -6,11 +6,13 @@ import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
 
 sealed interface Route {
-    sealed interface Page : Route {
-        data object Review : Page
-        data object Schedule : Page
-        data object NewsList : Page
-        data object Settings : Page
+    sealed class Page(
+        val index: Int
+    ) : Route {
+        data object Review : Page(0)
+        data object Schedule : Page(1)
+        data object NewsList : Page(2)
+        data object Settings : Page(3)
     }
 
     sealed interface Dialog : Route {
