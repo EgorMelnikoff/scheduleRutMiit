@@ -110,6 +110,7 @@ fun ScreenSchedule(
                             showNamedScheduleDialog = newValue
                         },
                         namedScheduleData = scheduleState.currentNamedScheduleData,
+                        isSavedSchedule = scheduleState.isSaved,
                         calendarView = appSettings.calendarView,
                         expandedSchedulesMenu = scheduleUiState?.expandedSchedulesMenu
                     )
@@ -268,9 +269,9 @@ fun ScreenSchedule(
                         )
                     }
                 } else null,
-            onDeleteNamedSchedule = {
-                showDeleteNamedScheduleDialog = true
-            },
+            onDeleteNamedSchedule = if (scheduleState.isSaved) {
+                { showDeleteNamedScheduleDialog = true }
+            } else null,
             onSaveCurrentNamedSchedule = if (!scheduleState.isSaved) {
                 scheduleActions.onSaveCurrentNamedSchedule
             } else null,
