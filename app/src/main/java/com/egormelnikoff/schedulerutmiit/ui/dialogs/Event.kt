@@ -100,9 +100,11 @@ fun EventDialog(
 
     }.toString()
 
-    LaunchedEffect(comment, tag) {
-        delay(300)
-        scheduleActions.eventActions.onEventExtraChange(event, comment, tag)
+    if (isSavedSchedule) {
+        LaunchedEffect(comment, tag) {
+            delay(300)
+            scheduleActions.eventActions.onEventExtraChange(event, comment, tag)
+        }
     }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
