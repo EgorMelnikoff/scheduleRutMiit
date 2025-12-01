@@ -1,7 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
@@ -25,11 +27,12 @@ fun ColorSelector(
 ) {
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
         SingleChoiceSegmentedButtonRow(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            space = 0.dp
         ) {
             colors.entries.forEachIndexed { index, color ->
                 SegmentedButton(
-                    border = BorderStroke(width = 0.dp, Color.Transparent),
+                    border = BorderStroke(width = 0.dp, Color.Unspecified),
                     colors = SegmentedButtonDefaults.colors().copy(
                         activeContainerColor = color.value,
                         activeBorderColor = Color.Transparent,
@@ -38,10 +41,8 @@ fun ColorSelector(
                         inactiveBorderColor = Color.Transparent,
                         inactiveContentColor = Color.Transparent
                     ),
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = index,
-                        count = colors.size,
-                        baseShape = MaterialTheme.shapes.medium
+                    shape = index.customRowItemShape(
+                        lastIndex = colors.size - 1
                     ),
                     onClick = {
                         onColorSelect(color.key)
@@ -55,6 +56,11 @@ fun ColorSelector(
                         )
                     }
                 )
+                if (index != colors.size - 1) {
+                    Spacer(
+                        modifier = Modifier.width(3.dp)
+                    )
+                }
             }
         }
     }
