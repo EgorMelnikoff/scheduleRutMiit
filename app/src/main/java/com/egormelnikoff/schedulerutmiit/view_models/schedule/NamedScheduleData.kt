@@ -33,7 +33,7 @@ data class NamedScheduleData(
         fun getNamedScheduleData(
             namedSchedule: NamedScheduleFormatted?
         ): NamedScheduleData? {
-            if (namedSchedule == null) return null
+            namedSchedule ?: return null
             val currentSchedule = findCurrentSchedule(namedSchedule)
             currentSchedule ?: return NamedScheduleData(
                 namedSchedule = namedSchedule
@@ -90,7 +90,7 @@ data class ScheduleData(
             val fullEventList = getFullEventsList(
                 today = today.toLocalDate(),
                 periodicEvents = periodicEventsForCalendar,
-                eventsList = visibleEvents,
+                nonPeriodicEventsList = visibleEvents,
                 scheduleEntity = schedule.scheduleEntity,
             )
 
@@ -141,11 +141,11 @@ data class ScheduleData(
             today: LocalDate,
             scheduleEntity: ScheduleEntity,
             periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
-            eventsList: List<Event>?
+            nonPeriodicEventsList: List<Event>?
         ): List<Pair<LocalDate, List<Event>>> {
             var fullEventsList = listOf<Event>()
             when {
-                (periodicEvents == null && eventsList == null) -> return listOf()
+                (periodicEvents == null && nonPeriodicEventsList == null) -> return listOf()
                 (periodicEvents != null) -> {
                     val currentStartDate = maxOf(today, scheduleEntity.startDate)
                     val events = buildList {
@@ -171,8 +171,8 @@ data class ScheduleData(
                     fullEventsList = events
                 }
 
-                (eventsList != null) -> {
-                    fullEventsList = eventsList
+                (nonPeriodicEventsList != null) -> {
+                    fullEventsList = nonPeriodicEventsList
                 }
             }
 
