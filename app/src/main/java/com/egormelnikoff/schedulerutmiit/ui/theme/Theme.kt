@@ -66,12 +66,14 @@ fun getCurrentColorScheme(
     isUsedAmoledTheme: Boolean,
     decorColorIndex: Int
 ): ColorScheme {
-    val colorTheme = if (isUsedAmoledTheme) {
-        amoledColorScheme
-    } else {
-        val currentColorTheme = colorThemes[decorColorIndex] ?: defaultColorTheme
-        if (isDarkTheme) currentColorTheme.dark
-        else currentColorTheme.light
+    val currentColorTheme = colorThemes[decorColorIndex] ?: defaultColorTheme
+
+    val colorTheme = when {
+        isUsedAmoledTheme -> amoledColorScheme.copy(
+            primary = currentColorTheme.dark.primary
+        )
+        isDarkTheme -> currentColorTheme.dark
+        else -> currentColorTheme.light
     }
 
     val primary by animateColorAsState(colorTheme.primary, animation)
