@@ -1,6 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -158,14 +162,20 @@ fun ScheduleTopAppBar(
                     onSetScheduleView(!calendarView)
                 }
             ) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = if (calendarView) ImageVector.vectorResource(R.drawable.list) else ImageVector.vectorResource(
-                        R.drawable.calendar
-                    ),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
+                AnimatedContent(
+                    targetState = calendarView,
+                    transitionSpec = {
+                        scaleIn() togetherWith scaleOut()
+                    }
+                ) { isCalendarView ->
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = if (isCalendarView) ImageVector.vectorResource(R.drawable.list)
+                        else ImageVector.vectorResource(R.drawable.calendar),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
             IconButton(
                 onClick = {
@@ -201,7 +211,7 @@ fun EventTopAppBar(
         navigationIcon = {
             navAction?.let {
                 IconButton(
-                    onClick = it
+                    onClick = navAction
                 ) {
                     Icon(
                         imageVector = navImageVector,
@@ -230,7 +240,6 @@ fun EventTopAppBar(
                     maxLines = 1
                 )
             }
-
         },
         actions = {
             actions?.invoke()

@@ -70,24 +70,11 @@ class PreferencesDataStore @Inject constructor(
         }
     }
 
-    suspend fun setScheduledWidgetWork(value: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.WIDGET_UPDATE] = value
-        }
-    }
-
     suspend fun setScheduledScheduleWork(value: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.SCHEDULE_UPDATE] = value
         }
     }
-
-    suspend fun getScheduledWidgetWork(): Boolean {
-        return context.dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.WIDGET_UPDATE] ?: false
-        }.first()
-    }
-
 
     suspend fun getScheduledScheduleWork(): Boolean {
         return context.dataStore.data.map { preferences ->

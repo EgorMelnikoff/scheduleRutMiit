@@ -70,11 +70,9 @@ class WorkSchedulerImpl @Inject constructor(
             ExistingPeriodicWorkPolicy.REPLACE,
             widgetWorkRequest
         )
-        preferencesDataStore.setScheduledWidgetWork(true)
     }
 
     override suspend fun cancelPeriodicWidgetUpdating() {
         workManager.cancelUniqueWork(UPDATING_WIDGET_PERIODICALLY)
-        preferencesDataStore.setScheduledWidgetWork(false)
     }
 }

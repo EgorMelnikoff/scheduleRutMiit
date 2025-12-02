@@ -61,7 +61,7 @@ import kotlinx.coroutines.launch
 data class BarItem(
     val title: String,
     val icon: ImageVector,
-    val selectedIcon: ImageVector,
+    val selectedIcon: ImageVector?,
     val route: Route.Page,
     val onClick: (() -> Unit)?
 )
@@ -174,7 +174,7 @@ fun CustomNavigationBar(
                     .width(68.dp)
                     .align(Alignment.CenterStart)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f))
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
             )
             Row(
                 verticalAlignment = Alignment.Bottom,
@@ -213,7 +213,7 @@ fun CustomNavigationItem(
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.9f else 1.0f,
+        targetValue = if (isPressed) 0.95f else 1.0f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
     )
 
@@ -232,7 +232,7 @@ fun CustomNavigationItem(
     ) {
         Icon(
             modifier = Modifier.size(24.dp),
-            imageVector = if (isSelected) barItem.selectedIcon else barItem.icon,
+            imageVector = if (isSelected && barItem.selectedIcon != null) barItem.selectedIcon else barItem.icon,
             contentDescription = barItem.title,
             tint = if (isSelected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.onSecondaryContainer
@@ -274,7 +274,7 @@ fun barItems(
         BarItem(
             title = LocalContext.current.getString(R.string.news),
             icon = ImageVector.vectorResource(R.drawable.news),
-            selectedIcon = ImageVector.vectorResource(R.drawable.news_fill),
+            selectedIcon = null,
             route = Route.Page.NewsList,
             onClick = onNewsClick
         ),

@@ -47,7 +47,7 @@ interface ScheduleRepos {
     )
 
     suspend fun deleteSavedNamedSchedule(
-        primaryKey: Long,
+        primaryKeyNamedSchedule: Long,
         isDefault: Boolean
     )
 
@@ -63,7 +63,9 @@ interface ScheduleRepos {
 
     suspend fun getDefaultNamedScheduleEntity(): NamedScheduleEntity?
 
-    suspend fun getSavedNamedScheduleById(idNamedSchedule: Long): NamedScheduleFormatted?
+    suspend fun getSavedNamedScheduleById(
+        primaryKeyNamedSchedule: Long
+    ): NamedScheduleFormatted?
 
     suspend fun updatePrioritySavedNamedSchedules(
         id: Long
@@ -81,14 +83,14 @@ interface ScheduleRepos {
     )
 
     suspend fun updateEventExtra(
-        scheduleId: Long,
+        primaryKeySchedule: Long,
         event: Event,
         tag: Int,
         comment: String
     )
 
     suspend fun getNewNamedSchedule(
-        namedScheduleId: Long = 0,
+        primaryKeyNamedSchedule: Long = 0,
         name: String,
         apiId: String,
         type: Int
@@ -160,10 +162,10 @@ class ScheduleReposImpl @Inject constructor(
     }
 
     override suspend fun deleteSavedNamedSchedule(
-        primaryKey: Long,
+        primaryKeyNamedSchedule: Long,
         isDefault: Boolean
     ) {
-        namedScheduleDao.delete(primaryKey)
+        namedScheduleDao.delete(primaryKeyNamedSchedule)
         if (isDefault) {
             val namedSchedules = namedScheduleDao.getAll()
             if (namedSchedules.isNotEmpty()) {
@@ -193,9 +195,9 @@ class ScheduleReposImpl @Inject constructor(
     }
 
     override suspend fun getSavedNamedScheduleById(
-        idNamedSchedule: Long
+        primaryKeyNamedSchedule: Long
     ): NamedScheduleFormatted? {
-        return namedScheduleDao.getNamedScheduleById(idNamedSchedule)
+        return namedScheduleDao.getNamedScheduleById(primaryKeyNamedSchedule)
     }
 
 
@@ -228,7 +230,7 @@ class ScheduleReposImpl @Inject constructor(
     }
 
     override suspend fun updateEventExtra(
-        scheduleId: Long,
+        primaryKeySchedule: Long,
         event: Event,
         tag: Int,
         comment: String
@@ -240,12 +242,12 @@ class ScheduleReposImpl @Inject constructor(
         val eventExtraData = namedScheduleDao.getEventExtraByEventId(event.id)
 
         eventExtraData?.let {
-            namedScheduleDao.updateCommentEvent(scheduleId, event.id, comment)
-            namedScheduleDao.updateTagEvent(scheduleId, event.id, tag)
+            namedScheduleDao.updateCommentEvent(primaryKeySchedule, event.id, comment)
+            namedScheduleDao.updateTagEvent(primaryKeySchedule, event.id, tag)
         } ?: namedScheduleDao.insertEventExtraData(
             EventExtraData(
                 id = event.id,
-                scheduleId = scheduleId,
+                scheduleId = primaryKeySchedule,
                 eventName = event.name,
                 eventStartDatetime = event.startDatetime,
                 comment = comment,
@@ -255,7 +257,7 @@ class ScheduleReposImpl @Inject constructor(
     }
 
     override suspend fun getNewNamedSchedule(
-        namedScheduleId: Long,
+        primaryKeyNamedSchedule: Long,
         name: String,
         apiId: String,
         type: Int
@@ -290,7 +292,7 @@ class ScheduleReposImpl @Inject constructor(
                 }
                 return Result.Success(
                     schedules.migrateToNewModel(
-                        id = namedScheduleId,
+                        id = primaryKeyNamedSchedule,
                         name = name,
                         apiId = apiId,
                         type = type,
@@ -341,7 +343,7 @@ class ScheduleReposImpl @Inject constructor(
         namedScheduleEntity: NamedScheduleEntity
     ): Result<String> {
         val updatedNamedSchedule = getNewNamedSchedule(
-            namedScheduleId = namedScheduleEntity.id,
+            primaryKeyNamedSchedule = namedScheduleEntity.id,
             name = namedScheduleEntity.shortName,
             apiId = namedScheduleEntity.apiId!!,
             type = namedScheduleEntity.type
@@ -553,10 +555,12 @@ class ScheduleReposImpl @Inject constructor(
                                     LocalDate.now().getFirstDayOfWeek()
                                 )
                             ).plus(1)
-                            val firstWeekNumber = ((currentWeekIndex + (oldSchedule.periodicContent.recurrence!!.currentNumber ?: 1))
-                                    % oldSchedule.periodicContent.recurrence.interval!!)
-                                .toInt()
-                                .plus(1)
+                            val firstWeekNumber =
+                                ((currentWeekIndex + (oldSchedule.periodicContent.recurrence!!.currentNumber
+                                    ?: 1))
+                                        % oldSchedule.periodicContent.recurrence.interval!!)
+                                    .toInt()
+                                    .plus(1)
                             Recurrence(
                                 frequency = oldSchedule.periodicContent.recurrence.frequency,
                                 interval = oldSchedule.periodicContent.recurrence.interval,
@@ -568,7 +572,8 @@ class ScheduleReposImpl @Inject constructor(
                                 frequency = oldSchedule.periodicContent.recurrence!!.frequency,
                                 interval = oldSchedule.periodicContent.recurrence.interval,
                                 currentNumber = oldSchedule.periodicContent.recurrence.currentNumber,
-                                firstWeekNumber = oldSchedule.periodicContent.recurrence.currentNumber ?: 1
+                                firstWeekNumber = oldSchedule.periodicContent.recurrence.currentNumber
+                                    ?: 1
                             )
                         }
                     },

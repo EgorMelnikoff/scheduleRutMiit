@@ -17,5 +17,4 @@ object PreferencesKeys {
     val EVENT_COMMENT_VISIBILITY = booleanPreferencesKey(name = "event_comment_visibility")
 
     val SCHEDULE_UPDATE = booleanPreferencesKey(name = "schedule_update")
-    val WIDGET_UPDATE = booleanPreferencesKey(name = "widget_update")
 }
