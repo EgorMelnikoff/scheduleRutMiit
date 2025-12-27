@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
@@ -15,7 +14,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.LocalContext
+import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.cornerRadius
@@ -40,6 +39,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import com.egormelnikoff.schedulerutmiit.MainActivity
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
@@ -48,14 +48,7 @@ import com.egormelnikoff.schedulerutmiit.app.modules.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetData
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.theme.ScheduleGlanceTheme
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.Blue
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.Green
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.LightBlue
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.Orange
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.Pink
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.Red
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.Violet
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.Yellow
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
 import com.google.gson.Gson
 import dagger.hilt.EntryPoints
 import kotlinx.coroutines.launch
@@ -121,8 +114,11 @@ class EventsWidget : GlanceAppWidget() {
         }.toString()
 
         Column(
-            modifier = GlanceModifier.Companion
+            modifier = GlanceModifier
                 .fillMaxSize()
+                .clickable(
+                    onClick = actionStartActivity(MainActivity::class.java)
+                )
                 .background(
                     imageProvider = ImageProvider(R.drawable.large_rounded),
                     colorFilter = ColorFilter.tint(
@@ -136,12 +132,12 @@ class EventsWidget : GlanceAppWidget() {
             if (widgetData?.settledScheduleEntity != null && widgetData.reviewData != null) {
                 val header = when (widgetData.reviewData.displayedDate) {
                     today -> {
-                       "${LocalContext.current.getString(R.string.today)}, " +
-                               "${widgetData.reviewData.displayedDate.format(formatter)}"
+                        "${glanceStringResource(R.string.today)}, " +
+                                "${widgetData.reviewData.displayedDate.format(formatter)}"
                     }
 
                     today.plusDays(1) -> {
-                        "${LocalContext.current.getString(R.string.tomorrow)}, " +
+                        "${glanceStringResource(R.string.tomorrow)}, " +
                                 "${widgetData.reviewData.displayedDate.format(formatter)}"
                     }
 
@@ -213,12 +209,12 @@ class EventsWidget : GlanceAppWidget() {
                     }
                 } else {
                     Empty(
-                        title = LocalContext.current.getString(R.string.empty_day)
+                        title = glanceStringResource(R.string.empty_day)
                     )
                 }
             } else {
                 Empty(
-                    title = LocalContext.current.getString(R.string.empty_here),
+                    title = glanceStringResource(R.string.empty_here),
                     onClick = onUpdate
                 )
             }
@@ -231,7 +227,7 @@ class EventsWidget : GlanceAppWidget() {
         eventsExtraData: List<EventExtraData>
     ) {
         Row(
-            modifier = GlanceModifier.Companion
+            modifier = GlanceModifier
                 .fillMaxWidth()
                 .background(
                     imageProvider = ImageProvider(R.drawable.medium_rounded),
@@ -257,7 +253,7 @@ class EventsWidget : GlanceAppWidget() {
             )
             Spacer(modifier = GlanceModifier.width(8.dp))
             Spacer(
-                modifier = GlanceModifier.Companion
+                modifier = GlanceModifier
                     .width(0.5.dp)
                     .background(
                         colorProvider = GlanceTheme.colors.onSecondaryContainer
@@ -310,17 +306,9 @@ class EventsWidget : GlanceAppWidget() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (eventExtraData.tag != 0) {
-                    val color = when (eventExtraData.tag) {
-                        1 -> Red
-                        2 -> Orange
-                        3 -> Yellow
-                        4 -> Green
-                        5 -> LightBlue
-                        6 -> Blue
-                        7 -> Violet
-                        8 -> Pink
-                        else -> Color.Unspecified
-                    }
+                    val color = getColorByIndex(
+                        eventExtraData.tag
+                    )
                     Image(
                         modifier = GlanceModifier.size(8.dp),
                         provider = ImageProvider(R.drawable.circle),
