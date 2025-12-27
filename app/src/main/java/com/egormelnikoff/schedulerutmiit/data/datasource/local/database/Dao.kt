@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.data.datasource.local.database
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
@@ -15,7 +16,7 @@ interface NamedScheduleDao {
     suspend fun insertNamedSchedule(namedScheduleFormatted: NamedScheduleFormatted): Long {
         val namedScheduleId = insertNamedScheduleEntity(namedScheduleFormatted.namedScheduleEntity)
         for (schedule in namedScheduleFormatted.schedules) {
-            insertScheduleWithEvents(
+            insertSchedule(
                 namedScheduleId = namedScheduleId,
                 scheduleFormatted = schedule
             )
@@ -23,12 +24,12 @@ interface NamedScheduleDao {
         return namedScheduleId
     }
 
-    suspend fun insertScheduleWithEvents(
+    suspend fun insertSchedule(
         namedScheduleId: Long,
         scheduleFormatted: ScheduleFormatted,
     ) {
         scheduleFormatted.scheduleEntity.namedScheduleId = namedScheduleId
-        val scheduleId = insertSchedule(scheduleFormatted.scheduleEntity)
+        val scheduleId = insertScheduleEntity(scheduleFormatted.scheduleEntity)
 
         scheduleFormatted.eventsExtraData.forEach { eventExtraData ->
             eventExtraData.scheduleId = scheduleId
@@ -40,13 +41,13 @@ interface NamedScheduleDao {
             insertEvent(event)
         }
     }
-    @Insert
+    @Insert(onConflict = REPLACE)
     suspend fun insertNamedScheduleEntity(namedScheduleEntity: NamedScheduleEntity): Long
-    @Insert
-    suspend fun insertSchedule(scheduleEntity: ScheduleEntity): Long
-    @Insert
+    @Insert(onConflict = REPLACE)
+    suspend fun insertScheduleEntity(scheduleEntity: ScheduleEntity): Long
+    @Insert(onConflict = REPLACE)
     suspend fun insertEvent(event: Event)
-    @Insert
+    @Insert(onConflict = REPLACE)
     suspend fun insertEventExtraData(eventExtraData: EventExtraData)
 
 
