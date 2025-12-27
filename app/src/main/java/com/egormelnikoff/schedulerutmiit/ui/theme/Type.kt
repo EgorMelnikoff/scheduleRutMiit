@@ -13,14 +13,19 @@ val Typography = Typography(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         fontSize = 36.sp,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        ),
         textMotion = TextMotion.Static,
         letterSpacing = 0.sp
     ),
-
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        ),
         textMotion = TextMotion.Static,
         letterSpacing = 0.sp
     ),
