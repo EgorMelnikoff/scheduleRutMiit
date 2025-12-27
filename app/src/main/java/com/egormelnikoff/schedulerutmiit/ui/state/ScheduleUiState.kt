@@ -25,7 +25,7 @@ data class ScheduleUiState(
 ) {
     companion object {
         @Composable
-        fun rememberScheduleUiState(
+        fun scheduleUiState(
             scheduleState: ScheduleState
         ): ScheduleUiState? {
             return if (scheduleState.currentNamedScheduleData?.namedSchedule != null && scheduleState.currentNamedScheduleData.scheduleData?.schedulePagerData != null) {

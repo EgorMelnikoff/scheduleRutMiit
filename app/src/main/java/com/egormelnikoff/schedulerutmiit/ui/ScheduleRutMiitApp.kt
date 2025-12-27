@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
@@ -27,7 +27,7 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event.AddEditEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions.Companion.getNavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions.Companion.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
@@ -35,36 +35,36 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleUiEventProc
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleUiStateSynchronizer
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
-import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState.Companion.rememberAppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState.Companion.rememberReviewUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState.Companion.rememberScheduleUiState
+import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState.Companion.appUiState
+import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState.Companion.reviewUiState
+import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState.Companion.scheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 
 @Composable
-fun Main(
+fun ScheduleRutMiitApp(
     searchViewModel: SearchViewModel,
     scheduleViewModel: ScheduleViewModel,
     newsViewModel: NewsViewModel,
     settingsViewModel: SettingsViewModel,
     scheduleActions: ScheduleActions,
+    searchActions: SearchActions,
     appSettings: AppSettings
 ) {
-    val appUiState = rememberAppUiState()
-    val reviewUiState = rememberReviewUiState()
-    val navigationActions = getNavigationActions(
-        appBackStack = appUiState.appBackStack
-    )
+    val scheduleState = scheduleViewModel.scheduleState.collectAsStateWithLifecycle().value
+    val searchState = searchViewModel.searchState.collectAsStateWithLifecycle().value
+    val searchParams = searchViewModel.searchParams.collectAsStateWithLifecycle().value
+    val newsState = newsViewModel.newsState.collectAsStateWithLifecycle().value
 
-    val scheduleState = scheduleViewModel.scheduleState.collectAsState().value
-    val scheduleUiState = rememberScheduleUiState(scheduleState = scheduleState)
 
-    val searchState = searchViewModel.searchState.collectAsState().value
-    val searchParams = searchViewModel.searchParams.collectAsState().value
-    val newsState = newsViewModel.newsState.collectAsState().value
+    val appUiState = appUiState()
+    val navigationActions = NavigationActions(appUiState.appBackStack)
+    val scheduleUiState = scheduleUiState(scheduleState)
+    val reviewUiState = reviewUiState()
 
     ScheduleUiEventProcessor(
         scheduleViewModel = scheduleViewModel,
@@ -151,9 +151,11 @@ fun Main(
 
                 entry<Route.Page.NewsList> {
                     NewsScreen(
-                        newsListFLow = newsViewModel.newsListFlow,
+                        newsListFlow = newsViewModel.newsListFlow,
+                        onGetNewsById = { id ->
+                            newsViewModel.getNewsById(id)
+                        },
                         newsGridListState = appUiState.newsListState,
-                        newsViewModel = newsViewModel,
                         navigationActions = navigationActions,
                         externalPadding = externalPadding
                     )
@@ -162,7 +164,6 @@ fun Main(
                 entry<Route.Page.Settings> {
                     SettingsScreen(
                         appUiState = appUiState,
-                        settingsListState = appUiState.settingsListState,
                         appSettings = appSettings,
                         navigationActions = navigationActions,
                         settingsViewModel = settingsViewModel,
@@ -178,15 +179,18 @@ fun Main(
                         eventExtraData = key.eventExtraData,
                         navigationActions = navigationActions,
                         scheduleActions = scheduleActions,
-                        externalPadding = externalPadding
+                        externalPadding = externalPadding,
+                        appUiState = appUiState
                     )
                 }
 
                 entry<Route.Dialog.NewsDialog> {
                     NewsDialog(
+                        setDefaultState = {
+                            newsViewModel.setDefaultNewsState()
+                        },
                         newsState = newsState,
                         navigationActions = navigationActions,
-                        newsViewModel = newsViewModel,
                         externalPadding = externalPadding
                     )
                 }
@@ -215,7 +219,7 @@ fun Main(
                         searchState = searchState,
                         searchParams = searchParams,
                         navigationActions = navigationActions,
-                        searchViewModel = searchViewModel,
+                        searchActions = searchActions,
                         scheduleActions = scheduleActions,
                         externalPadding = externalPadding
                     )

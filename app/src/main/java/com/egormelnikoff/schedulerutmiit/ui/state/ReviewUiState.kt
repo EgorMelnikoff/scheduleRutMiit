@@ -12,7 +12,7 @@ data class ReviewUiState(
 ) {
     companion object {
         @Composable
-        fun rememberReviewUiState(): ReviewUiState {
+        fun reviewUiState(): ReviewUiState {
             var visibleSavedSchedules by remember { mutableStateOf(true) }
 
             return ReviewUiState(

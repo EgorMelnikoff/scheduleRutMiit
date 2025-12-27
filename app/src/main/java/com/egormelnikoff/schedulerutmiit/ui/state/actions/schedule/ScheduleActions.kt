@@ -20,7 +20,7 @@ data class ScheduleActions(
     val onAddCustomSchedule: (String, LocalDate, LocalDate) -> Unit, //Name, StartDate, EndDate
 ) {
     companion object {
-        fun getScheduleActions(
+        fun scheduleActions(
             scheduleViewModel: ScheduleViewModel
         ) = ScheduleActions(
             eventActions = EventActions.getEventActions(

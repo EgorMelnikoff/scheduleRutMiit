@@ -21,7 +21,7 @@ data class WidgetData(
     val eventsExtraData: List<EventExtraData> = listOf(),
 ) {
     companion object {
-        fun getWidgetData(namedSchedule: NamedScheduleFormatted): WidgetData? {
+        fun widgetData(namedSchedule: NamedScheduleFormatted): WidgetData? {
             val scheduleFormatted = NamedScheduleData.findCurrentSchedule(namedSchedule)
             return if (scheduleFormatted != null) {
                 val today = LocalDateTime.now()
@@ -39,7 +39,7 @@ data class WidgetData(
                         it.startDatetime!!.toLocalDate()
                     }
                 }
-                val reviewData = ReviewData.getReviewData(
+                val reviewData = ReviewData.reviewData(
                     date = today,
                     scheduleEntity = scheduleFormatted.scheduleEntity,
                     periodicEvents = periodicEvents,

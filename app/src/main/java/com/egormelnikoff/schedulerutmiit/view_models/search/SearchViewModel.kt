@@ -7,11 +7,11 @@ import com.egormelnikoff.schedulerutmiit.app.model.Group
 import com.egormelnikoff.schedulerutmiit.app.model.Institute
 import com.egormelnikoff.schedulerutmiit.app.model.Institutes
 import com.egormelnikoff.schedulerutmiit.app.model.Person
+import com.egormelnikoff.schedulerutmiit.app.model.SearchOption
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
-import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -71,8 +71,7 @@ class SearchViewModelImpl @Inject constructor(
                 var peopleList = listOf<Person>()
 
                 if (_searchParams.value.searchOption == SearchOption.ALL || _searchParams.value.searchOption == SearchOption.GROUPS) {
-                    val groups = searchGroup(_searchParams.value.query)
-                    when (groups) {
+                    when (val groups = searchGroup(_searchParams.value.query)) {
                         is Result.Success -> {
                             groupsList = groups.data
                         }
@@ -84,8 +83,7 @@ class SearchViewModelImpl @Inject constructor(
                     }
                 }
                 if (_searchParams.value.searchOption == SearchOption.ALL || _searchParams.value.searchOption == SearchOption.PEOPLE) {
-                    val people = searchPerson(_searchParams.value.query)
-                    when (people) {
+                    when (val people = searchPerson(_searchParams.value.query)) {
                         is Result.Success -> {
                             peopleList = people.data
                         }

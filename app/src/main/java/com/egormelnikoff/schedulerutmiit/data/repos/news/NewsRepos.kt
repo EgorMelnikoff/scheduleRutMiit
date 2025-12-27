@@ -7,8 +7,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -22,7 +22,7 @@ interface NewsRepos {
 
 class NewsReposImpl @Inject constructor(
     private val miitApi: MiitApi,
-    private val miitApiHelper: MiitApiHelper,
+    private val apiHelper: ApiHelper,
     private val resourcesManager: ResourcesManager,
     private val parser: Parser
 ) : NewsRepos {
@@ -37,7 +37,7 @@ class NewsReposImpl @Inject constructor(
             pagingSourceFactory = {
                 PagingNewsSource(
                     miitApi = miitApi,
-                    miitApiHelper = miitApiHelper,
+                    apiHelper = apiHelper,
                     resourcesManager = resourcesManager
                 )
             }
@@ -46,7 +46,7 @@ class NewsReposImpl @Inject constructor(
 
 
     override suspend fun getNewsById(id: Long): Result<News> {
-        return miitApiHelper.callApiWithExceptions(
+        return apiHelper.callApiWithExceptions(
             fetchDataType = "News",
             message = "News id: $id"
         ) {

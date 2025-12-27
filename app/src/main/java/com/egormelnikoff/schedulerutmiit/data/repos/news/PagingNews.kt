@@ -6,12 +6,12 @@ import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper
 
 class PagingNewsSource (
     private val miitApi: MiitApi,
-    private val miitApiHelper: MiitApiHelper,
+    private val apiHelper: ApiHelper,
     private val resourcesManager: ResourcesManager
 ) : PagingSource<Int, NewsShort>() {
     override fun getRefreshKey(state: PagingState<Int, NewsShort>): Int? {
@@ -27,7 +27,7 @@ class PagingNewsSource (
         val currentPage = params.key ?: 1
         val pageSize = params.loadSize
 
-        val response = miitApiHelper.callApiWithExceptions(
+        val response = apiHelper.callApiWithExceptions(
             fetchDataType = "News list",
             message = "From page: $currentPage; To page: $currentPage"
         ) {

@@ -19,7 +19,7 @@ data class NavigationActions(
     val navigateToNewsDialog: () -> Unit
 ) {
     companion object {
-        fun getNavigationActions(
+        fun NavigationActions(
             appBackStack: AppBackStack<Route>
         ) = NavigationActions(
             onBack = { appBackStack.onBack() },

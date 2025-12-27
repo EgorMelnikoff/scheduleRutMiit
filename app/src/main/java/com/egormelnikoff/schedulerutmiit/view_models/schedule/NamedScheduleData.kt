@@ -30,7 +30,7 @@ data class NamedScheduleData(
                 ?: namedSchedule.schedules.firstOrNull()
         }
 
-        fun getNamedScheduleData(
+        fun namedScheduleData(
             namedSchedule: NamedScheduleFormatted?
         ): NamedScheduleData? {
             namedSchedule ?: return null
@@ -38,15 +38,12 @@ data class NamedScheduleData(
             currentSchedule ?: return NamedScheduleData(
                 namedSchedule = namedSchedule
             )
-            val today = LocalDateTime.now()
-            val scheduleData = ScheduleData.getScheduleData(
-                today = today,
-                schedule = currentSchedule
-            )
 
             return NamedScheduleData(
                 namedSchedule = namedSchedule,
-                scheduleData = scheduleData
+                scheduleData = ScheduleData.scheduleData(
+                    schedule = currentSchedule
+                )
             )
         }
     }
@@ -64,43 +61,39 @@ data class ScheduleData(
     val reviewData: ReviewData? = null
 ) {
     companion object {
-        fun getScheduleData(
-            today: LocalDateTime,
+        fun scheduleData(
             schedule: ScheduleFormatted
         ): ScheduleData {
+            val today = LocalDateTime.now()
             val splitEvents = schedule.events.partition { it.isHidden }
-            val hiddenEvents = splitEvents.first
-            val visibleEvents = splitEvents.second
 
             var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
             var nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>? = null
 
-            if (schedule.scheduleEntity.recurrence != null) {
-                periodicEventsForCalendar = visibleEvents
-                    .getPeriodicEvents(
-                        schedule.scheduleEntity.recurrence.interval!!
-                    )
+             if (schedule.scheduleEntity.recurrence != null) {
+                periodicEventsForCalendar = splitEvents.second.getPeriodicEvents(
+                    schedule.scheduleEntity.recurrence.interval!!
+                )
             } else {
-                nonPeriodicEventsForCalendar = visibleEvents
-                    .groupBy {
-                        it.startDatetime!!.toLocalDate()
-                    }
+                nonPeriodicEventsForCalendar = splitEvents.second.groupBy {
+                    it.startDatetime!!.toLocalDate()
+                }
             }
 
             val fullEventList = getFullEventsList(
                 today = today.toLocalDate(),
                 periodicEvents = periodicEventsForCalendar,
-                nonPeriodicEventsList = visibleEvents,
+                nonPeriodicEventsList = splitEvents.second,
                 scheduleEntity = schedule.scheduleEntity,
             )
 
-            val schedulePagerData = SchedulePagerData.getSchedulePagerData(
+            val schedulePagerData = SchedulePagerData.schedulePagerData(
                 today = today.toLocalDate(),
                 startDate = schedule.scheduleEntity.startDate,
                 endDate = schedule.scheduleEntity.endDate
             )
 
-            val reviewData = ReviewData.getReviewData(
+            val reviewData = ReviewData.reviewData(
                 date = today,
                 scheduleEntity = schedule.scheduleEntity,
                 periodicEvents = periodicEventsForCalendar,
@@ -116,7 +109,7 @@ data class ScheduleData(
                 fullEventList = fullEventList,
 
                 eventsExtraData = schedule.eventsExtraData,
-                hiddenEvents = hiddenEvents,
+                hiddenEvents = splitEvents.first,
                 reviewData = reviewData
             )
         }
@@ -191,6 +184,7 @@ data class ScheduleData(
                 scheduleEntity.startDate.getFirstDayOfWeek(),
                 scheduleEntity.endDate.getFirstDayOfWeek()
             ).toInt() + 1
+
             val weeksRemaining = ChronoUnit.WEEKS.between(
                 currentStartDate.getFirstDayOfWeek(),
                 scheduleEntity.endDate.getFirstDayOfWeek()
@@ -214,7 +208,7 @@ data class SchedulePagerData(
     val daysStartIndex: Int,
 ) {
     companion object {
-        fun getSchedulePagerData(
+        fun schedulePagerData(
             today: LocalDate,
             startDate: LocalDate,
             endDate: LocalDate
@@ -275,7 +269,7 @@ data class ReviewData(
     val countEventsForWeek: Int = 0
 ) {
     companion object {
-        fun getReviewData(
+        fun reviewData(
             date: LocalDateTime,
             scheduleEntity: ScheduleEntity,
             periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,

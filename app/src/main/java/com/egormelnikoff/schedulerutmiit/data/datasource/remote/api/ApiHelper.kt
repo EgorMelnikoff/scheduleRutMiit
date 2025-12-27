@@ -3,17 +3,21 @@ package com.egormelnikoff.schedulerutmiit.data.datasource.remote.api
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
-import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
 
-class MiitApiHelper @Inject constructor(
+class ApiHelper @Inject constructor(
     private val logger: Logger
 ) {
     companion object {
-        const val BASE_URL = "https://rut-miit.ru/"
+        const val BASE_GITHUB_URL = "https://api.github.com/"
+        const val LATEST_RELEASE = "repos/EgorMelnikoff/scheduleRutMiit/releases/latest"
+
+        const val BASE_MIIT_URL = "https://rut-miit.ru/"
         private const val DATA = "data-service/data/"
 
         const val GROUPS = "${DATA}timetable/groups-catalog"
@@ -28,20 +32,23 @@ class MiitApiHelper @Inject constructor(
         fetchDataType: String,
         message: String? = null,
         call: suspend () -> Response<T>
-    ): Result<T> {
-        return try {
+    ): Result<T> = withContext(Dispatchers.IO) {
+        try {
             val response = call()
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null) {
-                    logger.i("API", "Success fetched data ($fetchDataType):\n$message")
+                    message?.let { logger.i("API", "Success fetched data ($fetchDataType):\n$it") }
+                        ?: logger.i("API", "Success fetched data ($fetchDataType)")
                     Result.Success(body)
                 } else {
-                    logger.i("API", "Empty body ($fetchDataType)")
+                    message?.let { logger.i("API", "Empty body ($fetchDataType):\n$it") }
+                        ?: logger.i("API", "Empty body ($fetchDataType)")
                     Result.Error(TypedError.EmptyBodyError)
                 }
             } else {
-                logger.i("API", "Http error ($fetchDataType):\n$message\n${response.code()}, ${response.message()}")
+                message?.let { logger.i("API", "Http error ($fetchDataType):\n$it\n${response.code()}, ${response.message()}") }
+                    ?: logger.i("API", "Http error ($fetchDataType):\n${response.code()}, ${response.message()}")
                 Result.Error(
                     TypedError.HttpError(
                         code = response.code(),
@@ -49,22 +56,17 @@ class MiitApiHelper @Inject constructor(
                     )
                 )
             }
-        } catch (e: HttpException) {
-            logger.e("API", "Http error ($fetchDataType):\n$message", e)
-            Result.Error(
-                TypedError.HttpError(
-                    code = e.code(),
-                    message = e.message(),
-                )
-            )
         } catch (e: IOException) {
-            logger.e("API", "IOException ($fetchDataType):\n$message", e)
+            message?.let { logger.e("API", "IOException ($fetchDataType):\n$it", e) }
+                ?: logger.e("API", "IOException ($fetchDataType)", e)
             Result.Error(TypedError.NetworkError(e))
         } catch (e: SerializationException) {
-            logger.e("API", "Serialization error ($fetchDataType):\n$message", e)
+            message?.let { logger.e("API", "Serialization error ($fetchDataType):\n$it", e) }
+                ?: logger.e("API", "Serialization error ($fetchDataType)", e)
             Result.Error(TypedError.SerializationError(e))
         } catch (e: Throwable) {
-            logger.e("API", "Unexpected error ($fetchDataType):\n$message", e)
+            message?.let { logger.e("API", "Unexpected error ($fetchDataType):\n$it", e) }
+                ?: logger.e("API", "Unexpected error ($fetchDataType)", e)
             Result.Error(TypedError.UnexpectedError(e))
         }
     }

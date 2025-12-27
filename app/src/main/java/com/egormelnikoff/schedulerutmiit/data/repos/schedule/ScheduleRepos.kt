@@ -18,8 +18,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedScheduleDao
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -110,7 +110,7 @@ interface ScheduleRepos {
 
 class ScheduleReposImpl @Inject constructor(
     private val miitApi: MiitApi,
-    private val miitApiHelper: MiitApiHelper,
+    private val apiHelper: ApiHelper,
     private val parser: Parser,
     private val namedScheduleDao: NamedScheduleDao
 ) : ScheduleRepos {
@@ -137,7 +137,7 @@ class ScheduleReposImpl @Inject constructor(
         namedScheduleId: Long,
         scheduleFormatted: ScheduleFormatted
     ) {
-        namedScheduleDao.insertScheduleWithEvents(
+        namedScheduleDao.insertSchedule(
             namedScheduleId = namedScheduleId,
             scheduleFormatted = scheduleFormatted,
         )
@@ -273,7 +273,7 @@ class ScheduleReposImpl @Inject constructor(
                 }
                 val schedules = mutableListOf<Schedule>()
                 timetables.data.timetables.forEach { timetable ->
-                    val schedule = miitApiHelper.callApiWithExceptions(
+                    val schedule = apiHelper.callApiWithExceptions(
                         fetchDataType = "Schedule",
                         message = "Type: $type; ApiId: $apiId; TimetableId: ${timetable.id}"
                     ) {
@@ -307,7 +307,7 @@ class ScheduleReposImpl @Inject constructor(
         apiId: String,
         type: Int
     ): Result<Timetables> {
-        return miitApiHelper.callApiWithExceptions(
+        return apiHelper.callApiWithExceptions(
             fetchDataType = "Timetables",
             message = "Type: $type; ApiId: $apiId"
         ) {
@@ -478,10 +478,9 @@ class ScheduleReposImpl @Inject constructor(
                             ?: emptyList()
 
                         val eventsByWeek = clearedEvents.groupBy {
-                            it.startDatetime!!.get(WeekFields.ISO.weekOfYear())
+                            it.startDatetime!!.get(WeekFields.ISO.weekBasedYear())
                         }
                         val weeksIndexes = eventsByWeek.keys.toList()
-
                         val checkedEvents = eventsByWeek.flatMap { (weekIndex, eventsInWeek) ->
                             eventsInWeek.map { event ->
                                 event.copy(
@@ -572,8 +571,7 @@ class ScheduleReposImpl @Inject constructor(
                                 frequency = oldSchedule.periodicContent.recurrence!!.frequency,
                                 interval = oldSchedule.periodicContent.recurrence.interval,
                                 currentNumber = oldSchedule.periodicContent.recurrence.currentNumber,
-                                firstWeekNumber = oldSchedule.periodicContent.recurrence.currentNumber
-                                    ?: 1
+                                firstWeekNumber = oldSchedule.periodicContent.recurrence.currentNumber ?: 1
                             )
                         }
                     },
