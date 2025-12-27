@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,7 +44,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,6 +56,7 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.Grey
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.Red
 import com.egormelnikoff.schedulerutmiit.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import kotlinx.coroutines.launch
@@ -180,10 +183,11 @@ fun CustomNavigationBar(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                barItems.forEachIndexed { index, barItem ->
+                barItems.forEach { barItem ->
                     CustomNavigationItem(
                         barItem = barItem,
                         isSelected = appUiState.appBackStack.lastPage() == barItem.route,
+                        showBadge = false,
                         onClick = {
                             if (barItem.route == appUiState.appBackStack.lastPage()) {
                                 if (appUiState.appBackStack.last() is Route.Dialog) {
@@ -206,6 +210,7 @@ fun CustomNavigationBar(
 fun CustomNavigationItem(
     barItem: BarItem,
     isSelected: Boolean,
+    showBadge: Boolean = false,
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -230,13 +235,25 @@ fun CustomNavigationItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Icon(
-            modifier = Modifier.size(24.dp),
-            imageVector = if (isSelected && barItem.selectedIcon != null) barItem.selectedIcon else barItem.icon,
-            contentDescription = barItem.title,
-            tint = if (isSelected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.onSecondaryContainer
-        )
+        BadgedBox(
+            badge = {
+                if (showBadge) {
+                    Badge(
+                        containerColor = Red,
+                        contentColor = Color.Unspecified
+                    )
+                }
+            }
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = if (isSelected && barItem.selectedIcon != null) barItem.selectedIcon else barItem.icon,
+                contentDescription = barItem.title,
+                tint = if (isSelected) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        }
+
         Text(
             text = barItem.title,
             style = MaterialTheme.typography.bodySmall,
@@ -258,28 +275,28 @@ fun barItems(
 ): Array<BarItem> {
     return arrayOf(
         BarItem(
-            title = LocalContext.current.getString(R.string.review),
+            title = stringResource(R.string.review),
             icon = ImageVector.vectorResource(R.drawable.review),
             selectedIcon = ImageVector.vectorResource(R.drawable.review_fill),
             route = Route.Page.Review,
             onClick = null
         ),
         BarItem(
-            title = LocalContext.current.getString(R.string.schedule),
+            title = stringResource(R.string.schedule),
             icon = ImageVector.vectorResource(R.drawable.schedule),
             selectedIcon = ImageVector.vectorResource(R.drawable.schedule_fill),
             route = Route.Page.Schedule,
             onClick = onScheduleClick
         ),
         BarItem(
-            title = LocalContext.current.getString(R.string.news),
+            title = stringResource(R.string.news),
             icon = ImageVector.vectorResource(R.drawable.news),
             selectedIcon = null,
             route = Route.Page.NewsList,
             onClick = onNewsClick
         ),
         BarItem(
-            title = LocalContext.current.getString(R.string.settings),
+            title = stringResource(R.string.settings),
             icon = ImageVector.vectorResource(R.drawable.settings),
             selectedIcon = ImageVector.vectorResource(R.drawable.settings_fill),
             route = Route.Page.Settings,
