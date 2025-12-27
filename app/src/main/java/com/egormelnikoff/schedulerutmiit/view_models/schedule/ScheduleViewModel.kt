@@ -51,7 +51,6 @@ interface ScheduleViewModel {
     )
 
     fun deleteNamedSchedule(primaryKeyNamedSchedule: Long, isDefault: Boolean)
-
     fun addCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
     fun updateEventExtra(event: Event, comment: String, tag: Int)
     fun updateCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
@@ -173,7 +172,7 @@ class ScheduleViewModelImpl @Inject constructor(
         setDefault: Boolean
     ) {
         viewModelScope.launch {
-            if (primaryKeyNamedSchedule == _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
+            if (primaryKeyNamedSchedule == _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id && !setDefault) {
                 return@launch
             }
             if (setDefault) {
@@ -453,7 +452,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
 
         currentNamedSchedule?.let {
-            val namedScheduleData = NamedScheduleData.getNamedScheduleData(
+            val namedScheduleData = NamedScheduleData.namedScheduleData(
                 namedSchedule = currentNamedSchedule
             )
             _scheduleState.update {
