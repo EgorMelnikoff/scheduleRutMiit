@@ -16,7 +16,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import java.time.Instant
@@ -105,7 +105,7 @@ fun BottomSheetDatePicker(
         CustomButton(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             enabled = datePickerState.selectedDateMillis != null,
-            buttonTitle = LocalContext.current.getString(R.string.confirm),
+            buttonTitle = stringResource(R.string.confirm),
             onClick = {
                 val instant = Instant.ofEpochMilli(datePickerState.selectedDateMillis!!)
                 onDateSelect(instant.atZone(ZoneId.systemDefault()).toLocalDate())

@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -25,22 +25,22 @@ fun ThemeSelector(
         0 to ThemeSelectorItemContent(
             name = "light",
             imageVector = ImageVector.vectorResource(R.drawable.sun),
-            displayedName = LocalContext.current.getString(R.string.light)
+            displayedName = stringResource(R.string.light)
         ),
         1 to ThemeSelectorItemContent(
             name = "dark",
             imageVector = ImageVector.vectorResource(R.drawable.moon),
-            displayedName = LocalContext.current.getString(R.string.dark)
+            displayedName = stringResource(R.string.dark)
         ),
         2 to ThemeSelectorItemContent(
             name = "amoled",
             imageVector = null,
-            displayedName = LocalContext.current.getString(R.string.amoled)
+            displayedName = stringResource(R.string.amoled)
         ),
         3 to ThemeSelectorItemContent(
             name = "system",
             imageVector = null,
-            displayedName = LocalContext.current.getString(R.string.auto)
+            displayedName = stringResource(R.string.auto)
         )
     )
     CustomButtonRow(

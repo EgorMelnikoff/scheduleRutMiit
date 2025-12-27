@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,7 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
@@ -47,7 +46,6 @@ data class ThemeSelectorItemContent(
 @Composable
 fun SettingsScreen(
     appUiState: AppUiState,
-    settingsListState: LazyStaggeredGridState,
     appSettings: AppSettings,
     navigationActions: NavigationActions,
     settingsViewModel: SettingsViewModel,
@@ -68,11 +66,11 @@ fun SettingsScreen(
             top = externalPadding.calculateTopPadding() + 16.dp,
             bottom = externalPadding.calculateBottomPadding()
         ),
-        state = settingsListState
+        state = appUiState.settingsListState
     ) {
         item {
             ColumnGroup(
-                title = LocalContext.current.getString(R.string.schedule),
+                title = stringResource(R.string.schedule),
                 items = listOf(
                     {
                         SettingsItem(
@@ -80,7 +78,7 @@ fun SettingsScreen(
                                 eventViewDialog = true
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.compact),
-                            text = LocalContext.current.getString(R.string.compact_view)
+                            text = stringResource(R.string.compact_view)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -93,11 +91,10 @@ fun SettingsScreen(
                                     tint = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                                 CustomSwitch(
-                                    checked = (!appSettings.eventView.groupsVisible && !appSettings.eventView.roomsVisible && !appSettings.eventView.lecturersVisible && !appSettings.eventView.tagVisible && !appSettings.eventView.commentVisible),
-                                    onCheckedChange = {
-                                        settingsViewModel.onSetEventView(!it)
-                                    }
-                                )
+                                    checked = (!appSettings.eventView.groupsVisible && !appSettings.eventView.roomsVisible && !appSettings.eventView.lecturersVisible && !appSettings.eventView.tagVisible && !appSettings.eventView.commentVisible)
+                                ) {
+                                    settingsViewModel.onSetEventView(!it)
+                                }
                             }
                         }
                     },
@@ -107,14 +104,13 @@ fun SettingsScreen(
                                 settingsViewModel.onSetShowCountClasses(!appSettings.showCountClasses)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.count),
-                            text = LocalContext.current.getString(R.string.show_count_classes)
+                            text = stringResource(R.string.show_count_classes)
                         ) {
                             CustomSwitch(
-                                checked = appSettings.showCountClasses,
-                                onCheckedChange = {
-                                    settingsViewModel.onSetShowCountClasses(it)
-                                }
-                            )
+                                checked = appSettings.showCountClasses
+                            ) {
+                                settingsViewModel.onSetShowCountClasses(it)
+                            }
                         }
                     }
                 )
@@ -122,13 +118,13 @@ fun SettingsScreen(
         }
         item {
             ColumnGroup(
-                title = LocalContext.current.getString(R.string.decor),
+                title = stringResource(R.string.decor),
                 items = listOf(
                     {
                         SettingsItem(
                             onClick = null,
                             imageVector = ImageVector.vectorResource(R.drawable.sun),
-                            text = LocalContext.current.getString(R.string.theme),
+                            text = stringResource(R.string.theme),
                             horizontal = false
                         ) {
                             ThemeSelector(
@@ -143,15 +139,14 @@ fun SettingsScreen(
                         SettingsItem(
                             onClick = null,
                             imageVector = ImageVector.vectorResource(R.drawable.color),
-                            text = LocalContext.current.getString(R.string.color_style),
+                            text = stringResource(R.string.color_style),
                             horizontal = false
                         ) {
                             ColorSelector(
-                                currentSelected = appSettings.decorColorIndex,
-                                onColorSelect = { value ->
-                                    settingsViewModel.onSetDecorColor(value)
-                                }
-                            )
+                                currentSelected = appSettings.decorColorIndex
+                            ) { value ->
+                                settingsViewModel.onSetDecorColor(value)
+                            }
                         }
                     }
                 )
@@ -159,7 +154,7 @@ fun SettingsScreen(
         }
         item {
             ColumnGroup(
-                title = LocalContext.current.getString(R.string.general),
+                title = stringResource(R.string.general),
                 items = listOf(
                     {
                         SettingsItem(
@@ -167,7 +162,7 @@ fun SettingsScreen(
                                 appUiState.uriHandler.openUri(APP_CHANNEL_URL)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.send),
-                            text = LocalContext.current.getString(R.string.report_a_problem),
+                            text = stringResource(R.string.report_a_problem),
                         )
                     }, {
                         SettingsItem(
@@ -175,7 +170,7 @@ fun SettingsScreen(
                                 settingsViewModel.sendLogsFile()
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.bug_report),
-                            text = LocalContext.current.getString(R.string.send_logs_by_email),
+                            text = stringResource(R.string.send_logs_by_email),
                         )
                     }, {
                         SettingsItem(
@@ -183,7 +178,7 @@ fun SettingsScreen(
                                 navigationActions.navigateToInfoDialog()
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.info),
-                            text = LocalContext.current.getString(R.string.about_app),
+                            text = stringResource(R.string.about_app),
                         )
                     }
                 )
@@ -200,21 +195,21 @@ fun SettingsScreen(
             }
         ) {
             CheckedItem(
-                text = LocalContext.current.getString(R.string.groups),
+                text = stringResource(R.string.groups),
                 imageVector = ImageVector.vectorResource(R.drawable.group),
                 checked = appSettings.eventView.groupsVisible
             ) { visible ->
                 settingsViewModel.onSetEventGroupVisibility(visible)
             }
             CheckedItem(
-                text = LocalContext.current.getString(R.string.rooms),
+                text = stringResource(R.string.rooms),
                 imageVector = ImageVector.vectorResource(R.drawable.room),
                 checked = appSettings.eventView.roomsVisible
             ) { visible ->
                 settingsViewModel.onSetEventRoomsVisibility(visible)
             }
             CheckedItem(
-                text = LocalContext.current.getString(R.string.lecturers),
+                text = stringResource(R.string.lecturers),
                 imageVector = ImageVector.vectorResource(R.drawable.person),
                 checked = appSettings.eventView.lecturersVisible
             ) { visible ->
@@ -226,14 +221,14 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.outline
             )
             CheckedItem(
-                text = LocalContext.current.getString(R.string.tag),
+                text = stringResource(R.string.tag),
                 imageVector = ImageVector.vectorResource(R.drawable.tag),
                 checked = appSettings.eventView.tagVisible
             ) { visible ->
                 settingsViewModel.onSetEventTagVisibility(visible)
             }
             CheckedItem(
-                text = LocalContext.current.getString(R.string.comment),
+                text = stringResource(R.string.comment),
                 imageVector = ImageVector.vectorResource(R.drawable.comment),
                 checked = appSettings.eventView.commentVisible
             ) { visible ->

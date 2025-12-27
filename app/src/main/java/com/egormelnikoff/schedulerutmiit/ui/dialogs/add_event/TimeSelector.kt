@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.ui.elements.ChooseDateTimeButton
@@ -22,31 +22,29 @@ fun TimeSelector(
     focusManager: FocusManager
 ) {
     RowGroup(
-        title = LocalContext.current.getString(R.string.time),
+        title = stringResource(R.string.time),
         items = listOf(
             {
                 ChooseDateTimeButton(
                     modifier = Modifier.fillMaxWidth(),
                     title = startTime?.format(DateTimeFormatter.ofPattern("HH:mm"))
-                        ?: LocalContext.current.getString(R.string.start_time),
-                    imageVector = ImageVector.vectorResource(R.drawable.time),
-                    onClick = {
-                        onShowDialogStartTime(true)
-                        focusManager.clearFocus()
-                    }
-                )
+                        ?: stringResource(R.string.start_time),
+                    imageVector = ImageVector.vectorResource(R.drawable.time)
+                ) {
+                    onShowDialogStartTime(true)
+                    focusManager.clearFocus()
+                }
             }, {
                 ChooseDateTimeButton(
                     modifier = Modifier.fillMaxWidth(),
                     title = endTime?.format(DateTimeFormatter.ofPattern("HH:mm"))
-                        ?: LocalContext.current.getString(R.string.end_time),
+                        ?: stringResource(R.string.end_time),
                     imageVector = ImageVector.vectorResource(R.drawable.time),
-                    onClick = {
-                        onShowDialogEndTime(true)
-                        focusManager.clearFocus()
-                    },
                     enabled = startTime != null
-                )
+                ) {
+                    onShowDialogEndTime(true)
+                    focusManager.clearFocus()
+                }
             }
         )
     )

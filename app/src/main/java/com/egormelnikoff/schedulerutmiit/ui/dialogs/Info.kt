@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,7 +51,7 @@ fun InfoDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                titleText = LocalContext.current.getString(R.string.about_app),
+                titleText = stringResource(R.string.about_app),
                 navAction = { navigationActions.onBack() }
             )
         }
@@ -85,7 +85,7 @@ fun InfoDialog(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = LocalContext.current.getString(R.string.app_name),
+                        text = stringResource(R.string.app_name),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         overflow = TextOverflow.Ellipsis,
@@ -109,8 +109,8 @@ fun InfoDialog(
                 items = listOf(
                     {
                         ClickableItem(
-                            title = LocalContext.current.getString(R.string.telegram),
-                            subtitle = LocalContext.current.getString(R.string.news_updates),
+                            title = stringResource(R.string.telegram),
+                            subtitle = stringResource(R.string.news_updates),
                             leadingIcon = {
                                 LeadingIcon(
                                     imageVector = ImageVector.vectorResource(R.drawable.logo_telegram)
@@ -122,8 +122,8 @@ fun InfoDialog(
                         )
                     }, {
                         ClickableItem(
-                            title = LocalContext.current.getString(R.string.github),
-                            subtitle = LocalContext.current.getString(R.string.source_code),
+                            title = stringResource(R.string.github),
+                            subtitle = stringResource(R.string.source_code),
                             leadingIcon ={
                                 LeadingIcon(
                                     imageVector =  ImageVector.vectorResource(R.drawable.logo_github),
@@ -141,7 +141,7 @@ fun InfoDialog(
             ColumnGroup(
                 items = listOf {
                     ClickableItem(
-                        title = LocalContext.current.getString(R.string.support),
+                        title = stringResource(R.string.support),
                         leadingIcon = {
                             LeadingIcon(
                                 imageVector = ImageVector.vectorResource(R.drawable.ruble),
@@ -159,7 +159,7 @@ fun InfoDialog(
                 items = listOf {
                     ClickableItem(
                         title = AUTHOR,
-                        subtitle = LocalContext.current.getString(R.string.author),
+                        subtitle = stringResource(R.string.author),
                         leadingIcon = {
                             LeadingTitle(
                                 title = AUTHOR

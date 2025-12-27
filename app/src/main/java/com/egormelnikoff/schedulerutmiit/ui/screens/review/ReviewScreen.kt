@@ -26,8 +26,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -73,7 +73,7 @@ fun ReviewScreen(
         topBar = {
             if (scheduleState.savedNamedSchedules.isNotEmpty()) {
                 CustomTopAppBar(
-                    titleText = LocalContext.current.getString(R.string.review),
+                    titleText = stringResource(R.string.review),
                     actions = {
                         IconButton(
                             onClick = {
@@ -139,7 +139,7 @@ fun ReviewScreen(
                 }
                 item {
                     ExpandedItem(
-                        title = LocalContext.current.getString(R.string.saved_schedules),
+                        title = stringResource(R.string.saved_schedules),
                         imageVector = ImageVector.vectorResource(R.drawable.save),
                         visible = reviewUiState.visibleSavedSchedules,
                         onChangeVisibility = reviewUiState.onChangeVisibilitySavedSchedules
@@ -164,7 +164,7 @@ fun ReviewScreen(
                                         title = namedScheduleEntity.shortName,
                                         titleMaxLines = 2,
                                         subtitle = if (namedScheduleEntity.type != 3) {
-                                            "${LocalContext.current.getString(R.string.current_on)} $lastTimeUpdate"
+                                            "${stringResource(R.string.current_on)} $lastTimeUpdate"
                                         } else null,
                                         defaultMinHeight = 40.dp,
                                         onClick = {
@@ -189,8 +189,8 @@ fun ReviewScreen(
             }
         } else {
             ErrorScreen(
-                title = LocalContext.current.getString(R.string.no_saved_schedule),
-                subtitle = LocalContext.current.getString(R.string.empty_base),
+                title = stringResource(R.string.no_saved_schedule),
+                subtitle = stringResource(R.string.empty_base),
                 button = {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -198,13 +198,13 @@ fun ReviewScreen(
                     ) {
                         CustomButton(
                             modifier = Modifier.fillMaxWidth(),
-                            buttonTitle = LocalContext.current.getString(R.string.find),
+                            buttonTitle = stringResource(R.string.find),
                             imageVector = ImageVector.vectorResource(R.drawable.search),
                             onClick = { navigationActions.navigateToSearch() },
                         )
                         CustomButton(
                             modifier = Modifier.fillMaxWidth(),
-                            buttonTitle = LocalContext.current.getString(R.string.create),
+                            buttonTitle = stringResource(R.string.create),
                             imageVector = ImageVector.vectorResource(R.drawable.add),
                             onClick = { navigationActions.navigateToAddSchedule() },
                         )
@@ -238,8 +238,8 @@ fun ReviewScreen(
         if (showDeleteNamedScheduleDialog != null) {
             CustomAlertDialog(
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
-                dialogTitle = "${LocalContext.current.getString(R.string.delete_schedule)}?",
-                dialogText = LocalContext.current.getString(R.string.impossible_restore_eventextra),
+                dialogTitle = "${stringResource(R.string.delete_schedule)}?",
+                dialogText = stringResource(R.string.impossible_restore_eventextra),
                 onDismissRequest = {
                     showDeleteNamedScheduleDialog = null
                 },
@@ -277,11 +277,11 @@ fun EventsReview(
                     EventsCount(
                         title = when (reviewData.displayedDate) {
                             today -> {
-                                LocalContext.current.getString(R.string.today)
+                                stringResource(R.string.today)
                             }
 
                             today.plusDays(1) -> {
-                                LocalContext.current.getString(R.string.tomorrow)
+                                stringResource(R.string.tomorrow)
                             }
 
                             else -> {
@@ -299,11 +299,11 @@ fun EventsReview(
                         title = when {
                             reviewData.displayedDate == today.plusDays(1)
                                     && reviewData.displayedDate.dayOfWeek == DayOfWeek.MONDAY -> {
-                                LocalContext.current.getString(R.string.next_week)
+                                stringResource(R.string.next_week)
                             }
 
                             else -> {
-                                LocalContext.current.getString(R.string.week, "")
+                                stringResource(R.string.week, "")
                             }
                         },
                         value = reviewData.countEventsForWeek.toString(),
@@ -324,8 +324,8 @@ fun EventsReview(
         if (reviewData.events.isNotEmpty() && haveAnyEventsExtraData) {
             ColumnGroup(
                 title = if (reviewData.displayedDate == today.plusDays(1)) {
-                    LocalContext.current.getString(R.string.comments_on_tomorrow_events)
-                } else LocalContext.current.getString(R.string.comments_on_events),
+                    stringResource(R.string.comments_on_tomorrow_events)
+                } else stringResource(R.string.comments_on_events),
                 items = reviewData.events.values.flatten().mapNotNull { event ->
                     val eventExtraData = eventsExtraData
                         .find { it.id == event.id }

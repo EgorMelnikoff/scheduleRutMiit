@@ -7,7 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
@@ -31,15 +31,14 @@ fun LecturerInput(
         CustomTextField(
             modifier = Modifier.weight(1f),
             value = lecturer.shortFio ?: "",
-            onValueChanged = { newValue ->
-                onValueChanged(lecturer.copy(shortFio = newValue, fullFio = newValue))
-            },
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next
             ),
-            placeholderText = LocalContext.current.getString(R.string.full_name_of_lecturer),
-        )
+            placeholderText = stringResource(R.string.full_name_of_lecturer),
+        ) { newValue ->
+            onValueChanged(lecturer.copy(shortFio = newValue, fullFio = newValue))
+        }
         RemoveButton { onRemove() }
     }
 }
@@ -59,15 +58,14 @@ fun RoomInput(
         CustomTextField(
             modifier = Modifier.weight(1f),
             value = room.name ?: "",
-            onValueChanged = { newValue ->
-                onValueChanged(room.copy(name = newValue, hint = newValue))
-            },
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next
             ),
-            placeholderText = LocalContext.current.getString(R.string.room_number),
-        )
+            placeholderText = stringResource(R.string.room_number),
+        ) { newValue ->
+            onValueChanged(room.copy(name = newValue, hint = newValue))
+        }
         RemoveButton { onRemove() }
     }
 }
@@ -86,15 +84,14 @@ fun GroupInput(
         CustomTextField(
             modifier = Modifier.weight(1f),
             value = group.name ?: "",
-            onValueChanged = { newValue ->
-                onValueChanged(group.copy(name = newValue))
-            },
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next
             ),
-            placeholderText = LocalContext.current.getString(R.string.group_number),
-        )
+            placeholderText = stringResource(R.string.group_number),
+        ) { newValue ->
+            onValueChanged(group.copy(name = newValue))
+        }
         RemoveButton { onRemove() }
     }
 }

@@ -28,7 +28,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,13 +45,12 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
-import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 
 @Composable
 fun NewsDialog(
+    setDefaultState: () -> Unit,
     newsState: NewsState,
     navigationActions: NavigationActions,
-    newsViewModel: NewsViewModel,
     externalPadding: PaddingValues
 ) {
     when {
@@ -61,16 +60,16 @@ fun NewsDialog(
         )
 
         newsState.error != null -> ErrorScreen(
-            title = LocalContext.current.getString(R.string.error),
+            title = stringResource(R.string.error),
             subtitle = newsState.error,
             button = {
                 CustomButton(
                     modifier = Modifier.fillMaxWidth(),
-                    buttonTitle = LocalContext.current.getString(R.string.back),
+                    buttonTitle = stringResource(R.string.back),
                     imageVector = ImageVector.vectorResource(R.drawable.back),
                     onClick = {
                         navigationActions.onBack()
-                        newsViewModel.setDefaultNewsState()
+                        setDefaultState()
                     },
                 )
             },

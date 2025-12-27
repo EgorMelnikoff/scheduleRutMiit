@@ -34,7 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -81,13 +81,13 @@ fun ScreenSchedule(
 
         scheduleState.isError -> {
             ErrorScreen(
-                title = LocalContext.current.getString(R.string.error),
-                subtitle = LocalContext.current.getString(R.string.error_load_schedule),
+                title = stringResource(R.string.error),
+                subtitle = stringResource(R.string.error_load_schedule),
                 paddingTop = externalPadding.calculateTopPadding(),
                 button = {
                     CustomButton(
                         modifier = Modifier.fillMaxWidth(),
-                        buttonTitle = LocalContext.current.getString(R.string.return_default),
+                        buttonTitle = stringResource(R.string.return_default),
                         imageVector = ImageVector.vectorResource(R.drawable.back),
                         onClick = { scheduleActions.onLoadInitialScheduleData() },
                     )
@@ -183,8 +183,8 @@ fun ScreenSchedule(
                     if (showDeleteNamedScheduleDialog) {
                         CustomAlertDialog(
                             dialogIcon = ImageVector.vectorResource(R.drawable.delete),
-                            dialogTitle = "${LocalContext.current.getString(R.string.delete_schedule)}?",
-                            dialogText = LocalContext.current.getString(R.string.impossible_restore_eventextra),
+                            dialogTitle = "${stringResource(R.string.delete_schedule)}?",
+                            dialogText = stringResource(R.string.impossible_restore_eventextra),
                             onDismissRequest = {
                                 showDeleteNamedScheduleDialog = false
                             },
@@ -199,7 +199,7 @@ fun ScreenSchedule(
                 } else {
                     Empty(
                         title = "¯\\_(ツ)_/¯",
-                        subtitle = LocalContext.current.getString(R.string.empty_here),
+                        subtitle = stringResource(R.string.empty_here),
                         isBoldTitle = false,
                         paddingBottom = externalPadding.calculateBottomPadding()
                     )
@@ -209,8 +209,8 @@ fun ScreenSchedule(
 
         scheduleState.savedNamedSchedules.isEmpty() -> {
             ErrorScreen(
-                title = LocalContext.current.getString(R.string.no_saved_schedule),
-                subtitle = LocalContext.current.getString(R.string.empty_base),
+                title = stringResource(R.string.no_saved_schedule),
+                subtitle = stringResource(R.string.empty_base),
                 button = {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -218,13 +218,13 @@ fun ScreenSchedule(
                     ) {
                         CustomButton(
                             modifier = Modifier.fillMaxWidth(),
-                            buttonTitle = LocalContext.current.getString(R.string.find),
+                            buttonTitle = stringResource(R.string.find),
                             imageVector = ImageVector.vectorResource(R.drawable.search),
                             onClick = { navigationActions.navigateToSearch() },
                         )
                         CustomButton(
                             modifier = Modifier.fillMaxWidth(),
-                            buttonTitle = LocalContext.current.getString(R.string.create),
+                            buttonTitle = stringResource(R.string.create),
                             imageVector = ImageVector.vectorResource(R.drawable.add),
                             onClick = { navigationActions.navigateToAddSchedule() },
                         )
@@ -236,7 +236,7 @@ fun ScreenSchedule(
 
         else -> {
             ErrorScreen(
-                title = LocalContext.current.getString(R.string.error),
+                title = stringResource(R.string.error),
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
         }
@@ -311,7 +311,7 @@ fun IsSavedAlert(
             )
             Text(
                 modifier = Modifier.weight(1f),
-                text = LocalContext.current.getString(R.string.schedule_is_not_saved),
+                text = stringResource(R.string.schedule_is_not_saved),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onPrimary,
                 overflow = TextOverflow.Ellipsis,
@@ -324,7 +324,7 @@ fun IsSavedAlert(
                     interactionSource = null
                 ) {
                     Text(
-                        text = LocalContext.current.getString(R.string.save),
+                        text = stringResource(R.string.save),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimary
                     )

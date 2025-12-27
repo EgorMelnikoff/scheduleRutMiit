@@ -8,7 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
@@ -26,7 +26,7 @@ fun DateSelector(
 ) {
     val firstDayOfWeek = LocalDate.now().getFirstDayOfWeek()
     ColumnGroup(
-        title = LocalContext.current.getString(R.string.day_of_week),
+        title = stringResource(R.string.day_of_week),
         withBackground = false,
         items = listOf {
             Row(
@@ -40,7 +40,7 @@ fun DateSelector(
                             TextStyle.SHORT,
                             Locale.getDefault()
                         )
-                            ?: LocalContext.current.getString(R.string.not_specified),
+                            ?: stringResource(R.string.not_specified),
                         imageVector = null,
                         selected = currentDate.dayOfWeek == dateEvent?.dayOfWeek,
                         onSelect = {

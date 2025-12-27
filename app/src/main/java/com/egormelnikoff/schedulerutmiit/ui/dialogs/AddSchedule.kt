@@ -19,7 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
@@ -43,8 +43,6 @@ fun AddScheduleDialog(
     scheduleActions: ScheduleActions,
     externalPadding: PaddingValues
 ) {
-    val context = LocalContext.current
-
     var nameSchedule by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf<LocalDate?>(null) }
     var endDate by remember { mutableStateOf<LocalDate?>(null) }
@@ -55,15 +53,15 @@ fun AddScheduleDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                titleText = LocalContext.current.getString(R.string.adding_a_schedule),
+                titleText = stringResource(R.string.adding_a_schedule),
                 navAction = { navigationActions.onBack() },
                 actions = {
                     CustomButton(
                         modifier = Modifier.padding(horizontal = 12.dp),
-                        buttonTitle = LocalContext.current.getString(R.string.create),
+                        buttonTitle = stringResource(R.string.create),
                         onClick = {
                             val errorMessages =
-                                checkScheduleParams(context, nameSchedule, startDate, endDate)
+                                checkScheduleParams(appUiState.context, nameSchedule, startDate, endDate)
                             if (errorMessages.isEmpty()) {
                                 scheduleActions.onAddCustomSchedule(
                                     nameSchedule.trim(),
@@ -103,38 +101,35 @@ fun AddScheduleDialog(
                         CustomTextField(
                             modifier = Modifier.fillMaxWidth(),
                             value = nameSchedule,
-                            onValueChanged = { newValue ->
-                                nameSchedule = newValue
-                            },
-                            placeholderText = LocalContext.current.getString(R.string.schedule_name),
+                            placeholderText = stringResource(R.string.schedule_name),
                             keyboardOptions = KeyboardOptions(
                                 autoCorrectEnabled = false,
                                 imeAction = ImeAction.Done
                             )
-                        )
+                        ) { newValue ->
+                            nameSchedule = newValue
+                        }
                     },
                     listOf(
                         {
                             ChooseDateTimeButton(
                                 modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    appUiState.focusManager.clearFocus()
-                                    showDialogStartDate = true
-                                },
                                 title = startDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                                    ?: LocalContext.current.getString(R.string.start_date)
-                            )
+                                    ?: stringResource(R.string.start_date)
+                            ) {
+                                appUiState.focusManager.clearFocus()
+                                showDialogStartDate = true
+                            }
                         }, {
                             ChooseDateTimeButton(
                                 modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    appUiState.focusManager.clearFocus()
-                                    showDialogEndDate = true
-                                },
                                 title = endDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                                    ?: LocalContext.current.getString(R.string.end_date),
+                                    ?: stringResource(R.string.end_date),
                                 enabled = startDate != null
-                            )
+                            ) {
+                                appUiState.focusManager.clearFocus()
+                                showDialogEndDate = true
+                            }
                         }
                     )
                 )

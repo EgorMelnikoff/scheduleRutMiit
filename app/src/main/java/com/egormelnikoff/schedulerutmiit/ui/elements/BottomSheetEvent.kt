@@ -9,7 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -43,47 +43,43 @@ fun ModalDialogEvent(
         Spacer(modifier = Modifier.height(0.dp))
         onHideEvent?.let {
             ActionDialogButton(
-                onClick = {
-                    onHideEvent()
-                    onDismiss(null)
-                },
                 icon = ImageVector.vectorResource(R.drawable.visibility_off),
-                title = LocalContext.current.getString(R.string.hide_event),
+                title = stringResource(R.string.hide_event),
                 contentColor = MaterialTheme.colorScheme.onBackground
-            )
+            ) {
+                onHideEvent()
+                onDismiss(null)
+            }
         }
         onShowEvent?.let {
             ActionDialogButton(
-                onClick = {
-                    onShowEvent()
-                    onDismiss(null)
-                },
                 icon = ImageVector.vectorResource(R.drawable.visibility),
-                title = LocalContext.current.getString(R.string.show_event),
+                title = stringResource(R.string.show_event),
                 contentColor = MaterialTheme.colorScheme.onBackground
-            )
+            ) {
+                onShowEvent()
+                onDismiss(null)
+            }
         }
         onEditEvent?.let {
             ActionDialogButton(
-                onClick = {
-                    onEditEvent()
-                    onDismiss(null)
-                },
                 icon = ImageVector.vectorResource(R.drawable.edit),
-                title = LocalContext.current.getString(R.string.edit),
+                title = stringResource(R.string.edit),
                 contentColor = MaterialTheme.colorScheme.onBackground
-            )
+            ) {
+                onEditEvent()
+                onDismiss(null)
+            }
         }
         onDeleteEvent?.let {
             ActionDialogButton(
-                onClick = {
-                    onDeleteEvent()
-                    onDismiss(null)
-                },
                 icon = ImageVector.vectorResource(R.drawable.delete),
-                title = LocalContext.current.getString(R.string.delete_event),
+                title = stringResource(R.string.delete_event),
                 contentColor = MaterialTheme.colorScheme.error
-            )
+            ) {
+                onDeleteEvent()
+                onDismiss(null)
+            }
         }
     }
 }

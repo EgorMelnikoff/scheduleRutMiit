@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
@@ -73,7 +73,7 @@ fun ExpandedMenu(
             }
             ClickableItem(
                 verticalPadding = 4.dp,
-                title = LocalContext.current.getString(R.string.collapse),
+                title = stringResource(R.string.collapse),
                 titleColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 titleTypography = MaterialTheme.typography.titleSmall,
                 onClick = {

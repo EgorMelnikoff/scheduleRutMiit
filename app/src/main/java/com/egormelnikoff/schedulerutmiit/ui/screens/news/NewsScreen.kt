@@ -30,7 +30,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -46,19 +46,18 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
-import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 import kotlinx.coroutines.flow.Flow
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun NewsScreen(
-    newsListFLow: Flow<PagingData<NewsShort>>,
+    newsListFlow: Flow<PagingData<NewsShort>>,
+    onGetNewsById: (Long) -> Unit,
     newsGridListState: LazyStaggeredGridState,
     navigationActions: NavigationActions,
-    newsViewModel: NewsViewModel,
     externalPadding: PaddingValues
 ) {
-    val newsList = newsListFLow.collectAsLazyPagingItems()
+    val newsList = newsListFlow.collectAsLazyPagingItems()
     when (newsList.loadState.refresh) {
         is LoadState.Loading -> {
             LoadingScreen(
@@ -71,12 +70,12 @@ fun NewsScreen(
             val error = newsList.loadState.refresh as LoadState.Error
 
             ErrorScreen(
-                title = LocalContext.current.getString(R.string.error),
+                title = stringResource(R.string.error),
                 subtitle = error.error.localizedMessage,
                 button = {
                     CustomButton(
                         modifier = Modifier.fillMaxWidth(),
-                        buttonTitle = LocalContext.current.getString(R.string.repeat),
+                        buttonTitle = stringResource(R.string.repeat),
                         imageVector = ImageVector.vectorResource(R.drawable.refresh),
                         onClick = {
                             newsList.refresh()
@@ -108,7 +107,7 @@ fun NewsScreen(
                         NewsShort(
                             newsShort = newsShort,
                             onClick = {
-                                newsViewModel.getNewsById(newsShort.idInformation)
+                                onGetNewsById(newsShort.idInformation)
                                 navigationActions.navigateToNewsDialog()
                             }
                         )

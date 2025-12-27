@@ -4,12 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -20,7 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -87,7 +85,7 @@ fun ModalDialogNamedSchedule(
                         contentColor = MaterialTheme.colorScheme.onBackground
                     ),
                     icon = ImageVector.vectorResource(R.drawable.download),
-                    contentDescription = LocalContext.current.getString(R.string.download)
+                    contentDescription = stringResource(R.string.download)
                 )
             }
             navigateToRenameDialog?.let {
@@ -101,7 +99,7 @@ fun ModalDialogNamedSchedule(
                         contentColor = MaterialTheme.colorScheme.onBackground
                     ),
                     icon = ImageVector.vectorResource(R.drawable.edit),
-                    contentDescription = LocalContext.current.getString(R.string.rename)
+                    contentDescription = stringResource(R.string.rename)
                 )
             }
             onDeleteNamedSchedule?.let {
@@ -115,81 +113,60 @@ fun ModalDialogNamedSchedule(
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     icon = ImageVector.vectorResource(R.drawable.delete),
-                    contentDescription = LocalContext.current.getString(R.string.delete)
+                    contentDescription = stringResource(R.string.delete)
                 )
             }
         }
         Spacer(modifier = Modifier.height(0.dp))
-        if (arrayOf(
-                navigateToHiddenEvents,
-                onSaveCurrentNamedSchedule,
-                onSetDefaultNamedSchedule,
-                onLoadInitialData,
-                onOpenNamedSchedule
-            ).any { it != null }
-        ) {
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                thickness = 0.5.dp,
-                color = MaterialTheme.colorScheme.outline
-            )
-        }
         if (navigateToHiddenEvents != null && scheduleData?.scheduleEntity != null) {
             ActionDialogButton(
-                onClick = {
-                    navigateToHiddenEvents(scheduleData.scheduleEntity)
-                    onDismiss(null)
-                },
                 icon = ImageVector.vectorResource(R.drawable.visibility_off),
-                title = LocalContext.current.getString(R.string.hidden_events),
+                title = stringResource(R.string.hidden_events),
                 contentColor = MaterialTheme.colorScheme.onBackground
-            )
+            ) {
+                navigateToHiddenEvents(scheduleData.scheduleEntity)
+                onDismiss(null)
+            }
         }
         onSaveCurrentNamedSchedule?.let {
             ActionDialogButton(
-                onClick = {
-                    onSaveCurrentNamedSchedule()
-                    onDismiss(null)
-                },
                 icon = ImageVector.vectorResource(R.drawable.save),
-                title = LocalContext.current.getString(R.string.save),
+                title = stringResource(R.string.save),
                 contentColor = MaterialTheme.colorScheme.onBackground
-            )
+            ) {
+                onSaveCurrentNamedSchedule()
+                onDismiss(null)
+            }
         }
         onOpenNamedSchedule?.let {
             ActionDialogButton(
-                onClick = {
-                    onOpenNamedSchedule()
-                    onDismiss(null)
-                },
                 icon = ImageVector.vectorResource(R.drawable.open),
-                title = LocalContext.current.getString(R.string.open),
+                title = stringResource(R.string.open),
                 contentColor = MaterialTheme.colorScheme.onBackground
-            )
+            ) {
+                onOpenNamedSchedule()
+                onDismiss(null)
+            }
         }
         onSetDefaultNamedSchedule?.let {
             ActionDialogButton(
-                onClick = {
-                    onSetDefaultNamedSchedule()
-                    onDismiss(null)
-                },
                 icon = ImageVector.vectorResource(R.drawable.check),
-                title = LocalContext.current.getString(R.string.make_default),
+                title = stringResource(R.string.make_default),
                 contentColor = MaterialTheme.colorScheme.onBackground
-            )
+            ) {
+                onSetDefaultNamedSchedule()
+                onDismiss(null)
+            }
         }
         onLoadInitialData?.let {
             ActionDialogButton(
-                onClick = {
-                    onLoadInitialData()
-                    onDismiss(null)
-                },
                 icon = ImageVector.vectorResource(R.drawable.back),
-                title = LocalContext.current.getString(R.string.return_default),
+                title = stringResource(R.string.return_default),
                 contentColor = MaterialTheme.colorScheme.onBackground
-            )
+            ) {
+                onLoadInitialData()
+                onDismiss(null)
+            }
         }
     }
 }

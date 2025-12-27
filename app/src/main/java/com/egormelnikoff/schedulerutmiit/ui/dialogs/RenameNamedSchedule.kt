@@ -25,7 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -48,7 +48,7 @@ fun RenameDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                titleText = LocalContext.current.getString(R.string.renaming),
+                titleText = stringResource(R.string.renaming),
                 navAction = {
                     navigationActions.onBack()
                 }
@@ -71,14 +71,11 @@ fun RenameDialog(
                 modifier = Modifier.fillMaxWidth(),
                 value = newName,
                 maxSymbols = 50,
-                onValueChanged = { newValue ->
-                    newName = newValue
-                },
                 keyboardOptions = KeyboardOptions(
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Default
                 ),
-                placeholderText = LocalContext.current.getString(R.string.name),
+                placeholderText = stringResource(R.string.name),
                 trailingIcon = {
                     AnimatedVisibility(
                         visible = newName != "",
@@ -98,13 +95,18 @@ fun RenameDialog(
                         }
                     }
                 }
-            )
+            ) { newValue ->
+                newName = newValue
+            }
             CustomButton(
                 modifier = Modifier.fillMaxWidth(),
-                buttonTitle = LocalContext.current.getString(R.string.save),
+                buttonTitle = stringResource(R.string.save),
                 enabled = newName != "",
                 onClick = {
-                    scheduleActions.onConfirmRenameNamedSchedule(namedScheduleEntity, newName.trim())
+                    scheduleActions.onConfirmRenameNamedSchedule(
+                        namedScheduleEntity,
+                        newName.trim()
+                    )
                     navigationActions.onBack()
                 }
             )

@@ -26,7 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -281,7 +281,7 @@ fun ScheduleSingleEvent(
                 },
                 text = {
                     Text(
-                        text = LocalContext.current.getString(R.string.open)
+                        text = stringResource(R.string.open)
                     )
                 },
                 onClick = {
@@ -308,7 +308,7 @@ fun ScheduleSingleEvent(
                     },
                     text = {
                         Text(
-                            text = LocalContext.current.getString(R.string.hide)
+                            text = stringResource(R.string.hide)
                         )
                     },
                     onClick = {
@@ -331,7 +331,7 @@ fun ScheduleSingleEvent(
                     },
                     text = {
                         Text(
-                            text = LocalContext.current.getString(R.string.edit)
+                            text = stringResource(R.string.edit)
                         )
                     },
                     onClick = {
@@ -354,7 +354,7 @@ fun ScheduleSingleEvent(
                     },
                     text = {
                         Text(
-                            text = LocalContext.current.getString(R.string.delete)
+                            text = stringResource(R.string.delete)
                         )
                     },
                     onClick = {
@@ -371,8 +371,8 @@ fun ScheduleSingleEvent(
                     onDeleteEvent(scheduleEntity, event.id)
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
-                dialogTitle = "${LocalContext.current.getString(R.string.delete_event)}?",
-                dialogText = LocalContext.current.getString(R.string.event_deleting_alert)
+                dialogTitle = "${stringResource(R.string.delete_event)}?",
+                dialogText = stringResource(R.string.event_deleting_alert)
             )
         }
         if (showHideDialog) {
@@ -383,8 +383,8 @@ fun ScheduleSingleEvent(
                     showHideDialog = false
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),
-                dialogTitle = "${LocalContext.current.getString(R.string.hide_event)}?",
-                dialogText = LocalContext.current.getString(R.string.event_visibility_alert)
+                dialogTitle = "${stringResource(R.string.hide_event)}?",
+                dialogText = stringResource(R.string.event_visibility_alert)
             )
         }
     }

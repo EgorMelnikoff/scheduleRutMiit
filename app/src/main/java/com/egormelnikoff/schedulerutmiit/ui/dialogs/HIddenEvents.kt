@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
@@ -45,7 +45,7 @@ fun HiddenEventsDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                titleText = LocalContext.current.getString(R.string.hidden_events),
+                titleText = stringResource(R.string.hidden_events),
                 navAction = {
                     navigationActions.onBack()
                 }
@@ -114,7 +114,7 @@ fun HiddenEventsDialog(
                     Empty(
                         modifier = Modifier.fillParentMaxSize(),
                         title = "¯\\_(ツ)_/¯",
-                        subtitle = LocalContext.current.getString(R.string.empty_here),
+                        subtitle = stringResource(R.string.empty_here),
                         isBoldTitle = false,
                         paddingBottom = externalPadding.calculateBottomPadding()
                     )

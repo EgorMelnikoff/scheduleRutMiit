@@ -14,7 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
@@ -133,8 +133,8 @@ fun PagedDays(
                 item {
                     Empty(
                         modifier = Modifier.fillParentMaxSize(),
-                        title = LocalContext.current.getString(R.string.day_off),
-                        subtitle = LocalContext.current.getString(R.string.empty_day)
+                        title = stringResource(R.string.day_off),
+                        subtitle = stringResource(R.string.empty_day)
                     )
                 }
             }

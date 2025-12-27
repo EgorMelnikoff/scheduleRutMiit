@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -31,7 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -63,7 +62,6 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 
-@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun AddEditEventDialog(
     editableEvent: Event? = null,
@@ -198,17 +196,16 @@ fun AddEditEventDialog(
             CustomTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = nameEvent,
-                onValueChanged = { newValue ->
-                    nameEvent = newValue
-                },
-                placeholderText = LocalContext.current.getString(R.string.class_name),
+                placeholderText = stringResource(R.string.class_name),
                 keyboardOptions = KeyboardOptions(
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Done
                 )
-            )
+            ) { newValue ->
+                nameEvent = newValue
+            }
             ColumnGroup(
-                title = LocalContext.current.getString(R.string.class_type),
+                title = stringResource(R.string.class_type),
                 withBackground = false,
                 items = listOf {
                     FlowRow(
@@ -221,7 +218,7 @@ fun AddEditEventDialog(
                         DefaultEventParams.types.forEach { type ->
                             CustomChip(
                                 title = type
-                                    ?: LocalContext.current.getString(R.string.not_specified),
+                                    ?: stringResource(R.string.not_specified),
                                 imageVector = null,
                                 selected = type == typeEvent,
                                 onSelect = {
@@ -247,10 +244,10 @@ fun AddEditEventDialog(
                     startTime = startTime,
                     endTime = endTime,
                     onShowDialogStartTime = { value ->
-                        showDialogStart = true
+                        showDialogStart = value
                     },
                     onShowDialogEndTime = { value ->
-                        showDialogEnd = true
+                        showDialogEnd = value
                     }
                 )
                 RecurrenceField(
@@ -270,13 +267,13 @@ fun AddEditEventDialog(
                 startTime = startTime,
                 endTime = endTime,
                 onShowDialogDate = { value ->
-                    showDialogDate = true
+                    showDialogDate = value
                 },
                 onShowDialogStartTime = { value ->
-                    showDialogStart = true
+                    showDialogStart = value
                 },
                 onShowDialogEndTime = { value ->
-                    showDialogEnd = true
+                    showDialogEnd = value
                 }
             )
 
@@ -286,7 +283,7 @@ fun AddEditEventDialog(
                 color = MaterialTheme.colorScheme.outline
             )
             ListParam(
-                title = LocalContext.current.getString(R.string.room),
+                title = stringResource(R.string.room),
                 elements = roomsList,
                 onAddElement = {
                     roomsList = (roomsList + DefaultEventParams.defaultRoom)
@@ -328,7 +325,7 @@ fun AddEditEventDialog(
                 )
             }
             ListParam(
-                title = LocalContext.current.getString(R.string.groups),
+                title = stringResource(R.string.groups),
                 elements = groupsList,
                 onAddElement = {
                     groupsList = groupsList + DefaultEventParams.defaultGroup
@@ -393,7 +390,7 @@ fun RecurrenceField(
 ) {
     Column {
         ColumnGroup(
-            title = LocalContext.current.getString(R.string.repetition),
+            title = stringResource(R.string.repetition),
             withBackground = false,
             items = listOf {
                 CustomButtonRow(
@@ -405,9 +402,9 @@ fun RecurrenceField(
                     label = { element ->
                         Text(
                             text = if (element.second == 1) {
-                                LocalContext.current.getString(R.string.every_week)
+                                stringResource(R.string.every_week)
                             } else {
-                                LocalContext.current.getString(R.string.once_week, element.second)
+                                stringResource(R.string.once_week, element.second)
                             },
                             style = MaterialTheme.typography.bodyMedium,
                             maxLines = 1,
@@ -425,7 +422,7 @@ fun RecurrenceField(
         ) {
             Column {
                 ColumnGroup(
-                    title = LocalContext.current.getString(R.string.week, ""),
+                    title = stringResource(R.string.week, ""),
                     withBackground = false,
                     items = listOf {
                         CustomButtonRow(
