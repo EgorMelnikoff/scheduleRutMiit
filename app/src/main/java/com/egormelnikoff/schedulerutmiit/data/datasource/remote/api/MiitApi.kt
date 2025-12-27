@@ -5,11 +5,11 @@ import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.app.model.NewsList
 import com.egormelnikoff.schedulerutmiit.app.model.Schedule
 import com.egormelnikoff.schedulerutmiit.app.model.Timetables
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper.Companion.GROUPS
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper.Companion.NEWS
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper.Companion.NEWS_CATALOG
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper.Companion.SCHEDULE
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApiHelper.Companion.TIMETABLE
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper.Companion.GROUPS
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper.Companion.NEWS
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper.Companion.NEWS_CATALOG
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper.Companion.SCHEDULE
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper.Companion.TIMETABLE
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
