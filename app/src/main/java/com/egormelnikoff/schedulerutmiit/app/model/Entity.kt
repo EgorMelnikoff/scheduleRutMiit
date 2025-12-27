@@ -1,11 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.app.model
 
+import android.content.Context
 import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.egormelnikoff.schedulerutmiit.R
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
@@ -123,6 +125,34 @@ data class Event(
     fun customEquals(other: Event): Boolean {
         return this.customHashCode() == other.customHashCode()
     }
+
+    fun customToString(
+        context: Context
+    ): String {
+        return StringBuilder().apply {
+            append("${context.getString(R.string._class)}: ${this@Event.name}")
+            this@Event.typeName?.let {
+                append("\n${context.getString(R.string.class_type)}: $it")
+            }
+            append("\n${context.getString(R.string.time)}: ${this@Event.startDatetime!!.toLocaleTimeWithTimeZone()} - ${this@Event.endDatetime!!.toLocaleTimeWithTimeZone()}")
+
+            this@Event.timeSlotName?.let {
+                append(" ($it)")
+            }
+
+            if (!this@Event.rooms.isNullOrEmpty()) {
+                append("\n${context.getString(R.string.place)}: ${this@Event.rooms.joinToString { it.name.toString() }}")
+            }
+
+            if (!this@Event.lecturers.isNullOrEmpty()) {
+                append("\n${context.getString(R.string.lecturers)}: ${this@Event.lecturers.joinToString { it.shortFio.toString() }}")
+            }
+
+            if (!this@Event.groups.isNullOrEmpty()) {
+                append("\n${context.getString(R.string.groups)}: ${this@Event.groups.joinToString { it.name.toString() }}")
+            }
+        }.toString()
+    }
 }
 
 @Keep
@@ -213,17 +243,17 @@ fun getTimeSlotName(
         return null
     }
 
-    return when {
-        startDateTime.hour == 5 && startDateTime.minute == 30 -> "1 пара"
-        startDateTime.hour == 7 && startDateTime.minute == 5 -> "2 пара"
-        startDateTime.hour == 8 && startDateTime.minute == 40 -> "3 пара"
-        startDateTime.hour == 10 && startDateTime.minute == 45 -> "4 пара"
-        startDateTime.hour == 12 && startDateTime.minute == 20 -> "5 пара"
-        startDateTime.hour == 13 && startDateTime.minute == 55 -> "6 пара"
-        startDateTime.hour == 15 && startDateTime.minute == 30 -> "7 пара"
-        startDateTime.hour == 17 && startDateTime.minute == 0 -> "8 пара"
-        startDateTime.hour == 18 && startDateTime.minute == 35 -> "9 пара"
-        startDateTime.hour == 20 && startDateTime.minute == 10 -> "10 пара"
+    return when (startDateTime.hour) {
+        5 if startDateTime.minute == 30 -> "1 пара"
+        7 if startDateTime.minute == 5 -> "2 пара"
+        8 if startDateTime.minute == 40 -> "3 пара"
+        10 if startDateTime.minute == 45 -> "4 пара"
+        12 if startDateTime.minute == 20 -> "5 пара"
+        13 if startDateTime.minute == 55 -> "6 пара"
+        15 if startDateTime.minute == 30 -> "7 пара"
+        17 if startDateTime.minute == 0 -> "8 пара"
+        18 if startDateTime.minute == 35 -> "9 пара"
+        20 if startDateTime.minute == 10 -> "10 пара"
         else -> null
     }
 }
