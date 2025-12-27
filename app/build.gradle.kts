@@ -13,18 +13,27 @@ plugins {
 android {
     namespace = "com.egormelnikoff.schedulerutmiit"
     compileSdk = 36
-    
+
+    buildFeatures {
+        buildConfig = true
+        compose = true
+    }
+
     defaultConfig {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 29
         targetSdk = 36
-        versionCode = 44
-        versionName = "1.9.2"
+        versionCode = 45
+        versionName = "1.9.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            manifestPlaceholders["firebaseAnalyticsDeactivated"] = true
+            manifestPlaceholders["crashlyticsCollectionEnabled"] = false
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -32,6 +41,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            manifestPlaceholders["firebaseAnalyticsDeactivated"] = false
+            manifestPlaceholders["crashlyticsCollectionEnabled"] = true
         }
     }
     compileOptions {
@@ -43,9 +54,6 @@ android {
             jvmTarget = JvmTarget.JVM_11
         }
     }
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {
@@ -55,6 +63,7 @@ dependencies {
 
     implementation (libs.hilt.android)
     implementation (libs.androidx.hilt.lifecycle.viewmodel )
+    implementation(libs.androidx.compose.ui)
     ksp (libs.hilt.android.compiler)
     ksp (libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.work)
