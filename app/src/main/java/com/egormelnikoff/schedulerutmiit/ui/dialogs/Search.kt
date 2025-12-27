@@ -32,12 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.model.SearchOption
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
@@ -46,22 +47,18 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchState
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
-
-enum class SearchOption {
-    ALL, GROUPS, PEOPLE
-}
 
 @Composable
 fun SearchDialog(
     searchState: SearchState,
     searchParams: SearchParams,
     navigationActions: NavigationActions,
-    searchViewModel: SearchViewModel,
+    searchActions: SearchActions,
     scheduleActions: ScheduleActions,
-    externalPadding: PaddingValues,
+    externalPadding: PaddingValues
 ) {
     Column(
         modifier = Modifier
@@ -82,13 +79,12 @@ fun SearchDialog(
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1,
                 value = searchParams.query,
-                onValueChanged = { newValue ->
-                    searchViewModel.changeSearchParams(query = newValue)
-                },
                 action = {
-                    searchViewModel.search()
+                    searchActions.search()
                 },
-                placeholderText = LocalContext.current.getString(R.string.search),
+                placeholderText = if (searchParams.searchOption == SearchOption.PEOPLE) {
+                    "${stringResource(R.string.for_example)}, ${stringResource(R.string.example_lecturer)}"
+                } else  "${stringResource(R.string.for_example)}, ${stringResource(R.string.example_group)}",
                 leadingIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.search),
@@ -104,7 +100,7 @@ fun SearchDialog(
                     ) {
                         IconButton(
                             onClick = {
-                                searchViewModel.setDefaultSearchState()
+                                searchActions.setDefaultState()
                             }
                         ) {
                             Icon(
@@ -119,12 +115,14 @@ fun SearchDialog(
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Search
                 )
-            )
+            ) { newValue ->
+                searchActions.changeQuery(newValue)
+            }
 
             FilterRow(
                 selectedOption = searchParams.searchOption,
                 onSelectOption = { searchOption ->
-                    searchViewModel.changeSearchParams(searchOption = searchOption)
+                    searchActions.changeSearchOption(searchOption)
                 }
             )
         }
@@ -151,21 +149,20 @@ fun SearchDialog(
                 searchState.isEmptyQuery -> {
                     Empty(
                         imageVector = ImageVector.vectorResource(R.drawable.search),
-                        subtitle = LocalContext.current.getString(R.string.enter_your_query),
+                        subtitle = stringResource(R.string.enter_your_query),
                         paddingBottom = externalPadding.calculateBottomPadding()
                     )
                 }
 
                 searchState.groups.isEmpty() && searchState.people.isEmpty() ->
                     Empty(
-                        subtitle = LocalContext.current.getString(R.string.nothing_found),
+                        subtitle = stringResource(R.string.nothing_found),
                         paddingBottom = externalPadding.calculateBottomPadding()
                     )
 
                 else -> {
                     LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(
                             start = 8.dp,
@@ -177,7 +174,7 @@ fun SearchDialog(
                         if (searchState.groups.isNotEmpty() && (searchParams.searchOption == SearchOption.ALL || searchParams.searchOption == SearchOption.GROUPS)) {
                             item {
                                 Text(
-                                    text = LocalContext.current.getString(R.string.groups),
+                                    text = stringResource(R.string.groups),
                                     style = MaterialTheme.typography.titleSmall,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
@@ -198,7 +195,7 @@ fun SearchDialog(
                                                 group.id.toString(),
                                                 0
                                             )
-                                            searchViewModel.setDefaultSearchState()
+                                            searchActions.setDefaultState()
                                         }
                                     )
                                 }
@@ -210,7 +207,7 @@ fun SearchDialog(
                         if (searchState.people.isNotEmpty() && (searchParams.searchOption == SearchOption.ALL || searchParams.searchOption == SearchOption.PEOPLE)) {
                             item {
                                 Text(
-                                    text = LocalContext.current.getString(R.string.people),
+                                    text = stringResource(R.string.people),
                                     style = MaterialTheme.typography.titleSmall,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
@@ -242,7 +239,7 @@ fun SearchDialog(
                                                 person.id.toString(),
                                                 1
                                             )
-                                            searchViewModel.setDefaultSearchState()
+                                            searchActions.setDefaultState()
                                         }
                                     )
                                 }
@@ -265,7 +262,7 @@ fun FilterRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         CustomChip(
-            title = LocalContext.current.getString(R.string.all),
+            title = stringResource(R.string.all),
             imageVector = null,
             selected = selectedOption == SearchOption.ALL,
             onSelect = {
@@ -273,7 +270,7 @@ fun FilterRow(
             }
         )
         CustomChip(
-            title = LocalContext.current.getString(R.string.groups),
+            title = stringResource(R.string.groups),
             imageVector = ImageVector.vectorResource(R.drawable.group),
             selected = selectedOption == SearchOption.GROUPS,
             onSelect = {
@@ -281,7 +278,7 @@ fun FilterRow(
             }
         )
         CustomChip(
-            title = LocalContext.current.getString(R.string.people),
+            title = stringResource(R.string.people),
             imageVector = ImageVector.vectorResource(R.drawable.person),
             selected = selectedOption == SearchOption.PEOPLE,
             onSelect = {
