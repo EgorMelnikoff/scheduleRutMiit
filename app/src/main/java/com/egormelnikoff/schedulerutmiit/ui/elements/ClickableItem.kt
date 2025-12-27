@@ -46,7 +46,7 @@ fun ClickableItem(
     verticalPadding: Dp = 12.dp,
     defaultMinHeight: Dp? = null,
 
-    title: String,
+    title: String? = null,
     titleTypography: TextStyle? = null,
     titleMaxLines: Int = 1,
     titleColor: Color? = null,
@@ -60,6 +60,7 @@ fun ClickableItem(
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
     showClickLabel: Boolean = true,
+    clickLabelColor: Color? = null
 ) {
     Row(
         modifier = Modifier
@@ -89,13 +90,15 @@ fun ClickableItem(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(
-                text = title,
-                style = titleTypography ?: MaterialTheme.typography.titleMedium,
-                color = titleColor ?: MaterialTheme.colorScheme.onBackground,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = titleMaxLines
-            )
+            title?.let {
+                Text(
+                    text = title,
+                    style = titleTypography ?: MaterialTheme.typography.titleMedium,
+                    color = titleColor ?: MaterialTheme.colorScheme.onBackground,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = titleMaxLines
+                )
+            }
             subtitle?.let {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -122,7 +125,7 @@ fun ClickableItem(
                 modifier = Modifier.size(24.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.right),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                tint = clickLabelColor ?: MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
     }
@@ -135,9 +138,9 @@ fun LeadingAsyncImage(
     imageSize: Dp = 32.dp,
     titleSize: TextUnit = 12.sp,
 ) {
-    val model = rememberAsyncImagePainter(imageUrl)
+    val painter = rememberAsyncImagePainter(imageUrl)
     val transition by animateFloatAsState(
-        targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
+        targetValue = if (painter.state is AsyncImagePainter.State.Success) 1f else 0f
     )
     Box(
         contentAlignment = Alignment.Center
@@ -148,10 +151,10 @@ fun LeadingAsyncImage(
                 .clip(CircleShape)
                 .alpha(transition),
             contentScale = ContentScale.Crop,
-            painter = model,
+            painter = painter,
             contentDescription = title,
         )
-        if (model.state !is AsyncImagePainter.State.Success) {
+        if (painter.state !is AsyncImagePainter.State.Success) {
             LeadingTitle(
                 title = title,
                 titleSize = titleSize,
