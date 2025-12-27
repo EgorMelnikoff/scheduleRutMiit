@@ -4,10 +4,10 @@
     <string name="_default">Default</string>
     <string name="about_app">About app</string>
     <string name="add">Add</string>
-    <string name="amoled" translatable="false">AMOLED</string>
     <string name="adding_a_class">Adding a class</string>
     <string name="adding_a_schedule">Adding a schedule</string>
     <string name="all">All</string>
+    <string name="amoled" translatable="false">AMOLED</string>
     <string name="app_name">Schedule MIIT</string>
     <string name="author">Author</string>
     <string name="auto">Auto</string>
@@ -23,7 +23,6 @@
     <string name="confirm">Confirm</string>
     <string name="create">Create</string>
     <string name="current_on">Current on</string>
-    <string name="download">Download</string>
     <string name="dark">Dark</string>
     <string name="date">Date</string>
     <string name="date_and_time">Date and time</string>
@@ -33,15 +32,7 @@
     <string name="delete">Delete</string>
     <string name="delete_event">Delete class</string>
     <string name="delete_schedule">Delete schedule</string>
-    <plurals name="events">
-        <item quantity="few">classes</item>
-        <item quantity="many">classes</item>
-        <item quantity="one">class</item>
-        <item quantity="other">classes</item>
-        <item quantity="two">classes</item>
-    </plurals>
-    <string name="every_week">Every week</string>
-    <string name="once_week">Once every %1$d week</string>
+    <string name="download">Download</string>
     <string name="edit">Edit</string>
     <string name="editing">Editing</string>
     <string name="empty_base">Save at least one schedule to display it</string>
@@ -49,18 +40,27 @@
     <string name="empty_here">It`s empty here</string>
     <string name="empty_response">Empty response</string>
     <string name="end_date">Start date</string>
-    <string name="end_time">Start time</string>
+    <string name="end_time">End time</string>
     <string name="enter_comment">Enter comment</string>
     <string name="enter_your_query">Enter your query</string>
     <string name="error">Error</string>
     <string name="error_adding_log_to_file">Error adding log to file</string>
     <string name="error_load_schedule">There was an error loading the schedule</string>
     <string name="error_sending_logs">Error sending logs</string>
+    <plurals name="events">
+        <item quantity="few">classes</item>
+        <item quantity="many">classes</item>
+        <item quantity="one">class</item>
+        <item quantity="other">classes</item>
+        <item quantity="two">classes</item>
+    </plurals>
     <string name="event_deleting_alert">The action will delete the lesson, comments and tags</string>
     <string name="event_visibility_alert">Please note, class will no longer appear in the schedule</string>
     <string name="events_count_error">The maximum number of classes per day has been reached</string>
+    <string name="every_week">Every week</string>
     <string name="failed_update">Failed to update schedule</string>
     <string name="find">Find</string>
+    <string name="for_example">For example</string>
     <string name="full_name_of_lecturer">Full name of lecturer</string>
     <string name="general">General</string>
     <string name="github" translatable="false">GitHub</string>
@@ -92,6 +92,7 @@
     <string name="no_start_time_specified">No start time specified</string>
     <string name="not_specified">Not specified</string>
     <string name="nothing_found">Nothing found</string>
+    <string name="once_week">Once every %1$d week</string>
     <string name="open">Open</string>
     <string name="people">People</string>
     <string name="place">Place</string>
@@ -111,9 +112,9 @@
     <string name="save">Save</string>
     <string name="saved_schedules">Saved schedules</string>
     <string name="schedule">Schedule</string>
+    <string name="schedule_is_not_saved">Schedule is not saved</string>
     <string name="schedule_name">Schedule name</string>
     <string name="schedules">Schedules</string>
-    <string name="schedule_is_not_saved">Schedule is not saved</string>
     <string name="search">Search</string>
     <string name="search_or_create">Search or create</string>
     <string name="send_logs">Send logs</string>
@@ -141,4 +142,6 @@
     <string name="update">Update</string>
     <string name="week">Week %1$s</string>
     <string name="yes">Yes</string>
+    <string name="example_group" translatable="false">УВВ-311</string>
+    <string name="example_lecturer" translatable="false">Иванов Иван</string>
 </resources>

@@ -23,7 +23,6 @@
     <string name="create">Создать</string>
     <string name="current_on">Актуально на</string>
     <string name="dark">Темная</string>
-    <string name="download">Скачать</string>
     <string name="date">Дата</string>
     <string name="date_and_time">Дата и время</string>
     <string name="day_of_week">День недели</string>
@@ -32,16 +31,9 @@
     <string name="delete">Удалить</string>
     <string name="delete_event">Удалить пару</string>
     <string name="delete_schedule">Удалить расписание</string>
-    <plurals name="events">
-        <item quantity="few">пары</item>
-        <item quantity="many">пар</item>
-        <item quantity="one" tools:ignore="ImpliedQuantity">пара</item>
-        <item quantity="other">пар</item>
-    </plurals>
+    <string name="download">Скачать</string>
     <string name="edit">Редактировать</string>
     <string name="editing">Редактирование</string>
-    <string name="every_week">Каждую неделю</string>
-    <string name="once_week">Раз в %1$d недели</string>
     <string name="empty_base">Сохраните как минимум одно расписание для его отображения</string>
     <string name="empty_day">На это день пары не запланированы</string>
     <string name="empty_here">Здесь пусто</string>
@@ -54,11 +46,19 @@
     <string name="error_adding_log_to_file">Ошибка записи лога в файл</string>
     <string name="error_load_schedule">Произошла ошибка загрузки расписания</string>
     <string name="error_sending_logs">Ошибка при отправке журнала</string>
+    <plurals name="events">
+        <item quantity="few">пары</item>
+        <item quantity="many">пар</item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">пара</item>
+        <item quantity="other">пар</item>
+    </plurals>
     <string name="event_deleting_alert">Действие удалит пару, комментарии теги</string>
     <string name="event_visibility_alert">Будьте внимательны, занятие перестанет отображаться в расписании</string>
     <string name="events_count_error">Достигнуто максимальное количество пар на день</string>
+    <string name="every_week">Каждую неделю</string>
     <string name="failed_update">Не удалось обновить расписание</string>
     <string name="find">Найти</string>
+    <string name="for_example">Например</string>
     <string name="full_name_of_lecturer">ФИО преподавателя</string>
     <string name="general">Общее</string>
     <string name="group_number">Номер группы</string>
@@ -89,6 +89,7 @@
     <string name="no_start_time_specified">Не указано время начала</string>
     <string name="not_specified">Не указан</string>
     <string name="nothing_found">Ничего не найдено</string>
+    <string name="once_week">Раз в %1$d недели</string>
     <string name="open">Открыть</string>
     <string name="people">Преподаватели</string>
     <string name="place">Место</string>
@@ -108,9 +109,9 @@
     <string name="save">Сохранить</string>
     <string name="saved_schedules">Сохраненные расписания</string>
     <string name="schedule">Расписание</string>
+    <string name="schedule_is_not_saved">Расписание не сохранено</string>
     <string name="schedule_name">Название</string>
     <string name="schedules">Расписания</string>
-    <string name="schedule_is_not_saved">Расписание не сохранено</string>
     <string name="search">Поиск</string>
     <string name="search_or_create">Найти или создать</string>
     <string name="send_logs">Отправить журнал</string>
