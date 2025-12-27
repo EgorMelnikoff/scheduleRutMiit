@@ -16,7 +16,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import kotlin.collections.lastIndex
+import com.egormelnikoff.schedulerutmiit.ui.theme.baseItemSpacing
+import com.egormelnikoff.schedulerutmiit.ui.theme.mediumCornerRadius
+import com.egormelnikoff.schedulerutmiit.ui.theme.superExtraSmallCornerRadius
 
 @Composable
 fun <T> CustomButtonRow(
@@ -59,7 +61,7 @@ fun <T> CustomButtonRow(
                 )
                 if (index != elements.lastIndex) {
                     Spacer(
-                        modifier = Modifier.width(3.dp)
+                        modifier = Modifier.width(baseItemSpacing)
                     )
                 }
             }
@@ -74,9 +76,9 @@ fun Int.customRowItemShape(
     val isLast = this == lastIndex
 
     return RoundedCornerShape(
-        topStart = if (isFirst) edgeCorner else interiorCorner,
-        topEnd = if (isLast) edgeCorner else interiorCorner,
-        bottomStart = if (isFirst) edgeCorner else interiorCorner,
-        bottomEnd = if (isLast) edgeCorner else interiorCorner
+        topStart = if (isFirst) mediumCornerRadius else superExtraSmallCornerRadius,
+        topEnd = if (isLast) mediumCornerRadius else superExtraSmallCornerRadius,
+        bottomStart = if (isFirst) mediumCornerRadius else superExtraSmallCornerRadius,
+        bottomEnd = if (isLast) mediumCornerRadius else superExtraSmallCornerRadius
     )
 }
