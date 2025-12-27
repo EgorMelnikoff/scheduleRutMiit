@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.ui.theme.baseItemSpacing
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.colors
 
 @Composable
@@ -58,7 +59,7 @@ fun ColorSelector(
                 )
                 if (index != colors.size - 1) {
                     Spacer(
-                        modifier = Modifier.width(3.dp)
+                        modifier = Modifier.width(baseItemSpacing)
                     )
                 }
             }

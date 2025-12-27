@@ -16,11 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
-val edgeCorner: Dp = 16.dp
-val interiorCorner: Dp = 4.dp
+import com.egormelnikoff.schedulerutmiit.ui.theme.baseItemSpacing
+import com.egormelnikoff.schedulerutmiit.ui.theme.extraSmallCornerRadius
+import com.egormelnikoff.schedulerutmiit.ui.theme.largeCornerRadius
 
 @Composable
 fun GridGroup(
@@ -45,7 +44,7 @@ fun GridGroup(
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(3.dp)
+            verticalArrangement = Arrangement.spacedBy(baseItemSpacing)
         ) {
             items.forEachIndexed { indexColumn, itemDataColumn ->
                 val isFirstColumn = indexColumn == 0
@@ -53,20 +52,20 @@ fun GridGroup(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    horizontalArrangement = Arrangement.spacedBy(baseItemSpacing)
                 ) {
                     itemDataColumn.forEachIndexed { indexRow, itemDataRow ->
                         val isFirstRow = indexRow == 0
                         val isLastRow = indexRow == itemDataColumn.lastIndex
 
                         val topStartRadius =
-                            if (isFirstColumn && isFirstRow) edgeCorner else interiorCorner
+                            if (isFirstColumn && isFirstRow) largeCornerRadius else extraSmallCornerRadius
                         val topEndRadius =
-                            if (isFirstColumn && isLastRow) edgeCorner else interiorCorner
+                            if (isFirstColumn && isLastRow) largeCornerRadius else extraSmallCornerRadius
                         val bottomStartRadius =
-                            if (isLastColumn && isFirstRow) edgeCorner else interiorCorner
+                            if (isLastColumn && isFirstRow) largeCornerRadius else extraSmallCornerRadius
                         val bottomEndRadius =
-                            if (isLastColumn && isLastRow) edgeCorner else interiorCorner
+                            if (isLastColumn && isLastRow) largeCornerRadius else extraSmallCornerRadius
 
                         val shape = remember(
                             topStartRadius,
@@ -121,7 +120,7 @@ fun ColumnGroup(
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(3.dp)
+            verticalArrangement = Arrangement.spacedBy(baseItemSpacing)
         ) {
             items.forEachIndexed { index, itemData ->
                 val isFirst = index == 0
@@ -132,10 +131,10 @@ fun ColumnGroup(
                         .fillMaxWidth()
                         .let {
                             if (withBackground) {
-                                val topStartRadius = if (isFirst) edgeCorner else interiorCorner
-                                val topEndRadius = if (isFirst) edgeCorner else interiorCorner
-                                val bottomStartRadius = if (isLast) edgeCorner else interiorCorner
-                                val bottomEndRadius = if (isLast) edgeCorner else interiorCorner
+                                val topStartRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
+                                val topEndRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
+                                val bottomStartRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
+                                val bottomEndRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
 
                                 val shape = remember(
                                     topStartRadius,
@@ -188,16 +187,16 @@ fun RowGroup(
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(3.dp)
+            horizontalArrangement = Arrangement.spacedBy(baseItemSpacing)
         ) {
             items.forEachIndexed { index, itemData ->
                 val isFirst = index == 0
                 val isLast = index == items.lastIndex
 
-                val topStartRadius = if (isFirst) edgeCorner else interiorCorner
-                val bottomStartRadius = if (isFirst) edgeCorner else interiorCorner
-                val topEndRadius = if (isLast) edgeCorner else interiorCorner
-                val bottomEndRadius = if (isLast) edgeCorner else interiorCorner
+                val topStartRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
+                val bottomStartRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
+                val topEndRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
+                val bottomEndRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
 
                 val shape = remember(
                     topStartRadius,
@@ -218,7 +217,6 @@ fun RowGroup(
                         .weight(1f)
                         .clip(shape)
                         .background(MaterialTheme.colorScheme.secondaryContainer)
-
                 ) {
                     itemData()
                 }
