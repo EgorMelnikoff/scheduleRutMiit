@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomModalBottomSheet(
-    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState? = null,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    onDismiss: () -> Unit,
     content: @Composable () -> Unit
 ) {
     ModalBottomSheet(
@@ -45,16 +45,14 @@ fun CustomModalBottomSheet(
         },
         sheetState = sheetState ?: rememberModalBottomSheetState(),
         containerColor = MaterialTheme.colorScheme.background,
-        onDismissRequest = {
-            onDismiss()
-        }
+        onDismissRequest = onDismiss
     ) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
             horizontalAlignment = horizontalAlignment,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             content.invoke()
         }

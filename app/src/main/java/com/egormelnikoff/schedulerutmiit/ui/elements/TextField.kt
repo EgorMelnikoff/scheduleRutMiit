@@ -17,7 +17,6 @@ fun CustomTextField(
     modifier: Modifier,
     value: String,
     maxSymbols: Int = 200,
-    onValueChanged: (String) -> Unit,
     keyboardOptions: KeyboardOptions? = null,
     colors: TextFieldColors? = null,
     maxLines: Int? = null,
@@ -25,7 +24,8 @@ fun CustomTextField(
     placeholderText: String? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    visualTransformation: VisualTransformation? = null
+    visualTransformation: VisualTransformation? = null,
+    onValueChanged: (String) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -58,7 +58,7 @@ fun CustomTextField(
                 Text(
                     text = it,
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
         },

@@ -20,10 +20,10 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ActionDialogButton(
-    onClick: () -> Unit,
     icon: ImageVector,
     title: String,
-    contentColor: Color
+    contentColor: Color,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier

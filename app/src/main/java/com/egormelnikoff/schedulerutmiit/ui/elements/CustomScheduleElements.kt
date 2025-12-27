@@ -29,8 +29,8 @@ fun ChooseDateTimeButton(
     modifier: Modifier,
     title: String,
     imageVector: ImageVector? = null,
-    onClick: () -> Unit,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = modifier

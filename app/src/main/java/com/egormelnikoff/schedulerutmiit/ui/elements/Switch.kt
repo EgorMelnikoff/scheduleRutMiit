@@ -12,8 +12,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomSwitch (
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    colors: SwitchColors? = null
+    colors: SwitchColors? = null,
+    onCheckedChange: (Boolean) -> Unit
 ) {
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
         Switch(
