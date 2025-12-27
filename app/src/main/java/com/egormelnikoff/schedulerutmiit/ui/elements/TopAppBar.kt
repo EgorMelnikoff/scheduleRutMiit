@@ -39,7 +39,7 @@ fun CustomTopAppBar(
     titleText: String? = null,
     navAction: (() -> Unit)? = null,
     navImageVector: ImageVector = ImageVector.vectorResource(R.drawable.back),
-    actions: @Composable (() -> Unit)? = null,
+    actions: @Composable (() -> Unit)? = null
 ) {
     TopAppBar(
         title = {
@@ -110,7 +110,7 @@ fun ScheduleTopAppBar(
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
+                        maxLines = 1
                     )
                     if (namedScheduleData.scheduleData?.scheduleEntity != null && !isCustomSchedule) {
                         Text(

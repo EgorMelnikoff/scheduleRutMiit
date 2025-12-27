@@ -12,22 +12,22 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.amoledColorScheme
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.animation
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.colorThemes
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.defaultColorTheme
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.defaultTheme
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.themes
 
 @Composable
 fun ScheduleRutMiitTheme(
-    appSettings: AppSettings,
+    theme: String,
+    decorColorIndex: Int,
     content: @Composable () -> Unit
 ) {
-    val isDarkTheme = appSettings.theme.isDarkTheme()
+    val isDarkTheme = theme.isDarkTheme()
     val colorScheme = getCurrentColorScheme(
         isDarkTheme = isDarkTheme,
-        isUsedAmoledTheme = appSettings.theme == "amoled",
-        decorColorIndex = appSettings.decorColorIndex
+        isUsedAmoledTheme = theme == "amoled",
+        decorColorIndex = decorColorIndex
     )
 
     val view = LocalView.current
@@ -35,10 +35,8 @@ fun ScheduleRutMiitTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.isNavigationBarContrastEnforced = false
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                !isDarkTheme
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
-                !isDarkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !isDarkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !isDarkTheme
         }
     }
 
@@ -66,7 +64,7 @@ fun getCurrentColorScheme(
     isUsedAmoledTheme: Boolean,
     decorColorIndex: Int
 ): ColorScheme {
-    val currentColorTheme = colorThemes[decorColorIndex] ?: defaultColorTheme
+    val currentColorTheme = themes[decorColorIndex] ?: defaultTheme
 
     val colorTheme = when {
         isUsedAmoledTheme -> amoledColorScheme.copy(
