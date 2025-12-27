@@ -41,7 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,12 +60,14 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.EventTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDialog(
+    appUiState: AppUiState,
     event: Event,
     eventExtraData: EventExtraData?,
     scheduleEntity: ScheduleEntity,
@@ -80,24 +82,15 @@ fun EventDialog(
     var showEventDeleteDialog by remember { mutableStateOf(false) }
     var showEventHideDialog by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
     var tag by remember { mutableIntStateOf(eventExtraData?.tag ?: 0) }
     var comment by remember { mutableStateOf(eventExtraData?.comment ?: "") }
 
-    val startTime = "${
-        event.startDatetime!!.toLocaleTimeWithTimeZone()
-    }"
-    val endTime = "${
-        event.endDatetime!!.toLocaleTimeWithTimeZone()
-    }"
-
     val subtitle = StringBuilder().apply {
-        append("$startTime - $endTime")
+        append("${event.startDatetime!!.toLocaleTimeWithTimeZone()} - ${event.endDatetime!!.toLocaleTimeWithTimeZone()}")
         event.typeName?.let {
             append("  |  ")
             append(it)
         }
-
     }.toString()
 
     if (isSavedSchedule) {
@@ -119,41 +112,43 @@ fun EventDialog(
                 actions = {
                     IconButton(
                         onClick = {
-                            val eventString = StringBuilder().apply {
-                                append("${context.getString(R.string._class)}: ${event.name}")
-                                event.typeName?.let {
-                                    append("\n${context.getString(R.string.class_type)}: $it")
-                                }
-                                append("\n${context.getString(R.string.time)}: $startTime - $endTime")
-
-                                event.timeSlotName?.let {
-                                    append(" ($it)")
-                                }
-
-                                if (!event.rooms.isNullOrEmpty()) {
-                                    append("\n${context.getString(R.string.place)}: ${event.rooms.joinToString { it.name.toString() }}")
-                                }
-
-                                if (!event.lecturers.isNullOrEmpty()) {
-                                    append("\n${context.getString(R.string.lecturers)}: ${event.lecturers.joinToString { it.shortFio.toString() }}")
-                                }
-
-                                if (!event.groups.isNullOrEmpty()) {
-                                    append("\n${context.getString(R.string.groups)}: ${event.groups.joinToString { it.name.toString() }}")
-                                }
-                            }
                             val sendIntent: Intent = Intent().apply {
                                 action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, eventString.toString())
+                                putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    event.customToString(appUiState.context)
+                                )
                                 type = "text/plain"
                             }
                             val shareIntent = Intent.createChooser(sendIntent, null)
-                            context.startActivity(shareIntent)
+                            appUiState.context.startActivity(shareIntent)
                         }
                     ) {
                         Icon(
                             modifier = Modifier.size(24.dp),
                             imageVector = ImageVector.vectorResource(R.drawable.share),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    IconButton(
+                        onClick = {
+                            var eventString = event.customToString(appUiState.context)
+                            if (comment.isNotEmpty()) {
+                                eventString += "\n${appUiState.context.getString(R.string.comment)}: $comment"
+                            }
+                            val sendIntent: Intent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, eventString)
+                                type = "text/plain"
+                            }
+                            val shareIntent = Intent.createChooser(sendIntent, null)
+                            appUiState.context.startActivity(shareIntent)
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.share_with_comment),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onBackground
                         )
@@ -190,7 +185,7 @@ fun EventDialog(
         ) {
             if (!event.groups.isNullOrEmpty()) {
                 ColumnGroup(
-                    title = context.getString(R.string.groups),
+                    title = stringResource(R.string.groups),
                     titleColor = MaterialTheme.colorScheme.primary,
                     withBackground = false,
                     items = listOf {
@@ -238,7 +233,7 @@ fun EventDialog(
             }
             if (!event.rooms.isNullOrEmpty()) {
                 ColumnGroup(
-                    title = context.getString(R.string.room),
+                    title = stringResource(R.string.room),
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = event.rooms.map { room ->
                         {
@@ -264,7 +259,7 @@ fun EventDialog(
             }
             if (!event.lecturers.isNullOrEmpty()) {
                 ColumnGroup(
-                    title = context.getString(R.string.lecturers),
+                    title = stringResource(R.string.lecturers),
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = event.lecturers.map { lecturer ->
                         {
@@ -294,7 +289,7 @@ fun EventDialog(
             }
             if (isSavedSchedule) {
                 ColumnGroup(
-                    title = context.getString(R.string.comment),
+                    title = stringResource(R.string.comment),
                     titleColor = MaterialTheme.colorScheme.primary,
                     withBackground = false,
                     items = listOf {
@@ -303,15 +298,12 @@ fun EventDialog(
                                 .fillMaxWidth()
                                 .height(100.dp),
                             value = comment,
-                            onValueChanged = { newValue ->
-                                comment = newValue
-                            },
                             keyboardOptions = KeyboardOptions(
                                 autoCorrectEnabled = false,
                                 imeAction = ImeAction.Default
                             ),
                             maxSymbols = 100,
-                            placeholderText = context.getString(R.string.enter_comment),
+                            placeholderText = stringResource(R.string.enter_comment),
                             trailingIcon = {
                                 AnimatedVisibility(
                                     visible = comment != "",
@@ -336,11 +328,13 @@ fun EventDialog(
                                     }
                                 }
                             }
-                        )
+                        ) { newValue ->
+                            comment = newValue
+                        }
                     }
                 )
                 ColumnGroup(
-                    title = context.getString(R.string.tag),
+                    title = stringResource(R.string.tag),
                     titleColor = MaterialTheme.colorScheme.primary,
                     withBackground = false,
                     items = listOf {
@@ -358,8 +352,8 @@ fun EventDialog(
     if (showEventDeleteDialog) {
         CustomAlertDialog(
             dialogIcon = ImageVector.vectorResource(R.drawable.delete),
-            dialogTitle = "${context.getString(R.string.delete_event)}?",
-            dialogText = context.getString(R.string.event_deleting_alert),
+            dialogTitle = "${stringResource(R.string.delete_event)}?",
+            dialogText = stringResource(R.string.event_deleting_alert),
             onDismissRequest = {
                 showEventDeleteDialog = false
             },
@@ -372,8 +366,8 @@ fun EventDialog(
     if (showEventHideDialog) {
         CustomAlertDialog(
             dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),
-            dialogTitle = "${context.getString(R.string.hide_event)}?",
-            dialogText = context.getString(R.string.event_visibility_alert),
+            dialogTitle = "${stringResource(R.string.hide_event)}?",
+            dialogText = stringResource(R.string.event_visibility_alert),
             onDismissRequest = {
                 showEventHideDialog = false
             },
