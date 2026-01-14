@@ -21,6 +21,10 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedSch
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
+import com.egormelnikoff.schedulerutmiit.data.exception.ScheduleLoadException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.time.temporal.WeekFields
@@ -99,7 +103,7 @@ interface ScheduleRepos {
     suspend fun updateSavedNamedSchedule(
         namedScheduleEntity: NamedScheduleEntity,
         onStartUpdate: (() -> Unit)? = null,
-        onShowUpdating: (suspend () -> Unit)? = null
+        onFakeUpdating: (suspend () -> Unit)? = null
     ): Result<String>
 
     suspend fun isEventAddingUnavailable(
@@ -261,44 +265,49 @@ class ScheduleReposImpl @Inject constructor(
         name: String,
         apiId: String,
         type: Int
-    ): Result<NamedScheduleFormatted> {
+    ): Result<NamedScheduleFormatted> = coroutineScope {
+
         when (val timetables = getTimetables(apiId = apiId, type = type)) {
-            is Result.Error -> {
-                return Result.Error(timetables.typedError)
-            }
+            is Result.Error -> Result.Error(timetables.typedError)
 
             is Result.Success -> {
                 if (timetables.data.timetables.isEmpty()) {
-                    return Result.Error(TypedError.EmptyBodyError)
+                    return@coroutineScope Result.Error(TypedError.EmptyBodyError)
                 }
-                val schedules = mutableListOf<Schedule>()
-                timetables.data.timetables.forEach { timetable ->
-                    val schedule = apiHelper.callApiWithExceptions(
-                        fetchDataType = "Schedule",
-                        message = "Type: $type; ApiId: $apiId; TimetableId: ${timetable.id}"
-                    ) {
-                        miitApi.getSchedule(type.getApiTypeById(), apiId, timetable.id)
-                    }
 
-                    when (schedule) {
-                        is Result.Success -> {
-                            schedules.add(schedule.data.fixApiIssuance(apiId, timetable))
-                        }
+                val deferredSchedules = timetables.data.timetables.map { timetable ->
+                    async {
+                        apiHelper.callApiWithExceptions(
+                            fetchDataType = "Schedule",
+                            message = "Type: $type; ApiId: $apiId; TimetableId: ${timetable.id}"
+                        ) {
+                            miitApi.getSchedule(type.getApiTypeById(), apiId, timetable.id)
+                        }.let { result ->
+                            when (result) {
+                                is Result.Success -> result.data.fixApiIssuance(apiId, timetable)
 
-                        is Result.Error -> {
-                            return Result.Error(schedule.typedError)
+                                is Result.Error -> {
+                                    throw ScheduleLoadException(result.typedError)
+                                }
+                            }
                         }
                     }
                 }
-                return Result.Success(
-                    schedules.migrateToNewModel(
-                        id = primaryKeyNamedSchedule,
-                        name = name,
-                        apiId = apiId,
-                        type = type,
-                        lastTimeUpdate = System.currentTimeMillis()
+
+                return@coroutineScope try {
+                    val schedules = deferredSchedules.awaitAll()
+                    Result.Success(
+                        schedules.migrateToNewModel(
+                            id = primaryKeyNamedSchedule,
+                            name = name,
+                            apiId = apiId,
+                            type = type,
+                            lastTimeUpdate = System.currentTimeMillis()
+                        )
                     )
-                )
+                } catch (e: ScheduleLoadException) {
+                    Result.Error(e.error)
+                }
             }
         }
     }
@@ -323,14 +332,15 @@ class ScheduleReposImpl @Inject constructor(
     override suspend fun updateSavedNamedSchedule(
         namedScheduleEntity: NamedScheduleEntity,
         onStartUpdate: (() -> Unit)?,
-        onShowUpdating: (suspend () -> Unit)?
+        onFakeUpdating: (suspend () -> Unit)?
     ): Result<String> {
-        if (shouldUpdateNamedSchedule(namedScheduleEntity)) {
+        return if (shouldUpdateNamedSchedule(namedScheduleEntity)) {
             onStartUpdate?.invoke()
-            return performNamedScheduleUpdate(namedScheduleEntity)
+            performNamedScheduleUpdate(namedScheduleEntity)
+        } else {
+            onFakeUpdating?.invoke()
+            Result.Success("No schedule update required")
         }
-        onShowUpdating?.invoke()
-        return Result.Success("No schedule update required")
     }
 
     private fun shouldUpdateNamedSchedule(namedScheduleEntity: NamedScheduleEntity): Boolean {
@@ -508,7 +518,7 @@ class ScheduleReposImpl @Inject constructor(
         return fixedSchedule
     }
 
-    private fun MutableList<Schedule>.migrateToNewModel(
+    private fun List<Schedule>.migrateToNewModel(
         id: Long,
         name: String,
         apiId: String,
