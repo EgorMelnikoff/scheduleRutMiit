@@ -92,28 +92,26 @@ class ScheduleViewModelImpl @Inject constructor(
                 isError = false,
             )
             val savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules()
-            val defaultNamedScheduleEntity = savedNamedSchedules.find { namedScheduleEntity ->
-                primaryKeyNamedSchedule?.let {
-                    namedScheduleEntity.id == it
-                } ?: namedScheduleEntity.isDefault
+            val namedScheduleEntity = savedNamedSchedules.find { entity ->
+                primaryKeyNamedSchedule?.let { entity.id == it } ?: entity.isDefault
             } ?: savedNamedSchedules.firstOrNull()
 
-            defaultNamedScheduleEntity?.let { namedScheduleEntity ->
-                if (updating) scheduleRepos.updateSavedNamedSchedule(
+            if (namedScheduleEntity != null && updating) {
+                scheduleRepos.updateSavedNamedSchedule(
                     namedScheduleEntity = namedScheduleEntity,
-                    onShowUpdating = { delay(500) }
+                    onFakeUpdating = { delay(500) }
                 )
             }
             updateState(
                 savedNamedSchedules = scheduleRepos.getAllSavedNamedSchedules(),
-                currentNamedSchedule = defaultNamedScheduleEntity?.let {
+                currentNamedSchedule = namedScheduleEntity?.let {
                     scheduleRepos.getSavedNamedScheduleById(
                         primaryKeyNamedSchedule = it.id
                     )
                 },
                 isLoading = false,
                 isUpdating = false,
-                isSaved = defaultNamedScheduleEntity != null,
+                isSaved = namedScheduleEntity != null,
             )
             if (isDataLoading.value) _isDataLoading.value = false
         }
