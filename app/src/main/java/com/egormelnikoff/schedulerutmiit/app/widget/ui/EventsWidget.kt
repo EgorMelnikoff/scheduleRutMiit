@@ -14,7 +14,6 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.cornerRadius
@@ -39,7 +38,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.egormelnikoff.schedulerutmiit.MainActivity
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
@@ -116,15 +114,6 @@ class EventsWidget : GlanceAppWidget() {
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .clickable(
-                    onClick = actionStartActivity(MainActivity::class.java)
-                )
-                .background(
-                    imageProvider = ImageProvider(R.drawable.large_rounded),
-                    colorFilter = ColorFilter.tint(
-                        GlanceTheme.colors.background
-                    )
-                )
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.CenterHorizontally
