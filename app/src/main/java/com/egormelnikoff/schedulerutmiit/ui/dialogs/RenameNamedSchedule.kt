@@ -7,7 +7,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -41,8 +40,7 @@ import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActio
 fun RenameDialog(
     namedScheduleEntity: NamedScheduleEntity,
     navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions,
-    externalPadding: PaddingValues
+    scheduleActions: ScheduleActions
 ) {
     var newName by remember { mutableStateOf(namedScheduleEntity.fullName) }
     Scaffold(
@@ -60,7 +58,7 @@ fun RenameDialog(
                 .fillMaxSize()
                 .padding(
                     top = innerPadding.calculateTopPadding(),
-                    bottom = externalPadding.calculateBottomPadding(),
+                    bottom = innerPadding.calculateBottomPadding(),
                     start = 16.dp, end = 16.dp
                 )
                 .background(MaterialTheme.colorScheme.background)

@@ -1,7 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
@@ -19,10 +18,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -81,21 +78,15 @@ fun CustomTopAppBar(
 @Composable
 fun ScheduleTopAppBar(
     navigateToAddEvent: (ScheduleEntity) -> Unit,
-    onShowExpandedMenu: ((Boolean) -> Unit)?,
     onSetScheduleView: (Boolean) -> Unit,
     onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit,
 
     namedScheduleData: NamedScheduleData,
     calendarView: Boolean,
-    isSavedSchedule: Boolean,
-    expandedSchedulesMenu: Boolean?
+    isSavedSchedule: Boolean
 ) {
     val isNotEmpty = namedScheduleData.namedSchedule!!.schedules.isNotEmpty() && namedScheduleData.scheduleData?.scheduleEntity != null
-    val isSomeSchedules = namedScheduleData.namedSchedule.schedules.size > 1
     val isCustomSchedule = namedScheduleData.namedSchedule.namedScheduleEntity.type == 3
-    val rotationAngle by animateFloatAsState(
-        targetValue = if (expandedSchedulesMenu == true) 180f else 0f
-    )
 
     CustomTopAppBar(
         titleContent = {
@@ -103,7 +94,7 @@ fun ScheduleTopAppBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
                         text = namedScheduleData.namedSchedule.namedScheduleEntity.shortName,
@@ -119,24 +110,6 @@ fun ScheduleTopAppBar(
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
-                        )
-                    }
-                }
-                if (isSomeSchedules) {
-                    IconButton(
-                        onClick = {
-                            expandedSchedulesMenu?.let { onShowExpandedMenu?.invoke(!it) }
-                        }
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .graphicsLayer(
-                                    rotationZ = rotationAngle
-                                )
-                                .size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.down),
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            contentDescription = null
                         )
                     }
                 }

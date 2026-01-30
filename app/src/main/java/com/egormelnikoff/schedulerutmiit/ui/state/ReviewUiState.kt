@@ -8,17 +8,24 @@ import androidx.compose.runtime.setValue
 
 data class ReviewUiState(
     val visibleSavedSchedules: Boolean,
-    val onChangeVisibilitySavedSchedules: (Boolean) -> Unit
+    val visibleServices: Boolean,
+    val onChangeVisibilitySavedSchedules: (Boolean) -> Unit,
+    val onChangeVisibilityServices: (Boolean) -> Unit
 ) {
     companion object {
         @Composable
         fun reviewUiState(): ReviewUiState {
             var visibleSavedSchedules by remember { mutableStateOf(true) }
+            var visibleServices by remember { mutableStateOf(true) }
 
             return ReviewUiState(
                 visibleSavedSchedules = visibleSavedSchedules,
+                visibleServices = visibleServices,
                 onChangeVisibilitySavedSchedules = { newValue ->
                     visibleSavedSchedules = newValue
+                },
+                onChangeVisibilityServices = { newValue ->
+                    visibleServices = newValue
                 }
             )
         }

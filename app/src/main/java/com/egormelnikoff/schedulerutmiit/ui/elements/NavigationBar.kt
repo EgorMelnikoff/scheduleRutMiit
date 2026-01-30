@@ -51,15 +51,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.Grey
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.Red
-import com.egormelnikoff.schedulerutmiit.ui.theme.isDarkTheme
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
-import kotlinx.coroutines.launch
 
 data class BarItem(
     val title: String,
@@ -71,44 +66,12 @@ data class BarItem(
 
 @Composable
 fun CustomNavigationBar(
-    appUiState: AppUiState,
-    scheduleState: ScheduleState,
-    scheduleUiState: ScheduleUiState?,
-    appSettings: AppSettings
+    barItems: Array<BarItem>,
+    appBackStack: AppBackStack<Route.Page>,
+    isDarkTheme: Boolean
 ) {
-    val barItems = barItems(
-        onScheduleClick = {
-            appUiState.scope.launch {
-                when {
-                    scheduleUiState != null && scheduleState.currentNamedScheduleData?.scheduleData?.schedulePagerData != null && appSettings.calendarView -> {
-                        scheduleUiState.onSelectDate(
-                            scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate
-                        )
-                        scheduleUiState.pagerWeeksState.animateScrollToPage(
-                            scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.weeksStartIndex
-                        )
-                    }
-
-                    scheduleUiState != null && !appSettings.calendarView -> {
-                        scheduleUiState.scheduleListState.animateScrollToItem(0)
-                    }
-                }
-            }
-        },
-        onNewsClick = {
-            appUiState.scope.launch {
-                appUiState.newsListState.animateScrollToItem(0)
-            }
-        },
-        onSettingsClick = {
-            appUiState.scope.launch {
-                appUiState.settingsListState.animateScrollToItem(0)
-            }
-        }
-    )
-
     val indicatorOffset by animateDpAsState(
-        targetValue = 68.dp * appUiState.appBackStack.lastPage().index,
+        targetValue = 68.dp * appBackStack.lastPage().index,
         animationSpec = tween(200, easing = LinearOutSlowInEasing)
     )
 
@@ -139,7 +102,7 @@ fun CustomNavigationBar(
                     enabled = false
                 ) {}
                 .let {
-                    if (appSettings.theme.isDarkTheme()) {
+                    if (isDarkTheme) {
                         it.border(
                             width = 0.5.dp,
                             shape = CircleShape,
@@ -186,17 +149,13 @@ fun CustomNavigationBar(
                 barItems.forEach { barItem ->
                     CustomNavigationItem(
                         barItem = barItem,
-                        isSelected = appUiState.appBackStack.lastPage() == barItem.route,
+                        isSelected = appBackStack.lastPage() == barItem.route,
                         showBadge = false,
                         onClick = {
-                            if (barItem.route == appUiState.appBackStack.lastPage()) {
-                                if (appUiState.appBackStack.last() is Route.Dialog) {
-                                    appUiState.appBackStack.onBack()
-                                } else {
-                                    barItem.onClick?.invoke()
-                                }
+                            if (barItem.route == appBackStack.lastPage()) {
+                                barItem.onClick?.invoke()
                             } else {
-                                appUiState.appBackStack.navigateToPage(barItem.route)
+                                appBackStack.openPage(barItem.route)
                             }
                         }
                     )

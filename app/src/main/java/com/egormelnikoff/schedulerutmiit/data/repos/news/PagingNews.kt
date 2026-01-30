@@ -6,6 +6,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_MIIT_URL
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 
@@ -28,8 +29,8 @@ class PagingNewsSource (
         val pageSize = params.loadSize
 
         val response = apiHelper.callApiWithExceptions(
-            fetchDataType = "News list",
-            message = "From page: $currentPage; To page: $currentPage"
+            requestType = "News list",
+            requestParams = "From page: $currentPage; To page: $currentPage"
         ) {
             miitApi.getNewsList(pageSize, currentPage, currentPage)
         }
@@ -45,7 +46,7 @@ class PagingNewsSource (
                 val updatedItems = response.data.items
                     .filter { it.secondary.text != "Наши защиты" }
                     .map { newsShort ->
-                        newsShort.apply { thumbnail = "https://www.miit.ru$thumbnail" }
+                        newsShort.apply { thumbnail = "$BASE_MIIT_URL$thumbnail" }
                     }
 
                 LoadResult.Page(

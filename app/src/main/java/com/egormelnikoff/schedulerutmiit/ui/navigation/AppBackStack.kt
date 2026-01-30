@@ -2,27 +2,35 @@ package com.egormelnikoff.schedulerutmiit.ui.navigation
 
 import androidx.compose.runtime.mutableStateListOf
 
-class AppBackStack<T : Route>(
-    startRoute: T
+class AppBackStack<T : Route.Page>(
+    private val startRoute: T
 ) {
-    val backStack = mutableStateListOf<Route>(startRoute)
+    val pageBackStack = mutableStateListOf<Route.Page>(startRoute)
 
-    fun last() = backStack.last()
+    val dialogBackStack = mutableStateListOf<Route.Dialog>(Route.Dialog.Empty)
 
-    fun lastPage(): Route.Page {
-        return backStack.last { it is Route.Page } as Route.Page
+    fun openPage(page: Route.Page) {
+        when {
+            pageBackStack.size == 1 -> pageBackStack.add(page)
+            page == startRoute -> pageBackStack.removeAt(pageBackStack.lastIndex)
+            else -> pageBackStack[pageBackStack.lastIndex] = page
+        }
+    }
+
+    fun openDialog(dialog: Route.Dialog) {
+        dialogBackStack.add(dialog)
     }
 
     fun onBack() {
-        backStack.removeAt(backStack.lastIndex)
+        if (dialogBackStack.size > 1) {
+            dialogBackStack.removeAt(dialogBackStack.lastIndex)
+            return
+        }
+
+        if (pageBackStack.size > 1) {
+            pageBackStack.removeAt(pageBackStack.lastIndex)
+        }
     }
 
-    fun navigateToPage(page: Route.Page) {
-        backStack.removeIf { it is Route.Dialog }
-        backStack[backStack.lastIndex] = page
-    }
-
-    fun navigateToDialog(dialog: Route.Dialog) {
-        backStack.add(dialog)
-    }
+    fun lastPage(): Route.Page = pageBackStack.last()
 }

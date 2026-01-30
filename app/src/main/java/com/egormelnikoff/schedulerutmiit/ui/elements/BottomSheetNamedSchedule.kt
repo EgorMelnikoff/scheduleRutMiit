@@ -1,5 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,26 +18,33 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
+import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModalDialogNamedSchedule(
     namedScheduleEntity: NamedScheduleEntity,
-    scheduleData: ScheduleData? = null,
+    appUiState: AppUiState? = null,
+    scheduleActions: ScheduleActions? = null,
+    namedScheduleData: NamedScheduleData? = null,
     navigateToRenameDialog: (() -> Unit)? = null,
     navigateToHiddenEvents: ((ScheduleEntity) -> Unit)? = null,
-    onDownloadCurrentSchedule: (() -> Unit)? = null,
     onOpenNamedSchedule: (() -> Unit)? = null,
     onSetDefaultNamedSchedule: (() -> Unit)? = null,
     onDeleteNamedSchedule: (() -> Unit)? = null,
@@ -42,8 +52,9 @@ fun ModalDialogNamedSchedule(
     onSaveCurrentNamedSchedule: (() -> Unit)? = null,
     onDismiss: (NamedScheduleEntity?) -> Unit
 ) {
+    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     CustomModalBottomSheet(
-        modifier = Modifier.padding(horizontal = 8.dp),
+        modifier = Modifier.padding(horizontal = 12.dp),
         onDismiss = {
             onDismiss(null)
         }
@@ -57,35 +68,11 @@ fun ModalDialogNamedSchedule(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    text = namedScheduleEntity.fullName,
+                    text = namedScheduleEntity.shortName,
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
-                )
-                if (scheduleData?.scheduleEntity != null && namedScheduleEntity.type != 3) {
-                    Text(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        text = scheduleData.scheduleEntity.typeName,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                }
-            }
-            onDownloadCurrentSchedule?.let {
-                NamedScheduleIconButton(
-                    onClick = {
-                        onDownloadCurrentSchedule()
-                    },
-                    colors = IconButtonDefaults.iconButtonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onBackground
-                    ),
-                    icon = ImageVector.vectorResource(R.drawable.download),
-                    contentDescription = stringResource(R.string.download)
                 )
             }
             navigateToRenameDialog?.let {
@@ -118,56 +105,170 @@ fun ModalDialogNamedSchedule(
             }
         }
         Spacer(modifier = Modifier.height(0.dp))
-        if (navigateToHiddenEvents != null && scheduleData?.scheduleEntity != null) {
-            ActionDialogButton(
-                icon = ImageVector.vectorResource(R.drawable.visibility_off),
-                title = stringResource(R.string.hidden_events),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            ) {
-                navigateToHiddenEvents(scheduleData.scheduleEntity)
-                onDismiss(null)
-            }
+        if (appUiState != null && scheduleActions != null) {
+            ColumnGroup(
+                items = namedScheduleData?.namedSchedule?.schedules?.map { schedule ->
+                    {
+                        val scale by animateFloatAsState(
+                            targetValue = if (schedule.scheduleEntity.isDefault) 1f else 0f
+                        )
+                        ClickableItem(
+                            title = schedule.scheduleEntity.typeName,
+                            titleLabel = {
+                                Text(
+                                    modifier = Modifier
+                                        .graphicsLayer(scaleX = scale, scaleY = scale)
+                                        .background(
+                                            MaterialTheme.colorScheme.primary,
+                                            CircleShape
+                                        )
+                                        .padding(horizontal = 4.dp, vertical = 2.dp),
+                                    text = stringResource(R.string._default),
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            },
+                            subtitle = "${schedule.scheduleEntity.startDate.format(formatter)} - ${
+                                schedule.scheduleEntity.endDate.format(
+                                    formatter
+                                )
+                            }",
+                            verticalPadding = 8.dp,
+                            trailingIcon = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    if (!schedule.scheduleEntity.isDefault) {
+                                        IconButton(
+                                            onClick = {
+                                                scheduleActions.onSetDefaultSchedule(
+                                                    namedScheduleData.namedSchedule.namedScheduleEntity.id,
+                                                    schedule.scheduleEntity.id,
+                                                    schedule.scheduleEntity.timetableId
+                                                )
+                                            },
+                                            colors = IconButtonDefaults.iconButtonColors().copy(
+                                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                                contentColor = MaterialTheme.colorScheme.onBackground
+                                            )
+                                        ) {
+                                            Icon(
+                                                modifier = Modifier.size(24.dp),
+                                                imageVector = ImageVector.vectorResource(R.drawable.check),
+                                                contentDescription = null
+                                            )
+                                        }
+                                    }
+                                    schedule.scheduleEntity.downloadUrl?.let {
+                                        IconButton(
+                                            onClick = {
+                                                appUiState.uriHandler.openUri(
+                                                    schedule.scheduleEntity.downloadUrl
+                                                )
+                                            },
+                                            colors = IconButtonDefaults.iconButtonColors().copy(
+                                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                                contentColor = MaterialTheme.colorScheme.onBackground
+                                            )
+                                        ) {
+                                            Icon(
+                                                modifier = Modifier.size(24.dp),
+                                                imageVector = ImageVector.vectorResource(R.drawable.download),
+                                                contentDescription = null
+                                            )
+                                        }
+                                    }
+                                    if (namedScheduleData.scheduleData?.schedulePagerData!!.today > schedule.scheduleEntity.endDate) {
+                                        IconButton(
+                                            onClick = {
+
+                                            },
+                                            colors = IconButtonDefaults.iconButtonColors().copy(
+                                                containerColor = MaterialTheme.colorScheme.error,
+                                                contentColor = MaterialTheme.colorScheme.onPrimary
+                                            )
+                                        ) {
+                                            Icon(
+                                                modifier = Modifier.size(24.dp),
+                                                imageVector = ImageVector.vectorResource(R.drawable.delete),
+                                                contentDescription = null
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    }
+                } ?: listOf()
+            )
+            Spacer(modifier = Modifier.height(0.dp))
         }
-        onSaveCurrentNamedSchedule?.let {
-            ActionDialogButton(
-                icon = ImageVector.vectorResource(R.drawable.save),
-                title = stringResource(R.string.save),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            ) {
-                onSaveCurrentNamedSchedule()
-                onDismiss(null)
+        ColumnGroup(
+            items = buildList {
+                if (navigateToHiddenEvents != null && namedScheduleData?.scheduleData?.scheduleEntity != null) {
+                    add {
+                        ActionDialogButton(
+                            icon = ImageVector.vectorResource(R.drawable.visibility_off),
+                            title = stringResource(R.string.hidden_events),
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ) {
+                            navigateToHiddenEvents(namedScheduleData.scheduleData.scheduleEntity)
+                            onDismiss(null)
+                        }
+                    }
+                }
+                onSaveCurrentNamedSchedule?.let {
+                    add {
+                        ActionDialogButton(
+                            icon = ImageVector.vectorResource(R.drawable.save),
+                            title = stringResource(R.string.save),
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ) {
+                            onSaveCurrentNamedSchedule()
+                            onDismiss(null)
+                        }
+                    }
+                }
+                onOpenNamedSchedule?.let {
+                    add {
+                        ActionDialogButton(
+                            icon = ImageVector.vectorResource(R.drawable.open),
+                            title = stringResource(R.string.open),
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ) {
+                            onOpenNamedSchedule()
+                            onDismiss(null)
+                        }
+                    }
+                }
+                onSetDefaultNamedSchedule?.let {
+                    add {
+                        ActionDialogButton(
+                            icon = ImageVector.vectorResource(R.drawable.check),
+                            title = stringResource(R.string.make_default),
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ) {
+                            onSetDefaultNamedSchedule()
+                            onDismiss(null)
+                        }
+                    }
+                }
+                onLoadInitialData?.let {
+                    add {
+                        ActionDialogButton(
+                            icon = ImageVector.vectorResource(R.drawable.back),
+                            title = stringResource(R.string.return_default),
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ) {
+                            onLoadInitialData()
+                            onDismiss(null)
+                        }
+                    }
+                }
             }
-        }
-        onOpenNamedSchedule?.let {
-            ActionDialogButton(
-                icon = ImageVector.vectorResource(R.drawable.open),
-                title = stringResource(R.string.open),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            ) {
-                onOpenNamedSchedule()
-                onDismiss(null)
-            }
-        }
-        onSetDefaultNamedSchedule?.let {
-            ActionDialogButton(
-                icon = ImageVector.vectorResource(R.drawable.check),
-                title = stringResource(R.string.make_default),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            ) {
-                onSetDefaultNamedSchedule()
-                onDismiss(null)
-            }
-        }
-        onLoadInitialData?.let {
-            ActionDialogButton(
-                icon = ImageVector.vectorResource(R.drawable.back),
-                title = stringResource(R.string.return_default),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            ) {
-                onLoadInitialData()
-                onDismiss(null)
-            }
-        }
+        )
     }
 }
 

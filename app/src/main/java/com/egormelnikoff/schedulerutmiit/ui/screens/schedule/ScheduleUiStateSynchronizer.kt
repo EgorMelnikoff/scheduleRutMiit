@@ -17,7 +17,6 @@ fun ScheduleUiStateSynchronizer(
             scheduleState.currentNamedScheduleData.namedSchedule?.namedScheduleEntity?.apiId,
             scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.timetableId
         ) {
-            scheduleUiState.onExpandSchedulesMenu(false)
             scheduleUiState.pagerDaysState.scrollToPage(
                 scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.daysStartIndex
             )

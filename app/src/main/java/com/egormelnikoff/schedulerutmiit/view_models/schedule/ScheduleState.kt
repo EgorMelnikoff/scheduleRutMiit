@@ -3,11 +3,6 @@ package com.egormelnikoff.schedulerutmiit.view_models.schedule
 import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 
-sealed interface UiEvent {
-    data class ErrorMessage(val message: String) : UiEvent
-    data class InfoMessage(val message: String) : UiEvent
-}
-
 @Keep
 data class ScheduleState(
     val savedNamedSchedules: List<NamedScheduleEntity> = emptyList(),

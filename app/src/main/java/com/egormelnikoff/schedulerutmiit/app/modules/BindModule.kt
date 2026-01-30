@@ -14,8 +14,6 @@ import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleReposImpl
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchReposImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.settings.SettingsRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.settings.SettingsReposImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,9 +31,6 @@ abstract class BindModule {
     @Singleton
     abstract fun bindSearchRepos(searchReposImpl: SearchReposImpl): SearchRepos
 
-    @Binds
-    @Singleton
-    abstract fun bindSettingsRepos(settingsReposImpl: SettingsReposImpl): SettingsRepos
 
     @Binds
     @Singleton

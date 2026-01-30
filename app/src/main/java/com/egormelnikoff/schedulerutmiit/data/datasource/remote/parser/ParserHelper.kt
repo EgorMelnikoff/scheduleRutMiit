@@ -1,34 +1,40 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser
 
-import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkLogger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Document
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
 class ParserHelper @Inject constructor(
-    private val logger: Logger
+    private val networkLogger: NetworkLogger
 ) {
-    companion object {
-        private const val BASE_URL = "https://www.miit.ru/people?"
-        const val PEOPLE = "${BASE_URL}query="
-    }
-
     suspend fun callParserWithExceptions(
-        fetchDataType: String,
-        message: String,
+        requestType: String,
+        requestParams: String,
         call: suspend () -> Document
-    ): Result<Document> {
-        return try {
+    ): Result<Document> = withContext(Dispatchers.IO) {
+        try {
             val document = call()
-            logger.i("PARSER", "Success parsed data ($fetchDataType):\n$message")
+            networkLogger.logInfo(
+                message = "Success parsed data",
+                requestType = requestType,
+                requestParams = requestParams
+            )
             Result.Success(
                 data = document
             )
         } catch (e: HttpException) {
-            logger.e("PARSER", "Http error ($fetchDataType)", e)
+            networkLogger.logError(
+                message = "HttpException",
+                requestType = requestType,
+                requestParams = requestParams,
+                e = e
+            )
             Result.Error(
                 TypedError.HttpError(
                     code = e.code(),
@@ -36,14 +42,21 @@ class ParserHelper @Inject constructor(
                 )
             )
         } catch (e: IOException) {
-            logger.e("PARSER", "Network error ($fetchDataType)", e)
+            networkLogger.logError(
+                message = "IOException",
+                requestType = requestType,
+                requestParams = requestParams,
+                e = e
+            )
             Result.Error(TypedError.NetworkError(e))
         } catch (e: IllegalArgumentException) {
-            logger.e("PARSER", "Illegal argument error ($fetchDataType)", e)
+            networkLogger.logError(
+                message = "IllegalArgumentException",
+                requestType = requestType,
+                requestParams = requestParams,
+                e = e
+            )
             Result.Error(TypedError.IllegalArgumentError(e))
-        } catch (e: Throwable) {
-            logger.e("PARSER", "Unexpected error ($fetchDataType)", e)
-            Result.Error(TypedError.UnexpectedError(e))
         }
     }
 }

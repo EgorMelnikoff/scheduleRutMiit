@@ -11,24 +11,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions.Companion.scheduleActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.search.SearchActions.Companion.searchActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
-import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModelImpl
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModelImpl
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModelImpl
-import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModelImpl
+import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val scheduleViewModel: ScheduleViewModelImpl by viewModels()
-    private val searchViewModel: SearchViewModelImpl by viewModels()
-    private val newsViewModel: NewsViewModelImpl by viewModels()
-    private val settingsViewModel: SettingsViewModelImpl by viewModels()
+    private val scheduleViewModel: ScheduleViewModel by viewModels()
+    private val newsViewModel: NewsViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by viewModels()
 
     private lateinit var scheduleActions: ScheduleActions
-    private lateinit var searchActions: SearchActions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -42,10 +37,6 @@ class MainActivity : ComponentActivity() {
             scheduleViewModel = scheduleViewModel
         )
 
-        searchActions = searchActions(
-            searchViewModel = searchViewModel
-        )
-
         setContent {
             val appSettings by settingsViewModel.appSettings.collectAsStateWithLifecycle()
 
@@ -55,12 +46,10 @@ class MainActivity : ComponentActivity() {
                     decorColorIndex = settings.decorColorIndex
                 ) {
                     ScheduleRutMiitApp(
-                        searchViewModel = searchViewModel,
                         scheduleViewModel = scheduleViewModel,
                         newsViewModel = newsViewModel,
                         settingsViewModel = settingsViewModel,
                         scheduleActions = scheduleActions,
-                        searchActions = searchActions,
                         appSettings = settings
                     )
                 }

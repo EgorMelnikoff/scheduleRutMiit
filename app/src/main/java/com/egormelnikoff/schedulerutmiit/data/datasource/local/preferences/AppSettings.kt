@@ -3,7 +3,8 @@ package com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences
 data class AppSettings(
     val theme: String,
     val decorColorIndex: Int,
-    val calendarView: Boolean,
+    val scheduleView: Boolean,
+    val schedulesDeletable: Boolean,
     val showCountClasses: Boolean,
     val eventView: EventView
 )

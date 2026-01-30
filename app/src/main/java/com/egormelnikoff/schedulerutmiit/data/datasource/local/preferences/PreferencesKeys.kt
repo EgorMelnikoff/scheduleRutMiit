@@ -8,6 +8,7 @@ object PreferencesKeys {
     val THEME = stringPreferencesKey(name = "theme")
     val DECOR_COLOR = intPreferencesKey(name = "decor_color")
     val SCHEDULE_VIEW = booleanPreferencesKey(name = "schedule_view")
+    val SCHEDULES_DELETABLE = booleanPreferencesKey(name = "schedules_deletable")
     val SHOW_COUNT_CLASSES = booleanPreferencesKey(name = "show_count_classes")
 
     val EVENT_GROUPS_VISIBILITY = booleanPreferencesKey(name = "event_groups_visibility")

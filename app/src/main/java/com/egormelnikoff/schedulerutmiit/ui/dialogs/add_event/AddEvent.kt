@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -68,8 +67,7 @@ fun AddEditEventDialog(
     appUiState: AppUiState,
     scheduleEntity: ScheduleEntity,
     navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions,
-    externalPadding: PaddingValues
+    scheduleActions: ScheduleActions
 ) {
     var currentInterval by remember {
         mutableIntStateOf(
@@ -186,8 +184,7 @@ fun AddEditEventDialog(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(
                     start = 16.dp, end = 16.dp,
-                    top = innerPadding.calculateTopPadding(),
-                    bottom = externalPadding.calculateBottomPadding()
+                    top = innerPadding.calculateTopPadding()
                 )
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)

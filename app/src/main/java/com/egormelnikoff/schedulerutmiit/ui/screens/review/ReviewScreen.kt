@@ -186,6 +186,25 @@ fun ReviewScreen(
                         )
                     }
                 }
+                item {
+                    ExpandedItem(
+                        title = stringResource(R.string.services),
+                        imageVector = ImageVector.vectorResource(R.drawable.review),
+                        visible = reviewUiState.visibleServices,
+                        onChangeVisibility = reviewUiState.onChangeVisibilityServices
+                    ) {
+                        ColumnGroup(
+                            items = listOf {
+                                ClickableItem(
+                                    title = stringResource(R.string.list_teachers),
+                                    onClick = {
+                                        navigationActions.navigateToCurriculumDialog()
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
             }
         } else {
             ErrorScreen(

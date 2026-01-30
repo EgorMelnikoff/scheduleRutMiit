@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.ui.dialogs
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -43,8 +42,7 @@ import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 @Composable
 fun InfoDialog(
     appUiState: AppUiState,
-    navigationActions: NavigationActions,
-    externalPadding: PaddingValues,
+    navigationActions: NavigationActions
 ) {
     val packageInfo = appUiState.context.packageManager.getPackageInfo(appUiState.context.packageName, 0)
 
@@ -64,7 +62,7 @@ fun InfoDialog(
                     start = 16.dp,
                     end = 16.dp,
                     top = innerPadding.calculateTopPadding(),
-                    bottom = externalPadding.calculateBottomPadding()
+                    bottom = innerPadding.calculateBottomPadding()
                 )
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -159,7 +157,7 @@ fun InfoDialog(
                 items = listOf {
                     ClickableItem(
                         title = AUTHOR,
-                        subtitle = stringResource(R.string.author),
+                        subtitle = stringResource(R.string.developer),
                         leadingIcon = {
                             LeadingTitle(
                                 title = AUTHOR

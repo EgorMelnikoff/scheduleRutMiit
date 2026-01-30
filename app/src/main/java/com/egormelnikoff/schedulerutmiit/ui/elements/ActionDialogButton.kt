@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -23,13 +24,15 @@ fun ActionDialogButton(
     icon: ImageVector,
     title: String,
     contentColor: Color,
+    containerColor: Color = Color.Unspecified,
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
+            .clip(MaterialTheme.shapes.large)
             .clickable(onClick = onClick)
+            .background(containerColor)
             .padding(horizontal = 8.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)

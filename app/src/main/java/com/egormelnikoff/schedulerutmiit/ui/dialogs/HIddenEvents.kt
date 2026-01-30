@@ -36,8 +36,7 @@ fun HiddenEventsDialog(
     scheduleEntity: ScheduleEntity?,
     hiddenEvents: List<Event>,
     navigationActions: NavigationActions,
-    eventActions: EventActions,
-    externalPadding: PaddingValues
+    eventActions: EventActions
 ) {
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     val dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:MM")
@@ -56,7 +55,7 @@ fun HiddenEventsDialog(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             contentPadding = PaddingValues(
                 top = innerPadding.calculateTopPadding(),
-                bottom = externalPadding.calculateBottomPadding(),
+                bottom = innerPadding.calculateBottomPadding(),
                 start = 16.dp, end = 16.dp
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -116,7 +115,7 @@ fun HiddenEventsDialog(
                         title = "¯\\_(ツ)_/¯",
                         subtitle = stringResource(R.string.empty_here),
                         isBoldTitle = false,
-                        paddingBottom = externalPadding.calculateBottomPadding()
+                        paddingBottom = innerPadding.calculateBottomPadding()
                     )
                 }
             }
