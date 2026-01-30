@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -73,8 +72,7 @@ fun EventDialog(
     scheduleEntity: ScheduleEntity,
     isSavedSchedule: Boolean,
     navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions,
-    externalPadding: PaddingValues
+    scheduleActions: ScheduleActions
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
@@ -95,7 +93,7 @@ fun EventDialog(
 
     if (isSavedSchedule) {
         LaunchedEffect(comment, tag) {
-            delay(300)
+            delay(500)
             scheduleActions.eventActions.onEventExtraChange(event, comment, tag)
         }
     }
@@ -176,7 +174,7 @@ fun EventDialog(
                 .fillMaxSize()
                 .padding(
                     top = innerPadding.calculateTopPadding(),
-                    bottom = externalPadding.calculateBottomPadding(),
+                    bottom = innerPadding.calculateBottomPadding(),
                     start = 16.dp, end = 16.dp
                 )
                 .background(MaterialTheme.colorScheme.background)
@@ -207,6 +205,7 @@ fun EventDialog(
                                                 it.clickable(
                                                     onClick = {
                                                         navigationActions.navigateToSchedule()
+                                                        navigationActions.onBack()
                                                         scheduleActions.onGetNamedSchedule(
                                                             group.name!!,
                                                             group.id.toString(),
@@ -244,6 +243,7 @@ fun EventDialog(
                                 onClick = if (!event.isCustomEvent) {
                                     {
                                         navigationActions.navigateToSchedule()
+                                        navigationActions.onBack()
                                         scheduleActions.onGetNamedSchedule(
                                             room.name!!,
                                             room.id.toString(),
@@ -270,6 +270,7 @@ fun EventDialog(
                                 onClick = if (!event.isCustomEvent) {
                                     {
                                         navigationActions.navigateToSchedule()
+                                        navigationActions.onBack()
                                         scheduleActions.onGetNamedSchedule(
                                             lecturer.fullFio!!,
                                             lecturer.id.toString(),

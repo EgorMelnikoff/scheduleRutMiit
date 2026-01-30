@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.ui.dialogs
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,8 +39,7 @@ import java.time.format.DateTimeFormatter
 fun AddScheduleDialog(
     appUiState: AppUiState,
     navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions,
-    externalPadding: PaddingValues
+    scheduleActions: ScheduleActions
 ) {
     var nameSchedule by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf<LocalDate?>(null) }
@@ -69,6 +67,7 @@ fun AddScheduleDialog(
                                     endDate!!
                                 )
                                 navigationActions.navigateToSchedule()
+                                navigationActions.onBack()
                             } else {
                                 appUiState.scope.launch {
                                     appUiState.snackBarHostState.showSnackbar(
@@ -91,7 +90,7 @@ fun AddScheduleDialog(
                     start = 16.dp,
                     end = 16.dp,
                     top = innerPadding.calculateTopPadding(),
-                    bottom = externalPadding.calculateBottomPadding()
+                    bottom = innerPadding.calculateBottomPadding()
                 )
                 .verticalScroll(rememberScrollState())
         ) {
