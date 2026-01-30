@@ -99,7 +99,8 @@ interface ScheduleRepos {
     suspend fun updateSavedNamedSchedule(
         namedScheduleEntity: NamedScheduleEntity,
         onStartUpdate: (() -> Unit)? = null,
-        onShowUpdating: (suspend () -> Unit)? = null
+        onShowUpdating: (suspend () -> Unit)? = null,
+        deletableOldSchedules: Boolean
     ): Result<String>
 
     suspend fun isEventAddingUnavailable(
@@ -127,8 +128,8 @@ class ScheduleReposImpl @Inject constructor(
 
         val currentCount = namedScheduleDao.getCount()
         if (currentCount == 1) {
-            val namedScheduleEntityWithNewId = namedScheduleDao.getAll().first()
-            namedScheduleDao.setDefaultNamedSchedule(namedScheduleEntityWithNewId.id)
+            val namedScheduleEntityWithNewId = namedScheduleDao.getNamedScheduleById(namedScheduleId)!!
+            namedScheduleDao.setDefaultNamedSchedule(namedScheduleEntityWithNewId.namedScheduleEntity.id)
         }
         return namedScheduleId
     }
@@ -274,8 +275,8 @@ class ScheduleReposImpl @Inject constructor(
                 val schedules = mutableListOf<Schedule>()
                 timetables.data.timetables.forEach { timetable ->
                     val schedule = apiHelper.callApiWithExceptions(
-                        fetchDataType = "Schedule",
-                        message = "Type: $type; ApiId: $apiId; TimetableId: ${timetable.id}"
+                        requestType = "Schedule",
+                        requestParams = "Type: $type; ApiId: $apiId; TimetableId: ${timetable.id}"
                     ) {
                         miitApi.getSchedule(type.getApiTypeById(), apiId, timetable.id)
                     }
@@ -308,8 +309,8 @@ class ScheduleReposImpl @Inject constructor(
         type: Int
     ): Result<Timetables> {
         return apiHelper.callApiWithExceptions(
-            fetchDataType = "Timetables",
-            message = "Type: $type; ApiId: $apiId"
+            requestType = "Timetables",
+            requestParams = "Type: $type; ApiId: $apiId"
         ) {
             miitApi.getTimetables(type.getApiTypeById(), apiId)
         }
@@ -323,11 +324,12 @@ class ScheduleReposImpl @Inject constructor(
     override suspend fun updateSavedNamedSchedule(
         namedScheduleEntity: NamedScheduleEntity,
         onStartUpdate: (() -> Unit)?,
-        onShowUpdating: (suspend () -> Unit)?
+        onShowUpdating: (suspend () -> Unit)?,
+        deletableOldSchedules: Boolean
     ): Result<String> {
         if (shouldUpdateNamedSchedule(namedScheduleEntity)) {
             onStartUpdate?.invoke()
-            return performNamedScheduleUpdate(namedScheduleEntity)
+            return performNamedScheduleUpdate(namedScheduleEntity, deletableOldSchedules)
         }
         onShowUpdating?.invoke()
         return Result.Success("No schedule update required")
@@ -336,11 +338,13 @@ class ScheduleReposImpl @Inject constructor(
     private fun shouldUpdateNamedSchedule(namedScheduleEntity: NamedScheduleEntity): Boolean {
         val timeSinceLastUpdate =
             System.currentTimeMillis() - namedScheduleEntity.lastTimeUpdate
-        return timeSinceLastUpdate > SCHEDULE_UPDATE_THRESHOLD_MS && namedScheduleEntity.type != CUSTOM_SCHEDULE_TYPE
+        return timeSinceLastUpdate > SCHEDULE_UPDATE_THRESHOLD_MS
+                && namedScheduleEntity.type != CUSTOM_SCHEDULE_TYPE
     }
 
     private suspend fun performNamedScheduleUpdate(
-        namedScheduleEntity: NamedScheduleEntity
+        namedScheduleEntity: NamedScheduleEntity,
+        deletableOldSchedules: Boolean
     ): Result<String> {
         val updatedNamedSchedule = getNewNamedSchedule(
             primaryKeyNamedSchedule = namedScheduleEntity.id,
@@ -359,7 +363,8 @@ class ScheduleReposImpl @Inject constructor(
                 oldNamedSchedule?.let {
                     mergeAndUpdateSchedules(
                         oldNamedSchedule = oldNamedSchedule,
-                        newNamedSchedule = updatedNamedSchedule.data
+                        newNamedSchedule = updatedNamedSchedule.data,
+                        deletableOldSchedules = deletableOldSchedules
                     )
                     Result.Success("Success update")
                 } ?: Result.Error(
@@ -375,10 +380,12 @@ class ScheduleReposImpl @Inject constructor(
 
     private suspend fun mergeAndUpdateSchedules(
         oldNamedSchedule: NamedScheduleFormatted,
-        newNamedSchedule: NamedScheduleFormatted
+        newNamedSchedule: NamedScheduleFormatted,
+        deletableOldSchedules: Boolean
     ) {
-        val oldSchedulesMap =
-            oldNamedSchedule.schedules.associateBy { it.scheduleEntity.timetableId }
+        val oldSchedulesMap = oldNamedSchedule.schedules.associateBy {
+            it.scheduleEntity.timetableId
+        }
 
         newNamedSchedule.schedules.forEach { updatedSchedule ->
             val oldSchedule = oldSchedulesMap[updatedSchedule.scheduleEntity.timetableId]
@@ -421,14 +428,17 @@ class ScheduleReposImpl @Inject constructor(
             )
         }
 
-        oldNamedSchedule.schedules.forEach { oldSchedule ->
-            val stillExists =
-                newNamedSchedule.schedules.any { it.scheduleEntity.timetableId == oldSchedule.scheduleEntity.timetableId }
-            val isOutdated = LocalDate.now() > oldSchedule.scheduleEntity.endDate
-            if (!stillExists && isOutdated) {
-                deleteSavedSchedule(
-                    id = oldSchedule.scheduleEntity.id
-                )
+        if (deletableOldSchedules) {
+            oldNamedSchedule.schedules.forEach { oldSchedule ->
+                val stillExists = newNamedSchedule.schedules.any {
+                    it.scheduleEntity.timetableId == oldSchedule.scheduleEntity.timetableId
+                }
+                val isOutdated = LocalDate.now() > oldSchedule.scheduleEntity.endDate
+                if (!stillExists && isOutdated) {
+                    deleteSavedSchedule(
+                        id = oldSchedule.scheduleEntity.id
+                    )
+                }
             }
         }
         updateLastTimeUpdate(
@@ -478,7 +488,7 @@ class ScheduleReposImpl @Inject constructor(
                             ?: emptyList()
 
                         val eventsByWeek = clearedEvents.groupBy {
-                            it.startDatetime!!.get(WeekFields.ISO.weekBasedYear())
+                            it.startDatetime!!.get(WeekFields.ISO.weekOfYear())
                         }
                         val weeksIndexes = eventsByWeek.keys.toList()
                         val checkedEvents = eventsByWeek.flatMap { (weekIndex, eventsInWeek) ->
@@ -492,12 +502,13 @@ class ScheduleReposImpl @Inject constructor(
                                 )
                             }
                         }
+
                         PeriodicContent(
                             events = checkedEvents,
                             recurrence = Recurrence(
                                 frequency = "WEEKLY",
-                                currentNumber = parser.parseCurrentWeek("https://www.miit.ru/people/$apiId/timetable"),
-                                interval = weeksIndexes.size,
+                                currentNumber = parser.parseCurrentWeek(apiId),
+                                interval = 2,
                                 firstWeekNumber = 1
                             )
                         )
@@ -571,7 +582,8 @@ class ScheduleReposImpl @Inject constructor(
                                 frequency = oldSchedule.periodicContent.recurrence!!.frequency,
                                 interval = oldSchedule.periodicContent.recurrence.interval,
                                 currentNumber = oldSchedule.periodicContent.recurrence.currentNumber,
-                                firstWeekNumber = oldSchedule.periodicContent.recurrence.currentNumber ?: 1
+                                firstWeekNumber = oldSchedule.periodicContent.recurrence.currentNumber
+                                    ?: 1
                             )
                         }
                     },

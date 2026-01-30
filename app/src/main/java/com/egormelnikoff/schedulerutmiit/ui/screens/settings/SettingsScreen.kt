@@ -112,6 +112,20 @@ fun SettingsScreen(
                                 settingsViewModel.onSetShowCountClasses(it)
                             }
                         }
+                    }, {
+                        SettingsItem(
+                            onClick = {
+                                settingsViewModel.onSetSchedulesDeletable(!appSettings.schedulesDeletable)
+                            },
+                            imageVector = ImageVector.vectorResource(R.drawable.delete),
+                            text = stringResource(R.string.not_delete_schedules)
+                        ) {
+                            CustomSwitch(
+                                checked = !appSettings.schedulesDeletable
+                            ) {
+                                settingsViewModel.onSetSchedulesDeletable(!it)
+                            }
+                        }
                     }
                 )
             )

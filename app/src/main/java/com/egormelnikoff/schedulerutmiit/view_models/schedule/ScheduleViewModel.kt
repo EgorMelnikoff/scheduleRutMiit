@@ -12,6 +12,7 @@ import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,60 +20,32 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
-interface ScheduleViewModel {
-    val scheduleState: StateFlow<ScheduleState>
-    val uiEvent: Flow<UiEvent>
-    val isDataLoading: StateFlow<Boolean>
-    fun refreshScheduleState(
-        showLoading: Boolean = true,
-        updating: Boolean = false,
-        primaryKeyNamedSchedule: Long? = null
-    )
-
-    fun getNamedScheduleFromApi(name: String, apiId: String, type: Int)
-    fun getNamedScheduleFromDb(primaryKeyNamedSchedule: Long, setDefault: Boolean = false)
-    fun saveCurrentNamedSchedule()
-    fun addCustomNamedSchedule(name: String, startDate: LocalDate, endDate: LocalDate)
-    fun renameNamedSchedule(namedScheduleEntity: NamedScheduleEntity, newName: String)
-    fun setDefaultSchedule(
-        primaryKeyNamedSchedule: Long,
-        primaryKeySchedule: Long,
-        timetableId: String
-    )
-
-    fun deleteNamedSchedule(primaryKeyNamedSchedule: Long, isDefault: Boolean)
-    fun addCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
-    fun updateEventExtra(event: Event, comment: String, tag: Int)
-    fun updateCustomEvent(scheduleEntity: ScheduleEntity, event: Event)
-    fun updateEventHidden(scheduleEntity: ScheduleEntity, eventPrimaryKey: Long, isHidden: Boolean)
-    fun deleteCustomEvent(scheduleEntity: ScheduleEntity, eventPrimaryKey: Long)
-}
-
 @HiltViewModel
-class ScheduleViewModelImpl @Inject constructor(
+class ScheduleViewModel @Inject constructor(
     private val scheduleRepos: ScheduleRepos,
     private val resourcesManager: ResourcesManager,
+    private val preferencesDataStore: PreferencesDataStore,
     private val workScheduler: WorkScheduler,
     private val widgetDataUpdater: WidgetDataUpdater
-) : ViewModel(), ScheduleViewModel {
+) : ViewModel() {
     private val _scheduleState = MutableStateFlow(ScheduleState())
-    override val scheduleState = _scheduleState.asStateFlow()
+    val scheduleState = _scheduleState.asStateFlow()
 
     private val _uiEventChannel = Channel<UiEvent>()
-    override val uiEvent = _uiEventChannel.receiveAsFlow()
+    val uiEvent = _uiEventChannel.receiveAsFlow()
 
     private val _isDataLoading = MutableStateFlow(true)
-    override val isDataLoading: StateFlow<Boolean> = _isDataLoading.asStateFlow()
+    val isDataLoading: StateFlow<Boolean> = _isDataLoading.asStateFlow()
 
     private var fetchScheduleJob: Job? = null
 
@@ -80,10 +53,19 @@ class ScheduleViewModelImpl @Inject constructor(
         refreshScheduleState()
     }
 
-    override fun refreshScheduleState(
-        showLoading: Boolean,
-        updating: Boolean,
-        primaryKeyNamedSchedule: Long?
+    fun cancelLoading() {
+        fetchScheduleJob?.cancel()
+        updateState(
+            isLoading = false,
+            isUpdating = false,
+            isError = false
+        )
+    }
+
+    fun refreshScheduleState(
+        showLoading: Boolean = true,
+        updating: Boolean = false,
+        primaryKeyNamedSchedule: Long? = null
     ) {
         viewModelScope.launch {
             updateState(
@@ -101,7 +83,8 @@ class ScheduleViewModelImpl @Inject constructor(
             defaultNamedScheduleEntity?.let { namedScheduleEntity ->
                 if (updating) scheduleRepos.updateSavedNamedSchedule(
                     namedScheduleEntity = namedScheduleEntity,
-                    onShowUpdating = { delay(500) }
+                    onShowUpdating = { delay(500) },
+                    deletableOldSchedules = preferencesDataStore.schedulesDeletableFlow.first()
                 )
             }
             updateState(
@@ -119,7 +102,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun getNamedScheduleFromApi(
+    fun getNamedScheduleFromApi(
         name: String,
         apiId: String,
         type: Int
@@ -167,9 +150,9 @@ class ScheduleViewModelImpl @Inject constructor(
         fetchScheduleJob = fetchJob
     }
 
-    override fun getNamedScheduleFromDb(
+    fun getNamedScheduleFromDb(
         primaryKeyNamedSchedule: Long,
-        setDefault: Boolean
+        setDefault: Boolean = false
     ) {
         viewModelScope.launch {
             if (primaryKeyNamedSchedule == _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id && !setDefault) {
@@ -196,7 +179,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun saveCurrentNamedSchedule() {
+    fun saveCurrentNamedSchedule() {
         viewModelScope.launch {
             val currentNamedSchedule =
                 _scheduleState.value.currentNamedScheduleData?.namedSchedule ?: return@launch
@@ -216,7 +199,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun deleteNamedSchedule(
+    fun deleteNamedSchedule(
         primaryKeyNamedSchedule: Long,
         isDefault: Boolean
     ) {
@@ -256,7 +239,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun renameNamedSchedule(
+    fun renameNamedSchedule(
         namedScheduleEntity: NamedScheduleEntity,
         newName: String
     ) {
@@ -280,7 +263,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun setDefaultSchedule(
+    fun setDefaultSchedule(
         primaryKeyNamedSchedule: Long,
         primaryKeySchedule: Long,
         timetableId: String
@@ -308,7 +291,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun addCustomNamedSchedule(
+    fun addCustomNamedSchedule(
         name: String,
         startDate: LocalDate,
         endDate: LocalDate
@@ -328,6 +311,7 @@ class ScheduleViewModelImpl @Inject constructor(
                     ScheduleFormatted(
                         scheduleEntity = ScheduleEntity(
                             id = 0,
+                            isDefault = true,
                             namedScheduleId = 0,
                             timetableId = "d=${startDate}",
                             typeName = "Разовое",
@@ -351,7 +335,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun updateEventExtra(
+    fun updateEventExtra(
         event: Event,
         comment: String,
         tag: Int
@@ -377,7 +361,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun updateEventHidden(
+    fun updateEventHidden(
         scheduleEntity: ScheduleEntity,
         eventPrimaryKey: Long,
         isHidden: Boolean
@@ -391,7 +375,7 @@ class ScheduleViewModelImpl @Inject constructor(
     }
 
 
-    override fun updateCustomEvent(scheduleEntity: ScheduleEntity, event: Event) {
+    fun updateCustomEvent(scheduleEntity: ScheduleEntity, event: Event) {
         viewModelScope.launch {
             scheduleRepos.deleteSavedEvent(event.id)
             scheduleRepos.insertEvent(event)
@@ -401,7 +385,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun addCustomEvent(
+    fun addCustomEvent(
         scheduleEntity: ScheduleEntity,
         event: Event
     ) {
@@ -421,7 +405,7 @@ class ScheduleViewModelImpl @Inject constructor(
         }
     }
 
-    override fun deleteCustomEvent(
+    fun deleteCustomEvent(
         scheduleEntity: ScheduleEntity,
         eventPrimaryKey: Long
     ) {

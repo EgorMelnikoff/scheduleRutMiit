@@ -6,6 +6,7 @@ import java.time.LocalDate
 
 data class ScheduleActions(
     val eventActions: EventActions,
+    val cancelLoading: () -> Unit,
     val onGetNamedSchedule: (String, String, Int) -> Unit, //Name, ApiId, Type
     val onSelectDefaultNamedSchedule: (Long) -> Unit, //NamedSchedulePK
     val onOpenNamedSchedule: (Long) -> Unit, //NamedSchedulePK
@@ -26,6 +27,9 @@ data class ScheduleActions(
             eventActions = EventActions.getEventActions(
                 scheduleViewModel = scheduleViewModel
             ),
+            cancelLoading = {
+                scheduleViewModel.cancelLoading()
+            },
             onGetNamedSchedule = { name, apiId, type ->
                 scheduleViewModel.getNamedScheduleFromApi(
                     name = name,
