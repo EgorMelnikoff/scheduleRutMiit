@@ -23,8 +23,8 @@ android {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 29
         targetSdk = 36
-        versionCode = 45
-        versionName = "1.9.3"
+        versionCode = 46
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -67,6 +67,7 @@ dependencies {
     ksp (libs.hilt.android.compiler)
     ksp (libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.work)
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
     implementation(libs.retrofit)
     implementation (libs.jsoup)
