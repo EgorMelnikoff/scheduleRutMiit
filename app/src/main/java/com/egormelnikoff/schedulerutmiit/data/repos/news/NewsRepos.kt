@@ -19,7 +19,6 @@ interface NewsRepos {
     suspend fun getNewsById(id: Long): Result<News>
 }
 
-
 class NewsReposImpl @Inject constructor(
     private val miitApi: MiitApi,
     private val apiHelper: ApiHelper,
@@ -47,8 +46,8 @@ class NewsReposImpl @Inject constructor(
 
     override suspend fun getNewsById(id: Long): Result<News> {
         return apiHelper.callApiWithExceptions(
-            fetchDataType = "News",
-            message = "News id: $id"
+            requestType = "News",
+            requestParams = "News id: $id"
         ) {
             miitApi.getNewsById(id)
         }
