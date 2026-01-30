@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
-import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -12,6 +12,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -38,10 +39,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomPullToRefreshBox
@@ -68,11 +69,15 @@ fun ScreenSchedule(
     settingsViewModel: SettingsViewModel,
     externalPadding: PaddingValues
 ) {
+    var showBackDialog by remember { mutableStateOf(false) }
     var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
     var showDeleteNamedScheduleDialog by remember { mutableStateOf(false) }
 
     when {
         scheduleState.isLoading -> {
+            BackHandler {
+                scheduleActions.cancelLoading()
+            }
             LoadingScreen(
                 paddingTop = externalPadding.calculateTopPadding(),
                 paddingBottom = externalPadding.calculateBottomPadding()
@@ -97,6 +102,11 @@ fun ScreenSchedule(
         }
 
         scheduleState.currentNamedScheduleData?.namedSchedule != null -> {
+            if (!scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault) {
+                BackHandler {
+                    showBackDialog = true
+                }
+            }
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
@@ -105,14 +115,12 @@ fun ScreenSchedule(
                         onSetScheduleView = { value ->
                             settingsViewModel.onSetScheduleView(value)
                         },
-                        onShowExpandedMenu = scheduleUiState?.onExpandSchedulesMenu,
                         onShowNamedScheduleDialog = { newValue ->
                             showNamedScheduleDialog = newValue
                         },
                         namedScheduleData = scheduleState.currentNamedScheduleData,
                         isSavedSchedule = scheduleState.isSaved,
-                        calendarView = appSettings.calendarView,
-                        expandedSchedulesMenu = scheduleUiState?.expandedSchedulesMenu
+                        calendarView = appSettings.scheduleView
                     )
                 }
             ) { padding ->
@@ -133,14 +141,8 @@ fun ScreenSchedule(
                                 isSaved = scheduleState.isSaved,
                                 onSave = scheduleActions.onSaveCurrentNamedSchedule
                             )
-                            ExpandedMenu(
-                                setDefaultSchedule = scheduleActions.onSetDefaultSchedule,
-                                scheduleState = scheduleState,
-                                expandedSchedulesMenu = scheduleUiState.expandedSchedulesMenu,
-                                onShowExpandedMenu = scheduleUiState.onExpandSchedulesMenu
-                            )
                             AnimatedContent(
-                                targetState = appSettings.calendarView,
+                                targetState = appSettings.scheduleView,
                                 transitionSpec = {
                                     fadeIn() + slideInVertically(
                                         initialOffsetY = { it / 2 }
@@ -244,17 +246,9 @@ fun ScreenSchedule(
     showNamedScheduleDialog?.let {
         ModalDialogNamedSchedule(
             namedScheduleEntity = showNamedScheduleDialog!!,
-            scheduleData = scheduleState.currentNamedScheduleData?.scheduleData,
-            onDownloadCurrentSchedule = if (scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity?.downloadUrl != null) {
-                {
-                    appUiState.context.startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.downloadUrl.toUri()
-                        )
-                    )
-                }
-            } else null,
+            appUiState = appUiState,
+            scheduleActions = scheduleActions,
+            namedScheduleData = scheduleState.currentNamedScheduleData,
             navigateToRenameDialog = if (scheduleState.isSaved) {
                 { navigationActions.navigateToRenameDialog(showNamedScheduleDialog!!) }
             } else null,
@@ -282,6 +276,18 @@ fun ScreenSchedule(
             showNamedScheduleDialog = null
         }
     }
+    if (showBackDialog) {
+        CustomAlertDialog(
+            dialogTitle = stringResource(R.string.return_default_schedule),
+            dialogText = stringResource(R.string.do_you_want_continue),
+            onDismissRequest = {
+                showBackDialog = false
+            },
+            onConfirmation = {
+                scheduleActions.onLoadInitialScheduleData()
+            }
+        )
+    }
 
 }
 
@@ -290,46 +296,55 @@ fun IsSavedAlert(
     isSaved: Boolean,
     onSave: () -> Unit
 ) {
-    AnimatedVisibility(
-        visible = !isSaved,
-        enter = expandVertically(),
-        exit = shrinkVertically()
+    Box(
+        modifier = Modifier.padding(horizontal = 16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.error)
-                .padding(horizontal = 12.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+        AnimatedVisibility(
+            visible = !isSaved,
+            enter = expandVertically(),
+            exit = shrinkVertically()
         ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.alert),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
-            Text(
-                modifier = Modifier.weight(1f),
-                text = stringResource(R.string.schedule_is_not_saved),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onPrimary,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-            )
-            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                TextButton(
-                    onClick = onSave,
-                    shape = MaterialTheme.shapes.small,
-                    interactionSource = null
-                ) {
-                    Text(
-                        text = stringResource(R.string.save),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+            ColumnGroup(
+                items = listOf {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.error)
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.alert),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = stringResource(R.string.schedule_is_not_saved),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                            TextButton(
+                                onClick = onSave,
+                                shape = MaterialTheme.shapes.small,
+                                interactionSource = null
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.save),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
+                        }
+                    }
                 }
-            }
+            )
         }
+
     }
 }
