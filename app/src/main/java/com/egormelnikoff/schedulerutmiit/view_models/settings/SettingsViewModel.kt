@@ -2,10 +2,10 @@ package com.egormelnikoff.schedulerutmiit.view_models.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.data.repos.settings.SettingsRepos
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,46 +13,30 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-interface SettingsViewModel {
-    val appSettings: StateFlow<AppSettings?>
-    fun sendLogsFile()
-    fun onSetShowCountClasses(showCountClasses: Boolean)
-    fun onSetTheme(theme: String)
-    fun onSetDecorColor(decorColor: Int)
-    fun onSetScheduleView(scheduleView: Boolean)
-
-    fun onSetEventView(visible: Boolean)
-    fun onSetEventGroupVisibility(visible: Boolean)
-    fun onSetEventRoomsVisibility(visible: Boolean)
-    fun onSetEventLecturersVisibility(visible: Boolean)
-    fun onSetEventTagVisibility(visible: Boolean)
-    fun onSetEventCommentVisibility(visible: Boolean)
-}
-
 @HiltViewModel
-class SettingsViewModelImpl @Inject constructor(
-    private val settingsRepos: SettingsRepos,
-    private val dataStore: PreferencesDataStore,
-) : ViewModel(), SettingsViewModel {
+class SettingsViewModel @Inject constructor(
+    private val logger: Logger,
+    private val preferencesDataStore: PreferencesDataStore,
+) : ViewModel() {
     private val _appSettings = MutableStateFlow<AppSettings?>(null)
-    override val appSettings: StateFlow<AppSettings?> = _appSettings
+    val appSettings: StateFlow<AppSettings?> = _appSettings
 
     init {
         collectSettings()
     }
 
-    override fun sendLogsFile() {
-        settingsRepos.sendLogsFile()
+    fun sendLogsFile() {
+        logger.sendLogsFile()
     }
 
     private fun collectSettings() {
         viewModelScope.launch {
             val eventFlow = combine(
-                dataStore.groupsVisibilityFlow,
-                dataStore.roomsVisibilityFlow,
-                dataStore.lecturersVisibilityFlow,
-                dataStore.tagVisibilityFlow,
-                dataStore.commentVisibilityFlow
+                preferencesDataStore.groupsVisibilityFlow,
+                preferencesDataStore.roomsVisibilityFlow,
+                preferencesDataStore.lecturersVisibilityFlow,
+                preferencesDataStore.tagVisibilityFlow,
+                preferencesDataStore.commentVisibilityFlow
             ) { groupsVisibility, roomsVisibility, lecturersVisibility, tagVisibility, commentVisibility ->
                 EventView(
                     groupsVisible = groupsVisibility,
@@ -64,8 +48,8 @@ class SettingsViewModelImpl @Inject constructor(
             }
 
             val themeFlow = combine(
-                dataStore.themeFlow,
-                dataStore.decorColorFlow,
+                preferencesDataStore.themeFlow,
+                preferencesDataStore.decorColorFlow,
             ) { theme, decorColorIndex ->
                 Pair(theme, decorColorIndex)
             }
@@ -73,13 +57,15 @@ class SettingsViewModelImpl @Inject constructor(
             combine(
                 themeFlow,
                 eventFlow,
-                dataStore.scheduleViewFlow,
-                dataStore.showCountClassesFlow,
-            ) { theme, eventView, isCalendarView, isShowCountClasses ->
+                preferencesDataStore.scheduleViewFlow,
+                preferencesDataStore.schedulesDeletableFlow,
+                preferencesDataStore.showCountClassesFlow,
+            ) { theme, eventView, scheduleView, schedulesDeletable, isShowCountClasses ->
                 AppSettings(
                     theme = theme.first,
                     decorColorIndex = theme.second,
-                    calendarView = isCalendarView,
+                    scheduleView = scheduleView,
+                    schedulesDeletable = schedulesDeletable,
                     showCountClasses = isShowCountClasses,
                     eventView = eventView
                 )
@@ -89,71 +75,81 @@ class SettingsViewModelImpl @Inject constructor(
         }
     }
 
-    override fun onSetEventGroupVisibility(visible: Boolean) {
+    fun onSetEventGroupVisibility(visible: Boolean) {
         viewModelScope.launch {
-            settingsRepos.onSetEventGroupVisibility(visible)
+            preferencesDataStore.setEventGroupVisibility(visible)
         }
     }
 
-    override fun onSetEventView(visible: Boolean) {
+    fun onSetEventView(visible: Boolean) {
         viewModelScope.launch {
-            settingsRepos.onSetEventView(visible)
+            preferencesDataStore.setEventGroupVisibility(visible)
+            preferencesDataStore.setEventRoomsVisibility(visible)
+            preferencesDataStore.setEventLecturersVisibility(visible)
+            preferencesDataStore.setEventTagVisibility(visible)
+            preferencesDataStore.setEventCommentVisibility(visible)
         }
     }
 
-    override fun onSetEventRoomsVisibility(visible: Boolean) {
+    fun onSetEventRoomsVisibility(visible: Boolean) {
         viewModelScope.launch {
-            settingsRepos.onSetEventRoomsVisibility(visible)
+            preferencesDataStore.setEventRoomsVisibility(visible)
         }
     }
 
-    override fun onSetEventLecturersVisibility(visible: Boolean) {
+    fun onSetEventLecturersVisibility(visible: Boolean) {
         viewModelScope.launch {
-            settingsRepos.onSetEventLecturersVisibility(visible)
+            preferencesDataStore.setEventLecturersVisibility(visible)
         }
     }
 
-    override fun onSetEventTagVisibility(visible: Boolean) {
+    fun onSetEventTagVisibility(visible: Boolean) {
         viewModelScope.launch {
-            settingsRepos.onSetEventTagVisibility(visible)
+            preferencesDataStore.setEventTagVisibility(visible)
         }
     }
 
-    override fun onSetEventCommentVisibility(visible: Boolean) {
+    fun onSetEventCommentVisibility(visible: Boolean) {
         viewModelScope.launch {
-            settingsRepos.onSetEventCommentVisibility(visible)
+            preferencesDataStore.setEventCommentVisibility(visible)
         }
     }
 
-    override fun onSetShowCountClasses(
+    fun onSetShowCountClasses(
         showCountClasses: Boolean
     ) {
         viewModelScope.launch {
-            settingsRepos.onSetShowCountClasses(showCountClasses)
+            preferencesDataStore.setShowCountClasses(showCountClasses)
         }
     }
 
-    override fun onSetTheme(
+    fun onSetTheme(
         theme: String
     ) {
         viewModelScope.launch {
-            settingsRepos.onSetTheme(theme)
+            preferencesDataStore.setTheme(theme)
         }
     }
 
-    override fun onSetDecorColor(
+    fun onSetDecorColor(
         decorColor: Int
     ) {
         viewModelScope.launch {
-            settingsRepos.onSetDecorColor(decorColor)
+            preferencesDataStore.setDecorColor(decorColor)
         }
     }
 
-    override fun onSetScheduleView(
+    fun onSetScheduleView(
         scheduleView: Boolean
     ) {
         viewModelScope.launch {
-            settingsRepos.onSetScheduleView(scheduleView)
+            preferencesDataStore.setScheduleView(scheduleView)
+        }
+    }
+
+    fun onSetSchedulesDeletable(isDeletable: Boolean) {
+        viewModelScope.launch {
+            preferencesDataStore.setSchedulesDeletable(isDeletable)
         }
     }
 }
