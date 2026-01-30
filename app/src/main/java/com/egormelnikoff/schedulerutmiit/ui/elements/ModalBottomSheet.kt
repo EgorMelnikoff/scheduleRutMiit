@@ -52,7 +52,7 @@ fun CustomModalBottomSheet(
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
             horizontalAlignment = horizontalAlignment,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             content.invoke()
         }
