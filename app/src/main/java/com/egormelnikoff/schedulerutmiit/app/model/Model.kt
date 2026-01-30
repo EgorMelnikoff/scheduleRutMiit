@@ -1,18 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.app.model
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
 import java.time.LocalDate
 import java.time.LocalDateTime
-
-@Keep
-data class LatestRelease(
-    @SerializedName("html_url")
-    val htmlUrl: String,
-    val name: String,
-    @SerializedName("tag_name")
-    val tag: String
-)
 
 @Keep
 data class Schedule(
@@ -149,4 +139,10 @@ data class Room(
 data class RecurrenceRule(
     val frequency: String,
     val interval: Int
+)
+
+@Keep
+data class Subject(
+    val title: String,
+    val teachers: Set<String>
 )
