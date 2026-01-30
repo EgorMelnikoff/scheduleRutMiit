@@ -33,6 +33,12 @@ class PreferencesDataStore @Inject constructor(
         }
     }
 
+    suspend fun setSchedulesDeletable(isDeletable: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SCHEDULES_DELETABLE] = isDeletable
+        }
+    }
+
     suspend fun setEventGroupVisibility(visible: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.EVENT_GROUPS_VISIBILITY] = visible
@@ -92,6 +98,10 @@ class PreferencesDataStore @Inject constructor(
 
     val scheduleViewFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.SCHEDULE_VIEW] ?: true
+    }
+
+    val schedulesDeletableFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.SCHEDULES_DELETABLE] ?: true
     }
 
     val showCountClassesFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
