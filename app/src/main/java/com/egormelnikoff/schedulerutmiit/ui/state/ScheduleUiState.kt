@@ -19,9 +19,7 @@ data class ScheduleUiState(
     val pagerWeeksState: PagerState,
     val pagerDaysState: PagerState,
     val selectedDate: LocalDate,
-    val onSelectDate: (LocalDate) -> Unit,
-    val expandedSchedulesMenu: Boolean,
-    val onExpandSchedulesMenu: (Boolean) -> Unit
+    val onSelectDate: (LocalDate) -> Unit
 ) {
     companion object {
         @Composable
@@ -46,7 +44,6 @@ data class ScheduleUiState(
                         scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate
                     )
                 }
-                var expandedSchedulesMenu by remember { mutableStateOf(false) }
 
                 ScheduleUiState(
                     scheduleListState = scheduleListState,
@@ -55,10 +52,6 @@ data class ScheduleUiState(
                     selectedDate = selectedDate,
                     onSelectDate = { newDate ->
                         selectedDate = newDate
-                    },
-                    expandedSchedulesMenu = expandedSchedulesMenu,
-                    onExpandSchedulesMenu = { newValue ->
-                        expandedSchedulesMenu = newValue
                     }
                 )
             } else null
