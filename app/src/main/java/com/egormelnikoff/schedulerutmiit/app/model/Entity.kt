@@ -208,8 +208,9 @@ fun LocalDate.getEventsForDate(
     periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
     nonPeriodicEvents: Map<LocalDate, List<Event>>?
 ): Map<String, List<Event>> {
-    var displayedEvents = listOf<Event>()
+    if (scheduleEntity.startDate > this) return mapOf()
 
+    var displayedEvents = listOf<Event>()
     when {
         (periodicEvents != null) -> {
             val currentWeek = getCurrentWeek(

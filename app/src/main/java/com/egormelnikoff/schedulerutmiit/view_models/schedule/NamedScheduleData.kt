@@ -151,7 +151,7 @@ data class ScheduleData(
                             val currentWeekStartDate = currentStartDate.plusWeeks(index.toLong())
                             eventsInWeek.forEach { event ->
                                 val daysToAdd =
-                                    event.startDatetime!!.dayOfWeek.value - today.dayOfWeek.value
+                                    event.startDatetime!!.dayOfWeek.value - currentStartDate.dayOfWeek.value
                                 val newEventDate = currentWeekStartDate.plusDays(daysToAdd.toLong())
                                 val newEvent = event.copy(
                                     startDatetime = newEventDate.atTime(event.startDatetime.toLocalTime()),
@@ -323,6 +323,7 @@ data class ReviewData(
             periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
             nonPeriodicEvents: Map<LocalDate, List<Event>>?
         ): Int {
+            if (scheduleEntity.startDate > date) return 0
             var eventsCountForWeek = 0
             when {
                 (periodicEvents != null) -> {
