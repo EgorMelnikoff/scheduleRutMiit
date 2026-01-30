@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="_class">Пара</string>
-    <string name="_default">Обычный</string>
+    <string name="_default">Основное</string>
     <string name="about_app">О приложении</string>
     <string name="add">Добавить</string>
     <string name="adding_a_class">Добавление пары</string>
@@ -22,6 +22,7 @@
     <string name="confirm">Подтвердить</string>
     <string name="create">Создать</string>
     <string name="current_on">Актуально на</string>
+    <string name="curriculum_number">Номер учебного плана</string>
     <string name="dark">Темная</string>
     <string name="date">Дата</string>
     <string name="date_and_time">Дата и время</string>
@@ -31,6 +32,8 @@
     <string name="delete">Удалить</string>
     <string name="delete_event">Удалить пару</string>
     <string name="delete_schedule">Удалить расписание</string>
+    <string name="developer">Разработчик</string>
+    <string name="do_you_want_continue">Вы действительно хотите продолжить?</string>
     <string name="download">Скачать</string>
     <string name="edit">Редактировать</string>
     <string name="editing">Редактирование</string>
@@ -70,6 +73,7 @@
     <string name="impossible_restore_eventextra">Восстановить комментари и теги к парам будет невозможно</string>
     <string name="lecturers">Преподаватели</string>
     <string name="light">Светлая</string>
+    <string name="list_teachers">Список преподавателей для уч. плана</string>
     <string name="logs_not_found">Журнал не найден</string>
     <string name="make_default">Сделать основным</string>
     <string name="my">Мои</string>
@@ -87,8 +91,10 @@
     <string name="no_saved_schedule">Отсутствует сохраненное расписание</string>
     <string name="no_start_date_specified">Не указана дата начала</string>
     <string name="no_start_time_specified">Не указано время начала</string>
+    <string name="not_delete_schedules">Не удалять расписания</string>
     <string name="not_specified">Не указан</string>
     <string name="nothing_found">Ничего не найдено</string>
+    <string name="ok">Хорошо</string>
     <string name="once_week">Раз в %1$d недели</string>
     <string name="open">Открыть</string>
     <string name="people">Преподаватели</string>
@@ -101,6 +107,7 @@
     <string name="repetition">Повторение</string>
     <string name="report_a_problem">Сообщить о проблеме</string>
     <string name="return_default">Вернуть основное</string>
+    <string name="return_default_schedule">Возврат основного расписания</string>
     <string name="review">Обзор</string>
     <string name="room">Аудитория</string>
     <string name="room_number">Номер аудитории</string>
@@ -113,11 +120,13 @@
     <string name="schedule_name">Название</string>
     <string name="schedules">Расписания</string>
     <string name="search">Поиск</string>
+    <string name="search_curriculum_advice">Для поиска используйте идентификационный номер учебного плана</string>
     <string name="search_or_create">Найти или создать</string>
     <string name="send_logs">Отправить журнал</string>
     <string name="send_logs_by_email">Отправить журнал по эл. почте</string>
     <string name="serialization_error">Ошибка сериализации</string>
     <string name="server_error">Ошибка сервера</string>
+    <string name="services">Сервисы</string>
     <string name="settings">Настройки</string>
     <string name="show_count_classes">Количество пар</string>
     <string name="show_event">Показать пару</string>
@@ -130,6 +139,7 @@
     <string name="theme">Тема</string>
     <string name="time">Время</string>
     <string name="time_is_chosen_incorrectly">Некорректно указано время</string>
+    <string name="timeout_expired">Вышел таймаут</string>
     <string name="today">Сегодня</string>
     <string name="today_schedule">Сегодняшнее расписание</string>
     <string name="tomorrow">Завтра</string>
