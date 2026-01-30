@@ -9,31 +9,34 @@ data class NavigationActions(
     val onBack: () -> Unit,
     val navigateToSchedule: () -> Unit,
     val navigateToSearch: () -> Unit,
-    val navigateToEvent: (ScheduleEntity, Boolean,  Event, EventExtraData?) -> Unit,
+    val navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
     val navigateToRenameDialog: (NamedScheduleEntity) -> Unit,
     val navigateToAddSchedule: () -> Unit,
     val navigateToAddEvent: (ScheduleEntity) -> Unit,
     val navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
     val navigateToHiddenEvents: (ScheduleEntity) -> Unit,
     val navigateToInfoDialog: () -> Unit,
-    val navigateToNewsDialog: () -> Unit
+    val navigateToNewsDialog: () -> Unit,
+    val navigateToCurriculumDialog: () -> Unit
 ) {
     companion object {
         fun NavigationActions(
-            appBackStack: AppBackStack<Route>
+            appBackStack: AppBackStack<Route.Page>
         ) = NavigationActions(
             onBack = { appBackStack.onBack() },
             navigateToSearch = {
-                appBackStack.navigateToDialog(Route.Dialog.SearchDialog)
+                appBackStack.openDialog(Route.Dialog.SearchDialog)
             },
             navigateToSchedule = {
-                appBackStack.navigateToPage(Route.Page.Schedule)
+                if (appBackStack.lastPage() != Route.Page.Schedule) {
+                    appBackStack.openPage(Route.Page.Schedule)
+                }
             },
             navigateToAddSchedule = {
-                appBackStack.navigateToDialog(Route.Dialog.AddScheduleDialog)
+                appBackStack.openDialog(Route.Dialog.AddScheduleDialog)
             },
             navigateToEvent = { scheduleEntity, isSavedSchedule, event, eventExtraData ->
-                appBackStack.navigateToDialog(
+                appBackStack.openDialog(
                     dialog = Route.Dialog.EventDialog(
                         scheduleEntity = scheduleEntity,
                         isSavedSchedule = isSavedSchedule,
@@ -43,24 +46,24 @@ data class NavigationActions(
                 )
             },
             navigateToRenameDialog = { namedScheduleEntity ->
-                appBackStack.navigateToDialog(
+                appBackStack.openDialog(
                     dialog = Route.Dialog.RenameNamedScheduleDialog(
                         namedScheduleEntity = namedScheduleEntity
                     )
                 )
             },
             navigateToInfoDialog = {
-                appBackStack.navigateToDialog(Route.Dialog.InfoDialog)
+                appBackStack.openDialog(Route.Dialog.InfoDialog)
             },
             navigateToAddEvent = { scheduleEntity ->
-                appBackStack.navigateToDialog(
+                appBackStack.openDialog(
                     dialog = Route.Dialog.AddEventDialog(
                         scheduleEntity = scheduleEntity
                     )
                 )
             },
             navigateToEditEvent = { scheduleEntity, event ->
-                appBackStack.navigateToDialog(
+                appBackStack.openDialog(
                     dialog = Route.Dialog.AddEventDialog(
                         event = event,
                         scheduleEntity = scheduleEntity
@@ -68,14 +71,17 @@ data class NavigationActions(
                 )
             },
             navigateToHiddenEvents = { scheduleEntity ->
-                appBackStack.navigateToDialog(
+                appBackStack.openDialog(
                     Route.Dialog.HiddenEventsDialog(
                         scheduleEntity = scheduleEntity
                     )
                 )
             },
             navigateToNewsDialog = {
-                appBackStack.navigateToDialog(Route.Dialog.NewsDialog)
+                appBackStack.openDialog(Route.Dialog.NewsDialog)
+            },
+            navigateToCurriculumDialog = {
+                appBackStack.openDialog(Route.Dialog.CurriculumDialog)
             }
         )
     }

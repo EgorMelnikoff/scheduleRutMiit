@@ -19,7 +19,7 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import kotlinx.coroutines.CoroutineScope
 
 data class AppUiState(
-    val appBackStack: AppBackStack<Route>,
+    val appBackStack: AppBackStack<Route.Page>,
     val snackBarHostState: SnackbarHostState,
     val focusManager: FocusManager,
     val uriHandler: UriHandler,
@@ -31,7 +31,7 @@ data class AppUiState(
     companion object {
         @Composable
         fun appUiState(): AppUiState {
-            val appBackStack by remember { mutableStateOf(AppBackStack<Route>(startRoute = Route.Page.Schedule)) }
+            val appBackStack by remember { mutableStateOf(AppBackStack<Route.Page>(startRoute = Route.Page.Schedule)) }
             val snackBarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
             val focusManager = LocalFocusManager.current

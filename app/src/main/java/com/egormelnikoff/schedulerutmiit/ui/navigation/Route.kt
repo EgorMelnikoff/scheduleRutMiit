@@ -16,6 +16,8 @@ sealed interface Route {
     }
 
     sealed interface Dialog : Route {
+        data object Empty : Dialog
+
         data class EventDialog(
             val scheduleEntity: ScheduleEntity,
             val isSavedSchedule: Boolean,
@@ -39,6 +41,7 @@ sealed interface Route {
         data object NewsDialog : Dialog
         data object InfoDialog : Dialog
         data object SearchDialog : Dialog
+        data object CurriculumDialog : Dialog
         data object AddScheduleDialog : Dialog
     }
 }
