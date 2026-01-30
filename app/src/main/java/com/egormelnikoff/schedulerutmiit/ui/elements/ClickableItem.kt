@@ -50,6 +50,7 @@ fun ClickableItem(
     titleTypography: TextStyle? = null,
     titleMaxLines: Int = 1,
     titleColor: Color? = null,
+    titleLabel: (@Composable () -> Unit)? = null,
 
     subtitle: String? = null,
     subtitleTypography: TextStyle? = null,
@@ -84,20 +85,26 @@ fun ClickableItem(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-           leadingIcon?.invoke()
+            leadingIcon?.invoke()
         }
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             title?.let {
-                Text(
-                    text = title,
-                    style = titleTypography ?: MaterialTheme.typography.titleMedium,
-                    color = titleColor ?: MaterialTheme.colorScheme.onBackground,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = titleMaxLines
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = title,
+                        style = titleTypography ?: MaterialTheme.typography.titleMedium,
+                        color = titleColor ?: MaterialTheme.colorScheme.onBackground,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = titleMaxLines
+                    )
+                    titleLabel?.invoke()
+                }
             }
             subtitle?.let {
                 Row(
@@ -142,6 +149,7 @@ fun LeadingAsyncImage(
     val transition by animateFloatAsState(
         targetValue = if (painter.state is AsyncImagePainter.State.Success) 1f else 0f
     )
+
     Box(
         contentAlignment = Alignment.Center
     ) {
@@ -169,7 +177,7 @@ fun LeadingTitle(
     title: String,
     titleSize: TextUnit = 12.sp,
     imageSize: Dp = 32.dp
-){
+) {
     Box(
         modifier = Modifier
             .size(imageSize)
