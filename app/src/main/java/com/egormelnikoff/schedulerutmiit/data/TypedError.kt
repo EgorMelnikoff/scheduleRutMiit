@@ -2,13 +2,16 @@ package com.egormelnikoff.schedulerutmiit.data
 
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.serialization.SerializationException
 import okio.IOException
 
 sealed class TypedError {
     data class NetworkError(val exception: IOException) : TypedError()
+    data class TimeoutError(val exception: TimeoutCancellationException) : TypedError()
     data class HttpError(val code: Int, val message: String? = null) : TypedError()
-    data class SerializationError(val exception: Exception) : TypedError()
-    data class IllegalArgumentError(val exception: Exception) : TypedError()
+    data class SerializationError(val exception: SerializationException) : TypedError()
+    data class IllegalArgumentError(val exception: IllegalArgumentException) : TypedError()
     data class UnexpectedError(val exception: Throwable) : TypedError()
     data object EmptyBodyError : TypedError()
 
@@ -21,6 +24,11 @@ sealed class TypedError {
                 is NetworkError -> {
                     resourcesManager.getString(
                         R.string.network_error
+                    )
+                }
+                is TimeoutError-> {
+                    resourcesManager.getString(
+                        R.string.timeout_expired
                     )
                 }
                 is HttpError -> {
