@@ -323,7 +323,7 @@ data class ReviewData(
             periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
             nonPeriodicEvents: Map<LocalDate, List<Event>>?
         ): Int {
-            if (scheduleEntity.startDate > date) return 0
+            if (scheduleEntity.startDate > date || date > scheduleEntity.endDate) return 0
             var eventsCountForWeek = 0
             when {
                 (periodicEvents != null) -> {

@@ -208,7 +208,7 @@ fun LocalDate.getEventsForDate(
     periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
     nonPeriodicEvents: Map<LocalDate, List<Event>>?
 ): Map<String, List<Event>> {
-    if (scheduleEntity.startDate > this) return mapOf()
+    if (scheduleEntity.startDate > this || this > scheduleEntity.endDate) return mapOf()
 
     var displayedEvents = listOf<Event>()
     when {
