@@ -114,6 +114,7 @@ class EventsWidget : GlanceAppWidget() {
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
+                .background(GlanceTheme.colors.background)
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.CenterHorizontally
