@@ -27,13 +27,12 @@ fun ModalDialogEvent(
     onDismiss: (Event?) -> Unit
 ) {
     CustomModalBottomSheet(
-        modifier = Modifier.padding(horizontal = 8.dp),
+        modifier = Modifier.padding(horizontal = 12.dp),
         onDismiss = {
             onDismiss(null)
         }
     ) {
         Text(
-            modifier = Modifier.padding(horizontal = 8.dp),
             text = event.name!!,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
@@ -41,45 +40,57 @@ fun ModalDialogEvent(
             maxLines = 1
         )
         Spacer(modifier = Modifier.height(0.dp))
-        onHideEvent?.let {
-            ActionDialogButton(
-                icon = ImageVector.vectorResource(R.drawable.visibility_off),
-                title = stringResource(R.string.hide_event),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            ) {
-                onHideEvent()
-                onDismiss(null)
+        ColumnGroup(
+            items = buildList {
+                onHideEvent?.let {
+                    add {
+                        ActionDialogButton(
+                            icon = ImageVector.vectorResource(R.drawable.visibility_off),
+                            title = stringResource(R.string.hide_event),
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ) {
+                            onHideEvent()
+                            onDismiss(null)
+                        }
+                    }
+                }
+                onShowEvent?.let {
+                    add {
+                        ActionDialogButton(
+                            icon = ImageVector.vectorResource(R.drawable.visibility),
+                            title = stringResource(R.string.show_event),
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ) {
+                            onShowEvent()
+                            onDismiss(null)
+                        }
+                    }
+                }
+                onEditEvent?.let {
+                    add {
+                        ActionDialogButton(
+                            icon = ImageVector.vectorResource(R.drawable.edit),
+                            title = stringResource(R.string.edit),
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ) {
+                            onEditEvent()
+                            onDismiss(null)
+                        }
+                    }
+                }
+                onDeleteEvent?.let {
+                    add {
+                        ActionDialogButton(
+                            icon = ImageVector.vectorResource(R.drawable.delete),
+                            title = stringResource(R.string.delete_event),
+                            contentColor = MaterialTheme.colorScheme.error
+                        ) {
+                            onDeleteEvent()
+                            onDismiss(null)
+                        }
+                    }
+                }
             }
-        }
-        onShowEvent?.let {
-            ActionDialogButton(
-                icon = ImageVector.vectorResource(R.drawable.visibility),
-                title = stringResource(R.string.show_event),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            ) {
-                onShowEvent()
-                onDismiss(null)
-            }
-        }
-        onEditEvent?.let {
-            ActionDialogButton(
-                icon = ImageVector.vectorResource(R.drawable.edit),
-                title = stringResource(R.string.edit),
-                contentColor = MaterialTheme.colorScheme.onBackground
-            ) {
-                onEditEvent()
-                onDismiss(null)
-            }
-        }
-        onDeleteEvent?.let {
-            ActionDialogButton(
-                icon = ImageVector.vectorResource(R.drawable.delete),
-                title = stringResource(R.string.delete_event),
-                contentColor = MaterialTheme.colorScheme.error
-            ) {
-                onDeleteEvent()
-                onDismiss(null)
-            }
-        }
+        )
     }
 }
