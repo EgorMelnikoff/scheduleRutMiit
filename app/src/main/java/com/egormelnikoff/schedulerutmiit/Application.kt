@@ -31,16 +31,11 @@ class ScheduleApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        managePeriodicWork()
-    }
-
-    private fun managePeriodicWork() {
         applicationScope.launch {
             manageWidgetUpdating()
-            workScheduler.startPeriodicScheduleUpdating()
+            manageScheduleUpdating()
         }
     }
-
 
     private suspend fun manageWidgetUpdating() {
         val appWidgetManager = AppWidgetManager.getInstance(this)
@@ -49,6 +44,12 @@ class ScheduleApplication : Application(), Configuration.Provider {
         )
         if (widgetIds.isEmpty()) {
             workScheduler.cancelPeriodicWidgetUpdating()
+        }
+    }
+
+    private suspend fun manageScheduleUpdating() {
+        if (!workScheduler.isScheduledScheduleWork() && workScheduler.haveDefaultSchedule()) {
+            workScheduler.startPeriodicScheduleUpdating()
         }
     }
 }

@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -74,18 +73,6 @@ class PreferencesDataStore @Inject constructor(
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.SHOW_COUNT_CLASSES] = isShowCountClasses
         }
-    }
-
-    suspend fun setScheduledScheduleWork(value: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SCHEDULE_UPDATE] = value
-        }
-    }
-
-    suspend fun getScheduledScheduleWork(): Boolean {
-        return context.dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.SCHEDULE_UPDATE] ?: false
-        }.first()
     }
 
     val themeFlow: Flow<String> = context.dataStore.data.map { preferences ->
