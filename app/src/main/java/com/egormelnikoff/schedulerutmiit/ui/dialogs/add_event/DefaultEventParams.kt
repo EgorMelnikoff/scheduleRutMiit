@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event
 
-import com.egormelnikoff.schedulerutmiit.app.model.Group
-import com.egormelnikoff.schedulerutmiit.app.model.Lecturer
-import com.egormelnikoff.schedulerutmiit.app.model.Room
+import com.egormelnikoff.schedulerutmiit.app.entity.Group
+import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
+import com.egormelnikoff.schedulerutmiit.app.entity.Room
 
 object DefaultEventParams {
     val types = arrayOf(
@@ -17,22 +17,18 @@ object DefaultEventParams {
         "Другое"
     )
     val defaultRoom = Room(
-        id = null,
-        url = null,
+        id = -1,
         name = "",
         hint = ""
     )
     val defaultLecturer = Lecturer(
-        id = null,
+        id = -1,
         shortFio = "",
         fullFio = "",
-        url = null,
-        description = null,
-        hint = null
+        hint = ""
     )
     val defaultGroup = Group(
-        id = null,
-        url = null,
+        id = -1,
         name = ""
     )
 }
