@@ -1,12 +1,13 @@
-package com.egormelnikoff.schedulerutmiit.app.modules
+package com.egormelnikoff.schedulerutmiit.app.di
 
 import android.content.Context
 import androidx.work.WorkManager
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleTypeAdapter
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdaterImpl
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManagerImpl
+import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -33,8 +34,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideResourcesManager(@ApplicationContext context: Context): ResourcesManagerImpl =
-        ResourcesManagerImpl(context)
+    fun provideResourcesManager(@ApplicationContext context: Context): ResourcesManager =
+        ResourcesManager(context)
 
 
     @Provides
@@ -42,24 +43,26 @@ object AppModule {
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
         WorkManager.getInstance(context)
 
-
     @Provides
     @Singleton
     fun provideWidgetUpdater(
         @ApplicationContext context: Context,
         scheduleRepos: ScheduleRepos,
         gson: Gson
-    ): WidgetDataUpdaterImpl = WidgetDataUpdaterImpl(
+    ): WidgetDataUpdater = WidgetDataUpdater(
         context = context,
         scheduleRepos = scheduleRepos,
         gson = gson
     )
 
-
     @Provides
     @Singleton
     fun provideGson(): Gson {
         return GsonBuilder()
+            .registerTypeAdapter(
+                NamedScheduleType::class.java,
+                NamedScheduleTypeAdapter()
+            )
             .registerTypeAdapter(
                 LocalDate::class.java,
                 JsonDeserializer { json, _, _ ->
@@ -87,6 +90,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLogger(@ApplicationContext context: Context, resourcesManager: ResourcesManager): Logger =
-        Logger(context, resourcesManager)
+    fun provideLogger(
+        @ApplicationContext context: Context,
+        resourcesManager: ResourcesManager
+    ): Logger = Logger(context, resourcesManager)
 }
