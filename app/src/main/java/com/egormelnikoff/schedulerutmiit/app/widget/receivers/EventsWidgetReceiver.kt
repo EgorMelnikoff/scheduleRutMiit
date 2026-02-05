@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.annotation.Keep
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import com.egormelnikoff.schedulerutmiit.app.modules.ProviderEntryPoint
+import com.egormelnikoff.schedulerutmiit.app.di.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget
 import dagger.hilt.EntryPoints
 import kotlinx.coroutines.CoroutineScope

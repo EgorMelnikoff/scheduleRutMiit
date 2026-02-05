@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.DEVELOPER_EMAIL
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException

@@ -11,9 +11,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Group
-import com.egormelnikoff.schedulerutmiit.app.model.Lecturer
-import com.egormelnikoff.schedulerutmiit.app.model.Room
+import com.egormelnikoff.schedulerutmiit.app.entity.Group
+import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
+import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.RemoveButton
 

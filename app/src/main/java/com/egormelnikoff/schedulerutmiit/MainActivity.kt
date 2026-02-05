@@ -9,8 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions.Companion.scheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
@@ -33,7 +32,7 @@ class MainActivity : ComponentActivity() {
             scheduleViewModel.isDataLoading.value || settingsViewModel.appSettings.value == null
         }
 
-        scheduleActions = scheduleActions(
+        scheduleActions = ScheduleActions(
             scheduleViewModel = scheduleViewModel
         )
 

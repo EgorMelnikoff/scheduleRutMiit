@@ -39,10 +39,10 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.app.modules.ProviderEntryPoint
+import com.egormelnikoff.schedulerutmiit.app.di.ProviderEntryPoint
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetData
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.theme.ScheduleGlanceTheme
@@ -107,7 +107,7 @@ class EventsWidget : GlanceAppWidget() {
                 append(widgetData.namedScheduleEntity.shortName)
             }
             if (widgetData?.settledScheduleEntity != null) {
-                append(" (${widgetData.settledScheduleEntity.typeName})")
+                append(" (${widgetData.settledScheduleEntity.timetableType.typeName})")
             }
         }.toString()
 

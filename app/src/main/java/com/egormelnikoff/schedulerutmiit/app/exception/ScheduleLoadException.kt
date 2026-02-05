@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.exception
+package com.egormelnikoff.schedulerutmiit.app.exception
 
 import com.egormelnikoff.schedulerutmiit.data.TypedError
 

@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.data
 
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.serialization.SerializationException
 import okio.IOException

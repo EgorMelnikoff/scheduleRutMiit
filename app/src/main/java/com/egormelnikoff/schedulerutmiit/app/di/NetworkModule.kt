@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.app.modules
+package com.egormelnikoff.schedulerutmiit.app.di
 
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_RUT_MIIT_URL
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
@@ -35,19 +35,21 @@ object NetworkModule {
             }
             .build()
     }
-}
 
-@Module
-@InstallIn(SingletonComponent::class)
-object MiitApiModule {
     @Provides
     @Singleton
-    fun provideMiitApi(okHttpClient: OkHttpClient, gson: Gson): MiitApi {
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_RUT_MIIT_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
+        return retrofit
+    }
+
+    @Provides
+    @Singleton
+    fun provideMiitApi(retrofit: Retrofit): MiitApi {
         return retrofit.create(MiitApi::class.java)
     }
 }

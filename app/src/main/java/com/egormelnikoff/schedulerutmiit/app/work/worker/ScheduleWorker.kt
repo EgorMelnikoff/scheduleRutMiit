@@ -5,8 +5,9 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.domain.schedule.RefreshNamedScheduleUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
@@ -17,6 +18,7 @@ class ScheduleWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val scheduleRepos: ScheduleRepos,
+    private val refreshNamedScheduleUseCase: RefreshNamedScheduleUseCase,
     private val logger: Logger,
     private val preferencesDataStore: PreferencesDataStore
 ) : CoroutineWorker(appContext, workerParams) {
@@ -25,7 +27,7 @@ class ScheduleWorker @AssistedInject constructor(
         logger.i("ScheduleWorker", "Default schedule:\n$namedScheduleEntity")
         namedScheduleEntity ?: return Result.failure()
 
-        val updateResult = scheduleRepos.updateSavedNamedSchedule(
+        val updateResult = refreshNamedScheduleUseCase.update(
             namedScheduleEntity = namedScheduleEntity,
             onStartUpdate = {
                 logger.i("ScheduleWorker", "Start schedule update")

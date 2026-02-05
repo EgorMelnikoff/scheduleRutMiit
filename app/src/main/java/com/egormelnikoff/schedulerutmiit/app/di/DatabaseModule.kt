@@ -1,9 +1,9 @@
-package com.egormelnikoff.schedulerutmiit.app.modules
+package com.egormelnikoff.schedulerutmiit.app.di
 
 import android.content.Context
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.AppDatabase
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.Converters
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedScheduleDao
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.AppDatabase
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.Converters
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.Dao
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -23,7 +23,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideNamedScheduleDao(database: AppDatabase): NamedScheduleDao = database.namedScheduleDao()
+    fun provideDao(database: AppDatabase): Dao = database.dao()
 
 
     @Provides

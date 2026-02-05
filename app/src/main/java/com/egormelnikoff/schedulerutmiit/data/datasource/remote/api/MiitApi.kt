@@ -21,13 +21,13 @@ interface MiitApi {
 
     @GET(TIMETABLE)
     suspend fun getTimetables(
-        @Path("type") type: String,
+        @Path("type") typeName: String,
         @Path("apiId") apiId: String
     ): Response<Timetables>
 
     @GET(SCHEDULE)
     suspend fun getSchedule(
-        @Path("type") type: String,
+        @Path("type") typeName: String,
         @Path("apiId") apiId: String,
         @Path("timetableId") timetableId: String?
     ): Response<Schedule>

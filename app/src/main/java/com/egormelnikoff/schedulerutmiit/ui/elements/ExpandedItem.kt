@@ -47,7 +47,7 @@ fun ExpandedItem(
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.medium)
                 .clickable { onChangeVisibility(!visible) }
-                .padding(vertical = 8.dp, horizontal = 4.dp),
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {

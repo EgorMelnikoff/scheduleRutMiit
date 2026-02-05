@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.app.widget
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ReviewData
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData.Companion.getPeriodicEvents
@@ -32,14 +32,14 @@ data class WidgetData(
 
                 if (scheduleFormatted.scheduleEntity.recurrence != null) {
                     periodicEvents = splitEvents.second.getPeriodicEvents(
-                        scheduleFormatted.scheduleEntity.recurrence.interval!!,
+                        scheduleFormatted.scheduleEntity.recurrence.interval,
                     )
                 } else {
                     nonPeriodicEvents = splitEvents.second.groupBy {
                         it.startDatetime!!.toLocalDate()
                     }
                 }
-                val reviewData = ReviewData.reviewData(
+                val reviewData = ReviewData(
                     date = today,
                     scheduleEntity = scheduleFormatted.scheduleEntity,
                     periodicEvents = periodicEvents,

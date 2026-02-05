@@ -177,7 +177,7 @@ fun CustomNavigationItem(
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.95f else 1.0f,
+        targetValue = if (isPressed) 0.9f else 1.0f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
     )
 

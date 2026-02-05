@@ -30,7 +30,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -61,7 +61,7 @@ fun AddScheduleDialog(
                             val errorMessages =
                                 checkScheduleParams(appUiState.context, nameSchedule, startDate, endDate)
                             if (errorMessages.isEmpty()) {
-                                scheduleActions.onAddCustomSchedule(
+                                scheduleActions.onAddCustomNamedSchedule(
                                     nameSchedule.trim(),
                                     startDate!!,
                                     endDate!!

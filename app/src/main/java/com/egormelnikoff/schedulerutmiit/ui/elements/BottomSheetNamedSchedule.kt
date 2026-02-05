@@ -29,10 +29,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import java.time.format.DateTimeFormatter
 
@@ -53,6 +53,7 @@ fun ModalDialogNamedSchedule(
     onDismiss: (NamedScheduleEntity?) -> Unit
 ) {
     val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+
     CustomModalBottomSheet(
         modifier = Modifier.padding(horizontal = 12.dp),
         onDismiss = {
@@ -105,7 +106,7 @@ fun ModalDialogNamedSchedule(
             }
         }
         Spacer(modifier = Modifier.height(0.dp))
-        if (appUiState != null && scheduleActions != null) {
+        if (scheduleActions != null) {
             ColumnGroup(
                 items = namedScheduleData?.namedSchedule?.schedules?.map { schedule ->
                     {
@@ -113,7 +114,7 @@ fun ModalDialogNamedSchedule(
                             targetValue = if (schedule.scheduleEntity.isDefault) 1f else 0f
                         )
                         ClickableItem(
-                            title = schedule.scheduleEntity.typeName,
+                            title = schedule.scheduleEntity.timetableType.typeName,
                             titleLabel = {
                                 Text(
                                     modifier = Modifier
@@ -144,7 +145,6 @@ fun ModalDialogNamedSchedule(
                                         IconButton(
                                             onClick = {
                                                 scheduleActions.onSetDefaultSchedule(
-                                                    namedScheduleData.namedSchedule.namedScheduleEntity.id,
                                                     schedule.scheduleEntity.id,
                                                     schedule.scheduleEntity.timetableId
                                                 )
@@ -161,7 +161,7 @@ fun ModalDialogNamedSchedule(
                                             )
                                         }
                                     }
-                                    schedule.scheduleEntity.downloadUrl?.let {
+                                    if (appUiState != null &&  schedule.scheduleEntity.downloadUrl != null) {
                                         IconButton(
                                             onClick = {
                                                 appUiState.uriHandler.openUri(
