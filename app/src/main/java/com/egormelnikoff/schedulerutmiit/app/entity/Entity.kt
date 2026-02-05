@@ -214,16 +214,45 @@ class NamedScheduleTypeAdapter : TypeAdapter<NamedScheduleType>() {
 
         out.beginObject()
         out.name("id").value(value.id)
+        out.name("name").value(value.name)
         out.endObject()
     }
 
     override fun read(reader: JsonReader): NamedScheduleType {
-        return when (reader.nextInt()) {
-            0 -> NamedScheduleType.Group
-            1 -> NamedScheduleType.Person
-            2 -> NamedScheduleType.Room
-            3 -> NamedScheduleType.My
-            else -> throw JsonParseException("Unknown NamedScheduleType id")
+        return when (reader.peek()) {
+
+            JsonToken.NUMBER -> {
+                when (reader.nextInt()) {
+                    0 -> NamedScheduleType.Group
+                    1 -> NamedScheduleType.Person
+                    2 -> NamedScheduleType.Room
+                    3 -> NamedScheduleType.My
+                    else -> throw JsonParseException("Unknown NamedScheduleType id")
+                }
+            }
+
+            JsonToken.BEGIN_OBJECT -> {
+                var id: Int? = null
+
+                reader.beginObject()
+                while (reader.hasNext()) {
+                    when (reader.nextName()) {
+                        "id" -> id = reader.nextInt()
+                        else -> reader.skipValue()
+                    }
+                }
+                reader.endObject()
+
+                when (id) {
+                    0 -> NamedScheduleType.Group
+                    1 -> NamedScheduleType.Person
+                    2 -> NamedScheduleType.Room
+                    3 -> NamedScheduleType.My
+                    else -> throw JsonParseException("Unknown NamedScheduleType id")
+                }
+            }
+
+            else -> throw JsonParseException("Unexpected token for NamedScheduleType")
         }
     }
 }
