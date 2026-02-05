@@ -62,11 +62,13 @@ dependencies {
     implementation(libs.firebase.crashlytics.ndk)
 
     implementation (libs.hilt.android)
-    implementation (libs.androidx.hilt.lifecycle.viewmodel )
+    implementation (libs.androidx.hilt.lifecycle.viewmodel)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.compose.ui)
     ksp (libs.hilt.android.compiler)
     ksp (libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.work)
+
 
     implementation(libs.retrofit)
     implementation (libs.jsoup)
@@ -90,7 +92,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
-    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
     implementation(libs.androidx.core.ktx)
     implementation (libs.androidx.runtime.livedata)
