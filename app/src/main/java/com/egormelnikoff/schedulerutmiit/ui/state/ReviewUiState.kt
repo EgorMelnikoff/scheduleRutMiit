@@ -14,7 +14,7 @@ data class ReviewUiState(
 ) {
     companion object {
         @Composable
-        fun reviewUiState(): ReviewUiState {
+        operator fun invoke(): ReviewUiState {
             var visibleSavedSchedules by remember { mutableStateOf(true) }
             var visibleServices by remember { mutableStateOf(true) }
 

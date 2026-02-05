@@ -30,7 +30,7 @@ data class AppUiState(
 ) {
     companion object {
         @Composable
-        fun appUiState(): AppUiState {
+        operator fun invoke(): AppUiState {
             val appBackStack by remember { mutableStateOf(AppBackStack<Route.Page>(startRoute = Route.Page.Schedule)) }
             val snackBarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()

@@ -7,6 +7,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -16,14 +17,19 @@ import java.time.LocalDate
 @Keep
 data class ScheduleUiState(
     val scheduleListState: LazyListState,
+
     val pagerWeeksState: PagerState,
     val pagerDaysState: PagerState,
     val selectedDate: LocalDate,
-    val onSelectDate: (LocalDate) -> Unit
+    val onSelectDate: (LocalDate) -> Unit,
+
+    val pagerSplitWeeks: PagerState,
+    val selectedWeek: Int,
+    val onSelectWeek: (Int) -> Unit,
 ) {
     companion object {
         @Composable
-        fun scheduleUiState(
+        operator fun invoke(
             scheduleState: ScheduleState
         ): ScheduleUiState? {
             return if (scheduleState.currentNamedScheduleData?.namedSchedule != null && scheduleState.currentNamedScheduleData.scheduleData?.schedulePagerData != null) {
@@ -45,13 +51,33 @@ data class ScheduleUiState(
                     )
                 }
 
+                var selectedWeek by remember {
+                    mutableIntStateOf(
+                        if (scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity?.recurrence != null) {
+                            scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence.currentNumber
+                        } else 0
+                    )
+                }
+
+                val pagerSplitWeeks = rememberPagerState(
+                    initialPage = scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.dayOfWeek.value - 1,
+                    pageCount = { 7 }
+                )
+
                 ScheduleUiState(
                     scheduleListState = scheduleListState,
+
                     pagerWeeksState = pagerWeeksState,
                     pagerDaysState = pagerDaysState,
                     selectedDate = selectedDate,
                     onSelectDate = { newDate ->
                         selectedDate = newDate
+                    },
+
+                    pagerSplitWeeks = pagerSplitWeeks,
+                    selectedWeek = selectedWeek,
+                    onSelectWeek = { newWeek ->
+                        selectedWeek = newWeek
                     }
                 )
             } else null

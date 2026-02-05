@@ -1,15 +1,15 @@
 package com.egormelnikoff.schedulerutmiit.view_models.schedule
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.app.model.getCurrentWeek
-import com.egormelnikoff.schedulerutmiit.app.model.getEventsForDate
-import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
+import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
+import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget.Companion.eveningTime
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -30,18 +30,18 @@ data class NamedScheduleData(
                 ?: namedSchedule.schedules.firstOrNull()
         }
 
-        fun namedScheduleData(
-            namedSchedule: NamedScheduleFormatted?
+        fun invoke(
+            namedScheduleFormatted: NamedScheduleFormatted?
         ): NamedScheduleData? {
-            namedSchedule ?: return null
-            val currentSchedule = findCurrentSchedule(namedSchedule)
+            namedScheduleFormatted ?: return null
+            val currentSchedule = findCurrentSchedule(namedScheduleFormatted)
             currentSchedule ?: return NamedScheduleData(
-                namedSchedule = namedSchedule
+                namedSchedule = namedScheduleFormatted
             )
 
             return NamedScheduleData(
-                namedSchedule = namedSchedule,
-                scheduleData = ScheduleData.scheduleData(
+                namedSchedule = namedScheduleFormatted,
+                scheduleData = ScheduleData(
                     schedule = currentSchedule
                 )
             )
@@ -61,7 +61,7 @@ data class ScheduleData(
     val reviewData: ReviewData? = null
 ) {
     companion object {
-        fun scheduleData(
+        operator fun invoke(
             schedule: ScheduleFormatted
         ): ScheduleData {
             val today = LocalDateTime.now()
@@ -70,9 +70,9 @@ data class ScheduleData(
             var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
             var nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>? = null
 
-             if (schedule.scheduleEntity.recurrence != null) {
+            if (schedule.scheduleEntity.recurrence != null) {
                 periodicEventsForCalendar = splitEvents.second.getPeriodicEvents(
-                    schedule.scheduleEntity.recurrence.interval!!
+                    schedule.scheduleEntity.recurrence.interval
                 )
             } else {
                 nonPeriodicEventsForCalendar = splitEvents.second.groupBy {
@@ -87,13 +87,13 @@ data class ScheduleData(
                 scheduleEntity = schedule.scheduleEntity,
             )
 
-            val schedulePagerData = SchedulePagerData.schedulePagerData(
+            val schedulePagerData = SchedulePagerData(
                 today = today.toLocalDate(),
                 startDate = schedule.scheduleEntity.startDate,
                 endDate = schedule.scheduleEntity.endDate
             )
 
-            val reviewData = ReviewData.reviewData(
+            val reviewData = ReviewData(
                 date = today,
                 scheduleEntity = schedule.scheduleEntity,
                 periodicEvents = periodicEventsForCalendar,
@@ -125,6 +125,8 @@ data class ScheduleData(
                     }
                     if (eventsForWeek.isNotEmpty()) {
                         this[week] = eventsForWeek.groupBy { it.startDatetime!!.dayOfWeek }
+                    } else {
+                        this[week] = emptyMap()
                     }
                 }
             }
@@ -191,7 +193,7 @@ data class ScheduleData(
             ).toInt()
 
             return (weeksCount - weeksRemaining..weeksCount).map { week ->
-                ((week + scheduleEntity.recurrence!!.firstWeekNumber) % scheduleEntity.recurrence.interval!!)
+                ((week + scheduleEntity.recurrence!!.firstWeekNumber) % scheduleEntity.recurrence.interval)
                     .plus(1)
             }
         }
@@ -208,7 +210,7 @@ data class SchedulePagerData(
     val daysStartIndex: Int,
 ) {
     companion object {
-        fun schedulePagerData(
+        operator fun invoke(
             today: LocalDate,
             startDate: LocalDate,
             endDate: LocalDate
@@ -269,7 +271,7 @@ data class ReviewData(
     val countEventsForWeek: Int = 0
 ) {
     companion object {
-        fun reviewData(
+        operator fun invoke(
             date: LocalDateTime,
             scheduleEntity: ScheduleEntity,
             periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
@@ -327,8 +329,7 @@ data class ReviewData(
             var eventsCountForWeek = 0
             when {
                 (periodicEvents != null) -> {
-                    val currentWeek = getCurrentWeek(
-                        date = date,
+                    val currentWeek = date.getCurrentWeek(
                         startDate = scheduleEntity.startDate,
                         recurrence = scheduleEntity.recurrence!!
                     )

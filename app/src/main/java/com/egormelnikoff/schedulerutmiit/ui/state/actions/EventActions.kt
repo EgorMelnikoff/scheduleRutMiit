@@ -1,7 +1,7 @@
-package com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule
+package com.egormelnikoff.schedulerutmiit.ui.state.actions
 
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 data class EventActions(
@@ -13,7 +13,7 @@ data class EventActions(
     val onEventExtraChange: (Event, String, Int) -> Unit, //Event, Comment, Tag
 ) {
     companion object {
-        fun getEventActions(
+        operator fun invoke(
             scheduleViewModel: ScheduleViewModel
         ) = EventActions(
             onUpdateCustomEvent = { scheduleEntity, event ->
