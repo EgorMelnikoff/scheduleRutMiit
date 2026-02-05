@@ -246,7 +246,7 @@ fun RootHost(
                 entry<Route.Dialog.HiddenEventsDialog> { key ->
                     HiddenEventsDialog(
                         scheduleEntity = key.scheduleEntity,
-                        scheduleState = scheduleState,
+                        hiddenEvents = scheduleState.currentNamedScheduleData!!.scheduleData!!.hiddenEvents,
                         navigationActions = navigationActions,
                         eventActions = scheduleActions.eventActions
                     )
