@@ -1,10 +1,12 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.database
+package com.egormelnikoff.schedulerutmiit.data.datasource.local
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.egormelnikoff.schedulerutmiit.app.model.Group
-import com.egormelnikoff.schedulerutmiit.app.model.Lecturer
-import com.egormelnikoff.schedulerutmiit.app.model.Room
+import com.egormelnikoff.schedulerutmiit.app.entity.Group
+import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
+import com.egormelnikoff.schedulerutmiit.app.entity.Room
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.TimetableType
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.time.LocalDate
@@ -89,4 +91,25 @@ class Converters @Inject constructor(
             LocalDateTime.parse(localDateTimeString, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         }
     }
+
+    @TypeConverter
+    fun fromNamedScheduleType(type: NamedScheduleType) = type.id
+
+    @TypeConverter
+    fun toNamedScheduleType(value: Int): NamedScheduleType {
+        return when (value) {
+            0 -> NamedScheduleType.Group
+            1 -> NamedScheduleType.Person
+            2 -> NamedScheduleType.Room
+            else -> NamedScheduleType.My
+        }
+    }
+
+    @TypeConverter
+    fun fromTimetableType(type: TimetableType): Int =
+        type.ordinal
+
+    @TypeConverter
+    fun toTimetableType(value: Int): TimetableType =
+        TimetableType.entries[value]
 }

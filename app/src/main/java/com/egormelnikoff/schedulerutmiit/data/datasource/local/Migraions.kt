@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.database
+package com.egormelnikoff.schedulerutmiit.data.datasource.local
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -97,5 +97,62 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         db.execSQL("DROP TABLE $oldTableName")
 
         db.execSQL("DELETE FROM sqlite_sequence WHERE name='$tableName'")
+    }
+}
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("""
+            CREATE TABLE Schedules_new (
+                ScheduleId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                namedScheduleId INTEGER NOT NULL,
+                timetableId TEXT NOT NULL,
+                timetableType INTEGER NOT NULL,
+                downloadUrl TEXT,
+                startDate TEXT NOT NULL,
+                endDate TEXT NOT NULL,
+                interval INTEGER,
+                currentNumber INTEGER,
+                firstWeekNumber INTEGER,
+                isDefaultSchedule INTEGER NOT NULL
+            )
+        """.trimIndent())
+
+        db.execSQL("""
+            INSERT INTO Schedules_new (
+                ScheduleId, namedScheduleId, timetableId, timetableType, 
+                downloadUrl, startDate, endDate, interval, 
+                currentNumber, firstWeekNumber, isDefaultSchedule
+            )
+            SELECT 
+                ScheduleId, namedScheduleId, timetableId, 
+                CASE typeName 
+                    WHEN 'Периодическое' THEN 0 
+                    WHEN 'Разовое' THEN 1 
+                    WHEN 'Сессия' THEN 2 
+                    ELSE 1 
+                END, 
+                downloadUrl, startDate, endDate, interval, 
+                currentNumber, firstWeekNumber, isDefaultSchedule 
+            FROM Schedules
+        """.trimIndent())
+
+        db.execSQL("DROP TABLE Schedules")
+        db.execSQL("ALTER TABLE Schedules_new RENAME TO Schedules")
+    }
+}
+
+val MIGRATION_6_7 = object : Migration(6, 7) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `SearchHistory` (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                name TEXT NOT NULL, 
+                apiId INTEGER NOT NULL, 
+                namedScheduleType INTEGER NOT NULL
+            )
+            """.trimIndent()
+        )
     }
 }
