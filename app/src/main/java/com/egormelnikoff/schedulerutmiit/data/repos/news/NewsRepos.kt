@@ -5,9 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
+import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +21,7 @@ interface NewsRepos {
 
 class NewsReposImpl @Inject constructor(
     private val miitApi: MiitApi,
-    private val apiHelper: ApiHelper,
+    private val networkHelper: NetworkHelper,
     private val resourcesManager: ResourcesManager,
     private val parser: Parser
 ) : NewsRepos {
@@ -36,7 +36,7 @@ class NewsReposImpl @Inject constructor(
             pagingSourceFactory = {
                 PagingNewsSource(
                     miitApi = miitApi,
-                    apiHelper = apiHelper,
+                    networkHelper = networkHelper,
                     resourcesManager = resourcesManager
                 )
             }
@@ -45,11 +45,13 @@ class NewsReposImpl @Inject constructor(
 
 
     override suspend fun getNewsById(id: Long): Result<News> {
-        return apiHelper.callApiWithExceptions(
+        return networkHelper.callNetwork(
             requestType = "News",
-            requestParams = "News id: $id"
-        ) {
-            miitApi.getNewsById(id)
-        }
+            requestParams = "News id: $id",
+            callApi = {
+                miitApi.getNewsById(id)
+            },
+            callParser = null
+        )
     }
 }

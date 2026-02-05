@@ -3,16 +3,16 @@ package com.egormelnikoff.schedulerutmiit.data.repos.news
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
+import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_MIIT_URL
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.ApiHelper
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 
 class PagingNewsSource (
     private val miitApi: MiitApi,
-    private val apiHelper: ApiHelper,
+    private val networkHelper: NetworkHelper,
     private val resourcesManager: ResourcesManager
 ) : PagingSource<Int, NewsShort>() {
     override fun getRefreshKey(state: PagingState<Int, NewsShort>): Int? {
@@ -28,12 +28,14 @@ class PagingNewsSource (
         val currentPage = params.key ?: 1
         val pageSize = params.loadSize
 
-        val response = apiHelper.callApiWithExceptions(
+        val response = networkHelper.callNetwork(
             requestType = "News list",
-            requestParams = "From page: $currentPage; To page: $currentPage"
-        ) {
-            miitApi.getNewsList(pageSize, currentPage, currentPage)
-        }
+            requestParams = "From page: $currentPage; To page: $currentPage",
+            callApi = {
+                miitApi.getNewsList(pageSize, currentPage, currentPage)
+            },
+            callParser = null
+        )
 
         return when (response) {
             is Result.Error -> {
