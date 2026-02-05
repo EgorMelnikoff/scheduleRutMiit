@@ -3,9 +3,10 @@ package com.egormelnikoff.schedulerutmiit.view_models.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -140,7 +141,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onSetScheduleView(
-        scheduleView: Boolean
+        scheduleView: ScheduleView
     ) {
         viewModelScope.launch {
             preferencesDataStore.setScheduleView(scheduleView)

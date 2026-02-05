@@ -1,9 +1,11 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences
+package com.egormelnikoff.schedulerutmiit.app.preferences
+
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleView
 
 data class AppSettings(
     val theme: String,
     val decorColorIndex: Int,
-    val scheduleView: Boolean,
+    val scheduleView: ScheduleView,
     val schedulesDeletable: Boolean,
     val showCountClasses: Boolean,
     val eventView: EventView
