@@ -39,8 +39,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.SearchType
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.personImageUrl
-import com.egormelnikoff.schedulerutmiit.data.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
@@ -48,7 +49,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchState
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
@@ -182,7 +183,7 @@ fun SearchDialog(
                                         ClickableItem(
                                             verticalPadding = 8.dp,
                                             horizontalPadding = 8.dp,
-                                            title = group.name!!,
+                                            title = group.name,
                                             showClickLabel = false,
                                             onClick = {
                                                 navigationActions.navigateToSchedule()
@@ -190,7 +191,7 @@ fun SearchDialog(
                                                 scheduleActions.onGetNamedSchedule(
                                                     group.name,
                                                     group.id.toString(),
-                                                    0
+                                                    NamedScheduleType.Group
                                                 )
                                                 searchViewModel.setDefaultSearchState()
                                             }
@@ -216,9 +217,9 @@ fun SearchDialog(
                                         ClickableItem(
                                             verticalPadding = 8.dp,
                                             horizontalPadding = 8.dp,
-                                            title = person.name!!,
+                                            title = person.name,
                                             titleMaxLines = 2,
-                                            subtitle = person.position!!,
+                                            subtitle = person.position,
                                             subtitleMaxLines = 3,
                                             leadingIcon = {
                                                 LeadingAsyncImage(
@@ -235,7 +236,7 @@ fun SearchDialog(
                                                 scheduleActions.onGetNamedSchedule(
                                                     person.name,
                                                     person.id.toString(),
-                                                    1
+                                                    NamedScheduleType.Person
                                                 )
                                                 searchViewModel.setDefaultSearchState()
                                             }

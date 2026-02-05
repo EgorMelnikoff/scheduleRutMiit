@@ -46,10 +46,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -60,7 +61,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -207,9 +208,9 @@ fun EventDialog(
                                                         navigationActions.navigateToSchedule()
                                                         navigationActions.onBack()
                                                         scheduleActions.onGetNamedSchedule(
-                                                            group.name!!,
+                                                            group.name,
                                                             group.id.toString(),
-                                                            0
+                                                            NamedScheduleType.Group
                                                         )
                                                     }
                                                 )
@@ -218,7 +219,7 @@ fun EventDialog(
                                         .padding(8.dp)
                                 ) {
                                     Text(
-                                        text = group.name.toString(),
+                                        text = group.name,
                                         style = MaterialTheme.typography.titleSmall,
                                         color = MaterialTheme.colorScheme.onBackground,
                                         overflow = TextOverflow.Ellipsis,
@@ -237,7 +238,7 @@ fun EventDialog(
                     items = event.rooms.map { room ->
                         {
                             ClickableItem(
-                                title = room.hint.toString(),
+                                title = room.hint,
                                 titleMaxLines = 2,
                                 defaultMinHeight = 32.dp,
                                 onClick = if (!event.isCustomEvent) {
@@ -245,9 +246,9 @@ fun EventDialog(
                                         navigationActions.navigateToSchedule()
                                         navigationActions.onBack()
                                         scheduleActions.onGetNamedSchedule(
-                                            room.name!!,
+                                            room.name,
                                             room.id.toString(),
-                                            2
+                                            NamedScheduleType.Room
                                         )
                                     }
                                 } else null
@@ -264,7 +265,7 @@ fun EventDialog(
                     items = event.lecturers.map { lecturer ->
                         {
                             ClickableItem(
-                                title = lecturer.fullFio.toString(),
+                                title = lecturer.fullFio,
                                 titleMaxLines = 2,
                                 defaultMinHeight = 32.dp,
                                 onClick = if (!event.isCustomEvent) {
@@ -272,15 +273,15 @@ fun EventDialog(
                                         navigationActions.navigateToSchedule()
                                         navigationActions.onBack()
                                         scheduleActions.onGetNamedSchedule(
-                                            lecturer.fullFio!!,
+                                            lecturer.fullFio,
                                             lecturer.id.toString(),
-                                            1
+                                            NamedScheduleType.Person
                                         )
                                     }
                                 } else null,
                                 leadingIcon = {
                                     LeadingTitle(
-                                        title = lecturer.fullFio.toString()
+                                        title = lecturer.fullFio
                                     )
                                 }
                             )
