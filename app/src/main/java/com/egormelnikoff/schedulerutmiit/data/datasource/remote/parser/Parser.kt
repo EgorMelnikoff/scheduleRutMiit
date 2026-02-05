@@ -13,6 +13,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.Subject
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_MIIT_URL
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -23,22 +24,29 @@ import org.jsoup.nodes.TextNode
 import javax.inject.Inject
 
 interface Parser {
-    suspend fun parsePeople(query: String): Result<List<Person>>
-    suspend fun parseListSubjects(id: String): Result<List<Subject>>
-    suspend fun parseCurrentWeek(apiId: String): Int
+    suspend fun getPeopleByQuery(query: String): Result<List<Person>>
+    suspend fun getListSubjectById(id: String): Result<List<Subject>>
+    suspend fun getCurrentWeekByApiId(
+        apiId: String,
+        startDate: String,
+        type: Char
+    ): Int
+
     fun parseNews(news: News): News
 }
 
 class ParserImpl @Inject constructor(
-    private val parserHelper: ParserHelper
+    private val networkHelper: NetworkHelper,
 ) : Parser {
-    override suspend fun parsePeople(query: String): Result<List<Person>> {
-        val document = parserHelper.callParserWithExceptions(
+    override suspend fun getPeopleByQuery(query: String): Result<List<Person>> {
+        val document = networkHelper.callNetwork(
             requestType = "Person",
-            requestParams = "Query: $query"
-        ) {
-            Jsoup.connect(Endpoints.peopleUrl(query)).get()
-        }
+            requestParams = "Query: $query",
+            callParser = {
+                Jsoup.connect(Endpoints.peopleUrl(query)).get()
+            },
+            callApi = null
+        )
 
         return when (document) {
             is Result.Success -> {
@@ -111,13 +119,15 @@ class ParserImpl @Inject constructor(
         return news
     }
 
-    override suspend fun parseListSubjects(id: String): Result<List<Subject>> = coroutineScope {
-        val document = parserHelper.callParserWithExceptions(
+    override suspend fun getListSubjectById(id: String): Result<List<Subject>> = coroutineScope {
+        val document = networkHelper.callNetwork(
             requestType = "Subjects",
-            requestParams = "Id: $id; Page: 1"
-        ) {
-            Jsoup.connect(Endpoints.curriculumProfessorsUrl(id, 1)).get()
-        }
+            requestParams = "Id: $id; Page: 1",
+            callParser = {
+                Jsoup.connect(Endpoints.curriculumProfessorsUrl(id, 1)).get()
+            },
+            callApi = null
+        )
 
         when (document) {
             is Result.Error -> {
@@ -132,14 +142,16 @@ class ParserImpl @Inject constructor(
                 if (pages > 1) {
                     val deferredPages = (2..pages).map { currentPage ->
                         async {
-                            parserHelper.callParserWithExceptions(
+                            networkHelper.callNetwork(
                                 requestType = "Subjects",
-                                requestParams = "Id: $id; Page: $currentPage"
-                            ) {
-                                Jsoup.connect(
-                                    Endpoints.curriculumProfessorsUrl(id, currentPage)
-                                ).get()
-                            }
+                                requestParams = "Id: $id; Page: $currentPage",
+                                callParser = {
+                                    Jsoup.connect(
+                                        Endpoints.curriculumProfessorsUrl(id, currentPage)
+                                    ).get()
+                                },
+                                callApi = null
+                            )
                         }
                     }
 
@@ -159,6 +171,38 @@ class ParserImpl @Inject constructor(
                 }
                 return@coroutineScope Result.Success(result.normalize().sortedBy { it.title })
             }
+        }
+    }
+
+    override suspend fun getCurrentWeekByApiId(
+        apiId: String,
+        startDate: String,
+        type: Char
+    ): Int {
+        val document = networkHelper.callNetwork(
+            requestType = "CurrentWeek",
+            requestParams = "id: $apiId",
+            callParser = {
+                Jsoup.connect(
+                    Endpoints.timetableUrl(
+                        apiId, startDate, type
+                    )
+                ).get()
+            },
+            callApi = null
+        )
+
+
+        return when (document) {
+            is Result.Success -> {
+                val activeLink = document.data.select(".nav-link.active").first()
+                val weekText = activeLink?.text()
+                val weekNumber = weekText?.split(" ")?.get(0)
+                val romanToArabic = mapOf("I" to 1, "II" to 2, "III" to 3, "IV" to 4)
+                romanToArabic[weekNumber] ?: 1
+            }
+
+            is Result.Error -> 1
         }
     }
 
@@ -222,27 +266,6 @@ class ParserImpl @Inject constructor(
         return document.select("ul.pagination li[data-page]")
             .mapNotNull { it.attr("data-page").toIntOrNull() }
             .maxOrNull() ?: 1
-    }
-
-    override suspend fun parseCurrentWeek(apiId: String): Int {
-        val document = parserHelper.callParserWithExceptions(
-            requestType = "Current week",
-            requestParams = "id: $apiId"
-        ) {
-            Jsoup.connect(Endpoints.timetableUrl(apiId)).get()
-        }
-
-        return when (document) {
-            is Result.Success -> {
-                val activeLink = document.data.select(".nav-link.active").first()
-                val weekText = activeLink?.text()
-                val weekNumber = weekText?.split(" ")?.get(0)
-                val romanToArabic = mapOf("I" to 1, "II" to 2, "III" to 3, "IV" to 4)
-                romanToArabic[weekNumber] ?: 1
-            }
-
-            is Result.Error -> 1
-        }
     }
 
     private fun htmlToAnnotatedString(html: String): AnnotatedString {

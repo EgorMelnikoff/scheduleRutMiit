@@ -20,8 +20,12 @@ object Endpoints {
 
     fun peopleUrl(query: String) = "${BASE_MIIT_URL}/people?query=$query"
 
-    fun timetableUrl(apiId: String) =
-        "${BASE_MIIT_URL}/people/$apiId/timetable"
+    fun timetableUrl(
+        apiId: String,
+        startDate: String,
+        type: Char,
+    ) =
+        "${BASE_MIIT_URL}/people/$apiId/timetable?start=$startDate&type=$type"
 
     fun personImageUrl(personId: Int?, width: Int = 100) =
         "$BASE_MIIT_URL/content/e$personId.jpg?id_fe=$personId&SWidth=$width"
