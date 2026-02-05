@@ -37,7 +37,7 @@ class ScheduleApplication : Application(), Configuration.Provider {
         }
     }
 
-    private suspend fun manageWidgetUpdating() {
+    private fun manageWidgetUpdating() {
         val appWidgetManager = AppWidgetManager.getInstance(this)
         val widgetIds = appWidgetManager.getAppWidgetIds(
             ComponentName(this, EventsWidgetReceiver::class.java)

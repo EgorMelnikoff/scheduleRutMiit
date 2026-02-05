@@ -10,19 +10,15 @@ import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import com.google.gson.Gson
 import javax.inject.Inject
 
-interface WidgetDataUpdater {
-    suspend fun updateAll(): ListenableWorker.Result
-}
-
-class WidgetDataUpdaterImpl @Inject constructor(
+class WidgetDataUpdater @Inject constructor(
     private val scheduleRepos: ScheduleRepos,
     private val context: Context,
     private val gson: Gson
-) : WidgetDataUpdater {
-    override suspend fun updateAll(): ListenableWorker.Result {
+) {
+    suspend fun updateAll(): ListenableWorker.Result {
         val namedScheduleEntity = scheduleRepos.getDefaultNamedScheduleEntity()
             ?: return ListenableWorker.Result.failure()
-        val namedSchedule = scheduleRepos.getSavedNamedScheduleById(namedScheduleEntity.id)!!
+        val namedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleEntity.id)!!
         val widgetData = WidgetData.widgetData(namedSchedule)
         widgetData?.let {
             GlanceAppWidgetManager(context).getGlanceIds(EventsWidget::class.java)

@@ -8,24 +8,14 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.work.worker.ScheduleWorker
 import com.egormelnikoff.schedulerutmiit.app.work.worker.WidgetWorker
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.database.NamedScheduleDao
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.Dao
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-interface WorkScheduler {
-    suspend fun isScheduledScheduleWork(): Boolean
-    suspend fun haveDefaultSchedule(): Boolean
-    suspend fun startPeriodicScheduleUpdating()
-    suspend fun cancelPeriodicScheduleUpdating()
-
-    suspend fun startPeriodicWidgetUpdating()
-    suspend fun cancelPeriodicWidgetUpdating()
-}
-
-class WorkSchedulerImpl @Inject constructor(
-    private val namedScheduleDao: NamedScheduleDao,
+class WorkScheduler @Inject constructor(
+    private val dao: Dao,
     private val workManager: WorkManager
-) : WorkScheduler {
+) {
     companion object {
         private const val UPDATING_SCHEDULE_PERIODICALLY = "updatingSchedulePeriodically"
         private const val UPDATING_SCHEDULE_INTERVAL = 10L //Hours
@@ -33,19 +23,19 @@ class WorkSchedulerImpl @Inject constructor(
         private const val UPDATING_WIDGET_INTERVAL = 15L //Minutes
     }
 
-    override suspend fun isScheduledScheduleWork(): Boolean {
+    fun isScheduledScheduleWork(): Boolean {
         val workInfos = workManager.getWorkInfosByTag(UPDATING_SCHEDULE_PERIODICALLY).get()
         val workInfo = workInfos.firstOrNull()
 
         return workInfo != null && (workInfo.state == WorkInfo.State.ENQUEUED || workInfo.state == WorkInfo.State.RUNNING)
     }
 
-    override suspend fun haveDefaultSchedule(): Boolean {
-        return namedScheduleDao.getDefaultNamedScheduleEntity() != null
+    suspend fun haveDefaultSchedule(): Boolean {
+        return dao.getDefaultNamedScheduleEntity() != null
     }
 
 
-    override suspend fun startPeriodicScheduleUpdating() {
+    fun startPeriodicScheduleUpdating() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -65,15 +55,16 @@ class WorkSchedulerImpl @Inject constructor(
         )
     }
 
-    override suspend fun cancelPeriodicScheduleUpdating() {
+    fun cancelPeriodicScheduleUpdating() {
         workManager.cancelUniqueWork(UPDATING_SCHEDULE_PERIODICALLY)
     }
 
-    override suspend fun startPeriodicWidgetUpdating() {
+    fun startPeriodicWidgetUpdating() {
         val widgetWorkRequest = PeriodicWorkRequestBuilder<WidgetWorker>(
             UPDATING_WIDGET_INTERVAL,
             TimeUnit.MINUTES
         )
+            .addTag(UPDATING_WIDGET_PERIODICALLY)
             .build()
 
         workManager.enqueueUniquePeriodicWork(
@@ -83,7 +74,7 @@ class WorkSchedulerImpl @Inject constructor(
         )
     }
 
-    override suspend fun cancelPeriodicWidgetUpdating() {
+    fun cancelPeriodicWidgetUpdating() {
         workManager.cancelUniqueWork(UPDATING_WIDGET_PERIODICALLY)
     }
 }
