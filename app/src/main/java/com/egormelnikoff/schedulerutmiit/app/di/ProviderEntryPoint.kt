@@ -1,5 +1,7 @@
-package com.egormelnikoff.schedulerutmiit.app.modules
+package com.egormelnikoff.schedulerutmiit.app.di
 
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleTypeAdapter
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
@@ -18,6 +20,10 @@ import java.time.format.DateTimeFormatter
 interface ProviderEntryPoint {
     fun gson(): Gson {
         return GsonBuilder()
+            .registerTypeAdapter(
+                NamedScheduleType::class.java,
+                NamedScheduleTypeAdapter()
+            )
             .registerTypeAdapter(
                 LocalDate::class.java,
                 JsonDeserializer { json, _, _ ->
