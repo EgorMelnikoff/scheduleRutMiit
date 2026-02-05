@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,22 +30,21 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
-import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import java.time.DayOfWeek
@@ -71,55 +68,53 @@ fun ReviewScreen(
 
     Scaffold(
         topBar = {
-            if (scheduleState.savedNamedSchedules.isNotEmpty()) {
-                CustomTopAppBar(
-                    titleText = stringResource(R.string.review),
-                    actions = {
-                        IconButton(
-                            onClick = {
-                                navigationActions.navigateToAddSchedule()
-                            },
-                            colors = IconButtonDefaults.iconButtonColors().copy(
-                                contentColor = MaterialTheme.colorScheme.onBackground
-                            )
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .size(24.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.add),
-                                contentDescription = null
-                            )
-                        }
-                        IconButton(
-                            onClick = {
-                                navigationActions.navigateToSearch()
-                            },
-                            colors = IconButtonDefaults.iconButtonColors().copy(
-                                contentColor = MaterialTheme.colorScheme.onBackground
-                            )
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .size(24.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.search),
-                                contentDescription = null
-                            )
-                        }
+            CustomTopAppBar(
+                titleText = stringResource(R.string.review),
+                actions = {
+                    IconButton(
+                        onClick = {
+                            navigationActions.navigateToAddSchedule()
+                        },
+                        colors = IconButtonDefaults.iconButtonColors().copy(
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        )
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.add),
+                            contentDescription = null
+                        )
                     }
-                )
-            }
+                    IconButton(
+                        onClick = {
+                            navigationActions.navigateToSearch()
+                        },
+                        colors = IconButtonDefaults.iconButtonColors().copy(
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        )
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.search),
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
         }
     ) { innerPadding ->
-        if (scheduleState.savedNamedSchedules.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = 16.dp, end = 16.dp,
-                    top = innerPadding.calculateTopPadding() + 8.dp,
-                    bottom = externalPadding.calculateBottomPadding()
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = 16.dp, end = 16.dp,
+                top = innerPadding.calculateTopPadding(),
+                bottom = externalPadding.calculateBottomPadding()
+            ),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            if (scheduleState.savedNamedSchedules.isNotEmpty()) {
                 if (
                     scheduleState.defaultNamedScheduleData?.scheduleData?.reviewData != null &&
                     scheduleState.defaultNamedScheduleData.namedSchedule != null &&
@@ -130,11 +125,8 @@ fun ReviewScreen(
                             navigateToEvent = navigationActions.navigateToEvent,
                             scheduleState = scheduleState,
                             title = "${scheduleState.defaultNamedScheduleData.namedSchedule.namedScheduleEntity.shortName} " +
-                                    "(${scheduleState.defaultNamedScheduleData.scheduleData.scheduleEntity.typeName})"
+                                    "(${scheduleState.defaultNamedScheduleData.scheduleData.scheduleEntity.timetableType.typeName})"
                         )
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(2.dp))
                     }
                 }
                 item {
@@ -163,7 +155,7 @@ fun ReviewScreen(
                                     ClickableItem(
                                         title = namedScheduleEntity.shortName,
                                         titleMaxLines = 2,
-                                        subtitle = if (namedScheduleEntity.type != 3) {
+                                        subtitle = if (namedScheduleEntity.type != NamedScheduleType.My) {
                                             "${stringResource(R.string.current_on)} $lastTimeUpdate"
                                         } else null,
                                         defaultMinHeight = 40.dp,
@@ -186,52 +178,28 @@ fun ReviewScreen(
                         )
                     }
                 }
-                item {
-                    ExpandedItem(
-                        title = stringResource(R.string.services),
-                        imageVector = ImageVector.vectorResource(R.drawable.review),
-                        visible = reviewUiState.visibleServices,
-                        onChangeVisibility = reviewUiState.onChangeVisibilityServices
-                    ) {
-                        ColumnGroup(
-                            items = listOf {
-                                ClickableItem(
-                                    title = stringResource(R.string.list_teachers),
-                                    onClick = {
-                                        navigationActions.navigateToCurriculumDialog()
-                                    }
-                                )
-                            }
-                        )
-                    }
+            }
+            item {
+                ExpandedItem(
+                    title = stringResource(R.string.services),
+                    imageVector = ImageVector.vectorResource(R.drawable.review),
+                    visible = reviewUiState.visibleServices,
+                    onChangeVisibility = reviewUiState.onChangeVisibilityServices
+                ) {
+                    ColumnGroup(
+                        items = listOf {
+                            ClickableItem(
+                                title = stringResource(R.string.list_teachers),
+                                onClick = {
+                                    navigationActions.navigateToCurriculumDialog()
+                                }
+                            )
+                        }
+                    )
                 }
             }
-        } else {
-            ErrorScreen(
-                title = stringResource(R.string.no_saved_schedule),
-                subtitle = stringResource(R.string.empty_base),
-                button = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        CustomButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            buttonTitle = stringResource(R.string.find),
-                            imageVector = ImageVector.vectorResource(R.drawable.search),
-                            onClick = { navigationActions.navigateToSearch() },
-                        )
-                        CustomButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            buttonTitle = stringResource(R.string.create),
-                            imageVector = ImageVector.vectorResource(R.drawable.add),
-                            onClick = { navigationActions.navigateToAddSchedule() },
-                        )
-                    }
-                },
-                paddingBottom = externalPadding.calculateBottomPadding()
-            )
         }
+
 
         if (showNamedScheduleDialog != null) {
             ModalDialogNamedSchedule(
@@ -286,7 +254,8 @@ fun EventsReview(
     val today = LocalDate.now()
     Column(
         modifier = Modifier
-            .animateContentSize(),
+            .animateContentSize()
+            .padding(vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         RowGroup(
