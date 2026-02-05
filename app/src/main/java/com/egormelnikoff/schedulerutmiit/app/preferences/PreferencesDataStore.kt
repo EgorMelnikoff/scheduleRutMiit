@@ -1,10 +1,11 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences
+package com.egormelnikoff.schedulerutmiit.app.preferences
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -26,9 +27,9 @@ class PreferencesDataStore @Inject constructor(
         }
     }
 
-    suspend fun setScheduleView(isCalendar: Boolean) {
+    suspend fun setScheduleView(scheduleView: ScheduleView) {
         context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SCHEDULE_VIEW] = isCalendar
+            preferences[PreferencesKeys.SCHEDULE_VIEW] = scheduleView.name
         }
     }
 
@@ -83,8 +84,9 @@ class PreferencesDataStore @Inject constructor(
         preferences[PreferencesKeys.DECOR_COLOR] ?: 0
     }
 
-    val scheduleViewFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
-        preferences[PreferencesKeys.SCHEDULE_VIEW] ?: true
+    val scheduleViewFlow: Flow<ScheduleView> = context.dataStore.data.map { preferences ->
+        val name = preferences[PreferencesKeys.SCHEDULE_VIEW]
+        ScheduleView.entries.find { it.name == name } ?: ScheduleView.CALENDAR
     }
 
     val schedulesDeletableFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->

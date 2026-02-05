@@ -25,8 +25,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleView
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.next
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,15 +81,18 @@ fun CustomTopAppBar(
 @Composable
 fun ScheduleTopAppBar(
     navigateToAddEvent: (ScheduleEntity) -> Unit,
-    onSetScheduleView: (Boolean) -> Unit,
+    onSetScheduleView: (ScheduleView) -> Unit,
     onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit,
 
     namedScheduleData: NamedScheduleData,
-    calendarView: Boolean,
+    scheduleView: ScheduleView,
+    isPeriodic: Boolean,
     isSavedSchedule: Boolean
 ) {
-    val isNotEmpty = namedScheduleData.namedSchedule!!.schedules.isNotEmpty() && namedScheduleData.scheduleData?.scheduleEntity != null
-    val isCustomSchedule = namedScheduleData.namedSchedule.namedScheduleEntity.type == 3
+    val isNotEmpty =
+        namedScheduleData.namedSchedule!!.schedules.isNotEmpty() && namedScheduleData.scheduleData?.scheduleEntity != null
+    val isCustomSchedule =
+        namedScheduleData.namedSchedule.namedScheduleEntity.type == NamedScheduleType.My
 
     CustomTopAppBar(
         titleContent = {
@@ -105,7 +111,7 @@ fun ScheduleTopAppBar(
                     )
                     if (namedScheduleData.scheduleData?.scheduleEntity != null && !isCustomSchedule) {
                         Text(
-                            text = namedScheduleData.scheduleData.scheduleEntity.typeName,
+                            text = namedScheduleData.scheduleData.scheduleEntity.timetableType.typeName,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             overflow = TextOverflow.Ellipsis,
@@ -132,19 +138,33 @@ fun ScheduleTopAppBar(
             }
             IconButton(
                 onClick = {
-                    onSetScheduleView(!calendarView)
+                    onSetScheduleView(
+                        scheduleView.next(isPeriodic)
+                    )
                 }
             ) {
                 AnimatedContent(
-                    targetState = calendarView,
+                    targetState = scheduleView,
                     transitionSpec = {
                         scaleIn() togetherWith scaleOut()
                     }
-                ) { isCalendarView ->
+                ) { view ->
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        imageVector = if (isCalendarView) ImageVector.vectorResource(R.drawable.list)
-                        else ImageVector.vectorResource(R.drawable.calendar),
+                        imageVector = when (view) {
+                            ScheduleView.CALENDAR -> {
+                                if (isPeriodic) ImageVector.vectorResource(R.drawable.split)
+                                else ImageVector.vectorResource(R.drawable.list)
+                            }
+
+                            ScheduleView.SPLIT_WEEKS -> {
+                                ImageVector.vectorResource(R.drawable.list)
+                            }
+
+                            ScheduleView.LIST -> {
+                                ImageVector.vectorResource(R.drawable.calendar)
+                            }
+                        },
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onBackground
                     )
