@@ -31,11 +31,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.toLocaleTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
@@ -186,7 +186,7 @@ fun ScheduleSingleEvent(
                     )
                     event.groups.forEach { group ->
                         Text(
-                            text = group.name!!,
+                            text = group.name,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             overflow = TextOverflow.Ellipsis,
@@ -211,7 +211,7 @@ fun ScheduleSingleEvent(
                     )
                     event.rooms.forEach { room ->
                         Text(
-                            text = room.name!!,
+                            text = room.name,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             style = MaterialTheme.typography.bodyMedium,
                             overflow = TextOverflow.Ellipsis,
@@ -236,7 +236,7 @@ fun ScheduleSingleEvent(
                     )
                     event.lecturers.forEach { lecturer ->
                         Text(
-                            text = lecturer.shortFio!!,
+                            text = lecturer.shortFio,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             style = MaterialTheme.typography.bodyMedium,
                             overflow = TextOverflow.Ellipsis,

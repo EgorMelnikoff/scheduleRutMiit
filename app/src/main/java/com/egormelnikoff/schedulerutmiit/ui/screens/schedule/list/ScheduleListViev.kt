@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
+package com.egormelnikoff.schedulerutmiit.ui.screens.schedule.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,13 +25,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.model.getGroupedEvents
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.app.extension.getGroupedEvents
+import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.EventActions
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -40,10 +39,8 @@ import java.util.Locale
 
 @Composable
 fun ScheduleListView(
-    navigateToEvent: (ScheduleEntity, Boolean,  Event, EventExtraData?) -> Unit,
-    navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
-    onDeleteEvent: (ScheduleEntity, Long) -> Unit,
-    onUpdateHiddenEvent: (ScheduleEntity, Long) -> Unit,
+    navigationActions: NavigationActions,
+    eventActions: EventActions,
 
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState,
@@ -72,11 +69,11 @@ fun ScheduleListView(
                     Box(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
-                        Event(
-                            navigateToEvent = navigateToEvent,
-                            navigateToEditEvent = navigateToEditEvent,
-                            onDeleteEvent = onDeleteEvent,
-                            onUpdateHiddenEvent = onUpdateHiddenEvent,
+                        com.egormelnikoff.schedulerutmiit.ui.screens.schedule.Event(
+                            navigateToEvent = navigationActions.navigateToEvent,
+                            navigateToEditEvent = navigationActions.navigateToEditEvent,
+                            onDeleteEvent = eventActions.onDeleteEvent,
+                            onUpdateHiddenEvent = eventActions.onHideEvent,
                             events = eventsGrouped.second,
                             scheduleEntity = scheduleData.scheduleEntity!!,
                             eventsExtraData = scheduleData.eventsExtraData,

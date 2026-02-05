@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -40,8 +42,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
@@ -52,11 +55,15 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.ScheduleCalendarView
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.list.ScheduleListView
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.split_weeks.ScheduleSplitWeeksView
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.schedule.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
+
 
 @Composable
 fun ScreenSchedule(
@@ -102,7 +109,7 @@ fun ScreenSchedule(
         }
 
         scheduleState.currentNamedScheduleData?.namedSchedule != null -> {
-            if (!scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault) {
+            if (scheduleState.savedNamedSchedules.isNotEmpty() && !scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault) {
                 BackHandler {
                     showBackDialog = true
                 }
@@ -120,7 +127,8 @@ fun ScreenSchedule(
                         },
                         namedScheduleData = scheduleState.currentNamedScheduleData,
                         isSavedSchedule = scheduleState.isSaved,
-                        calendarView = appSettings.scheduleView
+                        isPeriodic = scheduleState.currentNamedScheduleData.scheduleData?.scheduleEntity?.timetableType == TimetableType.PERIODIC,
+                        scheduleView = appSettings.scheduleView
                     )
                 }
             ) { padding ->
@@ -131,10 +139,13 @@ fun ScreenSchedule(
                             .padding(top = padding.calculateTopPadding()),
                         onRefresh = {
                             if (scheduleState.isSaved) {
-                                scheduleActions.onRefreshScheduleState(scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id)
+                                scheduleActions.onRefreshScheduleState(
+                                    scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
+                                    true
+                                )
                             }
                         },
-                        isRefreshing = scheduleState.isUpdating
+                        isRefreshing = scheduleState.isRefreshing
                     ) {
                         Column {
                             IsSavedAlert(
@@ -152,32 +163,49 @@ fun ScreenSchedule(
                                             )
                                 }
                             ) { targetState ->
-                                if (targetState) {
-                                    ScheduleCalendarView(
-                                        navigateToEvent = navigationActions.navigateToEvent,
-                                        navigateToEditEvent = navigationActions.navigateToEditEvent,
-                                        onDeleteEvent = scheduleActions.eventActions.onDeleteEvent,
-                                        onUpdateHiddenEvent = scheduleActions.eventActions.onHideEvent,
+                                when (targetState) {
+                                    ScheduleView.CALENDAR -> {
+                                        ScheduleCalendarView(
+                                            navigationActions = navigationActions,
+                                            eventActions = scheduleActions.eventActions,
 
-                                        appUiState = appUiState,
-                                        scheduleState = scheduleState,
-                                        scheduleUiState = scheduleUiState,
-                                        isShowCountClasses = appSettings.showCountClasses,
-                                        eventView = appSettings.eventView,
-                                        paddingBottom = externalPadding.calculateBottomPadding()
-                                    )
-                                } else {
-                                    ScheduleListView(
-                                        navigateToEvent = navigationActions.navigateToEvent,
-                                        navigateToEditEvent = navigationActions.navigateToEditEvent,
-                                        onDeleteEvent = scheduleActions.eventActions.onDeleteEvent,
-                                        onUpdateHiddenEvent = scheduleActions.eventActions.onHideEvent,
+                                            appUiState = appUiState,
+                                            scheduleState = scheduleState,
+                                            scheduleUiState = scheduleUiState,
+                                            isShowCountClasses = appSettings.showCountClasses,
+                                            eventView = appSettings.eventView,
+                                            paddingBottom = externalPadding.calculateBottomPadding()
+                                        )
+                                    }
 
-                                        scheduleState = scheduleState,
-                                        scheduleUiState = scheduleUiState,
-                                        eventView = appSettings.eventView,
-                                        paddingBottom = externalPadding.calculateBottomPadding()
-                                    )
+                                    ScheduleView.LIST -> {
+                                        ScheduleListView(
+                                            navigationActions = navigationActions,
+                                            eventActions = scheduleActions.eventActions,
+
+                                            scheduleState = scheduleState,
+                                            scheduleUiState = scheduleUiState,
+                                            eventView = appSettings.eventView,
+                                            paddingBottom = externalPadding.calculateBottomPadding()
+                                        )
+                                    }
+
+                                    ScheduleView.SPLIT_WEEKS -> {
+                                        if (scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.timetableType == TimetableType.PERIODIC) {
+                                            ScheduleSplitWeeksView(
+                                                navigationActions = navigationActions,
+                                                eventActions = scheduleActions.eventActions,
+                                                appUiState = appUiState,
+                                                namedScheduleData = scheduleState.currentNamedScheduleData,
+                                                scheduleUiState = scheduleUiState,
+                                                isSavedSchedule = scheduleState.isSaved,
+                                                appSettings = appSettings,
+                                                paddingBottom = externalPadding.calculateBottomPadding()
+                                            )
+                                        } else {
+                                            settingsViewModel.onSetScheduleView(appSettings.scheduleView.next(false))
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -304,47 +332,50 @@ fun IsSavedAlert(
             enter = expandVertically(),
             exit = shrinkVertically()
         ) {
-            ColumnGroup(
-                items = listOf {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.error)
-                            .padding(horizontal = 12.dp, vertical = 4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.alert),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = stringResource(R.string.schedule_is_not_saved),
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-                        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                            TextButton(
-                                onClick = onSave,
-                                shape = MaterialTheme.shapes.small,
-                                interactionSource = null
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.save),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
+            Column {
+                Spacer(modifier = Modifier.height(4.dp))
+                ColumnGroup(
+                    items = listOf {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.error)
+                                .padding(horizontal = 12.dp, vertical = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                imageVector = ImageVector.vectorResource(R.drawable.alert),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = stringResource(R.string.schedule_is_not_saved),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
+                            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                                TextButton(
+                                    onClick = onSave,
+                                    shape = MaterialTheme.shapes.small,
+                                    interactionSource = null
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.save),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
                             }
                         }
                     }
-                }
-            )
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+            }
         }
-
     }
 }

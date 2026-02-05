@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
+package com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,11 +35,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.model.getCurrentWeek
-import com.egormelnikoff.schedulerutmiit.app.model.getEventsForDate
-import com.egormelnikoff.schedulerutmiit.app.model.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
+import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
+import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
@@ -126,8 +128,7 @@ fun HorizontalCalendar(
                     textAlign = TextAlign.Center
                 )
                 namedScheduleData.scheduleData.scheduleEntity.recurrence?.let { recurrence ->
-                    val selectedWeek = getCurrentWeek(
-                        date = firstDayOfCurrentWeek,
+                    val selectedWeek = firstDayOfCurrentWeek.getCurrentWeek(
                         startDate = scheduleEntity.startDate,
                         recurrence = recurrence
                     )
@@ -171,6 +172,7 @@ fun HorizontalCalendar(
                 )
             }
         }
+        Spacer(modifier = Modifier.height(8.dp))
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
             state = scheduleUiState.pagerWeeksState,
@@ -279,40 +281,51 @@ fun HorizontalCalendarItem(
             modifier = Modifier.defaultMinSize(minHeight = 6.dp)
         ) {
             if (isShowCountClasses) {
-                FlowRow(
-                    maxItemsInEachRow = if (events.size in 6..8) 4 else 5,
-                    horizontalArrangement = Arrangement.spacedBy(
-                        2.dp,
-                        Alignment.CenterHorizontally
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    events.forEach { groupedEvents ->
-                        var offset = 0
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
+                EventsSummary(
+                    events = events,
+                    eventsExtraData = eventsExtraData
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun EventsSummary(
+    events: Map<String, List<Event>>,
+    eventsExtraData: List<EventExtraData>
+) {
+    FlowRow(
+        maxItemsInEachRow = if (events.size in 6..8) 4 else 5,
+        horizontalArrangement = Arrangement.spacedBy(
+            2.dp,
+            Alignment.CenterHorizontally
+        ),
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        events.forEach { groupedEvents ->
+            var offset = 0
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box {
+                    groupedEvents.value.forEach { event ->
+                        val eventExtraData = eventsExtraData.find { it.id == event.id }
+                        val color = getColorByIndex(
+                            index = eventExtraData?.tag,
+                            defaultColor = MaterialTheme.colorScheme.onBackground
+                        )
+                        Canvas(
+                            modifier = Modifier
+                                .padding(start = offset.dp)
+                                .size(6.dp)
                         ) {
-                            Box {
-                                groupedEvents.value.forEach { event ->
-                                    val eventExtraData = eventsExtraData.find { it.id == event.id }
-                                    val color = getColorByIndex(
-                                        index = eventExtraData?.tag,
-                                        defaultColor = MaterialTheme.colorScheme.onBackground
-                                    )
-                                    Canvas(
-                                        modifier = Modifier
-                                            .padding(start = offset.dp)
-                                            .size(6.dp)
-                                    ) {
-                                        drawCircle(
-                                            color = color,
-                                            center = center
-                                        )
-                                    }
-                                    offset += 5
-                                }
-                            }
+                            drawCircle(
+                                color = color,
+                                center = center
+                            )
                         }
+                        offset += 5
                     }
                 }
             }
