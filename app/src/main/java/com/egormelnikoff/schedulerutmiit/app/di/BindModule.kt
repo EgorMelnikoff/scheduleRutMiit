@@ -3,11 +3,11 @@ package com.egormelnikoff.schedulerutmiit.app.di
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserImpl
 import com.egormelnikoff.schedulerutmiit.data.repos.news.NewsRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.news.NewsReposImpl
+import com.egormelnikoff.schedulerutmiit.data.repos.news.impl.NewsReposImpl
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.impl.ScheduleReposImpl
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchReposImpl
+import com.egormelnikoff.schedulerutmiit.data.repos.search.impl.SearchReposImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
