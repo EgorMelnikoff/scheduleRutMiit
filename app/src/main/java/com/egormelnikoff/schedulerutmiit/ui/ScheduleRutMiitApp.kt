@@ -51,6 +51,8 @@ import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchState
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -58,11 +60,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun ScheduleRutMiitApp(
     scheduleViewModel: ScheduleViewModel,
+    searchViewModel: SearchViewModel,
     newsViewModel: NewsViewModel,
     settingsViewModel: SettingsViewModel,
     scheduleActions: ScheduleActions,
     appSettings: AppSettings
 ) {
+    val searchParams = searchViewModel.searchParams.collectAsStateWithLifecycle().value
+    val searchState = searchViewModel.searchState.collectAsStateWithLifecycle().value
     val scheduleState = scheduleViewModel.scheduleState.collectAsStateWithLifecycle().value
     val newsState = newsViewModel.newsState.collectAsStateWithLifecycle().value
 
@@ -99,10 +104,13 @@ fun ScheduleRutMiitApp(
             navigationActions = navigationActions,
             scheduleActions = scheduleActions,
             newsViewModel = newsViewModel,
+            searchViewModel = searchViewModel,
 
             appUiState = appUiState,
             scheduleState = scheduleState,
-            newsState = newsState
+            newsState = newsState,
+            searchState = searchState,
+            searchParams = searchParams
         )
     }
 }
@@ -113,9 +121,12 @@ fun RootHost(
     pageHost: @Composable () -> Unit,
     navigationActions: NavigationActions,
     scheduleActions: ScheduleActions,
+    searchViewModel: SearchViewModel,
     newsViewModel: NewsViewModel,
 
     appUiState: AppUiState,
+    searchState: SearchState,
+    searchParams: SearchParams,
     scheduleState: ScheduleState,
     newsState: NewsState
 ) {
@@ -172,6 +183,7 @@ fun RootHost(
                         eventExtraData = key.eventExtraData,
                         navigationActions = navigationActions,
                         scheduleActions = scheduleActions,
+                        searchViewModel = searchViewModel,
                         appUiState = appUiState
                     )
                 }
@@ -201,12 +213,6 @@ fun RootHost(
                     )
                 }
                 entry<Route.Dialog.SearchDialog> {
-                    val searchViewModel: SearchViewModel = hiltViewModel<SearchViewModel>()
-                    val searchParams =
-                        searchViewModel.searchParams.collectAsStateWithLifecycle().value
-                    val searchState =
-                        searchViewModel.searchState.collectAsStateWithLifecycle().value
-
                     SearchDialog(
                         searchViewModel = searchViewModel,
                         searchParams = searchParams,
@@ -295,9 +301,12 @@ fun PageHost(
 
                                 scheduleUiState != null && scheduleState.currentNamedScheduleData?.scheduleData?.schedulePagerData != null && appSettings.scheduleView == ScheduleView.SPLIT_WEEKS -> {
                                     scheduleUiState.pagerSplitWeeks.scrollToPage(
-                                        scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.today.dayOfWeek.value
+                                        scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.dayOfWeek.value - 1
                                     )
-                                    scheduleUiState.onSelectWeek(scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity?.recurrence?.currentNumber ?: 0)
+                                    scheduleUiState.onSelectWeek(
+                                        scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity?.recurrence?.currentNumber
+                                            ?: 0
+                                    )
                                 }
                             }
                         }

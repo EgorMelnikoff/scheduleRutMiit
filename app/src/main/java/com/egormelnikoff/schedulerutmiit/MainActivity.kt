@@ -13,6 +13,7 @@ import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,6 +22,7 @@ class MainActivity : ComponentActivity() {
     private val scheduleViewModel: ScheduleViewModel by viewModels()
     private val newsViewModel: NewsViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
+    private val searchViewModel: SearchViewModel by viewModels()
 
     private lateinit var scheduleActions: ScheduleActions
 
@@ -45,6 +47,7 @@ class MainActivity : ComponentActivity() {
                     decorColorIndex = settings.decorColorIndex
                 ) {
                     ScheduleRutMiitApp(
+                        searchViewModel = searchViewModel,
                         scheduleViewModel = scheduleViewModel,
                         newsViewModel = newsViewModel,
                         settingsViewModel = settingsViewModel,
