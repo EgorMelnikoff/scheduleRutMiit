@@ -108,9 +108,9 @@ fun CustomNavigationBar(
                             shape = CircleShape,
                             brush = Brush.verticalGradient(
                                 colors = listOf(
-                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.3f),
+                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.2f),
                                     Color.Transparent,
-                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.2f)
+                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.1f)
                                 )
                             )
                         )

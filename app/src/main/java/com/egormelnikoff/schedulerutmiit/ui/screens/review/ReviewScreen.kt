@@ -252,10 +252,11 @@ fun EventsReview(
     val reviewData = scheduleState.defaultNamedScheduleData.scheduleData.reviewData!!
     val eventsExtraData = scheduleState.defaultNamedScheduleData.scheduleData.eventsExtraData
     val today = LocalDate.now()
+
     Column(
         modifier = Modifier
             .animateContentSize()
-            .padding(vertical = 4.dp),
+            .padding(top = 4.dp, bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         RowGroup(
