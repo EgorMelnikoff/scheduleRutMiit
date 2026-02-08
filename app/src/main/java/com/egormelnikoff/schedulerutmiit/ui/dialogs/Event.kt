@@ -49,6 +49,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
@@ -62,6 +63,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
 import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,7 +75,8 @@ fun EventDialog(
     scheduleEntity: ScheduleEntity,
     isSavedSchedule: Boolean,
     navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions
+    scheduleActions: ScheduleActions,
+    searchViewModel: SearchViewModel,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
@@ -212,6 +215,13 @@ fun EventDialog(
                                                             group.id.toString(),
                                                             NamedScheduleType.Group
                                                         )
+                                                        searchViewModel.saveQueryToHistory(
+                                                            SearchQuery(
+                                                                name = group.name,
+                                                                apiId = group.id,
+                                                                namedScheduleType = NamedScheduleType.Group
+                                                            )
+                                                        )
                                                     }
                                                 )
                                             } else it
@@ -250,6 +260,13 @@ fun EventDialog(
                                             room.id.toString(),
                                             NamedScheduleType.Room
                                         )
+                                        searchViewModel.saveQueryToHistory(
+                                            SearchQuery(
+                                                name = room.name,
+                                                apiId = room.id,
+                                                namedScheduleType = NamedScheduleType.Room
+                                            )
+                                        )
                                     }
                                 } else null
                             )
@@ -276,6 +293,13 @@ fun EventDialog(
                                             lecturer.fullFio,
                                             lecturer.id.toString(),
                                             NamedScheduleType.Person
+                                        )
+                                        searchViewModel.saveQueryToHistory(
+                                            SearchQuery(
+                                                name = lecturer.shortFio,
+                                                apiId = lecturer.id,
+                                                namedScheduleType = NamedScheduleType.Person
+                                            )
                                         )
                                     }
                                 } else null,

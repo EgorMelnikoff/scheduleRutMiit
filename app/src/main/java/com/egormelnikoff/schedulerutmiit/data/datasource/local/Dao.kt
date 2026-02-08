@@ -56,8 +56,11 @@ interface Dao {
     suspend fun saveSearchQuery (searchQuery: SearchQuery)
 
     @Transaction
-    @Query("SELECT * FROM SearchHistory")
+    @Query("SELECT * FROM SearchHistory ORDER BY id DESC")
     suspend fun getAllSearchQuery(): List<SearchQuery>
+    @Transaction
+    @Query("SELECT * FROM SearchHistory WHERE apiId = :apiId")
+    suspend fun getSearchQueryByApiId(apiId: Int): SearchQuery?
     @Transaction
     @Query("SELECT * FROM NamedSchedules")
     suspend fun getAll(): List<NamedScheduleEntity>
@@ -107,7 +110,7 @@ interface Dao {
     @Query("DELETE FROM EventsExtraData WHERE EventExtraId = :id")
     suspend fun deleteEventExtraByEventId(id: Long)
     @Query("DELETE FROM SearchHistory WHERE id = :queryPrimaryKey")
-    suspend fun deleteSearchQuery(queryPrimaryKey: Int)
+    suspend fun deleteSearchQuery(queryPrimaryKey: Long)
     @Query("DELETE FROM SearchHistory")
     suspend fun deleteAllSearchQuery()
 
