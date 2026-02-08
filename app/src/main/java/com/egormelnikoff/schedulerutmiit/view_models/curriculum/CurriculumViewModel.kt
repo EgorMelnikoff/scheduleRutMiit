@@ -2,22 +2,24 @@ package com.egormelnikoff.schedulerutmiit.view_models.curriculum
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.egormelnikoff.schedulerutmiit.app.model.Subject
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class CurriculumViewModel @Inject constructor(
     private val searchRepos: SearchRepos,
@@ -32,38 +34,39 @@ class CurriculumViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _searchQuery
-                .debounce(500L)
+                .debounce(300L)
                 .distinctUntilChanged()
-                .filter { it.length > 2 }
-                .collect { query ->
-                    getSubjectsList(query)
+                .mapLatest { id ->
+                    _curriculumState.update { it.copy(isLoading = true) }
+                    if (id.length < 3) {
+                        setDefaultSubjectsState()
+                        return@mapLatest null
+                    }
+                    searchRepos.getSubjectsByCurriculum(id)
+                }.collect { result ->
+                    result?.let { handSubjectsListResult(it) }
                 }
         }
     }
 
-    fun getSubjectsList(
-        id: String
+    fun handSubjectsListResult(
+        result: Result<List<Subject>>
     ) {
-        viewModelScope.launch {
-            _curriculumState.update { it.copy(isLoading = true) }
-            if (id.isNotEmpty()) {
-                when (val subjectsList = searchRepos.getSubjectsByCurriculum(id)) {
-                    is Result.Error -> {
-                        setErrorSubjectsState(subjectsList.typedError)
-                    }
+        when (result) {
+            is Result.Error -> {
+                setErrorSubjectsState(result.typedError)
+            }
 
-                    is Result.Success -> {
-                        _curriculumState.update {
-                            it.copy(
-                                subjectsList = subjectsList.data,
-                                error = null,
-                                isEmptyQuery = false,
-                                isLoading = false
-                            )
-                        }
-                    }
+            is Result.Success -> {
+                _curriculumState.update {
+                    it.copy(
+                        subjectsList = result.data,
+                        error = null,
+                        isEmptyQuery = false,
+                        isLoading = false
+                    )
                 }
-            } else setDefaultSubjectsState()
+            }
         }
     }
 

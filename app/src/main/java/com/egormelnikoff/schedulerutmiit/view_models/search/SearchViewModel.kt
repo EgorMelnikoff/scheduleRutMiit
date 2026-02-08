@@ -11,24 +11,30 @@ import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
 import com.egormelnikoff.schedulerutmiit.domain.search.SearchUseCase
+import com.egormelnikoff.schedulerutmiit.domain.search.result.SearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRepos: SearchRepos,
     private val searchUseCase: SearchUseCase,
     private val resourcesManager: ResourcesManager
 ) : ViewModel() {
+    private val institutesMutex = Mutex()
+
     private val _searchParams = MutableStateFlow(SearchParams())
     val searchParams = _searchParams.asStateFlow()
 
@@ -37,78 +43,70 @@ class SearchViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _searchParams
-                .debounce(500L)
-                .distinctUntilChanged()
-                .filter { it.query.length > 1 }
-                .collect { searchParams ->
-                    search(
-                        searchParams.query,
-                        searchParams.searchType
-                    )
-                }
-
             updateSearchQueryHistory()
+        }
+
+        viewModelScope.launch {
+            _searchParams
+                .debounce(300L)
+                .distinctUntilChanged()
+                .mapLatest { searchParams ->
+                    _searchState.update { it.copy(isLoading = true) }
+                    if (searchParams.query.isBlank()) {
+                        setDefaultSearchState()
+                        return@mapLatest null
+                    }
+                    loadInstitutesOnce()
+                    searchUseCase(
+                        searchParams,
+                        _searchState.value.institutes
+                    )
+                }.collect { result ->
+                    result?.let { handleSearchResult(it) }
+                }
         }
     }
 
-    fun search(
-        query: String,
-        searchType: SearchType
+    fun handleSearchResult(
+        result: SearchResult
     ) {
-        viewModelScope.launch {
-            _searchState.update { it.copy(isLoading = true) }
+        var groupsList = listOf<Group>()
+        var peopleList = listOf<Person>()
 
-            if (query.isNotEmpty()) {
-                if (_searchState.value.institutes == null) {
-                    loadInstitutes()
+        if (result.groups != null) {
+            when (result.groups) {
+                is Result.Error -> {
+                    setErrorSearchState(result.groups.typedError)
+                    return
                 }
 
-                var groupsList = listOf<Group>()
-                var peopleList = listOf<Person>()
-
-                val result = searchUseCase(
-                    query, searchType, _searchState.value.institutes
-                )
-
-                if (result.groups != null) {
-                    when (result.groups) {
-                        is Result.Error -> {
-                            setErrorSearchState(result.groups.typedError)
-                            return@launch
-                        }
-
-                        is Result.Success -> {
-                            groupsList = result.groups.data
-                        }
-                    }
+                is Result.Success -> {
+                    groupsList = result.groups.data
                 }
-
-                if (result.people != null) {
-                    when (result.people) {
-                        is Result.Error -> {
-                            setErrorSearchState(result.people.typedError)
-                            return@launch
-                        }
-
-                        is Result.Success -> {
-                            peopleList = result.people.data
-                        }
-                    }
-                }
-
-                _searchState.update {
-                    it.copy(
-                        groups = groupsList,
-                        people = peopleList,
-                        error = null,
-                        isEmptyQuery = false,
-                        isLoading = false
-                    )
-                }
-            } else {
-                setDefaultSearchState()
             }
+        }
+
+        if (result.people != null) {
+            when (result.people) {
+                is Result.Error -> {
+                    setErrorSearchState(result.people.typedError)
+                    return
+                }
+
+                is Result.Success -> {
+                    peopleList = result.people.data
+                }
+            }
+        }
+
+        _searchState.update {
+            it.copy(
+                groups = groupsList,
+                people = peopleList,
+                error = null,
+                isEmptyQuery = false,
+                isLoading = false
+            )
         }
     }
 
@@ -122,7 +120,7 @@ class SearchViewModel @Inject constructor(
     }
 
     fun deleteQueryFromHistory(
-        queryPrimaryKey: Int
+        queryPrimaryKey: Long
     ) {
         viewModelScope.launch {
             searchRepos.deleteSearchQuery(queryPrimaryKey)
@@ -136,24 +134,19 @@ class SearchViewModel @Inject constructor(
                 history = searchRepos.getAllSearchQuery()
             )
         }
-        println("ntcn")
-        println(_searchState.value.history)
     }
 
     fun setDefaultSearchState() {
-        viewModelScope.launch {
-            _searchState.update {
-                it.copy(
-                    history = searchRepos.getAllSearchQuery(),
-                    isEmptyQuery = true,
-                    isLoading = false,
-                    error = null,
-                    groups = listOf(),
-                    people = listOf()
-                )
-            }
-            _searchParams.value = SearchParams()
+        _searchState.update {
+            it.copy(
+                isEmptyQuery = true,
+                isLoading = false,
+                error = null,
+                groups = listOf(),
+                people = listOf()
+            )
         }
+        _searchParams.value = SearchParams()
     }
 
     fun changeSearchParams(query: String? = null, searchType: SearchType? = null) {
@@ -162,6 +155,14 @@ class SearchViewModel @Inject constructor(
                 query = query ?: it.query,
                 searchType = searchType ?: it.searchType
             )
+        }
+    }
+
+    private suspend fun loadInstitutesOnce() {
+        institutesMutex.withLock {
+            if (_searchState.value.institutes == null) {
+                loadInstitutes()
+            }
         }
     }
 
@@ -182,13 +183,13 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun setErrorSearchState(
-        data: TypedError
+        typedError: TypedError
     ) {
         _searchState.update {
             it.copy(
                 error = TypedError.getErrorMessage(
                     resourcesManager = resourcesManager,
-                    typedError = data
+                    typedError = typedError
                 ),
                 isEmptyQuery = false,
                 isLoading = false

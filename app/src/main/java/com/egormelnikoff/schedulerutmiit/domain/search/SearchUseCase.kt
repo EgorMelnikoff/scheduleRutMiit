@@ -7,6 +7,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
 import com.egormelnikoff.schedulerutmiit.domain.search.result.SearchResult
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
 import javax.inject.Inject
 
 
@@ -14,19 +15,18 @@ class SearchUseCase @Inject constructor(
     private val searchRepos: SearchRepos
 ) {
     suspend operator fun invoke(
-        query: String,
-        searchType: SearchType,
+        searchParams: SearchParams,
         institutes: Institutes?
     ): SearchResult {
         var groups: Result<List<Group>>? = null
         var people: Result<List<Person>>? = null
 
-        if ((searchType == SearchType.ALL || searchType == SearchType.GROUPS) && institutes != null) {
-            groups = searchRepos.getGroupsByQuery(institutes, query)
+        if ((searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.GROUPS) && institutes != null) {
+            groups = searchRepos.getGroupsByQuery(institutes, searchParams.query)
         }
 
-        if (searchType == SearchType.ALL || searchType == SearchType.PEOPLE) {
-            people = searchRepos.getPeopleByQuery(query)
+        if (searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.PEOPLE) {
+            people = searchRepos.getPeopleByQuery(searchParams.query)
         }
 
         return SearchResult(
