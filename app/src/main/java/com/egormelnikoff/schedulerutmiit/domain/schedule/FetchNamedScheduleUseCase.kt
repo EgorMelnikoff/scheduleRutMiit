@@ -11,7 +11,7 @@ import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.FetchNamedScheduleResult
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
 
 class FetchNamedScheduleUseCase @Inject constructor(
@@ -21,13 +21,16 @@ class FetchNamedScheduleUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         primaryKeyNamedSchedule: Long = 0,
+        fetchForce: Boolean = false,
         name: String,
         apiId: String,
         type: NamedScheduleType
-    ): FetchNamedScheduleResult = coroutineScope {
-        val savedNamedSchedule = scheduleRepos.getNamedScheduleByApiId(apiId)
+    ): FetchNamedScheduleResult = supervisorScope {
+        val savedNamedSchedule = if (!fetchForce)
+            scheduleRepos.getNamedScheduleByApiId(apiId)
+        else null
         savedNamedSchedule?.let {
-            return@coroutineScope FetchNamedScheduleResult(
+            return@supervisorScope FetchNamedScheduleResult(
                 Result.Success(savedNamedSchedule),
                 true
             )
@@ -35,7 +38,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
 
         when (val timetables = scheduleRepos.fetchTimetables(apiId = apiId, type = type)) {
             is Result.Error -> {
-                return@coroutineScope FetchNamedScheduleResult(
+                return@supervisorScope FetchNamedScheduleResult(
                     Result.Error(timetables.typedError),
                     false
                 )
@@ -43,7 +46,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
 
             is Result.Success -> {
                 if (timetables.data.timetables.isEmpty()) {
-                    return@coroutineScope FetchNamedScheduleResult(
+                    return@supervisorScope FetchNamedScheduleResult(
                         Result.Error(
                             TypedError.EmptyBodyError
                         ), false
@@ -52,28 +55,27 @@ class FetchNamedScheduleUseCase @Inject constructor(
 
                 val deferredSchedules = timetables.data.timetables.mapIndexed { index, timetable ->
                     async {
-                        scheduleRepos.fetchSchedule(apiId, type, timetable.id)
-                            .let { result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        val normalizedSchedule = scheduleNormalizer.invoke(
-                                            result.data,
-                                            apiId,
-                                            timetable
+                        scheduleRepos.fetchSchedule(apiId, type, timetable.id).let { schedule ->
+                            when (schedule) {
+                                is Result.Success -> {
+                                    val normalizedSchedule = scheduleNormalizer(
+                                        schedule.data,
+                                        apiId,
+                                        timetable
 
-                                        )
+                                    )
 
-                                        scheduleMapper.invoke(
-                                            normalizedSchedule,
-                                            primaryKeyNamedSchedule,
-                                            index
-                                        )
-                                    }
-
-                                    is Result.Error ->
-                                        throw ScheduleLoadException(result.typedError)
+                                    scheduleMapper(
+                                        normalizedSchedule,
+                                        primaryKeyNamedSchedule,
+                                        index
+                                    )
                                 }
+
+                                is Result.Error ->
+                                    throw ScheduleLoadException(schedule.typedError)
                             }
+                        }
                     }
                 }
 
