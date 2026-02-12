@@ -106,9 +106,9 @@ fun ModalDialogNamedSchedule(
             }
         }
         Spacer(modifier = Modifier.height(0.dp))
-        if (scheduleActions != null) {
+        if (scheduleActions != null && namedScheduleData?.namedSchedule?.schedules != null) {
             ColumnGroup(
-                items = namedScheduleData?.namedSchedule?.schedules?.map { schedule ->
+                items = namedScheduleData.namedSchedule.schedules.map { schedule ->
                     {
                         val scale by animateFloatAsState(
                             targetValue = if (schedule.scheduleEntity.isDefault) 1f else 0f
@@ -116,24 +116,15 @@ fun ModalDialogNamedSchedule(
                         ClickableItem(
                             title = schedule.scheduleEntity.timetableType.typeName,
                             titleLabel = {
-                                Text(
-                                    modifier = Modifier
-                                        .graphicsLayer(scaleX = scale, scaleY = scale)
-                                        .background(
-                                            MaterialTheme.colorScheme.primary,
-                                            CircleShape
-                                        )
-                                        .padding(horizontal = 4.dp, vertical = 2.dp),
-                                    text = stringResource(R.string._default),
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    style = MaterialTheme.typography.bodySmall,
+                                Icon(
+                                    modifier = Modifier.size(16.dp) .graphicsLayer(scaleX = scale, scaleY = scale),
+                                    imageVector = ImageVector.vectorResource(R.drawable.check),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    contentDescription = null
                                 )
                             },
                             subtitle = "${schedule.scheduleEntity.startDate.format(formatter)} - ${
-                                schedule.scheduleEntity.endDate.format(
-                                    formatter
-                                )
+                                schedule.scheduleEntity.endDate.format(formatter)
                             }",
                             verticalPadding = 8.dp,
                             trailingIcon = {
@@ -161,7 +152,7 @@ fun ModalDialogNamedSchedule(
                                             )
                                         }
                                     }
-                                    if (appUiState != null &&  schedule.scheduleEntity.downloadUrl != null) {
+                                    if (appUiState != null && schedule.scheduleEntity.downloadUrl != null) {
                                         IconButton(
                                             onClick = {
                                                 appUiState.uriHandler.openUri(
@@ -201,7 +192,7 @@ fun ModalDialogNamedSchedule(
                             }
                         )
                     }
-                } ?: listOf()
+                }
             )
             Spacer(modifier = Modifier.height(0.dp))
         }
