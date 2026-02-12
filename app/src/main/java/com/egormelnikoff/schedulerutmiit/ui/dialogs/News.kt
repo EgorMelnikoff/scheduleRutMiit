@@ -52,10 +52,7 @@ fun NewsDialog(
     navigationActions: NavigationActions
 ) {
     when {
-        newsState.isLoading -> LoadingScreen(
-            paddingTop = 0.dp,
-            paddingBottom = 0.dp
-        )
+        newsState.isLoading -> LoadingScreen()
 
 
         newsState.error != null -> ErrorScreen(

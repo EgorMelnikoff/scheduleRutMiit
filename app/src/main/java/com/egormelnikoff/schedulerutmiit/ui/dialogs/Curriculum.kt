@@ -140,10 +140,7 @@ fun CurriculumDialog(
                 }
             ) { curriculumState ->
                 when {
-                    curriculumState.isLoading -> LoadingScreen(
-                        paddingTop = 0.dp,
-                        paddingBottom = 0.dp
-                    )
+                    curriculumState.isLoading -> LoadingScreen()
 
                     curriculumState.error != null -> {
                         Empty(

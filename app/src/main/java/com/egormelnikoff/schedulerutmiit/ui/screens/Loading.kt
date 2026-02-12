@@ -10,11 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingScreen(
-    paddingTop: Dp,
-    paddingBottom: Dp
+    paddingTop: Dp = 0.dp,
+    paddingBottom: Dp = 0.dp
 ) {
     Box(
         modifier = Modifier

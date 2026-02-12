@@ -21,8 +21,8 @@ fun ErrorScreen(
     title: String? = null,
     subtitle: String? = null,
     button: @Composable (() -> Unit)? = null,
-    paddingTop: Dp? = null,
-    paddingBottom: Dp? = null,
+    paddingTop: Dp = 0.dp,
+    paddingBottom: Dp = 0.dp,
 ) {
     Box(
         modifier = Modifier
@@ -31,8 +31,8 @@ fun ErrorScreen(
             .padding(
                 start = 32.dp,
                 end = 32.dp,
-                top = paddingTop ?: 0.dp,
-                bottom = paddingBottom ?: 0.dp
+                top = paddingTop,
+                bottom = paddingBottom
             ),
         contentAlignment = Alignment.Center
     ) {

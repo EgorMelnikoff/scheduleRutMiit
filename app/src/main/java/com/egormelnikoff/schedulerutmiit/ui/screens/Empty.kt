@@ -26,8 +26,8 @@ fun Empty(
     title: String? = null,
     subtitle: String? = null,
     isBoldTitle: Boolean = true,
-    paddingTop: Dp? = null,
-    paddingBottom: Dp? = null
+    paddingTop: Dp = 0.dp,
+    paddingBottom: Dp = 0.dp
 ) {
     Column(
         modifier = modifier
@@ -36,8 +36,8 @@ fun Empty(
             .padding(
                 start = 32.dp,
                 end = 32.dp,
-                top = paddingTop ?: 0.dp,
-                bottom = paddingBottom ?: 0.dp
+                top = paddingTop,
+                bottom = paddingBottom
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)

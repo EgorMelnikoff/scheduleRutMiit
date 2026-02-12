@@ -138,10 +138,7 @@ fun SearchDialog(
                 }
             ) { searchState ->
                 when {
-                    searchState.isLoading -> LoadingScreen(
-                        paddingTop = 0.dp,
-                        paddingBottom = 0.dp
-                    )
+                    searchState.isLoading -> LoadingScreen()
 
                     searchState.error != null -> {
                         Empty(

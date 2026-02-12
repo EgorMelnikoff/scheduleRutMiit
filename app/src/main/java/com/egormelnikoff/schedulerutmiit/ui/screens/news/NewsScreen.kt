@@ -61,7 +61,6 @@ fun NewsScreen(
     when (newsList.loadState.refresh) {
         is LoadState.Loading -> {
             LoadingScreen(
-                paddingTop = 0.dp,
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
         }
