@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -190,8 +191,8 @@ fun HorizontalCalendar(
                     .plusWeeks(index.toLong())
                     .getFirstDayOfWeek()
 
-                for (date in 0L until 7L) {
-                    val currentDate = firstDayOfWeek.plusDays(date)
+                stringArrayResource(R.array.days_of_week).forEachIndexed { index, day ->
+                    val currentDate = firstDayOfWeek.plusDays(index.toLong())
 
                     val eventsForDate = currentDate.getEventsForDate(
                         scheduleEntity = scheduleEntity,
@@ -201,6 +202,7 @@ fun HorizontalCalendar(
 
                     HorizontalCalendarItem(
                         selectDate = scheduleUiState.onSelectDate,
+                        dayOfWeek = day,
                         currentDate = currentDate,
                         events = eventsForDate,
                         eventsExtraData = namedScheduleData.scheduleData.eventsExtraData,
@@ -219,6 +221,7 @@ fun HorizontalCalendar(
 fun HorizontalCalendarItem(
     selectDate: (LocalDate) -> Unit,
     currentDate: LocalDate,
+    dayOfWeek: String,
     isDisabled: Boolean,
     isSelected: Boolean,
     isShowCountClasses: Boolean,
@@ -226,15 +229,13 @@ fun HorizontalCalendarItem(
     events: Map<String, List<Event>>,
     eventsExtraData: List<EventExtraData>
 ) {
-    val dayOfWeekName = currentDate.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-
     Column(
         modifier = Modifier.width(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = dayOfWeekName.take(2).lowercase(),
+            text = dayOfWeek.lowercase(),
             style = MaterialTheme.typography.bodyMedium,
             color = if (isDisabled) MaterialTheme.colorScheme.secondaryContainer
             else if (currentDate.dayOfWeek.value == 7) {
@@ -277,10 +278,10 @@ fun HorizontalCalendarItem(
 
             )
         }
-        Box(
-            modifier = Modifier.defaultMinSize(minHeight = 6.dp)
-        ) {
-            if (isShowCountClasses) {
+        if (isShowCountClasses) {
+            Box(
+                modifier = Modifier.defaultMinSize(minHeight = 6.dp)
+            ) {
                 EventsSummary(
                     events = events,
                     eventsExtraData = eventsExtraData

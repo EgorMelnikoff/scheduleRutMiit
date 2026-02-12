@@ -19,7 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsByDayAndWeek
@@ -29,8 +31,6 @@ import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
 fun DaySelector(
@@ -46,28 +46,26 @@ fun DaySelector(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        val firstDayOfWeek = namedScheduleData.scheduleData!!.scheduleEntity!!.startDate.getFirstDayOfWeek()
-        for (date in 0 until 7) {
-            val currentDate = firstDayOfWeek.plusDays(date.toLong())
+        val firstDayOfWeek =
+            namedScheduleData.scheduleData!!.scheduleEntity!!.startDate.getFirstDayOfWeek()
 
-            val eventsForDate = namedScheduleData.scheduleData.periodicEvents!!.getEventsByDayAndWeek(
-                dayOfWeek = currentDate.dayOfWeek,
-                week = selectedWeek
-            )
+        stringArrayResource(R.array.days_of_week).forEachIndexed { index, day ->
+            val currentDate = firstDayOfWeek.plusDays(index.toLong())
+
+            val eventsForDate =
+                namedScheduleData.scheduleData.periodicEvents!!.getEventsByDayAndWeek(
+                    dayOfWeek = currentDate.dayOfWeek,
+                    week = selectedWeek
+                )
 
             DaySelectorItem(
-                title = currentDate.dayOfWeek
-                    .getDisplayName(
-                        TextStyle.SHORT,
-                        Locale.getDefault()
-                    )
-                    .take(2),
+                title = day,
                 events = eventsForDate,
                 eventsExtraData = namedScheduleData.scheduleData.eventsExtraData,
                 isShowCountClasses = isShowCountClasses,
-                isSelected = date == scheduleUiState.pagerSplitWeeks.currentPage,
+                isSelected = index == scheduleUiState.pagerSplitWeeks.currentPage,
                 isSunday = currentDate.dayOfWeek.value == 7,
-                currentPage = date,
+                currentPage = index,
                 selectPage = { date ->
                     scope.launch {
                         scheduleUiState.pagerSplitWeeks.scrollToPage(date)
@@ -126,10 +124,10 @@ fun DaySelectorItem(
 
             )
         }
-        Box(
-            modifier = Modifier.defaultMinSize(minHeight = 6.dp)
-        ) {
-            if (isShowCountClasses) {
+        if (isShowCountClasses) {
+            Box(
+                modifier = Modifier.defaultMinSize(minHeight = 6.dp)
+            ) {
                 EventsSummary(
                     events = events,
                     eventsExtraData = eventsExtraData
