@@ -98,13 +98,14 @@ fun GridGroup(
 
 @Composable
 fun ColumnGroup(
+    modifier: Modifier = Modifier,
     title: String? = null,
     titleColor: Color? = null,
     withBackground: Boolean = true,
     items: List<@Composable () -> Unit>
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         title?.let {
