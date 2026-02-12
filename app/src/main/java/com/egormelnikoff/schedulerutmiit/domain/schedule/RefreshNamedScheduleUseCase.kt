@@ -29,27 +29,27 @@ class RefreshNamedScheduleUseCase @Inject constructor(
         updating: Boolean = false
     ): RefreshNamedScheduleResult {
         val savedNamedSchedules = scheduleRepos.getSavedNamedSchedules()
-        val defaultNamedScheduleEntity = savedNamedSchedules.find { namedScheduleEntity ->
+        val namedScheduleToUpdate = savedNamedSchedules.find { namedScheduleEntity ->
             primaryKeyNamedSchedule?.let {
                 namedScheduleEntity.id == it
             } ?: namedScheduleEntity.isDefault
         } ?: savedNamedSchedules.firstOrNull()
 
-        defaultNamedScheduleEntity?.let { namedScheduleEntity ->
-            if (updating) update(
-                namedScheduleEntity = namedScheduleEntity,
+        if (namedScheduleToUpdate != null && updating) {
+            update(
+                namedScheduleEntity = namedScheduleToUpdate,
                 deletableOldSchedules = preferencesDataStore.schedulesDeletableFlow.first()
             )
         }
 
         return RefreshNamedScheduleResult(
             savedNamedSchedules = scheduleRepos.getSavedNamedSchedules(),
-            namedScheduleFormatted = defaultNamedScheduleEntity?.let {
+            namedScheduleFormatted = namedScheduleToUpdate?.let {
                 scheduleRepos.getNamedScheduleById(
                     primaryKeyNamedSchedule = it.id
                 )
             },
-            isSaved = defaultNamedScheduleEntity != null
+            isSaved = namedScheduleToUpdate != null
         )
     }
 
@@ -67,8 +67,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
     }
 
     private fun shouldUpdateNamedSchedule(namedScheduleEntity: NamedScheduleEntity): Boolean {
-        val timeSinceLastUpdate =
-            System.currentTimeMillis() - namedScheduleEntity.lastTimeUpdate
+        val timeSinceLastUpdate = System.currentTimeMillis() - namedScheduleEntity.lastTimeUpdate
         return timeSinceLastUpdate > SCHEDULE_UPDATE_THRESHOLD_MS
                 && namedScheduleEntity.type != NamedScheduleType.My
     }
@@ -77,8 +76,9 @@ class RefreshNamedScheduleUseCase @Inject constructor(
         namedScheduleEntity: NamedScheduleEntity,
         deletableOldSchedules: Boolean
     ): Result<String> {
-        val result = fetchNamedScheduleUseCase.invoke(
+        val result = fetchNamedScheduleUseCase(
             primaryKeyNamedSchedule = namedScheduleEntity.id,
+            fetchForce = true,
             name = namedScheduleEntity.shortName,
             apiId = namedScheduleEntity.apiId!!,
             type = namedScheduleEntity.type
@@ -90,15 +90,15 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             }
 
             is Result.Success -> {
-                val oldNamedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleEntity.id)
-                oldNamedSchedule?.let {
-                    mergeAndUpdateSchedules(
-                        oldNamedSchedule = oldNamedSchedule,
-                        newNamedSchedule = updatedNamedSchedule.data,
-                        deletableOldSchedules = deletableOldSchedules
-                    )
-                    Result.Success("Success update")
-                } ?: Result.Error(
+                scheduleRepos.getNamedScheduleById(namedScheduleEntity.id)
+                    ?.let { oldNamedSchedule ->
+                        mergeAndUpdateSchedules(
+                            oldNamedSchedule = oldNamedSchedule,
+                            newNamedSchedule = updatedNamedSchedule.data,
+                            deletableOldSchedules = deletableOldSchedules
+                        )
+                        Result.Success("Success update")
+                    } ?: Result.Error(
                     TypedError.UnexpectedError(
                         Exception("Cannot find schedule")
                     )
@@ -119,8 +119,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
         }
 
         newNamedSchedule.schedules.forEach { updatedSchedule ->
-            val oldSchedule = oldSchedulesMap[updatedSchedule.scheduleEntity.timetableId]
-            oldSchedule?.let {
+            oldSchedulesMap[updatedSchedule.scheduleEntity.timetableId]?.let { oldSchedule ->
                 val updatedScheduleEntity =
                     if (oldSchedule.scheduleEntity.recurrence?.currentNumber != updatedSchedule.scheduleEntity.recurrence?.currentNumber) {
                         oldSchedule.scheduleEntity.copy(
@@ -152,7 +151,6 @@ class RefreshNamedScheduleUseCase @Inject constructor(
                     oldNamedSchedule.namedScheduleEntity.id,
                     updatedScheduleWithId
                 )
-
             } ?: scheduleRepos.insertSchedule(
                 oldNamedSchedule.namedScheduleEntity.id,
                 updatedSchedule
@@ -160,21 +158,31 @@ class RefreshNamedScheduleUseCase @Inject constructor(
         }
 
         if (deletableOldSchedules) {
-            oldNamedSchedule.schedules.forEach { oldSchedule ->
-                val stillExists = newNamedSchedule.schedules.any {
-                    it.scheduleEntity.timetableId == oldSchedule.scheduleEntity.timetableId
-                }
-                val isOutdated = LocalDate.now() > oldSchedule.scheduleEntity.endDate
-                if (!stillExists && isOutdated) {
-                    scheduleRepos.deleteScheduleById(
-                        primaryKeySchedule = oldSchedule.scheduleEntity.id
-                    )
-                }
-            }
+            deleteOlSchedules(
+                newNamedSchedule,
+                oldNamedSchedule
+            )
         }
         scheduleRepos.updateLastTimeUpdate(
             primaryKeyNamedSchedule = oldNamedSchedule.namedScheduleEntity.id,
             lastTimeUpdate = System.currentTimeMillis()
         )
+    }
+
+    private suspend fun deleteOlSchedules(
+        newNamedSchedule: NamedScheduleFormatted,
+        oldNamedSchedule: NamedScheduleFormatted
+    ) {
+        oldNamedSchedule.schedules.forEach { oldSchedule ->
+            val stillExists = newNamedSchedule.schedules.any {
+                it.scheduleEntity.timetableId == oldSchedule.scheduleEntity.timetableId
+            }
+            val isOutdated = LocalDate.now() > oldSchedule.scheduleEntity.endDate
+            if (!stillExists && isOutdated) {
+                scheduleRepos.deleteScheduleById(
+                    primaryKeySchedule = oldSchedule.scheduleEntity.id
+                )
+            }
+        }
     }
 }

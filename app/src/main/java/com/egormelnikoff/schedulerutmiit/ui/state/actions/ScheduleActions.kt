@@ -17,7 +17,7 @@ data class ScheduleActions(
     val onAddCustomNamedSchedule: (String, LocalDate, LocalDate) -> Unit, //Name, StartDate, EndDate,
 
     val onLoadInitialScheduleData: () -> Unit,
-    val onRefreshScheduleState: (Long, Boolean) -> Unit, //NamedSchedulePK
+    val onRefreshScheduleState: (Long, Boolean) -> Unit, //NamedSchedulePK, Updating
 
     val onSetDefaultSchedule: (Long, String) -> Unit, //SchedulePK, timetableId
 

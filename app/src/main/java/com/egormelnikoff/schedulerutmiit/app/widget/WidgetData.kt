@@ -18,10 +18,10 @@ data class WidgetData(
     val namedScheduleEntity: NamedScheduleEntity? = null,
     val settledScheduleEntity: ScheduleEntity? = null,
     val reviewData: ReviewData? = null,
-    val eventsExtraData: List<EventExtraData> = listOf(),
+    val eventsExtraData: List<EventExtraData> = listOf()
 ) {
     companion object {
-        fun widgetData(namedSchedule: NamedScheduleFormatted): WidgetData? {
+        operator fun invoke(namedSchedule: NamedScheduleFormatted): WidgetData? {
             val scheduleFormatted = NamedScheduleData.findCurrentSchedule(namedSchedule)
             return if (scheduleFormatted != null) {
                 val today = LocalDateTime.now()

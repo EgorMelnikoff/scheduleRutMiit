@@ -16,24 +16,25 @@ class WidgetDataUpdater @Inject constructor(
     private val gson: Gson
 ) {
     suspend fun updateAll(): ListenableWorker.Result {
-        val namedScheduleEntity = scheduleRepos.getDefaultNamedScheduleEntity()
-            ?: return ListenableWorker.Result.failure()
-        val namedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleEntity.id)!!
-        val widgetData = WidgetData.widgetData(namedSchedule)
-        widgetData?.let {
-            GlanceAppWidgetManager(context).getGlanceIds(EventsWidget::class.java)
-                .forEach { glanceId ->
-                    updateWidgetState(glanceId, widgetData)
-                }
-            return ListenableWorker.Result.success()
+        scheduleRepos.getDefaultNamedScheduleEntity()?.let { namedScheduleEntity ->
+            val widgetData = WidgetData(
+                namedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleEntity.id)!!
+            )
+            widgetData?.let {
+                val widgetDataString = gson.toJson(widgetData)
+                GlanceAppWidgetManager(context)
+                    .getGlanceIds(EventsWidget::class.java)
+                    .forEach { glanceId ->
+                        updateWidgetState(glanceId, widgetDataString)
+                    }
+            }
         }
-        return ListenableWorker.Result.failure()
+        return ListenableWorker.Result.success()
     }
 
-    private suspend fun updateWidgetState(glanceId: GlanceId, widgetData: WidgetData) {
+    private suspend fun updateWidgetState(glanceId: GlanceId, widgetDataString: String) {
         updateAppWidgetState(context, glanceId) { prefs ->
-            val result = gson.toJson(widgetData)
-            prefs[EventsWidget.widgetDataKey] = result
+            prefs[EventsWidget.widgetDataKey] = widgetDataString
         }
         EventsWidget().update(context, glanceId)
     }
