@@ -18,7 +18,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -49,7 +49,7 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
             _searchParams
                 .debounce(300L)
-                .distinctUntilChanged()
+                .distinctUntilChangedBy { it.query }
                 .mapLatest { searchParams ->
                     _searchState.update { it.copy(isLoading = true) }
                     if (searchParams.query.isBlank()) {
@@ -136,19 +136,6 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun setDefaultSearchState() {
-        _searchState.update {
-            it.copy(
-                isEmptyQuery = true,
-                isLoading = false,
-                error = null,
-                groups = listOf(),
-                people = listOf()
-            )
-        }
-        _searchParams.value = SearchParams()
-    }
-
     fun changeSearchParams(query: String? = null, searchType: SearchType? = null) {
         _searchParams.update {
             it.copy(
@@ -180,6 +167,19 @@ class SearchViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun setDefaultSearchState() {
+        _searchState.update {
+            it.copy(
+                isEmptyQuery = true,
+                isLoading = false,
+                error = null,
+                groups = listOf(),
+                people = listOf()
+            )
+        }
+        _searchParams.value = SearchParams()
     }
 
     private fun setErrorSearchState(
