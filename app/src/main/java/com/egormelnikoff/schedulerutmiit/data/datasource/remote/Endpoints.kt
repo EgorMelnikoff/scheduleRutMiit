@@ -1,5 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote
 
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+
 object Endpoints {
     //API
     const val BASE_RUT_MIIT_URL = "https://rut-miit.ru/"
@@ -20,12 +22,18 @@ object Endpoints {
 
     fun peopleUrl(query: String) = "${BASE_MIIT_URL}/people?query=$query"
 
-    fun timetableUrl(
-        apiId: String,
+    fun scheduleUrl(
+        namedScheduleType: NamedScheduleType,
+        apiId: Int,
         startDate: String,
-        type: Char,
-    ) =
-        "${BASE_MIIT_URL}/people/$apiId/timetable?start=$startDate&type=$type"
+        type: String,
+    ): String {
+        return when (namedScheduleType) {
+            NamedScheduleType.PERSON -> "${BASE_MIIT_URL}/people/$apiId/timetable?start=$startDate&type=$type"
+            else -> "${BASE_MIIT_URL}/timetable/$apiId?start=$startDate&type=$type"
+        }
+    }
+
 
     fun personImageUrl(personId: Int?, width: Int = 100) =
         "$BASE_MIIT_URL/content/e$personId.jpg?id_fe=$personId&SWidth=$width"
