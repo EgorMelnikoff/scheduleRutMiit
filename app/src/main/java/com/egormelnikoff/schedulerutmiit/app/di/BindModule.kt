@@ -1,7 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.app.di
 
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.ParserImpl
 import com.egormelnikoff.schedulerutmiit.data.repos.news.NewsRepos
 import com.egormelnikoff.schedulerutmiit.data.repos.news.impl.NewsReposImpl
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
@@ -25,12 +23,7 @@ abstract class BindModule {
     @Singleton
     abstract fun bindSearchRepos(searchReposImpl: SearchReposImpl): SearchRepos
 
-
     @Binds
     @Singleton
     abstract fun bindNewsRepos(newsReposImpl: NewsReposImpl): NewsRepos
-
-    @Binds
-    @Singleton
-    abstract fun bindParser(parserImpl: ParserImpl): Parser
 }

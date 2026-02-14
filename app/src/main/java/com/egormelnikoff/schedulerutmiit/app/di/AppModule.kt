@@ -8,6 +8,7 @@ import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -94,4 +95,7 @@ object AppModule {
         @ApplicationContext context: Context,
         resourcesManager: ResourcesManager
     ): Logger = Logger(context, resourcesManager)
+
+    @Provides
+    fun provideParser(): Parser = Parser
 }
