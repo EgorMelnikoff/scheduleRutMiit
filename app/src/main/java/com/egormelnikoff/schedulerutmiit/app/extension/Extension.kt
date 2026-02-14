@@ -20,6 +20,13 @@ fun LocalDateTime.toLocaleTimeWithTimeZone(): LocalTime {
         .toLocalTime()
 }
 
+fun LocalTime.toUtcTime(date: LocalDate): LocalTime {
+    return this.atDate(date)
+        .atZone(ZoneId.systemDefault())
+        .withZoneSameInstant(ZoneOffset.UTC)
+        .toLocalTime()
+}
+
 fun LocalDate.getFirstDayOfWeek(): LocalDate {
     return this.minusDays(this.dayOfWeek.value - 1L)
 }
@@ -89,7 +96,7 @@ fun Map<Int, Map<DayOfWeek, List<Event>>>.getEventsByDayAndWeek(
 }
 
 fun String.getShortName(type: NamedScheduleType): String {
-    if (type != NamedScheduleType.Person) return this
+    if (type != NamedScheduleType.PERSON) return this
     val nameParts = this.split(" ")
     return if (nameParts.size == 3) {
         "${nameParts.first()} ${nameParts[1][0]}. ${nameParts[2][0]}."
