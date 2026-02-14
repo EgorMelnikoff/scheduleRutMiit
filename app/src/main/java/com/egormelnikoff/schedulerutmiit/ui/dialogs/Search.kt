@@ -203,7 +203,7 @@ fun SearchDialog(
                                                     navigationActions.onBack()
                                                     scheduleActions.onGetNamedSchedule(
                                                         query.name,
-                                                        query.apiId.toString(),
+                                                        query.apiId,
                                                         query.namedScheduleType
                                                     )
                                                     searchViewModel.setDefaultSearchState()
@@ -250,14 +250,14 @@ fun SearchDialog(
                                                 navigationActions.onBack()
                                                 scheduleActions.onGetNamedSchedule(
                                                     group.name,
-                                                    group.id.toString(),
-                                                    NamedScheduleType.Group
+                                                    group.id,
+                                                    NamedScheduleType.GROUP
                                                 )
                                                 searchViewModel.saveQueryToHistory(
                                                     SearchQuery(
                                                         name = group.name,
                                                         apiId = group.id,
-                                                        namedScheduleType = NamedScheduleType.Group
+                                                        namedScheduleType = NamedScheduleType.GROUP
                                                     )
                                                 )
                                                 searchViewModel.setDefaultSearchState()
@@ -302,14 +302,14 @@ fun SearchDialog(
                                                 navigationActions.onBack()
                                                 scheduleActions.onGetNamedSchedule(
                                                     person.name,
-                                                    person.id.toString(),
-                                                    NamedScheduleType.Person
+                                                    person.id,
+                                                    NamedScheduleType.PERSON
                                                 )
                                                 searchViewModel.saveQueryToHistory(
                                                     SearchQuery(
                                                         name = person.name,
                                                         apiId = person.id,
-                                                        namedScheduleType = NamedScheduleType.Person
+                                                        namedScheduleType = NamedScheduleType.PERSON
                                                     )
                                                 )
                                                 searchViewModel.setDefaultSearchState()

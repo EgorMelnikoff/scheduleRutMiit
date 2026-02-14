@@ -155,7 +155,7 @@ fun ReviewScreen(
                                     ClickableItem(
                                         title = namedScheduleEntity.shortName,
                                         titleMaxLines = 2,
-                                        subtitle = if (namedScheduleEntity.type != NamedScheduleType.My) {
+                                        subtitle = if (namedScheduleEntity.type != NamedScheduleType.MY) {
                                             "${stringResource(R.string.current_on)} $lastTimeUpdate"
                                         } else null,
                                         defaultMinHeight = 40.dp,

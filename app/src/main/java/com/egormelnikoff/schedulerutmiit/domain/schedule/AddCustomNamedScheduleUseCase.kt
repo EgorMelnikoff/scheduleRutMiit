@@ -25,7 +25,7 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
                 fullName = name,
                 shortName = name,
                 apiId = null,
-                type = NamedScheduleType.My,
+                type = NamedScheduleType.MY,
                 isDefault = false,
                 lastTimeUpdate = 0L
             ),

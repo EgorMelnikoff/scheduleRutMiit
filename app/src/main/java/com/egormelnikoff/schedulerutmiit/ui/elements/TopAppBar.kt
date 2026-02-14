@@ -92,7 +92,7 @@ fun ScheduleTopAppBar(
     val isNotEmpty =
         namedScheduleData.namedSchedule!!.schedules.isNotEmpty() && namedScheduleData.scheduleData?.scheduleEntity != null
     val isCustomSchedule =
-        namedScheduleData.namedSchedule.namedScheduleEntity.type == NamedScheduleType.My
+        namedScheduleData.namedSchedule.namedScheduleEntity.type == NamedScheduleType.MY
 
     CustomTopAppBar(
         titleContent = {
