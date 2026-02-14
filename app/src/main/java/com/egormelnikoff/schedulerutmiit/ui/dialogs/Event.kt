@@ -212,14 +212,14 @@ fun EventDialog(
                                                         navigationActions.onBack()
                                                         scheduleActions.onGetNamedSchedule(
                                                             group.name,
-                                                            group.id.toString(),
-                                                            NamedScheduleType.Group
+                                                            group.id,
+                                                            NamedScheduleType.GROUP
                                                         )
                                                         searchViewModel.saveQueryToHistory(
                                                             SearchQuery(
                                                                 name = group.name,
                                                                 apiId = group.id,
-                                                                namedScheduleType = NamedScheduleType.Group
+                                                                namedScheduleType = NamedScheduleType.GROUP
                                                             )
                                                         )
                                                     }
@@ -250,25 +250,25 @@ fun EventDialog(
                             ClickableItem(
                                 title = room.hint,
                                 titleMaxLines = 2,
-                                defaultMinHeight = 32.dp,
-                                onClick = if (!event.isCustomEvent) {
-                                    {
-                                        navigationActions.navigateToSchedule()
-                                        navigationActions.onBack()
-                                        scheduleActions.onGetNamedSchedule(
-                                            room.name,
-                                            room.id.toString(),
-                                            NamedScheduleType.Room
-                                        )
-                                        searchViewModel.saveQueryToHistory(
-                                            SearchQuery(
-                                                name = room.name,
-                                                apiId = room.id,
-                                                namedScheduleType = NamedScheduleType.Room
-                                            )
-                                        )
-                                    }
-                                } else null
+                                defaultMinHeight = 32.dp
+//                                onClick = if (!event.isCustomEvent) {
+//                                    {
+//                                        navigationActions.navigateToSchedule()
+//                                        navigationActions.onBack()
+//                                        scheduleActions.onGetNamedSchedule(
+//                                            room.name,
+//                                            room.id,
+//                                            NamedScheduleType.ROOM
+//                                        )
+//                                        searchViewModel.saveQueryToHistory(
+//                                            SearchQuery(
+//                                                name = room.name,
+//                                                apiId = room.id,
+//                                                namedScheduleType = NamedScheduleType.ROOM
+//                                            )
+//                                        )
+//                                    }
+//                                } else null
                             )
                         }
                     }
@@ -291,14 +291,14 @@ fun EventDialog(
                                         navigationActions.onBack()
                                         scheduleActions.onGetNamedSchedule(
                                             lecturer.fullFio,
-                                            lecturer.id.toString(),
-                                            NamedScheduleType.Person
+                                            lecturer.id,
+                                            NamedScheduleType.PERSON
                                         )
                                         searchViewModel.saveQueryToHistory(
                                             SearchQuery(
-                                                name = lecturer.shortFio,
+                                                name = lecturer.fullFio,
                                                 apiId = lecturer.id,
-                                                namedScheduleType = NamedScheduleType.Person
+                                                namedScheduleType = NamedScheduleType.PERSON
                                             )
                                         )
                                     }
