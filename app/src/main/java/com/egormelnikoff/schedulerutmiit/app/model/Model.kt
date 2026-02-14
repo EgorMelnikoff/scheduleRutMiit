@@ -25,7 +25,6 @@ data class Timetable(
     val id: String,
     val name: String,
     val type: TimetableType,
-    val typeName: String,
     val downloadUrl: String?,
     val startDate: LocalDate,
     val endDate: LocalDate
