@@ -75,11 +75,11 @@ data class Event(
     val rooms: List<Room>?,
     val groups: List<Group>?
 ) {
-    fun customHashCode(): Int {
-        val hashString = if (recurrenceRule != null) {
-            "$name$typeName${startDatetime!!.dayOfWeek}${startDatetime.toLocalTime()}${recurrenceRule.interval}$periodNumber$groups"
-        } else {
-            "$name$typeName$startDatetime$groups"
+    fun customHashCode(forceNonPeriodic: Boolean = false): Int {
+        val hashString = when {
+            forceNonPeriodic -> "$name$typeName${startDatetime!!.dayOfWeek}${startDatetime.toLocalTime()}$groups"
+            (recurrenceRule != null) -> "$name$typeName${startDatetime!!.dayOfWeek}${startDatetime.toLocalTime()}${recurrenceRule.interval}$periodNumber$groups"
+            else -> "$name$typeName$startDatetime$groups"
         }
         return hashString.hashCode()
     }
@@ -214,7 +214,7 @@ class NamedScheduleTypeAdapter : TypeAdapter<NamedScheduleType>() {
 
         out.beginObject()
         out.name("id").value(value.id)
-        out.name("name").value(value.name)
+        out.name("name").value(value.typeName)
         out.endObject()
     }
 
@@ -223,10 +223,10 @@ class NamedScheduleTypeAdapter : TypeAdapter<NamedScheduleType>() {
 
             JsonToken.NUMBER -> {
                 when (reader.nextInt()) {
-                    0 -> NamedScheduleType.Group
-                    1 -> NamedScheduleType.Person
-                    2 -> NamedScheduleType.Room
-                    3 -> NamedScheduleType.My
+                    0 -> NamedScheduleType.GROUP
+                    1 -> NamedScheduleType.PERSON
+                    2 -> NamedScheduleType.ROOM
+                    3 -> NamedScheduleType.MY
                     else -> throw JsonParseException("Unknown NamedScheduleType id")
                 }
             }
@@ -244,10 +244,10 @@ class NamedScheduleTypeAdapter : TypeAdapter<NamedScheduleType>() {
                 reader.endObject()
 
                 when (id) {
-                    0 -> NamedScheduleType.Group
-                    1 -> NamedScheduleType.Person
-                    2 -> NamedScheduleType.Room
-                    3 -> NamedScheduleType.My
+                    0 -> NamedScheduleType.GROUP
+                    1 -> NamedScheduleType.PERSON
+                    2 -> NamedScheduleType.ROOM
+                    3 -> NamedScheduleType.MY
                     else -> throw JsonParseException("Unknown NamedScheduleType id")
                 }
             }
