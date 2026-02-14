@@ -1,22 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.app.enums_sealed
 
-sealed class NamedScheduleType(
+enum class NamedScheduleType(
     val id: Int,
-    val name: String
+    val typeName: String
 ) {
-    data object Group : NamedScheduleType(
-        0, "group"
-    )
-
-    data object Person : NamedScheduleType(
-        1, "person"
-    )
-
-    data object Room : NamedScheduleType(
-        2, "room"
-    )
-
-    data object My : NamedScheduleType(
-        3, "my"
-    )
+    GROUP(0, "group"),
+    PERSON(1, "person"),
+    ROOM(2, "room"),
+    MY(3, "my")
 }

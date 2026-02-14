@@ -110,7 +110,7 @@ class ScheduleViewModel @Inject constructor(
 
     fun fetchNamedSchedule(
         name: String,
-        apiId: String,
+        apiId: Int,
         type: NamedScheduleType
     ) {
         val fetchJob = viewModelScope.launch {
@@ -121,7 +121,7 @@ class ScheduleViewModel @Inject constructor(
             val result = fetchNamedScheduleUseCase(
                 name = name,
                 apiId = apiId,
-                type = type
+                namedScheduleType = type
             )
 
             when (val newNamedSchedule = result.namedScheduleFormatted) {

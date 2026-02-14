@@ -2,30 +2,41 @@ package com.egormelnikoff.schedulerutmiit.data.repos.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.model.Schedule
+import com.egormelnikoff.schedulerutmiit.app.model.Timetable
 import com.egormelnikoff.schedulerutmiit.app.model.Timetables
 import com.egormelnikoff.schedulerutmiit.data.Result
 
 interface ScheduleRepos {
     suspend fun fetchTimetables(
-        apiId: String,
+        apiId: Int,
         type: NamedScheduleType
     ): Result<Timetables>
 
-    suspend fun fetchSchedule(
+    suspend fun fetchScheduleApi(
+        namedScheduleType: NamedScheduleType,
         apiId: String,
-        type: NamedScheduleType,
         timetableId: String
     ): Result<Schedule>
 
+    suspend fun fetchScheduleParser(
+        namedScheduleType: NamedScheduleType,
+        name: String,
+        apiId: Int,
+        timetable: Timetable,
+        currentGroup: Group? = null
+    ): Result<Schedule>
+
     suspend fun fetchCurrentWeek(
-        apiId: String,
+        namedScheduleType: NamedScheduleType,
+        apiId: Int,
         startDate: String,
-        type: Char
+        type: String
     ): Int
 
     suspend fun insertNamedSchedule(
@@ -53,7 +64,7 @@ interface ScheduleRepos {
     ): NamedScheduleFormatted?
 
     suspend fun getNamedScheduleByApiId(
-        apiId: String
+        apiId: Int
     ): NamedScheduleFormatted?
 
     suspend fun getDefaultNamedScheduleEntity(): NamedScheduleEntity?

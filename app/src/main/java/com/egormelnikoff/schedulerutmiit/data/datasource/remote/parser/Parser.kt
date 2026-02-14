@@ -7,72 +7,313 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.Group
+import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
+import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
+import com.egormelnikoff.schedulerutmiit.app.entity.RecurrenceRule
+import com.egormelnikoff.schedulerutmiit.app.entity.Room
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
 import com.egormelnikoff.schedulerutmiit.app.model.News
+import com.egormelnikoff.schedulerutmiit.app.model.NonPeriodicContent
+import com.egormelnikoff.schedulerutmiit.app.model.PeriodicContent
 import com.egormelnikoff.schedulerutmiit.app.model.Person
-import com.egormelnikoff.schedulerutmiit.app.model.Subject
+import com.egormelnikoff.schedulerutmiit.app.model.Schedule
+import com.egormelnikoff.schedulerutmiit.app.model.Timetable
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_MIIT_URL
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
-import javax.inject.Inject
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Year
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-interface Parser {
-    suspend fun getPeopleByQuery(query: String): Result<List<Person>>
-    suspend fun getListSubjectById(id: String): Result<List<Subject>>
-    suspend fun getCurrentWeekByApiId(
-        apiId: String,
-        startDate: String,
-        type: Char
-    ): Int
-
-    fun parseNews(news: News): News
-}
-
-class ParserImpl @Inject constructor(
-    private val networkHelper: NetworkHelper,
-) : Parser {
-    override suspend fun getPeopleByQuery(query: String): Result<List<Person>> {
-        val document = networkHelper.callNetwork(
-            requestType = "Person",
-            requestParams = "Query: $query",
-            callParser = {
-                Jsoup.connect(Endpoints.peopleUrl(query)).get()
-            },
-            callApi = null
-        )
-
-        return when (document) {
-            is Result.Success -> {
-                val people = mutableListOf<Person>()
-                document.data.select("div.search__people").forEach { item ->
-                    val aElement = item.selectFirst("a.mb-2")
-                    val spanElement = item.selectFirst("span[itemprop=Post]")
-                    if (aElement != null && spanElement != null) {
-                        val name = aElement.text()
-                        val id = aElement.attr("href")
-                            .substringAfter("/people/")
-                            .toIntOrNull() ?: -1
-                        val position = spanElement.text().trim()
-                        people.add(Person(name, id, position))
-                    }
-                }
-                Result.Success(people)
-            }
-
-            is Result.Error -> {
-                Result.Error(document.typedError)
-            }
+object Parser {
+    /* Schedule */
+    fun parseSchedule(
+        document: Document,
+        timetable: Timetable,
+        currentGroup: Group?
+    ): Result<Schedule> {
+        return if (timetable.type == TimetableType.PERIODIC) {
+            parsePeriodicSchedule(
+                document,
+                timetable,
+                currentGroup
+            )
+        } else {
+            parseNonPeriodicSchedule(
+                document,
+                timetable,
+                currentGroup
+            )
         }
     }
 
-    override fun parseNews(news: News): News {
+    private fun parsePeriodicSchedule(
+        document: Document,
+        timetable: Timetable,
+        currentGroup: Group?
+    ): Result<Schedule> {
+        val weekNumbers = document
+            .select(".nav-link[aria-controls]")
+            .map {
+                it.attr("aria-controls")
+                    .removePrefix("week-")
+                    .toInt()
+            }
+
+        val events = weekNumbers.flatMap { periodNumber ->
+            document.getElementById("week-$periodNumber")
+                ?.select("div.info-block.info-block_collapse.show")
+                ?.flatMap { element ->
+                    element.parseDate(true)?.let { date ->
+                        element.parseEvents(
+                            date = date,
+                            periodNumber = periodNumber,
+                            recurrenceRule = RecurrenceRule(
+                                frequency = "WEEKLY",
+                                interval = 2
+                            ),
+                            currentGroup = currentGroup
+                        )
+                    }.orEmpty()
+                }.orEmpty()
+        }
+
+        return Result.Success(
+            Schedule(
+                timetable = timetable,
+                periodicContent = PeriodicContent(
+                    events = events.normalizeEvents(),
+                    recurrence = Recurrence(
+                        interval = weekNumbers.size,
+                        currentNumber = parseCurrentWeek(document),
+                        firstWeekNumber = 1
+                    )
+                ),
+                nonPeriodicContent = null
+            )
+        )
+
+    }
+
+    private fun parseNonPeriodicSchedule(
+        document: Document,
+        timetable: Timetable,
+        currentGroup: Group?
+    ): Result<Schedule> {
+        val eventsByDates = document.select("div.info-block.info-block_collapse.show")
+
+        val events = eventsByDates.flatMap { element ->
+            element.parseDate(false)?.let { date ->
+                element.parseEvents(
+                    date = date,
+                    currentGroup = currentGroup
+                )
+            }.orEmpty()
+        }
+
+        return Result.Success(
+            Schedule(
+                timetable = timetable,
+                periodicContent = null,
+                nonPeriodicContent = NonPeriodicContent(
+                    events = events
+                )
+            )
+        )
+    }
+
+    private fun Element.parseDate(isPeriodic: Boolean): LocalDate? {
+        val header = this.selectFirst(".info-block__header-text")
+
+        val dateText = if (isPeriodic) {
+            header
+                ?.select(".text-secondary.small")
+                ?.first()
+                ?.text()
+                ?.trim() ?: return null
+        } else {
+            header
+                ?.ownText()
+                ?.trim() ?: return null
+        }
+
+        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.of("ru", "RU"))
+        val year = Year.now().value
+
+        return LocalDate.parse("$dateText $year", formatter)
+    }
+
+    private fun Element.parseEvents(
+        date: LocalDate,
+        periodNumber: Int? = null,
+        recurrenceRule: RecurrenceRule? = null,
+        currentGroup: Group?
+    ): List<Event> {
+        return this
+            .select(".timetable__list-timeslot")
+            .map { element ->
+                val headerText = element
+                    .selectFirst(".mb-1")
+                    ?.text()
+                    ?.trim()
+
+                val timeSlotName = headerText
+                    ?.takeIf { it.contains(",") }
+                    ?.substringBefore(",")
+                    ?.trim()
+
+                val timeRange = headerText
+                    ?.substringAfter(",")
+                    ?.trim()
+
+                val startTime = timeRange
+                    ?.substringBefore("—")
+                    ?.trim()
+                    ?.let { LocalTime.parse(it) }
+                    ?.toUtcTime(date)
+
+                val endTime = timeRange
+                    ?.substringAfter("—")
+                    ?.trim()
+                    ?.let { LocalTime.parse(it) }
+                    ?.toUtcTime(date)
+
+                val typeName = element
+                    .selectFirst(".timetable__grid-text_gray")
+                    ?.text()
+                    ?.trim()
+
+                val subjectContainer = element.selectFirst(".pl-4")
+
+                val name = subjectContainer
+                    ?.ownText()
+                    ?.trim()
+
+                val lecturers = element.parseLecturers()
+                val rooms = element.parseRooms()
+                val groups = element.parseGroups()
+
+                if (groups.isNotEmpty() && currentGroup != null) {
+                    groups.addFirst(currentGroup)
+                }
+
+                Event(
+                    startDatetime = LocalDateTime.of(date, startTime),
+                    endDatetime = LocalDateTime.of(date, endTime),
+                    scheduleId = -1,
+                    name = name,
+                    typeName = typeName,
+                    timeSlotName = timeSlotName,
+                    lecturers = lecturers,
+                    rooms = rooms,
+                    groups = groups,
+                    periodNumber = periodNumber,
+                    recurrenceRule = recurrenceRule
+                )
+            }
+    }
+
+    private fun Element.parseLecturers(): MutableList<Lecturer> {
+        return this
+            .select(".icon-academic-cap")
+            .mapNotNull { a ->
+
+                val href = a.attr("href")
+                val id = href
+                    .substringAfter("/people/")
+                    .substringBefore("/")
+                    .toIntOrNull() ?: return@mapNotNull null
+
+                val title = a.attr("title")
+
+                Lecturer(
+                    id = id,
+                    shortFio = a.text().trim(),
+                    fullFio = title.substringBefore(",").trim(),
+                    hint = title.substringAfter(",").trim()
+                )
+            }.toMutableList()
+    }
+
+    private fun Element.parseRooms(): MutableList<Room> {
+        return this
+            .select(".icon-location")
+            .mapNotNull { a ->
+
+                val href = a.attr("href")
+
+                val id = href
+                    .substringAfter("room=")
+                    .substringBefore("&")
+                    .toIntOrNull() ?: return@mapNotNull null
+
+                val title = a.attr("title")
+
+                Room(
+                    id = id,
+                    name = a.text().trim(),
+                    hint = title.trim()
+                )
+            }.toMutableList()
+    }
+
+    private fun Element.parseGroups(): MutableList<Group> {
+        return this
+            .select(".icon-community")
+            .mapNotNull { a ->
+
+                val href = a.attr("href")
+
+                val id = href
+                    .substringAfter("/timetable/")
+                    .toIntOrNull() ?: return@mapNotNull null
+
+                Group(
+                    id = id,
+                    name = a.text().trim()
+                )
+            }.toMutableList()
+    }
+
+    fun parseCurrentWeek(element: Element): Int {
+        val activeLink = element.select(".nav-link[aria-controls].active").first()
+
+        val weekNumber = activeLink?.attr("aria-controls")
+            ?.removePrefix("week-")
+            ?.toIntOrNull()
+
+        return weekNumber ?: 1
+    }
+
+    /* Search */
+    fun parsePeople(element: Element): List<Person> {
+        val people = mutableListOf<Person>()
+        element.select("div.search__people").forEach { item ->
+            val aElement = item.selectFirst("a.mb-2")
+            val spanElement = item.selectFirst("span[itemprop=Post]")
+            if (aElement != null && spanElement != null) {
+                val name = aElement.text()
+                val id = aElement.attr("href")
+                    .substringAfter("/people/")
+                    .toIntOrNull() ?: -1
+                val position = spanElement.text().trim()
+                people.add(Person(name, id, position))
+            }
+        }
+        return people
+    }
+
+    /* News */
+    fun parseNews(news: News): News {
         val document = Jsoup.parse(news.content)
         val elements = document.select("p, li, tr, img")
         val parsedElements = mutableListOf<Pair<String, Any>>()
@@ -119,97 +360,19 @@ class ParserImpl @Inject constructor(
         return news
     }
 
-    override suspend fun getListSubjectById(id: String): Result<List<Subject>> = coroutineScope {
-        val document = networkHelper.callNetwork(
-            requestType = "Subjects",
-            requestParams = "Id: $id; Page: 1",
-            callParser = {
-                Jsoup.connect(Endpoints.curriculumProfessorsUrl(id, 1)).get()
-            },
-            callApi = null
-        )
-
-        when (document) {
-            is Result.Error -> {
-                return@coroutineScope document
+    /* Subjects list */
+    fun parsePagesCount(element: Element): Int {
+        return element.select("ul.pagination li[data-page]")
+            .mapNotNull {
+                it.attr("data-page").toIntOrNull()
             }
-
-            is Result.Success -> {
-                val result = mutableListOf<Subject>()
-                result += parseListSubjectsByPage(document.data).toSubjects()
-
-                val pages = parsePagesCount(document.data)
-                if (pages > 1) {
-                    val deferredPages = (2..pages).map { currentPage ->
-                        async {
-                            networkHelper.callNetwork(
-                                requestType = "Subjects",
-                                requestParams = "Id: $id; Page: $currentPage",
-                                callParser = {
-                                    Jsoup.connect(
-                                        Endpoints.curriculumProfessorsUrl(id, currentPage)
-                                    ).get()
-                                },
-                                callApi = null
-                            )
-                        }
-                    }
-
-                    val results = deferredPages.awaitAll()
-
-                    results.forEach { item ->
-                        when (item) {
-                            is Result.Error -> {
-                                return@coroutineScope item
-                            }
-
-                            is Result.Success -> {
-                                result += parseListSubjectsByPage(item.data).toSubjects()
-                            }
-                        }
-                    }
-                }
-                return@coroutineScope Result.Success(result.normalize().sortedBy { it.title })
-            }
-        }
+            .maxOrNull() ?: 1
     }
 
-    override suspend fun getCurrentWeekByApiId(
-        apiId: String,
-        startDate: String,
-        type: Char
-    ): Int {
-        val document = networkHelper.callNetwork(
-            requestType = "CurrentWeek",
-            requestParams = "id: $apiId",
-            callParser = {
-                Jsoup.connect(
-                    Endpoints.timetableUrl(
-                        apiId, startDate, type
-                    )
-                ).get()
-            },
-            callApi = null
-        )
-
-
-        return when (document) {
-            is Result.Success -> {
-                val activeLink = document.data.select(".nav-link.active").first()
-                val weekText = activeLink?.text()
-                val weekNumber = weekText?.split(" ")?.get(0)
-                val romanToArabic = mapOf("I" to 1, "II" to 2, "III" to 3, "IV" to 4)
-                romanToArabic[weekNumber] ?: 1
-            }
-
-            is Result.Error -> 1
-        }
-    }
-
-    private fun parseListSubjectsByPage(document: Document): MutableMap<String, MutableSet<String>> {
+    fun parseListSubjectsByPage(element: Element): MutableMap<String, MutableSet<String>> {
         val subjectTeachers = mutableMapOf<String, MutableSet<String>>()
 
-        document.select("div[itemprop=teachingStaff]").forEach { item ->
+        element.select("div[itemprop=teachingStaff]").forEach { item ->
             val teacher = item.selectFirst("a[itemprop=fio]")?.text()?.trim()
             val subjects = item.select("span[itemprop=teachingDiscipline]").mapNotNull {
                 it.text().trim().takeIf { t -> t.isNotBlank() }
@@ -226,48 +389,22 @@ class ParserImpl @Inject constructor(
         return subjectTeachers
     }
 
-    private fun MutableMap<String, MutableSet<String>>.toSubjects(): List<Subject> {
-        val result = mutableListOf<Subject>()
 
-        this.forEach { (subject, teachers) ->
-            result.add(
-                Subject(
-                    title = subject,
-                    teachers = teachers
-                )
-            )
-        }
-
-        return result
-    }
-
-    private fun List<Subject>.normalize(): List<Subject> {
-        val map = mutableMapOf<String, MutableSet<String>>()
-
-        forEach { subject ->
-            subject.title.split(";").map {
-                it.trim()
-            }.forEach { splited ->
-                map.getOrPut(splited) {
-                    mutableSetOf()
-                }.addAll(subject.teachers)
+    /* NORMALIZERS */
+    private fun List<Event>.normalizeEvents(): List<Event> {
+        return this.groupBy { it.customHashCode(true) }
+            .map { (_, events) ->
+                events.first().let { event ->
+                    if (events.size > 1)
+                        event.copy(
+                            recurrenceRule = event.recurrenceRule?.copy(interval = 1)
+                        )
+                    else event
+                }
             }
-        }
-
-        return map.map { (title, teachers) ->
-            Subject(
-                title = title,
-                teachers = teachers
-            )
-        }
     }
 
-    private fun parsePagesCount(document: Document): Int {
-        return document.select("ul.pagination li[data-page]")
-            .mapNotNull { it.attr("data-page").toIntOrNull() }
-            .maxOrNull() ?: 1
-    }
-
+    /* CONVERTERS */
     private fun htmlToAnnotatedString(html: String): AnnotatedString {
         val body = Jsoup.parse(html).body()
 

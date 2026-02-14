@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
+import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums_sealed.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.app.model.NonPeriodicContent
@@ -17,7 +18,8 @@ class ScheduleNormalizer @Inject constructor(
 ) {
     suspend operator fun invoke(
         schedule: Schedule,
-        apiId: String,
+        namedScheduleType: NamedScheduleType,
+        apiId: Int,
         timetable: Timetable
     ): Schedule {
         val fixedSchedule = when (timetable.type) {
@@ -64,9 +66,10 @@ class ScheduleNormalizer @Inject constructor(
                         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
                         val currentPeriodNumber = scheduleRepos.fetchCurrentWeek(
+                            namedScheduleType,
                             apiId,
                             startDate = formatter.format(timetable.startDate),
-                            type = timetable.id.trim().last()
+                            type = timetable.id.trim()
                         )
 
                         PeriodicContent(

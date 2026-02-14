@@ -2,19 +2,23 @@ package com.egormelnikoff.schedulerutmiit.data.repos.schedule.impl
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.app.model.Schedule
+import com.egormelnikoff.schedulerutmiit.app.model.Timetable
 import com.egormelnikoff.schedulerutmiit.app.model.Timetables
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.local.Dao
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import org.jsoup.Jsoup
 import javax.inject.Inject
 
 class ScheduleReposImpl @Inject constructor(
@@ -25,30 +29,30 @@ class ScheduleReposImpl @Inject constructor(
 ) : ScheduleRepos {
     /* FETCH */
     override suspend fun fetchTimetables(
-        apiId: String,
+        apiId: Int,
         type: NamedScheduleType
     ): Result<Timetables> {
         return networkHelper.callNetwork(
             requestType = "Timetables",
             requestParams = "Type: $type; ApiId: $apiId",
             callApi = {
-                miitApi.getTimetables(type.name, apiId)
+                miitApi.getTimetables(type.typeName, apiId)
             },
             callParser = null
         )
     }
 
-    override suspend fun fetchSchedule(
+    override suspend fun fetchScheduleApi(
+        namedScheduleType: NamedScheduleType,
         apiId: String,
-        type: NamedScheduleType,
         timetableId: String
     ): Result<Schedule> {
         return networkHelper.callNetwork(
             requestType = "Schedule",
-            requestParams = "Type: ${type}; ApiId: $apiId; TimetableId: $timetableId",
+            requestParams = "Type: ${namedScheduleType}; ApiId: $apiId; TimetableId: $timetableId",
             callApi = {
                 miitApi.getSchedule(
-                    type.name,
+                    namedScheduleType.typeName,
                     apiId,
                     timetableId
                 )
@@ -57,12 +61,70 @@ class ScheduleReposImpl @Inject constructor(
         )
     }
 
+    override suspend fun fetchScheduleParser(
+        namedScheduleType: NamedScheduleType,
+        name: String,
+        apiId: Int,
+        timetable: Timetable,
+        currentGroup: Group?
+    ): Result<Schedule> {
+        networkHelper.callNetwork(
+            requestType = "ScheduleParser",
+            requestParams = "Id: $apiId; Start date: ${timetable.startDate}",
+            callParser = {
+                Jsoup.connect(
+                    Endpoints.scheduleUrl(
+                        namedScheduleType,
+                        apiId,
+                        timetable.startDate.toString(),
+                        timetable.type.id.toString()
+                    )
+                ).get()
+            },
+            callApi = null
+        ).let { document ->
+            return when (document) {
+                is Result.Error -> {
+                    document
+                }
+
+                is Result.Success -> {
+                    parser.parseSchedule(
+                        document.data,
+                        timetable,
+                        currentGroup
+                    )
+                }
+            }
+        }
+    }
+
     override suspend fun fetchCurrentWeek(
-        apiId: String,
+        namedScheduleType: NamedScheduleType,
+        apiId: Int,
         startDate: String,
-        type: Char
+        type: String
     ): Int {
-        return parser.getCurrentWeekByApiId(apiId, startDate, type)
+        networkHelper.callNetwork(
+            requestType = "CurrentWeek",
+            requestParams = "id: $apiId",
+            callParser = {
+                Jsoup.connect(
+                    Endpoints.scheduleUrl(
+                        namedScheduleType, apiId, startDate, type
+                    )
+                ).get()
+            },
+            callApi = null
+        ).let { document ->
+            return when (document) {
+                is Result.Error -> 1
+
+                is Result.Success -> {
+                    return parser.parseCurrentWeek(document.data)
+                }
+            }
+        }
     }
 
     /* INSERT */
@@ -114,9 +176,9 @@ class ScheduleReposImpl @Inject constructor(
     }
 
     override suspend fun getNamedScheduleByApiId(
-        apiId: String
+        apiId: Int
     ): NamedScheduleFormatted? {
-        return dao.getNamedScheduleByApiId(apiId.toInt())
+        return dao.getNamedScheduleByApiId(apiId)
     }
 
     override suspend fun getDefaultNamedScheduleEntity(): NamedScheduleEntity? {
@@ -188,7 +250,6 @@ class ScheduleReposImpl @Inject constructor(
     ) {
         dao.updateEventHidden(eventPrimaryKey, isHidden)
     }
-
 
     override suspend fun updateCommentEvent(
         primaryKeySchedule: Long,

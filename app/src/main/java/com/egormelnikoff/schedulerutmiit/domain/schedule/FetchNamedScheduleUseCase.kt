@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
+import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
@@ -23,8 +24,8 @@ class FetchNamedScheduleUseCase @Inject constructor(
         primaryKeyNamedSchedule: Long = 0,
         fetchForce: Boolean = false,
         name: String,
-        apiId: String,
-        type: NamedScheduleType
+        apiId: Int,
+        namedScheduleType: NamedScheduleType
     ): FetchNamedScheduleResult = supervisorScope {
         val savedNamedSchedule = if (!fetchForce)
             scheduleRepos.getNamedScheduleByApiId(apiId)
@@ -36,7 +37,8 @@ class FetchNamedScheduleUseCase @Inject constructor(
             )
         }
 
-        when (val timetables = scheduleRepos.fetchTimetables(apiId = apiId, type = type)) {
+        when (val timetables =
+            scheduleRepos.fetchTimetables(apiId = apiId, type = namedScheduleType)) {
             is Result.Error -> {
                 return@supervisorScope FetchNamedScheduleResult(
                     Result.Error(timetables.typedError),
@@ -55,27 +57,40 @@ class FetchNamedScheduleUseCase @Inject constructor(
 
                 val deferredSchedules = timetables.data.timetables.mapIndexed { index, timetable ->
                     async {
-                        scheduleRepos.fetchSchedule(apiId, type, timetable.id).let { schedule ->
-                            when (schedule) {
-                                is Result.Success -> {
-                                    val normalizedSchedule = scheduleNormalizer(
-                                        schedule.data,
-                                        apiId,
-                                        timetable
+                        scheduleRepos.fetchScheduleParser(
+                            namedScheduleType = namedScheduleType,
+                            name = name,
+                            apiId = apiId,
+                            timetable = timetable,
+                            currentGroup = if (namedScheduleType == NamedScheduleType.GROUP) {
+                                Group(
+                                    id = apiId,
+                                    name = name
+                                )
+                            } else null
+                        )
+                            .let { schedule ->
+                                when (schedule) {
+                                    is Result.Success -> {
+                                        val normalizedSchedule = scheduleNormalizer(
+                                            schedule.data,
+                                            namedScheduleType,
+                                            apiId,
+                                            timetable
 
-                                    )
+                                        )
 
-                                    scheduleMapper(
-                                        normalizedSchedule,
-                                        primaryKeyNamedSchedule,
-                                        index
-                                    )
+                                        scheduleMapper(
+                                            normalizedSchedule,
+                                            primaryKeyNamedSchedule,
+                                            index
+                                        )
+                                    }
+
+                                    is Result.Error ->
+                                        throw ScheduleLoadException(schedule.typedError)
                                 }
-
-                                is Result.Error ->
-                                    throw ScheduleLoadException(schedule.typedError)
                             }
-                        }
                     }
                 }
 
@@ -84,9 +99,9 @@ class FetchNamedScheduleUseCase @Inject constructor(
                     val namedScheduleEntity = NamedScheduleEntity(
                         id = primaryKeyNamedSchedule,
                         fullName = name,
-                        shortName = name.getShortName(type),
-                        apiId = apiId,
-                        type = type,
+                        shortName = name.getShortName(namedScheduleType),
+                        apiId = apiId.toString(),
+                        type = namedScheduleType,
                         isDefault = false,
                         lastTimeUpdate = System.currentTimeMillis()
                     )

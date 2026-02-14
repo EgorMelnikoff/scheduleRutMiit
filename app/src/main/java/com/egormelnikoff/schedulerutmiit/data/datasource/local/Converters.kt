@@ -98,10 +98,10 @@ class Converters @Inject constructor(
     @TypeConverter
     fun toNamedScheduleType(value: Int): NamedScheduleType {
         return when (value) {
-            0 -> NamedScheduleType.Group
-            1 -> NamedScheduleType.Person
-            2 -> NamedScheduleType.Room
-            else -> NamedScheduleType.My
+            0 -> NamedScheduleType.GROUP
+            1 -> NamedScheduleType.PERSON
+            2 -> NamedScheduleType.ROOM
+            else -> NamedScheduleType.MY
         }
     }
 

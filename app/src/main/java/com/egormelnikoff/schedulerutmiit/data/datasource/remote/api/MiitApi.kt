@@ -22,7 +22,7 @@ interface MiitApi {
     @GET(TIMETABLE)
     suspend fun getTimetables(
         @Path("type") typeName: String,
-        @Path("apiId") apiId: String
+        @Path("apiId") apiId: Int
     ): Response<Timetables>
 
     @GET(SCHEDULE)

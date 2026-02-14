@@ -68,8 +68,8 @@ class RefreshNamedScheduleUseCase @Inject constructor(
 
     private fun shouldUpdateNamedSchedule(namedScheduleEntity: NamedScheduleEntity): Boolean {
         val timeSinceLastUpdate = System.currentTimeMillis() - namedScheduleEntity.lastTimeUpdate
-        return timeSinceLastUpdate > SCHEDULE_UPDATE_THRESHOLD_MS
-                && namedScheduleEntity.type != NamedScheduleType.My
+        val isNotCustomSchedule = namedScheduleEntity.type != NamedScheduleType.MY
+        return timeSinceLastUpdate > SCHEDULE_UPDATE_THRESHOLD_MS && isNotCustomSchedule
     }
 
     private suspend fun performNamedScheduleUpdate(
@@ -80,8 +80,8 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             primaryKeyNamedSchedule = namedScheduleEntity.id,
             fetchForce = true,
             name = namedScheduleEntity.shortName,
-            apiId = namedScheduleEntity.apiId!!,
-            type = namedScheduleEntity.type
+            apiId = namedScheduleEntity.apiId!!.toInt(),
+            namedScheduleType = namedScheduleEntity.type
         )
 
         return when (val updatedNamedSchedule = result.namedScheduleFormatted) {
@@ -90,20 +90,21 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             }
 
             is Result.Success -> {
-                scheduleRepos.getNamedScheduleById(namedScheduleEntity.id)
-                    ?.let { oldNamedSchedule ->
-                        mergeAndUpdateSchedules(
-                            oldNamedSchedule = oldNamedSchedule,
-                            newNamedSchedule = updatedNamedSchedule.data,
-                            deletableOldSchedules = deletableOldSchedules
-                        )
-                        Result.Success("Success update")
-                    } ?: Result.Error(
-                    TypedError.UnexpectedError(
-                        Exception("Cannot find schedule")
+                val oldNamedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleEntity.id)
+                if (oldNamedSchedule != null) {
+                    mergeAndUpdateSchedules(
+                        oldNamedSchedule = oldNamedSchedule,
+                        newNamedSchedule = updatedNamedSchedule.data,
+                        deletableOldSchedules = deletableOldSchedules
                     )
-                )
-
+                    Result.Success("Success update")
+                } else {
+                    Result.Error(
+                        TypedError.UnexpectedError(
+                            Exception("Cannot find schedule")
+                        )
+                    )
+                }
             }
         }
     }

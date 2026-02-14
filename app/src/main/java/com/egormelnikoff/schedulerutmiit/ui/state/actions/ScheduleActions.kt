@@ -8,7 +8,7 @@ import java.time.LocalDate
 data class ScheduleActions(
     val eventActions: EventActions,
     val cancelLoading: () -> Unit,
-    val onGetNamedSchedule: (String, String, NamedScheduleType) -> Unit, //Name, ApiId, Type
+    val onGetNamedSchedule: (String, Int, NamedScheduleType) -> Unit, //Name, ApiId, Type
     val onSelectDefaultNamedSchedule: (Long) -> Unit, //NamedSchedulePK
     val onOpenNamedSchedule: (Long) -> Unit, //NamedSchedulePK
     val onSaveCurrentNamedSchedule: () -> Unit,
