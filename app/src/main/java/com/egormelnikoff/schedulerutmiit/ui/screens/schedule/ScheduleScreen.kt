@@ -173,6 +173,7 @@ fun ScreenSchedule(
 
                                             scheduleState = scheduleState,
                                             scheduleUiState = scheduleUiState,
+                                            isSavedSchedule = scheduleState.isSaved,
                                             eventView = appSettings.eventView,
                                             paddingBottom = externalPadding.calculateBottomPadding()
                                         )

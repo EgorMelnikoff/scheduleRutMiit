@@ -44,6 +44,7 @@ fun ScheduleListView(
 
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState,
+    isSavedSchedule: Boolean,
     eventView: EventView,
     paddingBottom: Dp
 ) {
@@ -65,7 +66,14 @@ fun ScheduleListView(
                     )
                 }
 
-                items(eventsForDay) { eventsGrouped ->
+                items(
+                    items = eventsForDay,
+                    key = if (isSavedSchedule) {
+                        {
+                            it.second.first().id
+                        }
+                    } else null
+                ) { eventsGrouped ->
                     Box(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {

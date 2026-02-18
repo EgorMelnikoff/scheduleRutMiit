@@ -41,7 +41,10 @@ fun EventsForDay(
     ) {
         if (eventsForDate.isNotEmpty()) {
             items(
-                items = eventsForDate
+                items = eventsForDate,
+                key = if (isSavedSchedule) {
+                    { it.second.first().id }
+                } else null
             ) { events ->
                 Event(
                     navigateToEvent = navigationActions.navigateToEvent,
