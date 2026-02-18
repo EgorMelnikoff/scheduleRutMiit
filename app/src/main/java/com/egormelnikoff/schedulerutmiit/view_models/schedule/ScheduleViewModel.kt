@@ -213,6 +213,21 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
+    fun deleteSchedule(
+        primaryKeyNamedSchedule: Long,
+        primaryKeySchedule: Long,
+    ) {
+        viewModelScope.launch {
+            scheduleRepos.deleteScheduleById(primaryKeySchedule)
+            updateState(
+                savedNamedSchedules = scheduleRepos.getSavedNamedSchedules(),
+                currentNamedSchedule = if (primaryKeyNamedSchedule == _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
+                    scheduleRepos.getNamedScheduleById(primaryKeyNamedSchedule)
+                } else null
+            )
+        }
+    }
+
     fun renameNamedSchedule(
         namedScheduleEntity: NamedScheduleEntity,
         newName: String
@@ -328,7 +343,7 @@ class ScheduleViewModel @Inject constructor(
             )
 
             if (result == null) {
-                sendErrorUiEvent(resourcesManager.getString(R.string.events_count_error).toString())
+                sendErrorUiEvent(resourcesManager.getString(R.string.events_count_error))
                 return@launch
             }
 

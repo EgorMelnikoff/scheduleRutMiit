@@ -114,7 +114,9 @@ fun ModalDialogNamedSchedule(
                             title = schedule.scheduleEntity.timetableType.typeName,
                             titleLabel = {
                                 Icon(
-                                    modifier = Modifier.size(16.dp) .graphicsLayer(scaleX = scale, scaleY = scale),
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .graphicsLayer(scaleX = scale, scaleY = scale),
                                     imageVector = ImageVector.vectorResource(R.drawable.check),
                                     tint = MaterialTheme.colorScheme.primary,
                                     contentDescription = null
@@ -171,7 +173,10 @@ fun ModalDialogNamedSchedule(
                                     if (namedScheduleData.scheduleData?.schedulePagerData!!.today > schedule.scheduleEntity.endDate) {
                                         IconButton(
                                             onClick = {
-
+                                                scheduleActions.onDeleteSchedule(
+                                                    namedScheduleEntity.id,
+                                                    schedule.scheduleEntity.id
+                                                )
                                             },
                                             colors = IconButtonDefaults.iconButtonColors().copy(
                                                 containerColor = MaterialTheme.colorScheme.error,

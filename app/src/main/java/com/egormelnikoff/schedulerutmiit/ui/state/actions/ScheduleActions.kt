@@ -13,6 +13,7 @@ data class ScheduleActions(
     val onOpenNamedSchedule: (Long) -> Unit, //NamedSchedulePK
     val onSaveCurrentNamedSchedule: () -> Unit,
     val onDeleteNamedSchedule: (Long, Boolean) -> Unit, //NamedSchedulePK, isDefault
+    val onDeleteSchedule: (Long, Long) -> Unit, //NamedSchedulePK, SchedulePK
     val onConfirmRenameNamedSchedule: (NamedScheduleEntity, String) -> Unit, //NamedScheduleEntity, NewName
     val onAddCustomNamedSchedule: (String, LocalDate, LocalDate) -> Unit, //Name, StartDate, EndDate,
 
@@ -58,6 +59,12 @@ data class ScheduleActions(
                 scheduleViewModel.deleteNamedSchedule(
                     primaryKeyNamedSchedule = primaryKeyNamedSchedule,
                     isDefault = isDefault
+                )
+            },
+            onDeleteSchedule = { primaryKeyNamedSchedule, primaryKeySchedule ->
+                scheduleViewModel.deleteSchedule(
+                    primaryKeyNamedSchedule = primaryKeyNamedSchedule,
+                    primaryKeySchedule = primaryKeySchedule
                 )
             },
             onAddCustomNamedSchedule = { name, startDate, endDate ->
