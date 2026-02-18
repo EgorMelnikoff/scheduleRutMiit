@@ -1,5 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -146,7 +148,13 @@ object Parser {
                 ?.trim() ?: return null
         }
 
-        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.of("ru", "RU"))
+        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            Locale.of("ru", "RU")
+        } else {
+            Locale("ru", "RU")
+        }
+
+        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", locale)
         val year = Year.now().value
 
         return LocalDate.parse("$dateText $year", formatter)
@@ -200,11 +208,7 @@ object Parser {
 
                 val lecturers = element.parseLecturers()
                 val rooms = element.parseRooms()
-                val groups = element.parseGroups()
-
-                if (groups.isNotEmpty() && currentGroup != null) {
-                    groups.addFirst(currentGroup)
-                }
+                val groups = element.parseGroups(currentGroup)
 
                 Event(
                     startDatetime = LocalDateTime.of(date, startTime),
@@ -266,20 +270,19 @@ object Parser {
             }.toMutableList()
     }
 
-    private fun Element.parseGroups(): MutableList<Group> {
+    private fun Element.parseGroups(
+        currentGroup: Group?
+    ): MutableList<Group> {
         return this
             .select(".icon-community")
-            .mapNotNull { a ->
-
-                val href = a.attr("href")
-
-                val id = href
+            .mapNotNull {
+                val id = it.attr("href")
                     .substringAfter("/timetable/")
-                    .toIntOrNull() ?: return@mapNotNull null
+                    .toIntOrNull() ?: currentGroup?.id ?: return@mapNotNull null
 
                 Group(
                     id = id,
-                    name = a.text().trim()
+                    name = it.text().trim()
                 )
             }.toMutableList()
     }
