@@ -290,7 +290,32 @@ class EventsWidget : GlanceAppWidget() {
             ),
             maxLines = 1
         )
-
+        if (!event.rooms.isNullOrEmpty()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    modifier = GlanceModifier.size(8.dp),
+                    provider = ImageProvider(R.drawable.room),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(
+                        colorProvider = GlanceTheme.colors.onSecondaryContainer
+                    )
+                )
+                Spacer(modifier = GlanceModifier.width(4.dp))
+                event.rooms.forEach { group ->
+                    Text(
+                        text = group.name,
+                        style = TextStyle(
+                            fontSize = 10.sp,
+                            color = GlanceTheme.colors.onSecondaryContainer
+                        ),
+                        maxLines = 1
+                    )
+                    Spacer(modifier = GlanceModifier.width(4.dp))
+                }
+            }
+        }
         if (eventExtraData != null && eventExtraData.comment != "") {
             Row(
                 verticalAlignment = Alignment.CenterVertically
