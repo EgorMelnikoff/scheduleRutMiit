@@ -67,7 +67,7 @@ data class BarItem(
 @Composable
 fun CustomNavigationBar(
     barItems: Array<BarItem>,
-    appBackStack: AppBackStack<Route.Page>,
+    appBackStack: AppBackStack,
     isDarkTheme: Boolean
 ) {
     val indicatorOffset by animateDpAsState(
