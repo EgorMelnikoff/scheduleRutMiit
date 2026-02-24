@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
+import android.content.ClipData
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -36,21 +40,21 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
-import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 
 @Composable
 fun InfoDialog(
-    appUiState: AppUiState,
-    navigationActions: NavigationActions
+    appBackStack: AppBackStack,
 ) {
-    val packageInfo = appUiState.context.packageManager.getPackageInfo(appUiState.context.packageName, 0)
+    val packageInfo = LocalContext.current.packageManager.getPackageInfo(LocalContext.current.packageName, 0)
+    val uriHandler = LocalUriHandler.current
+    val clipboard  = LocalClipboard.current
 
     Scaffold(
         topBar = {
             CustomTopAppBar(
                 titleText = stringResource(R.string.about_app),
-                navAction = { navigationActions.onBack() }
+                navAction = { appBackStack.onBack() }
             )
         }
     ) { innerPadding ->
@@ -115,21 +119,31 @@ fun InfoDialog(
                                 )
                             },
                             onClick = {
-                                appUiState.uriHandler.openUri(APP_CHANNEL_URL)
+                                uriHandler.openUri(APP_CHANNEL_URL)
+                            },
+                            onLongClick = {
+                                clipboard.nativeClipboard.setPrimaryClip(
+                                    ClipData.newPlainText(null, APP_CHANNEL_URL)
+                                )
                             }
                         )
                     }, {
                         ClickableItem(
                             title = stringResource(R.string.github),
                             subtitle = stringResource(R.string.source_code),
-                            leadingIcon ={
+                            leadingIcon = {
                                 LeadingIcon(
-                                    imageVector =  ImageVector.vectorResource(R.drawable.logo_github),
+                                    imageVector = ImageVector.vectorResource(R.drawable.logo_github),
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                             },
                             onClick = {
-                                appUiState.uriHandler.openUri(APP_GITHUB_REPOS)
+                                uriHandler.openUri(APP_GITHUB_REPOS)
+                            },
+                            onLongClick = {
+                                clipboard.nativeClipboard.setPrimaryClip(
+                                    ClipData.newPlainText(null, APP_GITHUB_REPOS)
+                                )
                             }
                         )
                     }
@@ -147,7 +161,12 @@ fun InfoDialog(
                             )
                         },
                         onClick = {
-                            appUiState.uriHandler.openUri(CLOUD_TIPS)
+                            uriHandler.openUri(CLOUD_TIPS)
+                        },
+                        onLongClick = {
+                            clipboard.nativeClipboard.setPrimaryClip(
+                                ClipData.newPlainText(null, CLOUD_TIPS)
+                            )
                         }
                     )
                 }
@@ -164,7 +183,12 @@ fun InfoDialog(
                             )
                         },
                         onClick = {
-                            appUiState.uriHandler.openUri(AUTHOR_CHANNEL_URL)
+                            uriHandler.openUri(AUTHOR_CHANNEL_URL)
+                        },
+                        onLongClick = {
+                            clipboard.nativeClipboard.setPrimaryClip(
+                                ClipData.newPlainText(null, AUTHOR_CHANNEL_URL)
+                            )
                         }
                     )
                 }

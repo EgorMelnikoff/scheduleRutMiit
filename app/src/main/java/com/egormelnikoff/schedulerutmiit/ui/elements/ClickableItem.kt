@@ -4,7 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +42,8 @@ import com.egormelnikoff.schedulerutmiit.R
 @Composable
 fun ClickableItem(
     onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
+    onDoubleCLick: (() -> Unit)? = null,
     horizontalPadding: Dp = 12.dp,
     verticalPadding: Dp = 12.dp,
     defaultMinHeight: Dp? = null,
@@ -60,26 +62,29 @@ fun ClickableItem(
 
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
+    clickLabel: ImageVector? = null,
     showClickLabel: Boolean = true,
     clickLabelColor: Color? = null
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .let {
-                if (onClick != null) {
-                    it.clickable { onClick() }
-                } else {
-                    it
-                }
+            .let { modifier ->
+                onClick?.let {
+                    modifier.combinedClickable(
+                        onClick = onClick,
+                        onLongClick = onLongClick,
+                        onDoubleClick = onDoubleCLick
+                    )
+                } ?: modifier
             }
             .padding(horizontal = horizontalPadding, vertical = verticalPadding)
-            .let {
+            .let { modifier ->
                 if (defaultMinHeight != null) {
-                    it.defaultMinSize(
+                    modifier.defaultMinSize(
                         minHeight = defaultMinHeight
                     )
-                } else it
+                } else modifier
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -130,7 +135,7 @@ fun ClickableItem(
         if (showClickLabel && onClick != null) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.right),
+                imageVector = clickLabel ?: ImageVector.vectorResource(R.drawable.right),
                 contentDescription = null,
                 tint = clickLabelColor ?: MaterialTheme.colorScheme.onSecondaryContainer
             )
