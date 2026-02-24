@@ -42,7 +42,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
@@ -54,7 +55,7 @@ fun NewsScreen(
     newsListFlow: Flow<PagingData<NewsShort>>,
     onGetNewsById: (Long) -> Unit,
     newsGridListState: LazyStaggeredGridState,
-    navigationActions: NavigationActions,
+    appBackStack: AppBackStack,
     externalPadding: PaddingValues
 ) {
     val newsList = newsListFlow.collectAsLazyPagingItems()
@@ -107,7 +108,7 @@ fun NewsScreen(
                             newsShort = newsShort,
                             onClick = {
                                 onGetNewsById(newsShort.idInformation)
-                                navigationActions.navigateToNewsDialog()
+                                appBackStack.openDialog(Route.Dialog.NewsDialog)
                             }
                         )
                     }

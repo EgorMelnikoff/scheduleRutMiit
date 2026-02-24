@@ -6,23 +6,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
-import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -38,7 +39,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
@@ -49,11 +50,10 @@ import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
 fun NewsDialog(
     setDefaultState: () -> Unit,
     newsState: NewsState,
-    navigationActions: NavigationActions
+    appBackStack: AppBackStack,
 ) {
     when {
         newsState.isLoading -> LoadingScreen()
-
 
         newsState.error != null -> ErrorScreen(
             title = stringResource(R.string.error),
@@ -64,7 +64,7 @@ fun NewsDialog(
                     buttonTitle = stringResource(R.string.back),
                     imageVector = ImageVector.vectorResource(R.drawable.back),
                     onClick = {
-                        navigationActions.onBack()
+                        appBackStack.onBack()
                         setDefaultState()
                     },
                 )
@@ -80,7 +80,6 @@ fun NewsDialog(
     StatusBarProtection()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsDialogContent(
     news: News
@@ -117,25 +116,33 @@ fun NewsDialogContent(
                 Spacer(modifier = Modifier.height(spacerHeight))
                 Column(
                     modifier = Modifier
-                        .clip(
-                            MaterialTheme.shapes.extraLarge.copy(
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = MaterialTheme.shapes.extraLarge.copy(
                                 bottomStart = CornerSize(0), bottomEnd = CornerSize(0)
                             )
                         )
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(16.dp),
+                        .padding(
+                            top = 16.dp,
+                            bottom = paddingValues.calculateBottomPadding()
+                        ),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         text = news.title.trim(),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 4
                     )
-                    DateNews(
-                        date = news.hisdateDisplay
-                    )
+                    Box(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        DateNews(
+                            date = news.hisdateDisplay
+                        )
+                    }
                     Spacer(
                         modifier = Modifier.height(4.dp)
                     )
@@ -147,6 +154,7 @@ fun NewsDialogContent(
                                 "p", "li" -> {
                                     val text = element.second as AnnotatedString
                                     Text(
+                                        modifier = Modifier.padding(horizontal = 16.dp),
                                         text = text,
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onBackground
@@ -158,7 +166,7 @@ fun NewsDialogContent(
                                     Column(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(vertical = 4.dp),
+                                            .padding(vertical = 4.dp, horizontal = 16.dp),
                                         verticalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
                                         tableRow.forEach { text ->
@@ -176,30 +184,26 @@ fun NewsDialogContent(
                         }
 
                         if (news.images != null && news.images!!.size > 1) {
-                            HorizontalMultiBrowseCarousel(
-                                state = rememberCarouselState { news.images!!.count() },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(),
-                                preferredItemWidth = 250.dp,
-                                itemSpacing = 8.dp
-                            ) { i ->
-                                val modelListImages = rememberAsyncImagePainter(news.images!![i])
-                                Image(
-                                    modifier = Modifier
-                                        .height(200.dp)
-                                        .maskClip(MaterialTheme.shapes.extraLarge)
-                                        .background(MaterialTheme.colorScheme.secondaryContainer),
-                                    painter = modelListImages,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop
-                                )
+                            LazyRow(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                contentPadding = PaddingValues(horizontal = 16.dp)
+                            ) {
+                                items(news.images!!) { link ->
+                                    Image(
+                                        modifier = Modifier
+                                            .height(200.dp)
+                                            .width(300.dp)
+                                            .clip(MaterialTheme.shapes.extraLarge)
+                                            .background(MaterialTheme.colorScheme.secondaryContainer),
+                                        painter = rememberAsyncImagePainter(link),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
                             }
                         }
                     }
-                    Spacer(
-                        modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
-                    )
                 }
             }
         }
