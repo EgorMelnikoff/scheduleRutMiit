@@ -4,6 +4,9 @@
     <string name="_default">Основное</string>
     <string name="about_app">О приложении</string>
     <string name="add">Добавить</string>
+    <string name="details">Детально</string>
+    <string name="briefly">Кратко</string>
+    <string name="off">Выключено</string>
     <string name="add_class">Добавить пару</string>
     <string name="adding_a_class">Добавление пары</string>
     <string name="adding_a_schedule">Добавление расписания</string>
