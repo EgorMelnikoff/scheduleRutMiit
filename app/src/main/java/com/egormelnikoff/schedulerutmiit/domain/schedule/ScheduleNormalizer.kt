@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.app.model.NonPeriodicContent
 import com.egormelnikoff.schedulerutmiit.app.model.PeriodicContent

@@ -42,29 +42,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.SearchType
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingAsyncImage
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchState
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 
 @Composable
 fun SearchDialog(
+    scheduleViewModel: ScheduleViewModel,
     searchViewModel: SearchViewModel,
+    appBackStack: AppBackStack,
     searchParams: SearchParams,
     searchState: SearchState,
-    navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions
 ) {
     Scaffold { innerPadding ->
         Column(
@@ -199,9 +200,9 @@ fun SearchDialog(
                                                 titleMaxLines = 2,
                                                 showClickLabel = false,
                                                 onClick = {
-                                                    navigationActions.navigateToSchedule()
-                                                    navigationActions.onBack()
-                                                    scheduleActions.onGetNamedSchedule(
+                                                    appBackStack.openPage(Route.Page.Schedule)
+                                                    appBackStack.onBack()
+                                                    scheduleViewModel.fetchNamedSchedule(
                                                         query.name,
                                                         query.apiId,
                                                         query.namedScheduleType
@@ -246,9 +247,9 @@ fun SearchDialog(
                                             horizontalPadding = 8.dp,
                                             title = group.name,
                                             onClick = {
-                                                navigationActions.navigateToSchedule()
-                                                navigationActions.onBack()
-                                                scheduleActions.onGetNamedSchedule(
+                                                appBackStack.openPage(Route.Page.Schedule)
+                                                appBackStack.onBack()
+                                                scheduleViewModel.fetchNamedSchedule(
                                                     group.name,
                                                     group.id,
                                                     NamedScheduleType.GROUP
@@ -298,9 +299,9 @@ fun SearchDialog(
                                                 )
                                             },
                                             onClick = {
-                                                navigationActions.navigateToSchedule()
-                                                navigationActions.onBack()
-                                                scheduleActions.onGetNamedSchedule(
+                                                appBackStack.openPage(Route.Page.Schedule)
+                                                appBackStack.onBack()
+                                                scheduleViewModel.fetchNamedSchedule(
                                                     person.name,
                                                     person.id,
                                                     NamedScheduleType.PERSON
@@ -335,7 +336,7 @@ fun FilterRow(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        CustomChip(
+        CustomFilterChip(
             title = stringResource(R.string.all),
             imageVector = null,
             selected = selectedOption == SearchType.ALL,
@@ -343,7 +344,7 @@ fun FilterRow(
                 onSelectOption(SearchType.ALL)
             }
         )
-        CustomChip(
+        CustomFilterChip(
             title = stringResource(R.string.groups),
             imageVector = ImageVector.vectorResource(R.drawable.group),
             selected = selectedOption == SearchType.GROUPS,
@@ -351,7 +352,7 @@ fun FilterRow(
                 onSelectOption(SearchType.GROUPS)
             }
         )
-        CustomChip(
+        CustomFilterChip(
             title = stringResource(R.string.people),
             imageVector = ImageVector.vectorResource(R.drawable.person),
             selected = selectedOption == SearchType.PEOPLE,

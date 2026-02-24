@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.app.enums_sealed
+package com.egormelnikoff.schedulerutmiit.app.enums
 
 
 enum class TimetableType(

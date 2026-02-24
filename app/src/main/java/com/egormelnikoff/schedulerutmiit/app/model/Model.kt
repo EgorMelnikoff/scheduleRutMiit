@@ -4,7 +4,7 @@ import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import java.time.LocalDate
 import java.time.LocalDateTime
 

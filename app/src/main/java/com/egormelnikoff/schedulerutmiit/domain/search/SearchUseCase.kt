@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.domain.search
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.SearchType
+import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.app.model.Institutes
 import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.data.Result
@@ -9,7 +9,6 @@ import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
 import com.egormelnikoff.schedulerutmiit.domain.search.result.SearchResult
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
 import javax.inject.Inject
-
 
 class SearchUseCase @Inject constructor(
     private val searchRepos: SearchRepos

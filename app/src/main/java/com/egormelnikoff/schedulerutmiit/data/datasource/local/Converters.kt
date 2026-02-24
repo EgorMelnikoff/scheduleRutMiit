@@ -5,8 +5,8 @@ import androidx.room.TypeConverter
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
 import com.egormelnikoff.schedulerutmiit.app.entity.Room
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.time.LocalDate

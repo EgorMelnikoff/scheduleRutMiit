@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote
 
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 
 object Endpoints {
     //API

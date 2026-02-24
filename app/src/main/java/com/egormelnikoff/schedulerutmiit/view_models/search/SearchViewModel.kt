@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.SearchType
+import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.Result

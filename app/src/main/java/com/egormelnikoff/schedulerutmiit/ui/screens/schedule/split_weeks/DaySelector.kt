@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,9 +23,11 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsByDayAndWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.EventsSummary
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.EventsBrieflySummary
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.EventsDetailSummary
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +38,7 @@ fun DaySelector(
     scheduleUiState: ScheduleUiState,
     namedScheduleData: NamedScheduleData,
     selectedWeek: Int,
-    isShowCountClasses: Boolean,
+    eventsCountView: EventsCountView,
     scope: CoroutineScope
 ) {
     Row(
@@ -62,7 +63,7 @@ fun DaySelector(
                 title = day,
                 events = eventsForDate,
                 eventsExtraData = namedScheduleData.scheduleData.eventsExtraData,
-                isShowCountClasses = isShowCountClasses,
+                eventsCountView = eventsCountView,
                 isSelected = index == scheduleUiState.pagerSplitWeeks.currentPage,
                 isSunday = currentDate.dayOfWeek.value == 7,
                 currentPage = index,
@@ -84,7 +85,7 @@ fun DaySelectorItem(
     title: String,
     isSunday: Boolean,
     isSelected: Boolean,
-    isShowCountClasses: Boolean,
+    eventsCountView: EventsCountView,
     isToday: Boolean,
     events: Map<String, List<Event>>,
     eventsExtraData: List<EventExtraData>
@@ -124,15 +125,15 @@ fun DaySelectorItem(
 
             )
         }
-        if (isShowCountClasses) {
-            Box(
-                modifier = Modifier.defaultMinSize(minHeight = 6.dp)
-            ) {
-                EventsSummary(
-                    events = events,
-                    eventsExtraData = eventsExtraData
-                )
-            }
+        if (eventsCountView == EventsCountView.DETAILS) {
+            EventsDetailSummary(
+                events = events,
+                eventsExtraData = eventsExtraData
+            )
+        } else if (eventsCountView == EventsCountView.BRIEFLY && events.isNotEmpty()) {
+            EventsBrieflySummary(
+                eventsSize = events.size
+            )
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -15,7 +14,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.entity.RecurrenceRule
 import com.egormelnikoff.schedulerutmiit.app.entity.Room
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
 import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.app.model.NonPeriodicContent

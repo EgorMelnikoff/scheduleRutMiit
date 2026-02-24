@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.app.di
 
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleTypeAdapter
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler

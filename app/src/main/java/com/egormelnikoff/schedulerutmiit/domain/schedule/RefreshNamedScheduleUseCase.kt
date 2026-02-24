@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
