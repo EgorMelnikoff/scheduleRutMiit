@@ -3,7 +3,8 @@ package com.egormelnikoff.schedulerutmiit.app.extension
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.DayPeriod
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
@@ -101,6 +102,15 @@ fun String.getShortName(type: NamedScheduleType): String {
     return if (nameParts.size == 3) {
         "${nameParts.first()} ${nameParts[1][0]}. ${nameParts[2][0]}."
     } else this
+}
+
+fun LocalDateTime.dayPeriod(): DayPeriod {
+    return when (toLocalTime()) {
+        in LocalTime.of(6, 0)..LocalTime.of(11, 59) -> DayPeriod.MORNING
+        in LocalTime.of(12, 0)..LocalTime.of(17, 59) -> DayPeriod.DAY
+        in LocalTime.of(18, 0)..LocalTime.of(21, 59) -> DayPeriod.EVENING
+        else -> DayPeriod.NIGHT
+    }
 }
 
 fun getTimeSlotName(

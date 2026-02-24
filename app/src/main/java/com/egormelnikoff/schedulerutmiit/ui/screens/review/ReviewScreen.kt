@@ -1,201 +1,292 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.review
 
-import androidx.compose.animation.animateContentSize
+import android.app.Activity
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
-import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.DayPeriod
+import com.egormelnikoff.schedulerutmiit.app.extension.dayPeriod
+import com.egormelnikoff.schedulerutmiit.ui.elements.ChooseDateTimeButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
-import java.time.DayOfWeek
-import java.time.Instant
-import java.time.LocalDate
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
 fun ReviewScreen(
     scheduleState: ScheduleState,
     reviewUiState: ReviewUiState,
-    navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions,
+    currentDateTime: LocalDateTime,
+    scheduleViewModel: ScheduleViewModel,
+    appBackStack: AppBackStack,
+    isDarkTheme: Boolean,
     externalPadding: PaddingValues
 ) {
+    val spacerHeight = 270.dp
+    val currentDate = currentDateTime.toLocalDate()
+    val dayPeriod = currentDateTime.dayPeriod()
+
+    val view = LocalView.current
+    val window = (view.context as Activity).window
+    val insetsController = remember(view, window) {
+        WindowCompat.getInsetsController(window, view)
+    }
+
+    SideEffect {
+        insetsController.isAppearanceLightStatusBars = false
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            val activity = view.context as? Activity
+            if (activity?.isChangingConfigurations == false) {
+                insetsController.isAppearanceLightStatusBars = !isDarkTheme
+            }
+        }
+    }
+
     var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
     var showDeleteNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
 
-    Scaffold(
-        topBar = {
-            CustomTopAppBar(
-                titleText = stringResource(R.string.review),
-                actions = {
-                    IconButton(
-                        onClick = {
-                            navigationActions.navigateToAddSchedule()
-                        },
-                        colors = IconButtonDefaults.iconButtonColors().copy(
-                            contentColor = MaterialTheme.colorScheme.onBackground
-                        )
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.add),
-                            contentDescription = null
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            navigationActions.navigateToSearch()
-                        },
-                        colors = IconButtonDefaults.iconButtonColors().copy(
-                            contentColor = MaterialTheme.colorScheme.onBackground
-                        )
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.search),
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp,
-                top = innerPadding.calculateTopPadding(),
-                bottom = externalPadding.calculateBottomPadding()
-            ),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+    Scaffold { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            if (scheduleState.savedNamedSchedules.isNotEmpty()) {
-                if (
-                    scheduleState.defaultNamedScheduleData?.scheduleData?.reviewData != null &&
-                    scheduleState.defaultNamedScheduleData.namedSchedule != null &&
-                    scheduleState.defaultNamedScheduleData.scheduleData.scheduleEntity != null
+            Box(
+                modifier = Modifier,
+                contentAlignment = Alignment.TopStart
+            ) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(spacerHeight + 20.dp),
+                    painter = when (dayPeriod) {
+                        DayPeriod.MORNING -> painterResource(R.drawable.day)
+                        DayPeriod.DAY -> painterResource(R.drawable.day)
+                        DayPeriod.EVENING -> painterResource(R.drawable.evening)
+                        DayPeriod.NIGHT -> painterResource(R.drawable.night)
+                    },
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(
+                            top = paddingValues.calculateTopPadding() + 8.dp,
+                            start = 16.dp, end = 16.dp
+                        ),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    item {
-                        EventsReview(
-                            navigateToEvent = navigationActions.navigateToEvent,
-                            scheduleState = scheduleState,
-                            title = "${scheduleState.defaultNamedScheduleData.namedSchedule.namedScheduleEntity.shortName} " +
-                                    "(${scheduleState.defaultNamedScheduleData.scheduleData.scheduleEntity.timetableType.typeName})"
-                        )
-                    }
-                }
-                item {
-                    ExpandedItem(
-                        title = stringResource(R.string.saved_schedules),
-                        imageVector = ImageVector.vectorResource(R.drawable.save),
-                        visible = reviewUiState.visibleSavedSchedules,
-                        onChangeVisibility = reviewUiState.onChangeVisibilitySavedSchedules
+                    Text(
+                        text = when (dayPeriod) {
+                            DayPeriod.MORNING -> "Доброе утро!"
+                            DayPeriod.DAY -> "Добрый день!"
+                            DayPeriod.EVENING -> "Добрый вечер!"
+                            DayPeriod.NIGHT -> "Доброй ночи!"
+                        },
+                        style = MaterialTheme.typography.titleLarge,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                    if (
+                        scheduleState.defaultNamedScheduleData?.scheduleData?.reviewData != null &&
+                        scheduleState.defaultNamedScheduleData.namedSchedule != null &&
+                        scheduleState.defaultNamedScheduleData.scheduleData.scheduleEntity != null
                     ) {
-                        ColumnGroup(
-                            items = scheduleState.savedNamedSchedules.map { namedScheduleEntity ->
-                                {
-                                    val formatter =
-                                        DateTimeFormatter.ofPattern(
-                                            "d MMMM",
-                                            Locale.getDefault()
-                                        )
-                                    val lastTimeUpdate =
-                                        formatter.format(
-                                            LocalDateTime.ofInstant(
-                                                Instant.ofEpochMilli(namedScheduleEntity.lastTimeUpdate),
-                                                ZoneId.systemDefault()
-                                            )
-                                        )
+                        val reviewData =
+                            scheduleState.defaultNamedScheduleData.scheduleData.reviewData
 
-                                    ClickableItem(
-                                        title = namedScheduleEntity.shortName,
-                                        titleMaxLines = 2,
-                                        subtitle = if (namedScheduleEntity.type != NamedScheduleType.MY) {
-                                            "${stringResource(R.string.current_on)} $lastTimeUpdate"
-                                        } else null,
-                                        defaultMinHeight = 40.dp,
-                                        onClick = {
-                                            showNamedScheduleDialog = namedScheduleEntity
-                                        },
-                                        trailingIcon = if (namedScheduleEntity.isDefault) {
-                                            {
-                                                Icon(
-                                                    modifier = Modifier.size(20.dp),
-                                                    imageVector = ImageVector.vectorResource(R.drawable.check),
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                        } else null
-                                    )
-                                }
+                        when (reviewData.displayedDate) {
+                            currentDate -> {
+                                Text(
+                                    text = stringResource(R.string.today) +
+                                            " ${reviewData.events.size} " +
+                                            pluralStringResource(
+                                                R.plurals.events,
+                                                reviewData.events.size
+                                            ),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1
+                                )
                             }
-                        )
+
+                            currentDate.plusDays(1) -> {
+                                Text(
+                                    text = stringResource(R.string.tomorrow) +
+                                            " ${reviewData.events.size} " +
+                                            pluralStringResource(
+                                                R.plurals.events,
+                                                reviewData.events.size
+                                            ),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1
+                                )
+
+                            }
+                        }
+
                     }
                 }
             }
-            item {
-                ExpandedItem(
-                    title = stringResource(R.string.services),
-                    imageVector = ImageVector.vectorResource(R.drawable.review),
-                    visible = reviewUiState.visibleServices,
-                    onChangeVisibility = reviewUiState.onChangeVisibilityServices
+
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Spacer(modifier = Modifier.height(spacerHeight))
+                Column(
+                    modifier = Modifier
+                        .dropShadow(
+                            shape = MaterialTheme.shapes.extraLarge.copy(
+                                bottomStart = CornerSize(0), bottomEnd = CornerSize(0)
+                            ),
+                            shadow = Shadow(
+                                radius = 10.dp,
+                                spread = 6.dp,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
+                                offset = DpOffset(x = 2.dp, 2.dp)
+                            )
+                        )
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = MaterialTheme.shapes.extraLarge.copy(
+                                bottomStart = CornerSize(0), bottomEnd = CornerSize(0)
+                            )
+                        )
+                        .padding(
+                            top = 16.dp, start = 16.dp, end = 16.dp,
+                            bottom = externalPadding.calculateBottomPadding()
+                        ),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    ColumnGroup(
-                        items = listOf {
-                            ClickableItem(
-                                title = stringResource(R.string.list_teachers),
-                                onClick = {
-                                    navigationActions.navigateToCurriculumDialog()
+                    RowGroup(
+                        items = listOf(
+                            {
+                                ChooseDateTimeButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    iconSize = 20.dp,
+                                    imageVector = ImageVector.vectorResource(R.drawable.search),
+                                    title = "${stringResource(R.string.find)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}"
+                                ) {
+                                    appBackStack.openDialog(Route.Dialog.SearchDialog)
+                                }
+                            }, {
+                                ChooseDateTimeButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    iconSize = 20.dp,
+                                    imageVector = ImageVector.vectorResource(R.drawable.add),
+                                    title = "${stringResource(R.string.create)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}"
+                                ) {
+                                    appBackStack.openDialog(Route.Dialog.AddScheduleDialog)
+                                }
+                            }
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    if (scheduleState.savedNamedSchedules.isNotEmpty()) {
+                        ExpandedItem(
+                            title = stringResource(R.string.saved_schedules),
+                            visible = reviewUiState.visibleSavedSchedules,
+                            onChangeVisibility = reviewUiState.onChangeVisibilitySavedSchedules
+                        ) {
+                            ColumnGroup(
+                                items = scheduleState.savedNamedSchedules.map { namedScheduleEntity ->
+                                    {
+                                        ClickableItem(
+                                            title = namedScheduleEntity.shortName,
+                                            titleMaxLines = 1,
+                                            defaultMinHeight = 32.dp,
+                                            onClick = {
+                                                showNamedScheduleDialog = namedScheduleEntity
+                                            },
+                                            trailingIcon = if (namedScheduleEntity.isDefault) {
+                                                {
+                                                    Icon(
+                                                        modifier = Modifier.size(20.dp),
+                                                        imageVector = ImageVector.vectorResource(R.drawable.check),
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            } else null
+                                        )
+                                    }
                                 }
                             )
                         }
-                    )
+                    }
+                    ExpandedItem(
+                        title = stringResource(R.string.services),
+                        visible = reviewUiState.visibleServices,
+                        onChangeVisibility = reviewUiState.onChangeVisibilityServices
+                    ) {
+                        ColumnGroup(
+                            items = listOf {
+                                ClickableItem(
+                                    title = stringResource(R.string.list_teachers),
+                                    onClick = {
+                                        appBackStack.openDialog(Route.Dialog.CurriculumDialog)
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -204,18 +295,18 @@ fun ReviewScreen(
         if (showNamedScheduleDialog != null) {
             ModalDialogNamedSchedule(
                 namedScheduleEntity = showNamedScheduleDialog!!,
-                navigateToRenameDialog = {
-                    navigationActions.navigateToRenameDialog(showNamedScheduleDialog!!)
-                },
+                currentDateTime = currentDateTime,
+                scheduleViewModel = scheduleViewModel,
+                appBackStack = appBackStack,
+
+                isSavedNamedSchedule = true,
+                isDefaultNamedSchedule = showNamedScheduleDialog!!.isDefault,
+
                 onOpenNamedSchedule = {
-                    scheduleActions.onOpenNamedSchedule(showNamedScheduleDialog!!.id)
-                    navigationActions.navigateToSchedule()
-                },
-                onSetDefaultNamedSchedule = if (!showNamedScheduleDialog!!.isDefault) {
-                    { scheduleActions.onSelectDefaultNamedSchedule(showNamedScheduleDialog!!.id) }
-                } else null,
-                onDeleteNamedSchedule = {
-                    showDeleteNamedScheduleDialog = showNamedScheduleDialog!!
+                    scheduleViewModel.getSavedNamedSchedule(
+                        primaryKeyNamedSchedule = showNamedScheduleDialog!!.id
+                    )
+                    appBackStack.navigateToSchedule()
                 }
             ) {
                 showNamedScheduleDialog = null
@@ -231,166 +322,11 @@ fun ReviewScreen(
                     showDeleteNamedScheduleDialog = null
                 },
                 onConfirmation = {
-                    scheduleActions.onDeleteNamedSchedule(
+                    scheduleViewModel.deleteNamedSchedule(
                         showDeleteNamedScheduleDialog!!.id,
                         showDeleteNamedScheduleDialog!!.isDefault
                     )
                 }
-            )
-        }
-    }
-}
-
-
-@Composable
-fun EventsReview(
-    navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
-    title: String,
-    scheduleState: ScheduleState
-) {
-    val scheduleEntity = scheduleState.defaultNamedScheduleData!!.scheduleData!!.scheduleEntity!!
-    val reviewData = scheduleState.defaultNamedScheduleData.scheduleData.reviewData!!
-    val eventsExtraData = scheduleState.defaultNamedScheduleData.scheduleData.eventsExtraData
-    val today = LocalDate.now()
-
-    Column(
-        modifier = Modifier
-            .animateContentSize()
-            .padding(top = 4.dp, bottom = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        RowGroup(
-            title = title,
-            items = listOf(
-                {
-                    EventsCount(
-                        title = when (reviewData.displayedDate) {
-                            today -> {
-                                stringResource(R.string.today)
-                            }
-
-                            today.plusDays(1) -> {
-                                stringResource(R.string.tomorrow)
-                            }
-
-                            else -> {
-                                reviewData.displayedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                            }
-                        },
-                        value = reviewData.events.size.toString(),
-                        comment = LocalResources.current.getQuantityString(
-                            R.plurals.events,
-                            reviewData.events.size
-                        )
-                    )
-                }, {
-                    EventsCount(
-                        title = when {
-                            reviewData.displayedDate == today.plusDays(1)
-                                    && reviewData.displayedDate.dayOfWeek == DayOfWeek.MONDAY -> {
-                                stringResource(R.string.next_week)
-                            }
-
-                            else -> {
-                                stringResource(R.string.week, "")
-                            }
-                        },
-                        value = reviewData.countEventsForWeek.toString(),
-                        comment = LocalResources.current.getQuantityString(
-                            R.plurals.events,
-                            reviewData.countEventsForWeek
-                        )
-                    )
-                }
-            )
-        )
-        val haveAnyEventsExtraData = reviewData.events.values.flatten().any {
-            eventsExtraData.find { eventExtraData ->
-                it.id == eventExtraData.id && eventExtraData.comment != ""
-            } != null
-        }
-
-        if (reviewData.events.isNotEmpty() && haveAnyEventsExtraData) {
-            ColumnGroup(
-                title = if (reviewData.displayedDate == today.plusDays(1)) {
-                    stringResource(R.string.comments_on_tomorrow_events)
-                } else stringResource(R.string.comments_on_events),
-                items = reviewData.events.values.flatten().mapNotNull { event ->
-                    val eventExtraData = eventsExtraData
-                        .find { it.id == event.id }
-
-                    if (eventExtraData != null && eventExtraData.comment != "") {
-                        {
-                            ClickableItem(
-                                title = event.name!!,
-                                subtitle = eventExtraData.comment,
-                                showClickLabel = false,
-                                subtitleLabel = if (eventExtraData.tag != 0) {
-                                    {
-                                        Icon(
-                                            modifier = Modifier.size(8.dp),
-                                            imageVector = ImageVector.vectorResource(R.drawable.circle),
-                                            contentDescription = null,
-                                            tint = getColorByIndex(eventExtraData.tag)
-                                        )
-                                    }
-                                } else null,
-                                onClick = {
-                                    navigateToEvent(
-                                        scheduleEntity,
-                                        true,
-                                        event,
-                                        eventExtraData
-                                    )
-                                }
-                            )
-                        }
-                    } else {
-                        null
-                    }
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun EventsCount(
-    title: String,
-    value: String,
-    comment: String
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text(
-            modifier = Modifier,
-            text = title,
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-            )
-            Text(
-                text = comment,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
             )
         }
     }
