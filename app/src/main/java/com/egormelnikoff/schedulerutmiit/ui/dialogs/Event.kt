@@ -5,12 +5,15 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,13 +24,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,8 +40,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -48,38 +51,43 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.elements.EventTopAppBar
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
-import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import kotlinx.coroutines.delay
+import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDialog(
-    appUiState: AppUiState,
     event: Event,
     eventExtraData: EventExtraData?,
+    namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
     isSavedSchedule: Boolean,
-    navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions,
     searchViewModel: SearchViewModel,
+    scheduleViewModel: ScheduleViewModel,
+    appBackStack: AppBackStack
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-
+    val context = LocalContext.current
     var showEventActionsDialog by remember { mutableStateOf(false) }
     var showEventDeleteDialog by remember { mutableStateOf(false) }
     var showEventHideDialog by remember { mutableStateOf(false) }
@@ -87,29 +95,18 @@ fun EventDialog(
     var tag by remember { mutableIntStateOf(eventExtraData?.tag ?: 0) }
     var comment by remember { mutableStateOf(eventExtraData?.comment ?: "") }
 
-    val subtitle = StringBuilder().apply {
-        append("${event.startDatetime!!.toLocaleTimeWithTimeZone()} - ${event.endDatetime!!.toLocaleTimeWithTimeZone()}")
-        event.typeName?.let {
-            append("  |  ")
-            append(it)
-        }
-    }.toString()
 
     if (isSavedSchedule) {
         LaunchedEffect(comment, tag) {
             delay(500)
-            scheduleActions.eventActions.onEventExtraChange(event, comment, tag)
+            scheduleViewModel.updateEventExtra(event, comment, tag)
         }
     }
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            EventTopAppBar(
-                title = event.name!!,
-                subtitle = subtitle,
-                scrollBehavior = scrollBehavior,
+            CustomTopAppBar(
                 navAction = {
-                    navigationActions.onBack()
+                    appBackStack.onBack()
                 },
                 actions = {
                     IconButton(
@@ -118,39 +115,17 @@ fun EventDialog(
                                 action = Intent.ACTION_SEND
                                 putExtra(
                                     Intent.EXTRA_TEXT,
-                                    event.customToString(appUiState.context)
+                                    event.customToString(context)
                                 )
                                 type = "text/plain"
                             }
                             val shareIntent = Intent.createChooser(sendIntent, null)
-                            appUiState.context.startActivity(shareIntent)
+                            context.startActivity(shareIntent)
                         }
                     ) {
                         Icon(
                             modifier = Modifier.size(24.dp),
                             imageVector = ImageVector.vectorResource(R.drawable.share),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            var eventString = event.customToString(appUiState.context)
-                            if (comment.isNotEmpty()) {
-                                eventString += "\n${appUiState.context.getString(R.string.comment)}: $comment"
-                            }
-                            val sendIntent: Intent = Intent().apply {
-                                action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, eventString)
-                                type = "text/plain"
-                            }
-                            val shareIntent = Intent.createChooser(sendIntent, null)
-                            appUiState.context.startActivity(shareIntent)
-                        }
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.share_with_comment),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onBackground
                         )
@@ -178,79 +153,162 @@ fun EventDialog(
                 .fillMaxSize()
                 .padding(
                     top = innerPadding.calculateTopPadding(),
-                    bottom = innerPadding.calculateBottomPadding(),
-                    start = 16.dp, end = 16.dp
+                    bottom = innerPadding.calculateBottomPadding()
                 )
                 .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            if (!event.groups.isNullOrEmpty()) {
-                ColumnGroup(
-                    title = stringResource(R.string.groups),
-                    titleColor = MaterialTheme.colorScheme.primary,
-                    withBackground = false,
-                    items = listOf {
-                        FlowRow(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            event.groups.forEach { group ->
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier
-                                        .clip(MaterialTheme.shapes.extraSmall)
-                                        .background(MaterialTheme.colorScheme.secondaryContainer)
-                                        .defaultMinSize(minWidth = 80.dp)
-                                        .let {
-                                            if (!event.isCustomEvent) {
-                                                it.clickable(
-                                                    onClick = {
-                                                        navigationActions.navigateToSchedule()
-                                                        navigationActions.onBack()
-                                                        scheduleActions.onGetNamedSchedule(
-                                                            group.name,
-                                                            group.id,
-                                                            NamedScheduleType.GROUP
-                                                        )
-                                                        searchViewModel.saveQueryToHistory(
-                                                            SearchQuery(
-                                                                name = group.name,
-                                                                apiId = group.id,
-                                                                namedScheduleType = NamedScheduleType.GROUP
+            Text(
+                modifier = Modifier.padding(
+                    start = 16.dp, end = 16.dp
+                ),
+                text = event.name!!,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2
+            )
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .padding(
+                        start = 16.dp, end = 16.dp
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                CustomFilterChip(
+                    imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                    colors = FilterChipDefaults.filterChipColors(
+                        disabledContainerColor = Color.Transparent,
+                        disabledLabelColor = MaterialTheme.colorScheme.onBackground,
+                        disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground,
+                    ),
+                    border = BorderStroke(
+                        width = 0.5.dp,
+                        color = MaterialTheme.colorScheme.outline
+                    ),
+                    title = if (scheduleEntity.timetableType == TimetableType.PERIODIC) {
+                        val dayName = event.startDatetime!!.dayOfWeek.getDisplayName(
+                            TextStyle.FULL,
+                            Locale.getDefault()
+                        ).toString().replaceFirstChar { it.uppercase() }
+                        if (event.recurrenceRule?.interval == 1) {
+                            dayName
+                        } else {
+                            "$dayName, ${
+                                stringResource(
+                                    R.string.week,
+                                    event.periodNumber ?: 0
+                                ).replaceFirstChar { it.lowercase() }
+                            }"
+                        }
+                    } else "${
+                        event.startDatetime!!.toLocalDate()
+                            .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                    }"
+                )
+                CustomFilterChip(
+                    imageVector = ImageVector.vectorResource(R.drawable.time),
+                    colors = FilterChipDefaults.filterChipColors(
+                        disabledContainerColor = Color.Transparent,
+                        disabledLabelColor = MaterialTheme.colorScheme.onBackground,
+                        disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground,
+                    ),
+                    border = BorderStroke(
+                        width = 0.5.dp,
+                        color = MaterialTheme.colorScheme.outline
+                    ),
+                    title = "${event.startDatetime.toLocaleTimeWithTimeZone()} - ${event.endDatetime!!.toLocaleTimeWithTimeZone()}"
+                )
+                event.typeName?.let {
+                    CustomFilterChip(
+                        title = event.typeName,
+                        border = BorderStroke(
+                            width = 0.5.dp,
+                            color = MaterialTheme.colorScheme.outline
+                        ),
+                        colors = FilterChipDefaults.filterChipColors(
+                            disabledContainerColor = Color.Transparent,
+                            disabledLabelColor = MaterialTheme.colorScheme.onBackground,
+                            disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground
+                        )
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier.padding(
+                    horizontal = 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                if (!event.groups.isNullOrEmpty()) {
+                    ColumnGroup(
+                        title = stringResource(R.string.groups),
+                        titleColor = MaterialTheme.colorScheme.primary,
+                        withBackground = false,
+                        items = listOf {
+                            FlowRow(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                event.groups.forEach { group ->
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier
+                                            .clip(MaterialTheme.shapes.extraSmall)
+                                            .background(MaterialTheme.colorScheme.secondaryContainer)
+                                            .defaultMinSize(minWidth = 80.dp)
+                                            .let {
+                                                if (!event.isCustomEvent) {
+                                                    it.clickable(
+                                                        onClick = {
+                                                            appBackStack.navigateToSchedule()
+                                                            appBackStack.onBack()
+                                                            scheduleViewModel.fetchNamedSchedule(
+                                                                group.name,
+                                                                group.id,
+                                                                NamedScheduleType.GROUP
                                                             )
-                                                        )
-                                                    }
-                                                )
-                                            } else it
-                                        }
-                                        .padding(8.dp)
-                                ) {
-                                    Text(
-                                        text = group.name,
-                                        style = MaterialTheme.typography.titleSmall,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        overflow = TextOverflow.Ellipsis,
-                                        maxLines = 2
-                                    )
+                                                            searchViewModel.saveQueryToHistory(
+                                                                SearchQuery(
+                                                                    name = group.name,
+                                                                    apiId = group.id,
+                                                                    namedScheduleType = NamedScheduleType.GROUP
+                                                                )
+                                                            )
+                                                        }
+                                                    )
+                                                } else it
+                                            }
+                                            .padding(8.dp)
+                                    ) {
+                                        Text(
+                                            text = group.name,
+                                            style = MaterialTheme.typography.titleSmall,
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            overflow = TextOverflow.Ellipsis,
+                                            maxLines = 2
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
-                )
-            }
-            if (!event.rooms.isNullOrEmpty()) {
-                ColumnGroup(
-                    title = stringResource(R.string.room),
-                    titleColor = MaterialTheme.colorScheme.primary,
-                    items = event.rooms.map { room ->
-                        {
-                            ClickableItem(
-                                title = room.hint,
-                                titleMaxLines = 2,
-                                defaultMinHeight = 32.dp
+                    )
+                }
+                if (!event.rooms.isNullOrEmpty()) {
+                    ColumnGroup(
+                        title = stringResource(R.string.room),
+                        titleColor = MaterialTheme.colorScheme.primary,
+                        items = event.rooms.map { room ->
+                            {
+                                ClickableItem(
+                                    title = room.hint,
+                                    titleMaxLines = 2,
+                                    defaultMinHeight = 32.dp
 //                                onClick = if (!event.isCustomEvent) {
 //                                    {
 //                                        navigationActions.navigateToSchedule()
@@ -269,110 +327,112 @@ fun EventDialog(
 //                                        )
 //                                    }
 //                                } else null
-                            )
+                                )
+                            }
                         }
-                    }
 
-                )
-            }
-            if (!event.lecturers.isNullOrEmpty()) {
-                ColumnGroup(
-                    title = stringResource(R.string.lecturers),
-                    titleColor = MaterialTheme.colorScheme.primary,
-                    items = event.lecturers.map { lecturer ->
-                        {
-                            ClickableItem(
-                                title = lecturer.fullFio,
-                                titleMaxLines = 2,
-                                defaultMinHeight = 32.dp,
-                                onClick = if (!event.isCustomEvent) {
-                                    {
-                                        navigationActions.navigateToSchedule()
-                                        navigationActions.onBack()
-                                        scheduleActions.onGetNamedSchedule(
-                                            lecturer.fullFio,
-                                            lecturer.id,
-                                            NamedScheduleType.PERSON
-                                        )
-                                        searchViewModel.saveQueryToHistory(
-                                            SearchQuery(
-                                                name = lecturer.fullFio,
-                                                apiId = lecturer.id,
-                                                namedScheduleType = NamedScheduleType.PERSON
+                    )
+                }
+                if (!event.lecturers.isNullOrEmpty()) {
+                    ColumnGroup(
+                        title = stringResource(R.string.lecturers),
+                        titleColor = MaterialTheme.colorScheme.primary,
+                        items = event.lecturers.map { lecturer ->
+                            {
+                                ClickableItem(
+                                    title = lecturer.fullFio,
+                                    titleMaxLines = 2,
+                                    defaultMinHeight = 32.dp,
+                                    onClick = if (!event.isCustomEvent) {
+                                        {
+                                            appBackStack.navigateToSchedule()
+                                            appBackStack.onBack()
+                                            scheduleViewModel.fetchNamedSchedule(
+                                                lecturer.fullFio,
+                                                lecturer.id,
+                                                NamedScheduleType.PERSON
                                             )
-                                        )
-                                    }
-                                } else null,
-                                leadingIcon = {
-                                    LeadingTitle(
-                                        title = lecturer.fullFio
-                                    )
-                                }
-                            )
-                        }
-                    }
-                )
-            }
-            if (isSavedSchedule) {
-                ColumnGroup(
-                    title = stringResource(R.string.comment),
-                    titleColor = MaterialTheme.colorScheme.primary,
-                    withBackground = false,
-                    items = listOf {
-                        CustomTextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(100.dp),
-                            value = comment,
-                            keyboardOptions = KeyboardOptions(
-                                autoCorrectEnabled = false,
-                                imeAction = ImeAction.Default
-                            ),
-                            maxSymbols = 100,
-                            placeholderText = stringResource(R.string.enter_comment),
-                            trailingIcon = {
-                                AnimatedVisibility(
-                                    visible = comment != "",
-                                    enter = scaleIn(animationSpec = tween(300)),
-                                    exit = fadeOut(animationSpec = tween(500))
-                                ) {
-                                    IconButton(
-                                        onClick = {
-                                            comment = ""
-                                            scheduleActions.eventActions.onEventExtraChange(
-                                                event,
-                                                "",
-                                                tag
+                                            searchViewModel.saveQueryToHistory(
+                                                SearchQuery(
+                                                    name = lecturer.fullFio,
+                                                    apiId = lecturer.id,
+                                                    namedScheduleType = NamedScheduleType.PERSON
+                                                )
                                             )
                                         }
-                                    ) {
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(R.drawable.clear),
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
+                                    } else null,
+                                    leadingIcon = {
+                                        LeadingTitle(
+                                            title = lecturer.fullFio
                                         )
                                     }
-                                }
+                                )
                             }
-                        ) { newValue ->
-                            comment = newValue
                         }
-                    }
-                )
-                ColumnGroup(
-                    title = stringResource(R.string.tag),
-                    titleColor = MaterialTheme.colorScheme.primary,
-                    withBackground = false,
-                    items = listOf {
-                        ColorSelector(
-                            currentSelected = tag,
-                            onColorSelect = { value ->
-                                tag = value
+                    )
+                }
+                if (isSavedSchedule) {
+                    ColumnGroup(
+                        title = stringResource(R.string.comment),
+                        titleColor = MaterialTheme.colorScheme.primary,
+                        withBackground = false,
+                        items = listOf {
+                            CustomTextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp),
+                                value = comment,
+                                keyboardOptions = KeyboardOptions(
+                                    autoCorrectEnabled = false,
+                                    imeAction = ImeAction.Default
+                                ),
+                                maxSymbols = 100,
+                                placeholderText = stringResource(R.string.enter_comment),
+                                trailingIcon = {
+                                    AnimatedVisibility(
+                                        visible = comment != "",
+                                        enter = scaleIn(animationSpec = tween(300)),
+                                        exit = fadeOut(animationSpec = tween(500))
+                                    ) {
+                                        IconButton(
+                                            onClick = {
+                                                comment = ""
+                                                scheduleViewModel.updateEventExtra(
+                                                    event,
+                                                    "",
+                                                    tag
+                                                )
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = ImageVector.vectorResource(R.drawable.clear),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    }
+                                }
+                            ) { newValue ->
+                                comment = newValue
                             }
-                        )
-                    }
-                )
+                        }
+                    )
+                    ColumnGroup(
+                        title = stringResource(R.string.tag),
+                        titleColor = MaterialTheme.colorScheme.primary,
+                        withBackground = false,
+                        items = listOf {
+                            ColorSelector(
+                                currentSelected = tag,
+                                onColorSelect = { value ->
+                                    tag = value
+                                }
+                            )
+                        }
+                    )
+                }
             }
+
         }
     }
     if (showEventDeleteDialog) {
@@ -384,8 +444,8 @@ fun EventDialog(
                 showEventDeleteDialog = false
             },
             onConfirmation = {
-                scheduleActions.eventActions.onDeleteEvent(scheduleEntity, event.id)
-                navigationActions.onBack()
+                scheduleViewModel.deleteCustomEvent(scheduleEntity, event.id)
+                appBackStack.onBack()
             }
         )
     }
@@ -398,8 +458,8 @@ fun EventDialog(
                 showEventHideDialog = false
             },
             onConfirmation = {
-                scheduleActions.eventActions.onHideEvent(scheduleEntity, event.id)
-                navigationActions.onBack()
+                scheduleViewModel.updateEventHidden(scheduleEntity, event.id, true)
+                appBackStack.onBack()
             }
         )
     }
@@ -408,8 +468,8 @@ fun EventDialog(
             event = event,
             onEditEvent = if (event.isCustomEvent) {
                 {
-                    navigationActions.onBack()
-                    navigationActions.navigateToEditEvent(scheduleEntity, event)
+                    appBackStack.onBack()
+                    appBackStack.openDialog(Route.Dialog.AddEventDialog(namedScheduleEntity, scheduleEntity, event, ))
                 }
             } else null,
             onDeleteEvent = if (event.isCustomEvent) {
@@ -425,7 +485,7 @@ fun EventDialog(
             } else null,
             onShowEvent = if (event.isHidden) {
                 {
-                    scheduleActions.eventActions.onShowEvent(scheduleEntity, event.id)
+                    scheduleViewModel.updateEventHidden(scheduleEntity, event.id, false)
                     event.isHidden = false
                 }
             } else null
