@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
@@ -24,8 +23,6 @@ class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val searchViewModel: SearchViewModel by viewModels()
 
-    private lateinit var scheduleActions: ScheduleActions
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         enableEdgeToEdge()
@@ -33,10 +30,6 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition {
             scheduleViewModel.isDataLoading.value || settingsViewModel.appSettings.value == null
         }
-
-        scheduleActions = ScheduleActions(
-            scheduleViewModel = scheduleViewModel
-        )
 
         setContent {
             val appSettings by settingsViewModel.appSettings.collectAsStateWithLifecycle()
@@ -51,7 +44,6 @@ class MainActivity : ComponentActivity() {
                         scheduleViewModel = scheduleViewModel,
                         newsViewModel = newsViewModel,
                         settingsViewModel = settingsViewModel,
-                        scheduleActions = scheduleActions,
                         appSettings = settings
                     )
                 }
