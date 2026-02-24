@@ -18,6 +18,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -28,9 +30,8 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -38,9 +39,10 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun AddScheduleDialog(
     appUiState: AppUiState,
-    navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions
+    scheduleViewModel: ScheduleViewModel
 ) {
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     var nameSchedule by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf<LocalDate?>(null) }
     var endDate by remember { mutableStateOf<LocalDate?>(null) }
@@ -52,22 +54,22 @@ fun AddScheduleDialog(
         topBar = {
             CustomTopAppBar(
                 titleText = stringResource(R.string.adding_a_schedule),
-                navAction = { navigationActions.onBack() },
+                navAction = { appUiState.appBackStack.onBack() },
                 actions = {
                     CustomButton(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         buttonTitle = stringResource(R.string.create),
                         onClick = {
                             val errorMessages =
-                                checkScheduleParams(appUiState.context, nameSchedule, startDate, endDate)
+                                checkScheduleParams(context, nameSchedule, startDate, endDate)
                             if (errorMessages.isEmpty()) {
-                                scheduleActions.onAddCustomNamedSchedule(
+                                scheduleViewModel.addCustomNamedSchedule(
                                     nameSchedule.trim(),
                                     startDate!!,
                                     endDate!!
                                 )
-                                navigationActions.navigateToSchedule()
-                                navigationActions.onBack()
+                                appUiState.appBackStack.navigateToSchedule()
+                                appUiState.appBackStack.onBack()
                             } else {
                                 appUiState.scope.launch {
                                     appUiState.snackBarHostState.showSnackbar(
@@ -116,7 +118,7 @@ fun AddScheduleDialog(
                                 title = startDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                                     ?: stringResource(R.string.start_date)
                             ) {
-                                appUiState.focusManager.clearFocus()
+                                focusManager.clearFocus()
                                 showDialogStartDate = true
                             }
                         }, {
@@ -126,7 +128,7 @@ fun AddScheduleDialog(
                                     ?: stringResource(R.string.end_date),
                                 enabled = startDate != null
                             ) {
-                                appUiState.focusManager.clearFocus()
+                                focusManager.clearFocus()
                                 showDialogEndDate = true
                             }
                         }

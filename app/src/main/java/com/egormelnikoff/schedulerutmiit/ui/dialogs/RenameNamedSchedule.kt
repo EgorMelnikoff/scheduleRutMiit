@@ -33,14 +33,14 @@ import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 @Composable
 fun RenameDialog(
     namedScheduleEntity: NamedScheduleEntity,
-    navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions
+    scheduleViewModel: ScheduleViewModel,
+    appBackStack: AppBackStack,
 ) {
     var newName by remember { mutableStateOf(namedScheduleEntity.fullName) }
     Scaffold(
@@ -48,7 +48,7 @@ fun RenameDialog(
             CustomTopAppBar(
                 titleText = stringResource(R.string.renaming),
                 navAction = {
-                    navigationActions.onBack()
+                    appBackStack.onBack()
                 }
             )
         }
@@ -101,11 +101,11 @@ fun RenameDialog(
                 buttonTitle = stringResource(R.string.save),
                 enabled = newName != "",
                 onClick = {
-                    scheduleActions.onConfirmRenameNamedSchedule(
-                        namedScheduleEntity,
-                        newName.trim()
+                    scheduleViewModel.renameNamedSchedule(
+                        namedScheduleEntity = namedScheduleEntity,
+                        newName = newName.trim()
                     )
-                    navigationActions.onBack()
+                    appBackStack.onBack()
                 }
             )
         }

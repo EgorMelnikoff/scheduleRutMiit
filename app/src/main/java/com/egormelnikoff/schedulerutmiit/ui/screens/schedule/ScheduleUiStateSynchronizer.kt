@@ -5,12 +5,16 @@ import androidx.compose.runtime.LaunchedEffect
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 @Composable
 fun ScheduleUiStateSynchronizer(
     scheduleUiState: ScheduleUiState?,
     scheduleState: ScheduleState,
+    currentDateTime: LocalDateTime,
+    scheduleViewModel: ScheduleViewModel,
 ) {
     if (scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity != null && scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData != null && scheduleUiState != null) {
         LaunchedEffect(
@@ -49,6 +53,14 @@ fun ScheduleUiStateSynchronizer(
             if (scheduleUiState.pagerWeeksState.currentPage != targetWeekIndex) {
                 scheduleUiState.pagerWeeksState.animateScrollToPage(targetWeekIndex)
             }
+        }
+
+        LaunchedEffect(currentDateTime) {
+            println("test")
+            scheduleViewModel.refreshScheduleState(
+                primaryKeyNamedSchedule = scheduleState.currentNamedScheduleData.namedSchedule?.namedScheduleEntity?.id,
+                showLoading = false
+            )
         }
     }
 }

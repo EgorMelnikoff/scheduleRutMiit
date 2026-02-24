@@ -31,7 +31,7 @@ fun ActionDialogButton(
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .background(containerColor)
-            .padding(horizontal = 8.dp, vertical = 12.dp),
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {

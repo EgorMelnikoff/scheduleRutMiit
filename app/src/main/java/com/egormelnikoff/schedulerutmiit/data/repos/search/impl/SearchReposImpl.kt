@@ -148,8 +148,10 @@ class SearchReposImpl @Inject constructor(
     }
 
     private fun compareValues(comparableValue: String, query: String): Boolean {
-        return comparableValue.lowercase().replace("-", "")
-            .contains(query.lowercase().replace("-", ""))
+        val cleanValue = comparableValue.filter { !it.isWhitespace() }
+        val cleanQuery = query.filter { !it.isWhitespace() }
+
+        return cleanValue.contains(cleanQuery, ignoreCase = true)
     }
 
     private fun getGroups(institutes: List<Institute>): List<Group> {

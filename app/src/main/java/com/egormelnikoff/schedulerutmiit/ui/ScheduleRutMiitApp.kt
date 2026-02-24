@@ -19,6 +19,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.CurriculumDialog
@@ -32,19 +33,16 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event.AddEditEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.ui.elements.barItems
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleUiEventProcessor
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleUiStateSynchronizer
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleView
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.view_models.curriculum.CurriculumViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
@@ -56,6 +54,7 @@ import com.egormelnikoff.schedulerutmiit.view_models.search.SearchState
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @Composable
 fun ScheduleRutMiitApp(
@@ -63,16 +62,15 @@ fun ScheduleRutMiitApp(
     searchViewModel: SearchViewModel,
     newsViewModel: NewsViewModel,
     settingsViewModel: SettingsViewModel,
-    scheduleActions: ScheduleActions,
     appSettings: AppSettings
 ) {
     val searchParams = searchViewModel.searchParams.collectAsStateWithLifecycle().value
     val searchState = searchViewModel.searchState.collectAsStateWithLifecycle().value
     val scheduleState = scheduleViewModel.scheduleState.collectAsStateWithLifecycle().value
     val newsState = newsViewModel.newsState.collectAsStateWithLifecycle().value
+    val currentDateTime = settingsViewModel.currentDate.collectAsStateWithLifecycle().value
 
     val appUiState = AppUiState()
-    val navigationActions = NavigationActions(appUiState.appBackStack)
     val scheduleUiState = ScheduleUiState(scheduleState)
     val reviewUiState = ReviewUiState()
 
@@ -83,7 +81,9 @@ fun ScheduleRutMiitApp(
 
     ScheduleUiStateSynchronizer(
         scheduleUiState = scheduleUiState,
-        scheduleState = scheduleState
+        scheduleState = scheduleState,
+        scheduleViewModel = scheduleViewModel,
+        currentDateTime = currentDateTime
     )
 
     Box(Modifier.fillMaxSize()) {
@@ -91,18 +91,17 @@ fun ScheduleRutMiitApp(
             pageHost = {
                 PageHost(
                     appUiState = appUiState,
+                    scheduleViewModel = scheduleViewModel,
+                    currentDateTime = currentDateTime,
                     newsViewModel = newsViewModel,
                     settingsViewModel = settingsViewModel,
-                    scheduleActions = scheduleActions,
                     scheduleState = scheduleState,
                     scheduleUiState = scheduleUiState,
                     reviewUiState = reviewUiState,
-                    appSettings = appSettings,
-                    navigationActions = navigationActions
+                    appSettings = appSettings
                 )
             },
-            navigationActions = navigationActions,
-            scheduleActions = scheduleActions,
+            scheduleViewModel = scheduleViewModel,
             newsViewModel = newsViewModel,
             searchViewModel = searchViewModel,
 
@@ -110,7 +109,8 @@ fun ScheduleRutMiitApp(
             scheduleState = scheduleState,
             newsState = newsState,
             searchState = searchState,
-            searchParams = searchParams
+            searchParams = searchParams,
+            currentDateTime = currentDateTime
         )
     }
 }
@@ -119,8 +119,7 @@ fun ScheduleRutMiitApp(
 @Composable
 fun RootHost(
     pageHost: @Composable () -> Unit,
-    navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions,
+    scheduleViewModel: ScheduleViewModel,
     searchViewModel: SearchViewModel,
     newsViewModel: NewsViewModel,
 
@@ -128,7 +127,8 @@ fun RootHost(
     searchState: SearchState,
     searchParams: SearchParams,
     scheduleState: ScheduleState,
-    newsState: NewsState
+    newsState: NewsState,
+    currentDateTime: LocalDateTime,
 ) {
     Scaffold(
         snackbarHost = {
@@ -177,14 +177,14 @@ fun RootHost(
 
                 entry<Route.Dialog.EventDialog> { key ->
                     EventDialog(
+                        namedScheduleEntity = key.namedScheduleEntity,
                         scheduleEntity = key.scheduleEntity,
                         isSavedSchedule = key.isSavedSchedule,
                         event = key.event,
                         eventExtraData = key.eventExtraData,
-                        navigationActions = navigationActions,
-                        scheduleActions = scheduleActions,
-                        searchViewModel = searchViewModel,
-                        appUiState = appUiState
+                        appBackStack = appUiState.appBackStack,
+                        scheduleViewModel = scheduleViewModel,
+                        searchViewModel = searchViewModel
                     )
                 }
 
@@ -194,31 +194,32 @@ fun RootHost(
                             newsViewModel.setDefaultNewsState()
                         },
                         newsState = newsState,
-                        navigationActions = navigationActions
+                        appBackStack = appUiState.appBackStack,
                     )
                 }
                 entry<Route.Dialog.InfoDialog> {
                     InfoDialog(
-                        appUiState = appUiState,
-                        navigationActions = navigationActions
+                        appBackStack = appUiState.appBackStack
                     )
                 }
                 entry<Route.Dialog.AddEventDialog> { key ->
                     AddEditEventDialog(
+                        namedScheduleEntity = key.namedScheduleEntity,
                         scheduleEntity = key.scheduleEntity,
                         editableEvent = key.event,
+                        currentDateTime = currentDateTime,
                         appUiState = appUiState,
-                        navigationActions = navigationActions,
-                        scheduleActions = scheduleActions
+                        scheduleViewModel = scheduleViewModel
                     )
                 }
                 entry<Route.Dialog.SearchDialog> {
                     SearchDialog(
+                        scheduleViewModel = scheduleViewModel,
                         searchViewModel = searchViewModel,
+                        appBackStack = appUiState.appBackStack,
                         searchParams = searchParams,
                         searchState = searchState,
-                        navigationActions = navigationActions,
-                        scheduleActions = scheduleActions
+
                     )
                 }
                 entry<Route.Dialog.CurriculumDialog> {
@@ -238,23 +239,23 @@ fun RootHost(
                 entry<Route.Dialog.AddScheduleDialog> {
                     AddScheduleDialog(
                         appUiState = appUiState,
-                        navigationActions = navigationActions,
-                        scheduleActions = scheduleActions
+                        scheduleViewModel = scheduleViewModel
                     )
                 }
                 entry<Route.Dialog.RenameNamedScheduleDialog> { key ->
                     RenameDialog(
                         namedScheduleEntity = key.namedScheduleEntity,
-                        navigationActions = navigationActions,
-                        scheduleActions = scheduleActions
+                        appBackStack = appUiState.appBackStack,
+                        scheduleViewModel = scheduleViewModel
                     )
                 }
                 entry<Route.Dialog.HiddenEventsDialog> { key ->
                     HiddenEventsDialog(
+                        namedScheduleEntity = key.namedScheduleEntity,
                         scheduleEntity = key.scheduleEntity,
                         hiddenEvents = scheduleState.currentNamedScheduleData!!.scheduleData!!.hiddenEvents,
-                        navigationActions = navigationActions,
-                        eventActions = scheduleActions.eventActions
+                        scheduleViewModel = scheduleViewModel,
+                        appBackStack = appUiState.appBackStack
                     )
                 }
             }
@@ -264,12 +265,12 @@ fun RootHost(
 
 @Composable
 fun PageHost(
-    navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions,
+    scheduleViewModel: ScheduleViewModel,
     newsViewModel: NewsViewModel,
     settingsViewModel: SettingsViewModel,
 
     scheduleState: ScheduleState,
+    currentDateTime: LocalDateTime,
 
     appUiState: AppUiState,
     scheduleUiState: ScheduleUiState?,
@@ -352,8 +353,10 @@ fun PageHost(
                     ReviewScreen(
                         scheduleState = scheduleState,
                         reviewUiState = reviewUiState,
-                        navigationActions = navigationActions,
-                        scheduleActions = scheduleActions,
+                        currentDateTime = currentDateTime,
+                        scheduleViewModel = scheduleViewModel,
+                        appBackStack = appUiState.appBackStack,
+                        isDarkTheme = appSettings.theme.isDarkTheme(),
                         externalPadding = padding
                     )
                 }
@@ -363,9 +366,9 @@ fun PageHost(
                         appUiState = appUiState,
                         scheduleState = scheduleState,
                         scheduleUiState = scheduleUiState,
+                        currentDateTime = currentDateTime,
                         appSettings = appSettings,
-                        navigationActions = navigationActions,
-                        scheduleActions = scheduleActions,
+                        scheduleViewModel = scheduleViewModel,
                         settingsViewModel = settingsViewModel,
                         externalPadding = padding
                     )
@@ -378,7 +381,7 @@ fun PageHost(
                             newsViewModel.getNewsById(id)
                         },
                         newsGridListState = appUiState.newsListState,
-                        navigationActions = navigationActions,
+                        appBackStack = appUiState.appBackStack,
                         externalPadding = padding
                     )
                 }
@@ -387,7 +390,6 @@ fun PageHost(
                     SettingsScreen(
                         appUiState = appUiState,
                         appSettings = appSettings,
-                        navigationActions = navigationActions,
                         settingsViewModel = settingsViewModel,
                         externalPadding = padding
                     )

@@ -1,13 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.app.preferences
 
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleView
+import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 
 data class AppSettings(
     val theme: String,
     val decorColorIndex: Int,
     val scheduleView: ScheduleView,
+    val eventsCountView: EventsCountView,
     val schedulesDeletable: Boolean,
-    val showCountClasses: Boolean,
     val eventView: EventView
 )
 
