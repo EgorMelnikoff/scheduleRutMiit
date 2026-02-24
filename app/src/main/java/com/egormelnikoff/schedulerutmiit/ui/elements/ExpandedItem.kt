@@ -45,15 +45,15 @@ fun ExpandedItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(MaterialTheme.shapes.medium)
+                .clip(MaterialTheme.shapes.small)
                 .clickable { onChangeVisibility(!visible) }
-                .padding(8.dp),
+                .padding(4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (imageVector != null) {
                 Icon(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(16.dp),
                     imageVector = imageVector,
                     tint = MaterialTheme.colorScheme.onSecondaryContainer,
                     contentDescription = null
@@ -62,14 +62,14 @@ fun ExpandedItem(
             Text(
                 modifier = Modifier.weight(1f),
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
             Icon(
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(20.dp)
                     .graphicsLayer(
                         rotationZ = rotationAngle
                     ),

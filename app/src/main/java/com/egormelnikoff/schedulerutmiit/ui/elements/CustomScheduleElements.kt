@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 
@@ -29,6 +30,7 @@ fun ChooseDateTimeButton(
     modifier: Modifier,
     title: String,
     imageVector: ImageVector? = null,
+    iconSize: Dp? = null,
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
@@ -43,7 +45,7 @@ fun ChooseDateTimeButton(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Icon(
-            modifier = Modifier.size(12.dp),
+            modifier = Modifier.size(iconSize ?: 12.dp),
             imageVector = imageVector ?: ImageVector.vectorResource(R.drawable.calendar),
             contentDescription = null,
             tint = if (enabled) MaterialTheme.colorScheme.onBackground

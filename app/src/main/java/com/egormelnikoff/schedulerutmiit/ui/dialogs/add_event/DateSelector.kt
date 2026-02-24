@@ -13,18 +13,20 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomFilterChip
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
 fun DateSelector(
+    currentDateTime: LocalDateTime,
     dateEvent: LocalDate?,
     onSelectDateEvent: (LocalDate) -> Unit,
     focusManager: FocusManager
 ) {
-    val firstDayOfWeek = LocalDate.now().getFirstDayOfWeek()
+    val firstDayOfWeek = currentDateTime.toLocalDate().getFirstDayOfWeek()
     ColumnGroup(
         title = stringResource(R.string.day_of_week),
         withBackground = false,
@@ -35,7 +37,7 @@ fun DateSelector(
             ) {
                 for (date in 0L until 7L) {
                     val currentDate = firstDayOfWeek.plusDays(date)
-                    CustomChip(
+                    CustomFilterChip(
                         title = currentDate.dayOfWeek.getDisplayName(
                             TextStyle.SHORT,
                             Locale.getDefault()
