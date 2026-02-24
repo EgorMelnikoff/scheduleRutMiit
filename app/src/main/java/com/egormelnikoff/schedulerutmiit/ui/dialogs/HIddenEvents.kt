@@ -21,22 +21,24 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.EventActions
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
 fun HiddenEventsDialog(
-    scheduleEntity: ScheduleEntity?,
+    namedScheduleEntity: NamedScheduleEntity,
+    scheduleEntity: ScheduleEntity,
     hiddenEvents: List<Event>,
-    navigationActions: NavigationActions,
-    eventActions: EventActions
+    scheduleViewModel: ScheduleViewModel,
+    appBackStack: AppBackStack
 ) {
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     val dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:MM")
@@ -45,8 +47,9 @@ fun HiddenEventsDialog(
         topBar = {
             CustomTopAppBar(
                 titleText = stringResource(R.string.hidden_events),
+                subtitleText = "${namedScheduleEntity.shortName} (${scheduleEntity.timetableType.typeName})",
                 navAction = {
-                    navigationActions.onBack()
+                    appBackStack.onBack()
                 }
             )
         }
@@ -60,7 +63,7 @@ fun HiddenEventsDialog(
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (hiddenEvents.isNotEmpty() && scheduleEntity != null) {
+            if (hiddenEvents.isNotEmpty()) {
                 items(hiddenEvents) { event ->
                     Box(
                         modifier = Modifier
@@ -88,7 +91,7 @@ fun HiddenEventsDialog(
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
-                                        eventActions.onShowEvent(scheduleEntity, event.id)
+                                        scheduleViewModel.updateEventHidden(scheduleEntity, event.id, false)
                                     },
                                     colors = IconButtonDefaults.iconButtonColors()
                                         .copy(

@@ -29,6 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,6 +39,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.RecurrenceRule
 import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
@@ -47,13 +50,12 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButtonRow
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomChip
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ListParam
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -63,12 +65,17 @@ import java.time.ZoneOffset
 
 @Composable
 fun AddEditEventDialog(
+    namedScheduleEntity: NamedScheduleEntity,
+    scheduleEntity: ScheduleEntity,
     editableEvent: Event? = null,
     appUiState: AppUiState,
-    scheduleEntity: ScheduleEntity,
-    navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions
+    currentDateTime: LocalDateTime,
+
+    scheduleViewModel: ScheduleViewModel
 ) {
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+
     var currentInterval by remember {
         mutableIntStateOf(
             editableEvent?.recurrenceRule?.interval ?: 1
@@ -97,20 +104,21 @@ fun AddEditEventDialog(
         topBar = {
             CustomTopAppBar(
                 titleText = editableEvent?.let {
-                    appUiState.context.getString(R.string.editing)
-                } ?: appUiState.context.getString(R.string.adding_a_class),
+                    stringResource(R.string.editing)
+                } ?: stringResource(R.string.adding_a_class),
+                subtitleText = "${namedScheduleEntity.shortName} (${scheduleEntity.timetableType.typeName})",
                 navAction = {
-                    navigationActions.onBack()
+                    appUiState.appBackStack.onBack()
                 },
                 actions = {
                     CustomButton(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         buttonTitle = editableEvent?.let {
-                            appUiState.context.getString(R.string.save)
-                        } ?: appUiState.context.getString(R.string.create),
+                            stringResource(R.string.save)
+                        } ?: stringResource(R.string.create),
                         onClick = {
                             val errorMessages = checkEventParams(
-                                context = appUiState.context,
+                                context = context,
                                 name = nameEvent,
                                 date = dateEvent,
                                 startTime = startTime,
@@ -155,15 +163,15 @@ fun AddEditEventDialog(
                                 )
                                 editableEvent?.let {
                                     if (editableEvent != event) {
-                                        scheduleActions.eventActions.onUpdateCustomEvent(
+                                        scheduleViewModel.updateCustomEvent(
                                             scheduleEntity,
                                             event
                                         )
                                     }
-                                } ?: scheduleActions.eventActions.onAddCustomEvent(
+                                } ?: scheduleViewModel.addCustomEvent(
                                     scheduleEntity, event
                                 )
-                                navigationActions.onBack()
+                                appUiState.appBackStack.onBack()
                             } else {
                                 appUiState.scope.launch {
                                     appUiState.snackBarHostState.showSnackbar(
@@ -213,14 +221,14 @@ fun AddEditEventDialog(
                         )
                     ) {
                         DefaultEventParams.types.forEach { type ->
-                            CustomChip(
+                            CustomFilterChip(
                                 title = type
                                     ?: stringResource(R.string.not_specified),
                                 imageVector = null,
                                 selected = type == typeEvent,
                                 onSelect = {
                                     typeEvent = type
-                                    appUiState.focusManager.clearFocus()
+                                    focusManager.clearFocus()
                                 }
                             )
                         }
@@ -230,14 +238,15 @@ fun AddEditEventDialog(
 
             scheduleEntity.recurrence?.let {
                 DateSelector(
+                    currentDateTime = currentDateTime,
                     dateEvent = dateEvent,
                     onSelectDateEvent = { value ->
                         dateEvent = value
                     },
-                    focusManager = appUiState.focusManager
+                    focusManager = focusManager
                 )
                 TimeSelector(
-                    focusManager = appUiState.focusManager,
+                    focusManager = focusManager,
                     startTime = startTime,
                     endTime = endTime,
                     onShowDialogStartTime = { value ->
@@ -248,7 +257,7 @@ fun AddEditEventDialog(
                     }
                 )
                 RecurrenceField(
-                    maxInterval = scheduleEntity.recurrence.interval!!,
+                    maxInterval = scheduleEntity.recurrence.interval,
                     currentInterval = currentInterval,
                     currentPeriod = currentPeriod,
                     onSelectInterval = { value ->
@@ -259,7 +268,7 @@ fun AddEditEventDialog(
                     },
                 )
             } ?: DateTimeSelector(
-                focusManager = appUiState.focusManager,
+                focusManager = focusManager,
                 dateEvent = dateEvent,
                 startTime = startTime,
                 endTime = endTime,
@@ -284,7 +293,7 @@ fun AddEditEventDialog(
                 elements = roomsList,
                 onAddElement = {
                     roomsList = (roomsList + DefaultEventParams.defaultRoom)
-                    appUiState.focusManager.clearFocus()
+                    focusManager.clearFocus()
                 },
                 maxCount = 1
             ) { index, room ->
@@ -300,11 +309,11 @@ fun AddEditEventDialog(
                 )
             }
             ListParam(
-                title = appUiState.context.getString(R.string.lecturers),
+                title = stringResource(R.string.lecturers),
                 elements = lecturersList,
                 onAddElement = {
                     lecturersList = (lecturersList + DefaultEventParams.defaultLecturer)
-                    appUiState.focusManager.clearFocus()
+                    focusManager.clearFocus()
                 },
                 maxCount = 3
             ) { index, lecturer ->
@@ -326,7 +335,7 @@ fun AddEditEventDialog(
                 elements = groupsList,
                 onAddElement = {
                     groupsList = groupsList + DefaultEventParams.defaultGroup
-                    appUiState.focusManager.clearFocus()
+                    focusManager.clearFocus()
                 },
                 maxCount = 7
             ) { index, group ->
@@ -469,14 +478,14 @@ fun checkEventParams(
             append("${context.getString(R.string.time_is_chosen_incorrectly)}\n")
         }
 
-        if (!roomsList.all { it.name!!.isNotEmpty() }) {
+        if (!roomsList.all { it.name.isNotEmpty() }) {
             append("${context.getString(R.string.room_number_not_specified)}\n")
         }
-        if (!lecturersList.all { it.fullFio!!.isNotEmpty() }) {
+        if (!lecturersList.all { it.fullFio.isNotEmpty() }) {
             append("${context.getString(R.string.provide_the_names_of_all_lecturers)}\n")
         }
-        if (!groupsList.all { it.name!!.isNotEmpty() }) {
-            append("${context.getString(R.string.provide_the_numbers_of_all_groups)}\n")
+        if (!groupsList.all { it.name.isNotEmpty() }) {
+            append(context.getString(R.string.provide_the_numbers_of_all_groups))
         }
     }.trimEnd()
     return errorString.toString()

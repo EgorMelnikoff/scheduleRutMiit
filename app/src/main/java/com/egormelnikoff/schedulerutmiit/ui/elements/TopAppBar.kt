@@ -6,19 +6,15 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -26,17 +22,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleView
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.next
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTopAppBar(
-    titleContent: @Composable (() -> Unit)? = null,
     titleText: String? = null,
+    subtitleText: String? = null,
     navAction: (() -> Unit)? = null,
     navImageVector: ImageVector = ImageVector.vectorResource(R.drawable.back),
     actions: @Composable (() -> Unit)? = null
@@ -44,15 +38,26 @@ fun CustomTopAppBar(
     TopAppBar(
         title = {
             titleText?.let {
-                Text(
-                    text = titleText,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-            } ?: titleContent?.let {
-                titleContent.invoke()
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = titleText,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                    subtitleText?.let {
+                        Text(
+                            text = subtitleText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+                }
             }
         },
         navigationIcon = {
@@ -80,62 +85,22 @@ fun CustomTopAppBar(
 
 @Composable
 fun ScheduleTopAppBar(
-    navigateToAddEvent: (ScheduleEntity) -> Unit,
     onSetScheduleView: (ScheduleView) -> Unit,
     onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit,
 
     namedScheduleData: NamedScheduleData,
     scheduleView: ScheduleView,
-    isPeriodic: Boolean,
-    isSavedSchedule: Boolean
+    isPeriodic: Boolean
 ) {
-    val isNotEmpty =
-        namedScheduleData.namedSchedule!!.schedules.isNotEmpty() && namedScheduleData.scheduleData?.scheduleEntity != null
     val isCustomSchedule =
-        namedScheduleData.namedSchedule.namedScheduleEntity.type == NamedScheduleType.MY
+        namedScheduleData.namedSchedule!!.namedScheduleEntity.type == NamedScheduleType.MY
 
     CustomTopAppBar(
-        titleContent = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = namedScheduleData.namedSchedule.namedScheduleEntity.shortName,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                    if (namedScheduleData.scheduleData?.scheduleEntity != null && !isCustomSchedule) {
-                        Text(
-                            text = namedScheduleData.scheduleData.scheduleEntity.timetableType.typeName,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-                    }
-                }
-            }
-        },
+        titleText = namedScheduleData.namedSchedule.namedScheduleEntity.shortName,
+        subtitleText = if (namedScheduleData.scheduleData?.scheduleEntity != null && !isCustomSchedule) {
+            namedScheduleData.scheduleData.scheduleEntity.timetableType.typeName
+        } else null,
         actions = {
-            if (isSavedSchedule && isNotEmpty) {
-                IconButton(
-                    onClick = {
-                        navigateToAddEvent(namedScheduleData.scheduleData.scheduleEntity)
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.add),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
             IconButton(
                 onClick = {
                     onSetScheduleView(
@@ -185,62 +150,5 @@ fun ScheduleTopAppBar(
                 )
             }
         }
-    )
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EventTopAppBar(
-    title: String,
-    subtitle: String,
-    scrollBehavior: TopAppBarScrollBehavior,
-    navAction: (() -> Unit)? = null,
-    navImageVector: ImageVector = ImageVector.vectorResource(R.drawable.back),
-    actions: @Composable (() -> Unit)? = null,
-) {
-    MediumTopAppBar(
-        expandedHeight = TopAppBarDefaults.MediumAppBarExpandedHeight + 16.dp,
-        navigationIcon = {
-            navAction?.let {
-                IconButton(
-                    onClick = navAction
-                ) {
-                    Icon(
-                        imageVector = navImageVector,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
-        },
-        title = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-            }
-        },
-        actions = {
-            actions?.invoke()
-        },
-        colors = TopAppBarDefaults.topAppBarColors().copy(
-            containerColor = MaterialTheme.colorScheme.background,
-            scrolledContainerColor = MaterialTheme.colorScheme.background
-        ),
-        scrollBehavior = scrollBehavior
     )
 }

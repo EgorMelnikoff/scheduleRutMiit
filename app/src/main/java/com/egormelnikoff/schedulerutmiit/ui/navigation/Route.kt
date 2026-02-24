@@ -19,6 +19,7 @@ sealed interface Route {
         data object Empty : Dialog
 
         data class EventDialog(
+            val namedScheduleEntity: NamedScheduleEntity,
             val scheduleEntity: ScheduleEntity,
             val isSavedSchedule: Boolean,
             val event: Event,
@@ -26,11 +27,13 @@ sealed interface Route {
         ) : Dialog
 
         data class AddEventDialog(
-            val event: Event? = null,
-            val scheduleEntity: ScheduleEntity
+            val namedScheduleEntity: NamedScheduleEntity,
+            val scheduleEntity: ScheduleEntity,
+            val event: Event? = null
         ) : Dialog
 
         data class HiddenEventsDialog(
+            val namedScheduleEntity: NamedScheduleEntity,
             val scheduleEntity: ScheduleEntity
         ) : Dialog
 
