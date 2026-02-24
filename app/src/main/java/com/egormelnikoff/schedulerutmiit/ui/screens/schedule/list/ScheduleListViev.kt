@@ -27,11 +27,12 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.EventActions
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -39,8 +40,8 @@ import java.util.Locale
 
 @Composable
 fun ScheduleListView(
-    navigationActions: NavigationActions,
-    eventActions: EventActions,
+    scheduleViewModel: ScheduleViewModel,
+    appBackStack: AppBackStack,
 
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState,
@@ -78,10 +79,30 @@ fun ScheduleListView(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
                         com.egormelnikoff.schedulerutmiit.ui.screens.schedule.Event(
-                            navigateToEvent = navigationActions.navigateToEvent,
-                            navigateToEditEvent = navigationActions.navigateToEditEvent,
-                            onDeleteEvent = eventActions.onDeleteEvent,
-                            onUpdateHiddenEvent = eventActions.onHideEvent,
+                            navigateToEvent = { scheduleEntity, isSavedSchedule, event, eventExtraData ->
+                                appBackStack.openDialog(
+                                    Route.Dialog.EventDialog(
+                                        namedScheduleEntity = scheduleState.currentNamedScheduleData.namedSchedule!!.namedScheduleEntity,
+                                        scheduleEntity = scheduleEntity,
+                                        isSavedSchedule = isSavedSchedule,
+                                        event = event,
+                                        eventExtraData = eventExtraData
+                                    )
+                                )
+                            },
+                            navigateToEditEvent = { scheduleEntity, event ->
+                                appBackStack.openDialog(
+                                    Route.Dialog.AddEventDialog(
+                                        scheduleState.currentNamedScheduleData.namedSchedule!!.namedScheduleEntity, scheduleEntity, event
+                                    )
+                                )
+                            },
+                            onDeleteEvent = { scheduleEntity, eventId ->
+                                scheduleViewModel.deleteCustomEvent(scheduleEntity, eventId)
+                            },
+                            onUpdateHiddenEvent = { scheduleEntity, eventId ->
+                                scheduleViewModel.updateEventHidden(scheduleEntity, eventId, true)
+                            },
                             events = eventsGrouped.second,
                             scheduleEntity = scheduleData.scheduleEntity!!,
                             eventsExtraData = scheduleData.eventsExtraData,

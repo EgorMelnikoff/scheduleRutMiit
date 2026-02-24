@@ -9,15 +9,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -38,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
@@ -52,7 +52,7 @@ import java.util.Locale
 
 @Composable
 fun HorizontalCalendar(
-    isShowCountClasses: Boolean,
+    eventsCountView: EventsCountView,
     namedScheduleData: NamedScheduleData,
     scheduleUiState: ScheduleUiState,
     scope: CoroutineScope
@@ -173,14 +173,14 @@ fun HorizontalCalendar(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
             state = scheduleUiState.pagerWeeksState,
             verticalAlignment = Alignment.Top,
             pageSpacing = 16.dp,
             contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp, bottom = 12.dp
+                top = 8.dp, bottom = 12.dp,
+                start = 16.dp, end = 16.dp
             )
         ) { index ->
             Row(
@@ -206,7 +206,7 @@ fun HorizontalCalendar(
                         currentDate = currentDate,
                         events = eventsForDate,
                         eventsExtraData = namedScheduleData.scheduleData.eventsExtraData,
-                        isShowCountClasses = isShowCountClasses,
+                        eventsCountView = eventsCountView,
                         isDisabled = currentDate !in scheduleEntity.startDate..scheduleEntity.endDate,
                         isSelected = currentDate == scheduleUiState.selectedDate,
                         isToday = (currentDate == namedScheduleData.scheduleData.schedulePagerData!!.today)
@@ -224,7 +224,7 @@ fun HorizontalCalendarItem(
     dayOfWeek: String,
     isDisabled: Boolean,
     isSelected: Boolean,
-    isShowCountClasses: Boolean,
+    eventsCountView: EventsCountView,
     isToday: Boolean,
     events: Map<String, List<Event>>,
     eventsExtraData: List<EventExtraData>
@@ -278,25 +278,26 @@ fun HorizontalCalendarItem(
 
             )
         }
-        if (isShowCountClasses) {
-            Box(
-                modifier = Modifier.defaultMinSize(minHeight = 6.dp)
-            ) {
-                EventsSummary(
-                    events = events,
-                    eventsExtraData = eventsExtraData
-                )
-            }
+        if (eventsCountView == EventsCountView.DETAILS) {
+            EventsDetailSummary(
+                events = events,
+                eventsExtraData = eventsExtraData
+            )
+        } else if (eventsCountView == EventsCountView.BRIEFLY && events.isNotEmpty()) {
+            EventsBrieflySummary(
+                eventsSize = events.size
+            )
         }
     }
 }
 
 @Composable
-fun EventsSummary(
+fun EventsDetailSummary(
     events: Map<String, List<Event>>,
     eventsExtraData: List<EventExtraData>
 ) {
     FlowRow(
+        modifier = Modifier.defaultMinSize(minHeight = 6.dp),
         maxItemsInEachRow = if (events.size in 6..8) 4 else 5,
         horizontalArrangement = Arrangement.spacedBy(
             2.dp,
@@ -331,5 +332,19 @@ fun EventsSummary(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun EventsBrieflySummary(
+    eventsSize: Int
+) {
+    Badge(
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+    ) {
+        Text(
+            text = eventsSize.toString()
+        )
     }
 }

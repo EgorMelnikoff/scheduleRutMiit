@@ -12,25 +12,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.EventsForDay
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.EventActions
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 @Composable
 fun ScheduleCalendarView(
-    navigationActions: NavigationActions,
-    eventActions: EventActions,
+    scheduleViewModel: ScheduleViewModel,
     appUiState: AppUiState,
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState,
     eventView: EventView,
-    isShowCountClasses: Boolean,
+    eventsCountView: EventsCountView,
     paddingBottom: Dp
 ) {
     Column {
@@ -38,11 +38,11 @@ fun ScheduleCalendarView(
             namedScheduleData = scheduleState.currentNamedScheduleData!!,
             scope = appUiState.scope,
             scheduleUiState = scheduleUiState,
-            isShowCountClasses = isShowCountClasses
+            eventsCountView = eventsCountView
         )
         PagedDays(
-            navigationActions = navigationActions,
-            eventActions = eventActions,
+            scheduleViewModel = scheduleViewModel,
+            appBackStack = appUiState.appBackStack,
 
             namedScheduleData = scheduleState.currentNamedScheduleData,
             pagerDaysState = scheduleUiState.pagerDaysState,
@@ -57,8 +57,8 @@ fun ScheduleCalendarView(
 
 @Composable
 fun PagedDays(
-    navigationActions: NavigationActions,
-    eventActions: EventActions,
+    scheduleViewModel: ScheduleViewModel,
+    appBackStack: AppBackStack,
 
     namedScheduleData: NamedScheduleData,
     pagerDaysState: PagerState,
@@ -91,8 +91,8 @@ fun PagedDays(
         }
 
         EventsForDay(
-            navigationActions = navigationActions,
-            eventActions = eventActions,
+            scheduleViewModel = scheduleViewModel,
+            appBackStack = appBackStack,
 
             scheduleEntity = scheduleEntity,
             namedScheduleData = namedScheduleData,

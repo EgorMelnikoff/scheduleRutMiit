@@ -2,9 +2,7 @@ package com.egormelnikoff.schedulerutmiit.ui.screens.schedule.split_weeks
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material3.MaterialTheme
@@ -22,17 +20,15 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsByDayAndWeek
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButtonRow
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.EventsForDay
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.EventActions
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 @Composable
 fun ScheduleSplitWeeksView(
-    navigationActions: NavigationActions,
-    eventActions: EventActions,
+    scheduleViewModel: ScheduleViewModel,
     appUiState: AppUiState,
     scheduleUiState: ScheduleUiState,
     namedScheduleData: NamedScheduleData,
@@ -47,30 +43,30 @@ fun ScheduleSplitWeeksView(
         DaySelector(
             scheduleUiState = scheduleUiState,
             namedScheduleData = namedScheduleData,
-            isShowCountClasses = appSettings.showCountClasses,
+            eventsCountView = appSettings.eventsCountView,
             selectedWeek = scheduleUiState.selectedWeek,
             scope = appUiState.scope
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-            CustomButtonRow(
-                selectedElement = scheduleUiState.selectedWeek,
-                elements = weeks,
-                onClick = { value ->
-                    scheduleUiState.onSelectWeek(value)
+        if (weeks.size > 1) {
+            Box(modifier = Modifier.padding(16.dp)) {
+                CustomButtonRow(
+                    selectedElement = scheduleUiState.selectedWeek,
+                    elements = weeks,
+                    onClick = { value ->
+                        scheduleUiState.onSelectWeek(value)
+                    }
+                ) { week ->
+                    Text(
+                        text = stringResource(
+                            R.string.week,
+                            week.second
+                        ),
+                        maxLines = 1,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
-            ) { week ->
-                Text(
-                    text = stringResource(
-                        R.string.week,
-                        week.second
-                    ),
-                    maxLines = 1,
-                    style = MaterialTheme.typography.bodyMedium
-                )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
         HorizontalPager(
             modifier = Modifier.fillMaxSize(),
             state = scheduleUiState.pagerSplitWeeks,
@@ -93,8 +89,8 @@ fun ScheduleSplitWeeksView(
             }
 
             EventsForDay(
-                navigationActions = navigationActions,
-                eventActions = eventActions,
+                scheduleViewModel = scheduleViewModel,
+                appBackStack = appUiState.appBackStack,
 
                 scheduleEntity = scheduleEntity,
                 namedScheduleData = namedScheduleData,

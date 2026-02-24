@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -31,7 +32,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
@@ -47,10 +48,10 @@ data class ThemeSelectorItemContent(
 fun SettingsScreen(
     appUiState: AppUiState,
     appSettings: AppSettings,
-    navigationActions: NavigationActions,
     settingsViewModel: SettingsViewModel,
     externalPadding: PaddingValues
 ) {
+    val uriHandler = LocalUriHandler.current
     var eventViewDialog by remember { mutableStateOf(false) }
 
     LazyVerticalStaggeredGrid(
@@ -100,17 +101,17 @@ fun SettingsScreen(
                     },
                     {
                         SettingsItem(
-                            onClick = {
-                                settingsViewModel.onSetShowCountClasses(!appSettings.showCountClasses)
-                            },
+                            onClick = null,
                             imageVector = ImageVector.vectorResource(R.drawable.count),
-                            text = stringResource(R.string.show_count_classes)
+                            text = stringResource(R.string.show_count_classes),
+                            horizontal = false
                         ) {
-                            CustomSwitch(
-                                checked = appSettings.showCountClasses
-                            ) {
-                                settingsViewModel.onSetShowCountClasses(it)
-                            }
+                            EventsCountSelector(
+                                setEventsCountView = { value ->
+                                    settingsViewModel.onSetEventsCountView(value)
+                                },
+                                currentView = appSettings.eventsCountView
+                            )
                         }
                     }, {
                         SettingsItem(
@@ -173,7 +174,7 @@ fun SettingsScreen(
                     {
                         SettingsItem(
                             onClick = {
-                                appUiState.uriHandler.openUri(APP_CHANNEL_URL)
+                                uriHandler.openUri(APP_CHANNEL_URL)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.send),
                             text = stringResource(R.string.report_a_problem),
@@ -189,7 +190,7 @@ fun SettingsScreen(
                     }, {
                         SettingsItem(
                             onClick = {
-                                navigationActions.navigateToInfoDialog()
+                                appUiState.appBackStack.openDialog(Route.Dialog.InfoDialog)
                             },
                             imageVector = ImageVector.vectorResource(R.drawable.info),
                             text = stringResource(R.string.about_app),

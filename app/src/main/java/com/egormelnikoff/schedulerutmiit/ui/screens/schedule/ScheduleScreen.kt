@@ -28,7 +28,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.enums_sealed.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.AnimatedAlert
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
@@ -36,7 +37,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomPullToRefreshBox
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.ScheduleTopAppBar
-import com.egormelnikoff.schedulerutmiit.ui.navigation.NavigationActions
+import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
@@ -45,18 +46,19 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.list.ScheduleListVi
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.split_weeks.ScheduleSplitWeeksView
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.actions.ScheduleActions
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
+import java.time.LocalDateTime
 
 @Composable
 fun ScreenSchedule(
     appUiState: AppUiState,
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState?,
+    currentDateTime: LocalDateTime,
     appSettings: AppSettings,
-    navigationActions: NavigationActions,
-    scheduleActions: ScheduleActions,
+    scheduleViewModel: ScheduleViewModel,
     settingsViewModel: SettingsViewModel,
     externalPadding: PaddingValues
 ) {
@@ -67,7 +69,7 @@ fun ScreenSchedule(
     when {
         scheduleState.isLoading -> {
             BackHandler {
-                scheduleActions.cancelLoading()
+                scheduleViewModel.cancelLoading()
             }
             LoadingScreen(
                 paddingTop = externalPadding.calculateTopPadding(),
@@ -85,7 +87,7 @@ fun ScreenSchedule(
                         modifier = Modifier.fillMaxWidth(),
                         buttonTitle = stringResource(R.string.return_default),
                         imageVector = ImageVector.vectorResource(R.drawable.back),
-                        onClick = { scheduleActions.onLoadInitialScheduleData() },
+                        onClick = { scheduleViewModel.refreshScheduleState(showLoading = false) },
                     )
                 },
                 paddingBottom = externalPadding.calculateBottomPadding()
@@ -102,7 +104,6 @@ fun ScreenSchedule(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
                     ScheduleTopAppBar(
-                        navigateToAddEvent = navigationActions.navigateToAddEvent,
                         onSetScheduleView = { value ->
                             settingsViewModel.onSetScheduleView(value)
                         },
@@ -110,7 +111,6 @@ fun ScreenSchedule(
                             showNamedScheduleDialog = newValue
                         },
                         namedScheduleData = scheduleState.currentNamedScheduleData,
-                        isSavedSchedule = scheduleState.isSaved,
                         isPeriodic = scheduleState.currentNamedScheduleData.scheduleData?.scheduleEntity?.timetableType == TimetableType.PERIODIC,
                         scheduleView = appSettings.scheduleView
                     )
@@ -123,9 +123,10 @@ fun ScreenSchedule(
                             .padding(top = padding.calculateTopPadding()),
                         onRefresh = {
                             if (scheduleState.isSaved) {
-                                scheduleActions.onRefreshScheduleState(
-                                    scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
-                                    true
+                                scheduleViewModel.refreshScheduleState(
+                                    showLoading = false,
+                                    updating = true,
+                                    primaryKeyNamedSchedule = scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id
                                 )
                             }
                         },
@@ -138,7 +139,9 @@ fun ScreenSchedule(
                                 imageVector = ImageVector.vectorResource(R.drawable.alert),
                                 backgroundColor = MaterialTheme.colorScheme.error,
                                 actionTitle = stringResource(R.string.save),
-                                action = scheduleActions.onSaveCurrentNamedSchedule
+                                action = {
+                                    scheduleViewModel.saveCurrentNamedSchedule()
+                                }
                             )
                             AnimatedContent(
                                 targetState = appSettings.scheduleView,
@@ -154,13 +157,12 @@ fun ScreenSchedule(
                                 when (targetState) {
                                     ScheduleView.CALENDAR -> {
                                         ScheduleCalendarView(
-                                            navigationActions = navigationActions,
-                                            eventActions = scheduleActions.eventActions,
+                                            scheduleViewModel = scheduleViewModel,
 
                                             appUiState = appUiState,
                                             scheduleState = scheduleState,
                                             scheduleUiState = scheduleUiState,
-                                            isShowCountClasses = appSettings.showCountClasses,
+                                            eventsCountView = appSettings.eventsCountView,
                                             eventView = appSettings.eventView,
                                             paddingBottom = externalPadding.calculateBottomPadding()
                                         )
@@ -168,8 +170,8 @@ fun ScreenSchedule(
 
                                     ScheduleView.LIST -> {
                                         ScheduleListView(
-                                            navigationActions = navigationActions,
-                                            eventActions = scheduleActions.eventActions,
+                                            scheduleViewModel = scheduleViewModel,
+                                            appBackStack = appUiState.appBackStack,
 
                                             scheduleState = scheduleState,
                                             scheduleUiState = scheduleUiState,
@@ -182,11 +184,12 @@ fun ScreenSchedule(
                                     ScheduleView.SPLIT_WEEKS -> {
                                         if (scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.timetableType == TimetableType.PERIODIC) {
                                             ScheduleSplitWeeksView(
-                                                navigationActions = navigationActions,
-                                                eventActions = scheduleActions.eventActions,
+                                                scheduleViewModel = scheduleViewModel,
+
                                                 appUiState = appUiState,
-                                                namedScheduleData = scheduleState.currentNamedScheduleData,
                                                 scheduleUiState = scheduleUiState,
+
+                                                namedScheduleData = scheduleState.currentNamedScheduleData,
                                                 isSavedSchedule = scheduleState.isSaved,
                                                 appSettings = appSettings,
                                                 paddingBottom = externalPadding.calculateBottomPadding()
@@ -212,7 +215,7 @@ fun ScreenSchedule(
                                 showDeleteNamedScheduleDialog = false
                             },
                             onConfirmation = {
-                                scheduleActions.onDeleteNamedSchedule(
+                                scheduleViewModel.deleteNamedSchedule(
                                     scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
                                     scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault
                                 )
@@ -243,13 +246,13 @@ fun ScreenSchedule(
                             modifier = Modifier.fillMaxWidth(),
                             buttonTitle = stringResource(R.string.find),
                             imageVector = ImageVector.vectorResource(R.drawable.search),
-                            onClick = { navigationActions.navigateToSearch() },
+                            onClick = { appUiState.appBackStack.openDialog(Route.Dialog.SearchDialog) },
                         )
                         CustomButton(
                             modifier = Modifier.fillMaxWidth(),
                             buttonTitle = stringResource(R.string.create),
                             imageVector = ImageVector.vectorResource(R.drawable.add),
-                            onClick = { navigationActions.navigateToAddSchedule() },
+                            onClick = { appUiState.appBackStack.openDialog(Route.Dialog.AddScheduleDialog) },
                         )
                     }
                 },
@@ -267,32 +270,16 @@ fun ScreenSchedule(
     showNamedScheduleDialog?.let {
         ModalDialogNamedSchedule(
             namedScheduleEntity = showNamedScheduleDialog!!,
-            appUiState = appUiState,
-            scheduleActions = scheduleActions,
-            namedScheduleData = scheduleState.currentNamedScheduleData,
-            navigateToRenameDialog = if (scheduleState.isSaved) {
-                { navigationActions.navigateToRenameDialog(showNamedScheduleDialog!!) }
-            } else null,
-            navigateToHiddenEvents = if (!scheduleState.currentNamedScheduleData?.scheduleData?.hiddenEvents.isNullOrEmpty() && scheduleState.isSaved) {
-                navigationActions.navigateToHiddenEvents
-            } else null,
-            onSetDefaultNamedSchedule =
-                if (!showNamedScheduleDialog!!.isDefault && scheduleState.isSaved) {
-                    {
-                        scheduleActions.onSelectDefaultNamedSchedule(
-                            showNamedScheduleDialog!!.id
-                        )
-                    }
-                } else null,
-            onDeleteNamedSchedule = if (scheduleState.isSaved) {
-                { showDeleteNamedScheduleDialog = true }
-            } else null,
-            onSaveCurrentNamedSchedule = if (!scheduleState.isSaved) {
-                scheduleActions.onSaveCurrentNamedSchedule
-            } else null,
-            onLoadInitialData = if (!showNamedScheduleDialog!!.isDefault) {
-                scheduleActions.onLoadInitialScheduleData
-            } else null
+            schedules = scheduleState.currentNamedScheduleData?.namedSchedule?.schedules,
+            currentDateTime = currentDateTime,
+            scheduleViewModel = scheduleViewModel,
+            appBackStack = appUiState.appBackStack,
+
+            isSavedNamedSchedule = scheduleState.isSaved,
+            isDefaultNamedSchedule = showNamedScheduleDialog!!.isDefault,
+
+            haveNotEmptySchedules = scheduleState.currentNamedScheduleData?.namedSchedule?.schedules?.isNotEmpty() == true && scheduleState.currentNamedScheduleData.scheduleData?.scheduleEntity != null,
+            haveHiddenEvents = !scheduleState.currentNamedScheduleData?.scheduleData?.hiddenEvents.isNullOrEmpty()
         ) {
             showNamedScheduleDialog = null
         }
@@ -306,7 +293,7 @@ fun ScreenSchedule(
                 showBackDialog = false
             },
             onConfirmation = {
-                scheduleActions.onLoadInitialScheduleData()
+                scheduleViewModel.refreshScheduleState(showLoading = false)
             }
         )
     }

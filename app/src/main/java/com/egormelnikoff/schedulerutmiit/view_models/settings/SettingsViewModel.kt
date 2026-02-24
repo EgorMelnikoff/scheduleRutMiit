@@ -2,16 +2,26 @@ package com.egormelnikoff.schedulerutmiit.view_models.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleView
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +35,26 @@ class SettingsViewModel @Inject constructor(
     init {
         collectSettings()
     }
+
+    val currentDate: StateFlow<LocalDateTime> =
+        hourlyTicker()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)
+            )
+
+    fun hourlyTicker(): Flow<LocalDateTime> = flow {
+        while (true) {
+            val now = LocalDateTime.now()
+            emit(now.truncatedTo(ChronoUnit.MINUTES))
+
+            val delayMs = Duration.between(now, now.plusHours(1)).toMillis()
+
+            delay(delayMs)
+        }
+    }.distinctUntilChanged()
+
 
     fun sendLogsFile() {
         logger.sendLogsFile()
@@ -60,14 +90,14 @@ class SettingsViewModel @Inject constructor(
                 eventFlow,
                 preferencesDataStore.scheduleViewFlow,
                 preferencesDataStore.schedulesDeletableFlow,
-                preferencesDataStore.showCountClassesFlow,
-            ) { theme, eventView, scheduleView, schedulesDeletable, isShowCountClasses ->
+                preferencesDataStore.eventCountViewFlow,
+            ) { theme, eventView, scheduleView, schedulesDeletable, eventCountView ->
                 AppSettings(
                     theme = theme.first,
                     decorColorIndex = theme.second,
                     scheduleView = scheduleView,
                     schedulesDeletable = schedulesDeletable,
-                    showCountClasses = isShowCountClasses,
+                    eventsCountView = eventCountView,
                     eventView = eventView
                 )
             }.collect { settings ->
@@ -116,11 +146,11 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun onSetShowCountClasses(
-        showCountClasses: Boolean
+    fun onSetEventsCountView(
+        eventsCountView: EventsCountView
     ) {
         viewModelScope.launch {
-            preferencesDataStore.setShowCountClasses(showCountClasses)
+            preferencesDataStore.setEventCountView(eventsCountView)
         }
     }
 

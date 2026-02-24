@@ -5,7 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleView
+import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -70,9 +71,9 @@ class PreferencesDataStore @Inject constructor(
     }
 
 
-    suspend fun setShowCountClasses(isShowCountClasses: Boolean) {
+    suspend fun setEventCountView(eventsCountView: EventsCountView) {
         context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SHOW_COUNT_CLASSES] = isShowCountClasses
+            preferences[PreferencesKeys.COUNT_CLASSES_VIEW] = eventsCountView.name
         }
     }
 
@@ -93,8 +94,9 @@ class PreferencesDataStore @Inject constructor(
         preferences[PreferencesKeys.SCHEDULES_DELETABLE] ?: true
     }
 
-    val showCountClassesFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
-        preferences[PreferencesKeys.SHOW_COUNT_CLASSES] ?: true
+    val eventCountViewFlow: Flow<EventsCountView> = context.dataStore.data.map { preferences ->
+        val name = preferences[PreferencesKeys.COUNT_CLASSES_VIEW]
+        EventsCountView.entries.find { it.name == name } ?: EventsCountView.DETAILS
     }
 
     val groupsVisibilityFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
