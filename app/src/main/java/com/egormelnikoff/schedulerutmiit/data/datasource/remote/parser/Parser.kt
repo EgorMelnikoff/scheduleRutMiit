@@ -42,17 +42,27 @@ object Parser {
         timetable: Timetable,
         currentGroup: Group?
     ): Result<Schedule> {
+        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            Locale.of("ru", "RU")
+        } else {
+            Locale("ru", "RU")
+        }
+
+        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", locale)
+
         return if (timetable.type == TimetableType.PERIODIC) {
             parsePeriodicSchedule(
                 document,
                 timetable,
-                currentGroup
+                currentGroup,
+                formatter
             )
         } else {
             parseNonPeriodicSchedule(
                 document,
                 timetable,
-                currentGroup
+                currentGroup,
+                formatter
             )
         }
     }
@@ -60,7 +70,8 @@ object Parser {
     private fun parsePeriodicSchedule(
         document: Document,
         timetable: Timetable,
-        currentGroup: Group?
+        currentGroup: Group?,
+        formatter: DateTimeFormatter,
     ): Result<Schedule> {
         val weekNumbers = document
             .select(".nav-link[aria-controls]")
@@ -74,7 +85,7 @@ object Parser {
             document.getElementById("week-$periodNumber")
                 ?.select("div.info-block.info-block_collapse.show")
                 ?.flatMap { element ->
-                    element.parseDate(true)?.let { date ->
+                    element.parseDate(true, formatter)?.let { date ->
                         element.parseEvents(
                             date = date,
                             periodNumber = periodNumber,
@@ -108,12 +119,13 @@ object Parser {
     private fun parseNonPeriodicSchedule(
         document: Document,
         timetable: Timetable,
-        currentGroup: Group?
+        currentGroup: Group?,
+        formatter: DateTimeFormatter,
     ): Result<Schedule> {
         val eventsByDates = document.select("div.info-block.info-block_collapse.show")
 
         val events = eventsByDates.flatMap { element ->
-            element.parseDate(false)?.let { date ->
+            element.parseDate(false, formatter)?.let { date ->
                 element.parseEvents(
                     date = date,
                     currentGroup = currentGroup
@@ -132,7 +144,7 @@ object Parser {
         )
     }
 
-    private fun Element.parseDate(isPeriodic: Boolean): LocalDate? {
+    private fun Element.parseDate(isPeriodic: Boolean, formatter: DateTimeFormatter): LocalDate? {
         val header = this.selectFirst(".info-block__header-text")
 
         val dateText = if (isPeriodic) {
@@ -147,13 +159,8 @@ object Parser {
                 ?.trim() ?: return null
         }
 
-        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            Locale.of("ru", "RU")
-        } else {
-            Locale("ru", "RU")
-        }
+        if (dateText.isEmpty()) return null
 
-        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", locale)
         val year = Year.now().value
 
         return LocalDate.parse("$dateText $year", formatter)
