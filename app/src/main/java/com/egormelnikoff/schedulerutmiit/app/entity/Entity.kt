@@ -10,7 +10,7 @@ import androidx.room.Relation
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.google.gson.JsonParseException
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
@@ -94,7 +94,7 @@ data class Event(
             this@Event.typeName?.let {
                 append("\n${context.getString(R.string.class_type)}: $it")
             }
-            append("\n${context.getString(R.string.time)}: ${this@Event.startDatetime!!.toLocaleTimeWithTimeZone()} - ${this@Event.endDatetime!!.toLocaleTimeWithTimeZone()}")
+            append("\n${context.getString(R.string.time)}: ${this@Event.startDatetime!!.toLocalTimeWithTimeZone()} - ${this@Event.endDatetime!!.toLocalTimeWithTimeZone()}")
 
             this@Event.timeSlotName?.let {
                 append(" ($it)")

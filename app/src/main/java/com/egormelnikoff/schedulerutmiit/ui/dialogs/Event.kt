@@ -56,7 +56,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -102,6 +102,7 @@ fun EventDialog(
             scheduleViewModel.updateEventExtra(event, comment, tag)
         }
     }
+
     Scaffold(
         topBar = {
             CustomTopAppBar(
@@ -220,7 +221,7 @@ fun EventDialog(
                         width = 0.5.dp,
                         color = MaterialTheme.colorScheme.outline
                     ),
-                    title = "${event.startDatetime.toLocaleTimeWithTimeZone()} - ${event.endDatetime!!.toLocaleTimeWithTimeZone()}"
+                    title = "${event.startDatetime.toLocalTimeWithTimeZone()} - ${event.endDatetime!!.toLocalTimeWithTimeZone()}"
                 )
                 event.typeName?.let {
                     CustomFilterChip(
@@ -435,6 +436,36 @@ fun EventDialog(
 
         }
     }
+    if (showEventActionsDialog) {
+        ModalDialogEvent(
+            event = event,
+            onEditEvent = if (event.isCustomEvent) {
+                {
+                    appBackStack.onBack()
+                    appBackStack.openDialog(Route.Dialog.AddEventDialog(namedScheduleEntity, scheduleEntity, event))
+                }
+            } else null,
+            onDeleteEvent = if (event.isCustomEvent) {
+                {
+                    showEventDeleteDialog = true
+                }
+            } else null,
+            onHideEvent = if (!event.isHidden) {
+                {
+                    showEventHideDialog = true
+                    event.isHidden = true
+                }
+            } else null,
+            onShowEvent = if (event.isHidden) {
+                {
+                    scheduleViewModel.updateEventHidden(scheduleEntity, event.id, false)
+                    event.isHidden = false
+                }
+            } else null
+        ) {
+            showEventActionsDialog = false
+        }
+    }
     if (showEventDeleteDialog) {
         CustomAlertDialog(
             dialogIcon = ImageVector.vectorResource(R.drawable.delete),
@@ -462,35 +493,5 @@ fun EventDialog(
                 appBackStack.onBack()
             }
         )
-    }
-    if (showEventActionsDialog) {
-        ModalDialogEvent(
-            event = event,
-            onEditEvent = if (event.isCustomEvent) {
-                {
-                    appBackStack.onBack()
-                    appBackStack.openDialog(Route.Dialog.AddEventDialog(namedScheduleEntity, scheduleEntity, event, ))
-                }
-            } else null,
-            onDeleteEvent = if (event.isCustomEvent) {
-                {
-                    showEventDeleteDialog = true
-                }
-            } else null,
-            onHideEvent = if (!event.isHidden) {
-                {
-                    showEventHideDialog = true
-                    event.isHidden = true
-                }
-            } else null,
-            onShowEvent = if (event.isHidden) {
-                {
-                    scheduleViewModel.updateEventHidden(scheduleEntity, event.id, false)
-                    event.isHidden = false
-                }
-            } else null
-        ) {
-            showEventActionsDialog = false
-        }
     }
 }

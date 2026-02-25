@@ -34,7 +34,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
@@ -71,9 +71,9 @@ fun Event(
             Text(
                 text =
                     "${
-                        events.first().startDatetime!!.toLocaleTimeWithTimeZone()
+                        events.first().startDatetime!!.toLocalTimeWithTimeZone()
                     } - ${
-                        events.first().endDatetime!!.toLocaleTimeWithTimeZone()
+                        events.first().endDatetime!!.toLocalTimeWithTimeZone()
                     }",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary

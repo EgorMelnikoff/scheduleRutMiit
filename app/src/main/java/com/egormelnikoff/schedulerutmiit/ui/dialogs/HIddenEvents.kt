@@ -23,7 +23,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
@@ -78,9 +78,9 @@ fun HiddenEventsDialog(
                                         java.time.format.TextStyle.FULL,
                                         Locale.getDefault()
                                     ).replaceFirstChar { c -> c.uppercase() }
-                                val startTime = event.startDatetime.toLocaleTimeWithTimeZone()
+                                val startTime = event.startDatetime.toLocalTimeWithTimeZone()
                                         .format(timeFormatter)
-                                val endTime = event.endDatetime!!.toLocaleTimeWithTimeZone()
+                                val endTime = event.endDatetime!!.toLocalTimeWithTimeZone()
                                         .format(timeFormatter)
                                 "${event.typeName} ($day, $startTime - $endTime)"
                             } else {

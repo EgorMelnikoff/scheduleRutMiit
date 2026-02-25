@@ -15,7 +15,7 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
-fun LocalDateTime.toLocaleTimeWithTimeZone(): LocalTime {
+fun LocalDateTime.toLocalTimeWithTimeZone(): LocalTime {
     return this.atZone(ZoneOffset.UTC)
         .withZoneSameInstant(ZoneId.systemDefault())
         .toLocalTime()

@@ -44,7 +44,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.RecurrenceRule
 import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
-import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -93,8 +93,8 @@ fun AddEditEventDialog(
         )
     }
     var dateEvent by remember { mutableStateOf(editableEvent?.startDatetime?.toLocalDate()) }
-    var startTime by remember { mutableStateOf(editableEvent?.startDatetime?.toLocaleTimeWithTimeZone()) }
-    var endTime by remember { mutableStateOf(editableEvent?.endDatetime?.toLocaleTimeWithTimeZone()) }
+    var startTime by remember { mutableStateOf(editableEvent?.startDatetime?.toLocalTimeWithTimeZone()) }
+    var endTime by remember { mutableStateOf(editableEvent?.endDatetime?.toLocalTimeWithTimeZone()) }
 
     var roomsList by remember { mutableStateOf(editableEvent?.rooms ?: listOf()) }
     var lecturersList by remember { mutableStateOf(editableEvent?.lecturers ?: listOf()) }

@@ -9,7 +9,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.app.extension.toLocaleTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget.Companion.eveningTime
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -291,7 +291,7 @@ data class ReviewData(
             )
 
             val isFinishedEvents = events.isNotEmpty() && date.toLocalTime().isAfter(
-                events.values.flatten().last().endDatetime!!.toLocaleTimeWithTimeZone()
+                events.values.flatten().last().endDatetime!!.toLocalTimeWithTimeZone()
             )
 
             val nextDay = events.isEmpty() && date.toLocalTime().isAfter(eveningTime)
