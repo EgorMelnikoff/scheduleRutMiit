@@ -63,8 +63,8 @@ class SearchReposImpl @Inject constructor(
                 }
 
                 is Result.Success -> {
-                    val result = mutableListOf<Subject>()
-                    result += parser.parseListSubjectsByPage(document.data).toSubjects()
+                    val subjects = mutableListOf<Subject>()
+                    subjects += parser.parseListSubjectsByPage(document.data).toSubjects()
 
                     val pages = parser.parsePagesCount(document.data)
                     if (pages > 1) {
@@ -83,22 +83,20 @@ class SearchReposImpl @Inject constructor(
                             }
                         }
 
-                        val results = deferredPages.awaitAll()
-
-                        results.forEach { item ->
-                            when (item) {
+                        deferredPages.awaitAll().forEach { result ->
+                            when (result) {
                                 is Result.Error -> {
-                                    return@supervisorScope item
+                                    return@supervisorScope result
                                 }
 
                                 is Result.Success -> {
-                                    result += parser.parseListSubjectsByPage(item.data).toSubjects()
+                                    subjects += parser.parseListSubjectsByPage(result.data).toSubjects()
                                 }
                             }
                         }
                     }
                     return@supervisorScope Result.Success(
-                        result
+                        subjects
                             .normalizeSubjects()
                             .sortedBy { it.title }
                     )

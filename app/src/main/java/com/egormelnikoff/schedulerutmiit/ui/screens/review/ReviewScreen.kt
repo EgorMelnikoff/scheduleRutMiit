@@ -146,8 +146,7 @@ fun ReviewScreen(
                         scheduleState.defaultNamedScheduleData.namedSchedule != null &&
                         scheduleState.defaultNamedScheduleData.scheduleData.scheduleEntity != null
                     ) {
-                        val reviewData =
-                            scheduleState.defaultNamedScheduleData.scheduleData.reviewData
+                        val reviewData = scheduleState.defaultNamedScheduleData.scheduleData.reviewData
 
                         when (reviewData.displayedDate) {
                             currentDate -> {

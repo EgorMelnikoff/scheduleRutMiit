@@ -18,9 +18,9 @@ object Endpoints {
     const val BASE_MIIT_URL = "https://www.miit.ru"
 
     fun curriculumProfessorsUrl(id: String, page: Int) =
-        "${BASE_MIIT_URL}/edu/curriculum/$id/professors?page=$page"
+        "${BASE_RUT_MIIT_URL}edu/curriculum/$id/professors?page=$page"
 
-    fun peopleUrl(query: String) = "${BASE_MIIT_URL}/people?query=$query"
+    fun peopleUrl(query: String) = "${BASE_RUT_MIIT_URL}people?query=$query"
 
     fun scheduleUrl(
         namedScheduleType: NamedScheduleType,
@@ -29,12 +29,12 @@ object Endpoints {
         type: String,
     ): String {
         return when (namedScheduleType) {
-            NamedScheduleType.PERSON -> "${BASE_MIIT_URL}/people/$apiId/timetable?start=$startDate&type=$type"
-            else -> "${BASE_MIIT_URL}/timetable/$apiId?start=$startDate&type=$type"
+            NamedScheduleType.PERSON -> "${BASE_RUT_MIIT_URL}people/$apiId/timetable?start=$startDate&type=$type"
+            else -> "${BASE_RUT_MIIT_URL}timetable/$apiId?start=$startDate&type=$type"
         }
     }
 
 
     fun personImageUrl(personId: Int?, width: Int = 100) =
-        "$BASE_MIIT_URL/content/e$personId.jpg?id_fe=$personId&SWidth=$width"
+        "$BASE_RUT_MIIT_URL}content/e$personId.jpg?id_fe=$personId&SWidth=$width"
 }
