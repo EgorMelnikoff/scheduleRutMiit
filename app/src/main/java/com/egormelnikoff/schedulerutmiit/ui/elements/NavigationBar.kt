@@ -92,7 +92,7 @@ fun CustomNavigationBar(
             .padding(
                 top = 12.dp,
                 bottom = WindowInsets.navigationBars.asPaddingValues()
-                    .calculateBottomPadding() + 4.dp
+                    .calculateBottomPadding() + 8.dp
             ),
         contentAlignment = Alignment.Center
     ) {

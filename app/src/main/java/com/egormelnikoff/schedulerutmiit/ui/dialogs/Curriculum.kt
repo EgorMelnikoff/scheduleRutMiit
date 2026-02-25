@@ -71,8 +71,7 @@ fun CurriculumDialog(
                 .padding(
                     start = 8.dp,
                     end = 8.dp,
-                    top = innerPadding.calculateTopPadding() + 16.dp,
-                    bottom = innerPadding.calculateBottomPadding()
+                    top = innerPadding.calculateTopPadding() + 16.dp
                 ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -166,7 +165,8 @@ fun CurriculumDialog(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             contentPadding = PaddingValues(
                                 start = 8.dp,
-                                end = 8.dp
+                                end = 8.dp,
+                                bottom = innerPadding.calculateBottomPadding()
                             ),
                             horizontalAlignment = Alignment.Start
                         ) {
