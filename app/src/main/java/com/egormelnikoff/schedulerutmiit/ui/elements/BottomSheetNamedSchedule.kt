@@ -181,7 +181,7 @@ fun ModalDialogNamedScheduleHeader(
                 maxLines = 1
             )
 
-            if (namedScheduleEntity.type != NamedScheduleType.MY) {
+            if (namedScheduleEntity.type != NamedScheduleType.MY && isSavedNamedSchedule) {
                 val lastTimeUpdate = LocalDateTime.ofInstant(
                     Instant.ofEpochMilli(namedScheduleEntity.lastTimeUpdate),
                     ZoneId.systemDefault()
@@ -287,11 +287,6 @@ fun ScheduleActionsDialog(
             )
             if (haveDownloadUrl) {
                 ClickableItem(
-                    onClick = {
-                        uriHandler.openUri(
-                            schedule.scheduleEntity.downloadUrl!!
-                        )
-                    },
                     title = "${stringResource(R.string.download)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
                     titleTypography = MaterialTheme.typography.titleMedium,
                     leadingIcon = {
@@ -311,19 +306,14 @@ fun ScheduleActionsDialog(
                         )
                     },
                     showClickLabel = false
-                )
+                ) {
+                    uriHandler.openUri(
+                        schedule.scheduleEntity.downloadUrl!!
+                    )
+                }
             }
             if (isSavedNamedSchedule && haveNotEmptySchedules) {
                 ClickableItem(
-                    onClick = {
-                        appBackStack.openDialog(
-                            Route.Dialog.AddEventDialog(
-                                namedScheduleEntity,
-                                schedule.scheduleEntity
-                            )
-                        )
-                        onDismissParentDialog(null)
-                    },
                     title = stringResource(R.string.add_class),
                     titleTypography = MaterialTheme.typography.titleMedium,
                     leadingIcon = {
@@ -335,19 +325,18 @@ fun ScheduleActionsDialog(
                         )
                     },
                     showClickLabel = false
-                )
+                ) {
+                    appBackStack.openDialog(
+                        Route.Dialog.AddEventDialog(
+                            namedScheduleEntity,
+                            schedule.scheduleEntity
+                        )
+                    )
+                    onDismissParentDialog(null)
+                }
             }
             if (isSavedNamedSchedule && haveHiddenEvents) {
                 ClickableItem(
-                    onClick = {
-                        appBackStack.openDialog(
-                            Route.Dialog.HiddenEventsDialog(
-                                namedScheduleEntity,
-                                schedule.scheduleEntity
-                            )
-                        )
-                        onDismissParentDialog(null)
-                    },
                     title = stringResource(R.string.hidden_events),
                     titleTypography = MaterialTheme.typography.titleMedium,
                     leadingIcon = {
@@ -359,16 +348,18 @@ fun ScheduleActionsDialog(
                         )
                     },
                     showClickLabel = false
-                )
+                ) {
+                    appBackStack.openDialog(
+                        Route.Dialog.HiddenEventsDialog(
+                            namedScheduleEntity,
+                            schedule.scheduleEntity
+                        )
+                    )
+                    onDismissParentDialog(null)
+                }
             }
             if (!isDefaultSchedule) {
                 ClickableItem(
-                    onClick = {
-                        scheduleViewModel.setDefaultSchedule(
-                            schedule.scheduleEntity.id,
-                            schedule.scheduleEntity.timetableId
-                        )
-                    },
                     title = "${stringResource(R.string.open)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
                     titleTypography = MaterialTheme.typography.titleMedium,
                     leadingIcon = {
@@ -380,16 +371,15 @@ fun ScheduleActionsDialog(
                         )
                     },
                     showClickLabel = false
-                )
+                ) {
+                    scheduleViewModel.setDefaultSchedule(
+                        schedule.scheduleEntity.id,
+                        schedule.scheduleEntity.timetableId
+                    )
+                }
             }
             if (today.toLocalDate() > schedule.scheduleEntity.endDate) {
                 ClickableItem(
-                    onClick = {
-                        scheduleViewModel.deleteSchedule(
-                            namedScheduleEntity.id,
-                            schedule.scheduleEntity.id
-                        )
-                    },
                     title = stringResource(R.string.delete),
                     titleTypography = MaterialTheme.typography.titleMedium,
                     titleColor = MaterialTheme.colorScheme.error,
@@ -402,7 +392,12 @@ fun ScheduleActionsDialog(
                         )
                     },
                     showClickLabel = false
-                )
+                ) {
+                    scheduleViewModel.deleteSchedule(
+                        namedScheduleEntity.id,
+                        schedule.scheduleEntity.id
+                    )
+                }
             }
         }
     }
