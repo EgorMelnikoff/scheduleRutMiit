@@ -55,12 +55,13 @@ fun ScheduleUiStateSynchronizer(
             }
         }
 
-        LaunchedEffect(currentDateTime) {
-            println("test")
-            scheduleViewModel.refreshScheduleState(
-                primaryKeyNamedSchedule = scheduleState.currentNamedScheduleData.namedSchedule?.namedScheduleEntity?.id,
-                showLoading = false
-            )
+        if (scheduleState.isSaved) {
+            LaunchedEffect(currentDateTime) {
+                scheduleViewModel.refreshScheduleState(
+                    primaryKeyNamedSchedule = scheduleState.currentNamedScheduleData.namedSchedule?.namedScheduleEntity?.id,
+                    showLoading = false
+                )
+            }
         }
     }
 }
