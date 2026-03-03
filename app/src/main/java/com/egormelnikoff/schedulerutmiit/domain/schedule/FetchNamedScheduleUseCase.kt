@@ -13,6 +13,7 @@ import com.egormelnikoff.schedulerutmiit.domain.schedule.result.FetchNamedSchedu
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
+import java.time.LocalDate
 import javax.inject.Inject
 
 class FetchNamedScheduleUseCase @Inject constructor(
@@ -55,21 +56,22 @@ class FetchNamedScheduleUseCase @Inject constructor(
                     )
                 }
 
-                val deferredSchedules = timetables.data.timetables.mapIndexed { index, timetable ->
-                    async {
-                        scheduleRepos.fetchScheduleParser(
-                            namedScheduleType = namedScheduleType,
-                            name = name,
-                            apiId = apiId,
-                            timetable = timetable,
-                            currentGroup = if (namedScheduleType == NamedScheduleType.GROUP) {
-                                Group(
-                                    id = apiId,
-                                    name = name
-                                )
-                            } else null
-                        )
-                            .let { schedule ->
+                val deferredSchedules = timetables.data.timetables
+                    .filter { it.endDate >= LocalDate.now() }
+                    .mapIndexed { index, timetable ->
+                        async {
+                            scheduleRepos.fetchScheduleParser(
+                                namedScheduleType = namedScheduleType,
+                                name = name,
+                                apiId = apiId,
+                                timetable = timetable,
+                                currentGroup = if (namedScheduleType == NamedScheduleType.GROUP) {
+                                    Group(
+                                        id = apiId,
+                                        name = name
+                                    )
+                                } else null
+                            ).let { schedule ->
                                 when (schedule) {
                                     is Result.Success -> {
                                         val normalizedSchedule = scheduleNormalizer(
@@ -91,8 +93,8 @@ class FetchNamedScheduleUseCase @Inject constructor(
                                         throw ScheduleLoadException(schedule.typedError)
                                 }
                             }
+                        }
                     }
-                }
 
                 try {
                     val schedules = deferredSchedules.awaitAll().filterNotNull()
