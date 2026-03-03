@@ -21,19 +21,17 @@ class RefreshNamedScheduleUseCase @Inject constructor(
     private val fetchNamedScheduleUseCase: FetchNamedScheduleUseCase
 ) {
     companion object {
-        private val SCHEDULE_UPDATE_THRESHOLD_MS = TimeUnit.HOURS.toMillis(10)
+        private val SCHEDULE_UPDATE_THRESHOLD_MS = TimeUnit.HOURS.toMillis(24)
     }
 
     suspend operator fun invoke(
         primaryKeyNamedSchedule: Long? = null,
         updating: Boolean = false
     ): RefreshNamedScheduleResult {
-        val savedNamedSchedules = scheduleRepos.getSavedNamedSchedules()
-        val namedScheduleToUpdate = savedNamedSchedules.find { namedScheduleEntity ->
-            primaryKeyNamedSchedule?.let {
-                namedScheduleEntity.id == it
-            } ?: namedScheduleEntity.isDefault
-        } ?: savedNamedSchedules.firstOrNull()
+        val namedScheduleToUpdate = primaryKeyNamedSchedule?.let {
+            scheduleRepos.getNamedScheduleById(primaryKeyNamedSchedule)?.namedScheduleEntity
+        } ?: scheduleRepos.getDefaultNamedScheduleEntity()
+        ?: scheduleRepos.getSavedNamedSchedules().firstOrNull()
 
         if (namedScheduleToUpdate != null && updating) {
             update(
