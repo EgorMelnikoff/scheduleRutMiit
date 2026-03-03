@@ -146,7 +146,8 @@ fun ReviewScreen(
                         scheduleState.defaultNamedScheduleData.namedSchedule != null &&
                         scheduleState.defaultNamedScheduleData.scheduleData.scheduleEntity != null
                     ) {
-                        val reviewData = scheduleState.defaultNamedScheduleData.scheduleData.reviewData
+                        val reviewData =
+                            scheduleState.defaultNamedScheduleData.scheduleData.reviewData
 
                         when (reviewData.displayedDate) {
                             currentDate -> {
@@ -278,11 +279,10 @@ fun ReviewScreen(
                         ColumnGroup(
                             items = listOf {
                                 ClickableItem(
-                                    title = stringResource(R.string.list_teachers),
-                                    onClick = {
-                                        appBackStack.openDialog(Route.Dialog.CurriculumDialog)
-                                    }
-                                )
+                                    title = stringResource(R.string.list_teachers)
+                                ) {
+                                    appBackStack.openDialog(Route.Dialog.CurriculumDialog)
+                                }
                             }
                         )
                     }

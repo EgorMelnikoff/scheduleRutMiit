@@ -48,7 +48,7 @@ fun InfoDialog(
 ) {
     val packageInfo = LocalContext.current.packageManager.getPackageInfo(LocalContext.current.packageName, 0)
     val uriHandler = LocalUriHandler.current
-    val clipboard  = LocalClipboard.current
+    val clipboard = LocalClipboard.current
 
     Scaffold(
         topBar = {
@@ -118,15 +118,14 @@ fun InfoDialog(
                                     imageVector = ImageVector.vectorResource(R.drawable.logo_telegram)
                                 )
                             },
-                            onClick = {
-                                uriHandler.openUri(APP_CHANNEL_URL)
-                            },
                             onLongClick = {
                                 clipboard.nativeClipboard.setPrimaryClip(
                                     ClipData.newPlainText(null, APP_CHANNEL_URL)
                                 )
                             }
-                        )
+                        ) {
+                            uriHandler.openUri(APP_CHANNEL_URL)
+                        }
                     }, {
                         ClickableItem(
                             title = stringResource(R.string.github),
@@ -137,15 +136,14 @@ fun InfoDialog(
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                             },
-                            onClick = {
-                                uriHandler.openUri(APP_GITHUB_REPOS)
-                            },
                             onLongClick = {
                                 clipboard.nativeClipboard.setPrimaryClip(
                                     ClipData.newPlainText(null, APP_GITHUB_REPOS)
                                 )
                             }
-                        )
+                        ) {
+                            uriHandler.openUri(APP_GITHUB_REPOS)
+                        }
                     }
                 )
             )
@@ -160,15 +158,14 @@ fun InfoDialog(
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         },
-                        onClick = {
-                            uriHandler.openUri(CLOUD_TIPS)
-                        },
                         onLongClick = {
                             clipboard.nativeClipboard.setPrimaryClip(
                                 ClipData.newPlainText(null, CLOUD_TIPS)
                             )
                         }
-                    )
+                    ) {
+                        uriHandler.openUri(CLOUD_TIPS)
+                    }
                 }
             )
 
@@ -182,15 +179,14 @@ fun InfoDialog(
                                 title = AUTHOR
                             )
                         },
-                        onClick = {
-                            uriHandler.openUri(AUTHOR_CHANNEL_URL)
-                        },
                         onLongClick = {
                             clipboard.nativeClipboard.setPrimaryClip(
                                 ClipData.newPlainText(null, AUTHOR_CHANNEL_URL)
                             )
                         }
-                    )
+                    ) {
+                        uriHandler.openUri(AUTHOR_CHANNEL_URL)
+                    }
                 }
             )
         }

@@ -24,7 +24,7 @@ fun CustomAlertDialog(
         title = {
             Text(text = dialogTitle)
         },
-        icon = if (dialogIcon != null){
+        icon = dialogIcon?.let {
             {
                 Icon(
                     imageVector = dialogIcon,
@@ -32,7 +32,7 @@ fun CustomAlertDialog(
                 )
             }
 
-        } else null,
+        },
         text = {
             Text(
                 text = dialogText,

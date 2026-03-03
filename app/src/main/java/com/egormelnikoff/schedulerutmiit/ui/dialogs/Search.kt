@@ -198,18 +198,17 @@ fun SearchDialog(
                                                     }
                                                 },
                                                 titleMaxLines = 2,
-                                                showClickLabel = false,
-                                                onClick = {
-                                                    appBackStack.openPage(Route.Page.Schedule)
-                                                    appBackStack.onBack()
-                                                    scheduleViewModel.fetchNamedSchedule(
-                                                        query.name,
-                                                        query.apiId,
-                                                        query.namedScheduleType
-                                                    )
-                                                    searchViewModel.setDefaultSearchState()
-                                                }
-                                            )
+                                                showClickLabel = false
+                                            ) {
+                                                appBackStack.openPage(Route.Page.Schedule)
+                                                appBackStack.onBack()
+                                                scheduleViewModel.fetchNamedSchedule(
+                                                    query.name,
+                                                    query.apiId,
+                                                    query.namedScheduleType
+                                                )
+                                                searchViewModel.setDefaultSearchState()
+                                            }
                                         }
                                     }
                                 }
@@ -245,25 +244,24 @@ fun SearchDialog(
                                         ClickableItem(
                                             verticalPadding = 8.dp,
                                             horizontalPadding = 8.dp,
-                                            title = group.name,
-                                            onClick = {
-                                                appBackStack.openPage(Route.Page.Schedule)
-                                                appBackStack.onBack()
-                                                scheduleViewModel.fetchNamedSchedule(
-                                                    group.name,
-                                                    group.id,
-                                                    NamedScheduleType.GROUP
+                                            title = group.name
+                                        ) {
+                                            appBackStack.openPage(Route.Page.Schedule)
+                                            appBackStack.onBack()
+                                            scheduleViewModel.fetchNamedSchedule(
+                                                group.name,
+                                                group.id,
+                                                NamedScheduleType.GROUP
+                                            )
+                                            searchViewModel.saveQueryToHistory(
+                                                SearchQuery(
+                                                    name = group.name,
+                                                    apiId = group.id,
+                                                    namedScheduleType = NamedScheduleType.GROUP
                                                 )
-                                                searchViewModel.saveQueryToHistory(
-                                                    SearchQuery(
-                                                        name = group.name,
-                                                        apiId = group.id,
-                                                        namedScheduleType = NamedScheduleType.GROUP
-                                                    )
-                                                )
-                                                searchViewModel.setDefaultSearchState()
-                                            }
-                                        )
+                                            )
+                                            searchViewModel.setDefaultSearchState()
+                                        }
                                     }
                                 }
                                 item {
@@ -297,25 +295,24 @@ fun SearchDialog(
                                                     imageUrl = personImageUrl(person.id),
                                                     imageSize = 60.dp
                                                 )
-                                            },
-                                            onClick = {
-                                                appBackStack.openPage(Route.Page.Schedule)
-                                                appBackStack.onBack()
-                                                scheduleViewModel.fetchNamedSchedule(
-                                                    person.name,
-                                                    person.id,
-                                                    NamedScheduleType.PERSON
-                                                )
-                                                searchViewModel.saveQueryToHistory(
-                                                    SearchQuery(
-                                                        name = person.name,
-                                                        apiId = person.id,
-                                                        namedScheduleType = NamedScheduleType.PERSON
-                                                    )
-                                                )
-                                                searchViewModel.setDefaultSearchState()
                                             }
-                                        )
+                                        ) {
+                                            appBackStack.openPage(Route.Page.Schedule)
+                                            appBackStack.onBack()
+                                            scheduleViewModel.fetchNamedSchedule(
+                                                person.name,
+                                                person.id,
+                                                NamedScheduleType.PERSON
+                                            )
+                                            searchViewModel.saveQueryToHistory(
+                                                SearchQuery(
+                                                    name = person.name,
+                                                    apiId = person.id,
+                                                    namedScheduleType = NamedScheduleType.PERSON
+                                                )
+                                            )
+                                            searchViewModel.setDefaultSearchState()
+                                        }
                                     }
                                 }
                             }
