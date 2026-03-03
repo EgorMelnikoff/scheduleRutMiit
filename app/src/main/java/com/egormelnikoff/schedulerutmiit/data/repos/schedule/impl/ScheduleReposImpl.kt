@@ -35,6 +35,7 @@ class ScheduleReposImpl @Inject constructor(
         return networkHelper.callNetwork(
             requestType = "Timetables",
             requestParams = "Type: $type; ApiId: $apiId",
+            timeoutMs = 5000,
             callApi = {
                 miitApi.getTimetables(type.typeName, apiId)
             },
@@ -84,17 +85,15 @@ class ScheduleReposImpl @Inject constructor(
             callApi = null
         ).let { document ->
             return when (document) {
-                is Result.Error -> {
-                    document
-                }
+                is Result.Error -> document
 
-                is Result.Success -> {
+                is Result.Success -> Result.Success(
                     parser.parseSchedule(
                         document.data,
                         timetable,
                         currentGroup
                     )
-                }
+                )
             }
         }
     }
