@@ -22,7 +22,6 @@ import com.egormelnikoff.schedulerutmiit.app.model.PeriodicContent
 import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.app.model.Schedule
 import com.egormelnikoff.schedulerutmiit.app.model.Timetable
-import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_MIIT_URL
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -41,39 +40,65 @@ object Parser {
         document: Document,
         timetable: Timetable,
         currentGroup: Group?
-    ): Result<Schedule> {
+    ): Schedule {
         val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
             Locale.of("ru", "RU")
         } else {
+            @Suppress("DEPRECATION")
             Locale("ru", "RU")
         }
 
         val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", locale)
 
         return if (timetable.type == TimetableType.PERIODIC) {
-            parsePeriodicSchedule(
-                document,
-                timetable,
+            val periodicContent = document.parsePeriodicSchedule(
                 currentGroup,
                 formatter
             )
+            if (periodicContent.events.isNullOrEmpty()) {
+                val nonPeriodicContent = document.parseNonPeriodicSchedule(
+                    isPeriodic = true,
+                    currentGroup = currentGroup,
+                    formatter = formatter
+                )
+                Schedule(
+                    timetable = timetable,
+                    periodicContent = PeriodicContent(
+                        events = nonPeriodicContent.events,
+                        recurrence = Recurrence(
+                            interval = 1,
+                            currentNumber = 1,
+                            firstWeekNumber = 1
+                        )
+                    ),
+                    nonPeriodicContent = null
+                )
+            } else {
+                Schedule(
+                    timetable = timetable,
+                    periodicContent = periodicContent,
+                    nonPeriodicContent = null
+                )
+            }
         } else {
-            parseNonPeriodicSchedule(
-                document,
-                timetable,
-                currentGroup,
-                formatter
+            val nonPeriodicContent = document.parseNonPeriodicSchedule(
+                currentGroup = currentGroup,
+                formatter = formatter
+            )
+
+            Schedule(
+                timetable = timetable,
+                periodicContent = null,
+                nonPeriodicContent = nonPeriodicContent
             )
         }
     }
 
-    private fun parsePeriodicSchedule(
-        document: Document,
-        timetable: Timetable,
+    private fun Document.parsePeriodicSchedule(
         currentGroup: Group?,
         formatter: DateTimeFormatter,
-    ): Result<Schedule> {
-        val weekNumbers = document
+    ): PeriodicContent {
+        val weekNumbers = this
             .select(".nav-link[aria-controls]")
             .map {
                 it.attr("aria-controls")
@@ -82,7 +107,7 @@ object Parser {
             }
 
         val events = weekNumbers.flatMap { periodNumber ->
-            document.getElementById("week-$periodNumber")
+            this.getElementById("week-$periodNumber")
                 ?.select("div.info-block.info-block_collapse.show")
                 ?.flatMap { element ->
                     element.parseDate(true, formatter)?.let { date ->
@@ -99,48 +124,45 @@ object Parser {
                 }.orEmpty()
         }
 
-        return Result.Success(
-            Schedule(
-                timetable = timetable,
-                periodicContent = PeriodicContent(
-                    events = events.normalizeEvents(),
-                    recurrence = Recurrence(
-                        interval = weekNumbers.size,
-                        currentNumber = parseCurrentWeek(document),
-                        firstWeekNumber = 1
-                    )
-                ),
-                nonPeriodicContent = null
+        return PeriodicContent(
+            events = events.normalizePeriodicEvents(),
+            recurrence = Recurrence(
+                interval = weekNumbers.size,
+                currentNumber = parseCurrentWeek(this),
+                firstWeekNumber = 1
             )
         )
-
     }
 
-    private fun parseNonPeriodicSchedule(
-        document: Document,
-        timetable: Timetable,
+    private fun Document.parseNonPeriodicSchedule(
+        isPeriodic: Boolean = false,
         currentGroup: Group?,
         formatter: DateTimeFormatter,
-    ): Result<Schedule> {
-        val eventsByDates = document.select("div.info-block.info-block_collapse.show")
+    ): NonPeriodicContent {
+        val eventsByDates = this.select("div.info-block.info-block_collapse.show")
 
         val events = eventsByDates.flatMap { element ->
-            element.parseDate(false, formatter)?.let { date ->
+            element.parseDate(isPeriodic, formatter)?.let { date ->
                 element.parseEvents(
                     date = date,
                     currentGroup = currentGroup
                 )
             }.orEmpty()
         }
-
-        return Result.Success(
-            Schedule(
-                timetable = timetable,
-                periodicContent = null,
-                nonPeriodicContent = NonPeriodicContent(
-                    events = events
-                )
+        return if (isPeriodic) {
+            NonPeriodicContent(
+                events = events.map {
+                    it.copy(
+                        periodNumber = 1,
+                        recurrenceRule = RecurrenceRule(
+                            frequency = "WEEKLY",
+                            interval = 1
+                        )
+                    )
+                }
             )
+        } else NonPeriodicContent(
+            events = events
         )
     }
 
@@ -175,6 +197,7 @@ object Parser {
         return this
             .select(".timetable__list-timeslot")
             .map { element ->
+                println(element)
                 val headerText = element
                     .selectFirst(".mb-1")
                     ?.text()
@@ -400,7 +423,7 @@ object Parser {
 
 
     /* NORMALIZERS */
-    private fun List<Event>.normalizeEvents(): List<Event> {
+    private fun List<Event>.normalizePeriodicEvents(): List<Event> {
         return this.groupBy { it.customHashCode(true) }
             .map { (_, events) ->
                 events.first().let { event ->

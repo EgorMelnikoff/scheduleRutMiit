@@ -128,10 +128,10 @@ fun HorizontalCalendar(
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
-                namedScheduleData.scheduleData.scheduleEntity.recurrence?.let { recurrence ->
+                if (scheduleEntity.recurrence != null && scheduleEntity.recurrence.interval > 1) {
                     val selectedWeek = firstDayOfCurrentWeek.getCurrentWeek(
                         startDate = scheduleEntity.startDate,
-                        recurrence = recurrence
+                        recurrence = scheduleEntity.recurrence
                     )
                     val color = MaterialTheme.colorScheme.onSecondaryContainer
                     Icon(
