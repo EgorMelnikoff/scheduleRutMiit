@@ -41,9 +41,6 @@ import com.egormelnikoff.schedulerutmiit.R
 
 @Composable
 fun ClickableItem(
-    onClick: (() -> Unit)? = null,
-    onLongClick: (() -> Unit)? = null,
-    onDoubleCLick: (() -> Unit)? = null,
     horizontalPadding: Dp = 12.dp,
     verticalPadding: Dp = 12.dp,
     defaultMinHeight: Dp? = null,
@@ -64,7 +61,10 @@ fun ClickableItem(
     trailingIcon: (@Composable () -> Unit)? = null,
     clickLabel: ImageVector? = null,
     showClickLabel: Boolean = true,
-    clickLabelColor: Color? = null
+    clickLabelColor: Color? = null,
+    onLongClick: (() -> Unit)? = null,
+    onDoubleCLick: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier
@@ -127,11 +127,10 @@ fun ClickableItem(
                 }
             }
         }
-        trailingIcon?.let {
-            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                it.invoke()
-            }
+        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+            trailingIcon?.invoke()
         }
+
         if (showClickLabel && onClick != null) {
             Icon(
                 modifier = Modifier.size(24.dp),
