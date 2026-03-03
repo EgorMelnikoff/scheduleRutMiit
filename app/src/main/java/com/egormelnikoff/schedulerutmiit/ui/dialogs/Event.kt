@@ -57,6 +57,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -64,7 +65,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
+import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
@@ -363,8 +364,9 @@ fun EventDialog(
                                         }
                                     } else null,
                                     leadingIcon = {
-                                        LeadingTitle(
-                                            title = lecturer.fullFio
+                                        LeadingAsyncImage(
+                                            title = lecturer.fullFio,
+                                            imageUrl = personImageUrl(personId = lecturer.id)
                                         )
                                     }
                                 )
