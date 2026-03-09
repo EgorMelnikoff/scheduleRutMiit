@@ -79,7 +79,7 @@ fun ModalDialogNamedSchedule(
         schedules?.let {
             Spacer(modifier = Modifier.height(4.dp))
             ColumnGroup(
-                modifier = Modifier.padding(horizontal = 12.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 items = schedules.map { schedule ->
                     {
                         var showScheduleDialog by remember { mutableStateOf(false) }
@@ -165,7 +165,7 @@ fun ModalDialogNamedScheduleHeader(
     onDismiss: (NamedScheduleEntity?) -> Unit
 ) {
     Row(
-        modifier = Modifier.padding(horizontal = 12.dp),
+        modifier = Modifier.padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
