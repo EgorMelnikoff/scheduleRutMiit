@@ -39,10 +39,11 @@
     <string name="developer">Разработчик</string>
     <string name="do_you_want_continue">Вы действительно хотите продолжить?</string>
     <string name="download">Скачать</string>
+    <string name="download_latest_release">Скачать последнюю версию</string>
     <string name="edit">Редактировать</string>
     <string name="editing">Редактирование</string>
     <string name="empty_base">Сохраните как минимум одно расписание для его отображения</string>
-    <string name="empty_day">На это день пары не запланированы</string>
+    <string name="empty_day">На этот день пары не запланированы</string>
     <string name="empty_here">Здесь пусто</string>
     <string name="empty_response">Пустой ответ</string>
     <string name="end_date">Дата окончания</string>

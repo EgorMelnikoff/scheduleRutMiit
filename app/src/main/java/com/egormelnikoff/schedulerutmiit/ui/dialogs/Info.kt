@@ -31,15 +31,17 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_GITHUB_LATEST_RELEASE
 import com.egormelnikoff.schedulerutmiit.app.AppConst.APP_GITHUB_REPOS
 import com.egormelnikoff.schedulerutmiit.app.AppConst.AUTHOR
 import com.egormelnikoff.schedulerutmiit.app.AppConst.AUTHOR_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.app.AppConst.CLOUD_TIPS
+import com.egormelnikoff.schedulerutmiit.app.AppConst.RU_STORE
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
+import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 
 @Composable
@@ -107,6 +109,46 @@ fun InfoDialog(
                     )
                 }
             }
+
+            RowGroup(
+                title = stringResource(R.string.download_latest_release),
+                items = listOf(
+                    {
+                        ClickableItem(
+                            title = stringResource(R.string.github),
+                            leadingIcon = {
+                                LeadingIcon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.logo_github)
+                                )
+                            },
+                            onLongClick = {
+                                clipboard.nativeClipboard.setPrimaryClip(
+                                    ClipData.newPlainText(null, APP_GITHUB_LATEST_RELEASE)
+                                )
+                            }
+                        ) {
+                            uriHandler.openUri(APP_GITHUB_LATEST_RELEASE)
+                        }
+                    }, {
+                        ClickableItem(
+                            title = stringResource(R.string.rustore),
+                            leadingIcon = {
+                                LeadingIcon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.logo_rustore)
+                                )
+                            },
+                            onLongClick = {
+                                clipboard.nativeClipboard.setPrimaryClip(
+                                    ClipData.newPlainText(null, RU_STORE)
+                                )
+                            }
+                        ) {
+                            uriHandler.openUri(RU_STORE)
+                        }
+                    }
+                )
+            )
+
             ColumnGroup(
                 items = listOf(
                     {
@@ -146,27 +188,6 @@ fun InfoDialog(
                         }
                     }
                 )
-            )
-
-            ColumnGroup(
-                items = listOf {
-                    ClickableItem(
-                        title = stringResource(R.string.support),
-                        leadingIcon = {
-                            LeadingIcon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ruble),
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                        },
-                        onLongClick = {
-                            clipboard.nativeClipboard.setPrimaryClip(
-                                ClipData.newPlainText(null, CLOUD_TIPS)
-                            )
-                        }
-                    ) {
-                        uriHandler.openUri(CLOUD_TIPS)
-                    }
-                }
             )
 
             ColumnGroup(

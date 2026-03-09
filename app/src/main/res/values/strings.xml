@@ -40,6 +40,7 @@
     <string name="developer">Developer</string>
     <string name="do_you_want_continue">Do you really want to continue?</string>
     <string name="download">Download</string>
+    <string name="download_latest_release">Download latest release</string>
     <string name="edit">Edit</string>
     <string name="editing">Editing</string>
     <string name="empty_base">Save at least one schedule to display it</string>
@@ -118,6 +119,7 @@
     <string name="return_default">Return default</string>
     <string name="return_default_schedule">Return to the default schedule</string>
     <string name="review">Review</string>
+    <string name="rustore" translatable="false">RuStore</string>
     <string name="room">Room</string>
     <string name="room_number">Room number</string>
     <string name="room_number_not_specified">Room number not specified</string>
