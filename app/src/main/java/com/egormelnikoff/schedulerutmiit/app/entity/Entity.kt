@@ -30,8 +30,8 @@ data class NamedScheduleEntity(
     val apiId: String?,
     val type: NamedScheduleType,
     @ColumnInfo(name = "isDefaultNamedSchedule")
-    var isDefault: Boolean,
-    var lastTimeUpdate: Long
+    val isDefault: Boolean,
+    val lastTimeUpdate: Long
 )
 
 @Keep
@@ -41,7 +41,7 @@ data class ScheduleEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     @ColumnInfo(name = "namedScheduleId")
-    var namedScheduleId: Long,
+    val namedScheduleId: Long,
     val timetableId: String,
     val timetableType: TimetableType,
     val downloadUrl: String?,
@@ -50,7 +50,7 @@ data class ScheduleEntity(
     @Embedded
     val recurrence: Recurrence?,
     @ColumnInfo(name = "isDefaultSchedule")
-    var isDefault: Boolean = false,
+    val isDefault: Boolean = false,
 )
 
 @Keep
@@ -60,10 +60,10 @@ data class Event(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     @ColumnInfo(name = "eventScheduleId")
-    var scheduleId: Long,
+    val scheduleId: Long,
     val startDatetime: LocalDateTime?,
     val endDatetime: LocalDateTime?,
-    var isHidden: Boolean = false,
+    val isHidden: Boolean = false,
     val isCustomEvent: Boolean = false,
     @Embedded
     val recurrenceRule: RecurrenceRule?,
@@ -123,7 +123,7 @@ data class EventExtraData(
     val id: Long = 0,
 
     @ColumnInfo(name = "eventExtraScheduleId")
-    var scheduleId: Long = 0,
+    val scheduleId: Long = 0,
 
     val eventName: String?,
     val eventStartDatetime: LocalDateTime?,
