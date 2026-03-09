@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.data.Result
 import kotlinx.coroutines.flow.Flow
 
 interface NewsRepos {
-    fun parseNews(news: News): News
+    suspend fun parseNews(news: News): News
     fun getNewsListFlow(): Flow<PagingData<NewsShort>>
     suspend fun getNewsById(id: Long): Result<News>
 }

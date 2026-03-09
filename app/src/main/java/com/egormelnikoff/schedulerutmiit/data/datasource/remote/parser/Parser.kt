@@ -15,6 +15,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.entity.RecurrenceRule
 import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
 import com.egormelnikoff.schedulerutmiit.app.model.News
 import com.egormelnikoff.schedulerutmiit.app.model.NonPeriodicContent
@@ -23,6 +24,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.app.model.Schedule
 import com.egormelnikoff.schedulerutmiit.app.model.Timetable
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_MIIT_URL
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -32,15 +35,17 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.Year
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Locale
+import kotlin.math.abs
 
 object Parser {
     /* Schedule */
-    fun parseSchedule(
+    suspend fun parseSchedule(
         document: Document,
         timetable: Timetable,
         currentGroup: Group?
-    ): Schedule {
+    ): Schedule = withContext(Dispatchers.Default) {
         val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
             Locale.of("ru", "RU")
         } else {
@@ -50,8 +55,9 @@ object Parser {
 
         val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", locale)
 
-        return if (timetable.type == TimetableType.PERIODIC) {
+        return@withContext if (timetable.type == TimetableType.PERIODIC) {
             val periodicContent = document.parsePeriodicSchedule(
+                timetable.startDate,
                 currentGroup,
                 formatter
             )
@@ -94,11 +100,12 @@ object Parser {
         }
     }
 
-    private fun Document.parsePeriodicSchedule(
+    private suspend fun Document.parsePeriodicSchedule(
+        startDate: LocalDate,
         currentGroup: Group?,
         formatter: DateTimeFormatter,
-    ): PeriodicContent {
-        val weekNumbers = this
+    ): PeriodicContent = withContext(Dispatchers.Default) {
+        val weekNumbers = this@parsePeriodicSchedule
             .select(".nav-link[aria-controls]")
             .map {
                 it.attr("aria-controls")
@@ -107,7 +114,7 @@ object Parser {
             }
 
         val events = weekNumbers.flatMap { periodNumber ->
-            this.getElementById("week-$periodNumber")
+            this@parsePeriodicSchedule.getElementById("week-$periodNumber")
                 ?.select("div.info-block.info-block_collapse.show")
                 ?.flatMap { element ->
                     element.parseDate(true, formatter)?.let { date ->
@@ -124,22 +131,23 @@ object Parser {
                 }.orEmpty()
         }
 
-        return PeriodicContent(
+        return@withContext PeriodicContent(
             events = events.normalizePeriodicEvents(),
-            recurrence = Recurrence(
+            recurrence = getRecurrence(
+                startDate = startDate,
                 interval = weekNumbers.size,
-                currentNumber = parseCurrentWeek(this),
-                firstWeekNumber = 1
+                currentNumber = parseCurrentWeek(this@parsePeriodicSchedule),
             )
         )
     }
 
-    private fun Document.parseNonPeriodicSchedule(
+    private suspend fun Document.parseNonPeriodicSchedule(
         isPeriodic: Boolean = false,
         currentGroup: Group?,
         formatter: DateTimeFormatter,
-    ): NonPeriodicContent {
-        val eventsByDates = this.select("div.info-block.info-block_collapse.show")
+    ): NonPeriodicContent = withContext(Dispatchers.Default) {
+        val eventsByDates = this@parseNonPeriodicSchedule
+            .select("div.info-block.info-block_collapse.show")
 
         val events = eventsByDates.flatMap { element ->
             element.parseDate(isPeriodic, formatter)?.let { date ->
@@ -149,7 +157,7 @@ object Parser {
                 )
             }.orEmpty()
         }
-        return if (isPeriodic) {
+        return@withContext if (isPeriodic) {
             NonPeriodicContent(
                 events = events.map {
                     it.copy(
@@ -166,38 +174,40 @@ object Parser {
         )
     }
 
-    private fun Element.parseDate(isPeriodic: Boolean, formatter: DateTimeFormatter): LocalDate? {
-        val header = this.selectFirst(".info-block__header-text")
+    private suspend fun Element.parseDate(
+        isPeriodic: Boolean,
+        formatter: DateTimeFormatter
+    ): LocalDate? = withContext(Dispatchers.Default) {
+        val header = this@parseDate.selectFirst(".info-block__header-text")
 
         val dateText = if (isPeriodic) {
             header
                 ?.select(".text-secondary.small")
                 ?.first()
                 ?.text()
-                ?.trim() ?: return null
+                ?.trim() ?: return@withContext null
         } else {
             header
                 ?.ownText()
-                ?.trim() ?: return null
+                ?.trim() ?: return@withContext null
         }
 
-        if (dateText.isEmpty()) return null
+        if (dateText.isEmpty()) return@withContext null
 
         val year = Year.now().value
 
-        return LocalDate.parse("$dateText $year", formatter)
+        return@withContext LocalDate.parse("$dateText $year", formatter)
     }
 
-    private fun Element.parseEvents(
+    private suspend fun Element.parseEvents(
         date: LocalDate,
         periodNumber: Int? = null,
         recurrenceRule: RecurrenceRule? = null,
         currentGroup: Group?
-    ): List<Event> {
-        return this
+    ): List<Event> = withContext(Dispatchers.Default) {
+        return@withContext this@parseEvents
             .select(".timetable__list-timeslot")
             .map { element ->
-                println(element)
                 val headerText = element
                     .selectFirst(".mb-1")
                     ?.text()
@@ -255,30 +265,31 @@ object Parser {
             }
     }
 
-    private fun Element.parseLecturers(): MutableList<Lecturer> {
-        return this
-            .select(".icon-academic-cap")
-            .mapNotNull { a ->
+    private suspend fun Element.parseLecturers(): MutableList<Lecturer> =
+        withContext(Dispatchers.Default) {
+            return@withContext this@parseLecturers
+                .select(".icon-academic-cap")
+                .mapNotNull { a ->
 
-                val href = a.attr("href")
-                val id = href
-                    .substringAfter("/people/")
-                    .substringBefore("/")
-                    .toIntOrNull() ?: return@mapNotNull null
+                    val href = a.attr("href")
+                    val id = href
+                        .substringAfter("/people/")
+                        .substringBefore("/")
+                        .toIntOrNull() ?: return@mapNotNull null
 
-                val title = a.attr("title")
+                    val title = a.attr("title")
 
-                Lecturer(
-                    id = id,
-                    shortFio = a.text().trim(),
-                    fullFio = title.substringBefore(",").trim(),
-                    hint = title.substringAfter(",").trim()
-                )
-            }.toMutableList()
-    }
+                    Lecturer(
+                        id = id,
+                        shortFio = a.text().trim(),
+                        fullFio = title.substringBefore(",").trim(),
+                        hint = title.substringAfter(",").trim()
+                    )
+                }.toMutableList()
+        }
 
-    private fun Element.parseRooms(): MutableList<Room> {
-        return this
+    private suspend fun Element.parseRooms(): MutableList<Room> = withContext(Dispatchers.Default) {
+        return@withContext this@parseRooms
             .select(".icon-location")
             .mapNotNull { a ->
 
@@ -299,10 +310,10 @@ object Parser {
             }.toMutableList()
     }
 
-    private fun Element.parseGroups(
+    private suspend fun Element.parseGroups(
         currentGroup: Group?
-    ): MutableList<Group> {
-        return this
+    ): MutableList<Group> = withContext(Dispatchers.Default) {
+        return@withContext this@parseGroups
             .select(".icon-community")
             .mapNotNull {
                 val id = it.attr("href")
@@ -316,18 +327,18 @@ object Parser {
             }.toMutableList()
     }
 
-    fun parseCurrentWeek(element: Element): Int {
+    suspend fun parseCurrentWeek(element: Element): Int = withContext(Dispatchers.Default) {
         val activeLink = element.select(".nav-link[aria-controls].active").first()
 
         val weekNumber = activeLink?.attr("aria-controls")
             ?.removePrefix("week-")
             ?.toIntOrNull()
 
-        return weekNumber ?: 1
+        return@withContext weekNumber ?: 1
     }
 
     /* Search */
-    fun parsePeople(element: Element): List<Person> {
+    suspend fun parsePeople(element: Element): List<Person> = withContext(Dispatchers.Default) {
         val people = mutableListOf<Person>()
         element.select("div.search__people").forEach { item ->
             val aElement = item.selectFirst("a.mb-2")
@@ -341,11 +352,11 @@ object Parser {
                 people.add(Person(name, id, position))
             }
         }
-        return people
+        return@withContext people
     }
 
     /* News */
-    fun parseNews(news: News): News {
+    suspend fun parseNews(news: News): News = withContext(Dispatchers.Default) {
         val document = Jsoup.parse(news.content)
         val elements = document.select("p, li, tr, img")
         val parsedElements = mutableListOf<Pair<String, Any>>()
@@ -389,19 +400,23 @@ object Parser {
 
         news.elements = parsedElements
         news.images = parsedImages
-        return news
+        return@withContext news
     }
 
     /* Subjects list */
-    fun parsePagesCount(element: Element): Int {
-        return element.select("ul.pagination li[data-page]")
+    suspend fun parsePagesCount(element: Element): Int = withContext(Dispatchers.Default) {
+        return@withContext element.select("ul.pagination li[data-page]")
             .mapNotNull {
                 it.attr("data-page").toIntOrNull()
             }
             .maxOrNull() ?: 1
     }
 
-    fun parseListSubjectsByPage(element: Element): MutableMap<String, MutableSet<String>> {
+    suspend fun parseListSubjectsByPage(
+        element: Element
+    ): MutableMap<String, MutableSet<String>> = withContext(
+        Dispatchers.Default
+    ) {
         val subjectTeachers = mutableMapOf<String, MutableSet<String>>()
 
         element.select("div[itemprop=teachingStaff]").forEach { item ->
@@ -418,7 +433,7 @@ object Parser {
                 }.add(teacher)
             }
         }
-        return subjectTeachers
+        return@withContext subjectTeachers
     }
 
 
@@ -471,6 +486,36 @@ object Parser {
                     }
                 }
             }
+        }
+    }
+
+    private fun getRecurrence(
+        interval: Int,
+        currentNumber: Int,
+        startDate: LocalDate
+    ): Recurrence {
+        val today = LocalDate.now()
+        return if (today > startDate) {
+            val currentWeekIndex = abs(
+                ChronoUnit.WEEKS.between(
+                    startDate.getFirstDayOfWeek(),
+                    today.getFirstDayOfWeek()
+                )
+            ).plus(1)
+
+            val firstWeekNumber =
+                ((currentWeekIndex + currentNumber) % interval)
+                    .plus(1)
+
+            Recurrence(
+                interval, currentNumber,
+                firstWeekNumber = firstWeekNumber.toInt()
+            )
+        } else {
+            Recurrence(
+                interval, currentNumber,
+                firstWeekNumber = currentNumber
+            )
         }
     }
 }

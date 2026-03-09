@@ -21,7 +21,7 @@ class NewsReposImpl @Inject constructor(
     private val resourcesManager: ResourcesManager,
     private val parser: Parser
 ) : NewsRepos {
-    override fun parseNews(news: News) = parser.parseNews(news)
+    override suspend fun parseNews(news: News) = parser.parseNews(news)
 
     override fun getNewsListFlow(): Flow<PagingData<NewsShort>> {
         return Pager(
