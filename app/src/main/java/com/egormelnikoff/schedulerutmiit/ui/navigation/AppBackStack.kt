@@ -3,23 +3,23 @@ package com.egormelnikoff.schedulerutmiit.ui.navigation
 import androidx.compose.runtime.mutableStateListOf
 
 class AppBackStack(
-    private val startRoute: Route.Page
+    private val startRage: Route.Page
 ) {
-    val pageBackStack = mutableStateListOf(startRoute)
+    val pageBackStack = mutableStateListOf(startRage)
 
     val dialogBackStack = mutableStateListOf<Route.Dialog>(Route.Dialog.Empty)
 
     fun openPage(page: Route.Page) {
         when {
             pageBackStack.size == 1 -> pageBackStack.add(page)
-            page == startRoute -> pageBackStack.removeAt(pageBackStack.lastIndex)
+            page == startRage -> pageBackStack.removeAt(pageBackStack.lastIndex)
             else -> pageBackStack[pageBackStack.lastIndex] = page
         }
     }
 
-    fun navigateToSchedule() {
-        if (lastPage() != Route.Page.Schedule) {
-            openPage(Route.Page.Schedule)
+    fun navigateToStartRage() {
+        if (lastPage() != startRage) {
+            openPage(startRage)
         }
     }
 

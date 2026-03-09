@@ -305,7 +305,7 @@ fun ReviewScreen(
                     scheduleViewModel.getSavedNamedSchedule(
                         primaryKeyNamedSchedule = showNamedScheduleDialog!!.id
                     )
-                    appBackStack.navigateToSchedule()
+                    appBackStack.navigateToStartRage()
                 }
             ) {
                 showNamedScheduleDialog = null
