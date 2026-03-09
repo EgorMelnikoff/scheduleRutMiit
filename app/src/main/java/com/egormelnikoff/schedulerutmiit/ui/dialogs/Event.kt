@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
@@ -161,84 +163,10 @@ fun EventDialog(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                modifier = Modifier.padding(
-                    start = 16.dp, end = 16.dp
-                ),
-                text = event.name!!,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 2
+            EventHeader(
+                scheduleEntity, event, 16.dp
             )
-            Row(
-                modifier = Modifier
-                    .horizontalScroll(rememberScrollState())
-                    .padding(
-                        start = 16.dp, end = 16.dp
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                CustomFilterChip(
-                    imageVector = ImageVector.vectorResource(R.drawable.calendar),
-                    colors = FilterChipDefaults.filterChipColors(
-                        disabledContainerColor = Color.Transparent,
-                        disabledLabelColor = MaterialTheme.colorScheme.onBackground,
-                        disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground,
-                    ),
-                    border = BorderStroke(
-                        width = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outline
-                    ),
-                    title = if (scheduleEntity.timetableType == TimetableType.PERIODIC) {
-                        val dayName = event.startDatetime!!.dayOfWeek.getDisplayName(
-                            TextStyle.FULL,
-                            Locale.getDefault()
-                        ).toString().replaceFirstChar { it.uppercase() }
-                        if (event.recurrenceRule?.interval == 1) {
-                            dayName
-                        } else {
-                            "$dayName, ${
-                                stringResource(
-                                    R.string.week,
-                                    event.periodNumber ?: 0
-                                ).replaceFirstChar { it.lowercase() }
-                            }"
-                        }
-                    } else "${
-                        event.startDatetime!!.toLocalDate()
-                            .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                    }"
-                )
-                CustomFilterChip(
-                    imageVector = ImageVector.vectorResource(R.drawable.time),
-                    colors = FilterChipDefaults.filterChipColors(
-                        disabledContainerColor = Color.Transparent,
-                        disabledLabelColor = MaterialTheme.colorScheme.onBackground,
-                        disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground,
-                    ),
-                    border = BorderStroke(
-                        width = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outline
-                    ),
-                    title = "${event.startDatetime.toLocalTimeWithTimeZone()} - ${event.endDatetime!!.toLocalTimeWithTimeZone()}"
-                )
-                event.typeName?.let {
-                    CustomFilterChip(
-                        title = event.typeName,
-                        border = BorderStroke(
-                            width = 0.5.dp,
-                            color = MaterialTheme.colorScheme.outline
-                        ),
-                        colors = FilterChipDefaults.filterChipColors(
-                            disabledContainerColor = Color.Transparent,
-                            disabledLabelColor = MaterialTheme.colorScheme.onBackground,
-                            disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground
-                        )
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.height(0.dp))
             Column(
                 modifier = Modifier.padding(
                     horizontal = 16.dp
@@ -268,7 +196,7 @@ fun EventDialog(
                                                 if (!event.isCustomEvent) {
                                                     it.clickable(
                                                         onClick = {
-                                                            appBackStack.navigateToSchedule()
+                                                            appBackStack.navigateToStartRage()
                                                             appBackStack.onBack()
                                                             scheduleViewModel.fetchNamedSchedule(
                                                                 group.name,
@@ -347,7 +275,7 @@ fun EventDialog(
                                     defaultMinHeight = 32.dp,
                                     onClick = if (!event.isCustomEvent) {
                                         {
-                                            appBackStack.navigateToSchedule()
+                                            appBackStack.navigateToStartRage()
                                             appBackStack.onBack()
                                             scheduleViewModel.fetchNamedSchedule(
                                                 lecturer.fullFio,
@@ -440,11 +368,18 @@ fun EventDialog(
     }
     if (showEventActionsDialog) {
         ModalDialogEvent(
+            scheduleEntity = scheduleEntity,
             event = event,
             onEditEvent = if (event.isCustomEvent) {
                 {
                     appBackStack.onBack()
-                    appBackStack.openDialog(Route.Dialog.AddEventDialog(namedScheduleEntity, scheduleEntity, event))
+                    appBackStack.openDialog(
+                        Route.Dialog.AddEventDialog(
+                            namedScheduleEntity,
+                            scheduleEntity,
+                            event
+                        )
+                    )
                 }
             } else null,
             onDeleteEvent = if (event.isCustomEvent) {
@@ -455,13 +390,6 @@ fun EventDialog(
             onHideEvent = if (!event.isHidden) {
                 {
                     showEventHideDialog = true
-                    event.isHidden = true
-                }
-            } else null,
-            onShowEvent = if (event.isHidden) {
-                {
-                    scheduleViewModel.updateEventHidden(scheduleEntity, event.id, false)
-                    event.isHidden = false
                 }
             } else null
         ) {
@@ -495,5 +423,95 @@ fun EventDialog(
                 appBackStack.onBack()
             }
         )
+    }
+}
+
+@Composable
+fun EventHeader(
+    scheduleEntity: ScheduleEntity,
+    event: Event,
+    horizontalPadding: Dp
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            modifier = Modifier.padding(
+                horizontal = horizontalPadding
+            ),
+            text = event.name!!,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2
+        )
+        Row(
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(
+                    horizontal = horizontalPadding
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            CustomFilterChip(
+                imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                colors = FilterChipDefaults.filterChipColors(
+                    disabledContainerColor = Color.Transparent,
+                    disabledLabelColor = MaterialTheme.colorScheme.onBackground,
+                    disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground,
+                ),
+                border = BorderStroke(
+                    width = 0.5.dp,
+                    color = MaterialTheme.colorScheme.outline
+                ),
+                title = if (scheduleEntity.timetableType == TimetableType.PERIODIC) {
+                    val dayName = event.startDatetime!!.dayOfWeek.getDisplayName(
+                        TextStyle.FULL,
+                        Locale.getDefault()
+                    ).toString().replaceFirstChar { it.uppercase() }
+                    if (event.recurrenceRule?.interval == 1) {
+                        dayName
+                    } else {
+                        "$dayName, ${
+                            stringResource(
+                                R.string.week,
+                                event.periodNumber ?: 0
+                            ).replaceFirstChar { it.lowercase() }
+                        }"
+                    }
+                } else "${
+                    event.startDatetime!!.toLocalDate()
+                        .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                }"
+            )
+            CustomFilterChip(
+                imageVector = ImageVector.vectorResource(R.drawable.time),
+                colors = FilterChipDefaults.filterChipColors(
+                    disabledContainerColor = Color.Transparent,
+                    disabledLabelColor = MaterialTheme.colorScheme.onBackground,
+                    disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground,
+                ),
+                border = BorderStroke(
+                    width = 0.5.dp,
+                    color = MaterialTheme.colorScheme.outline
+                ),
+                title = "${event.startDatetime.toLocalTimeWithTimeZone()} - ${event.endDatetime!!.toLocalTimeWithTimeZone()}"
+            )
+            event.typeName?.let {
+                CustomFilterChip(
+                    title = event.typeName,
+                    border = BorderStroke(
+                        width = 0.5.dp,
+                        color = MaterialTheme.colorScheme.outline
+                    ),
+                    colors = FilterChipDefaults.filterChipColors(
+                        disabledContainerColor = Color.Transparent,
+                        disabledLabelColor = MaterialTheme.colorScheme.onBackground,
+                        disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground
+                    )
+                )
+            }
+        }
     }
 }
