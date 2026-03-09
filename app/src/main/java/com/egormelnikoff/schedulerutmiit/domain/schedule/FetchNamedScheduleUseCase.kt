@@ -38,8 +38,10 @@ class FetchNamedScheduleUseCase @Inject constructor(
             )
         }
 
-        when (val timetables =
-            scheduleRepos.fetchTimetables(apiId = apiId, type = namedScheduleType)) {
+        when (val timetables = scheduleRepos.fetchTimetables(
+            apiId = apiId,
+            type = namedScheduleType
+        )) {
             is Result.Error -> {
                 return@supervisorScope FetchNamedScheduleResult(
                     Result.Error(timetables.typedError),
@@ -79,7 +81,6 @@ class FetchNamedScheduleUseCase @Inject constructor(
                                             namedScheduleType,
                                             apiId,
                                             timetable
-
                                         )
 
                                         scheduleMapper(

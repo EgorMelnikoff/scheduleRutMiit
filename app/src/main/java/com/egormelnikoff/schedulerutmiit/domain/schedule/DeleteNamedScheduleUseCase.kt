@@ -22,8 +22,8 @@ class DeleteNamedScheduleUseCase @Inject constructor(
                 namedScheduleFormatted = null
             )
         }
-        val defaultNamedSchedule =
-            savedNamedSchedules.find { it.isDefault } ?: savedNamedSchedules.first()
+        val defaultNamedSchedule = savedNamedSchedules.find { it.isDefault }
+            ?: savedNamedSchedules.first()
 
         return OpenSavedScheduleResult(
             savedNamedSchedules = savedNamedSchedules,

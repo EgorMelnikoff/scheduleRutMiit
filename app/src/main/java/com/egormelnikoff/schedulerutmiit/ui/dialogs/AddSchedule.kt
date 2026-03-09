@@ -60,22 +60,27 @@ fun AddScheduleDialog(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         buttonTitle = stringResource(R.string.create),
                         onClick = {
-                            val errorMessages =
-                                checkScheduleParams(context, nameSchedule, startDate, endDate)
-                            if (errorMessages.isEmpty()) {
-                                scheduleViewModel.addCustomNamedSchedule(
-                                    nameSchedule.trim(),
-                                    startDate!!,
-                                    endDate!!
-                                )
-                                appUiState.appBackStack.navigateToSchedule()
-                                appUiState.appBackStack.onBack()
-                            } else {
-                                appUiState.scope.launch {
-                                    appUiState.snackBarHostState.showSnackbar(
-                                        message = errorMessages,
-                                        duration = SnackbarDuration.Long
+                            checkScheduleParams(
+                                context,
+                                nameSchedule,
+                                startDate,
+                                endDate
+                            ).let { errorMessages ->
+                                if (errorMessages.isEmpty()) {
+                                    scheduleViewModel.addCustomNamedSchedule(
+                                        nameSchedule.trim(),
+                                        startDate!!,
+                                        endDate!!
                                     )
+                                    appUiState.appBackStack.navigateToStartRage()
+                                    appUiState.appBackStack.onBack()
+                                } else {
+                                    appUiState.scope.launch {
+                                        appUiState.snackBarHostState.showSnackbar(
+                                            message = errorMessages,
+                                            duration = SnackbarDuration.Long
+                                        )
+                                    }
                                 }
                             }
                         }

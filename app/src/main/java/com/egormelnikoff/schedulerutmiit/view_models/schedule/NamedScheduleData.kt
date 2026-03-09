@@ -70,11 +70,11 @@ data class ScheduleData(
             var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
             var nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>? = null
 
-            if (schedule.scheduleEntity.recurrence != null) {
+            schedule.scheduleEntity.recurrence?.let {
                 periodicEventsForCalendar = splitEvents.second.getPeriodicEvents(
                     schedule.scheduleEntity.recurrence.interval
                 )
-            } else {
+            } ?: {
                 nonPeriodicEventsForCalendar = splitEvents.second.groupBy {
                     it.startDatetime!!.toLocalDate()
                 }

@@ -120,7 +120,7 @@ class ScheduleReposImpl @Inject constructor(
                 is Result.Error -> 1
 
                 is Result.Success -> {
-                    return parser.parseCurrentWeek(document.data)
+                    parser.parseCurrentWeek(document.data)
                 }
             }
         }
