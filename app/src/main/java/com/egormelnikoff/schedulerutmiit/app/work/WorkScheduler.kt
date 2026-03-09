@@ -18,7 +18,7 @@ class WorkScheduler @Inject constructor(
 ) {
     companion object {
         private const val UPDATING_SCHEDULE_PERIODICALLY = "updatingSchedulePeriodically"
-        private const val UPDATING_SCHEDULE_INTERVAL = 10L //Hours
+        private const val UPDATING_SCHEDULE_INTERVAL = 24L //Hours
         private const val UPDATING_WIDGET_PERIODICALLY = "updatingWidgetPeriodically"
         private const val UPDATING_WIDGET_INTERVAL = 15L //Minutes
     }

@@ -21,33 +21,35 @@ class RefreshNamedScheduleUseCase @Inject constructor(
     private val fetchNamedScheduleUseCase: FetchNamedScheduleUseCase
 ) {
     companion object {
-        private val SCHEDULE_UPDATE_THRESHOLD_MS = TimeUnit.HOURS.toMillis(24)
+        private val SCHEDULE_UPDATE_THRESHOLD_MS = TimeUnit.HOURS.toMillis(6)
     }
 
     suspend operator fun invoke(
         primaryKeyNamedSchedule: Long? = null,
         updating: Boolean = false
     ): RefreshNamedScheduleResult {
-        val namedScheduleToUpdate = primaryKeyNamedSchedule?.let {
-            scheduleRepos.getNamedScheduleById(primaryKeyNamedSchedule)?.namedScheduleEntity
-        } ?: scheduleRepos.getDefaultNamedScheduleEntity()
-        ?: scheduleRepos.getSavedNamedSchedules().firstOrNull()
+        val namedSchedule = primaryKeyNamedSchedule?.let {
+            scheduleRepos.getNamedScheduleById(primaryKeyNamedSchedule)
+                ?.namedScheduleEntity
+        }
+            ?: scheduleRepos.getDefaultNamedScheduleEntity()
+            ?: scheduleRepos.getSavedNamedSchedules().firstOrNull()
 
-        if (namedScheduleToUpdate != null && updating) {
+        if (namedSchedule != null && updating) {
             update(
-                namedScheduleEntity = namedScheduleToUpdate,
+                namedScheduleEntity = namedSchedule,
                 deletableOldSchedules = preferencesDataStore.schedulesDeletableFlow.first()
             )
         }
 
         return RefreshNamedScheduleResult(
             savedNamedSchedules = scheduleRepos.getSavedNamedSchedules(),
-            namedScheduleFormatted = namedScheduleToUpdate?.let {
+            namedScheduleFormatted = namedSchedule?.let {
                 scheduleRepos.getNamedScheduleById(
                     primaryKeyNamedSchedule = it.id
                 )
             },
-            isSaved = namedScheduleToUpdate != null
+            isSaved = namedSchedule != null
         )
     }
 
@@ -119,15 +121,6 @@ class RefreshNamedScheduleUseCase @Inject constructor(
 
         newNamedSchedule.schedules.forEach { updatedSchedule ->
             oldSchedulesMap[updatedSchedule.scheduleEntity.timetableId]?.let { oldSchedule ->
-                val updatedScheduleEntity =
-                    if (oldSchedule.scheduleEntity.recurrence?.currentNumber != updatedSchedule.scheduleEntity.recurrence?.currentNumber) {
-                        oldSchedule.scheduleEntity.copy(
-                            recurrence = updatedSchedule.scheduleEntity.recurrence
-                        )
-                    } else {
-                        oldSchedule.scheduleEntity
-                    }
-
                 val updatedEvents = mutableListOf<Event>()
                 val customEvents = oldSchedule.events.filter { it.isCustomEvent }
                 val defaultEvents = updatedSchedule.events.map { event ->
@@ -141,7 +134,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
                 updatedEvents.addAll(customEvents)
 
                 val updatedScheduleWithId = ScheduleFormatted(
-                    scheduleEntity = updatedScheduleEntity,
+                    scheduleEntity = updatedSchedule.scheduleEntity,
                     events = updatedEvents,
                     eventsExtraData = oldSchedule.eventsExtraData
                 )
