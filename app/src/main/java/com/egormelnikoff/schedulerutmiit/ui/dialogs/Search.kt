@@ -46,7 +46,6 @@ import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingAsyncImage
@@ -155,64 +154,55 @@ fun SearchDialog(
                     }
 
                     searchState.isEmptyQuery -> {
-                        Box(
+                        Column (
                             modifier = Modifier.verticalScroll(rememberScrollState())
                         ) {
-                            ColumnGroup(
-                                withBackground = false,
-                                items = searchState.history.map { query ->
-                                    {
-                                        Box(
-                                            modifier = Modifier.clip(MaterialTheme.shapes.medium)
-                                        ) {
-                                            ClickableItem(
-                                                verticalPadding = 8.dp,
-                                                horizontalPadding = 8.dp,
-                                                title = query.name,
-                                                leadingIcon = {
-                                                    Icon(
-                                                        imageVector = ImageVector.vectorResource(
-                                                            R.drawable.history
-                                                        ),
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                            searchState.history.forEach { query ->
+                                Box(
+                                    modifier = Modifier.clip(MaterialTheme.shapes.medium)
+                                ) {
+                                    ClickableItem(
+                                        verticalPadding = 8.dp,
+                                        horizontalPadding = 8.dp,
+                                        title = query.name,
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = ImageVector.vectorResource(R.drawable.history),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                            )
+                                        },
+                                        trailingIcon = {
+                                            IconButton(
+                                                modifier = Modifier.size(36.dp),
+                                                onClick = {
+                                                    searchViewModel.deleteQueryFromHistory(
+                                                        query.id
                                                     )
-                                                },
-                                                trailingIcon = {
-                                                    IconButton(
-                                                        modifier = Modifier.size(36.dp),
-                                                        onClick = {
-                                                            searchViewModel.deleteQueryFromHistory(
-                                                                query.id
-                                                            )
-                                                        }
-                                                    ) {
-                                                        Icon(
-                                                            modifier = Modifier.size(24.dp),
-                                                            imageVector = ImageVector.vectorResource(
-                                                                R.drawable.clear
-                                                            ),
-                                                            contentDescription = null,
-                                                            tint = MaterialTheme.colorScheme.onBackground
-                                                        )
-                                                    }
-                                                },
-                                                titleMaxLines = 2,
-                                                showClickLabel = false
+                                                }
                                             ) {
-                                                appBackStack.openPage(Route.Page.Schedule)
-                                                appBackStack.onBack()
-                                                scheduleViewModel.fetchNamedSchedule(
-                                                    query.name,
-                                                    query.apiId,
-                                                    query.namedScheduleType
+                                                Icon(
+                                                    modifier = Modifier.size(24.dp),
+                                                    imageVector = ImageVector.vectorResource(R.drawable.clear),
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onBackground
                                                 )
-                                                searchViewModel.setDefaultSearchState()
                                             }
-                                        }
+                                        },
+                                        titleMaxLines = 2,
+                                        showClickLabel = false
+                                    ) {
+                                        appBackStack.openPage(Route.Page.Schedule)
+                                        appBackStack.onBack()
+                                        scheduleViewModel.fetchNamedSchedule(
+                                            query.name,
+                                            query.apiId,
+                                            query.namedScheduleType
+                                        )
+                                        searchViewModel.setDefaultSearchState()
                                     }
                                 }
-                            )
+                            }
                         }
                     }
 
