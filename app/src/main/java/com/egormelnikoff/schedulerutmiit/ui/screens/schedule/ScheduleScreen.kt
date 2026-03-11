@@ -49,14 +49,12 @@ import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
-import java.time.LocalDateTime
 
 @Composable
 fun ScreenSchedule(
     appUiState: AppUiState,
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState?,
-    currentDateTime: LocalDateTime,
     appSettings: AppSettings,
     scheduleViewModel: ScheduleViewModel,
     settingsViewModel: SettingsViewModel,
@@ -270,8 +268,8 @@ fun ScreenSchedule(
     showNamedScheduleDialog?.let {
         ModalDialogNamedSchedule(
             namedScheduleEntity = showNamedScheduleDialog!!,
+            currentScheduleEntity = scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity,
             schedules = scheduleState.currentNamedScheduleData?.namedSchedule?.schedules,
-            currentDateTime = currentDateTime,
             scheduleViewModel = scheduleViewModel,
             appBackStack = appUiState.appBackStack,
 

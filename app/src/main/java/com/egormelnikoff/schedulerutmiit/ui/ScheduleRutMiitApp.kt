@@ -366,7 +366,6 @@ fun PageHost(
                         appUiState = appUiState,
                         scheduleState = scheduleState,
                         scheduleUiState = scheduleUiState,
-                        currentDateTime = currentDateTime,
                         appSettings = appSettings,
                         scheduleViewModel = scheduleViewModel,
                         settingsViewModel = settingsViewModel,

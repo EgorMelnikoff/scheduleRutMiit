@@ -294,7 +294,6 @@ fun ReviewScreen(
         if (showNamedScheduleDialog != null) {
             ModalDialogNamedSchedule(
                 namedScheduleEntity = showNamedScheduleDialog!!,
-                currentDateTime = currentDateTime,
                 scheduleViewModel = scheduleViewModel,
                 appBackStack = appBackStack,
 
