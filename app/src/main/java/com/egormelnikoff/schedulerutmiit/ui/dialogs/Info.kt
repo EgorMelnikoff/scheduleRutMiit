@@ -118,7 +118,8 @@ fun InfoDialog(
                             title = stringResource(R.string.github),
                             leadingIcon = {
                                 LeadingIcon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.logo_github)
+                                    imageVector = ImageVector.vectorResource(R.drawable.logo_github),
+                                    color = MaterialTheme.colorScheme.onBackground
                                 )
                             },
                             onLongClick = {
@@ -197,7 +198,7 @@ fun InfoDialog(
                         subtitle = stringResource(R.string.developer),
                         leadingIcon = {
                             LeadingTitle(
-                                title = AUTHOR
+                                title = AUTHOR.first()
                             )
                         },
                         onLongClick = {
