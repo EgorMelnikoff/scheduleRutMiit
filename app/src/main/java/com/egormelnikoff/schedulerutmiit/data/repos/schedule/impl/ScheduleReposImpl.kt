@@ -229,8 +229,7 @@ class ScheduleReposImpl @Inject constructor(
     }
 
     override suspend fun updateLastTimeUpdate(
-        primaryKeyNamedSchedule: Long,
-        lastTimeUpdate: Long
+        primaryKeyNamedSchedule: Long
     ) {
         dao.updateLastTimeUpdate(
             primaryKeyNamedSchedule = primaryKeyNamedSchedule,

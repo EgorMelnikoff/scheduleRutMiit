@@ -11,7 +11,7 @@ class ScheduleMapper @Inject constructor() {
         schedule: Schedule,
         primaryKeyNamedSchedule: Long,
         index: Int
-    ): ScheduleFormatted? {
+    ): ScheduleFormatted {
         val events = mutableListOf<Event>()
         schedule.periodicContent?.events
             ?.filter { it.startDatetime != null }
@@ -20,23 +20,22 @@ class ScheduleMapper @Inject constructor() {
             ?.filter { it.startDatetime != null }
             ?.let { events.addAll(it) }
 
-        if (events.isNotEmpty()) {
-            val scheduleEntity = ScheduleEntity(
-                namedScheduleId = primaryKeyNamedSchedule,
-                startDate = schedule.timetable.startDate,
-                endDate = schedule.timetable.endDate,
-                recurrence = schedule.periodicContent?.recurrence,
-                timetableType = schedule.timetable.type,
-                downloadUrl = schedule.timetable.downloadUrl,
-                timetableId = schedule.timetable.id,
-                isDefault = index == 0
-            )
-            return ScheduleFormatted(
-                scheduleEntity = scheduleEntity,
-                events = events,
-                eventsExtraData = listOf()
-            )
-        }
-        return null
+
+        val scheduleEntity = ScheduleEntity(
+            namedScheduleId = primaryKeyNamedSchedule,
+            startDate = schedule.timetable.startDate,
+            endDate = schedule.timetable.endDate,
+            recurrence = schedule.periodicContent?.recurrence,
+            timetableType = schedule.timetable.type,
+            downloadUrl = schedule.timetable.downloadUrl,
+            timetableId = schedule.timetable.id,
+            isDefault = index == 0
+        )
+
+        return ScheduleFormatted(
+            scheduleEntity = scheduleEntity,
+            events = events,
+            eventsExtraData = listOf()
+        )
     }
 }

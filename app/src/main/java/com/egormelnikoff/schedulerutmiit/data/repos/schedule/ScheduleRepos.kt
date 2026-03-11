@@ -95,8 +95,7 @@ interface ScheduleRepos {
     )
 
     suspend fun updateLastTimeUpdate(
-        primaryKeyNamedSchedule: Long,
-        lastTimeUpdate: Long
+        primaryKeyNamedSchedule: Long
     )
 
     suspend fun updateEventHidden(

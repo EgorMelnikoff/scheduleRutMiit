@@ -495,7 +495,7 @@ object Parser {
         startDate: LocalDate
     ): Recurrence {
         val today = LocalDate.now()
-        return if (today > startDate) {
+        return if (today > startDate && interval > 1) {
             val currentWeekIndex = abs(
                 ChronoUnit.WEEKS.between(
                     startDate.getFirstDayOfWeek(),

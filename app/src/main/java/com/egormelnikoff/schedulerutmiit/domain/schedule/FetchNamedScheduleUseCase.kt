@@ -18,7 +18,6 @@ import javax.inject.Inject
 
 class FetchNamedScheduleUseCase @Inject constructor(
     private val scheduleRepos: ScheduleRepos,
-    private val scheduleNormalizer: ScheduleNormalizer,
     private val scheduleMapper: ScheduleMapper
 ) {
     suspend operator fun invoke(
@@ -28,14 +27,13 @@ class FetchNamedScheduleUseCase @Inject constructor(
         apiId: Int,
         namedScheduleType: NamedScheduleType
     ): FetchNamedScheduleResult = supervisorScope {
-        val savedNamedSchedule = if (!fetchForce)
-            scheduleRepos.getNamedScheduleByApiId(apiId)
-        else null
-        savedNamedSchedule?.let {
-            return@supervisorScope FetchNamedScheduleResult(
-                Result.Success(savedNamedSchedule),
-                true
-            )
+        if (!fetchForce) {
+            scheduleRepos.getNamedScheduleByApiId(apiId)?.let {
+                return@supervisorScope FetchNamedScheduleResult(
+                    Result.Success(it),
+                    true
+                )
+            }
         }
 
         when (val timetables = scheduleRepos.fetchTimetables(
@@ -76,18 +74,15 @@ class FetchNamedScheduleUseCase @Inject constructor(
                             ).let { schedule ->
                                 when (schedule) {
                                     is Result.Success -> {
-                                        val normalizedSchedule = scheduleNormalizer(
-                                            schedule.data,
-                                            namedScheduleType,
-                                            apiId,
-                                            timetable
-                                        )
-
-                                        scheduleMapper(
-                                            normalizedSchedule,
-                                            primaryKeyNamedSchedule,
-                                            index
-                                        )
+                                        if (schedule.data.periodicContent?.events.isNullOrEmpty() || schedule.data.nonPeriodicContent?.events.isNullOrEmpty()) {
+                                            scheduleMapper(
+                                                schedule.data,
+                                                primaryKeyNamedSchedule,
+                                                index
+                                            )
+                                        } else {
+                                            throw ScheduleLoadException(TypedError.EmptyBodyError)
+                                        }
                                     }
 
                                     is Result.Error ->
@@ -98,7 +93,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
                     }
 
                 try {
-                    val schedules = deferredSchedules.awaitAll().filterNotNull()
+                    val schedules = deferredSchedules.awaitAll()
                     val namedScheduleEntity = NamedScheduleEntity(
                         id = primaryKeyNamedSchedule,
                         fullName = name,

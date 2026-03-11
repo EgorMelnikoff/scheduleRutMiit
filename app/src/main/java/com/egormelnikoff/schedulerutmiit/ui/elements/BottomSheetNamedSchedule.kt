@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
@@ -48,8 +49,8 @@ import java.util.Locale
 @Composable
 fun ModalDialogNamedSchedule(
     namedScheduleEntity: NamedScheduleEntity,
+    currentScheduleEntity: ScheduleEntity? = null,
     schedules: List<ScheduleFormatted>? = null,
-    currentDateTime: LocalDateTime,
 
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
@@ -89,7 +90,7 @@ fun ModalDialogNamedSchedule(
                         Column {
                             ClickableItem(
                                 title = schedule.scheduleEntity.timetableType.typeName,
-                                titleLabel = if (schedule.scheduleEntity.isDefault) {
+                                titleLabel = if (schedule.scheduleEntity.id == currentScheduleEntity?.id) {
                                     {
                                         Icon(
                                             modifier = Modifier.size(16.dp),
@@ -122,7 +123,6 @@ fun ModalDialogNamedSchedule(
                             ScheduleActionsDialog(
                                 showExpandedMenu = showScheduleDialog,
                                 namedScheduleEntity = namedScheduleEntity,
-                                today = currentDateTime,
                                 schedule = schedule,
 
                                 scheduleViewModel = scheduleViewModel,
@@ -164,6 +164,8 @@ fun ModalDialogNamedScheduleHeader(
     isDefaultNamedSchedule: Boolean,
     onDismiss: (NamedScheduleEntity?) -> Unit
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -240,11 +242,7 @@ fun ModalDialogNamedScheduleHeader(
         if (isSavedNamedSchedule) {
             LargeIconButton(
                 onClick = {
-                    scheduleViewModel.deleteNamedSchedule(
-                        namedScheduleEntity.id,
-                        isDefaultNamedSchedule
-                    )
-                    onDismiss(null)
+                    showDeleteDialog = true
                 },
                 colors = IconButtonDefaults.iconButtonColors().copy(
                     containerColor = MaterialTheme.colorScheme.error,
@@ -255,6 +253,23 @@ fun ModalDialogNamedScheduleHeader(
             )
         }
     }
+
+    if (showDeleteDialog) {
+        CustomAlertDialog(
+            dialogTitle = stringResource(R.string.delete_schedule),
+            dialogText = stringResource(R.string.do_you_want_continue),
+            onDismissRequest = {
+                showDeleteDialog = false
+            },
+            onConfirmation = {
+                scheduleViewModel.deleteNamedSchedule(
+                    namedScheduleEntity.id,
+                    isDefaultNamedSchedule
+                )
+                onDismiss(null)
+            }
+        )
+    }
 }
 
 
@@ -262,7 +277,6 @@ fun ModalDialogNamedScheduleHeader(
 fun ScheduleActionsDialog(
     showExpandedMenu: Boolean,
     namedScheduleEntity: NamedScheduleEntity,
-    today: LocalDateTime,
     schedule: ScheduleFormatted,
 
     scheduleViewModel: ScheduleViewModel,
@@ -275,6 +289,7 @@ fun ScheduleActionsDialog(
 
     onDismissParentDialog: (NamedScheduleEntity?) -> Unit
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
 
     AnimatedVisibility(
@@ -378,7 +393,7 @@ fun ScheduleActionsDialog(
                     )
                 }
             }
-            if (today.toLocalDate() > schedule.scheduleEntity.endDate) {
+            if (namedScheduleEntity.type != NamedScheduleType.MY && isSavedNamedSchedule) {
                 ClickableItem(
                     title = stringResource(R.string.delete),
                     titleTypography = MaterialTheme.typography.titleMedium,
@@ -393,6 +408,7 @@ fun ScheduleActionsDialog(
                     },
                     showClickLabel = false
                 ) {
+                    showDeleteDialog = true
                     scheduleViewModel.deleteSchedule(
                         namedScheduleEntity.id,
                         schedule.scheduleEntity.id
@@ -400,6 +416,22 @@ fun ScheduleActionsDialog(
                 }
             }
         }
+    }
+
+    if (showDeleteDialog) {
+        CustomAlertDialog(
+            dialogTitle = stringResource(R.string.delete_schedule),
+            dialogText = stringResource(R.string.do_you_want_continue),
+            onDismissRequest = {
+                showDeleteDialog = false
+            },
+            onConfirmation = {
+                scheduleViewModel.deleteSchedule(
+                    namedScheduleEntity.id,
+                    schedule.scheduleEntity.id
+                )
+            }
+        )
     }
 }
 

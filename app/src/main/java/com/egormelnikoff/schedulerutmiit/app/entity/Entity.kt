@@ -51,7 +51,9 @@ data class ScheduleEntity(
     val recurrence: Recurrence?,
     @ColumnInfo(name = "isDefaultSchedule")
     val isDefault: Boolean = false,
-)
+) {
+    fun getKey(): Int = "$startDate${timetableType.name}".hashCode()
+}
 
 @Keep
 @Entity(tableName = "Events")
