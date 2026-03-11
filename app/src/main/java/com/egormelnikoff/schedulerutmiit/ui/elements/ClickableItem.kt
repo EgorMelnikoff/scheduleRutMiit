@@ -168,7 +168,7 @@ fun LeadingAsyncImage(
         )
         if (painter.state !is AsyncImagePainter.State.Success) {
             LeadingTitle(
-                title = title,
+                title = title.first(),
                 titleSize = titleSize,
                 imageSize = imageSize,
             )
@@ -178,7 +178,7 @@ fun LeadingAsyncImage(
 
 @Composable
 fun LeadingTitle(
-    title: String,
+    title: Char,
     titleSize: TextUnit = 12.sp,
     imageSize: Dp = 32.dp
 ) {
@@ -195,7 +195,7 @@ fun LeadingTitle(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = title.first().uppercase(),
+            text = title.uppercase(),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
             maxLines = 1,
