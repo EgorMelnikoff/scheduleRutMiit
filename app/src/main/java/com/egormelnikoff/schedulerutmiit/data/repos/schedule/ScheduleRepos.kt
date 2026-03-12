@@ -79,6 +79,12 @@ interface ScheduleRepos {
     ): Int
 
 
+    suspend fun replaceSchedule(
+        oldScheduleId: Long,
+        namedScheduleId: Long,
+        newScheduleFormatted: ScheduleFormatted
+    )
+
     suspend fun updatePrioritySavedNamedSchedules(
         primaryKeyNamedSchedule: Long
     )

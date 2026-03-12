@@ -18,6 +18,8 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import javax.inject.Inject
 
@@ -51,6 +53,7 @@ class ScheduleReposImpl @Inject constructor(
         return networkHelper.callNetwork(
             requestType = "Schedule",
             requestParams = "Type: ${namedScheduleType}; ApiId: $apiId; TimetableId: $timetableId",
+            timeoutMs = 10000,
             callApi = {
                 miitApi.getSchedule(
                     namedScheduleType.typeName,
@@ -72,6 +75,7 @@ class ScheduleReposImpl @Inject constructor(
         networkHelper.callNetwork(
             requestType = "ScheduleParser",
             requestParams = "Id: $apiId; Start date: ${timetable.startDate}",
+            timeoutMs = 10000,
             callParser = {
                 Jsoup.connect(
                     Endpoints.scheduleUrl(
@@ -129,7 +133,7 @@ class ScheduleReposImpl @Inject constructor(
     /* INSERT */
     override suspend fun insertNamedSchedule(
         namedSchedule: NamedScheduleFormatted
-    ): Long {
+    ): Long = withContext(Dispatchers.IO) {
         val namedScheduleId = dao.insertNamedSchedule(namedSchedule)
 
         val currentCount = dao.getCount()
@@ -138,69 +142,79 @@ class ScheduleReposImpl @Inject constructor(
                 dao.getNamedScheduleById(namedScheduleId)!!
             dao.setDefaultNamedSchedule(namedScheduleEntityWithNewId.namedScheduleEntity.id)
         }
-        return namedScheduleId
+        return@withContext namedScheduleId
     }
 
     override suspend fun insertSchedule(
         primaryKeySchedule: Long,
         scheduleFormatted: ScheduleFormatted
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.insertSchedule(
             namedScheduleId = primaryKeySchedule,
             scheduleFormatted = scheduleFormatted,
         )
     }
 
+    override suspend fun replaceSchedule(
+        oldScheduleId: Long,
+        namedScheduleId: Long,
+        newScheduleFormatted: ScheduleFormatted
+    ) = withContext(Dispatchers.IO) {
+        dao.replaceSchedule(oldScheduleId, namedScheduleId, newScheduleFormatted)
+    }
+
     override suspend fun insertEvent(
         event: Event
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.insertEvent(event)
     }
 
     override suspend fun insertEventExtraData(
         eventExtraData: EventExtraData
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.insertEventExtraData(eventExtraData)
     }
 
     /* GET */
-    override suspend fun getSavedNamedSchedules(): List<NamedScheduleEntity> {
-        return dao.getAll()
-    }
+    override suspend fun getSavedNamedSchedules(): List<NamedScheduleEntity> =
+        withContext(Dispatchers.IO) {
+            return@withContext dao.getAll()
+        }
 
     override suspend fun getNamedScheduleById(
         primaryKeyNamedSchedule: Long
-    ): NamedScheduleFormatted? {
-        return dao.getNamedScheduleById(primaryKeyNamedSchedule)
+    ): NamedScheduleFormatted? = withContext(Dispatchers.IO) {
+        return@withContext dao.getNamedScheduleById(primaryKeyNamedSchedule)
     }
 
     override suspend fun getNamedScheduleByApiId(
         apiId: Int
-    ): NamedScheduleFormatted? {
-        return dao.getNamedScheduleByApiId(apiId)
+    ): NamedScheduleFormatted? = withContext(Dispatchers.IO) {
+        return@withContext dao.getNamedScheduleByApiId(apiId)
     }
 
-    override suspend fun getDefaultNamedScheduleEntity(): NamedScheduleEntity? {
-        return dao.getDefaultNamedScheduleEntity()
-    }
+    override suspend fun getDefaultNamedScheduleEntity(): NamedScheduleEntity? =
+        withContext(Dispatchers.IO) {
+            return@withContext dao.getDefaultNamedScheduleEntity()
+        }
 
     override suspend fun getEventExtraByEventId(
         primaryKeyEvent: Long
-    ): EventExtraData? {
-        return dao.getEventExtraByEventId(primaryKeyEvent)
+    ): EventExtraData? = withContext(Dispatchers.IO) {
+        return@withContext dao.getEventExtraByEventId(primaryKeyEvent)
     }
 
     override suspend fun getCountEventsPerDate(
         date: String,
         scheduleId: Long
-    ): Int {
-        return dao.getCountEventsPerDate(date, scheduleId)
+    ): Int = withContext(Dispatchers.IO) {
+        return@withContext dao.getCountEventsPerDate(date, scheduleId)
     }
 
     /* UPDATE */
     override suspend fun updatePrioritySavedNamedSchedules(
         primaryKeyNamedSchedule: Long
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.setDefaultNamedSchedule(primaryKeyNamedSchedule)
         dao.setNonDefaultNamedSchedule(primaryKeyNamedSchedule)
     }
@@ -208,7 +222,7 @@ class ScheduleReposImpl @Inject constructor(
     override suspend fun updatePrioritySchedule(
         primaryKeyNamedSchedule: Long,
         primaryKeySchedule: Long
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.setDefaultSchedule(primaryKeySchedule)
         dao.setNonDefaultSchedule(
             primaryKeyNamedSchedule = primaryKeyNamedSchedule,
@@ -220,7 +234,7 @@ class ScheduleReposImpl @Inject constructor(
         primaryKeyNamedSchedule: Long,
         type: NamedScheduleType,
         newName: String
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.updateName(
             primaryKeyNamedSchedule = primaryKeyNamedSchedule,
             fullName = newName,
@@ -230,14 +244,14 @@ class ScheduleReposImpl @Inject constructor(
 
     override suspend fun updateLastTimeUpdate(
         primaryKeyNamedSchedule: Long
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.updateLastTimeUpdate(
             primaryKeyNamedSchedule = primaryKeyNamedSchedule,
             lastTimeUpdate = System.currentTimeMillis()
         )
     }
 
-    override suspend fun updateCustomEvent(event: Event) {
+    override suspend fun updateCustomEvent(event: Event) = withContext(Dispatchers.IO) {
         dao.deleteEventById(event.id)
         dao.insertEvent(event)
     }
@@ -245,7 +259,7 @@ class ScheduleReposImpl @Inject constructor(
     override suspend fun updateEventHidden(
         eventPrimaryKey: Long,
         isHidden: Boolean
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.updateEventHidden(eventPrimaryKey, isHidden)
     }
 
@@ -253,7 +267,7 @@ class ScheduleReposImpl @Inject constructor(
         primaryKeySchedule: Long,
         primaryKeyEvent: Long,
         comment: String
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.updateCommentEvent(primaryKeySchedule, primaryKeyEvent, comment)
     }
 
@@ -261,7 +275,7 @@ class ScheduleReposImpl @Inject constructor(
         primaryKeySchedule: Long,
         primaryKeyEvent: Long,
         tag: Int
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.updateTagEvent(primaryKeySchedule, primaryKeyEvent, tag)
     }
 
@@ -270,7 +284,7 @@ class ScheduleReposImpl @Inject constructor(
     override suspend fun deleteNamedScheduleById(
         primaryKeyNamedSchedule: Long,
         isDefault: Boolean
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.delete(primaryKeyNamedSchedule)
         if (isDefault) {
             val namedSchedules = dao.getAll()
@@ -282,7 +296,7 @@ class ScheduleReposImpl @Inject constructor(
 
     override suspend fun deleteScheduleById(
         primaryKeySchedule: Long
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.deleteScheduleById(primaryKeySchedule)
         dao.deleteEventsByScheduleId(primaryKeySchedule)
         dao.deleteEventsExtraByScheduleId(primaryKeySchedule)
@@ -290,14 +304,14 @@ class ScheduleReposImpl @Inject constructor(
 
     override suspend fun deleteEventById(
         primaryKeyEvent: Long
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.deleteEventById(primaryKeyEvent)
         dao.deleteEventExtraByEventId(primaryKeyEvent)
     }
 
     override suspend fun deleteEventExtraByEventId(
         primaryKeyEvent: Long
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dao.deleteEventExtraByEventId(primaryKeyEvent)
     }
 }

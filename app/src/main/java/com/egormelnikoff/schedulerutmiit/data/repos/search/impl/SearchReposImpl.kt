@@ -13,9 +13,11 @@ import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
 import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import javax.inject.Inject
 
@@ -90,7 +92,8 @@ class SearchReposImpl @Inject constructor(
                                 }
 
                                 is Result.Success -> {
-                                    subjects += parser.parseListSubjectsByPage(result.data).toSubjects()
+                                    subjects += parser.parseListSubjectsByPage(result.data)
+                                        .toSubjects()
                                 }
                             }
                         }
@@ -125,7 +128,7 @@ class SearchReposImpl @Inject constructor(
             callParser = null
         )
 
-    override suspend fun saveSearchQuery(searchQuery: SearchQuery) {
+    override suspend fun saveSearchQuery(searchQuery: SearchQuery) = withContext(Dispatchers.IO) {
         val savedQuery = dao.getSearchQueryByApiId(searchQuery.apiId)
         savedQuery?.let {
             dao.deleteSearchQuery(savedQuery.id)
@@ -133,15 +136,15 @@ class SearchReposImpl @Inject constructor(
         dao.saveSearchQuery(searchQuery)
     }
 
-    override suspend fun getAllSearchQuery(): List<SearchQuery> {
-        return dao.getAllSearchQuery()
+    override suspend fun getAllSearchQuery(): List<SearchQuery> = withContext(Dispatchers.IO) {
+        return@withContext dao.getAllSearchQuery()
     }
 
-    override suspend fun deleteAllSearchQuery() {
+    override suspend fun deleteAllSearchQuery() = withContext(Dispatchers.IO) {
         dao.deleteAllSearchQuery()
     }
 
-    override suspend fun deleteSearchQuery(queryPrimaryKey: Long) {
+    override suspend fun deleteSearchQuery(queryPrimaryKey: Long) = withContext(Dispatchers.IO) {
         dao.deleteSearchQuery(queryPrimaryKey)
     }
 
