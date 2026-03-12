@@ -53,19 +53,19 @@ object Parser {
             Locale("ru", "RU")
         }
 
-        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", locale)
+        val parserFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", locale)
 
         return@withContext if (timetable.type == TimetableType.PERIODIC) {
             val periodicContent = document.parsePeriodicSchedule(
                 timetable.startDate,
                 currentGroup,
-                formatter
+                parserFormatter
             )
             if (periodicContent.events.isNullOrEmpty()) {
                 val nonPeriodicContent = document.parseNonPeriodicSchedule(
                     isPeriodic = true,
                     currentGroup = currentGroup,
-                    formatter = formatter
+                    formatter = parserFormatter
                 )
                 Schedule(
                     timetable = timetable,
@@ -89,7 +89,7 @@ object Parser {
         } else {
             val nonPeriodicContent = document.parseNonPeriodicSchedule(
                 currentGroup = currentGroup,
-                formatter = formatter
+                formatter = parserFormatter
             )
 
             Schedule(
