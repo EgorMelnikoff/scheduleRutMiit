@@ -4,16 +4,13 @@ import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.work.worker.ScheduleWorker
 import com.egormelnikoff.schedulerutmiit.app.work.worker.WidgetWorker
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.Dao
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class WorkScheduler @Inject constructor(
-    private val dao: Dao,
     private val workManager: WorkManager
 ) {
     companion object {
@@ -22,18 +19,6 @@ class WorkScheduler @Inject constructor(
         private const val UPDATING_WIDGET_PERIODICALLY = "updatingWidgetPeriodically"
         private const val UPDATING_WIDGET_INTERVAL = 15L //Minutes
     }
-
-    fun isScheduledScheduleWork(): Boolean {
-        val workInfos = workManager.getWorkInfosByTag(UPDATING_SCHEDULE_PERIODICALLY).get()
-        val workInfo = workInfos.firstOrNull()
-
-        return workInfo != null && (workInfo.state == WorkInfo.State.ENQUEUED || workInfo.state == WorkInfo.State.RUNNING)
-    }
-
-    suspend fun haveDefaultSchedule(): Boolean {
-        return dao.getDefaultNamedScheduleEntity() != null
-    }
-
 
     fun startPeriodicScheduleUpdating() {
         val constraints = Constraints.Builder()
@@ -50,7 +35,7 @@ class WorkScheduler @Inject constructor(
 
         workManager.enqueueUniquePeriodicWork(
             UPDATING_SCHEDULE_PERIODICALLY,
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.KEEP,
             scheduleWorkRequest
         )
     }
@@ -69,7 +54,7 @@ class WorkScheduler @Inject constructor(
 
         workManager.enqueueUniquePeriodicWork(
             UPDATING_WIDGET_PERIODICALLY,
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.KEEP,
             widgetWorkRequest
         )
     }
