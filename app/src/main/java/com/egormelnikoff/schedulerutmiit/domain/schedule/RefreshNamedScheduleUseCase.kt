@@ -139,8 +139,8 @@ class RefreshNamedScheduleUseCase @Inject constructor(
                 updatedEvents.addAll(defaultEvents)
                 updatedEvents.addAll(customEvents)
 
-                scheduleRepos.deleteScheduleById(oldSchedule.scheduleEntity.id)
-                scheduleRepos.insertSchedule(
+                scheduleRepos.replaceSchedule(
+                    oldSchedule.scheduleEntity.id,
                     oldNamedSchedule.namedScheduleEntity.id,
                     ScheduleFormatted(
                         scheduleEntity = updatedSchedule.scheduleEntity,
@@ -170,7 +170,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
     ) {
         oldNamedSchedule.schedules.forEach { oldSchedule ->
             val stillExists = newNamedSchedule.schedules.any {
-                it.scheduleEntity.timetableId == oldSchedule.scheduleEntity.timetableId
+                it.scheduleEntity.getKey() == oldSchedule.scheduleEntity.getKey()
             }
             val isOutdated = LocalDate.now() > oldSchedule.scheduleEntity.endDate
             if (!stillExists && isOutdated) {

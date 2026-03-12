@@ -53,18 +53,23 @@ interface Dao {
         }
     }
 
+    @Transaction
     @Insert(onConflict = REPLACE)
     suspend fun insertNamedScheduleEntity(namedScheduleEntity: NamedScheduleEntity): Long
 
+    @Transaction
     @Insert(onConflict = REPLACE)
     suspend fun insertScheduleEntity(scheduleEntity: ScheduleEntity): Long
 
+    @Transaction
     @Insert(onConflict = REPLACE)
     suspend fun insertEvent(event: Event)
 
+    @Transaction
     @Insert(onConflict = REPLACE)
     suspend fun insertEventExtraData(eventExtraData: EventExtraData)
 
+    @Transaction
     @Insert(onConflict = REPLACE)
     suspend fun saveSearchQuery(searchQuery: SearchQuery)
 
@@ -118,33 +123,54 @@ interface Dao {
         }
     }
 
+    @Transaction
     @Query("DELETE FROM NamedSchedules WHERE NamedScheduleId = :primaryKey")
     suspend fun deleteNamedScheduleById(primaryKey: Long)
 
+    @Transaction
     @Query("DELETE FROM Schedules WHERE namedScheduleId = :id")
     suspend fun deleteSchedulesByNamedScheduleId(id: Long)
 
+    @Transaction
     @Query("DELETE FROM Schedules WHERE ScheduleId = :id")
     suspend fun deleteScheduleById(id: Long)
 
+    @Transaction
     @Query("DELETE FROM Events WHERE eventScheduleId = :id")
     suspend fun deleteEventsByScheduleId(id: Long)
 
+    @Transaction
     @Query("DELETE FROM Events WHERE EventId = :id")
     suspend fun deleteEventById(id: Long)
 
+    @Transaction
     @Query("DELETE FROM EventsExtraData WHERE eventExtraScheduleId = :id")
     suspend fun deleteEventsExtraByScheduleId(id: Long)
 
+    @Transaction
     @Query("DELETE FROM EventsExtraData WHERE EventExtraId = :id")
     suspend fun deleteEventExtraByEventId(id: Long)
 
+    @Transaction
     @Query("DELETE FROM SearchHistory WHERE id = :queryPrimaryKey")
     suspend fun deleteSearchQuery(queryPrimaryKey: Long)
 
+    @Transaction
     @Query("DELETE FROM SearchHistory")
     suspend fun deleteAllSearchQuery()
 
+
+    @Transaction
+    suspend fun replaceSchedule(
+        oldScheduleId: Long,
+        namedScheduleId: Long,
+        newScheduleFormatted: ScheduleFormatted
+    ) {
+        deleteScheduleById(oldScheduleId)
+        insertSchedule(namedScheduleId, newScheduleFormatted)
+    }
+
+    @Transaction
     @Query("UPDATE eventsextradata SET tag = :tag WHERE eventExtraScheduleId = :schedulePrimaryKey AND EventExtraId = :eventPrimaryKey")
     suspend fun updateTagEvent(
         schedulePrimaryKey: Long,
@@ -152,6 +178,7 @@ interface Dao {
         tag: Int
     )
 
+    @Transaction
     @Query("UPDATE eventsextradata SET comment = :comment WHERE eventExtraScheduleId = :schedulePrimaryKey AND EventExtraId = :eventPrimaryKey")
     suspend fun updateCommentEvent(
         schedulePrimaryKey: Long,
@@ -159,18 +186,21 @@ interface Dao {
         comment: String
     )
 
+    @Transaction
     @Query("UPDATE Events SET isHidden = :isHidden WHERE EventId = :eventPrimaryKey")
     suspend fun updateEventHidden(
         eventPrimaryKey: Long,
         isHidden: Boolean
     )
 
+    @Transaction
     @Query("UPDATE namedschedules SET lastTimeUpdate = :lastTimeUpdate WHERE NamedScheduleId = :primaryKeyNamedSchedule")
     suspend fun updateLastTimeUpdate(
         primaryKeyNamedSchedule: Long,
         lastTimeUpdate: Long
     )
 
+    @Transaction
     @Query("UPDATE namedschedules SET fullName = :fullName, shortName = :shortName WHERE NamedScheduleId = :primaryKeyNamedSchedule")
     suspend fun updateName(
         primaryKeyNamedSchedule: Long,
