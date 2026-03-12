@@ -127,7 +127,7 @@ fun ModalDialogNamedSchedule(
                                 appBackStack = appBackStack,
 
                                 isSavedNamedSchedule = isSavedNamedSchedule,
-                                isDefaultSchedule = schedule.scheduleEntity.isDefault,
+                                isDefaultSchedule = schedule.scheduleEntity.id == currentScheduleEntity?.id,
                                 haveDownloadUrl = schedule.scheduleEntity.downloadUrl != null,
                                 haveNotEmptySchedules = haveNotEmptySchedules,
                                 haveHiddenEvents = haveHiddenEvents,
