@@ -25,6 +25,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.app.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
@@ -50,7 +51,6 @@ fun ScheduleListView(
     paddingBottom: Dp
 ) {
     val scheduleData = scheduleState.currentNamedScheduleData!!.scheduleData!!
-    val formatter = DateTimeFormatter.ofPattern("d MMMM")
 
     if (scheduleData.fullEventList.isNotEmpty()) {
         LazyColumn(
@@ -63,7 +63,7 @@ fun ScheduleListView(
                 stickyHeader {
                     DateHeader(
                         date = events.first,
-                        formatter = formatter
+                        formatter = dayMonthNameFormatter
                     )
                 }
 
@@ -152,7 +152,7 @@ fun DateHeader(
                     TextStyle.SHORT_STANDALONE,
                     Locale.getDefault()
                 ).replaceFirstChar { it.uppercase() }
-            }, ${formatter.format(date)}",
+            }, ${date.format(formatter)}",
             style = MaterialTheme.typography.titleMedium,
             color = color
         )

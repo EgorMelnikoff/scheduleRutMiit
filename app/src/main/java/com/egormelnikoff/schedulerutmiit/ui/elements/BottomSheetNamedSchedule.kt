@@ -32,6 +32,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
@@ -42,8 +44,6 @@ import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,8 +62,6 @@ fun ModalDialogNamedSchedule(
     onOpenNamedSchedule: (() -> Unit)? = null,
     onDismiss: (NamedScheduleEntity?) -> Unit
 ) {
-    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-
     CustomModalBottomSheet(
         onDismiss = {
             onDismiss(null)
@@ -100,8 +98,8 @@ fun ModalDialogNamedSchedule(
                                         )
                                     }
                                 } else null,
-                                subtitle = "${schedule.scheduleEntity.startDate.format(formatter)} - " +
-                                        "${schedule.scheduleEntity.endDate.format(formatter)}",
+                                subtitle = "${schedule.scheduleEntity.startDate.format(dayMonthYearFormatter)} - " +
+                                        "${schedule.scheduleEntity.endDate.format(dayMonthYearFormatter)}",
                                 onClick = {
                                     showScheduleDialog = !showScheduleDialog
                                 },
@@ -187,12 +185,7 @@ fun ModalDialogNamedScheduleHeader(
                 val lastTimeUpdate = LocalDateTime.ofInstant(
                     Instant.ofEpochMilli(namedScheduleEntity.lastTimeUpdate),
                     ZoneId.systemDefault()
-                ).format(
-                    DateTimeFormatter.ofPattern(
-                        "d MMMM",
-                        Locale.getDefault()
-                    )
-                )
+                ).format(dayMonthNameFormatter)
 
                 Text(
                     text = "${stringResource(R.string.current_on)} $lastTimeUpdate",

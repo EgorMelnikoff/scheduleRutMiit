@@ -40,6 +40,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
@@ -48,7 +49,6 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 import kotlinx.coroutines.flow.Flow
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun NewsScreen(
@@ -144,7 +144,6 @@ fun NewsShort(
     val transition by animateFloatAsState(
         targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
     )
-    val formatter = DateTimeFormatter.ofPattern("d MMMM")
 
     Column(
         modifier = Modifier
@@ -179,7 +178,7 @@ fun NewsShort(
                 maxLines = 3
             )
             DateNews(
-                date = newsShort.date.format(formatter)
+                date = newsShort.date.format(dayMonthNameFormatter)
             )
         }
     }

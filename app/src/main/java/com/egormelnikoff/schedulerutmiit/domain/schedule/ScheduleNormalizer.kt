@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.yearDateMonthFormatter
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
@@ -9,7 +10,6 @@ import com.egormelnikoff.schedulerutmiit.app.model.PeriodicContent
 import com.egormelnikoff.schedulerutmiit.app.model.Schedule
 import com.egormelnikoff.schedulerutmiit.app.model.Timetable
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
-import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import javax.inject.Inject
 
@@ -63,12 +63,11 @@ class ScheduleNormalizer @Inject constructor(
                                 )
                             }
                         }
-                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
                         val currentPeriodNumber = scheduleRepos.fetchCurrentWeek(
                             namedScheduleType,
                             apiId,
-                            startDate = formatter.format(timetable.startDate),
+                            startDate = timetable.startDate.format(yearDateMonthFormatter),
                             type = timetable.id.trim()
                         )
 

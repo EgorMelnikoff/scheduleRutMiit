@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.ChooseDateTimeButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
@@ -34,7 +35,6 @@ import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun AddScheduleDialog(
@@ -120,7 +120,7 @@ fun AddScheduleDialog(
                         {
                             ChooseDateTimeButton(
                                 modifier = Modifier.fillMaxWidth(),
-                                title = startDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                                title = startDate?.format(dayMonthYearFormatter)
                                     ?: stringResource(R.string.start_date)
                             ) {
                                 focusManager.clearFocus()
@@ -129,7 +129,7 @@ fun AddScheduleDialog(
                         }, {
                             ChooseDateTimeButton(
                                 modifier = Modifier.fillMaxWidth(),
-                                title = endDate?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                                title = endDate?.format(dayMonthYearFormatter)
                                     ?: stringResource(R.string.end_date),
                                 enabled = startDate != null
                             ) {

@@ -20,6 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatterWithTime
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
@@ -29,7 +31,6 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
@@ -40,9 +41,6 @@ fun HiddenEventsDialog(
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack
 ) {
-    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-    val dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, hh:MM")
-
     Scaffold(
         topBar = {
             CustomTopAppBar(
@@ -79,12 +77,12 @@ fun HiddenEventsDialog(
                                         Locale.getDefault()
                                     ).replaceFirstChar { c -> c.uppercase() }
                                 val startTime = event.startDatetime.toLocalTimeWithTimeZone()
-                                        .format(timeFormatter)
+                                        .format(hourMinuteFormatter)
                                 val endTime = event.endDatetime!!.toLocalTimeWithTimeZone()
-                                        .format(timeFormatter)
+                                        .format(hourMinuteFormatter)
                                 "${event.typeName} ($day, $startTime - $endTime)"
                             } else {
-                                "${event.typeName} (${event.startDatetime!!.format(dateTimeFormatter)})"
+                                "${event.typeName} (${event.startDatetime!!.format(dayMonthYearFormatterWithTime)})"
                             },
                             subtitleMaxLines = 2,
                             showClickLabel = false,

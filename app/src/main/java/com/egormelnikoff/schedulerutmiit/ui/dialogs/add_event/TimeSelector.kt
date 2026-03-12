@@ -8,10 +8,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.ui.elements.ChooseDateTimeButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun TimeSelector(
@@ -27,7 +27,7 @@ fun TimeSelector(
             {
                 ChooseDateTimeButton(
                     modifier = Modifier.fillMaxWidth(),
-                    title = startTime?.format(DateTimeFormatter.ofPattern("HH:mm"))
+                    title = startTime?.format(hourMinuteFormatter)
                         ?: stringResource(R.string.start_time),
                     imageVector = ImageVector.vectorResource(R.drawable.time)
                 ) {
@@ -37,7 +37,7 @@ fun TimeSelector(
             }, {
                 ChooseDateTimeButton(
                     modifier = Modifier.fillMaxWidth(),
-                    title = endTime?.format(DateTimeFormatter.ofPattern("HH:mm"))
+                    title = endTime?.format(hourMinuteFormatter)
                         ?: stringResource(R.string.end_time),
                     imageVector = ImageVector.vectorResource(R.drawable.time),
                     enabled = startTime != null

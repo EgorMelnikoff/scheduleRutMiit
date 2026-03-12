@@ -39,6 +39,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.app.di.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
@@ -52,7 +53,6 @@ import dagger.hilt.EntryPoints
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 class EventsWidget : GlanceAppWidget() {
     private lateinit var gson: Gson
@@ -100,7 +100,6 @@ class EventsWidget : GlanceAppWidget() {
         onUpdate: () -> Unit
     ) {
         val today = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("d MMMM")
 
         val subHeader = StringBuilder().apply {
             if (widgetData?.namedScheduleEntity != null) {
@@ -123,16 +122,16 @@ class EventsWidget : GlanceAppWidget() {
                 val header = when (widgetData.reviewData.displayedDate) {
                     today -> {
                         "${glanceStringResource(R.string.today)}, " +
-                                "${widgetData.reviewData.displayedDate.format(formatter)}"
+                                "${widgetData.reviewData.displayedDate.format(dayMonthNameFormatter)}"
                     }
 
                     today.plusDays(1) -> {
                         "${glanceStringResource(R.string.tomorrow)}, " +
-                                "${widgetData.reviewData.displayedDate.format(formatter)}"
+                                "${widgetData.reviewData.displayedDate.format(dayMonthNameFormatter)}"
                     }
 
                     else -> {
-                        widgetData.reviewData.displayedDate.format(formatter)
+                        widgetData.reviewData.displayedDate.format(dayMonthNameFormatter)
                     }
                 }
 

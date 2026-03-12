@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
@@ -74,7 +75,6 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import kotlinx.coroutines.delay
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -482,7 +482,7 @@ fun EventHeader(
                     }
                 } else "${
                     event.startDatetime!!.toLocalDate()
-                        .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                        .format(dayMonthYearFormatter)
                 }"
             )
             CustomFilterChip(
