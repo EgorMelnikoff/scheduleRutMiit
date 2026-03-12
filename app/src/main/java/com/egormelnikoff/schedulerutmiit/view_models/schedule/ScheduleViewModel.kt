@@ -62,6 +62,7 @@ class ScheduleViewModel @Inject constructor(
     val isDataLoading = _isDataLoading.asStateFlow()
 
     private var fetchScheduleJob: Job? = null
+    private var updateScheduleJob: Job? = null
 
     init {
         refreshScheduleState()
@@ -71,7 +72,16 @@ class ScheduleViewModel @Inject constructor(
         fetchScheduleJob?.cancel()
         updateState(
             isLoading = false,
-            isUpdating = false,
+            isRefreshing = false,
+            isError = false
+        )
+    }
+
+    fun cancelRefresh() {
+        updateScheduleJob?.cancel()
+        updateState(
+            isLoading = false,
+            isRefreshing = false,
             isError = false
         )
     }
@@ -81,10 +91,11 @@ class ScheduleViewModel @Inject constructor(
         updating: Boolean = false,
         showLoading: Boolean = true
     ) {
-        viewModelScope.launch {
+        val newUpdateScheduleJob = viewModelScope.launch {
+            updateScheduleJob?.cancelAndJoin()
             updateState(
                 isLoading = showLoading,
-                isUpdating = updating,
+                isRefreshing = updating,
                 isError = false,
             )
 
@@ -100,11 +111,12 @@ class ScheduleViewModel @Inject constructor(
                 savedNamedSchedules = result.savedNamedSchedules,
                 currentNamedSchedule = result.namedScheduleFormatted,
                 isLoading = false,
-                isUpdating = false,
+                isRefreshing = false,
                 isSaved = result.isSaved,
             )
             if (isDataLoading.value) _isDataLoading.value = false
         }
+        updateScheduleJob = newUpdateScheduleJob
     }
 
 
@@ -173,7 +185,7 @@ class ScheduleViewModel @Inject constructor(
                 isSaved = true,
                 isError = false,
                 isLoading = false,
-                isUpdating = false
+                isRefreshing = false
             )
         }
     }
@@ -384,7 +396,7 @@ class ScheduleViewModel @Inject constructor(
     private fun updateState(
         savedNamedSchedules: List<NamedScheduleEntity>? = null,
         currentNamedSchedule: NamedScheduleFormatted? = null,
-        isUpdating: Boolean? = null,
+        isRefreshing: Boolean? = null,
         isError: Boolean? = null,
         isLoading: Boolean? = null,
         isSaved: Boolean? = null
@@ -392,7 +404,7 @@ class ScheduleViewModel @Inject constructor(
         _scheduleState.update {
             it.copy(
                 savedNamedSchedules = savedNamedSchedules ?: it.savedNamedSchedules,
-                isRefreshing = isUpdating ?: it.isRefreshing,
+                isRefreshing = isRefreshing ?: it.isRefreshing,
                 isError = isError ?: it.isError,
                 isLoading = isLoading ?: it.isLoading,
                 isSaved = isSaved ?: it.isSaved

@@ -98,6 +98,12 @@ fun ScreenSchedule(
                     showBackDialog = true
                 }
             }
+
+            if (scheduleState.isRefreshing) {
+                BackHandler {
+                    scheduleViewModel.cancelRefresh()
+                }
+            }
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
