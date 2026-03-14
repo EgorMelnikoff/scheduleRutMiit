@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event
 
-import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -36,15 +35,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
-import com.egormelnikoff.schedulerutmiit.app.entity.Group
-import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.RecurrenceRule
-import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.validator.EventValidation
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -57,9 +54,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ListParam
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 
@@ -67,7 +62,7 @@ import java.time.ZoneOffset
 fun AddEditEventDialog(
     namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
-    editableEvent: Event? = null,
+    editableEvent: EventEntity? = null,
     appUiState: AppUiState,
     currentDateTime: LocalDateTime,
 
@@ -117,7 +112,7 @@ fun AddEditEventDialog(
                             stringResource(R.string.save)
                         } ?: stringResource(R.string.create),
                         onClick = {
-                            val errorMessages = checkEventParams(
+                            when (val result = EventValidation.validate(
                                 context = context,
                                 name = nameEvent,
                                 date = dateEvent,
@@ -126,58 +121,61 @@ fun AddEditEventDialog(
                                 roomsList = roomsList,
                                 lecturersList = lecturersList,
                                 groupsList = groupsList
-                            )
-                            if (errorMessages.isEmpty()) {
-                                val startDateTime = LocalDateTime.of(dateEvent, startTime)
-                                    .atZone(ZoneId.systemDefault())
-                                    .withZoneSameInstant(ZoneOffset.UTC)
-                                    .toLocalDateTime()
-                                val endDateTime = LocalDateTime.of(dateEvent, endTime)
-                                    .atZone(ZoneId.systemDefault())
-                                    .withZoneSameInstant(ZoneOffset.UTC)
-                                    .toLocalDateTime()
+                            )) {
+                                is EventValidation.Success -> {
+                                    val startDateTime = LocalDateTime.of(dateEvent, startTime)
+                                        .atZone(ZoneId.systemDefault())
+                                        .withZoneSameInstant(ZoneOffset.UTC)
+                                        .toLocalDateTime()
+                                    val endDateTime = LocalDateTime.of(dateEvent, endTime)
+                                        .atZone(ZoneId.systemDefault())
+                                        .withZoneSameInstant(ZoneOffset.UTC)
+                                        .toLocalDateTime()
 
-                                val event = Event(
-                                    id = editableEvent?.id ?: 0,
-                                    scheduleId = scheduleEntity.id,
-                                    name = nameEvent.trim(),
-                                    typeName = typeEvent,
+                                    val event = EventEntity(
+                                        id = editableEvent?.id ?: 0,
+                                        scheduleId = scheduleEntity.id,
+                                        name = nameEvent.trim(),
+                                        typeName = typeEvent,
 
-                                    startDatetime = startDateTime,
-                                    endDatetime = endDateTime,
-                                    lecturers = lecturersList,
-                                    rooms = roomsList,
-                                    groups = groupsList,
-                                    isCustomEvent = true,
-                                    timeSlotName = getTimeSlotName(
-                                        startDateTime = startDateTime,
-                                        endDateTime = endDateTime
-                                    ),
-                                    recurrenceRule = scheduleEntity.recurrence?.let {
-                                        RecurrenceRule(
-                                            frequency = "WEEKLY",
-                                            interval = currentInterval
-                                        )
-                                    },
-                                    periodNumber = if (currentInterval > 1) currentPeriod else 1
-                                )
-                                editableEvent?.let {
-                                    if (editableEvent != event) {
-                                        scheduleViewModel.updateCustomEvent(
-                                            scheduleEntity,
-                                            event
+                                        startDatetime = startDateTime,
+                                        endDatetime = endDateTime,
+                                        lecturers = lecturersList,
+                                        rooms = roomsList,
+                                        groups = groupsList,
+                                        isCustomEvent = true,
+                                        timeSlotName = getTimeSlotName(
+                                            startDateTime = startDateTime,
+                                            endDateTime = endDateTime
+                                        ),
+                                        recurrenceRule = scheduleEntity.recurrence?.let {
+                                            RecurrenceRule(
+                                                frequency = "WEEKLY",
+                                                interval = currentInterval
+                                            )
+                                        },
+                                        periodNumber = if (currentInterval > 1) currentPeriod else 1
+                                    )
+                                    editableEvent?.let {
+                                        if (editableEvent != event) {
+                                            scheduleViewModel.updateCustomEvent(
+                                                scheduleEntity,
+                                                event
+                                            )
+                                        }
+                                    } ?: scheduleViewModel.addCustomEvent(
+                                        scheduleEntity, event
+                                    )
+                                    appUiState.appBackStack.onBack()
+                                }
+
+                                is EventValidation.Error -> {
+                                    appUiState.scope.launch {
+                                        appUiState.snackBarHostState.showSnackbar(
+                                            message = result.message,
+                                            duration = SnackbarDuration.Long
                                         )
                                     }
-                                } ?: scheduleViewModel.addCustomEvent(
-                                    scheduleEntity, event
-                                )
-                                appUiState.appBackStack.onBack()
-                            } else {
-                                appUiState.scope.launch {
-                                    appUiState.snackBarHostState.showSnackbar(
-                                        message = errorMessages,
-                                        duration = SnackbarDuration.Long
-                                    )
                                 }
                             }
                         }
@@ -449,44 +447,4 @@ fun RecurrenceField(
             }
         }
     }
-}
-
-fun checkEventParams(
-    context: Context,
-    name: String,
-    date: LocalDate?,
-    startTime: LocalTime?,
-    endTime: LocalTime?,
-    roomsList: List<Room>,
-    lecturersList: List<Lecturer>,
-    groupsList: List<Group>
-): String {
-    val errorString = StringBuilder().apply {
-        if (name.isEmpty()) {
-            append("${context.getString(R.string.no_name_specified)}\n")
-        }
-        if (date == null) {
-            append("${context.getString(R.string.no_date_specified)}\n")
-        }
-        if (startTime == null) {
-            append("${context.getString(R.string.no_start_time_specified)}\n")
-        }
-        if (endTime == null) {
-            append("${context.getString(R.string.no_end_time_specified)}\n")
-        }
-        if (startTime != null && endTime != null && startTime > endTime) {
-            append("${context.getString(R.string.time_is_chosen_incorrectly)}\n")
-        }
-
-        if (!roomsList.all { it.name.isNotEmpty() }) {
-            append("${context.getString(R.string.room_number_not_specified)}\n")
-        }
-        if (!lecturersList.all { it.fullFio.isNotEmpty() }) {
-            append("${context.getString(R.string.provide_the_names_of_all_lecturers)}\n")
-        }
-        if (!groupsList.all { it.name.isNotEmpty() }) {
-            append(context.getString(R.string.provide_the_numbers_of_all_groups))
-        }
-    }.trimEnd()
-    return errorString.toString()
 }

@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +23,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
+import com.egormelnikoff.schedulerutmiit.app.validator.ScheduleValidation
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.ChooseDateTimeButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
@@ -60,26 +59,25 @@ fun AddScheduleDialog(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         buttonTitle = stringResource(R.string.create),
                         onClick = {
-                            checkScheduleParams(
+                            when (val result = ScheduleValidation.validate(
                                 context,
                                 nameSchedule,
                                 startDate,
                                 endDate
-                            ).let { errorMessages ->
-                                if (errorMessages.isEmpty()) {
+                            )) {
+                                is ScheduleValidation.Success -> {
                                     scheduleViewModel.addCustomNamedSchedule(
                                         nameSchedule.trim(),
-                                        startDate!!,
-                                        endDate!!
+                                        result.startDate,
+                                        result.endDate
                                     )
                                     appUiState.appBackStack.navigateToStartRage()
                                     appUiState.appBackStack.onBack()
-                                } else {
+                                }
+
+                                is ScheduleValidation.Error -> {
                                     appUiState.scope.launch {
-                                        appUiState.snackBarHostState.showSnackbar(
-                                            message = errorMessages,
-                                            duration = SnackbarDuration.Long
-                                        )
+                                        appUiState.snackBarHostState.showSnackbar(result.message)
                                     }
                                 }
                             }
@@ -167,24 +165,4 @@ fun AddScheduleDialog(
             )
         }
     }
-}
-
-fun checkScheduleParams(
-    context: Context,
-    name: String,
-    startDate: LocalDate?,
-    endDate: LocalDate?,
-): String {
-    val errorString = StringBuilder().apply {
-        if (name.isEmpty()) {
-            append("${context.getString(R.string.no_name_specified)}\n")
-        }
-        if (startDate == null) {
-            append("${context.getString(R.string.no_start_date_specified)}\n")
-        }
-        if (endDate == null) {
-            append("${context.getString(R.string.no_end_date_specified)}\n")
-        }
-    }.trimEnd()
-    return errorString.toString()
 }
