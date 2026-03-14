@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.News
+import com.egormelnikoff.schedulerutmiit.app.model.NewsContent
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
@@ -82,7 +82,7 @@ fun NewsDialog(
 
 @Composable
 fun NewsDialogContent(
-    news: News
+    news: NewsContent
 ) {
     Scaffold { paddingValues ->
         Box(
@@ -90,11 +90,12 @@ fun NewsDialogContent(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            val spacerHeight = if (!news.images.isNullOrEmpty()) {
+            val spacerHeight = if (news.images.isNotEmpty()) {
                 230.dp
             } else paddingValues.calculateTopPadding()
-            if (!news.images.isNullOrEmpty()) {
-                val model = rememberAsyncImagePainter(news.images!!.first())
+
+            if (news.images.isNotEmpty()) {
+                val model = rememberAsyncImagePainter(news.images.first())
                 val transition by animateFloatAsState(
                     targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
                 )
@@ -130,7 +131,7 @@ fun NewsDialogContent(
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        text = news.title.trim(),
+                        text = news.news.title.trim(),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         overflow = TextOverflow.Ellipsis,
@@ -140,7 +141,7 @@ fun NewsDialogContent(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
                         DateNews(
-                            date = news.hisdateDisplay
+                            date = news.news.hisdateDisplay
                         )
                     }
                     Spacer(
@@ -149,7 +150,7 @@ fun NewsDialogContent(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        news.elements?.forEach { element ->
+                        news.elements.forEach { element ->
                             when (element.first) {
                                 "p", "li" -> {
                                     val text = element.second as AnnotatedString
@@ -183,13 +184,13 @@ fun NewsDialogContent(
                             }
                         }
 
-                        if (news.images != null && news.images!!.size > 1) {
+                        if (news.images.size > 1) {
                             LazyRow(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 contentPadding = PaddingValues(horizontal = 16.dp)
                             ) {
-                                items(news.images!!) { link ->
+                                items(news.images) { link ->
                                     Image(
                                         modifier = Modifier
                                             .height(200.dp)

@@ -6,11 +6,10 @@ import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_MIIT_URL
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 
-class PagingNewsSource (
+class PagingNewsSource(
     private val miitApi: MiitApi,
     private val networkHelper: NetworkHelper,
     private val resourcesManager: ResourcesManager
@@ -39,17 +38,20 @@ class PagingNewsSource (
 
         return when (response) {
             is Result.Error -> {
-                LoadResult.Error(Exception(TypedError.getErrorMessage(resourcesManager, response.typedError)))
+                LoadResult.Error(
+                    Exception(
+                        TypedError.getErrorMessage(
+                            resourcesManager,
+                            response.typedError
+                        )
+                    )
+                )
             }
 
             is Result.Success -> {
                 val nextKey = if (currentPage < response.data.maxPage) currentPage + 1 else null
 
-                val updatedItems = response.data.items
-                    .filter { it.secondary.text != "Наши защиты" }
-                    .map { newsShort ->
-                        newsShort.apply { thumbnail = "$BASE_MIIT_URL$thumbnail" }
-                    }
+                val updatedItems = response.data.items.filter { it.secondary.text != "Наши защиты" }
 
                 LoadResult.Page(
                     data = updatedItems,
