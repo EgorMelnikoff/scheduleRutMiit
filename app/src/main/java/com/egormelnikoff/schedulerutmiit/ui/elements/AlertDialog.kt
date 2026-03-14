@@ -39,9 +39,7 @@ fun CustomAlertDialog(
                 style = MaterialTheme.typography.bodyLarge,
             )
         },
-        onDismissRequest = {
-            onDismissRequest()
-        },
+        onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
                 onClick = {

@@ -28,7 +28,7 @@ fun AdviceDialog(
     painter: Painter
 ){
     Dialog(
-        onDismissRequest = { onDismissRequest() }
+        onDismissRequest = onDismissRequest
     ) {
         Column(
             modifier = Modifier
