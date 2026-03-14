@@ -132,7 +132,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
                 updatedEvents.addAll(defaultEvents)
                 updatedEvents.addAll(customEvents)
 
-                scheduleRepos.replaceSchedule(
+                scheduleRepos.replaceScheduleEvents(
                     oldSchedule.scheduleEntity.id,
                     oldNamedSchedule.namedScheduleEntity.id,
                     ScheduleFormatted(

@@ -36,6 +36,14 @@ interface Dao {
             scheduleFormatted.scheduleEntity.copy(namedScheduleId = namedScheduleId)
         val scheduleId = insertScheduleEntity(updatedSchedule)
 
+        insertEventsWithExtra(scheduleFormatted, scheduleId)
+    }
+
+    @Transaction
+    suspend fun insertEventsWithExtra(
+        scheduleFormatted: ScheduleFormatted,
+        scheduleId: Long
+    ) {
         scheduleFormatted.eventsExtraData.forEach { eventExtraData ->
             insertEventExtraData(
                 eventExtraData.copy(
@@ -161,13 +169,14 @@ interface Dao {
 
 
     @Transaction
-    suspend fun replaceSchedule(
+    suspend fun replaceScheduleEvents(
         oldScheduleId: Long,
         namedScheduleId: Long,
         newScheduleFormatted: ScheduleFormatted
     ) {
-        deleteScheduleById(oldScheduleId)
-        insertSchedule(namedScheduleId, newScheduleFormatted)
+        deleteEventsByScheduleId(oldScheduleId)
+        deleteEventsExtraByScheduleId(oldScheduleId)
+        insertEventsWithExtra(newScheduleFormatted, oldScheduleId)
     }
 
     @Transaction

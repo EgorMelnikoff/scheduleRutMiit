@@ -79,7 +79,7 @@ interface ScheduleRepos {
     ): Int
 
 
-    suspend fun replaceSchedule(
+    suspend fun replaceScheduleEvents(
         oldScheduleId: Long,
         namedScheduleId: Long,
         newScheduleFormatted: ScheduleFormatted

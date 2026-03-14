@@ -155,12 +155,12 @@ class ScheduleReposImpl @Inject constructor(
         )
     }
 
-    override suspend fun replaceSchedule(
+    override suspend fun replaceScheduleEvents(
         oldScheduleId: Long,
         namedScheduleId: Long,
         newScheduleFormatted: ScheduleFormatted
     ) = withContext(Dispatchers.IO) {
-        dao.replaceSchedule(oldScheduleId, namedScheduleId, newScheduleFormatted)
+        dao.replaceScheduleEvents(oldScheduleId, namedScheduleId, newScheduleFormatted)
     }
 
     override suspend fun insertEvent(
