@@ -1,9 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.view_models.schedule
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
@@ -19,7 +20,7 @@ import kotlin.math.abs
 
 @Keep
 data class NamedScheduleData(
-    val namedSchedule: NamedScheduleFormatted? = null,
+    val namedSchedule: NamedScheduleFormatted,
     val scheduleData: ScheduleData? = null
 ) {
     companion object {
@@ -30,7 +31,7 @@ data class NamedScheduleData(
                 ?: namedSchedule.schedules.firstOrNull()
         }
 
-        fun invoke(
+        operator fun invoke(
             namedScheduleFormatted: NamedScheduleFormatted?
         ): NamedScheduleData? {
             namedScheduleFormatted ?: return null
@@ -51,14 +52,14 @@ data class NamedScheduleData(
 
 @Keep
 data class ScheduleData(
-    val scheduleEntity: ScheduleEntity? = null,
-    val periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null,
-    val nonPeriodicEvents: Map<LocalDate, List<Event>>? = null,
-    val fullEventList: List<Pair<LocalDate, List<Event>>> = listOf(),
-    val hiddenEvents: List<Event> = listOf(),
+    val scheduleEntity: ScheduleEntity,
+    val periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>? = null,
+    val nonPeriodicEvents: Map<LocalDate, List<EventEntity>>? = null,
+    val fullEventList: List<Pair<LocalDate, List<EventEntity>>> = listOf(),
+    val hiddenEvents: List<EventEntity> = listOf(),
     val eventsExtraData: List<EventExtraData> = listOf(),
-    val schedulePagerData: SchedulePagerData? = null,
-    val reviewData: ReviewData? = null
+    val schedulePagerData: SchedulePagerData,
+    val reviewData: ReviewData
 ) {
     companion object {
         operator fun invoke(
@@ -67,8 +68,8 @@ data class ScheduleData(
             val today = LocalDateTime.now()
             val splitEvents = schedule.events.partition { it.isHidden }
 
-            var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
-            var nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>? = null
+            var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<EventEntity>>>? = null
+            var nonPeriodicEventsForCalendar: Map<LocalDate, List<EventEntity>>? = null
 
             schedule.scheduleEntity.recurrence?.let {
                 periodicEventsForCalendar = splitEvents.second.getPeriodicEvents(
@@ -76,7 +77,7 @@ data class ScheduleData(
                 )
             } ?: {
                 nonPeriodicEventsForCalendar = splitEvents.second.groupBy {
-                    it.startDatetime!!.toLocalDate()
+                    it.startDatetime.toLocalDate()
                 }
             }
 
@@ -114,9 +115,9 @@ data class ScheduleData(
             )
         }
 
-        fun List<Event>.getPeriodicEvents(
+        fun List<EventEntity>.getPeriodicEvents(
             interval: Int
-        ): Map<Int, Map<DayOfWeek, List<Event>>> {
+        ): Map<Int, Map<DayOfWeek, List<EventEntity>>> {
             return buildMap {
                 for (week in 1..interval) {
                     val eventsForWeek = this@getPeriodicEvents.filter { event ->
@@ -124,7 +125,7 @@ data class ScheduleData(
                         (rule.interval == 1 || event.periodNumber == week)
                     }
                     if (eventsForWeek.isNotEmpty()) {
-                        this[week] = eventsForWeek.groupBy { it.startDatetime!!.dayOfWeek }
+                        this[week] = eventsForWeek.groupBy { it.startDatetime.dayOfWeek }
                     } else {
                         this[week] = emptyMap()
                     }
@@ -135,29 +136,31 @@ data class ScheduleData(
         private fun getFullEventsList(
             today: LocalDate,
             scheduleEntity: ScheduleEntity,
-            periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
-            nonPeriodicEventsList: List<Event>?
-        ): List<Pair<LocalDate, List<Event>>> {
-            var fullEventsList = listOf<Event>()
+            periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>?,
+            nonPeriodicEventsList: List<EventEntity>?
+        ): List<Pair<LocalDate, List<EventEntity>>> {
+            var fullEventsList = listOf<EventEntity>()
             when {
                 (periodicEvents == null && nonPeriodicEventsList == null) -> return listOf()
-                (periodicEvents != null) -> {
+                (periodicEvents != null && scheduleEntity.recurrence != null) -> {
                     val currentStartDate = maxOf(today, scheduleEntity.startDate)
                     val events = buildList {
                         val weeksNumbers = getWeekNumbers(
                             currentStartDate = currentStartDate,
-                            scheduleEntity = scheduleEntity
+                            startDate = scheduleEntity.startDate,
+                            endDate = scheduleEntity.endDate,
+                            recurrence = scheduleEntity.recurrence
                         )
                         weeksNumbers.forEachIndexed { index, week ->
                             val eventsInWeek = periodicEvents[week]?.values.orEmpty().flatten()
                             val currentWeekStartDate = currentStartDate.plusWeeks(index.toLong())
                             eventsInWeek.forEach { event ->
                                 val daysToAdd =
-                                    event.startDatetime!!.dayOfWeek.value - currentStartDate.dayOfWeek.value
+                                    event.startDatetime.dayOfWeek.value - currentStartDate.dayOfWeek.value
                                 val newEventDate = currentWeekStartDate.plusDays(daysToAdd.toLong())
                                 val newEvent = event.copy(
                                     startDatetime = newEventDate.atTime(event.startDatetime.toLocalTime()),
-                                    endDatetime = newEventDate.atTime(event.endDatetime?.toLocalTime()),
+                                    endDatetime = newEventDate.atTime(event.endDatetime.toLocalTime()),
                                 )
                                 add(newEvent)
                             }
@@ -172,28 +175,30 @@ data class ScheduleData(
             }
 
             return fullEventsList
-                .filter { it.startDatetime?.toLocalDate()?.isAfter(today.minusDays(1)) == true }
+                .filter { it.startDatetime.toLocalDate()?.isAfter(today.minusDays(1)) == true }
                 .sortedBy { it.startDatetime }
-                .groupBy { it.startDatetime!!.toLocalDate() }
+                .groupBy { it.startDatetime.toLocalDate() }
                 .toList()
         }
 
         private fun getWeekNumbers(
             currentStartDate: LocalDate,
-            scheduleEntity: ScheduleEntity
+            startDate: LocalDate,
+            endDate: LocalDate,
+            recurrence: Recurrence
         ): List<Int> {
             val weeksCount = ChronoUnit.WEEKS.between(
-                scheduleEntity.startDate.getFirstDayOfWeek(),
-                scheduleEntity.endDate.getFirstDayOfWeek()
+                startDate.getFirstDayOfWeek(),
+                endDate.getFirstDayOfWeek()
             ).toInt() + 1
 
             val weeksRemaining = ChronoUnit.WEEKS.between(
                 currentStartDate.getFirstDayOfWeek(),
-                scheduleEntity.endDate.getFirstDayOfWeek()
+                endDate.getFirstDayOfWeek()
             ).toInt()
 
             return (weeksCount - weeksRemaining..weeksCount).map { week ->
-                ((week + scheduleEntity.recurrence!!.firstWeekNumber) % scheduleEntity.recurrence.interval)
+                ((week + recurrence.firstWeekNumber) % recurrence.interval)
                     .plus(1)
             }
         }
@@ -267,15 +272,15 @@ data class SchedulePagerData(
 @Keep
 data class ReviewData(
     val displayedDate: LocalDate,
-    val events: Map<String, List<Event>> = mapOf(),
+    val events: Map<String, List<EventEntity>> = mapOf(),
     val countEventsForWeek: Int = 0
 ) {
     companion object {
         operator fun invoke(
             date: LocalDateTime,
             scheduleEntity: ScheduleEntity,
-            periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
-            nonPeriodicEvents: Map<LocalDate, List<Event>>?
+            periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>?,
+            nonPeriodicEvents: Map<LocalDate, List<EventEntity>>?
         ): ReviewData {
             var displayedDate = date.toLocalDate()
             var events = date.toLocalDate().getEventsForDate(
@@ -291,7 +296,7 @@ data class ReviewData(
             )
 
             val isFinishedEvents = events.isNotEmpty() && date.toLocalTime().isAfter(
-                events.values.flatten().last().endDatetime!!.toLocalTimeWithTimeZone()
+                events.values.flatten().last().endDatetime.toLocalTimeWithTimeZone()
             )
 
             val nextDay = events.isEmpty() && date.toLocalTime().isAfter(eveningTime)
@@ -322,16 +327,16 @@ data class ReviewData(
         private fun getEventCountForWeek(
             date: LocalDate,
             scheduleEntity: ScheduleEntity,
-            periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
-            nonPeriodicEvents: Map<LocalDate, List<Event>>?
+            periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>?,
+            nonPeriodicEvents: Map<LocalDate, List<EventEntity>>?
         ): Int {
             if (scheduleEntity.startDate > date || date > scheduleEntity.endDate) return 0
             var eventsCountForWeek = 0
             when {
-                (periodicEvents != null) -> {
+                (periodicEvents != null && scheduleEntity.recurrence != null) -> {
                     val currentWeek = date.getCurrentWeek(
                         startDate = scheduleEntity.startDate,
-                        recurrence = scheduleEntity.recurrence!!
+                        recurrence = scheduleEntity.recurrence
                     )
                     eventsCountForWeek = periodicEvents[currentWeek]?.values?.flatten()?.size ?: 0
                 }
@@ -348,7 +353,7 @@ data class ReviewData(
 
         private fun getNonPeriodicEventsCountForWeek(
             date: LocalDate,
-            nonPeriodicEvents: Map<LocalDate, List<Event>>
+            nonPeriodicEvents: Map<LocalDate, List<EventEntity>>
         ): Int {
             var count = 0
             val firstDayOfWeek = date.getFirstDayOfWeek()

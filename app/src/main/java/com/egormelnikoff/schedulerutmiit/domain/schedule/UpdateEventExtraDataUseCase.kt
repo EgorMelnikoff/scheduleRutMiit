@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.OpenSavedScheduleResult
@@ -12,7 +12,7 @@ class UpdateEventExtraDataUseCase @Inject constructor(
     suspend operator fun invoke(
         primaryKeyNamedSchedule: Long,
         primaryKeySchedule: Long,
-        event: Event,
+        event: EventEntity,
         tag: Int,
         comment: String
     ): OpenSavedScheduleResult {

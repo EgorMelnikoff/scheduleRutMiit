@@ -11,11 +11,6 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
-import com.google.gson.JsonParseException
-import com.google.gson.TypeAdapter
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonToken
-import com.google.gson.stream.JsonWriter
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -57,20 +52,21 @@ data class ScheduleEntity(
 
 @Keep
 @Entity(tableName = "Events")
-data class Event(
+data class EventEntity(
     @ColumnInfo(name = "EventId")
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     @ColumnInfo(name = "eventScheduleId")
-    val scheduleId: Long,
-    val startDatetime: LocalDateTime?,
-    val endDatetime: LocalDateTime?,
+    val scheduleId: Long = -1,
     val isHidden: Boolean = false,
     val isCustomEvent: Boolean = false,
+
+    val startDatetime: LocalDateTime,
+    val endDatetime: LocalDateTime,
     @Embedded
     val recurrenceRule: RecurrenceRule?,
     val periodNumber: Int?,
-    val name: String?,
+    val name: String,
     val typeName: String?,
     val timeSlotName: String?,
     val lecturers: List<Lecturer>?,
@@ -79,39 +75,39 @@ data class Event(
 ) {
     fun customHashCode(forceNonPeriodic: Boolean = false): Int {
         val hashString = when {
-            forceNonPeriodic -> "$name$typeName${startDatetime!!.dayOfWeek}${startDatetime.toLocalTime()}$groups"
-            (recurrenceRule != null) -> "$name$typeName${startDatetime!!.dayOfWeek}${startDatetime.toLocalTime()}${recurrenceRule.interval}$periodNumber$groups"
+            forceNonPeriodic -> "$name$typeName${startDatetime.dayOfWeek}${startDatetime.toLocalTime()}$groups"
+            (recurrenceRule != null) -> "$name$typeName${startDatetime.dayOfWeek}${startDatetime.toLocalTime()}${recurrenceRule.interval}$periodNumber$groups"
             else -> "$name$typeName$startDatetime$groups"
         }
         return hashString.hashCode()
     }
 
-    fun customEquals(other: Event): Boolean {
+    fun customEquals(other: EventEntity): Boolean {
         return this.customHashCode() == other.customHashCode()
     }
 
     fun customToString(context: Context): String {
         return StringBuilder().apply {
-            append("${context.getString(R.string._class)}: ${this@Event.name}")
-            this@Event.typeName?.let {
+            append("${context.getString(R.string._class)}: ${this@EventEntity.name}")
+            this@EventEntity.typeName?.let {
                 append("\n${context.getString(R.string.class_type)}: $it")
             }
-            append("\n${context.getString(R.string.time)}: ${this@Event.startDatetime!!.toLocalTimeWithTimeZone()} - ${this@Event.endDatetime!!.toLocalTimeWithTimeZone()}")
+            append("\n${context.getString(R.string.time)}: ${this@EventEntity.startDatetime.toLocalTimeWithTimeZone()} - ${this@EventEntity.endDatetime.toLocalTimeWithTimeZone()}")
 
-            this@Event.timeSlotName?.let {
+            this@EventEntity.timeSlotName?.let {
                 append(" ($it)")
             }
 
-            if (!this@Event.rooms.isNullOrEmpty()) {
-                append("\n${context.getString(R.string.place)}: ${this@Event.rooms.joinToString { it.name }}")
+            if (!this@EventEntity.rooms.isNullOrEmpty()) {
+                append("\n${context.getString(R.string.place)}: ${this@EventEntity.rooms.joinToString { it.name }}")
             }
 
-            if (!this@Event.lecturers.isNullOrEmpty()) {
-                append("\n${context.getString(R.string.lecturers)}: ${this@Event.lecturers.joinToString { it.shortFio }}")
+            if (!this@EventEntity.lecturers.isNullOrEmpty()) {
+                append("\n${context.getString(R.string.lecturers)}: ${this@EventEntity.lecturers.joinToString { it.shortFio }}")
             }
 
-            if (!this@Event.groups.isNullOrEmpty()) {
-                append("\n${context.getString(R.string.groups)}: ${this@Event.groups.joinToString { it.name }}")
+            if (!this@EventEntity.groups.isNullOrEmpty()) {
+                append("\n${context.getString(R.string.groups)}: ${this@EventEntity.groups.joinToString { it.name }}")
             }
         }.toString()
     }
@@ -160,17 +156,17 @@ data class ScheduleFormatted(
     @Embedded
     val scheduleEntity: ScheduleEntity,
     @Relation(
-        entity = Event::class,
+        entity = EventEntity::class,
         parentColumn = "ScheduleId",
         entityColumn = "eventScheduleId"
     )
-    val events: List<Event>,
+    val events: List<EventEntity>,
     @Relation(
         entity = EventExtraData::class,
         parentColumn = "ScheduleId",
         entityColumn = "eventExtraScheduleId"
     )
-    val eventsExtraData: List<EventExtraData>
+    val eventsExtraData: List<EventExtraData> = listOf()
 )
 
 @Keep
@@ -206,55 +202,3 @@ data class Room(
     val name: String,
     val hint: String
 )
-
-class NamedScheduleTypeAdapter : TypeAdapter<NamedScheduleType>() {
-    override fun write(out: JsonWriter, value: NamedScheduleType?) {
-        if (value == null) {
-            out.nullValue()
-            return
-        }
-
-        out.beginObject()
-        out.name("id").value(value.id)
-        out.name("name").value(value.typeName)
-        out.endObject()
-    }
-
-    override fun read(reader: JsonReader): NamedScheduleType {
-        return when (reader.peek()) {
-
-            JsonToken.NUMBER -> {
-                when (reader.nextInt()) {
-                    0 -> NamedScheduleType.GROUP
-                    1 -> NamedScheduleType.PERSON
-                    2 -> NamedScheduleType.ROOM
-                    3 -> NamedScheduleType.MY
-                    else -> throw JsonParseException("Unknown NamedScheduleType id")
-                }
-            }
-
-            JsonToken.BEGIN_OBJECT -> {
-                var id: Int? = null
-
-                reader.beginObject()
-                while (reader.hasNext()) {
-                    when (reader.nextName()) {
-                        "id" -> id = reader.nextInt()
-                        else -> reader.skipValue()
-                    }
-                }
-                reader.endObject()
-
-                when (id) {
-                    0 -> NamedScheduleType.GROUP
-                    1 -> NamedScheduleType.PERSON
-                    2 -> NamedScheduleType.ROOM
-                    3 -> NamedScheduleType.MY
-                    else -> throw JsonParseException("Unknown NamedScheduleType id")
-                }
-            }
-
-            else -> throw JsonParseException("Unexpected token for NamedScheduleType")
-        }
-    }
-}

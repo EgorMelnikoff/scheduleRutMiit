@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.app.extension
 
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.enums.DayPeriod
@@ -40,38 +40,40 @@ fun LocalDate.getCurrentWeek(
     return ((weeksFromStart + recurrence.firstWeekNumber) % recurrence.interval).plus(1)
 }
 
-fun List<Event>.getGroupedEvents(): Map<String, List<Event>> {
+fun List<EventEntity>.getGroupedEvents(): Map<String, List<EventEntity>> {
     if (this.isEmpty()) return mapOf()
     return this
         .sortedBy { event ->
-            event.startDatetime!!.toLocalTime()
+            event.startDatetime.toLocalTime()
         }.groupBy { event ->
             Pair(
-                event.startDatetime!!.toLocalTime(),
-                event.endDatetime!!.toLocalTime()
+                event.startDatetime.toLocalTime(),
+                event.endDatetime.toLocalTime()
             ).toString()
         }
 }
 
 fun LocalDate.getEventsForDate(
     scheduleEntity: ScheduleEntity,
-    periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
-    nonPeriodicEvents: Map<LocalDate, List<Event>>?
-): Map<String, List<Event>> {
+    periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>?,
+    nonPeriodicEvents: Map<LocalDate, List<EventEntity>>?
+): Map<String, List<EventEntity>> {
     if (scheduleEntity.startDate > this || this > scheduleEntity.endDate) return mapOf()
 
-    var displayedEvents = listOf<Event>()
+    var displayedEvents = listOf<EventEntity>()
     when {
-        (periodicEvents != null) -> {
+        (periodicEvents != null && scheduleEntity.recurrence != null) -> {
             val currentWeek = this@getEventsForDate.getCurrentWeek(
                 startDate = scheduleEntity.startDate,
-                recurrence = scheduleEntity.recurrence!!
+                recurrence = scheduleEntity.recurrence
             )
-            val events = periodicEvents[currentWeek]!!.filter {
+            val events = periodicEvents[currentWeek]?.filter {
                 it.key == this@getEventsForDate.dayOfWeek
-            }.values.flatten()
+            }?.values?.flatten()
 
-            displayedEvents = events
+            events?.let {
+                displayedEvents = events
+            }
         }
 
         (nonPeriodicEvents != null) -> {
@@ -85,15 +87,15 @@ fun LocalDate.getEventsForDate(
     return displayedEvents.getGroupedEvents()
 }
 
-fun Map<Int, Map<DayOfWeek, List<Event>>>.getEventsByDayAndWeek(
+fun Map<Int, Map<DayOfWeek, List<EventEntity>>>.getEventsByDayAndWeek(
     dayOfWeek: DayOfWeek,
     week: Int
-): Map<String, List<Event>> {
-    val events = this[week]!!.filter {
+): Map<String, List<EventEntity>> {
+    val events = this[week]?.filter {
         it.key == dayOfWeek
-    }.values.flatten()
+    }?.values?.flatten()
 
-    return events.getGroupedEvents()
+    return events?.getGroupedEvents().orEmpty()
 }
 
 fun String.getShortName(type: NamedScheduleType): String {
@@ -114,14 +116,14 @@ fun LocalDateTime.dayPeriod(): DayPeriod {
 }
 
 fun getTimeSlotName(
-    startDateTime: LocalDateTime,
-    endDateTime: LocalDateTime
+    startDateTime: LocalDateTime?,
+    endDateTime: LocalDateTime?
 ): String? {
     if (Duration.between(startDateTime, endDateTime).toMinutes() != 80L) {
         return null
     }
 
-    return when (startDateTime.hour) {
+    return when (startDateTime?.hour) {
         5 if startDateTime.minute == 30 -> "1 пара"
         7 if startDateTime.minute == 5 -> "2 пара"
         8 if startDateTime.minute == 40 -> "3 пара"

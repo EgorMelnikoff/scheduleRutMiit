@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.view_models.schedule
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
@@ -53,13 +53,12 @@ class ScheduleViewModel @Inject constructor(
     private val addCustomEventUseCase: AddCustomEventUseCase
 ) : ViewModel() {
     private val _scheduleState = MutableStateFlow(ScheduleState())
-    val scheduleState = _scheduleState.asStateFlow()
-
-    private val _uiEventChannel = Channel<UiEvent>()
-    val uiEvent = _uiEventChannel.receiveAsFlow()
-
     private val _isDataLoading = MutableStateFlow(true)
+    private val _uiEventChannel = Channel<UiEvent>()
+
+    val scheduleState = _scheduleState.asStateFlow()
     val isDataLoading = _isDataLoading.asStateFlow()
+    val uiEvent = _uiEventChannel.receiveAsFlow()
 
     private var fetchScheduleJob: Job? = null
     private var updateScheduleJob: Job? = null
@@ -218,7 +217,7 @@ class ScheduleViewModel @Inject constructor(
             _scheduleState.update {
                 it.copy(
                     savedNamedSchedules = result.savedNamedSchedules ?: listOf(),
-                    currentNamedScheduleData = NamedScheduleData.invoke(result.namedScheduleFormatted),
+                    currentNamedScheduleData = NamedScheduleData(result.namedScheduleFormatted),
                     isSaved = true
                 )
             }
@@ -305,7 +304,7 @@ class ScheduleViewModel @Inject constructor(
 
 
     fun updateEventExtra(
-        event: Event,
+        event: EventEntity,
         comment: String,
         tag: Int
     ) {
@@ -347,7 +346,7 @@ class ScheduleViewModel @Inject constructor(
 
     fun addCustomEvent(
         scheduleEntity: ScheduleEntity,
-        event: Event
+        event: EventEntity
     ) {
         viewModelScope.launch {
             val result = addCustomEventUseCase(
@@ -381,7 +380,7 @@ class ScheduleViewModel @Inject constructor(
 
     fun updateCustomEvent(
         scheduleEntity: ScheduleEntity,
-        event: Event
+        event: EventEntity
     ) {
         viewModelScope.launch {
             scheduleRepos.updateCustomEvent(event)
@@ -412,7 +411,7 @@ class ScheduleViewModel @Inject constructor(
         }
 
         currentNamedSchedule?.let {
-            val namedScheduleData = NamedScheduleData.invoke(
+            val namedScheduleData = NamedScheduleData(
                 namedScheduleFormatted = currentNamedSchedule
             )
             _scheduleState.update {

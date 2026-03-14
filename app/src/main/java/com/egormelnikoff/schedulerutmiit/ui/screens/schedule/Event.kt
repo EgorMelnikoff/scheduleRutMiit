@@ -31,7 +31,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
@@ -42,13 +42,13 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
 
 @Composable
 fun Event(
-    events: List<Event>,
+    events: List<EventEntity>,
     scheduleEntity: ScheduleEntity,
     eventsExtraData: List<EventExtraData>,
     isSavedSchedule: Boolean,
     eventView: EventView,
-    navigateToEvent: (ScheduleEntity, Boolean,  Event, EventExtraData?) -> Unit,
-    navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
+    navigateToEvent: (ScheduleEntity, Boolean, EventEntity, EventExtraData?) -> Unit,
+    navigateToEditEvent: (ScheduleEntity, EventEntity) -> Unit,
     onDeleteEvent: (ScheduleEntity, Long) -> Unit,
     onUpdateHiddenEvent: (ScheduleEntity, Long) -> Unit
 ) {
@@ -71,9 +71,9 @@ fun Event(
             Text(
                 text =
                     "${
-                        events.first().startDatetime!!.toLocalTimeWithTimeZone()
+                        events.first().startDatetime.toLocalTimeWithTimeZone()
                     } - ${
-                        events.first().endDatetime!!.toLocalTimeWithTimeZone()
+                        events.first().endDatetime.toLocalTimeWithTimeZone()
                     }",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary
@@ -104,14 +104,14 @@ fun Event(
 
 @Composable
 fun ScheduleSingleEvent(
-    navigateToEvent: (ScheduleEntity, Boolean,  Event, EventExtraData?) -> Unit,
-    navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
+    navigateToEvent: (ScheduleEntity, Boolean, EventEntity, EventExtraData?) -> Unit,
+    navigateToEditEvent: (ScheduleEntity, EventEntity) -> Unit,
     onDeleteEvent: (ScheduleEntity, Long) -> Unit,
     onUpdateHiddenEvent: (ScheduleEntity, Long) -> Unit,
     scheduleEntity: ScheduleEntity,
     isSavedSchedule: Boolean,
     eventView: EventView,
-    event: Event,
+    event: EventEntity,
     eventExtraData: EventExtraData?
 ) {
     var showExpandedMenu by remember { mutableStateOf(false) }
@@ -156,7 +156,7 @@ fun ScheduleSingleEvent(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            if (event.typeName != null) {
+            event.typeName?.let {
                 Text(
                     text = event.typeName,
                     style = MaterialTheme.typography.titleSmall,
@@ -164,7 +164,7 @@ fun ScheduleSingleEvent(
                 )
             }
             Text(
-                text = event.name.toString(),
+                text = event.name,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,

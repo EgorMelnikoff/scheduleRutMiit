@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.app.widget
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
@@ -27,8 +27,8 @@ data class WidgetData(
                 val today = LocalDateTime.now()
                 val splitEvents = scheduleFormatted.events.partition { it.isHidden }
 
-                var periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null
-                var nonPeriodicEvents: Map<LocalDate, List<Event>>? = null
+                var periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>? = null
+                var nonPeriodicEvents: Map<LocalDate, List<EventEntity>>? = null
 
                 if (scheduleFormatted.scheduleEntity.recurrence != null) {
                     periodicEvents = splitEvents.second.getPeriodicEvents(
@@ -36,7 +36,7 @@ data class WidgetData(
                     )
                 } else {
                     nonPeriodicEvents = splitEvents.second.groupBy {
-                        it.startDatetime!!.toLocalDate()
+                        it.startDatetime.toLocalDate()
                     }
                 }
                 val reviewData = ReviewData(

@@ -8,7 +8,6 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
@@ -17,7 +16,9 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
+import com.egormelnikoff.schedulerutmiit.app.model.Event
 import com.egormelnikoff.schedulerutmiit.app.model.News
+import com.egormelnikoff.schedulerutmiit.app.model.NewsContent
 import com.egormelnikoff.schedulerutmiit.app.model.NonPeriodicContent
 import com.egormelnikoff.schedulerutmiit.app.model.PeriodicContent
 import com.egormelnikoff.schedulerutmiit.app.model.Person
@@ -252,7 +253,6 @@ object Parser {
                 Event(
                     startDatetime = LocalDateTime.of(date, startTime),
                     endDatetime = LocalDateTime.of(date, endTime),
-                    scheduleId = -1,
                     name = name,
                     typeName = typeName,
                     timeSlotName = timeSlotName,
@@ -356,7 +356,7 @@ object Parser {
     }
 
     /* News */
-    suspend fun parseNews(news: News): News = withContext(Dispatchers.Default) {
+    suspend fun parseNews(news: News): NewsContent = withContext(Dispatchers.Default) {
         val document = Jsoup.parse(news.content)
         val elements = document.select("p, li, tr, img")
         val parsedElements = mutableListOf<Pair<String, Any>>()
@@ -398,9 +398,9 @@ object Parser {
             }
         }
 
-        news.elements = parsedElements
-        news.images = parsedImages
-        return@withContext news
+        return@withContext NewsContent(
+            news, parsedElements, parsedImages
+        )
     }
 
     /* Subjects list */

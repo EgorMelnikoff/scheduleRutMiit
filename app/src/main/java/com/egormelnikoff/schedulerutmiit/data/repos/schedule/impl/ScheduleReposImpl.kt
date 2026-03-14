@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.schedule.impl
 
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
@@ -139,7 +139,7 @@ class ScheduleReposImpl @Inject constructor(
         val currentCount = dao.getCount()
         if (currentCount == 1) {
             val namedScheduleEntityWithNewId =
-                dao.getNamedScheduleById(namedScheduleId)!!
+                dao.getNamedScheduleById(namedScheduleId)
             dao.setDefaultNamedSchedule(namedScheduleEntityWithNewId.namedScheduleEntity.id)
         }
         return@withContext namedScheduleId
@@ -164,7 +164,7 @@ class ScheduleReposImpl @Inject constructor(
     }
 
     override suspend fun insertEvent(
-        event: Event
+        event: EventEntity
     ) = withContext(Dispatchers.IO) {
         dao.insertEvent(event)
     }
@@ -183,7 +183,7 @@ class ScheduleReposImpl @Inject constructor(
 
     override suspend fun getNamedScheduleById(
         primaryKeyNamedSchedule: Long
-    ): NamedScheduleFormatted? = withContext(Dispatchers.IO) {
+    ): NamedScheduleFormatted = withContext(Dispatchers.IO) {
         return@withContext dao.getNamedScheduleById(primaryKeyNamedSchedule)
     }
 
@@ -251,7 +251,7 @@ class ScheduleReposImpl @Inject constructor(
         )
     }
 
-    override suspend fun updateCustomEvent(event: Event) = withContext(Dispatchers.IO) {
+    override suspend fun updateCustomEvent(event: EventEntity) = withContext(Dispatchers.IO) {
         dao.deleteEventById(event.id)
         dao.insertEvent(event)
     }

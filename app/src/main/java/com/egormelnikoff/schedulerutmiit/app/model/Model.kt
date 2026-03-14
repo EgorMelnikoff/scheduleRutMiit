@@ -1,9 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.app.model
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import androidx.room.Embedded
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
+import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
+import com.egormelnikoff.schedulerutmiit.app.entity.RecurrenceRule
+import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -40,6 +44,45 @@ data class PeriodicContent(
 data class NonPeriodicContent(
     val events: List<Event>?,
 )
+
+@Keep
+data class Event(
+    val startDatetime: LocalDateTime?,
+    val endDatetime: LocalDateTime?,
+    @Embedded
+    val recurrenceRule: RecurrenceRule?,
+    val periodNumber: Int?,
+    val name: String?,
+    val typeName: String?,
+    val timeSlotName: String?,
+    val lecturers: List<Lecturer>?,
+    val rooms: List<Room>?,
+    val groups: List<Group>?
+) {
+    fun customHashCode(forceNonPeriodic: Boolean = false): Int {
+        val hashString = when {
+            forceNonPeriodic -> "$name$typeName${startDatetime?.dayOfWeek}${startDatetime?.toLocalTime()}$groups"
+            (recurrenceRule != null) -> "$name$typeName${startDatetime?.dayOfWeek}${startDatetime?.toLocalTime()}${recurrenceRule.interval}$periodNumber$groups"
+            else -> "$name$typeName$startDatetime$groups"
+        }
+        return hashString.hashCode()
+    }
+
+    fun toEntity() = if (startDatetime != null && endDatetime != null && name != null)
+        EventEntity(
+            startDatetime = startDatetime,
+            endDatetime = endDatetime,
+            recurrenceRule = recurrenceRule,
+            periodNumber = periodNumber,
+            name = name,
+            typeName = typeName,
+            timeSlotName = timeSlotName,
+            lecturers = lecturers,
+            groups = groups,
+            rooms = rooms
+        )
+    else throw NullPointerException()
+}
 
 
 @Keep
@@ -87,7 +130,7 @@ data class NewsShort(
     val idInformation: Long,
     val title: String,
     val date: LocalDateTime,
-    var thumbnail: String,
+    val thumbnail: String,
     val secondary: Secondary
 )
 
@@ -101,9 +144,14 @@ data class News(
     val idInformation: Long,
     val title: String,
     val hisdateDisplay: String,
-    val content: String,
-    var elements: MutableList<Pair<String, Any>>?,
-    var images: MutableList<String>?
+    val content: String
+)
+
+@Keep
+data class NewsContent(
+    val news: News,
+    val elements: MutableList<Pair<String, Any>>,
+    val images: MutableList<String>
 )
 
 

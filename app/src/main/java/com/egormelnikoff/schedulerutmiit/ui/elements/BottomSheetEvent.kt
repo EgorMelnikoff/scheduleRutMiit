@@ -11,7 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventHeader
 
@@ -19,11 +19,11 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventHeader
 @Composable
 fun ModalDialogEvent(
     scheduleEntity: ScheduleEntity,
-    event: Event,
+    event: EventEntity,
     onHideEvent: (() -> Unit)? = null,
     onDeleteEvent: (() -> Unit)? = null,
     onEditEvent: (() -> Unit)? = null,
-    onDismiss: (Event?) -> Unit
+    onDismiss: (EventEntity?) -> Unit
 ) {
     CustomModalBottomSheet(
         onDismiss = {

@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.model.Schedule
@@ -12,13 +12,13 @@ class ScheduleMapper @Inject constructor() {
         primaryKeyNamedSchedule: Long,
         index: Int
     ): ScheduleFormatted {
-        val events = mutableListOf<Event>()
+        val events = mutableListOf<EventEntity>()
         schedule.periodicContent?.events
-            ?.filter { it.startDatetime != null }
-            ?.let { events.addAll(it) }
+            ?.filter { it.startDatetime != null && it.endDatetime != null && it.name != null }
+            ?.let { events.addAll(it.map { e -> e.toEntity() }) }
         schedule.nonPeriodicContent?.events
-            ?.filter { it.startDatetime != null }
-            ?.let { events.addAll(it) }
+            ?.filter { it.startDatetime != null && it.endDatetime != null && it.name != null }
+            ?.let { events.addAll(it.map { e -> e.toEntity() }) }
 
 
         val scheduleEntity = ScheduleEntity(
@@ -34,8 +34,7 @@ class ScheduleMapper @Inject constructor() {
 
         return ScheduleFormatted(
             scheduleEntity = scheduleEntity,
-            events = events,
-            eventsExtraData = listOf()
+            events = events
         )
     }
 }

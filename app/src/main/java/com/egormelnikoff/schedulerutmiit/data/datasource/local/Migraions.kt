@@ -156,3 +156,67 @@ val MIGRATION_6_7 = object : Migration(6, 7) {
         )
     }
 }
+val MIGRATION_7_8 = object : Migration(7, 8) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+
+        db.execSQL("""
+            CREATE TABLE Events_new (
+                EventId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                eventScheduleId INTEGER NOT NULL,
+                isHidden INTEGER NOT NULL,
+                isCustomEvent INTEGER NOT NULL,
+                startDatetime TEXT NOT NULL,
+                endDatetime TEXT NOT NULL,
+                frequency TEXT,
+                interval INTEGER,
+                periodNumber INTEGER,
+                name TEXT NOT NULL,
+                typeName TEXT,
+                timeSlotName TEXT,
+                lecturers TEXT,
+                rooms TEXT,
+                groups TEXT
+            )
+        """.trimIndent())
+
+        db.execSQL("""
+            INSERT INTO Events_new (
+                EventId,
+                eventScheduleId,
+                isHidden,
+                isCustomEvent,
+                startDatetime,
+                endDatetime,
+                frequency,
+                interval,
+                periodNumber,
+                name,
+                typeName,
+                timeSlotName,
+                lecturers,
+                rooms,
+                groups
+            )
+            SELECT
+                EventId,
+                eventScheduleId,
+                isHidden,
+                isCustomEvent,
+                COALESCE(startDatetime, '1970-01-01T00:00:00'),
+                COALESCE(endDatetime, '1970-01-01T00:00:00'),
+                frequency,
+                interval,
+                periodNumber,
+                COALESCE(name, ''),
+                typeName,
+                timeSlotName,
+                lecturers,
+                rooms,
+                groups
+            FROM Events
+        """.trimIndent())
+
+        db.execSQL("DROP TABLE Events")
+        db.execSQL("ALTER TABLE Events_new RENAME TO Events")
+    }
+}

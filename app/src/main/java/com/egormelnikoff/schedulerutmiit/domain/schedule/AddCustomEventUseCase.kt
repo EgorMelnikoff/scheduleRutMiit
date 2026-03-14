@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.OpenSavedScheduleResult
@@ -16,10 +16,10 @@ class AddCustomEventUseCase @Inject constructor(
 
     suspend operator fun invoke(
         scheduleEntity: ScheduleEntity,
-        event: Event
+        event: EventEntity
     ): OpenSavedScheduleResult? {
         if (isAddingAvailable(
-                date = event.startDatetime!!.toLocalDate(),
+                date = event.startDatetime.toLocalDate(),
                 scheduleId = scheduleEntity.id
             )
         ) {

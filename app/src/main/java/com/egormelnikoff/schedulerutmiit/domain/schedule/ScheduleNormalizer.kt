@@ -45,19 +45,19 @@ class ScheduleNormalizer @Inject constructor(
                             ?.filter { it.startDatetime != null && it.endDatetime != null && it.name != null }
                             ?.distinctBy {
                                 it.customHashCode()
-                            }
-                            ?: emptyList()
+                            } ?: emptyList()
 
                         val eventsByWeek = clearedEvents.groupBy {
                             it.startDatetime!!.get(WeekFields.ISO.weekOfYear())
                         }
+
                         val weeksIndexes = eventsByWeek.keys.toList()
                         val checkedEvents = eventsByWeek.flatMap { (weekIndex, eventsInWeek) ->
                             eventsInWeek.map { event ->
                                 event.copy(
                                     timeSlotName = getTimeSlotName(
-                                        startDateTime = event.startDatetime!!,
-                                        endDateTime = event.endDatetime!!
+                                        startDateTime = event.startDatetime,
+                                        endDateTime = event.endDatetime
                                     ),
                                     periodNumber = (weekIndex % weeksIndexes.size + 1)
                                 )

@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
@@ -63,7 +63,7 @@ interface Dao {
 
     @Transaction
     @Insert(onConflict = REPLACE)
-    suspend fun insertEvent(event: Event)
+    suspend fun insertEvent(event: EventEntity)
 
     @Transaction
     @Insert(onConflict = REPLACE)
@@ -91,7 +91,7 @@ interface Dao {
 
     @Transaction
     @Query("SELECT * FROM NamedSchedules WHERE NamedScheduleId = :id")
-    suspend fun getNamedScheduleById(id: Long): NamedScheduleFormatted?
+    suspend fun getNamedScheduleById(id: Long): NamedScheduleFormatted
 
     @Transaction
     @Query("SELECT * FROM NamedSchedules WHERE isDefaultNamedSchedule = 1")

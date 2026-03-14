@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.data.repos.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
@@ -49,7 +49,7 @@ interface ScheduleRepos {
     )
 
     suspend fun insertEvent(
-        event: Event
+        event: EventEntity
     )
 
     suspend fun insertEventExtraData(
@@ -61,7 +61,7 @@ interface ScheduleRepos {
 
     suspend fun getNamedScheduleById(
         primaryKeyNamedSchedule: Long
-    ): NamedScheduleFormatted?
+    ): NamedScheduleFormatted
 
     suspend fun getNamedScheduleByApiId(
         apiId: Int
@@ -110,7 +110,7 @@ interface ScheduleRepos {
     )
 
     suspend fun updateCustomEvent(
-        event: Event
+        event: EventEntity
     )
 
     suspend fun updateCommentEvent(

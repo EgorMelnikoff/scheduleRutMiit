@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
@@ -81,7 +81,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDialog(
-    event: Event,
+    event: EventEntity,
     eventExtraData: EventExtraData?,
     namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
@@ -429,7 +429,7 @@ fun EventDialog(
 @Composable
 fun EventHeader(
     scheduleEntity: ScheduleEntity,
-    event: Event,
+    event: EventEntity,
     horizontalPadding: Dp
 ) {
     Column(
@@ -439,7 +439,7 @@ fun EventHeader(
             modifier = Modifier.padding(
                 horizontal = horizontalPadding
             ),
-            text = event.name!!,
+            text = event.name,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
             overflow = TextOverflow.Ellipsis,
@@ -466,7 +466,7 @@ fun EventHeader(
                     color = MaterialTheme.colorScheme.outline
                 ),
                 title = if (scheduleEntity.timetableType == TimetableType.PERIODIC) {
-                    val dayName = event.startDatetime!!.dayOfWeek.getDisplayName(
+                    val dayName = event.startDatetime.dayOfWeek.getDisplayName(
                         TextStyle.FULL,
                         Locale.getDefault()
                     ).toString().replaceFirstChar { it.uppercase() }
@@ -481,7 +481,7 @@ fun EventHeader(
                         }"
                     }
                 } else "${
-                    event.startDatetime!!.toLocalDate()
+                    event.startDatetime.toLocalDate()
                         .format(dayMonthYearFormatter)
                 }"
             )
@@ -496,7 +496,7 @@ fun EventHeader(
                     width = 0.5.dp,
                     color = MaterialTheme.colorScheme.outline
                 ),
-                title = "${event.startDatetime.toLocalTimeWithTimeZone()} - ${event.endDatetime!!.toLocalTimeWithTimeZone()}"
+                title = "${event.startDatetime.toLocalTimeWithTimeZone()} - ${event.endDatetime.toLocalTimeWithTimeZone()}"
             )
             event.typeName?.let {
                 CustomFilterChip(

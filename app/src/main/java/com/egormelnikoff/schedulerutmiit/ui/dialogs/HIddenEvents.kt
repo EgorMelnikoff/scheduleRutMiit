@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatterWithTime
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.hourMinuteFormatter
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
@@ -37,7 +37,7 @@ import java.util.Locale
 fun HiddenEventsDialog(
     namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
-    hiddenEvents: List<Event>,
+    hiddenEvents: List<EventEntity>,
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack
 ) {
@@ -69,27 +69,39 @@ fun HiddenEventsDialog(
                             .background(MaterialTheme.colorScheme.secondaryContainer)
                     ) {
                         ClickableItem(
-                            title = event.name!!,
+                            title = event.name,
                             titleMaxLines = 1,
                             subtitle = if (event.recurrenceRule != null) {
-                                val day = event.startDatetime!!.dayOfWeek.getDisplayName(
-                                        java.time.format.TextStyle.FULL,
-                                        Locale.getDefault()
-                                    ).replaceFirstChar { c -> c.uppercase() }
-                                val startTime = event.startDatetime.toLocalTimeWithTimeZone()
-                                        .format(hourMinuteFormatter)
-                                val endTime = event.endDatetime!!.toLocalTimeWithTimeZone()
-                                        .format(hourMinuteFormatter)
+                                val day = event.startDatetime.dayOfWeek.getDisplayName(
+                                    java.time.format.TextStyle.FULL,
+                                    Locale.getDefault()
+                                ).replaceFirstChar { c -> c.uppercase() }
+
+                                val startTime = event.startDatetime
+                                    .toLocalTimeWithTimeZone()
+                                    .format(hourMinuteFormatter)
+                                val endTime = event.endDatetime
+                                    .toLocalTimeWithTimeZone()
+                                    .format(hourMinuteFormatter)
+
                                 "${event.typeName} ($day, $startTime - $endTime)"
                             } else {
-                                "${event.typeName} (${event.startDatetime!!.format(dayMonthYearFormatterWithTime)})"
+                                "${event.typeName} (${
+                                    event.startDatetime
+                                        .toLocalTimeWithTimeZone()
+                                        .format(dayMonthYearFormatterWithTime)
+                                })"
                             },
                             subtitleMaxLines = 2,
                             showClickLabel = false,
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
-                                        scheduleViewModel.updateEventHidden(scheduleEntity, event.id, false)
+                                        scheduleViewModel.updateEventHidden(
+                                            scheduleEntity,
+                                            event.id,
+                                            false
+                                        )
                                     },
                                     colors = IconButtonDefaults.iconButtonColors()
                                         .copy(
