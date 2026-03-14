@@ -10,13 +10,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 @Composable
@@ -24,10 +25,11 @@ fun EventsForDay(
     appBackStack: AppBackStack,
     scheduleViewModel: ScheduleViewModel,
 
+    namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
-    namedScheduleData: NamedScheduleData,
+    eventsForDate: List<Pair<String, List<EventEntity>>>?,
+    eventsExtraData: List<EventExtraData>,
 
-    eventsForDate: List<Pair<String, List<Event>>>,
     isSavedSchedule: Boolean,
     eventView: EventView,
     paddingBottom: Dp
@@ -40,7 +42,7 @@ fun EventsForDay(
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        if (eventsForDate.isNotEmpty()) {
+        if (!eventsForDate.isNullOrEmpty()) {
             items(
                 items = eventsForDate,
                 key = if (isSavedSchedule) {
@@ -51,7 +53,7 @@ fun EventsForDay(
                     navigateToEvent = { scheduleEntity, isSavedSchedule, event, eventExtraData ->
                         appBackStack.openDialog(
                             Route.Dialog.EventDialog(
-                                namedScheduleEntity = namedScheduleData.namedSchedule!!.namedScheduleEntity,
+                                namedScheduleEntity = namedScheduleEntity,
                                 scheduleEntity = scheduleEntity,
                                 isSavedSchedule = isSavedSchedule,
                                 event = event,
@@ -62,7 +64,7 @@ fun EventsForDay(
                     navigateToEditEvent = { scheduleEntity, event ->
                         appBackStack.openDialog(
                             Route.Dialog.AddEventDialog(
-                                namedScheduleData.namedSchedule!!.namedScheduleEntity, scheduleEntity, event
+                                namedScheduleEntity, scheduleEntity, event
                             )
                         )
                     },
@@ -75,7 +77,7 @@ fun EventsForDay(
 
                     events = events.second,
                     scheduleEntity = scheduleEntity,
-                    eventsExtraData = namedScheduleData.scheduleData!!.eventsExtraData,
+                    eventsExtraData = eventsExtraData,
 
                     isSavedSchedule = isSavedSchedule,
                     eventView = eventView

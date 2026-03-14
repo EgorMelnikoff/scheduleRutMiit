@@ -253,7 +253,7 @@ fun RootHost(
                     HiddenEventsDialog(
                         namedScheduleEntity = key.namedScheduleEntity,
                         scheduleEntity = key.scheduleEntity,
-                        hiddenEvents = scheduleState.currentNamedScheduleData!!.scheduleData!!.hiddenEvents,
+                        hiddenEvents = scheduleState.currentNamedScheduleData?.scheduleData?.hiddenEvents ?: listOf(),
                         scheduleViewModel = scheduleViewModel,
                         appBackStack = appUiState.appBackStack
                     )
@@ -305,7 +305,7 @@ fun PageHost(
                                         scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.dayOfWeek.value - 1
                                     )
                                     scheduleUiState.onSelectWeek(
-                                        scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity?.recurrence?.currentNumber
+                                        scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence?.currentNumber
                                             ?: 0
                                     )
                                 }

@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsByDayAndWeek
@@ -29,14 +29,16 @@ import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.EventsBrieflySummary
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.EventsDetailSummary
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun DaySelector(
     scheduleUiState: ScheduleUiState,
-    namedScheduleData: NamedScheduleData,
+
+    scheduleData: ScheduleData,
+
     selectedWeek: Int,
     eventsCountView: EventsCountView,
     scope: CoroutineScope
@@ -47,14 +49,13 @@ fun DaySelector(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        val firstDayOfWeek =
-            namedScheduleData.scheduleData!!.scheduleEntity!!.startDate.getFirstDayOfWeek()
+        val firstDayOfWeek = scheduleData.scheduleEntity.startDate.getFirstDayOfWeek()
 
         stringArrayResource(R.array.days_of_week).forEachIndexed { index, day ->
             val currentDate = firstDayOfWeek.plusDays(index.toLong())
 
             val eventsForDate =
-                namedScheduleData.scheduleData.periodicEvents!!.getEventsByDayAndWeek(
+                scheduleData.periodicEvents?.getEventsByDayAndWeek(
                     dayOfWeek = currentDate.dayOfWeek,
                     week = selectedWeek
                 )
@@ -62,7 +63,7 @@ fun DaySelector(
             DaySelectorItem(
                 title = day,
                 events = eventsForDate,
-                eventsExtraData = namedScheduleData.scheduleData.eventsExtraData,
+                eventsExtraData = scheduleData.eventsExtraData,
                 eventsCountView = eventsCountView,
                 isSelected = index == scheduleUiState.pagerSplitWeeks.currentPage,
                 isSunday = currentDate.dayOfWeek.value == 7,
@@ -72,7 +73,7 @@ fun DaySelector(
                         scheduleUiState.pagerSplitWeeks.scrollToPage(date)
                     }
                 },
-                isToday = (currentDate == namedScheduleData.scheduleData.schedulePagerData!!.today)
+                isToday = (currentDate == scheduleData.schedulePagerData.today)
             )
         }
     }
@@ -87,7 +88,7 @@ fun DaySelectorItem(
     isSelected: Boolean,
     eventsCountView: EventsCountView,
     isToday: Boolean,
-    events: Map<String, List<Event>>,
+    events: Map<String, List<EventEntity>>?,
     eventsExtraData: List<EventExtraData>
 ) {
     Column(
@@ -125,15 +126,17 @@ fun DaySelectorItem(
 
             )
         }
-        if (eventsCountView == EventsCountView.DETAILS) {
-            EventsDetailSummary(
-                events = events,
-                eventsExtraData = eventsExtraData
-            )
-        } else if (eventsCountView == EventsCountView.BRIEFLY && events.isNotEmpty()) {
-            EventsBrieflySummary(
-                eventsSize = events.size
-            )
+        events?.let {
+            if (eventsCountView == EventsCountView.DETAILS) {
+                EventsDetailSummary(
+                    events = events,
+                    eventsExtraData = eventsExtraData
+                )
+            } else if (eventsCountView == EventsCountView.BRIEFLY && events.isNotEmpty()) {
+                EventsBrieflySummary(
+                    eventsSize = events.size
+                )
+            }
         }
     }
 }

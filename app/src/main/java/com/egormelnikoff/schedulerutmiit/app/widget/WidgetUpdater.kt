@@ -18,7 +18,7 @@ class WidgetDataUpdater @Inject constructor(
     suspend fun updateAll(): ListenableWorker.Result {
         scheduleRepos.getDefaultNamedScheduleEntity()?.let { namedScheduleEntity ->
             val widgetData = WidgetData(
-                namedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleEntity.id)!!
+                namedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleEntity.id)
             )
             widgetData?.let {
                 val widgetDataString = gson.toJson(widgetData)

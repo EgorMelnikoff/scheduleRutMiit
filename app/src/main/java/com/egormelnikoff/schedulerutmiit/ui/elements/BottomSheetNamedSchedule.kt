@@ -315,9 +315,9 @@ fun ScheduleActionsDialog(
                     },
                     showClickLabel = false
                 ) {
-                    uriHandler.openUri(
-                        schedule.scheduleEntity.downloadUrl!!
-                    )
+                    schedule.scheduleEntity.downloadUrl?.let {
+                        uriHandler.openUri(it)
+                    }
                 }
             }
             if (isSavedNamedSchedule && haveNotEmptySchedules) {

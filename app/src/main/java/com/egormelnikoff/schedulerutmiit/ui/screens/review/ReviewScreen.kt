@@ -47,11 +47,11 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.enums.DayPeriod
 import com.egormelnikoff.schedulerutmiit.app.extension.dayPeriod
-import com.egormelnikoff.schedulerutmiit.ui.elements.ChooseDateTimeButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.ExpandedItem
+import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
@@ -141,14 +141,7 @@ fun ReviewScreen(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
-                    if (
-                        scheduleState.defaultNamedScheduleData?.scheduleData?.reviewData != null &&
-                        scheduleState.defaultNamedScheduleData.namedSchedule != null &&
-                        scheduleState.defaultNamedScheduleData.scheduleData.scheduleEntity != null
-                    ) {
-                        val reviewData =
-                            scheduleState.defaultNamedScheduleData.scheduleData.reviewData
-
+                    scheduleState.defaultNamedScheduleData?.scheduleData?.reviewData?.let { reviewData ->
                         when (reviewData.displayedDate) {
                             currentDate -> {
                                 Text(
@@ -218,20 +211,34 @@ fun ReviewScreen(
                     RowGroup(
                         items = listOf(
                             {
-                                ChooseDateTimeButton(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    iconSize = 20.dp,
-                                    imageVector = ImageVector.vectorResource(R.drawable.search),
-                                    title = "${stringResource(R.string.find)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}"
+                                ClickableItem(
+                                    defaultMinHeight = 32.dp,
+                                    showClickLabel = false,
+                                    title = "${stringResource(R.string.find)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
+                                    titleTypography = MaterialTheme.typography.titleSmall,
+                                    leadingIcon = {
+                                        LeadingIcon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.search),
+                                            iconSize = 20.dp,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                    }
                                 ) {
                                     appBackStack.openDialog(Route.Dialog.SearchDialog)
                                 }
                             }, {
-                                ChooseDateTimeButton(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    iconSize = 20.dp,
-                                    imageVector = ImageVector.vectorResource(R.drawable.add),
-                                    title = "${stringResource(R.string.create)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}"
+                                ClickableItem(
+                                    defaultMinHeight = 32.dp,
+                                    showClickLabel = false,
+                                    title = "${stringResource(R.string.create)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
+                                    titleTypography = MaterialTheme.typography.titleSmall,
+                                    leadingIcon = {
+                                        LeadingIcon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.add),
+                                            iconSize = 20.dp,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                    }
                                 ) {
                                     appBackStack.openDialog(Route.Dialog.AddScheduleDialog)
                                 }
@@ -291,18 +298,18 @@ fun ReviewScreen(
         }
 
 
-        if (showNamedScheduleDialog != null) {
+        showNamedScheduleDialog?.let {
             ModalDialogNamedSchedule(
-                namedScheduleEntity = showNamedScheduleDialog!!,
+                namedScheduleEntity = it,
                 scheduleViewModel = scheduleViewModel,
                 appBackStack = appBackStack,
 
                 isSavedNamedSchedule = true,
-                isDefaultNamedSchedule = showNamedScheduleDialog!!.isDefault,
+                isDefaultNamedSchedule = it.isDefault,
 
                 onOpenNamedSchedule = {
                     scheduleViewModel.getSavedNamedSchedule(
-                        primaryKeyNamedSchedule = showNamedScheduleDialog!!.id
+                        primaryKeyNamedSchedule = it.id
                     )
                     appBackStack.navigateToStartRage()
                 }
@@ -311,7 +318,7 @@ fun ReviewScreen(
             }
         }
 
-        if (showDeleteNamedScheduleDialog != null) {
+        showDeleteNamedScheduleDialog?.let {
             CustomAlertDialog(
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                 dialogTitle = "${stringResource(R.string.delete_schedule)}?",
@@ -321,8 +328,8 @@ fun ReviewScreen(
                 },
                 onConfirmation = {
                     scheduleViewModel.deleteNamedSchedule(
-                        showDeleteNamedScheduleDialog!!.id,
-                        showDeleteNamedScheduleDialog!!.isDefault
+                        primaryKeyNamedSchedule = it.id,
+                        isDefault = it.isDefault
                     )
                 }
             )

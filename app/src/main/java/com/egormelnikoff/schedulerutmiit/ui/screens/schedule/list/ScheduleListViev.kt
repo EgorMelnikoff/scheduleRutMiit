@@ -26,13 +26,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -44,14 +45,15 @@ fun ScheduleListView(
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
 
-    scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState,
+
     isSavedSchedule: Boolean,
+    namedScheduleEntity: NamedScheduleEntity,
+    scheduleData: ScheduleData,
+
     eventView: EventView,
     paddingBottom: Dp
 ) {
-    val scheduleData = scheduleState.currentNamedScheduleData!!.scheduleData!!
-
     if (scheduleData.fullEventList.isNotEmpty()) {
         LazyColumn(
             state = scheduleUiState.scheduleListState,
@@ -82,7 +84,7 @@ fun ScheduleListView(
                             navigateToEvent = { scheduleEntity, isSavedSchedule, event, eventExtraData ->
                                 appBackStack.openDialog(
                                     Route.Dialog.EventDialog(
-                                        namedScheduleEntity = scheduleState.currentNamedScheduleData.namedSchedule!!.namedScheduleEntity,
+                                        namedScheduleEntity = namedScheduleEntity,
                                         scheduleEntity = scheduleEntity,
                                         isSavedSchedule = isSavedSchedule,
                                         event = event,
@@ -93,7 +95,7 @@ fun ScheduleListView(
                             navigateToEditEvent = { scheduleEntity, event ->
                                 appBackStack.openDialog(
                                     Route.Dialog.AddEventDialog(
-                                        scheduleState.currentNamedScheduleData.namedSchedule!!.namedScheduleEntity, scheduleEntity, event
+                                        namedScheduleEntity, scheduleEntity, event
                                     )
                                 )
                             },
@@ -104,9 +106,9 @@ fun ScheduleListView(
                                 scheduleViewModel.updateEventHidden(scheduleEntity, eventId, true)
                             },
                             events = eventsGrouped.second,
-                            scheduleEntity = scheduleData.scheduleEntity!!,
+                            scheduleEntity = scheduleData.scheduleEntity,
                             eventsExtraData = scheduleData.eventsExtraData,
-                            isSavedSchedule = scheduleState.isSaved,
+                            isSavedSchedule = isSavedSchedule,
                             eventView = eventView
                         )
                     }

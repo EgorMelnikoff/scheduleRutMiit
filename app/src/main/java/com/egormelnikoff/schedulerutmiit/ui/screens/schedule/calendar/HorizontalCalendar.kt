@@ -37,7 +37,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
@@ -45,7 +45,7 @@ import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -56,18 +56,15 @@ import java.util.Locale
 @Composable
 fun HorizontalCalendar(
     eventsCountView: EventsCountView,
-    namedScheduleData: NamedScheduleData,
+    scheduleData: ScheduleData,
     scheduleUiState: ScheduleUiState,
     scope: CoroutineScope
 ) {
-    val scheduleEntity = namedScheduleData.scheduleData!!.scheduleEntity!!
-    val schedulePagerData = namedScheduleData.scheduleData.schedulePagerData!!
-
     val firstDayOfCurrentWeek = remember(
         scheduleUiState.pagerWeeksState.currentPage,
-        scheduleEntity
+        scheduleData.scheduleEntity
     ) {
-        scheduleEntity.startDate
+        scheduleData.scheduleEntity.startDate
             .plusWeeks(scheduleUiState.pagerWeeksState.currentPage.toLong())
             .getFirstDayOfWeek()
     }
@@ -81,7 +78,7 @@ fun HorizontalCalendar(
         scheduleUiState.pagerWeeksState.currentPage != 0
     }
     val enabledRightButton by derivedStateOf {
-        scheduleUiState.pagerWeeksState.currentPage != schedulePagerData.weeksCount - 1
+        scheduleUiState.pagerWeeksState.currentPage != scheduleData.schedulePagerData.weeksCount - 1
     }
 
     Column(
@@ -128,10 +125,10 @@ fun HorizontalCalendar(
                         onClick = {
                             scope.launch {
                                 scheduleUiState.pagerWeeksState.animateScrollToPage(
-                                    schedulePagerData.weeksStartIndex
+                                    scheduleData.schedulePagerData.weeksStartIndex
                                 )
                             }
-                            scheduleUiState.onSelectDate(schedulePagerData.defaultDate)
+                            scheduleUiState.onSelectDate(scheduleData.schedulePagerData.defaultDate)
                         }
                     )
                     .padding(horizontal = 8.dp, vertical = 4.dp),
@@ -147,10 +144,10 @@ fun HorizontalCalendar(
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
-                if (scheduleEntity.recurrence != null && scheduleEntity.recurrence.interval > 1) {
+                if (scheduleData.scheduleEntity.recurrence != null && scheduleData.scheduleEntity.recurrence.interval > 1) {
                     val selectedWeek = firstDayOfCurrentWeek.getCurrentWeek(
-                        startDate = scheduleEntity.startDate,
-                        recurrence = scheduleEntity.recurrence
+                        startDate = scheduleData.scheduleEntity.startDate,
+                        recurrence = scheduleData.scheduleEntity.recurrence
                     )
                     val color = MaterialTheme.colorScheme.onSecondaryContainer
                     Icon(
@@ -183,7 +180,7 @@ fun HorizontalCalendar(
                         onLongClick = {
                             scope.launch {
                                 scheduleUiState.pagerWeeksState.animateScrollToPage(
-                                    schedulePagerData.weeksCount - 1
+                                    scheduleData.schedulePagerData.weeksCount - 1
                                 )
                             }
                         }
@@ -210,7 +207,7 @@ fun HorizontalCalendar(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val firstDayOfWeek = scheduleEntity.startDate
+                val firstDayOfWeek = scheduleData.scheduleEntity.startDate
                     .plusWeeks(index.toLong())
                     .getFirstDayOfWeek()
 
@@ -218,9 +215,9 @@ fun HorizontalCalendar(
                     val currentDate = firstDayOfWeek.plusDays(index.toLong())
 
                     val eventsForDate = currentDate.getEventsForDate(
-                        scheduleEntity = scheduleEntity,
-                        periodicEvents = namedScheduleData.scheduleData.periodicEvents,
-                        nonPeriodicEvents = namedScheduleData.scheduleData.nonPeriodicEvents
+                        scheduleEntity = scheduleData.scheduleEntity,
+                        periodicEvents = scheduleData.periodicEvents,
+                        nonPeriodicEvents = scheduleData.nonPeriodicEvents
                     )
 
                     HorizontalCalendarItem(
@@ -228,11 +225,11 @@ fun HorizontalCalendar(
                         dayOfWeek = day,
                         currentDate = currentDate,
                         events = eventsForDate,
-                        eventsExtraData = namedScheduleData.scheduleData.eventsExtraData,
+                        eventsExtraData = scheduleData.eventsExtraData,
                         eventsCountView = eventsCountView,
-                        isDisabled = currentDate !in scheduleEntity.startDate..scheduleEntity.endDate,
+                        isDisabled = currentDate !in scheduleData.scheduleEntity.startDate..scheduleData.scheduleEntity.endDate,
                         isSelected = currentDate == scheduleUiState.selectedDate,
-                        isToday = (currentDate == schedulePagerData.today)
+                        isToday = (currentDate == scheduleData.schedulePagerData.today)
                     )
                 }
             }
@@ -249,7 +246,7 @@ fun HorizontalCalendarItem(
     isSelected: Boolean,
     eventsCountView: EventsCountView,
     isToday: Boolean,
-    events: Map<String, List<Event>>,
+    events: Map<String, List<EventEntity>>,
     eventsExtraData: List<EventExtraData>
 ) {
     Column(
@@ -316,7 +313,7 @@ fun HorizontalCalendarItem(
 
 @Composable
 fun EventsDetailSummary(
-    events: Map<String, List<Event>>,
+    events: Map<String, List<EventEntity>>,
     eventsExtraData: List<EventExtraData>
 ) {
     FlowRow(

@@ -58,8 +58,8 @@ fun ThemeSelector(
             setTheme(themeName)
         }
     ) { theme ->
-        val currentTheme = themes[theme.first]!!
-        if (currentTheme.imageVector != null) {
+        val currentTheme = themes[theme.first]
+        if (currentTheme?.imageVector != null) {
             Icon(
                 modifier = Modifier
                     .size(16.dp),
@@ -68,7 +68,7 @@ fun ThemeSelector(
             )
         } else {
             Text(
-                text = currentTheme.displayedName,
+                text = currentTheme?.displayedName.toString(),
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

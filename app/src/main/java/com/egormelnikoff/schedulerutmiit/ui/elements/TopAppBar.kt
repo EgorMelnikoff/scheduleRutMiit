@@ -92,8 +92,7 @@ fun ScheduleTopAppBar(
     scheduleView: ScheduleView,
     isPeriodic: Boolean
 ) {
-    val isCustomSchedule =
-        namedScheduleData.namedSchedule!!.namedScheduleEntity.type == NamedScheduleType.MY
+    val isCustomSchedule = namedScheduleData.namedSchedule.namedScheduleEntity.type == NamedScheduleType.MY
 
     CustomTopAppBar(
         titleText = namedScheduleData.namedSchedule.namedScheduleEntity.shortName,

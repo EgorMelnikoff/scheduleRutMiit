@@ -107,9 +107,11 @@ fun BottomSheetDatePicker(
             enabled = datePickerState.selectedDateMillis != null,
             buttonTitle = stringResource(R.string.confirm),
             onClick = {
-                val instant = Instant.ofEpochMilli(datePickerState.selectedDateMillis!!)
-                onDateSelect(instant.atZone(ZoneId.systemDefault()).toLocalDate())
-                onShowDialog(false)
+                datePickerState.selectedDateMillis?.let {
+                    val instant = Instant.ofEpochMilli(it)
+                    onDateSelect(instant.atZone(ZoneId.systemDefault()).toLocalDate())
+                    onShowDialog(false)
+                }
             }
         )
     }

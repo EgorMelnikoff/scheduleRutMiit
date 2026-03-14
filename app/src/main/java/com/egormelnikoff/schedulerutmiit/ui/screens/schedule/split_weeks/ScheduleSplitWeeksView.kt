@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsByDayAndWeek
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButtonRow
@@ -24,6 +25,7 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.EventsForDay
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 @Composable
@@ -31,18 +33,21 @@ fun ScheduleSplitWeeksView(
     scheduleViewModel: ScheduleViewModel,
     appUiState: AppUiState,
     scheduleUiState: ScheduleUiState,
+
     namedScheduleData: NamedScheduleData,
+    scheduleData: ScheduleData,
+    recurrence: Recurrence,
+
     isSavedSchedule: Boolean,
     appSettings: AppSettings,
     paddingBottom: Dp
 ) {
-    val scheduleEntity = namedScheduleData.scheduleData!!.scheduleEntity!!
-    val weeks = (1..namedScheduleData.scheduleData.scheduleEntity.recurrence!!.interval).toList()
+    val weeks = (1..recurrence.interval).toList()
 
     Column {
         DaySelector(
             scheduleUiState = scheduleUiState,
-            namedScheduleData = namedScheduleData,
+            scheduleData = scheduleData,
             eventsCountView = appSettings.eventsCountView,
             selectedWeek = scheduleUiState.selectedWeek,
             scope = appUiState.scope
@@ -73,7 +78,7 @@ fun ScheduleSplitWeeksView(
             verticalAlignment = Alignment.Top,
             pageSpacing = 12.dp
         ) { index ->
-            val currentDate = scheduleEntity.startDate.plusDays(index.toLong())
+            val currentDate = scheduleData.scheduleEntity.startDate.plusDays(index.toLong())
 
             val eventsForDate by remember(
                 namedScheduleData.namedSchedule,
@@ -81,10 +86,10 @@ fun ScheduleSplitWeeksView(
                 scheduleUiState.selectedWeek
             ) {
                 mutableStateOf(
-                    namedScheduleData.scheduleData.periodicEvents!!.getEventsByDayAndWeek(
+                    scheduleData.periodicEvents?.getEventsByDayAndWeek(
                         currentDate.dayOfWeek,
                         scheduleUiState.selectedWeek
-                    ).toList()
+                    )?.toList()
                 )
             }
 
@@ -92,9 +97,10 @@ fun ScheduleSplitWeeksView(
                 scheduleViewModel = scheduleViewModel,
                 appBackStack = appUiState.appBackStack,
 
-                scheduleEntity = scheduleEntity,
-                namedScheduleData = namedScheduleData,
+                namedScheduleEntity = namedScheduleData.namedSchedule.namedScheduleEntity,
+                scheduleEntity = scheduleData.scheduleEntity,
                 eventsForDate = eventsForDate,
+                eventsExtraData = scheduleData.eventsExtraData,
                 isSavedSchedule = isSavedSchedule,
                 eventView = appSettings.eventView,
                 paddingBottom = paddingBottom

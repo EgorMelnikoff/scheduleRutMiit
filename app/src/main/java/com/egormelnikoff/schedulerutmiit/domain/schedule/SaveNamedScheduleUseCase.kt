@@ -14,7 +14,7 @@ class SaveNamedScheduleUseCase @Inject constructor(
         currentNamedSchedule: NamedScheduleFormatted
     ): OpenSavedScheduleResult {
         val namedScheduleId = scheduleRepos.insertNamedSchedule(currentNamedSchedule)
-        val namedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleId)!! //
+        val namedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleId)
 
         if (namedSchedule.namedScheduleEntity.isDefault) {
             workScheduler.startPeriodicScheduleUpdating()

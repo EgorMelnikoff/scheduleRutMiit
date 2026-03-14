@@ -23,7 +23,7 @@ class OpenSavedScheduleUseCase @Inject constructor(
 
         return OpenSavedScheduleResult(
             savedNamedSchedules = scheduleRepos.getSavedNamedSchedules(),
-            namedScheduleFormatted = scheduleRepos.getNamedScheduleById(primaryKeyNamedSchedule)!!
+            namedScheduleFormatted = scheduleRepos.getNamedScheduleById(primaryKeyNamedSchedule)
         )
     }
 }
