@@ -127,7 +127,7 @@ fun ModalDialogNamedSchedule(
                                 appBackStack = appBackStack,
 
                                 isSavedNamedSchedule = isSavedNamedSchedule,
-                                isDefaultSchedule = schedule.scheduleEntity.id == currentScheduleEntity?.id,
+                                isDefaultSchedule = isSavedNamedSchedule && schedule.scheduleEntity.id == currentScheduleEntity?.id || schedule.scheduleEntity.isDefault,
                                 haveDownloadUrl = schedule.scheduleEntity.downloadUrl != null,
                                 haveNotEmptySchedules = haveNotEmptySchedules,
                                 haveHiddenEvents = haveHiddenEvents,
@@ -259,7 +259,6 @@ fun ModalDialogNamedScheduleHeader(
                     namedScheduleEntity.id,
                     isDefaultNamedSchedule
                 )
-                onDismiss(null)
             }
         )
     }
