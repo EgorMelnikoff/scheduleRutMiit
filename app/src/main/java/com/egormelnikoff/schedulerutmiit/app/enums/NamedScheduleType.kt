@@ -1,5 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.app.enums
 
+import androidx.annotation.Keep
+
+@Keep
 enum class NamedScheduleType(
     val id: Int,
     val typeName: String
