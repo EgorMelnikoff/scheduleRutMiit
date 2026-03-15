@@ -14,6 +14,7 @@ import com.egormelnikoff.schedulerutmiit.R
 fun CustomAlertDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
+    dismissOnConfirm: Boolean = true,
     dialogTitle: String,
     dialogText: String,
     dialogIcon: ImageVector? = null,
@@ -44,7 +45,7 @@ fun CustomAlertDialog(
             TextButton(
                 onClick = {
                     onConfirmation()
-                    onDismissRequest()
+                    if (dismissOnConfirm) onDismissRequest()
                 }
             ) {
                 Text(
@@ -56,9 +57,7 @@ fun CustomAlertDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
+                onClick = onDismissRequest
             ) {
                 Text(
                     text = dismissText ?: stringResource(R.string.no),
