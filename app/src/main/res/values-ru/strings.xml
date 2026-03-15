@@ -100,6 +100,7 @@
     <string name="not_specified">Не указан</string>
     <string name="nothing_found">Ничего не найдено</string>
     <string name="ok">Хорошо</string>
+    <string name="or">или</string>
     <string name="once_week">Раз в %1$d недели</string>
     <string name="open">Открыть</string>
     <string name="people">Преподаватели</string>

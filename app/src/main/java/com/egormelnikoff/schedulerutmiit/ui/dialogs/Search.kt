@@ -86,9 +86,17 @@ fun SearchDialog(
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
                     value = searchParams.query,
-                    placeholderText = if (searchParams.searchType == SearchType.PEOPLE) {
-                        "${stringResource(R.string.for_example)}, ${stringResource(R.string.example_lecturer)}"
-                    } else "${stringResource(R.string.for_example)}, ${stringResource(R.string.example_group)}",
+                    placeholderText = "${stringResource(R.string.for_example)}, " +
+                            when (searchParams.searchType) {
+                                SearchType.ALL ->
+                                    stringResource(R.string.example_group) +
+                                            " ${stringResource(R.string.or)} " +
+                                            stringResource(R.string.example_lecturer)
+
+                                SearchType.GROUPS -> stringResource(R.string.example_group)
+
+                                SearchType.PEOPLE -> stringResource(R.string.example_lecturer)
+                            },
                     leadingIcon = {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.search),
@@ -154,7 +162,7 @@ fun SearchDialog(
                     }
 
                     searchState.isEmptyQuery -> {
-                        Column (
+                        Column(
                             modifier = Modifier.verticalScroll(rememberScrollState())
                         ) {
                             searchState.history.forEach { query ->
