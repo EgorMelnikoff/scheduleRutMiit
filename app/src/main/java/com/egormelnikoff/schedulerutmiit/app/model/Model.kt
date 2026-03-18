@@ -1,7 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.app.model
 
 import androidx.annotation.Keep
-import androidx.room.Embedded
 import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
@@ -49,7 +48,6 @@ data class NonPeriodicContent(
 data class Event(
     val startDatetime: LocalDateTime?,
     val endDatetime: LocalDateTime?,
-    @Embedded
     val recurrenceRule: RecurrenceRule?,
     val periodNumber: Int?,
     val name: String?,
@@ -153,7 +151,6 @@ data class NewsContent(
     val elements: MutableList<Pair<String, Any>>,
     val images: MutableList<String>
 )
-
 
 @Keep
 data class Subject(
