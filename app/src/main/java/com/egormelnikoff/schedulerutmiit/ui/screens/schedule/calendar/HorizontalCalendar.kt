@@ -268,7 +268,9 @@ fun HorizontalCalendarItem(
     }
 
     Column(
-        modifier = Modifier.width(40.dp),
+        modifier = Modifier.defaultMinSize(
+            minWidth = 40.dp
+        ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
