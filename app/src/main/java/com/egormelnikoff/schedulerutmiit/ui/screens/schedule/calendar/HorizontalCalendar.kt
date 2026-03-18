@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,7 +52,6 @@ import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
 
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun HorizontalCalendar(
     eventsCountView: EventsCountView,
@@ -69,22 +68,29 @@ fun HorizontalCalendar(
             .getFirstDayOfWeek()
     }
 
-    val displayDate by derivedStateOf {
-        if (firstDayOfCurrentWeek == scheduleUiState.selectedDate.getFirstDayOfWeek())
-            scheduleUiState.selectedDate
-        else firstDayOfCurrentWeek.plusDays(4L)
+    val displayDate by remember {
+        derivedStateOf {
+            if (firstDayOfCurrentWeek == scheduleUiState.selectedDate.getFirstDayOfWeek())
+                scheduleUiState.selectedDate
+            else firstDayOfCurrentWeek.plusDays(4L)
+        }
     }
-    val enabledLeftButton by derivedStateOf {
-        scheduleUiState.pagerWeeksState.currentPage != 0
+    val enabledLeftButton by remember {
+        derivedStateOf {
+            scheduleUiState.pagerWeeksState.currentPage != 0
+        }
     }
-    val enabledRightButton by derivedStateOf {
-        scheduleUiState.pagerWeeksState.currentPage != scheduleData.schedulePagerData.weeksCount - 1
+    val enabledRightButton by remember {
+        derivedStateOf {
+            scheduleUiState.pagerWeeksState.currentPage != scheduleData.schedulePagerData.weeksCount - 1
+        }
     }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Row(
             modifier = Modifier
@@ -93,7 +99,6 @@ fun HorizontalCalendar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
             Icon(
                 modifier = Modifier
                     .clip(CircleShape)
@@ -120,7 +125,7 @@ fun HorizontalCalendar(
             Row(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(MaterialTheme.shapes.small)
+                    .clip(CircleShape)
                     .clickable(
                         onClick = {
                             scope.launch {
@@ -131,7 +136,8 @@ fun HorizontalCalendar(
                             scheduleUiState.onSelectDate(scheduleData.schedulePagerData.defaultDate)
                         }
                     )
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .height(32.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)
             ) {
@@ -249,30 +255,28 @@ fun HorizontalCalendarItem(
     events: Map<String, List<EventEntity>>,
     eventsExtraData: List<EventExtraData>
 ) {
+    val backgroundColor = when {
+        isSelected -> MaterialTheme.colorScheme.primary
+        isToday -> MaterialTheme.colorScheme.secondaryContainer
+        else -> Color.Unspecified
+    }
+    val textColor = when {
+        isDisabled -> MaterialTheme.colorScheme.secondaryContainer
+        isSelected -> MaterialTheme.colorScheme.onPrimary
+        (currentDate.dayOfWeek.value == 7) -> MaterialTheme.colorScheme.error
+        else -> MaterialTheme.colorScheme.onSecondaryContainer
+    }
+
     Column(
         modifier = Modifier.width(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(
-            text = dayOfWeek.lowercase(),
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (isDisabled) MaterialTheme.colorScheme.secondaryContainer
-            else if (currentDate.dayOfWeek.value == 7) {
-                MaterialTheme.colorScheme.error
-            } else MaterialTheme.colorScheme.onSecondaryContainer
-        )
-        Box(
-            contentAlignment = Alignment.Center,
+        Column(
             modifier = Modifier
                 .clip(CircleShape)
-                .size(36.dp)
                 .background(
-                    color = when {
-                        isSelected -> MaterialTheme.colorScheme.primary
-                        isToday -> MaterialTheme.colorScheme.secondaryContainer
-                        else -> Color.Unspecified
-                    }
+                    color = backgroundColor
                 )
                 .let {
                     if (!isDisabled) {
@@ -285,17 +289,19 @@ fun HorizontalCalendarItem(
                         it
                     }
                 }
+                .padding(vertical = 10.dp, horizontal = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
         ) {
+            Text(
+                text = dayOfWeek.lowercase(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = textColor
+            )
             Text(
                 text = currentDate.dayOfMonth.toString(),
                 style = MaterialTheme.typography.bodyMedium,
-                color = when {
-                    isDisabled -> MaterialTheme.colorScheme.secondaryContainer
-                    isSelected -> MaterialTheme.colorScheme.onPrimary
-                    currentDate.dayOfWeek.value == 7 -> MaterialTheme.colorScheme.error
-                    else -> MaterialTheme.colorScheme.onSecondaryContainer
-                }
-
+                color = textColor
             )
         }
         if (eventsCountView == EventsCountView.DETAILS) {
