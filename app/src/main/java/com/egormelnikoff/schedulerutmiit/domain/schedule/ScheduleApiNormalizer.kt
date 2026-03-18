@@ -13,7 +13,7 @@ import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
 import java.time.temporal.WeekFields
 import javax.inject.Inject
 
-class ScheduleNormalizer @Inject constructor(
+class ScheduleApiNormalizer @Inject constructor(
     private val scheduleRepos: ScheduleRepos
 ) {
     suspend operator fun invoke(
