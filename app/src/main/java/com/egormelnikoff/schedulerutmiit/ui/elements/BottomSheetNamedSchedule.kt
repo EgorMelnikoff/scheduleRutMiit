@@ -259,6 +259,7 @@ fun ModalDialogNamedScheduleHeader(
                     namedScheduleEntity.id,
                     isDefaultNamedSchedule
                 )
+                onDismiss(null)
             }
         )
     }
