@@ -7,7 +7,6 @@ import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.app.model.Schedule
 import com.egormelnikoff.schedulerutmiit.app.model.Timetable
 import com.egormelnikoff.schedulerutmiit.app.model.Timetables
@@ -238,7 +237,7 @@ class ScheduleReposImpl @Inject constructor(
         dao.updateName(
             primaryKeyNamedSchedule = primaryKeyNamedSchedule,
             fullName = newName,
-            shortName = newName.getShortName(type)
+            shortName = newName
         )
     }
 
