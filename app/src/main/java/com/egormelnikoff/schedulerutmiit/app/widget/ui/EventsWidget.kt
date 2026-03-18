@@ -315,7 +315,7 @@ class EventsWidget : GlanceAppWidget() {
                 }
             }
         }
-        if (eventExtraData != null && eventExtraData.comment != "") {
+        if (eventExtraData != null && eventExtraData.comment.isNotBlank()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {

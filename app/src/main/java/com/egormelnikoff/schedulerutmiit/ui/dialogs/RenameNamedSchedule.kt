@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,12 @@ fun RenameDialog(
     appBackStack: AppBackStack,
 ) {
     var newName by remember { mutableStateOf(namedScheduleEntity.fullName) }
+    val renameEnabled by remember {
+        derivedStateOf {
+            newName.isNotBlank()
+        }
+    }
+
     Scaffold(
         topBar = {
             CustomTopAppBar(
@@ -76,7 +83,7 @@ fun RenameDialog(
                 placeholderText = stringResource(R.string.name),
                 trailingIcon = {
                     AnimatedVisibility(
-                        visible = newName != "",
+                        visible = newName.isNotEmpty(),
                         enter = scaleIn(animationSpec = tween(300)),
                         exit = fadeOut(animationSpec = tween(500))
                     ) {
@@ -99,7 +106,7 @@ fun RenameDialog(
             CustomButton(
                 modifier = Modifier.fillMaxWidth(),
                 buttonTitle = stringResource(R.string.save),
-                enabled = newName != "",
+                enabled = renameEnabled,
                 onClick = {
                     scheduleViewModel.renameNamedSchedule(
                         namedScheduleEntity = namedScheduleEntity,

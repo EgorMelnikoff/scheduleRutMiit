@@ -246,7 +246,7 @@ fun ScheduleSingleEvent(
                 }
             }
 
-            if (eventView.commentVisible && eventExtraData != null && eventExtraData.comment != "") {
+            if (eventView.commentVisible && eventExtraData != null && eventExtraData.comment.isNotBlank()) {
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 4.dp),
                     color = MaterialTheme.colorScheme.outline,
