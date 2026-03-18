@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
+import android.content.ClipData
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -7,7 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -91,13 +93,14 @@ fun EventDialog(
     appBackStack: AppBackStack
 ) {
     val context = LocalContext.current
+    val clipboard = LocalClipboard.current
+
     var showEventActionsDialog by remember { mutableStateOf(false) }
     var showEventDeleteDialog by remember { mutableStateOf(false) }
     var showEventHideDialog by remember { mutableStateOf(false) }
 
     var tag by remember { mutableIntStateOf(eventExtraData?.tag ?: 0) }
     var comment by remember { mutableStateOf(eventExtraData?.comment ?: "") }
-
 
     if (isSavedSchedule) {
         LaunchedEffect(comment, tag) {
@@ -194,7 +197,7 @@ fun EventDialog(
                                             .defaultMinSize(minWidth = 80.dp)
                                             .let {
                                                 if (!event.isCustomEvent) {
-                                                    it.clickable(
+                                                    it.combinedClickable(
                                                         onClick = {
                                                             appBackStack.navigateToStartRage()
                                                             appBackStack.onBack()
@@ -209,6 +212,11 @@ fun EventDialog(
                                                                     apiId = group.id,
                                                                     namedScheduleType = NamedScheduleType.GROUP
                                                                 )
+                                                            )
+                                                        },
+                                                        onLongClick = {
+                                                            clipboard.nativeClipboard.setPrimaryClip(
+                                                                ClipData.newPlainText(null, group.name)
                                                             )
                                                         }
                                                     )
@@ -273,6 +281,11 @@ fun EventDialog(
                                     title = lecturer.fullFio,
                                     titleMaxLines = 2,
                                     defaultMinHeight = 32.dp,
+                                    onLongClick = {
+                                        clipboard.nativeClipboard.setPrimaryClip(
+                                            ClipData.newPlainText(null, lecturer.fullFio)
+                                        )
+                                    },
                                     onClick = if (!event.isCustomEvent) {
                                         {
                                             appBackStack.navigateToStartRage()
@@ -321,7 +334,7 @@ fun EventDialog(
                                 placeholderText = stringResource(R.string.enter_comment),
                                 trailingIcon = {
                                     AnimatedVisibility(
-                                        visible = comment != "",
+                                        visible = comment.isNotEmpty(),
                                         enter = scaleIn(animationSpec = tween(300)),
                                         exit = fadeOut(animationSpec = tween(500))
                                     ) {
