@@ -44,16 +44,6 @@ fun ModalDialogEvent(
                 onDismiss(null)
             }
         }
-        onDeleteEvent?.let {
-            ActionDialogButton(
-                icon = ImageVector.vectorResource(R.drawable.delete),
-                title = stringResource(R.string.delete_event),
-                contentColor = MaterialTheme.colorScheme.error
-            ) {
-                onDeleteEvent()
-                onDismiss(null)
-            }
-        }
         onEditEvent?.let {
             ActionDialogButton(
                 icon = ImageVector.vectorResource(R.drawable.edit),
@@ -61,6 +51,16 @@ fun ModalDialogEvent(
                 contentColor = MaterialTheme.colorScheme.onBackground
             ) {
                 onEditEvent()
+                onDismiss(null)
+            }
+        }
+        onDeleteEvent?.let {
+            ActionDialogButton(
+                icon = ImageVector.vectorResource(R.drawable.delete),
+                title = stringResource(R.string.delete_event),
+                contentColor = MaterialTheme.colorScheme.error
+            ) {
+                onDeleteEvent()
                 onDismiss(null)
             }
         }
