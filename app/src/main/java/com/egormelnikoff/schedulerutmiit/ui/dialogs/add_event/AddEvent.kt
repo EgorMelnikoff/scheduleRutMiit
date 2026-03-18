@@ -18,9 +18,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +53,6 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ListParam
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -95,6 +94,21 @@ fun AddEditEventDialog(
     var lecturersList by remember { mutableStateOf(editableEvent?.lecturers ?: listOf()) }
     var groupsList by remember { mutableStateOf(editableEvent?.groups ?: listOf()) }
 
+    val buttonEnabled by remember {
+        derivedStateOf {
+            EventValidation.validate(
+                context = context,
+                name = nameEvent,
+                date = dateEvent,
+                startTime = startTime,
+                endTime = endTime,
+                roomsList = roomsList,
+                lecturersList = lecturersList,
+                groupsList = groupsList
+            ) is EventValidation.Success
+        }
+    }
+
     Scaffold(
         topBar = {
             CustomTopAppBar(
@@ -111,73 +125,52 @@ fun AddEditEventDialog(
                         buttonTitle = editableEvent?.let {
                             stringResource(R.string.save)
                         } ?: stringResource(R.string.create),
+                        enabled = buttonEnabled,
                         onClick = {
-                            when (val result = EventValidation.validate(
-                                context = context,
-                                name = nameEvent,
-                                date = dateEvent,
-                                startTime = startTime,
-                                endTime = endTime,
-                                roomsList = roomsList,
-                                lecturersList = lecturersList,
-                                groupsList = groupsList
-                            )) {
-                                is EventValidation.Success -> {
-                                    val startDateTime = LocalDateTime.of(dateEvent, startTime)
-                                        .atZone(ZoneId.systemDefault())
-                                        .withZoneSameInstant(ZoneOffset.UTC)
-                                        .toLocalDateTime()
-                                    val endDateTime = LocalDateTime.of(dateEvent, endTime)
-                                        .atZone(ZoneId.systemDefault())
-                                        .withZoneSameInstant(ZoneOffset.UTC)
-                                        .toLocalDateTime()
+                            val startDateTime = LocalDateTime.of(dateEvent, startTime)
+                                .atZone(ZoneId.systemDefault())
+                                .withZoneSameInstant(ZoneOffset.UTC)
+                                .toLocalDateTime()
+                            val endDateTime = LocalDateTime.of(dateEvent, endTime)
+                                .atZone(ZoneId.systemDefault())
+                                .withZoneSameInstant(ZoneOffset.UTC)
+                                .toLocalDateTime()
 
-                                    val event = EventEntity(
-                                        id = editableEvent?.id ?: 0,
-                                        scheduleId = scheduleEntity.id,
-                                        name = nameEvent.trim(),
-                                        typeName = typeEvent,
+                            val event = EventEntity(
+                                id = editableEvent?.id ?: 0,
+                                scheduleId = scheduleEntity.id,
+                                name = nameEvent.trim(),
+                                typeName = typeEvent,
 
-                                        startDatetime = startDateTime,
-                                        endDatetime = endDateTime,
-                                        lecturers = lecturersList,
-                                        rooms = roomsList,
-                                        groups = groupsList,
-                                        isCustomEvent = true,
-                                        timeSlotName = getTimeSlotName(
-                                            startDateTime = startDateTime,
-                                            endDateTime = endDateTime
-                                        ),
-                                        recurrenceRule = scheduleEntity.recurrence?.let {
-                                            RecurrenceRule(
-                                                frequency = "WEEKLY",
-                                                interval = currentInterval
-                                            )
-                                        },
-                                        periodNumber = if (currentInterval > 1) currentPeriod else 1
+                                startDatetime = startDateTime,
+                                endDatetime = endDateTime,
+                                lecturers = lecturersList,
+                                rooms = roomsList,
+                                groups = groupsList,
+                                isCustomEvent = true,
+                                timeSlotName = getTimeSlotName(
+                                    startDateTime = startDateTime,
+                                    endDateTime = endDateTime
+                                ),
+                                recurrenceRule = scheduleEntity.recurrence?.let {
+                                    RecurrenceRule(
+                                        frequency = "WEEKLY",
+                                        interval = currentInterval
                                     )
-                                    editableEvent?.let {
-                                        if (editableEvent != event) {
-                                            scheduleViewModel.updateCustomEvent(
-                                                scheduleEntity,
-                                                event
-                                            )
-                                        }
-                                    } ?: scheduleViewModel.addCustomEvent(
-                                        scheduleEntity, event
+                                },
+                                periodNumber = if (currentInterval > 1) currentPeriod else 1
+                            )
+                            editableEvent?.let {
+                                if (editableEvent != event) {
+                                    scheduleViewModel.updateCustomEvent(
+                                        scheduleEntity,
+                                        event
                                     )
-                                    appUiState.appBackStack.onBack()
                                 }
-
-                                is EventValidation.Error -> {
-                                    appUiState.scope.launch {
-                                        appUiState.snackBarHostState.showSnackbar(
-                                            message = result.message,
-                                            duration = SnackbarDuration.Long
-                                        )
-                                    }
-                                }
-                            }
+                            } ?: scheduleViewModel.addCustomEvent(
+                                scheduleEntity, event
+                            )
+                            appUiState.appBackStack.onBack()
                         }
                     )
                 }
