@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.domain.schedule
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.domain.schedule.result.OpenSavedScheduleResult
+import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import javax.inject.Inject
 
 class SaveNamedScheduleUseCase @Inject constructor(
@@ -12,7 +12,7 @@ class SaveNamedScheduleUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         currentNamedSchedule: NamedScheduleFormatted
-    ): OpenSavedScheduleResult {
+    ): ScheduleUseCaseResult {
         val namedScheduleId = scheduleRepos.insertNamedSchedule(currentNamedSchedule)
         val namedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleId)
 
@@ -20,7 +20,7 @@ class SaveNamedScheduleUseCase @Inject constructor(
             workScheduler.startPeriodicScheduleUpdating()
         }
 
-        return OpenSavedScheduleResult(
+        return ScheduleUseCaseResult(
             savedNamedSchedules = scheduleRepos.getSavedNamedSchedules(),
             namedScheduleFormatted = namedSchedule
         )

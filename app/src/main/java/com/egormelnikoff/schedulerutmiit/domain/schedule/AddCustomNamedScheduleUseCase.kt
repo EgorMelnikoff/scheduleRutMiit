@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.domain.schedule.result.OpenSavedScheduleResult
+import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
         name: String,
         startDate: LocalDate,
         endDate: LocalDate
-    ): OpenSavedScheduleResult {
+    ): ScheduleUseCaseResult {
         val namedSchedule = NamedScheduleFormatted(
             namedScheduleEntity = NamedScheduleEntity(
                 id = 0,
@@ -49,7 +49,7 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
         )
         val namedScheduleId = scheduleRepos.insertNamedSchedule(namedSchedule)
 
-        return OpenSavedScheduleResult(
+        return ScheduleUseCaseResult(
             savedNamedSchedules = scheduleRepos.getSavedNamedSchedules(),
             namedScheduleFormatted = scheduleRepos.getNamedScheduleById(namedScheduleId)
         )

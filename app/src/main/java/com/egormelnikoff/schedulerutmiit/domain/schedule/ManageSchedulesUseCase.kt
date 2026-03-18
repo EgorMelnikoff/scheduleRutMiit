@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.domain.schedule
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.domain.schedule.result.OpenSavedScheduleResult
+import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import javax.inject.Inject
 
 
@@ -16,7 +16,7 @@ class ManageSchedulesUseCase @Inject constructor(
         primaryKeySchedule: Long,
         timetableId: String,
         isSaved: Boolean
-    ): OpenSavedScheduleResult {
+    ): ScheduleUseCaseResult {
         if (isSaved) {
             scheduleRepos.updatePrioritySchedule(
                 primaryKeyNamedSchedule = currentNamedSchedule.namedScheduleEntity.id,
@@ -31,7 +31,7 @@ class ManageSchedulesUseCase @Inject constructor(
                 )
             )
         }
-        return OpenSavedScheduleResult(
+        return ScheduleUseCaseResult(
             savedNamedSchedules = null,
             namedScheduleFormatted = currentNamedSchedule.copy(schedules = updatedSchedules)
         )

@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.domain.schedule
 import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.domain.schedule.result.OpenSavedScheduleResult
+import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ class AddCustomEventUseCase @Inject constructor(
     suspend operator fun invoke(
         scheduleEntity: ScheduleEntity,
         event: EventEntity
-    ): OpenSavedScheduleResult? {
+    ): ScheduleUseCaseResult? {
         if (isAddingAvailable(
                 date = event.startDatetime.toLocalDate(),
                 scheduleId = scheduleEntity.id
@@ -27,7 +27,7 @@ class AddCustomEventUseCase @Inject constructor(
         }
         scheduleRepos.insertEvent(event)
 
-        return OpenSavedScheduleResult(
+        return ScheduleUseCaseResult(
             savedNamedSchedules = null,
             namedScheduleFormatted = scheduleRepos.getNamedScheduleById(scheduleEntity.namedScheduleId)
         )

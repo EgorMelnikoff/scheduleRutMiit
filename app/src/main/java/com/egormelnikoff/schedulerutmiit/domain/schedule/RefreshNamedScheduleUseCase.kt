@@ -8,7 +8,7 @@ import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.domain.schedule.result.RefreshNamedScheduleResult
+import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
@@ -26,7 +26,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
     suspend operator fun invoke(
         primaryKeyNamedSchedule: Long? = null,
         updating: Boolean = false
-    ): RefreshNamedScheduleResult {
+    ): ScheduleUseCaseResult {
         val namedSchedule = primaryKeyNamedSchedule?.let {
             scheduleRepos.getNamedScheduleById(primaryKeyNamedSchedule).namedScheduleEntity
         }
@@ -40,14 +40,13 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             )
         }
 
-        return RefreshNamedScheduleResult(
+        return ScheduleUseCaseResult(
             savedNamedSchedules = scheduleRepos.getSavedNamedSchedules(),
             namedScheduleFormatted = namedSchedule?.let {
                 scheduleRepos.getNamedScheduleById(
                     primaryKeyNamedSchedule = it.id
                 )
-            },
-            isSaved = namedSchedule != null
+            }
         )
     }
 

@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.domain.schedule
 import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.domain.schedule.result.OpenSavedScheduleResult
+import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import javax.inject.Inject
 
 class UpdateEventExtraDataUseCase @Inject constructor(
@@ -15,10 +15,10 @@ class UpdateEventExtraDataUseCase @Inject constructor(
         event: EventEntity,
         tag: Int,
         comment: String
-    ): OpenSavedScheduleResult {
+    ): ScheduleUseCaseResult {
         if (comment == "" && tag == 0) {
             scheduleRepos.deleteEventExtraByEventId(event.id)
-            return OpenSavedScheduleResult(
+            return ScheduleUseCaseResult(
                 savedNamedSchedules = null,
                 namedScheduleFormatted = scheduleRepos.getNamedScheduleById(primaryKeyNamedSchedule)
             )
@@ -40,7 +40,7 @@ class UpdateEventExtraDataUseCase @Inject constructor(
             )
         )
 
-        return OpenSavedScheduleResult(
+        return ScheduleUseCaseResult(
             savedNamedSchedules = null,
             namedScheduleFormatted = scheduleRepos.getNamedScheduleById(primaryKeyNamedSchedule)
         )

@@ -111,7 +111,6 @@ class FetchNamedScheduleUseCase @Inject constructor(
                             )
                         ), false
                     )
-
                 } catch (e: ScheduleLoadException) {
                     FetchNamedScheduleResult(
                         Result.Error(e.error),
