@@ -111,7 +111,7 @@ class ScheduleViewModel @Inject constructor(
                 currentNamedSchedule = result.namedScheduleFormatted,
                 isLoading = false,
                 isRefreshing = false,
-                isSaved = result.isSaved,
+                isSaved = result.namedScheduleFormatted != null,
             )
             if (isDataLoading.value) _isDataLoading.value = false
         }
