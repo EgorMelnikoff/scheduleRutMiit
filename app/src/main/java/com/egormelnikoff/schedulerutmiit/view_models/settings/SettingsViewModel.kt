@@ -85,19 +85,27 @@ class SettingsViewModel @Inject constructor(
                 Pair(theme, decorColorIndex)
             }
 
+            val scheduleFlow = combine(
+                preferencesDataStore.scheduleViewFlow,
+                preferencesDataStore.schedulesDeletableFlow,
+                preferencesDataStore.eventCountViewFlow
+            ) { scheduleView, schedulesDeletable, eventCountView ->
+                Triple(scheduleView, schedulesDeletable, eventCountView)
+            }
+
             combine(
                 themeFlow,
                 eventFlow,
-                preferencesDataStore.scheduleViewFlow,
-                preferencesDataStore.schedulesDeletableFlow,
-                preferencesDataStore.eventCountViewFlow,
-            ) { theme, eventView, scheduleView, schedulesDeletable, eventCountView ->
+                scheduleFlow,
+                preferencesDataStore.syncTagCommentsFlow,
+            ) { theme, eventView, scheduleSettings, syncTagsFlow ->
                 AppSettings(
                     theme = theme.first,
                     decorColorIndex = theme.second,
-                    scheduleView = scheduleView,
-                    schedulesDeletable = schedulesDeletable,
-                    eventsCountView = eventCountView,
+                    scheduleView = scheduleSettings.first,
+                    schedulesDeletable = scheduleSettings.second,
+                    eventsCountView = scheduleSettings.third,
+                    syncTagsAndComments = syncTagsFlow,
                     eventView = eventView
                 )
             }.collect { settings ->
@@ -181,6 +189,12 @@ class SettingsViewModel @Inject constructor(
     fun onSetSchedulesDeletable(isDeletable: Boolean) {
         viewModelScope.launch {
             preferencesDataStore.setSchedulesDeletable(isDeletable)
+        }
+    }
+
+    fun onSetSyncTagsComments(isSynchronizable: Boolean) {
+        viewModelScope.launch {
+            preferencesDataStore.setSyncTagsComments(isSynchronizable)
         }
     }
 }

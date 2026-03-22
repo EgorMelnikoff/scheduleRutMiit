@@ -98,21 +98,6 @@ fun SettingsScreen(
                                 }
                             }
                         }
-                    },
-                    {
-                        SettingsItem(
-                            onClick = null,
-                            imageVector = ImageVector.vectorResource(R.drawable.count),
-                            text = stringResource(R.string.show_count_classes),
-                            horizontal = false
-                        ) {
-                            EventsCountSelector(
-                                setEventsCountView = { value ->
-                                    settingsViewModel.onSetEventsCountView(value)
-                                },
-                                currentView = appSettings.eventsCountView
-                            )
-                        }
                     }, {
                         SettingsItem(
                             onClick = {
@@ -126,6 +111,34 @@ fun SettingsScreen(
                             ) {
                                 settingsViewModel.onSetSchedulesDeletable(!it)
                             }
+                        }
+                    }, {
+                        SettingsItem(
+                            onClick = {
+                                settingsViewModel.onSetSyncTagsComments(!appSettings.syncTagsAndComments)
+                            },
+                            imageVector = ImageVector.vectorResource(R.drawable.sync),
+                            text = stringResource(R.string.sync_tag_comments)
+                        ) {
+                            CustomSwitch(
+                                checked = appSettings.syncTagsAndComments
+                            ) {
+                                settingsViewModel.onSetSyncTagsComments(it)
+                            }
+                        }
+                    }, {
+                        SettingsItem(
+                            onClick = null,
+                            imageVector = ImageVector.vectorResource(R.drawable.count),
+                            text = stringResource(R.string.show_count_classes),
+                            horizontal = false
+                        ) {
+                            EventsCountSelector(
+                                setEventsCountView = { value ->
+                                    settingsViewModel.onSetEventsCountView(value)
+                                },
+                                currentView = appSettings.eventsCountView
+                            )
                         }
                     }
                 )

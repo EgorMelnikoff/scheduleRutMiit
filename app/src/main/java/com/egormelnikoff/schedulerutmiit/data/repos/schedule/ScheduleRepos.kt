@@ -52,10 +52,11 @@ interface ScheduleRepos {
         event: EventEntity
     )
 
-    suspend fun insertEventExtraData(
-        eventExtraData: EventExtraData
+    suspend fun updateEventExtraData(
+        event: EventEntity,
+        tag: Int,
+        comment: String
     )
-
 
     suspend fun getSavedNamedSchedules(): List<NamedScheduleEntity>
 
@@ -115,12 +116,12 @@ interface ScheduleRepos {
 
     suspend fun updateCommentEvent(
         primaryKeySchedule: Long,
-        primaryKeyEvent: Long,
+        event: EventEntity,
         comment: String
     )
     suspend fun updateTagEvent(
         primaryKeySchedule: Long,
-        primaryKeyEvent: Long,
+        event: EventEntity,
         tag: Int
     )
 

@@ -40,6 +40,12 @@ class PreferencesDataStore @Inject constructor(
         }
     }
 
+    suspend fun setSyncTagsComments(isSynchronizable: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SYNC_TAGS_AND_COMMENTS] = isSynchronizable
+        }
+    }
+
     suspend fun setEventGroupVisibility(visible: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.EVENT_GROUPS_VISIBILITY] = visible
@@ -92,6 +98,10 @@ class PreferencesDataStore @Inject constructor(
 
     val schedulesDeletableFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.SCHEDULES_DELETABLE] ?: true
+    }
+
+    val syncTagCommentsFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.SYNC_TAGS_AND_COMMENTS] ?: false
     }
 
     val eventCountViewFlow: Flow<EventsCountView> = context.dataStore.data.map { preferences ->

@@ -9,6 +9,7 @@ data class AppSettings(
     val scheduleView: ScheduleView,
     val eventsCountView: EventsCountView,
     val schedulesDeletable: Boolean,
+    val syncTagsAndComments: Boolean,
     val eventView: EventView
 )
 

@@ -12,6 +12,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.app.model.Event
 
 @Dao
 interface Dao {
@@ -121,6 +122,11 @@ interface Dao {
     @Query("SELECT COUNT(*) FROM Events WHERE eventScheduleId = :scheduleId AND SUBSTRING(startDatetime, 1, 10) = :date")
     suspend fun getCountEventsPerDate(date: String, scheduleId: Long): Int
 
+    @Transaction
+    @Query("SELECT * FROM Events WHERE name = :name AND typeName = :typeName AND eventScheduleId = :scheduleId")
+    suspend fun getEventsByNameAndType(name: String, typeName: String?, scheduleId: Long): List<EventEntity>
+
+    @Transaction
     suspend fun delete(primaryKey: Long) {
         deleteNamedScheduleById(primaryKey)
         val schedulesId = getSchedulesId(primaryKey)

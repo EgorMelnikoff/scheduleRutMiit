@@ -104,7 +104,7 @@
     <string name="not_delete_schedules">Do not delete schedules</string>
     <string name="not_specified">Not specified</string>
     <string name="nothing_found">Nothing found</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="or">or</string>
     <string name="once_week">Once every %1$d week</string>
     <string name="open">Open</string>
@@ -143,6 +143,7 @@
     <string name="show_count_classes">Count classes</string>
     <string name="show_event">Show class</string>
     <string name="source_code">Source code</string>
+    <string name="sync_tag_comments">Synchronize tags and comments</string>
     <string name="start_date">Start date</string>
     <string name="start_time">Start time</string>
     <string name="summary">Summary</string>
