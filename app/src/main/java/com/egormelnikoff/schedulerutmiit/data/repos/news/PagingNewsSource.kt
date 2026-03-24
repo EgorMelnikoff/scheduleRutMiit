@@ -6,8 +6,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
 
 class PagingNewsSource(
     private val miitApi: MiitApi,
@@ -33,7 +33,7 @@ class PagingNewsSource(
             callApi = {
                 miitApi.getNewsList(pageSize, currentPage, currentPage)
             },
-            callParser = null
+            callJsoup = null
         )
 
         return when (response) {
