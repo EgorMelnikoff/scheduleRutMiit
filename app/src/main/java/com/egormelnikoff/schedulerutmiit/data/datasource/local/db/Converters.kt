@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local
+package com.egormelnikoff.schedulerutmiit.data.datasource.local.db
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter

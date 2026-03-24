@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local
+package com.egormelnikoff.schedulerutmiit.data.datasource.local.db
 
 import android.content.Context
 import androidx.room.Database

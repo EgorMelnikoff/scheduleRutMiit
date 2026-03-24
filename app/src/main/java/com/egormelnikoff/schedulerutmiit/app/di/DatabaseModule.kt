@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.app.di
 
 import android.content.Context
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.AppDatabase
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.Converters
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.Dao
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.db.AppDatabase
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.db.Converters
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.db.Dao
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
