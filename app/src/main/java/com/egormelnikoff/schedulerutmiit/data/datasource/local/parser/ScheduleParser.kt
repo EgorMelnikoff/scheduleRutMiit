@@ -1,13 +1,6 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser
+package com.egormelnikoff.schedulerutmiit.data.datasource.local.parser
 
 import android.os.Build
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
@@ -17,20 +10,14 @@ import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
 import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.News
-import com.egormelnikoff.schedulerutmiit.app.model.NewsContent
 import com.egormelnikoff.schedulerutmiit.app.model.NonPeriodicContent
 import com.egormelnikoff.schedulerutmiit.app.model.PeriodicContent
-import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.app.model.Schedule
 import com.egormelnikoff.schedulerutmiit.app.model.Timetable
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_MIIT_URL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.jsoup.nodes.TextNode
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -40,22 +27,21 @@ import java.time.temporal.ChronoUnit
 import java.util.Locale
 import kotlin.math.abs
 
-object Parser {
-    /* Schedule */
-    suspend fun parseSchedule(
+object ScheduleParser {
+    val ruLocale: Locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        Locale.of("ru", "RU")
+    } else {
+        @Suppress("DEPRECATION")
+        Locale("ru", "RU")
+    }
+
+    val parserFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", ruLocale)
+
+    suspend operator fun invoke(
         document: Document,
         timetable: Timetable,
         currentGroup: Group?
     ): Schedule = withContext(Dispatchers.Default) {
-        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            Locale.of("ru", "RU")
-        } else {
-            @Suppress("DEPRECATION")
-            Locale("ru", "RU")
-        }
-
-        val parserFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", locale)
-
         return@withContext if (timetable.type == TimetableType.PERIODIC) {
             val periodicContent = document.parsePeriodicSchedule(
                 timetable.startDate,
@@ -337,107 +323,6 @@ object Parser {
         return@withContext weekNumber ?: 1
     }
 
-    /* Search */
-    suspend fun parsePeople(element: Element): List<Person> = withContext(Dispatchers.Default) {
-        val people = mutableListOf<Person>()
-        element.select("div.search__people").forEach { item ->
-            val aElement = item.selectFirst("a.mb-2")
-            val spanElement = item.selectFirst("span[itemprop=Post]")
-            if (aElement != null && spanElement != null) {
-                val name = aElement.text()
-                val id = aElement.attr("href")
-                    .substringAfter("/people/")
-                    .toIntOrNull() ?: -1
-                val position = spanElement.text().trim()
-                people.add(Person(name, id, position))
-            }
-        }
-        return@withContext people
-    }
-
-    /* News */
-    suspend fun parseNews(news: News): NewsContent = withContext(Dispatchers.Default) {
-        val document = Jsoup.parse(news.content)
-        val elements = document.select("p, li, tr, img")
-        val parsedElements = mutableListOf<Pair<String, Any>>()
-        val parsedImages = mutableListOf<String>()
-        for (element in elements) {
-            when (element.tagName()) {
-                "p" -> {
-                    val annotatedString = htmlToAnnotatedString(element.html())
-                    if (annotatedString.isNotEmpty()) {
-                        parsedElements.add(Pair("p", annotatedString))
-                    }
-                }
-
-                "li" -> {
-                    val annotatedString = htmlToAnnotatedString("• ${element.html()}")
-                    if (annotatedString.isNotEmpty()) {
-                        parsedElements.add(Pair("li", annotatedString))
-                    }
-                }
-
-                "tr" -> {
-                    val tableRow = element.select("td")
-                    val tableRowItems = mutableListOf<String>()
-                    tableRow.forEach { td ->
-                        val text = td.text().trim()
-                        if (text.isNotEmpty()) {
-                            tableRowItems.add(text)
-                        }
-                    }
-                    parsedElements.add(Pair("tr", tableRowItems))
-                }
-
-                "img" -> {
-                    val imageUrl = element.attr("src")
-                    if (imageUrl.isNotEmpty()) {
-                        parsedImages.add("$BASE_MIIT_URL$imageUrl")
-                    }
-                }
-            }
-        }
-
-        return@withContext NewsContent(
-            news, parsedElements, parsedImages
-        )
-    }
-
-    /* Subjects list */
-    suspend fun parsePagesCount(element: Element): Int = withContext(Dispatchers.Default) {
-        return@withContext element.select("ul.pagination li[data-page]")
-            .mapNotNull {
-                it.attr("data-page").toIntOrNull()
-            }
-            .maxOrNull() ?: 1
-    }
-
-    suspend fun parseListSubjectsByPage(
-        element: Element
-    ): MutableMap<String, MutableSet<String>> = withContext(
-        Dispatchers.Default
-    ) {
-        val subjectTeachers = mutableMapOf<String, MutableSet<String>>()
-
-        element.select("div[itemprop=teachingStaff]").forEach { item ->
-            val teacher = item.selectFirst("a[itemprop=fio]")?.text()?.trim()
-            val subjects = item.select("span[itemprop=teachingDiscipline]").mapNotNull {
-                it.text().trim().takeIf { t -> t.isNotBlank() }
-            }
-            if (teacher.isNullOrBlank() || subjects.isEmpty()) {
-                return@forEach
-            }
-            subjects.forEach { subject ->
-                subjectTeachers.getOrPut(subject) {
-                    mutableSetOf()
-                }.add(teacher)
-            }
-        }
-        return@withContext subjectTeachers
-    }
-
-
-    /* NORMALIZERS */
     private fun List<Event>.normalizePeriodicEvents(): List<Event> {
         return this.groupBy { it.customHashCode(true) }
             .map { (_, events) ->
@@ -449,44 +334,6 @@ object Parser {
                     else event
                 }
             }
-    }
-
-    /* CONVERTERS */
-    private fun htmlToAnnotatedString(html: String): AnnotatedString {
-        val body = Jsoup.parse(html).body()
-
-        return buildAnnotatedString {
-            body.childNodes().forEach { node ->
-                when (node) {
-                    is TextNode -> {
-                        append(node.text())
-                    }
-
-                    is Element -> {
-                        if (node.tagName() == "a") {
-                            val url = node.attr("href")
-                            val linkText = node.text()
-
-                            pushLink(
-                                LinkAnnotation.Url(
-                                    url = url,
-                                    styles = TextLinkStyles(
-                                        style = SpanStyle(
-                                            textDecoration = TextDecoration.Underline,
-                                            fontSize = 16.sp
-                                        )
-                                    )
-                                )
-                            )
-                            append(linkText)
-                            pop()
-                        } else {
-                            append(node.text())
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun getRecurrence(

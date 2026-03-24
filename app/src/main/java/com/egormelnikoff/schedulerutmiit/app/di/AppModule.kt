@@ -8,8 +8,10 @@ import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.parser.NewsParser
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.parser.ScheduleParser
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.parser.SearchParser
+import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
@@ -48,11 +50,11 @@ object AppModule {
     @Singleton
     fun provideWidgetUpdater(
         @ApplicationContext context: Context,
-        scheduleRepos: ScheduleRepos,
+        scheduleLocalRepos: ScheduleLocalRepos,
         gson: Gson
     ): WidgetDataUpdater = WidgetDataUpdater(
         context = context,
-        scheduleRepos = scheduleRepos,
+        scheduleLocalRepos = scheduleLocalRepos,
         gson = gson
     )
 
@@ -97,5 +99,11 @@ object AppModule {
     ): Logger = Logger(context, resourcesManager)
 
     @Provides
-    fun provideParser(): Parser = Parser
+    fun provideNewsParser(): NewsParser = NewsParser
+
+    @Provides
+    fun provideScheduleParser(): ScheduleParser = ScheduleParser
+
+    @Provides
+    fun provideSearchParser(): SearchParser = SearchParser
 }
