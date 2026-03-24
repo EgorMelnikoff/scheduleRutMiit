@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.AppConst.AUTHOR
+import com.egormelnikoff.schedulerutmiit.app.AppConst.DEVELOPER
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.APP_GITHUB_LATEST_RELEASE
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.APP_GITHUB_REPOS
@@ -194,11 +194,11 @@ fun InfoDialog(
             ColumnGroup(
                 items = listOf {
                     ClickableItem(
-                        title = AUTHOR,
+                        title = DEVELOPER,
                         subtitle = stringResource(R.string.developer),
                         leadingIcon = {
                             LeadingTitle(
-                                title = AUTHOR.first()
+                                title = DEVELOPER.first()
                             )
                         },
                         onLongClick = {
