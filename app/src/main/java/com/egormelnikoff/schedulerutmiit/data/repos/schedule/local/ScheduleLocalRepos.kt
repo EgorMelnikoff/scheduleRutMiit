@@ -1,50 +1,19 @@
-package com.egormelnikoff.schedulerutmiit.data.repos.schedule
+package com.egormelnikoff.schedulerutmiit.data.repos.schedule.local
 
 import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.model.Schedule
-import com.egormelnikoff.schedulerutmiit.app.model.Timetable
-import com.egormelnikoff.schedulerutmiit.app.model.Timetables
-import com.egormelnikoff.schedulerutmiit.data.Result
 
-interface ScheduleRepos {
-    suspend fun fetchTimetables(
-        apiId: Int,
-        type: NamedScheduleType
-    ): Result<Timetables>
-
-    suspend fun fetchScheduleApi(
-        namedScheduleType: NamedScheduleType,
-        apiId: String,
-        timetableId: String
-    ): Result<Schedule>
-
-    suspend fun fetchScheduleParser(
-        namedScheduleType: NamedScheduleType,
-        name: String,
-        apiId: Int,
-        timetable: Timetable,
-        currentGroup: Group? = null
-    ): Result<Schedule>
-
-    suspend fun fetchCurrentWeek(
-        namedScheduleType: NamedScheduleType,
-        apiId: Int,
-        startDate: String,
-        type: String
-    ): Int
-
-    suspend fun insertNamedSchedule(
+interface ScheduleLocalRepos {
+    suspend fun saveNamedSchedule(
         namedSchedule: NamedScheduleFormatted
     ): Long
 
-    suspend fun insertSchedule(
-        primaryKeySchedule: Long,
+    suspend fun saveSchedule(
+        primaryKeyNamedSchedule: Long,
         scheduleFormatted: ScheduleFormatted
     )
 
@@ -52,11 +21,32 @@ interface ScheduleRepos {
         event: EventEntity
     )
 
-    suspend fun updateEventExtraData(
+    suspend fun insertEventExtraData(
         event: EventEntity,
         tag: Int,
         comment: String
     )
+
+
+
+    suspend fun deleteNamedScheduleById(
+        primaryKeyNamedSchedule: Long,
+        isDefault: Boolean
+    )
+
+    suspend fun deleteScheduleById(
+        primaryKeySchedule: Long
+    )
+
+    suspend fun deleteEventById(
+        primaryKeyEvent: Long
+    )
+
+    suspend fun deleteEventExtraByEventId(
+        event: EventEntity
+    )
+
+
 
     suspend fun getSavedNamedSchedules(): List<NamedScheduleEntity>
 
@@ -80,9 +70,9 @@ interface ScheduleRepos {
     ): Int
 
 
+
     suspend fun replaceScheduleEvents(
         oldScheduleId: Long,
-        namedScheduleId: Long,
         newScheduleFormatted: ScheduleFormatted
     )
 
@@ -105,40 +95,23 @@ interface ScheduleRepos {
         primaryKeyNamedSchedule: Long
     )
 
-    suspend fun updateEventHidden(
+    suspend fun updateEvent(
+        event: EventEntity
+    )
+
+    suspend fun updateEventIsHidden(
         eventPrimaryKey: Long,
         isHidden: Boolean
     )
 
-    suspend fun updateCustomEvent(
-        event: EventEntity
-    )
-
-    suspend fun updateCommentEvent(
+    suspend fun updateComment(
         primaryKeySchedule: Long,
         event: EventEntity,
         comment: String
     )
-    suspend fun updateTagEvent(
+    suspend fun updateTag(
         primaryKeySchedule: Long,
         event: EventEntity,
         tag: Int
-    )
-
-    suspend fun deleteNamedScheduleById(
-        primaryKeyNamedSchedule: Long,
-        isDefault: Boolean
-    )
-
-    suspend fun deleteScheduleById(
-        primaryKeySchedule: Long
-    )
-
-    suspend fun deleteEventById(
-        primaryKeyEvent: Long
-    )
-
-    suspend fun deleteEventExtraByEventId(
-        primaryKeyEvent: Long
     )
 }

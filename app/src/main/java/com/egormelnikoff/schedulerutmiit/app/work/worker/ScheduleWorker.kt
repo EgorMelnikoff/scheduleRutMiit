@@ -6,7 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.egormelnikoff.schedulerutmiit.app.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
 import com.egormelnikoff.schedulerutmiit.domain.schedule.RefreshNamedScheduleUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -17,13 +17,13 @@ import com.egormelnikoff.schedulerutmiit.data.Result as ApiResult
 class ScheduleWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val scheduleRepos: ScheduleRepos,
+    private val scheduleLocalRepos: ScheduleLocalRepos,
     private val refreshNamedScheduleUseCase: RefreshNamedScheduleUseCase,
     private val logger: Logger,
     private val preferencesDataStore: PreferencesDataStore
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
-        val namedScheduleEntity = scheduleRepos.getDefaultNamedScheduleEntity()
+        val namedScheduleEntity = scheduleLocalRepos.getDefaultNamedScheduleEntity()
         logger.i("ScheduleWorker", "Default schedule:\n$namedScheduleEntity")
         namedScheduleEntity ?: return Result.failure()
 

@@ -8,24 +8,22 @@ import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.app.model.NonPeriodicContent
 import com.egormelnikoff.schedulerutmiit.app.model.PeriodicContent
 import com.egormelnikoff.schedulerutmiit.app.model.Schedule
-import com.egormelnikoff.schedulerutmiit.app.model.Timetable
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.schedule.remote.ScheduleRemoteRepos
 import java.time.temporal.WeekFields
 import javax.inject.Inject
 
 class ScheduleApiNormalizer @Inject constructor(
-    private val scheduleRepos: ScheduleRepos
+    private val scheduleRemoteRepos: ScheduleRemoteRepos
 ) {
     suspend operator fun invoke(
-        schedule: Schedule,
         namedScheduleType: NamedScheduleType,
         apiId: Int,
-        timetable: Timetable
+        schedule: Schedule
     ): Schedule {
-        val fixedSchedule = when (timetable.type) {
+        val fixedSchedule = when (schedule.timetable.type) {
             TimetableType.NON_PERIODIC, TimetableType.SESSION -> {
                 Schedule(
-                    timetable = timetable,
+                    timetable = schedule.timetable,
                     periodicContent = null,
                     nonPeriodicContent = NonPeriodicContent(
                         events = schedule.nonPeriodicContent?.events
@@ -36,7 +34,7 @@ class ScheduleApiNormalizer @Inject constructor(
 
             TimetableType.PERIODIC -> {
                 Schedule(
-                    timetable = timetable,
+                    timetable = schedule.timetable,
                     nonPeriodicContent = null,
                     periodicContent = if (schedule.periodicContent != null) {
                         schedule.periodicContent
@@ -51,7 +49,6 @@ class ScheduleApiNormalizer @Inject constructor(
                             it.startDatetime!!.get(WeekFields.ISO.weekOfYear())
                         }
 
-                        val weeksIndexes = eventsByWeek.keys.toList()
                         val checkedEvents = eventsByWeek.flatMap { (weekIndex, eventsInWeek) ->
                             eventsInWeek.map { event ->
                                 event.copy(
@@ -59,16 +56,16 @@ class ScheduleApiNormalizer @Inject constructor(
                                         startDateTime = event.startDatetime,
                                         endDateTime = event.endDatetime
                                     ),
-                                    periodNumber = (weekIndex % weeksIndexes.size + 1)
+                                    periodNumber = (weekIndex % eventsByWeek.keys.size + 1)
                                 )
                             }
                         }
 
-                        val currentPeriodNumber = scheduleRepos.fetchCurrentWeek(
+                        val currentPeriodNumber = scheduleRemoteRepos.fetchCurrentWeek(
                             namedScheduleType,
                             apiId,
-                            startDate = timetable.startDate.format(yearDateMonthFormatter),
-                            type = timetable.id.trim()
+                            startDate = schedule.timetable.startDate.format(yearDateMonthFormatter),
+                            type = schedule.timetable.id.trim()
                         )
 
                         PeriodicContent(

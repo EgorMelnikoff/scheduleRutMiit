@@ -8,7 +8,8 @@ import com.egormelnikoff.schedulerutmiit.app.exception.ScheduleLoadException
 import com.egormelnikoff.schedulerutmiit.app.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.schedule.remote.ScheduleRemoteRepos
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.FetchNamedScheduleResult
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -17,7 +18,8 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 class FetchNamedScheduleUseCase @Inject constructor(
-    private val scheduleRepos: ScheduleRepos,
+    private val scheduleLocalRepos: ScheduleLocalRepos,
+    private val scheduleRemoteRepos: ScheduleRemoteRepos,
     private val scheduleMapper: ScheduleMapper
 ) {
     suspend operator fun invoke(
@@ -28,7 +30,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
         namedScheduleType: NamedScheduleType
     ): FetchNamedScheduleResult = supervisorScope {
         if (!fetchForce) {
-            scheduleRepos.getNamedScheduleByApiId(apiId)?.let {
+            scheduleLocalRepos.getNamedScheduleByApiId(apiId)?.let {
                 return@supervisorScope FetchNamedScheduleResult(
                     Result.Success(it),
                     true
@@ -36,7 +38,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
             }
         }
 
-        when (val timetables = scheduleRepos.fetchTimetables(
+        when (val timetables = scheduleRemoteRepos.fetchTimetables(
             apiId = apiId,
             type = namedScheduleType
         )) {
@@ -60,7 +62,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
                     .filter { it.endDate >= LocalDate.now() }
                     .mapIndexed { index, timetable ->
                         async {
-                            scheduleRepos.fetchScheduleParser(
+                            scheduleRemoteRepos.fetchScheduleParser(
                                 namedScheduleType = namedScheduleType,
                                 name = name,
                                 apiId = apiId,

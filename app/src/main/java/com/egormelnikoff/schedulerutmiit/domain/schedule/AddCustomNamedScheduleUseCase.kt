@@ -6,13 +6,13 @@ import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import java.time.LocalDate
 import javax.inject.Inject
 
 class AddCustomNamedScheduleUseCase @Inject constructor(
-    private val scheduleRepos: ScheduleRepos
+    private val scheduleLocalRepos: ScheduleLocalRepos
 ) {
     suspend operator fun invoke(
         name: String,
@@ -47,11 +47,12 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
                 )
             )
         )
-        val namedScheduleId = scheduleRepos.insertNamedSchedule(namedSchedule)
 
         return ScheduleUseCaseResult(
-            savedNamedSchedules = scheduleRepos.getSavedNamedSchedules(),
-            namedScheduleFormatted = scheduleRepos.getNamedScheduleById(namedScheduleId)
+            savedNamedSchedules = scheduleLocalRepos.getSavedNamedSchedules(),
+            namedScheduleFormatted = scheduleLocalRepos.getNamedScheduleById(
+                primaryKeyNamedSchedule = scheduleLocalRepos.saveNamedSchedule(namedSchedule)
+            )
         )
     }
 }

@@ -6,19 +6,19 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.work.ListenableWorker
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
 import com.google.gson.Gson
 import javax.inject.Inject
 
 class WidgetDataUpdater @Inject constructor(
-    private val scheduleRepos: ScheduleRepos,
+    private val scheduleLocalRepos: ScheduleLocalRepos,
     private val context: Context,
     private val gson: Gson
 ) {
     suspend fun updateAll(): ListenableWorker.Result {
-        scheduleRepos.getDefaultNamedScheduleEntity()?.let { namedScheduleEntity ->
+        scheduleLocalRepos.getDefaultNamedScheduleEntity()?.let { namedScheduleEntity ->
             val widgetData = WidgetData(
-                namedSchedule = scheduleRepos.getNamedScheduleById(namedScheduleEntity.id)
+                namedSchedule = scheduleLocalRepos.getNamedScheduleById(namedScheduleEntity.id)
             )
             widgetData?.let {
                 val widgetDataString = gson.toJson(widgetData)

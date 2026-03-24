@@ -2,13 +2,13 @@ package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import javax.inject.Inject
 
 
 class ManageSchedulesUseCase @Inject constructor(
-    private val scheduleRepos: ScheduleRepos,
+    private val scheduleLocalRepos: ScheduleLocalRepos,
     private val widgetDataUpdater: WidgetDataUpdater,
 ) {
     suspend operator fun invoke(
@@ -18,7 +18,7 @@ class ManageSchedulesUseCase @Inject constructor(
         isSaved: Boolean
     ): ScheduleUseCaseResult {
         if (isSaved) {
-            scheduleRepos.updatePrioritySchedule(
+            scheduleLocalRepos.updatePrioritySchedule(
                 primaryKeyNamedSchedule = currentNamedSchedule.namedScheduleEntity.id,
                 primaryKeySchedule = primaryKeySchedule
             )
