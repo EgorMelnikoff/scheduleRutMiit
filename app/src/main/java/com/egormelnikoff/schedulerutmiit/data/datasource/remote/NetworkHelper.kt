@@ -23,15 +23,15 @@ class NetworkHelper @Inject constructor(
         retries: Int = 3,
         timeoutMs: Long = 20000,
         callApi: (suspend () -> Response<T>)?,
-        callParser: (suspend () -> T)?
+        callJsoup: (suspend () -> T)?
     ): Result<T> = withContext(Dispatchers.IO) {
         repeat(retries) { attempt ->
             try {
                 val result = withTimeout(timeoutMs) {
                     callApi?.let {
                         executeApiCall(requestType, requestParams, it)
-                    } ?: callParser?.let {
-                        executeParserCall(requestType, requestParams, it)
+                    } ?: callJsoup?.let {
+                        executeJsoupCall(requestType, requestParams, it)
                     }
                 }
 
@@ -111,7 +111,7 @@ class NetworkHelper @Inject constructor(
         }
     }
 
-    private suspend fun <T : Any> executeParserCall(
+    private suspend fun <T : Any> executeJsoupCall(
         requestType: String, requestParams: String? = null, call: suspend () -> T
     ): Result<T> {
         return try {

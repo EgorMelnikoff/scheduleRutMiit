@@ -3,19 +3,15 @@ package com.egormelnikoff.schedulerutmiit.data.datasource.remote
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 
 object Endpoints {
-    //API
     const val BASE_RUT_MIIT_URL = "https://rut-miit.ru/"
-    private const val DATA_SERVICE = "data-service/data/"
-
-    const val GROUPS = "${DATA_SERVICE}timetable/groups-catalog"
-    const val TIMETABLE = "${DATA_SERVICE}timetable/v2/{type}/{apiId}"
-    const val SCHEDULE = "${DATA_SERVICE}timetable/v2/{type}/{apiId}/{timetableId}"
-
-    const val NEWS_CATALOG = "${DATA_SERVICE}news?idk_information_category=2"
-    const val NEWS = "${DATA_SERVICE}news/{newsId}"
-
-    //PARSER
     const val BASE_MIIT_URL = "https://www.miit.ru"
+
+    const val GROUPS = "data-service/data/timetable/groups-catalog"
+    const val TIMETABLE = "data-service/data/timetable/v2/{type}/{apiId}"
+    const val SCHEDULE = "data-service/data/timetable/v2/{type}/{apiId}/{timetableId}"
+
+    const val NEWS_CATALOG = "data-service/data/news?idk_information_category=2"
+    const val NEWS = "data-service/data/news/{newsId}"
 
     fun curriculumProfessorsUrl(id: String, page: Int) =
         "${BASE_RUT_MIIT_URL}edu/curriculum/$id/professors?page=$page"
@@ -27,20 +23,18 @@ object Endpoints {
         namedScheduleType: NamedScheduleType,
         apiId: Int,
         startDate: String,
-        type: String,
+        timetableType: String,
     ) = when (namedScheduleType) {
-        NamedScheduleType.PERSON -> "${BASE_RUT_MIIT_URL}people/$apiId/timetable?start=$startDate&type=$type"
-        else -> "${BASE_RUT_MIIT_URL}timetable/$apiId?start=$startDate&type=$type"
+        NamedScheduleType.PERSON -> "${BASE_RUT_MIIT_URL}people/$apiId/timetable?start=$startDate&type=$timetableType"
+        else -> "${BASE_RUT_MIIT_URL}timetable/$apiId?start=$startDate&type=$timetableType"
     }
-
-
+    
     fun personImageUrl(personId: Int?, width: Int = 100) =
         "$BASE_MIIT_URL/content/e$personId.jpg?id_fe=$personId&SWidth=$width"
-
 
     const val APP_CHANNEL_URL = "https://t.me/schedule_rut_miit"
     const val APP_GITHUB_REPOS = "https://github.com/EgorMelnikoff/scheduleRutMiit"
     const val APP_GITHUB_LATEST_RELEASE = "https://github.com/EgorMelnikoff/scheduleRutMiit/releases/latest"
     const val RU_STORE = "https://www.rustore.ru/catalog/app/com.egormelnikoff.schedulerutmiit"
-    const val AUTHOR_CHANNEL_URL = "https://t.me/s/EgorMelnikoff"
+    const val AUTHOR_CHANNEL_URL = "https://t.me/EgorMelnikoff"
 }
