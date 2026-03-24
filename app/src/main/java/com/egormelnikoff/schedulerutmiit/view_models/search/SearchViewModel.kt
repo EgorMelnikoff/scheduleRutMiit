@@ -9,7 +9,8 @@ import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
-import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.search.local.SearchLocalRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.search.remote.SearchRemoteRepos
 import com.egormelnikoff.schedulerutmiit.domain.search.SearchUseCase
 import com.egormelnikoff.schedulerutmiit.domain.search.result.SearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +30,8 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchRepos: SearchRepos,
+    private val searchRemoteRepos: SearchRemoteRepos,
+    private val searchLocalRepos: SearchLocalRepos,
     private val searchUseCase: SearchUseCase,
     private val resourcesManager: ResourcesManager
 ) : ViewModel() {
@@ -114,7 +116,7 @@ class SearchViewModel @Inject constructor(
         searchQuery: SearchQuery
     ) {
         viewModelScope.launch {
-            searchRepos.saveSearchQuery(searchQuery)
+            searchLocalRepos.saveSearchQuery(searchQuery)
             updateSearchQueryHistory()
         }
     }
@@ -123,7 +125,7 @@ class SearchViewModel @Inject constructor(
         queryPrimaryKey: Long
     ) {
         viewModelScope.launch {
-            searchRepos.deleteSearchQuery(queryPrimaryKey)
+            searchLocalRepos.deleteSearchQuery(queryPrimaryKey)
             updateSearchQueryHistory()
         }
     }
@@ -131,7 +133,7 @@ class SearchViewModel @Inject constructor(
     suspend fun updateSearchQueryHistory() {
         _searchState.update {
             it.copy(
-                history = searchRepos.getAllSearchQuery()
+                history = searchLocalRepos.getAllSearchQuery()
             )
         }
     }
@@ -154,7 +156,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private suspend fun loadInstitutes() {
-        when (val institutes = searchRepos.fetchInstitutes()) {
+        when (val institutes = searchRemoteRepos.fetchInstitutes()) {
             is Result.Error -> {
                 setErrorSearchState(institutes.typedError)
             }

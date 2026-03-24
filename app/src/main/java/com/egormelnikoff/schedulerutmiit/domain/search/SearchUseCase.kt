@@ -5,13 +5,13 @@ import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.app.model.Institutes
 import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.search.remote.SearchRemoteRepos
 import com.egormelnikoff.schedulerutmiit.domain.search.result.SearchResult
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
 import javax.inject.Inject
 
 class SearchUseCase @Inject constructor(
-    private val searchRepos: SearchRepos
+    private val searchRemoteRepos: SearchRemoteRepos
 ) {
     suspend operator fun invoke(
         searchParams: SearchParams,
@@ -21,11 +21,11 @@ class SearchUseCase @Inject constructor(
         var people: Result<List<Person>>? = null
 
         if ((searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.GROUPS) && institutes != null) {
-            groups = searchRepos.getGroupsByQuery(institutes, searchParams.query)
+            groups = searchRemoteRepos.getGroupsByQuery(institutes, searchParams.query)
         }
 
         if (searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.PEOPLE) {
-            people = searchRepos.getPeopleByQuery(searchParams.query)
+            people = searchRemoteRepos.getPeopleByQuery(searchParams.query)
         }
 
         return SearchResult(

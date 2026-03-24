@@ -1,13 +1,12 @@
-package com.egormelnikoff.schedulerutmiit.data.repos.search
+package com.egormelnikoff.schedulerutmiit.data.repos.search.remote
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
-import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.app.model.Institutes
 import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.app.model.Subject
 import com.egormelnikoff.schedulerutmiit.data.Result
 
-interface SearchRepos {
+interface SearchRemoteRepos {
     suspend fun fetchInstitutes(): Result<Institutes>
     suspend fun getGroupsByQuery(
         institutes: Institutes,
@@ -16,9 +15,4 @@ interface SearchRepos {
 
     suspend fun getPeopleByQuery(query: String): Result<List<Person>>
     suspend fun getSubjectsByCurriculum(id: String): Result<List<Subject>>
-
-    suspend fun getAllSearchQuery(): List<SearchQuery>
-    suspend fun saveSearchQuery (searchQuery: SearchQuery)
-    suspend fun deleteSearchQuery(queryPrimaryKey: Long)
-    suspend fun deleteAllSearchQuery()
 }

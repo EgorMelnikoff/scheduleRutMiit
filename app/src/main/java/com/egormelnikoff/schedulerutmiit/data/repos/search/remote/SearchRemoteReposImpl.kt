@@ -1,81 +1,73 @@
-package com.egormelnikoff.schedulerutmiit.data.repos.search.impl
+package com.egormelnikoff.schedulerutmiit.data.repos.search.remote
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
-import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.app.model.Institute
 import com.egormelnikoff.schedulerutmiit.app.model.Institutes
 import com.egormelnikoff.schedulerutmiit.app.model.Person
 import com.egormelnikoff.schedulerutmiit.app.model.Subject
 import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.Dao
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints
+import com.egormelnikoff.schedulerutmiit.data.datasource.remote.MiitApi
 import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.parser.Parser
-import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
-import kotlinx.coroutines.Dispatchers
+import com.egormelnikoff.schedulerutmiit.data.datasource.local.parser.SearchParser
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
-import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import javax.inject.Inject
 
-class SearchReposImpl @Inject constructor(
+class SearchRemoteReposImpl @Inject constructor(
     private val miitApi: MiitApi,
     private val networkHelper: NetworkHelper,
-    private val parser: Parser,
-    private val dao: Dao
-) : SearchRepos {
+    private val searchParser: SearchParser
+) : SearchRemoteRepos {
     override suspend fun getPeopleByQuery(query: String): Result<List<Person>> {
-        val document = networkHelper.callNetwork(
+        networkHelper.callNetwork(
             requestType = "Person",
             requestParams = "Query: $query",
-            callParser = {
+            callJsoup = {
                 Jsoup.connect(Endpoints.peopleUrl(query)).get()
             },
             callApi = null
-        )
+        ).let {
+            return when (it) {
+                is Result.Error -> it
 
-        return when (document) {
-            is Result.Success -> {
-                Result.Success(parser.parsePeople(document.data))
-            }
-
-            is Result.Error -> {
-                Result.Error(document.typedError)
+                is Result.Success -> {
+                    Result.Success(searchParser.parsePeople(it.data))
+                }
             }
         }
     }
 
-    override suspend fun getSubjectsByCurriculum(id: String): Result<List<Subject>> =
-        supervisorScope {
-            val document = networkHelper.callNetwork(
-                requestType = "Subjects",
-                requestParams = "Id: $id; Page: 1",
-                callParser = {
-                    Jsoup.connect(Endpoints.curriculumProfessorsUrl(id, 1)).get()
-                },
-                callApi = null
-            )
-
-            when (document) {
+    override suspend fun getSubjectsByCurriculum(id: String) = supervisorScope {
+        networkHelper.callNetwork(
+            requestType = "Subjects",
+            requestParams = "Id: $id; Page: 1",
+            callJsoup = {
+                Jsoup.connect(Endpoints.curriculumProfessorsUrl(id, 1)).get()
+            },
+            callApi = null
+        ).let {
+            when (it) {
                 is Result.Error -> {
-                    return@supervisorScope document
+                    return@supervisorScope it
                 }
 
                 is Result.Success -> {
                     val subjects = mutableListOf<Subject>()
-                    subjects += parser.parseListSubjectsByPage(document.data).toSubjects()
+                    subjects += searchParser
+                        .parseListSubjectsByPage(it.data)
+                        .toSubjects()
 
-                    val pages = parser.parsePagesCount(document.data)
+                    val pages = searchParser.parsePagesCount(it.data)
                     if (pages > 1) {
                         val deferredPages = (2..pages).map { currentPage ->
                             async {
                                 networkHelper.callNetwork(
                                     requestType = "Subjects",
                                     requestParams = "Id: $id; Page: $currentPage",
-                                    callParser = {
+                                    callJsoup = {
                                         Jsoup.connect(
                                             Endpoints.curriculumProfessorsUrl(id, currentPage)
                                         ).get()
@@ -92,7 +84,8 @@ class SearchReposImpl @Inject constructor(
                                 }
 
                                 is Result.Success -> {
-                                    subjects += parser.parseListSubjectsByPage(result.data)
+                                    subjects += searchParser
+                                        .parseListSubjectsByPage(result.data)
                                         .toSubjects()
                                 }
                             }
@@ -101,12 +94,14 @@ class SearchReposImpl @Inject constructor(
                     return@supervisorScope Result.Success(
                         subjects
                             .normalizeSubjects()
-                            .sortedBy { it.title }
+                            .sortedBy { s -> s.title }
                     )
                 }
             }
         }
 
+
+    }
 
     override suspend fun getGroupsByQuery(
         institutes: Institutes,
@@ -119,34 +114,13 @@ class SearchReposImpl @Inject constructor(
         return Result.Success(filteredGroups)
     }
 
-    override suspend fun fetchInstitutes(): Result<Institutes> =
-        networkHelper.callNetwork(
-            requestType = "Institutes",
-            callApi = {
-                miitApi.getInstitutes()
-            },
-            callParser = null
-        )
-
-    override suspend fun saveSearchQuery(searchQuery: SearchQuery) = withContext(Dispatchers.IO) {
-        val savedQuery = dao.getSearchQueryByApiId(searchQuery.apiId)
-        savedQuery?.let {
-            dao.deleteSearchQuery(savedQuery.id)
-        }
-        dao.saveSearchQuery(searchQuery)
-    }
-
-    override suspend fun getAllSearchQuery(): List<SearchQuery> = withContext(Dispatchers.IO) {
-        return@withContext dao.getAllSearchQuery()
-    }
-
-    override suspend fun deleteAllSearchQuery() = withContext(Dispatchers.IO) {
-        dao.deleteAllSearchQuery()
-    }
-
-    override suspend fun deleteSearchQuery(queryPrimaryKey: Long) = withContext(Dispatchers.IO) {
-        dao.deleteSearchQuery(queryPrimaryKey)
-    }
+    override suspend fun fetchInstitutes(): Result<Institutes> = networkHelper.callNetwork(
+        requestType = "Institutes",
+        callApi = {
+            miitApi.getInstitutes()
+        },
+        callJsoup = null
+    )
 
     private fun compareValues(comparableValue: String, query: String): Boolean {
         val cleanValue = comparableValue.filter { !it.isWhitespace() }
