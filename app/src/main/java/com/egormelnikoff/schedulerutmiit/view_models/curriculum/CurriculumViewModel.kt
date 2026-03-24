@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.app.model.Subject
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.data.Result
 import com.egormelnikoff.schedulerutmiit.data.TypedError
-import com.egormelnikoff.schedulerutmiit.data.repos.search.SearchRepos
+import com.egormelnikoff.schedulerutmiit.data.repos.search.remote.SearchRemoteRepos
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -22,7 +22,7 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class CurriculumViewModel @Inject constructor(
-    private val searchRepos: SearchRepos,
+    private val searchRemoteRepos: SearchRemoteRepos,
     private val resourcesManager: ResourcesManager
 ) : ViewModel() {
     private val _curriculumState = MutableStateFlow(CurriculumState())
@@ -42,7 +42,7 @@ class CurriculumViewModel @Inject constructor(
                         setDefaultSubjectsState()
                         return@mapLatest null
                     }
-                    searchRepos.getSubjectsByCurriculum(id)
+                    searchRemoteRepos.getSubjectsByCurriculum(id)
                 }.collect { result ->
                     result?.let { handSubjectsListResult(it) }
                 }

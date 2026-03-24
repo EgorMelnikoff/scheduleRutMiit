@@ -23,8 +23,8 @@ android {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 29
         targetSdk = 36
-        versionCode = 62
-        versionName = "2.1.9"
+        versionCode = 63
+        versionName = "2.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
