@@ -47,7 +47,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.screens.NewsLoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 import kotlinx.coroutines.flow.Flow
 
@@ -62,9 +62,7 @@ fun NewsScreen(
     val newsList = newsListFlow.collectAsLazyPagingItems()
     when (newsList.loadState.refresh) {
         is LoadState.Loading -> {
-            LoadingScreen(
-                paddingBottom = externalPadding.calculateBottomPadding()
-            )
+            NewsLoadingScreen()
         }
 
         is LoadState.Error -> {

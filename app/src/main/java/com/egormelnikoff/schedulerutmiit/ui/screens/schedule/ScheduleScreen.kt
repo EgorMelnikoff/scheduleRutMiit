@@ -40,7 +40,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ScheduleTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.ui.screens.ScheduleLoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.ScheduleCalendarView
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.list.ScheduleListView
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.split_weeks.ScheduleSplitWeeksView
@@ -69,10 +69,7 @@ fun ScreenSchedule(
             BackHandler {
                 scheduleViewModel.cancelLoading()
             }
-            LoadingScreen(
-                paddingTop = externalPadding.calculateTopPadding(),
-                paddingBottom = externalPadding.calculateBottomPadding()
-            )
+            ScheduleLoadingScreen()
         }
 
         scheduleState.isError -> {
