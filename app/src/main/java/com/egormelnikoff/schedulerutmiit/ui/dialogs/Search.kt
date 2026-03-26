@@ -200,13 +200,13 @@ fun SearchDialog(
                                         titleMaxLines = 2,
                                         showClickLabel = false
                                     ) {
-                                        appBackStack.openPage(Route.Page.Schedule)
-                                        appBackStack.onBack()
                                         scheduleViewModel.fetchNamedSchedule(
                                             query.name,
                                             query.apiId,
                                             query.namedScheduleType
                                         )
+                                        appBackStack.openPage(Route.Page.Schedule)
+                                        appBackStack.onBack()
                                         searchViewModel.setDefaultSearchState()
                                     }
                                 }
@@ -244,8 +244,6 @@ fun SearchDialog(
                                             horizontalPadding = 8.dp,
                                             title = group.name
                                         ) {
-                                            appBackStack.openPage(Route.Page.Schedule)
-                                            appBackStack.onBack()
                                             scheduleViewModel.fetchNamedSchedule(
                                                 group.name,
                                                 group.id,
@@ -258,6 +256,8 @@ fun SearchDialog(
                                                     namedScheduleType = NamedScheduleType.GROUP
                                                 )
                                             )
+                                            appBackStack.openPage(Route.Page.Schedule)
+                                            appBackStack.onBack()
                                             searchViewModel.setDefaultSearchState()
                                         }
                                     }
@@ -295,8 +295,6 @@ fun SearchDialog(
                                                 )
                                             }
                                         ) {
-                                            appBackStack.openPage(Route.Page.Schedule)
-                                            appBackStack.onBack()
                                             scheduleViewModel.fetchNamedSchedule(
                                                 person.name,
                                                 person.id,
@@ -309,6 +307,8 @@ fun SearchDialog(
                                                     namedScheduleType = NamedScheduleType.PERSON
                                                 )
                                             )
+                                            appBackStack.openPage(Route.Page.Schedule)
+                                            appBackStack.onBack()
                                             searchViewModel.setDefaultSearchState()
                                         }
                                     }
