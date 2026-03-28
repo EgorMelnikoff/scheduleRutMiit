@@ -128,7 +128,7 @@ fun ScreenSchedule(
                                 scheduleViewModel.refreshScheduleState(
                                     showLoading = false,
                                     updating = true,
-                                    primaryKeyNamedSchedule = scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id
+                                    namedScheduleId = scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id
                                 )
                             }
                         },

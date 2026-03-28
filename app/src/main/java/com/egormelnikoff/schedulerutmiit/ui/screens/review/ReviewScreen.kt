@@ -309,7 +309,7 @@ fun ReviewScreen(
 
                 onOpenNamedSchedule = {
                     scheduleViewModel.getSavedNamedSchedule(
-                        primaryKeyNamedSchedule = it.id
+                        namedScheduleId = it.id
                     )
                     appBackStack.navigateToStartRage()
                 }
@@ -328,7 +328,7 @@ fun ReviewScreen(
                 },
                 onConfirmation = {
                     scheduleViewModel.deleteNamedSchedule(
-                        primaryKeyNamedSchedule = it.id,
+                        namedScheduleId = it.id,
                         isDefault = it.isDefault
                     )
                 }

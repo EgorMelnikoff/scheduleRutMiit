@@ -201,7 +201,7 @@ fun ModalDialogNamedScheduleHeader(
             LargeIconButton(
                 onClick = {
                     scheduleViewModel.getSavedNamedSchedule(
-                        primaryKeyNamedSchedule = namedScheduleEntity.id,
+                        namedScheduleId = namedScheduleEntity.id,
                         setDefault = true
                     )
                     onDismiss(null)

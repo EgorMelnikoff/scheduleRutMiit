@@ -58,7 +58,7 @@ fun ScheduleUiStateSynchronizer(
         if (scheduleState.isSaved) {
             LaunchedEffect(currentDateTime) {
                 scheduleViewModel.refreshScheduleState(
-                    primaryKeyNamedSchedule = scheduleState.currentNamedScheduleData.namedSchedule?.namedScheduleEntity?.id,
+                    namedScheduleId = scheduleState.currentNamedScheduleData.namedSchedule?.namedScheduleEntity?.id,
                     showLoading = false
                 )
             }
