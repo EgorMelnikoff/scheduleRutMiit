@@ -5,15 +5,15 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
-import com.egormelnikoff.schedulerutmiit.app.model.NonPeriodicContent
-import com.egormelnikoff.schedulerutmiit.app.model.PeriodicContent
-import com.egormelnikoff.schedulerutmiit.app.model.Schedule
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.remote.ScheduleRemoteRepos
+import com.egormelnikoff.schedulerutmiit.app.network.model.NonPeriodicContent
+import com.egormelnikoff.schedulerutmiit.app.network.model.PeriodicContent
+import com.egormelnikoff.schedulerutmiit.app.network.model.Schedule
+import com.egormelnikoff.schedulerutmiit.datasource.remote.schedule.ScheduleRemoteDataSource
 import java.time.temporal.WeekFields
 import javax.inject.Inject
 
 class ScheduleApiNormalizer @Inject constructor(
-    private val scheduleRemoteRepos: ScheduleRemoteRepos
+    private val scheduleRemoteDataSource: ScheduleRemoteDataSource
 ) {
     suspend operator fun invoke(
         namedScheduleType: NamedScheduleType,
@@ -61,7 +61,7 @@ class ScheduleApiNormalizer @Inject constructor(
                             }
                         }
 
-                        val currentPeriodNumber = scheduleRemoteRepos.fetchCurrentWeek(
+                        val currentPeriodNumber = scheduleRemoteDataSource.fetchCurrentWeek(
                             namedScheduleType,
                             apiId,
                             startDate = schedule.timetable.startDate.format(yearDateMonthFormatter),

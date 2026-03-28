@@ -4,14 +4,14 @@ import android.content.Context
 import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleTypeAdapter
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.logger.Logger
+import com.egormelnikoff.schedulerutmiit.app.network.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.parser.NewsParser
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.parser.ScheduleParser
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.parser.SearchParser
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
+import com.egormelnikoff.schedulerutmiit.datasource.local.parser.NewsParser
+import com.egormelnikoff.schedulerutmiit.datasource.local.parser.ScheduleParser
+import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SearchParser
+import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
@@ -50,11 +50,11 @@ object AppModule {
     @Singleton
     fun provideWidgetUpdater(
         @ApplicationContext context: Context,
-        scheduleLocalRepos: ScheduleLocalRepos,
+        namedScheduleRepos: NamedScheduleRepos,
         gson: Gson
     ): WidgetDataUpdater = WidgetDataUpdater(
         context = context,
-        scheduleLocalRepos = scheduleLocalRepos,
+        namedScheduleRepos = namedScheduleRepos,
         gson = gson
     )
 

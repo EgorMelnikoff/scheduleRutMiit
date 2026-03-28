@@ -1,25 +1,19 @@
-package com.egormelnikoff.schedulerutmiit.data.repos.schedule.remote
+package com.egormelnikoff.schedulerutmiit.datasource.remote.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.model.Schedule
-import com.egormelnikoff.schedulerutmiit.app.model.Timetable
-import com.egormelnikoff.schedulerutmiit.app.model.Timetables
-import com.egormelnikoff.schedulerutmiit.data.Result
+import com.egormelnikoff.schedulerutmiit.app.network.model.Schedule
+import com.egormelnikoff.schedulerutmiit.app.network.model.Timetable
+import com.egormelnikoff.schedulerutmiit.app.network.model.Timetables
+import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 
-interface ScheduleRemoteRepos {
+interface ScheduleRemoteDataSource {
     suspend fun fetchTimetables(
         apiId: Int,
         type: NamedScheduleType
     ): Result<Timetables>
 
-    suspend fun fetchScheduleApi(
-        namedScheduleType: NamedScheduleType,
-        apiId: String,
-        timetableId: String
-    ): Result<Schedule>
-
-    suspend fun fetchScheduleParser(
+    suspend fun fetchSchedule(
         namedScheduleType: NamedScheduleType,
         name: String,
         apiId: Int,
@@ -33,5 +27,4 @@ interface ScheduleRemoteRepos {
         startDate: String,
         type: String
     ): Int
-
 }

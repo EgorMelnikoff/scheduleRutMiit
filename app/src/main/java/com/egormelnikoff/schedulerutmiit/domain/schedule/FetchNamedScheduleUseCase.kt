@@ -6,11 +6,11 @@ import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.exception.ScheduleLoadException
 import com.egormelnikoff.schedulerutmiit.app.extension.getShortName
-import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.TypedError
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.remote.ScheduleRemoteRepos
+import com.egormelnikoff.schedulerutmiit.app.network.result.Result
+import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
+import com.egormelnikoff.schedulerutmiit.datasource.remote.schedule.ScheduleRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.FetchNamedScheduleResult
+import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
@@ -18,19 +18,19 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 class FetchNamedScheduleUseCase @Inject constructor(
-    private val scheduleLocalRepos: ScheduleLocalRepos,
-    private val scheduleRemoteRepos: ScheduleRemoteRepos,
+    private val namedScheduleRepos: NamedScheduleRepos,
+    private val scheduleRemoteDataSource: ScheduleRemoteDataSource,
     private val scheduleMapper: ScheduleMapper
 ) {
     suspend operator fun invoke(
-        primaryKeyNamedSchedule: Long = 0,
+        namedScheduleId: Long = 0,
         fetchForce: Boolean = false,
         name: String,
         apiId: Int,
         namedScheduleType: NamedScheduleType
     ): FetchNamedScheduleResult = supervisorScope {
         if (!fetchForce) {
-            scheduleLocalRepos.getNamedScheduleByApiId(apiId)?.let {
+            namedScheduleRepos.getByApiId(apiId)?.let {
                 return@supervisorScope FetchNamedScheduleResult(
                     Result.Success(it),
                     true
@@ -38,7 +38,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
             }
         }
 
-        when (val timetables = scheduleRemoteRepos.fetchTimetables(
+        when (val timetables = scheduleRemoteDataSource.fetchTimetables(
             apiId = apiId,
             type = namedScheduleType
         )) {
@@ -62,7 +62,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
                     .filter { it.endDate >= LocalDate.now() }
                     .mapIndexed { index, timetable ->
                         async {
-                            scheduleRemoteRepos.fetchScheduleParser(
+                            scheduleRemoteDataSource.fetchSchedule(
                                 namedScheduleType = namedScheduleType,
                                 name = name,
                                 apiId = apiId,
@@ -79,7 +79,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
                                         if (schedule.data.periodicContent?.events.isNullOrEmpty() || schedule.data.nonPeriodicContent?.events.isNullOrEmpty()) {
                                             scheduleMapper(
                                                 schedule.data,
-                                                primaryKeyNamedSchedule,
+                                                namedScheduleId,
                                                 index
                                             )
                                         } else {
@@ -97,7 +97,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
                 try {
                     val schedules = deferredSchedules.awaitAll()
                     val namedScheduleEntity = NamedScheduleEntity(
-                        id = primaryKeyNamedSchedule,
+                        id = namedScheduleId,
                         fullName = name,
                         shortName = name.getShortName(namedScheduleType),
                         apiId = apiId.toString(),

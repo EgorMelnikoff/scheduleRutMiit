@@ -3,13 +3,13 @@ package com.egormelnikoff.schedulerutmiit.domain.schedule
 import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
-import com.egormelnikoff.schedulerutmiit.app.model.Schedule
+import com.egormelnikoff.schedulerutmiit.app.network.model.Schedule
 import javax.inject.Inject
 
 class ScheduleMapper @Inject constructor() {
     operator fun invoke(
         schedule: Schedule,
-        primaryKeyNamedSchedule: Long,
+        namedScheduleId: Long,
         index: Int
     ): ScheduleFormatted {
         val events = mutableListOf<EventEntity>()
@@ -22,7 +22,7 @@ class ScheduleMapper @Inject constructor() {
 
 
         val scheduleEntity = ScheduleEntity(
-            namedScheduleId = primaryKeyNamedSchedule,
+            namedScheduleId = namedScheduleId,
             startDate = schedule.timetable.startDate,
             endDate = schedule.timetable.endDate,
             recurrence = schedule.periodicContent?.recurrence,

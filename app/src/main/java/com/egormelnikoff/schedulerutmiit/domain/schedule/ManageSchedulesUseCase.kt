@@ -2,28 +2,29 @@ package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
+import com.egormelnikoff.schedulerutmiit.repos.schedule.ScheduleRepos
 import javax.inject.Inject
 
 
 class ManageSchedulesUseCase @Inject constructor(
-    private val scheduleLocalRepos: ScheduleLocalRepos,
+    private val scheduleRepos: ScheduleRepos,
     private val widgetDataUpdater: WidgetDataUpdater,
 ) {
     suspend operator fun invoke(
         currentNamedSchedule: NamedScheduleFormatted,
-        primaryKeySchedule: Long,
+        scheduleId: Long,
         timetableId: String,
         isSaved: Boolean
     ): ScheduleUseCaseResult {
         if (isSaved) {
-            scheduleLocalRepos.updatePrioritySchedule(
-                primaryKeyNamedSchedule = currentNamedSchedule.namedScheduleEntity.id,
-                primaryKeySchedule = primaryKeySchedule
+            scheduleRepos.setDefaultSchedule(
+                namedScheduleId = currentNamedSchedule.namedScheduleEntity.id,
+                scheduleId = scheduleId
             )
             widgetDataUpdater.updateAll()
         }
+
         val updatedSchedules = currentNamedSchedule.schedules.map { schedule ->
             schedule.copy(
                 scheduleEntity = schedule.scheduleEntity.copy(
@@ -31,6 +32,7 @@ class ManageSchedulesUseCase @Inject constructor(
                 )
             )
         }
+
         return ScheduleUseCaseResult(
             savedNamedSchedules = null,
             namedScheduleFormatted = currentNamedSchedule.copy(schedules = updatedSchedules)

@@ -2,28 +2,28 @@ package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
+import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
 import javax.inject.Inject
 
-class OpenSavedScheduleUseCase @Inject constructor(
-    private val scheduleLocalRepos: ScheduleLocalRepos,
+class OpenNamedScheduleUseCase @Inject constructor(
+    private val namedScheduleRepos: NamedScheduleRepos,
     private val widgetDataUpdater: WidgetDataUpdater,
     private val workScheduler: WorkScheduler,
 ) {
     suspend operator fun invoke(
-        primaryKeyNamedSchedule: Long,
+        namedScheduleId: Long,
         setDefault: Boolean = false
     ): ScheduleUseCaseResult {
         if (setDefault) {
-            scheduleLocalRepos.updatePrioritySavedNamedSchedules(primaryKeyNamedSchedule)
+            namedScheduleRepos.setDefaultNamedSchedule(namedScheduleId)
             widgetDataUpdater.updateAll()
             workScheduler.startPeriodicScheduleUpdating()
         }
 
         return ScheduleUseCaseResult(
-            savedNamedSchedules = scheduleLocalRepos.getSavedNamedSchedules(),
-            namedScheduleFormatted = scheduleLocalRepos.getNamedScheduleById(primaryKeyNamedSchedule)
+            savedNamedSchedules = namedScheduleRepos.getAllEntities(),
+            namedScheduleFormatted = namedScheduleRepos.getById(namedScheduleId)
         )
     }
 }

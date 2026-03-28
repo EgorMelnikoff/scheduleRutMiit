@@ -1,15 +1,21 @@
 package com.egormelnikoff.schedulerutmiit.app.di
 
-import com.egormelnikoff.schedulerutmiit.data.repos.news.NewsRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.news.NewsReposImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalReposImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.remote.ScheduleRemoteRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.remote.ScheduleRemoteReposImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.search.local.SearchLocalRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.search.local.SearchLocalReposImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.search.remote.SearchRemoteRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.search.remote.SearchRemoteReposImpl
+import com.egormelnikoff.schedulerutmiit.datasource.remote.news.NewsRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.datasource.remote.news.NewsRemoteDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.datasource.remote.schedule.ScheduleRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.datasource.remote.schedule.ScheduleRemoteDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.repos.event.EventRepos
+import com.egormelnikoff.schedulerutmiit.repos.event.EventReposImpl
+import com.egormelnikoff.schedulerutmiit.repos.event_extra.EventExtraRepos
+import com.egormelnikoff.schedulerutmiit.repos.event_extra.EventExtraReposImpl
+import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleReposImpl
+import com.egormelnikoff.schedulerutmiit.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.repos.schedule.ScheduleReposImpl
+import com.egormelnikoff.schedulerutmiit.repos.search_query.SearchQueryRepos
+import com.egormelnikoff.schedulerutmiit.repos.search_query.SearchQueryReposImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,22 +27,35 @@ import javax.inject.Singleton
 abstract class BindModule {
     @Binds
     @Singleton
-    abstract fun bindScheduleLocal(scheduleLocalDataSourceImpl: ScheduleLocalReposImpl): ScheduleLocalRepos
+    abstract fun bindScheduleRemoteDataSource(scheduleRemoteDataSourceImpl: ScheduleRemoteDataSourceImpl): ScheduleRemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindScheduleRemote(scheduleRemoteDataSourceImpl: ScheduleRemoteReposImpl): ScheduleRemoteRepos
+    abstract fun bindNewsRemoteDataSource(newsRemoteDataSourceImpl: NewsRemoteDataSourceImpl): NewsRemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindSearchLocal(searchLocalReposImpl: SearchLocalReposImpl): SearchLocalRepos
-
-    @Binds
-    @Singleton
-    abstract fun bindSearchRemote(searchRemoteReposImpl: SearchRemoteReposImpl): SearchRemoteRepos
+    abstract fun bindSearchRemoteDataSource(searchRemoteDataSourceImpl: SearchRemoteDataSourceImpl): SearchRemoteDataSource
 
 
     @Binds
     @Singleton
-    abstract fun bindNewsRepos(newsReposImpl: NewsReposImpl): NewsRepos
+    abstract fun bindNamedScheduleRepos(namedScheduleReposImpl: NamedScheduleReposImpl): NamedScheduleRepos
+
+    @Binds
+    @Singleton
+    abstract fun bindScheduleRepos(scheduleReposImpl: ScheduleReposImpl): ScheduleRepos
+
+    @Binds
+    @Singleton
+    abstract fun bindEventRepos(eventReposImpl: EventReposImpl): EventRepos
+
+    @Binds
+    @Singleton
+    abstract fun bindEventExtraRepos(eventExtraReposImpl: EventExtraReposImpl): EventExtraRepos
+
+
+    @Binds
+    @Singleton
+    abstract fun bindSearchQueryRepos(searchQueryReposImpl: SearchQueryReposImpl): SearchQueryRepos
 }

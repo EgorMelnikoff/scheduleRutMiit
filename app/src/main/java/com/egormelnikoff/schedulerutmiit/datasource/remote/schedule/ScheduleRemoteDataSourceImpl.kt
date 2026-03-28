@@ -1,22 +1,22 @@
-package com.egormelnikoff.schedulerutmiit.data.repos.schedule.remote
+package com.egormelnikoff.schedulerutmiit.datasource.remote.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.model.Schedule
-import com.egormelnikoff.schedulerutmiit.app.model.Timetable
-import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.MiitApi
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.NetworkHelper
-import com.egormelnikoff.schedulerutmiit.data.datasource.local.parser.ScheduleParser
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
+import com.egormelnikoff.schedulerutmiit.app.network.NetworkHelper
+import com.egormelnikoff.schedulerutmiit.app.network.model.Schedule
+import com.egormelnikoff.schedulerutmiit.app.network.model.Timetable
+import com.egormelnikoff.schedulerutmiit.app.network.result.Result
+import com.egormelnikoff.schedulerutmiit.datasource.local.parser.ScheduleParser
+import com.egormelnikoff.schedulerutmiit.datasource.remote.api.MiitApi
 import org.jsoup.Jsoup
 import javax.inject.Inject
 
-class ScheduleRemoteReposImpl @Inject constructor(
+class ScheduleRemoteDataSourceImpl @Inject constructor(
     private val miitApi: MiitApi,
     private val scheduleParser: ScheduleParser,
     private val networkHelper: NetworkHelper
-) : ScheduleRemoteRepos {
+) : ScheduleRemoteDataSource {
     override suspend fun fetchTimetables(
         apiId: Int,
         type: NamedScheduleType
@@ -30,26 +30,7 @@ class ScheduleRemoteReposImpl @Inject constructor(
         callJsoup = null
     )
 
-
-    override suspend fun fetchScheduleApi(
-        namedScheduleType: NamedScheduleType,
-        apiId: String,
-        timetableId: String
-    ) = networkHelper.callNetwork(
-        requestType = "Schedule",
-        requestParams = "Type: ${namedScheduleType}; ApiId: $apiId; TimetableId: $timetableId",
-        timeoutMs = 10000,
-        callApi = {
-            miitApi.getSchedule(
-                namedScheduleType.typeName,
-                apiId,
-                timetableId
-            )
-        },
-        callJsoup = null
-    )
-
-    override suspend fun fetchScheduleParser(
+    override suspend fun fetchSchedule(
         namedScheduleType: NamedScheduleType,
         name: String,
         apiId: Int,
@@ -58,7 +39,7 @@ class ScheduleRemoteReposImpl @Inject constructor(
     ): Result<Schedule> {
         networkHelper.callNetwork(
             requestType = "ScheduleParser",
-            requestParams = "Id: $apiId; Start date: ${timetable.startDate}",
+            requestParams = "Id: $apiId; Type: $namedScheduleType; Start date: ${timetable.startDate}",
             timeoutMs = 10000,
             callJsoup = {
                 Jsoup.connect(
@@ -113,5 +94,4 @@ class ScheduleRemoteReposImpl @Inject constructor(
             }
         }
     }
-
 }
