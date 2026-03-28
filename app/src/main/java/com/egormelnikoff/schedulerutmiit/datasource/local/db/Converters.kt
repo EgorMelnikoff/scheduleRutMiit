@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.db
+package com.egormelnikoff.schedulerutmiit.datasource.local.db
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
@@ -106,10 +106,8 @@ class Converters @Inject constructor(
     }
 
     @TypeConverter
-    fun fromTimetableType(type: TimetableType): Int =
-        type.ordinal
+    fun fromTimetableType(type: TimetableType): Int = type.ordinal
 
     @TypeConverter
-    fun toTimetableType(value: Int): TimetableType =
-        TimetableType.entries[value]
+    fun toTimetableType(value: Int): TimetableType = TimetableType.entries[value]
 }

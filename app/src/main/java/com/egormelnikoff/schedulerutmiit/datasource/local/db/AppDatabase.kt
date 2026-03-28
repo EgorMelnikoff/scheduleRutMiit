@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.db
+package com.egormelnikoff.schedulerutmiit.datasource.local.db
 
 import android.content.Context
 import androidx.room.Database
@@ -10,6 +10,11 @@ import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventDao
+import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventExtraDao
+import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.NamedScheduleDao
+import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.ScheduleDao
+import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.SearchQueryDao
 
 @Database(
     entities = [
@@ -24,7 +29,11 @@ import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun dao(): Dao
+    abstract fun namedScheduleDao(): NamedScheduleDao
+    abstract fun scheduleDao(): ScheduleDao
+    abstract fun eventDao(): EventDao
+    abstract fun eventExtraDao(): EventExtraDao
+    abstract fun searchQueryDao(): SearchQueryDao
 
     companion object {
         @Volatile
