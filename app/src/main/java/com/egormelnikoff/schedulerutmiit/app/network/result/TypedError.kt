@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data
+package com.egormelnikoff.schedulerutmiit.app.network.result
 
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager

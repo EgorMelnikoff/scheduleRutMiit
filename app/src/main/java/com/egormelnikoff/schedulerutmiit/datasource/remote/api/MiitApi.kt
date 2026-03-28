@@ -1,10 +1,11 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.remote
+package com.egormelnikoff.schedulerutmiit.datasource.remote.api
 
-import com.egormelnikoff.schedulerutmiit.app.model.Institutes
-import com.egormelnikoff.schedulerutmiit.app.model.News
-import com.egormelnikoff.schedulerutmiit.app.model.NewsList
-import com.egormelnikoff.schedulerutmiit.app.model.Schedule
-import com.egormelnikoff.schedulerutmiit.app.model.Timetables
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
+import com.egormelnikoff.schedulerutmiit.app.network.model.Institutes
+import com.egormelnikoff.schedulerutmiit.app.network.model.News
+import com.egormelnikoff.schedulerutmiit.app.network.model.NewsList
+import com.egormelnikoff.schedulerutmiit.app.network.model.Schedule
+import com.egormelnikoff.schedulerutmiit.app.network.model.Timetables
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

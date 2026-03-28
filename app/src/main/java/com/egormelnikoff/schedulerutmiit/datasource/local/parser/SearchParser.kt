@@ -1,6 +1,6 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.parser
+package com.egormelnikoff.schedulerutmiit.datasource.local.parser
 
-import com.egormelnikoff.schedulerutmiit.app.model.Person
+import com.egormelnikoff.schedulerutmiit.app.network.model.Person
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Element

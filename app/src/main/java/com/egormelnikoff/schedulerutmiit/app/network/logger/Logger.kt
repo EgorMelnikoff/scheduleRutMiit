@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.app.logger
+package com.egormelnikoff.schedulerutmiit.app.network.logger
 
 import android.content.Context
 import android.content.Intent

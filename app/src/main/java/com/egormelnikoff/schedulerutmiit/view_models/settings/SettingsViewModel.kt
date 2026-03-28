@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.app.logger.Logger
+import com.egormelnikoff.schedulerutmiit.app.network.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore

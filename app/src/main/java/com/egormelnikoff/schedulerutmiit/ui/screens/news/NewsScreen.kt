@@ -41,8 +41,8 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
-import com.egormelnikoff.schedulerutmiit.app.model.NewsShort
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_MIIT_URL
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_MIIT_URL
+import com.egormelnikoff.schedulerutmiit.app.network.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route

@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.parser
+package com.egormelnikoff.schedulerutmiit.datasource.local.parser
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
@@ -7,9 +7,9 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.app.model.News
-import com.egormelnikoff.schedulerutmiit.app.model.NewsContent
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_MIIT_URL
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_MIIT_URL
+import com.egormelnikoff.schedulerutmiit.app.network.model.News
+import com.egormelnikoff.schedulerutmiit.app.network.model.NewsContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup

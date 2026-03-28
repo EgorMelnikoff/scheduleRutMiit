@@ -26,8 +26,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet

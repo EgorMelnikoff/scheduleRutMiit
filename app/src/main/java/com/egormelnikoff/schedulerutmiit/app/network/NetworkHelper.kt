@@ -1,8 +1,8 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.remote
+package com.egormelnikoff.schedulerutmiit.app.network
 
-import com.egormelnikoff.schedulerutmiit.app.logger.Logger
-import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.TypedError
+import com.egormelnikoff.schedulerutmiit.app.network.logger.Logger
+import com.egormelnikoff.schedulerutmiit.app.network.result.Result
+import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay

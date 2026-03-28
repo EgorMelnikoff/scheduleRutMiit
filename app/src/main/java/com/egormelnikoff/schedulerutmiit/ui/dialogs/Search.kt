@@ -44,7 +44,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.personImageUrl
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField

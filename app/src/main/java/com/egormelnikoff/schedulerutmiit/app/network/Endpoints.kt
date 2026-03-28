@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.remote
+package com.egormelnikoff.schedulerutmiit.app.network
 
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 

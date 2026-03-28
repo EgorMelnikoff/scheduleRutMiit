@@ -4,26 +4,26 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.egormelnikoff.schedulerutmiit.app.logger.Logger
+import com.egormelnikoff.schedulerutmiit.app.network.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.data.repos.schedule.local.ScheduleLocalRepos
 import com.egormelnikoff.schedulerutmiit.domain.schedule.RefreshNamedScheduleUseCase
+import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
-import com.egormelnikoff.schedulerutmiit.data.Result as ApiResult
+import com.egormelnikoff.schedulerutmiit.app.network.result.Result as ApiResult
 
 @HiltWorker
 class ScheduleWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val scheduleLocalRepos: ScheduleLocalRepos,
+    private val namedScheduleRepos: NamedScheduleRepos,
     private val refreshNamedScheduleUseCase: RefreshNamedScheduleUseCase,
     private val logger: Logger,
     private val preferencesDataStore: PreferencesDataStore
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
-        val namedScheduleEntity = scheduleLocalRepos.getDefaultNamedScheduleEntity()
+        val namedScheduleEntity = namedScheduleRepos.getDefault()
         logger.i("ScheduleWorker", "Default schedule:\n$namedScheduleEntity")
         namedScheduleEntity ?: return Result.failure()
 

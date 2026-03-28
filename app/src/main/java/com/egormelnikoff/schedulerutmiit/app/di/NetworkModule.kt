@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.app.di
 
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.BASE_RUT_MIIT_URL
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.MiitApi
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_RUT_MIIT_URL
+import com.egormelnikoff.schedulerutmiit.datasource.remote.api.MiitApi
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides

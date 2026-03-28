@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data
+package com.egormelnikoff.schedulerutmiit.app.network.result
 
 sealed interface Result<out R> {
     data class Success<S>(

@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.data.datasource.local.parser
+package com.egormelnikoff.schedulerutmiit.datasource.local.parser
 
 import android.os.Build
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
@@ -9,11 +9,11 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
-import com.egormelnikoff.schedulerutmiit.app.model.Event
-import com.egormelnikoff.schedulerutmiit.app.model.NonPeriodicContent
-import com.egormelnikoff.schedulerutmiit.app.model.PeriodicContent
-import com.egormelnikoff.schedulerutmiit.app.model.Schedule
-import com.egormelnikoff.schedulerutmiit.app.model.Timetable
+import com.egormelnikoff.schedulerutmiit.app.network.model.Event
+import com.egormelnikoff.schedulerutmiit.app.network.model.NonPeriodicContent
+import com.egormelnikoff.schedulerutmiit.app.network.model.PeriodicContent
+import com.egormelnikoff.schedulerutmiit.app.network.model.Schedule
+import com.egormelnikoff.schedulerutmiit.app.network.model.Timetable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Document

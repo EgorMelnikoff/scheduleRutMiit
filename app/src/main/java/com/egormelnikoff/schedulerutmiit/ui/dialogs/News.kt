@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.model.NewsContent
+import com.egormelnikoff.schedulerutmiit.app.network.model.NewsContent
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen

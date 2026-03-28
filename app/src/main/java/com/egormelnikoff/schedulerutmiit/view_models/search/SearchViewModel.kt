@@ -5,14 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.app.model.Person
+import com.egormelnikoff.schedulerutmiit.app.network.model.Person
+import com.egormelnikoff.schedulerutmiit.app.network.result.Result
+import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.data.Result
-import com.egormelnikoff.schedulerutmiit.data.TypedError
-import com.egormelnikoff.schedulerutmiit.data.repos.search.local.SearchLocalRepos
-import com.egormelnikoff.schedulerutmiit.data.repos.search.remote.SearchRemoteRepos
+import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.domain.search.SearchUseCase
 import com.egormelnikoff.schedulerutmiit.domain.search.result.SearchResult
+import com.egormelnikoff.schedulerutmiit.repos.search_query.SearchQueryRepos
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -30,8 +30,8 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchRemoteRepos: SearchRemoteRepos,
-    private val searchLocalRepos: SearchLocalRepos,
+    private val searchRemoteDataSource: SearchRemoteDataSource,
+    private val searchQueryRepos: SearchQueryRepos,
     private val searchUseCase: SearchUseCase,
     private val resourcesManager: ResourcesManager
 ) : ViewModel() {
@@ -116,16 +116,16 @@ class SearchViewModel @Inject constructor(
         searchQuery: SearchQuery
     ) {
         viewModelScope.launch {
-            searchLocalRepos.saveSearchQuery(searchQuery)
+            searchQueryRepos.insert(searchQuery)
             updateSearchQueryHistory()
         }
     }
 
     fun deleteQueryFromHistory(
-        queryPrimaryKey: Long
+        queryId: Long
     ) {
         viewModelScope.launch {
-            searchLocalRepos.deleteSearchQuery(queryPrimaryKey)
+            searchQueryRepos.deleteById(queryId)
             updateSearchQueryHistory()
         }
     }
@@ -133,7 +133,7 @@ class SearchViewModel @Inject constructor(
     suspend fun updateSearchQueryHistory() {
         _searchState.update {
             it.copy(
-                history = searchLocalRepos.getAllSearchQuery()
+                history = searchQueryRepos.getAll()
             )
         }
     }
@@ -156,7 +156,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private suspend fun loadInstitutes() {
-        when (val institutes = searchRemoteRepos.fetchInstitutes()) {
+        when (val institutes = searchRemoteDataSource.fetchInstitutes()) {
             is Result.Error -> {
                 setErrorSearchState(institutes.typedError)
             }

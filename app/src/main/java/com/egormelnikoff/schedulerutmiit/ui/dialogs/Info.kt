@@ -31,11 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.DEVELOPER
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.APP_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.APP_GITHUB_LATEST_RELEASE
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.APP_GITHUB_REPOS
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.AUTHOR_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.data.datasource.remote.Endpoints.RU_STORE
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_GITHUB_LATEST_RELEASE
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_GITHUB_REPOS
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.AUTHOR_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.RU_STORE
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar

@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.app.model
+package com.egormelnikoff.schedulerutmiit.app.network.model
 
 import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity

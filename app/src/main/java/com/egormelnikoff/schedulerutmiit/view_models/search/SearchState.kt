@@ -3,8 +3,8 @@ package com.egormelnikoff.schedulerutmiit.view_models.search
 import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
-import com.egormelnikoff.schedulerutmiit.app.model.Institutes
-import com.egormelnikoff.schedulerutmiit.app.model.Person
+import com.egormelnikoff.schedulerutmiit.app.network.model.Institutes
+import com.egormelnikoff.schedulerutmiit.app.network.model.Person
 
 @Keep
 data class SearchState(
