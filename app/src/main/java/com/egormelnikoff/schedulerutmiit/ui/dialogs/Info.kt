@@ -32,7 +32,7 @@ import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.DEVELOPER
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_GITHUB_LATEST_RELEASE
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_GITHUB_LATEST_RELEASE_DOWNLOAD
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_GITHUB_REPOS
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.AUTHOR_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.RU_STORE
@@ -124,11 +124,11 @@ fun InfoDialog(
                             },
                             onLongClick = {
                                 clipboard.nativeClipboard.setPrimaryClip(
-                                    ClipData.newPlainText(null, APP_GITHUB_LATEST_RELEASE)
+                                    ClipData.newPlainText(null, APP_GITHUB_LATEST_RELEASE_DOWNLOAD)
                                 )
                             }
                         ) {
-                            uriHandler.openUri(APP_GITHUB_LATEST_RELEASE)
+                            uriHandler.openUri(APP_GITHUB_LATEST_RELEASE_DOWNLOAD)
                         }
                     }, {
                         ClickableItem(
