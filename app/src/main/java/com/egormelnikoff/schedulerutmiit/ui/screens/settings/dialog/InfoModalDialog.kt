@@ -1,6 +1,9 @@
-package com.egormelnikoff.schedulerutmiit.ui.dialogs
+package com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog
 
+import android.content.ActivityNotFoundException
 import android.content.ClipData
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,9 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,8 +32,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
+import androidx.core.net.toUri
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.DEVELOPER
+import com.egormelnikoff.schedulerutmiit.app.AppConst.DEVELOPER_EMAIL
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_GITHUB_LATEST_RELEASE_DOWNLOAD
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_GITHUB_REPOS
@@ -38,40 +43,31 @@ import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.AUTHOR_CHANNEL_UR
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.RU_STORE
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingIcon
-import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingTitle
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
-import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InfoDialog(
-    appBackStack: AppBackStack,
+fun InfoModalDialog(
+    onDismiss: () -> Unit
 ) {
-    val packageInfo = LocalContext.current.packageManager.getPackageInfo(LocalContext.current.packageName, 0)
+    val context = LocalContext.current
+    val packageInfo = context.packageManager.getPackageInfo(LocalContext.current.packageName, 0)
     val uriHandler = LocalUriHandler.current
     val clipboard = LocalClipboard.current
 
-    Scaffold(
-        topBar = {
-            CustomTopAppBar(
-                titleText = stringResource(R.string.about_app),
-                navAction = { appBackStack.onBack() }
-            )
-        }
-    ) { innerPadding ->
+    CustomModalBottomSheet(
+        modifier = Modifier.padding(start = 16.dp,end = 16.dp, top = 24.dp, bottom = 16.dp),
+        showDragHandle = false,
+        onDismiss = onDismiss
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = innerPadding.calculateTopPadding(),
-                    bottom = innerPadding.calculateBottomPadding()
-                )
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -122,6 +118,7 @@ fun InfoDialog(
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                             },
+                            showClickLabel = false,
                             onLongClick = {
                                 clipboard.nativeClipboard.setPrimaryClip(
                                     ClipData.newPlainText(null, APP_GITHUB_LATEST_RELEASE_DOWNLOAD)
@@ -138,6 +135,7 @@ fun InfoDialog(
                                     imageVector = ImageVector.vectorResource(R.drawable.logo_rustore)
                                 )
                             },
+                            showClickLabel = false,
                             onLongClick = {
                                 clipboard.nativeClipboard.setPrimaryClip(
                                     ClipData.newPlainText(null, RU_STORE)
@@ -150,17 +148,18 @@ fun InfoDialog(
                 )
             )
 
-            ColumnGroup(
+            RowGroup(
+                title = stringResource(R.string.report_a_problem),
                 items = listOf(
                     {
                         ClickableItem(
                             title = stringResource(R.string.telegram),
-                            subtitle = stringResource(R.string.news_updates),
                             leadingIcon = {
                                 LeadingIcon(
                                     imageVector = ImageVector.vectorResource(R.drawable.logo_telegram)
                                 )
                             },
+                            showClickLabel = false,
                             onLongClick = {
                                 clipboard.nativeClipboard.setPrimaryClip(
                                     ClipData.newPlainText(null, APP_CHANNEL_URL)
@@ -171,24 +170,55 @@ fun InfoDialog(
                         }
                     }, {
                         ClickableItem(
-                            title = stringResource(R.string.github),
-                            subtitle = stringResource(R.string.source_code),
+                            title = stringResource(R.string.email),
                             leadingIcon = {
                                 LeadingIcon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.logo_github),
+                                    imageVector = ImageVector.vectorResource(R.drawable.email),
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                             },
+                            showClickLabel = false,
                             onLongClick = {
                                 clipboard.nativeClipboard.setPrimaryClip(
-                                    ClipData.newPlainText(null, APP_GITHUB_REPOS)
+                                    ClipData.newPlainText(null, DEVELOPER_EMAIL)
                                 )
                             }
                         ) {
-                            uriHandler.openUri(APP_GITHUB_REPOS)
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = "mailto:".toUri()
+                                putExtra(Intent.EXTRA_EMAIL, arrayOf(DEVELOPER_EMAIL))
+                                putExtra(Intent.EXTRA_SUBJECT, "Сообщение о проблеме")
+                            }
+
+                            try {
+                                context.startActivity(intent)
+                            } catch (e: ActivityNotFoundException) {
+                                Toast.makeText(
+                                    context,
+                                    "Приложение почты не найдено" + e.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }
                 )
+            )
+
+
+            ColumnGroup(
+                items = listOf {
+                    ClickableItem(
+                        title = stringResource(R.string.github),
+                        subtitle = stringResource(R.string.source_code),
+                        onLongClick = {
+                            clipboard.nativeClipboard.setPrimaryClip(
+                                ClipData.newPlainText(null, APP_GITHUB_REPOS)
+                            )
+                        }
+                    ) {
+                        uriHandler.openUri(APP_GITHUB_REPOS)
+                    }
+                }
             )
 
             ColumnGroup(
@@ -196,11 +226,6 @@ fun InfoDialog(
                     ClickableItem(
                         title = DEVELOPER,
                         subtitle = stringResource(R.string.developer),
-                        leadingIcon = {
-                            LeadingTitle(
-                                title = DEVELOPER.first()
-                            )
-                        },
                         onLongClick = {
                             clipboard.nativeClipboard.setPrimaryClip(
                                 ClipData.newPlainText(null, AUTHOR_CHANNEL_URL)
@@ -210,6 +235,7 @@ fun InfoDialog(
                         uriHandler.openUri(AUTHOR_CHANNEL_URL)
                     }
                 }
+
             )
         }
     }

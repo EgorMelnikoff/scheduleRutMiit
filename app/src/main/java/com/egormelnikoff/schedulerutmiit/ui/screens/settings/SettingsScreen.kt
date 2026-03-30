@@ -3,14 +3,10 @@ package com.egormelnikoff.schedulerutmiit.ui.screens.settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -18,32 +14,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.app.enums.Theme
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
+import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
-import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.CountEventsModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.EventViewModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.InfoModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.ThemeModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
+import com.egormelnikoff.schedulerutmiit.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 
 data class ThemeSelectorItemContent(
-    val name: String,
+    val theme: Theme,
     val imageVector: ImageVector?,
     val displayedName: String
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     appUiState: AppUiState,
@@ -51,16 +48,18 @@ fun SettingsScreen(
     settingsViewModel: SettingsViewModel,
     externalPadding: PaddingValues
 ) {
-    val uriHandler = LocalUriHandler.current
+    var decorDialog by remember { mutableStateOf(false) }
     var eventViewDialog by remember { mutableStateOf(false) }
+    var countEventsDialog by remember { mutableStateOf(false) }
+    var infoDialog by remember { mutableStateOf(false) }
 
     LazyVerticalStaggeredGrid(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background),
         columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
-        verticalItemSpacing = 12.dp,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalItemSpacing = 16.dp,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(
             start = 16.dp,
             end = 16.dp,
@@ -70,144 +69,172 @@ fun SettingsScreen(
         state = appUiState.settingsListState
     ) {
         item {
+            val data = mutableListOf<String>()
+            if (appSettings.eventView.groupsVisible) {
+                data.add(stringResource(R.string.groups))
+            }
+
+            if (appSettings.eventView.roomsVisible) {
+                data.add(stringResource(R.string.rooms))
+            }
+
+            if (appSettings.eventView.lecturersVisible) {
+                data.add(stringResource(R.string.lecturers))
+            }
+
+            if (appSettings.eventView.tagVisible) {
+                data.add(stringResource(R.string.tag))
+            }
+
+            if (appSettings.eventView.commentVisible) {
+                data.add(stringResource(R.string.comment))
+            }
+
+
             ColumnGroup(
                 title = stringResource(R.string.schedule),
                 items = listOf(
                     {
-                        SettingsItem(
-                            onClick = {
-                                eventViewDialog = true
-                            },
-                            imageVector = ImageVector.vectorResource(R.drawable.compact),
-                            text = stringResource(R.string.compact_view)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
+                        ClickableItem(
+                            title = stringResource(R.string.event_view),
+                            leadingIcon = {
                                 Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    imageVector = ImageVector.vectorResource(R.drawable.right),
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = ImageVector.vectorResource(R.drawable.event_view),
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
+                            },
+                            subtitle = data
+                                .joinToString(", ")
+                                .lowercase()
+                                .replaceFirstChar { it.uppercase() },
+                            subtitleMaxLines = 2,
+                            defaultMinHeight = 36.dp
+                        ) {
+                            eventViewDialog = true
+                        }
+                    }, {
+                        ClickableItem(
+                            title = stringResource(R.string.show_count_classes),
+                            subtitle = when (appSettings.eventsCountView) {
+                                EventsCountView.DETAILS -> stringResource(R.string.details)
+                                EventsCountView.BRIEFLY -> stringResource(R.string.briefly)
+                                EventsCountView.OFF -> stringResource(R.string.off)
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = when (appSettings.eventsCountView) {
+                                        EventsCountView.DETAILS -> ImageVector.vectorResource(R.drawable.points)
+                                        EventsCountView.BRIEFLY -> ImageVector.vectorResource(R.drawable.one)
+                                        EventsCountView.OFF -> ImageVector.vectorResource(R.drawable.visibility_off)
+                                    },
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            },
+                            defaultMinHeight = 36.dp
+                        ) {
+                            countEventsDialog = true
+                        }
+                    }, {
+                        ClickableItem(
+                            title = stringResource(R.string.not_delete_schedules),
+                            subtitle = stringResource(R.string.not_delete_schedules_message),
+                            subtitleMaxLines = 3,
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = ImageVector.vectorResource(R.drawable.undelete),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            },
+                            defaultMinHeight = 36.dp,
+                            trailingIcon = {
                                 CustomSwitch(
-                                    checked = (!appSettings.eventView.groupsVisible && !appSettings.eventView.roomsVisible && !appSettings.eventView.lecturersVisible && !appSettings.eventView.tagVisible && !appSettings.eventView.commentVisible)
+                                    checked = !appSettings.schedulesDeletable
                                 ) {
-                                    settingsViewModel.onSetEventView(!it)
+                                    settingsViewModel.onSetSchedulesDeletable(!it)
                                 }
-                            }
-                        }
-                    }, {
-                        SettingsItem(
-                            onClick = {
-                                settingsViewModel.onSetSchedulesDeletable(!appSettings.schedulesDeletable)
                             },
-                            imageVector = ImageVector.vectorResource(R.drawable.delete),
-                            text = stringResource(R.string.not_delete_schedules)
+                            showClickLabel = false
                         ) {
-                            CustomSwitch(
-                                checked = !appSettings.schedulesDeletable
-                            ) {
-                                settingsViewModel.onSetSchedulesDeletable(!it)
-                            }
+                            settingsViewModel.onSetSchedulesDeletable(!appSettings.schedulesDeletable)
                         }
                     }, {
-                        SettingsItem(
-                            onClick = {
-                                settingsViewModel.onSetSyncTagsComments(!appSettings.syncTagsAndComments)
+                        ClickableItem(
+                            title = stringResource(R.string.sync_tag_comments),
+                            subtitle = stringResource(R.string.sync_tag_comments_message),
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = ImageVector.vectorResource(R.drawable.sync),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
                             },
-                            imageVector = ImageVector.vectorResource(R.drawable.sync),
-                            text = stringResource(R.string.sync_tag_comments)
+                            subtitleMaxLines = 3,
+                            defaultMinHeight = 36.dp,
+                            trailingIcon = {
+                                CustomSwitch(
+                                    checked = appSettings.syncTagsAndComments
+                                ) {
+                                    settingsViewModel.onSetSyncTagsComments(it)
+                                }
+                            },
+                            showClickLabel = false
                         ) {
-                            CustomSwitch(
-                                checked = appSettings.syncTagsAndComments
-                            ) {
-                                settingsViewModel.onSetSyncTagsComments(it)
-                            }
-                        }
-                    }, {
-                        SettingsItem(
-                            onClick = null,
-                            imageVector = ImageVector.vectorResource(R.drawable.count),
-                            text = stringResource(R.string.show_count_classes),
-                            horizontal = false
-                        ) {
-                            EventsCountSelector(
-                                setEventsCountView = { value ->
-                                    settingsViewModel.onSetEventsCountView(value)
-                                },
-                                currentView = appSettings.eventsCountView
-                            )
+                            settingsViewModel.onSetSyncTagsComments(!appSettings.syncTagsAndComments)
                         }
                     }
                 )
             )
         }
-        item {
-            ColumnGroup(
-                title = stringResource(R.string.decor),
-                items = listOf(
-                    {
-                        SettingsItem(
-                            onClick = null,
-                            imageVector = ImageVector.vectorResource(R.drawable.sun),
-                            text = stringResource(R.string.theme),
-                            horizontal = false
-                        ) {
-                            ThemeSelector(
-                                setTheme = { value ->
-                                    settingsViewModel.onSetTheme(value)
-                                },
-                                currentTheme = appSettings.theme
-                            )
-                        }
-                    },
-                    {
-                        SettingsItem(
-                            onClick = null,
-                            imageVector = ImageVector.vectorResource(R.drawable.color),
-                            text = stringResource(R.string.color_style),
-                            horizontal = false
-                        ) {
-                            ColorSelector(
-                                currentSelected = appSettings.decorColorIndex
-                            ) { value ->
-                                settingsViewModel.onSetDecorColor(value)
-                            }
-                        }
-                    }
-                )
-            )
-        }
+
         item {
             ColumnGroup(
                 title = stringResource(R.string.general),
                 items = listOf(
                     {
-                        SettingsItem(
-                            onClick = {
-                                uriHandler.openUri(APP_CHANNEL_URL)
+                        ClickableItem(
+                            title = stringResource(R.string.theme),
+                            subtitle = when (appSettings.theme) {
+                                Theme.LIGHT -> stringResource(R.string.light)
+                                Theme.DARK -> stringResource(R.string.dark)
+                                Theme.SYSTEM -> stringResource(R.string.auto)
                             },
-                            imageVector = ImageVector.vectorResource(R.drawable.send),
-                            text = stringResource(R.string.report_a_problem),
-                        )
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = if (appSettings.theme.isDarkTheme()) ImageVector.vectorResource(
+                                        R.drawable.moon
+                                    )
+                                    else ImageVector.vectorResource(R.drawable.sun),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            },
+                            defaultMinHeight = 36.dp
+                        ) {
+                            decorDialog = true
+                        }
                     }, {
-                        SettingsItem(
-                            onClick = {
-                                settingsViewModel.sendLogsFile()
+                        ClickableItem(
+                            title = stringResource(R.string.about_app),
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = ImageVector.vectorResource(R.drawable.info),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
                             },
-                            imageVector = ImageVector.vectorResource(R.drawable.bug_report),
-                            text = stringResource(R.string.send_logs_by_email),
-                        )
-                    }, {
-                        SettingsItem(
-                            onClick = {
-                                appUiState.appBackStack.openDialog(Route.Dialog.InfoDialog)
-                            },
-                            imageVector = ImageVector.vectorResource(R.drawable.info),
-                            text = stringResource(R.string.about_app),
-                        )
+                            defaultMinHeight = 36.dp
+                        ) {
+                            infoDialog = true
+                        }
                     }
                 )
             )
@@ -216,52 +243,36 @@ fun SettingsScreen(
     StatusBarProtection()
 
     if (eventViewDialog) {
-        CustomModalBottomSheet(
-            modifier = Modifier.padding(horizontal = 8.dp),
+        EventViewModalDialog(
             onDismiss = {
                 eventViewDialog = false
-            }
-        ) {
-            CheckedItem(
-                text = stringResource(R.string.groups),
-                imageVector = ImageVector.vectorResource(R.drawable.group),
-                checked = appSettings.eventView.groupsVisible
-            ) { visible ->
-                settingsViewModel.onSetEventGroupVisibility(visible)
-            }
-            CheckedItem(
-                text = stringResource(R.string.rooms),
-                imageVector = ImageVector.vectorResource(R.drawable.room),
-                checked = appSettings.eventView.roomsVisible
-            ) { visible ->
-                settingsViewModel.onSetEventRoomsVisibility(visible)
-            }
-            CheckedItem(
-                text = stringResource(R.string.lecturers),
-                imageVector = ImageVector.vectorResource(R.drawable.person),
-                checked = appSettings.eventView.lecturersVisible
-            ) { visible ->
-                settingsViewModel.onSetEventLecturersVisibility(visible)
-            }
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                thickness = 0.5.dp,
-                color = MaterialTheme.colorScheme.outline
-            )
-            CheckedItem(
-                text = stringResource(R.string.tag),
-                imageVector = ImageVector.vectorResource(R.drawable.tag),
-                checked = appSettings.eventView.tagVisible
-            ) { visible ->
-                settingsViewModel.onSetEventTagVisibility(visible)
-            }
-            CheckedItem(
-                text = stringResource(R.string.comment),
-                imageVector = ImageVector.vectorResource(R.drawable.comment),
-                checked = appSettings.eventView.commentVisible
-            ) { visible ->
-                settingsViewModel.onSetEventCommentVisibility(visible)
-            }
+            },
+            appSettings = appSettings,
+            settingsViewModel = settingsViewModel
+        )
+    }
+
+    if (decorDialog) {
+        ThemeModalDialog(
+            onDismiss = {
+                decorDialog = false
+            },
+            appSettings = appSettings,
+            settingsViewModel = settingsViewModel
+        )
+    }
+
+    if (countEventsDialog) {
+        CountEventsModalDialog(
+            {
+                countEventsDialog = false
+            }, appSettings, settingsViewModel
+        )
+    }
+
+    if (infoDialog) {
+        InfoModalDialog {
+            infoDialog = false
         }
     }
 }
