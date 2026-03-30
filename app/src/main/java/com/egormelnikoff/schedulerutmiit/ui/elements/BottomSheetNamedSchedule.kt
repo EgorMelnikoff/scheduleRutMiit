@@ -42,6 +42,7 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -101,19 +102,30 @@ fun ModalDialogNamedSchedule(
                                 subtitle = "${schedule.scheduleEntity.startDate.format(dayMonthYearFormatter)} - " +
                                         "${schedule.scheduleEntity.endDate.format(dayMonthYearFormatter)}",
                                 onClick = {
-                                    showScheduleDialog = !showScheduleDialog
+                                    if (schedule.scheduleEntity.id != currentScheduleEntity?.id) {
+                                        scheduleViewModel.setDefaultSchedule(
+                                            schedule.scheduleEntity.id,
+                                            schedule.scheduleEntity.timetableId
+                                        )
+                                    }
                                 },
                                 trailingIcon = {
-                                    Icon(
-                                        modifier = Modifier
-                                            .size(20.dp)
-                                            .graphicsLayer(
-                                                rotationZ = angle
-                                            ),
-                                        imageVector = ImageVector.vectorResource(R.drawable.up),
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                    )
+                                    IconButton(
+                                        onClick = {
+                                            showScheduleDialog = !showScheduleDialog
+                                        }
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier
+                                                .size(20.dp)
+                                                .graphicsLayer(
+                                                    rotationZ = angle
+                                                ),
+                                            imageVector = ImageVector.vectorResource(R.drawable.up),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                        )
+                                    }
                                 },
                                 showClickLabel = false,
                                 verticalPadding = 8.dp
@@ -127,7 +139,6 @@ fun ModalDialogNamedSchedule(
                                 appBackStack = appBackStack,
 
                                 isSavedNamedSchedule = isSavedNamedSchedule,
-                                isDefaultSchedule = isSavedNamedSchedule && schedule.scheduleEntity.id == currentScheduleEntity?.id || schedule.scheduleEntity.isDefault,
                                 haveDownloadUrl = schedule.scheduleEntity.downloadUrl != null,
                                 haveNotEmptySchedules = haveNotEmptySchedules,
                                 haveHiddenEvents = haveHiddenEvents,
@@ -275,7 +286,6 @@ fun ScheduleActionsDialog(
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
     isSavedNamedSchedule: Boolean,
-    isDefaultSchedule: Boolean,
     haveDownloadUrl: Boolean,
     haveNotEmptySchedules: Boolean,
     haveHiddenEvents: Boolean,
@@ -366,27 +376,8 @@ fun ScheduleActionsDialog(
                     onDismissParentDialog(null)
                 }
             }
-            if (!isDefaultSchedule) {
-                ClickableItem(
-                    title = "${stringResource(R.string.open)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
-                    titleTypography = MaterialTheme.typography.titleMedium,
-                    leadingIcon = {
-                        Icon(
-                            modifier = Modifier.size(20.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.check),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    },
-                    showClickLabel = false
-                ) {
-                    scheduleViewModel.setDefaultSchedule(
-                        schedule.scheduleEntity.id,
-                        schedule.scheduleEntity.timetableId
-                    )
-                }
-            }
-            if (namedScheduleEntity.type != NamedScheduleType.MY && isSavedNamedSchedule) {
+
+            if (LocalDate.now() > schedule.scheduleEntity.endDate && namedScheduleEntity.type != NamedScheduleType.MY && isSavedNamedSchedule) {
                 ClickableItem(
                     title = stringResource(R.string.delete),
                     titleTypography = MaterialTheme.typography.titleMedium,
