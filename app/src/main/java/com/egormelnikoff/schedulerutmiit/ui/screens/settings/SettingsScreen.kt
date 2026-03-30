@@ -200,7 +200,7 @@ fun SettingsScreen(
                     {
                         ClickableItem(
                             title = stringResource(R.string.theme),
-                            subtitle = when (appSettings.theme) {
+                            subtitle = when (appSettings.decorPreferences.theme) {
                                 Theme.LIGHT -> stringResource(R.string.light)
                                 Theme.DARK -> stringResource(R.string.dark)
                                 Theme.SYSTEM -> stringResource(R.string.auto)
@@ -208,7 +208,7 @@ fun SettingsScreen(
                             leadingIcon = {
                                 Icon(
                                     modifier = Modifier.size(20.dp),
-                                    imageVector = if (appSettings.theme.isDarkTheme()) ImageVector.vectorResource(
+                                    imageVector = if (appSettings.decorPreferences.theme.isDarkTheme()) ImageVector.vectorResource(
                                         R.drawable.moon
                                     )
                                     else ImageVector.vectorResource(R.drawable.sun),

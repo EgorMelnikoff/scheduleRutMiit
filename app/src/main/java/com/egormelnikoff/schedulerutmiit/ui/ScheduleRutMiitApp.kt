@@ -318,7 +318,7 @@ fun PageHost(
                         }
                     }
                 ),
-                isDarkTheme = appSettings.theme.isDarkTheme()
+                isDarkTheme = appSettings.decorPreferences.theme.isDarkTheme()
             )
         }
     ) { padding ->
@@ -351,7 +351,7 @@ fun PageHost(
                         currentDateTime = currentDateTime,
                         scheduleViewModel = scheduleViewModel,
                         appBackStack = appUiState.appBackStack,
-                        isDarkTheme = appSettings.theme.isDarkTheme(),
+                        isDarkTheme = appSettings.decorPreferences.theme.isDarkTheme(),
                         externalPadding = padding
                     )
                 }

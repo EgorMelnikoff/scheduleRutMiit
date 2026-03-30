@@ -42,7 +42,7 @@ fun ThemeModalDialog(
                             setTheme = { value ->
                                 settingsViewModel.onSetTheme(value)
                             },
-                            currentTheme = appSettings.theme
+                            currentTheme = appSettings.decorPreferences.theme
                         )
                     }
                 }, {
@@ -51,8 +51,8 @@ fun ThemeModalDialog(
                         defaultMinHeight = 36.dp,
                         trailingIcon = {
                             CustomSwitch(
-                                checked = appSettings.usedAmoled,
-                                enabled = appSettings.theme.isDarkTheme(),
+                                checked = appSettings.decorPreferences.usedAmoled,
+                                enabled = appSettings.decorPreferences.theme.isDarkTheme(),
                             ) { used ->
                                 settingsViewModel.onSetUsedAmoled(used)
                             }
@@ -66,7 +66,7 @@ fun ThemeModalDialog(
             title = stringResource(R.string.color_style),
             items = listOf {
                 ColorSelector(
-                    currentSelected = appSettings.decorColorIndex
+                    currentSelected = appSettings.decorPreferences.decorColorIndex
                 ) { value ->
                     settingsViewModel.onSetDecorColor(value)
                 }

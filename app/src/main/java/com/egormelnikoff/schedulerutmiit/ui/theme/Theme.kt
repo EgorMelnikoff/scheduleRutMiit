@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
+import com.egormelnikoff.schedulerutmiit.app.preferences.DecorPreferences
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.amoledColorScheme
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.animation
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.defaultTheme
@@ -20,16 +21,14 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.color.themes
 
 @Composable
 fun ScheduleRutMiitTheme(
-    theme: Theme,
-    decorColorIndex: Int,
-    usedAmoled: Boolean,
+    decorPreferences: DecorPreferences,
     content: @Composable () -> Unit
 ) {
-    val isDarkTheme = theme.isDarkTheme()
+    val isDarkTheme = decorPreferences.theme.isDarkTheme()
     val colorScheme = getCurrentColorScheme(
         isDarkTheme = isDarkTheme,
-        isUsedAmoledTheme = usedAmoled,
-        decorColorIndex = decorColorIndex
+        isUsedAmoledTheme = decorPreferences.usedAmoled,
+        decorColorIndex = decorPreferences.decorColorIndex
     )
 
     val view = LocalView.current
