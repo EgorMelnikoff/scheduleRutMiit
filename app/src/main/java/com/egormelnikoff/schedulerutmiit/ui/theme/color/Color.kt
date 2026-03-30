@@ -34,12 +34,11 @@ val colors = mapOf(
     5 to LightBlue
 )
 
-fun getColorByIndex(
-    index: Int?,
+fun Int?.getColorByIndex(
     defaultColor: Color = Color.Unspecified
 ): Color {
-    if (index == 0 || index == null) return defaultColor
-    return colors[index] ?: Color.Unspecified
+    if (this == 0 || this == null) return defaultColor
+    return colors[this] ?: Color.Unspecified
 }
 
 val animation: SpringSpec<Color> = SpringSpec(stiffness = Spring.StiffnessMedium)
