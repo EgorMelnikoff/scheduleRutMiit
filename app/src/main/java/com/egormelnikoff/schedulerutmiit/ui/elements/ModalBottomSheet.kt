@@ -23,24 +23,27 @@ import androidx.compose.ui.unit.dp
 fun CustomModalBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState? = null,
+    showDragHandle: Boolean = true,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     onDismiss: () -> Unit,
     content: @Composable () -> Unit
 ) {
     ModalBottomSheet(
         dragHandle = {
-            Surface(
-                modifier = modifier
-                    .padding(vertical = 24.dp)
-                    .clickable(
-                        interactionSource = null,
-                        enabled = false,
-                        onClick = {}
-                    ),
-                color = MaterialTheme.colorScheme.outline,
-                shape = MaterialTheme.shapes.extraSmall,
-            ) {
-                Box(Modifier.size(width = 36.dp, height = 4.dp))
+            if (showDragHandle) {
+                Surface(
+                    modifier = modifier
+                        .padding(vertical = 24.dp)
+                        .clickable(
+                            interactionSource = null,
+                            enabled = false,
+                            onClick = {}
+                        ),
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = MaterialTheme.shapes.extraSmall,
+                ) {
+                    Box(Modifier.size(width = 36.dp, height = 4.dp))
+                }
             }
         },
         sheetState = sheetState ?: rememberModalBottomSheetState(),
@@ -50,7 +53,7 @@ fun CustomModalBottomSheet(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
+                .padding(bottom = 12.dp),
             horizontalAlignment = horizontalAlignment,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
