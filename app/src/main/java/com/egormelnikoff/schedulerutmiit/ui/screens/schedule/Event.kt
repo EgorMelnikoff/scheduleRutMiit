@@ -144,7 +144,7 @@ fun ScheduleSingleEvent(
                 drawLine(
                     start = Offset(x = 0f, y = 0f),
                     end = Offset(x = size.width, y = 0f),
-                    color = getColorByIndex(eventExtraData.tag),
+                    color = eventExtraData.tag.getColorByIndex(),
                     strokeWidth = 20f
                 )
             }
@@ -253,11 +253,11 @@ fun ScheduleSingleEvent(
                     thickness = 0.5.dp
                 )
                 Text(
-                    text = eventExtraData.comment,
+                    text = eventExtraData.comment.replace(Regex("\\s+"), " "),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 2
+                    maxLines = 3
                 )
             }
         }
