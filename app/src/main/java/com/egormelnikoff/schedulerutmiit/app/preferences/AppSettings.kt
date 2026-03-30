@@ -2,9 +2,11 @@ package com.egormelnikoff.schedulerutmiit.app.preferences
 
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.app.enums.Theme
 
 data class AppSettings(
-    val theme: String,
+    val theme: Theme,
+    val usedAmoled: Boolean,
     val decorColorIndex: Int,
     val scheduleView: ScheduleView,
     val eventsCountView: EventsCountView,
