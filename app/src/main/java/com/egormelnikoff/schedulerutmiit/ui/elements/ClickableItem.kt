@@ -43,25 +43,27 @@ import com.egormelnikoff.schedulerutmiit.R
 fun ClickableItem(
     horizontalPadding: Dp = 12.dp,
     verticalPadding: Dp = 12.dp,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(4.dp),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(12.dp),
     defaultMinHeight: Dp? = null,
 
     title: String? = null,
-    titleTypography: TextStyle? = null,
+    titleTypography: TextStyle = MaterialTheme.typography.titleMedium,
     titleMaxLines: Int = 1,
-    titleColor: Color? = null,
+    titleColor: Color = MaterialTheme.colorScheme.onBackground,
     titleLabel: (@Composable () -> Unit)? = null,
 
     subtitle: String? = null,
-    subtitleTypography: TextStyle? = null,
+    subtitleTypography: TextStyle = MaterialTheme.typography.bodyMedium,
     subtitleMaxLines: Int = 1,
-    subtitleColor: Color? = null,
+    subtitleColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
     subtitleLabel: (@Composable () -> Unit)? = null,
 
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
-    clickLabel: ImageVector? = null,
+    clickLabel: ImageVector = ImageVector.vectorResource(R.drawable.right),
     showClickLabel: Boolean = true,
-    clickLabelColor: Color? = null,
+    clickLabelColor: Color =  MaterialTheme.colorScheme.onSecondaryContainer,
     onLongClick: (() -> Unit)? = null,
     onDoubleCLick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
@@ -87,14 +89,14 @@ fun ClickableItem(
                 } else modifier
             },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = horizontalArrangement
     ) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
             leadingIcon?.invoke()
         }
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = verticalArrangement,
         ) {
             title?.let {
                 Row(
@@ -103,8 +105,8 @@ fun ClickableItem(
                 ) {
                     Text(
                         text = title,
-                        style = titleTypography ?: MaterialTheme.typography.titleMedium,
-                        color = titleColor ?: MaterialTheme.colorScheme.onBackground,
+                        style = titleTypography,
+                        color = titleColor,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = titleMaxLines
                     )
@@ -114,13 +116,13 @@ fun ClickableItem(
             subtitle?.let {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     subtitleLabel?.invoke()
                     Text(
                         text = subtitle,
-                        style = subtitleTypography ?: MaterialTheme.typography.bodyMedium,
-                        color = subtitleColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                        style = subtitleTypography,
+                        color = subtitleColor,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = subtitleMaxLines
                     )
@@ -134,9 +136,9 @@ fun ClickableItem(
         if (showClickLabel && onClick != null) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                imageVector = clickLabel ?: ImageVector.vectorResource(R.drawable.right),
+                imageVector = clickLabel,
                 contentDescription = null,
-                tint = clickLabelColor ?: MaterialTheme.colorScheme.onSecondaryContainer
+                tint = clickLabelColor
             )
         }
     }
