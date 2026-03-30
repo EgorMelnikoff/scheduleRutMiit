@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.settings
+package com.egormelnikoff.schedulerutmiit.ui.screens.settings.selector
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -14,38 +14,36 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.enums.Theme
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButtonRow
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.ThemeSelectorItemContent
 
 @Composable
 fun ThemeSelector(
-    setTheme: (String) -> Unit,
-    currentTheme: String
+    setTheme: (Theme) -> Unit,
+    currentTheme: Theme
 ) {
     val themes = mapOf(
         0 to ThemeSelectorItemContent(
-            name = "light",
+            theme = Theme.LIGHT,
             imageVector = ImageVector.vectorResource(R.drawable.sun),
             displayedName = stringResource(R.string.light)
         ),
         1 to ThemeSelectorItemContent(
-            name = "dark",
+            theme = Theme.DARK,
             imageVector = ImageVector.vectorResource(R.drawable.moon),
             displayedName = stringResource(R.string.dark)
         ),
         2 to ThemeSelectorItemContent(
-            name = "amoled",
-            imageVector = null,
-            displayedName = stringResource(R.string.amoled)
-        ),
-        3 to ThemeSelectorItemContent(
-            name = "system",
+            theme = Theme.SYSTEM,
             imageVector = null,
             displayedName = stringResource(R.string.auto)
         )
     )
+
     CustomButtonRow(
         selectedElement = currentTheme,
-        elements = themes.entries.map { it.value.name },
+        elements = themes.entries.map { it.value.theme },
         colors = SegmentedButtonDefaults.colors().copy(
             activeContainerColor = MaterialTheme.colorScheme.primary,
             activeBorderColor = Color.Transparent,

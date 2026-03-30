@@ -12,6 +12,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.egormelnikoff.schedulerutmiit.app.enums.Theme
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.amoledColorScheme
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.animation
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.defaultTheme
@@ -19,14 +20,15 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.color.themes
 
 @Composable
 fun ScheduleRutMiitTheme(
-    theme: String,
+    theme: Theme,
     decorColorIndex: Int,
+    usedAmoled: Boolean,
     content: @Composable () -> Unit
 ) {
     val isDarkTheme = theme.isDarkTheme()
     val colorScheme = getCurrentColorScheme(
         isDarkTheme = isDarkTheme,
-        isUsedAmoledTheme = theme == "amoled",
+        isUsedAmoledTheme = usedAmoled,
         decorColorIndex = decorColorIndex
     )
 
@@ -49,10 +51,10 @@ fun ScheduleRutMiitTheme(
 }
 
 @Composable
-fun String.isDarkTheme(): Boolean {
+fun Theme.isDarkTheme(): Boolean {
     return when (this) {
-        "dark", "amoled" -> true
-        "light" -> false
+        Theme.DARK -> true
+        Theme.LIGHT -> false
         else -> isSystemInDarkTheme()
     }
 }
@@ -67,7 +69,7 @@ fun getCurrentColorScheme(
     val currentColorTheme = themes[decorColorIndex] ?: defaultTheme
 
     val colorTheme = when {
-        isUsedAmoledTheme -> amoledColorScheme.copy(
+        isDarkTheme && isUsedAmoledTheme -> amoledColorScheme.copy(
             primary = currentColorTheme.dark.primary
         )
         isDarkTheme -> currentColorTheme.dark
