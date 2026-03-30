@@ -88,7 +88,7 @@ fun ModalDialogNamedSchedule(
                         Column {
                             ClickableItem(
                                 title = schedule.scheduleEntity.timetableType.typeName,
-                                titleLabel = if (schedule.scheduleEntity.id == currentScheduleEntity?.id) {
+                                titleLabel = if (schedule.scheduleEntity.id == currentScheduleEntity?.id && isSavedNamedSchedule) {
                                     {
                                         Icon(
                                             modifier = Modifier.size(16.dp),
