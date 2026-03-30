@@ -42,7 +42,6 @@ sealed interface Route {
         ) : Dialog
 
         data object NewsDialog : Dialog
-        data object InfoDialog : Dialog
         data object SearchDialog : Dialog
         data object CurriculumDialog : Dialog
         data object AddScheduleDialog : Dialog

@@ -25,7 +25,6 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.CurriculumDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.HiddenEventsDialog
-import com.egormelnikoff.schedulerutmiit.ui.dialogs.InfoDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.NewsDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.RenameDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchDialog
@@ -197,11 +196,7 @@ fun RootHost(
                         appBackStack = appUiState.appBackStack,
                     )
                 }
-                entry<Route.Dialog.InfoDialog> {
-                    InfoDialog(
-                        appBackStack = appUiState.appBackStack
-                    )
-                }
+
                 entry<Route.Dialog.AddEventDialog> { key ->
                     AddEditEventDialog(
                         namedScheduleEntity = key.namedScheduleEntity,
