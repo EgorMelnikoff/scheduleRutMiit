@@ -7,6 +7,6 @@ import androidx.glance.LocalContext
 
 @Composable
 @ReadOnlyComposable
-fun glanceStringResource(@StringRes id: Int): String {
-    return LocalContext.current.getString(id)
+fun glanceStringResource(@StringRes id: Int, vararg formatArgs: Any): String {
+    return LocalContext.current.getString(id, *formatArgs)
 }
