@@ -36,9 +36,7 @@ class MainActivity : ComponentActivity() {
 
             appSettings?.let { settings ->
                 ScheduleRutMiitTheme(
-                    theme = settings.theme,
-                    usedAmoled = settings.usedAmoled,
-                    decorColorIndex = settings.decorColorIndex
+                    decorPreferences = settings.decorPreferences
                 ) {
                     ScheduleRutMiitApp(
                         searchViewModel = searchViewModel,
