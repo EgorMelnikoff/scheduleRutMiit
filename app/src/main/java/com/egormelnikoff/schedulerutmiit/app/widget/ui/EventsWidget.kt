@@ -143,15 +143,36 @@ class EventsWidget : GlanceAppWidget() {
                         modifier = GlanceModifier.defaultWeight(),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        Text(
-                            text = header,
-                            style = TextStyle(
-                                color = GlanceTheme.colors.onBackground,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            maxLines = 1
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = header,
+                                style = TextStyle(
+                                    color = GlanceTheme.colors.onBackground,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                maxLines = 1
+                            )
+
+                            if (widgetData.reviewData.currentWeek != 0) {
+                                Spacer(modifier = GlanceModifier.width(4.dp))
+                                Image(
+                                    modifier = GlanceModifier.size(16.dp),
+                                    provider = when (widgetData.reviewData.currentWeek) {
+                                        1 -> ImageProvider(R.drawable.one)
+                                        2 -> ImageProvider(R.drawable.two)
+                                        else -> ImageProvider(R.drawable.resource_null)
+                                    },
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(
+                                        colorProvider = GlanceTheme.colors.onBackground
+                                    )
+                                )
+                            }
+                        }
+
                         Text(
                             text = subHeader,
                             style = TextStyle(
@@ -161,6 +182,7 @@ class EventsWidget : GlanceAppWidget() {
                             maxLines = 1
                         )
                     }
+
                     Image(
                         modifier = GlanceModifier
                             .cornerRadius(8.dp)
@@ -320,9 +342,7 @@ class EventsWidget : GlanceAppWidget() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (eventExtraData.tag != 0) {
-                    val color = getColorByIndex(
-                        eventExtraData.tag
-                    )
+                    val color = eventExtraData.tag.getColorByIndex()
                     Image(
                         modifier = GlanceModifier.size(8.dp),
                         provider = ImageProvider(R.drawable.circle),

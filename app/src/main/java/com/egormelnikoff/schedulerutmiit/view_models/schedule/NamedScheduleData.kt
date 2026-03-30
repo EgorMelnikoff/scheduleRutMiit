@@ -273,7 +273,7 @@ data class SchedulePagerData(
 data class ReviewData(
     val displayedDate: LocalDate,
     val events: Map<String, List<EventEntity>> = mapOf(),
-    val countEventsForWeek: Int = 0
+    val currentWeek: Int = 0
 ) {
     companion object {
         operator fun invoke(
@@ -288,12 +288,13 @@ data class ReviewData(
                 periodicEvents = periodicEvents,
                 nonPeriodicEvents = nonPeriodicEvents
             )
-            var eventsCountForWeek = getEventCountForWeek(
-                scheduleEntity = scheduleEntity,
-                date = date.toLocalDate(),
-                periodicEvents = periodicEvents,
-                nonPeriodicEvents = nonPeriodicEvents
-            )
+
+            val currentWeek = scheduleEntity.recurrence?.let {
+                displayedDate.getCurrentWeek(
+                    startDate = scheduleEntity.startDate,
+                    recurrence = scheduleEntity.recurrence
+                )
+            } ?: 0
 
             val isFinishedEvents = events.isNotEmpty() && date.toLocalTime().isAfter(
                 events.values.flatten().last().endDatetime.toLocalTimeWithTimeZone()
@@ -309,60 +310,13 @@ data class ReviewData(
                     periodicEvents = periodicEvents,
                     nonPeriodicEvents = nonPeriodicEvents
                 )
-                eventsCountForWeek = getEventCountForWeek(
-                    scheduleEntity = scheduleEntity,
-                    date = tomorrow.toLocalDate(),
-                    periodicEvents = periodicEvents,
-                    nonPeriodicEvents = nonPeriodicEvents
-                )
             }
 
             return ReviewData(
                 displayedDate = displayedDate,
-                countEventsForWeek = eventsCountForWeek,
+                currentWeek = currentWeek,
                 events = events
             )
-        }
-
-        private fun getEventCountForWeek(
-            date: LocalDate,
-            scheduleEntity: ScheduleEntity,
-            periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>?,
-            nonPeriodicEvents: Map<LocalDate, List<EventEntity>>?
-        ): Int {
-            if (scheduleEntity.startDate > date || date > scheduleEntity.endDate) return 0
-            var eventsCountForWeek = 0
-            when {
-                (periodicEvents != null && scheduleEntity.recurrence != null) -> {
-                    val currentWeek = date.getCurrentWeek(
-                        startDate = scheduleEntity.startDate,
-                        recurrence = scheduleEntity.recurrence
-                    )
-                    eventsCountForWeek = periodicEvents[currentWeek]?.values?.flatten()?.size ?: 0
-                }
-
-                (nonPeriodicEvents != null) -> {
-                    eventsCountForWeek = getNonPeriodicEventsCountForWeek(
-                        date = date,
-                        nonPeriodicEvents = nonPeriodicEvents
-                    )
-                }
-            }
-            return eventsCountForWeek
-        }
-
-        private fun getNonPeriodicEventsCountForWeek(
-            date: LocalDate,
-            nonPeriodicEvents: Map<LocalDate, List<EventEntity>>
-        ): Int {
-            var count = 0
-            val firstDayOfWeek = date.getFirstDayOfWeek()
-            for (date in 0 until 7) {
-                val currentDate = firstDayOfWeek.plusDays(date.toLong())
-                val eventPerDay = nonPeriodicEvents[currentDate]?.distinctBy { it.startDatetime }
-                count += eventPerDay?.size ?: 0
-            }
-            return count
         }
     }
 }
