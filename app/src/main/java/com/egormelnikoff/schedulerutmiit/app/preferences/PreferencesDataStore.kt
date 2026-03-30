@@ -47,6 +47,12 @@ class PreferencesDataStore @Inject constructor(
         }
     }
 
+    suspend fun skipWelcomePage() {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SKIP_WELCOME_PAGE] = true
+        }
+    }
+
     suspend fun setSyncTagsComments(isSynchronizable: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.SYNC_TAGS_AND_COMMENTS] = isSynchronizable
@@ -101,6 +107,10 @@ class PreferencesDataStore @Inject constructor(
 
     val decorColorFlow: Flow<Int> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.DECOR_COLOR] ?: 0
+    }
+
+    val skipWelcomeFLow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.SKIP_WELCOME_PAGE] ?: false
     }
 
     val scheduleViewFlow: Flow<ScheduleView> = context.dataStore.data.map { preferences ->

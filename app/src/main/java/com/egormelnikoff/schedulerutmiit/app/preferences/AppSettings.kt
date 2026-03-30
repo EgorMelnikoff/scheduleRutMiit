@@ -5,14 +5,19 @@ import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
 
 data class AppSettings(
-    val theme: Theme,
-    val usedAmoled: Boolean,
-    val decorColorIndex: Int,
+    val decorPreferences: DecorPreferences,
     val scheduleView: ScheduleView,
+    val eventView: EventView,
     val eventsCountView: EventsCountView,
     val schedulesDeletable: Boolean,
     val syncTagsAndComments: Boolean,
-    val eventView: EventView
+    val skipWelcomePage: Boolean
+)
+
+data class DecorPreferences(
+    val theme: Theme,
+    val usedAmoled: Boolean,
+    val decorColorIndex: Int,
 )
 
 data class EventView(

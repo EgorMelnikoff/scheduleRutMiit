@@ -6,6 +6,7 @@ import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.app.preferences.DecorPreferences
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,12 +74,12 @@ class SettingsViewModel @Inject constructor(
                 )
             }
 
-            val themeFlow = combine(
+            val decorFlow = combine(
                 preferencesDataStore.themeFlow,
                 preferencesDataStore.decorColorFlow,
                 preferencesDataStore.usedAmoledFlow
             ) { theme, decorColorIndex, usedAmoled ->
-                Triple(theme, decorColorIndex, usedAmoled)
+                DecorPreferences(theme, usedAmoled, decorColorIndex)
             }
 
             val scheduleFlow = combine(
@@ -90,24 +91,31 @@ class SettingsViewModel @Inject constructor(
             }
 
             combine(
-                themeFlow,
+                decorFlow,
                 eventFlow,
                 scheduleFlow,
                 preferencesDataStore.syncTagCommentsFlow,
-            ) { theme, eventView, scheduleSettings, syncTagsFlow ->
+                preferencesDataStore.skipWelcomeFLow
+            ) { decor, eventView, scheduleSettings, syncTagsFlow, skipWelcome ->
                 AppSettings(
-                    theme = theme.first,
-                    usedAmoled = theme.third,
-                    decorColorIndex = theme.second,
+                    decorPreferences = decor,
                     scheduleView = scheduleSettings.first,
+                    eventView = eventView,
                     schedulesDeletable = scheduleSettings.second,
                     eventsCountView = scheduleSettings.third,
                     syncTagsAndComments = syncTagsFlow,
-                    eventView = eventView
+
+                    skipWelcomePage = skipWelcome
                 )
             }.collect { settings ->
                 _appSettings.value = settings
             }
+        }
+    }
+
+    fun skipWelcomePage() {
+        viewModelScope.launch {
+            preferencesDataStore.skipWelcomePage()
         }
     }
 
