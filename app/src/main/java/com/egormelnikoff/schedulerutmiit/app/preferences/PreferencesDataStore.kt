@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.app.enums.Theme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -16,9 +17,15 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class PreferencesDataStore @Inject constructor(
     private val context: Context
 ) {
-    suspend fun setTheme(theme: String) {
+    suspend fun setTheme(theme: Theme) {
         context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.THEME] = theme
+            preferences[PreferencesKeys.THEME] = theme.name
+        }
+    }
+
+    suspend fun setUsedAmoled(usedAmoled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USED_AMOLED] = usedAmoled
         }
     }
 
@@ -83,8 +90,13 @@ class PreferencesDataStore @Inject constructor(
         }
     }
 
-    val themeFlow: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[PreferencesKeys.THEME] ?: "system"
+    val themeFlow: Flow<Theme> = context.dataStore.data.map { preferences ->
+        val theme = preferences[PreferencesKeys.THEME]
+        Theme.entries.find { it.name == theme?.uppercase() } ?: Theme.SYSTEM
+    }
+
+    val usedAmoledFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.USED_AMOLED] ?: false
     }
 
     val decorColorFlow: Flow<Int> = context.dataStore.data.map { preferences ->

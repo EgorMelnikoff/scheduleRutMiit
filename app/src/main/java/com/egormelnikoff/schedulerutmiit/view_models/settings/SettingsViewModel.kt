@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.app.network.logger.Logger
+import com.egormelnikoff.schedulerutmiit.app.enums.Theme
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
@@ -26,7 +26,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val logger: Logger,
     private val preferencesDataStore: PreferencesDataStore,
 ) : ViewModel() {
     private val _appSettings = MutableStateFlow<AppSettings?>(null)
@@ -56,10 +55,6 @@ class SettingsViewModel @Inject constructor(
     }.distinctUntilChanged()
 
 
-    fun sendLogsFile() {
-        logger.sendLogsFile()
-    }
-
     private fun collectSettings() {
         viewModelScope.launch {
             val eventFlow = combine(
@@ -81,8 +76,9 @@ class SettingsViewModel @Inject constructor(
             val themeFlow = combine(
                 preferencesDataStore.themeFlow,
                 preferencesDataStore.decorColorFlow,
-            ) { theme, decorColorIndex ->
-                Pair(theme, decorColorIndex)
+                preferencesDataStore.usedAmoledFlow
+            ) { theme, decorColorIndex, usedAmoled ->
+                Triple(theme, decorColorIndex, usedAmoled)
             }
 
             val scheduleFlow = combine(
@@ -101,6 +97,7 @@ class SettingsViewModel @Inject constructor(
             ) { theme, eventView, scheduleSettings, syncTagsFlow ->
                 AppSettings(
                     theme = theme.first,
+                    usedAmoled = theme.third,
                     decorColorIndex = theme.second,
                     scheduleView = scheduleSettings.first,
                     schedulesDeletable = scheduleSettings.second,
@@ -117,16 +114,6 @@ class SettingsViewModel @Inject constructor(
     fun onSetEventGroupVisibility(visible: Boolean) {
         viewModelScope.launch {
             preferencesDataStore.setEventGroupVisibility(visible)
-        }
-    }
-
-    fun onSetEventView(visible: Boolean) {
-        viewModelScope.launch {
-            preferencesDataStore.setEventGroupVisibility(visible)
-            preferencesDataStore.setEventRoomsVisibility(visible)
-            preferencesDataStore.setEventLecturersVisibility(visible)
-            preferencesDataStore.setEventTagVisibility(visible)
-            preferencesDataStore.setEventCommentVisibility(visible)
         }
     }
 
@@ -163,10 +150,18 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onSetTheme(
-        theme: String
+        theme: Theme
     ) {
         viewModelScope.launch {
             preferencesDataStore.setTheme(theme)
+        }
+    }
+
+    fun onSetUsedAmoled(
+        usedAmoled: Boolean
+    ) {
+        viewModelScope.launch {
+            preferencesDataStore.setUsedAmoled(usedAmoled)
         }
     }
 
