@@ -53,7 +53,7 @@ fun ScheduleLoadingScreen() {
             }
             items(2) {
                 LoadingCard(
-                    height = 150.dp
+                    height = 120.dp
                 )
             }
             item {
@@ -65,7 +65,7 @@ fun ScheduleLoadingScreen() {
             }
             items(4) {
                 LoadingCard(
-                    height = 150.dp
+                    height = 120.dp
                 )
             }
             item {
@@ -77,7 +77,7 @@ fun ScheduleLoadingScreen() {
             }
             items(1) {
                 LoadingCard(
-                    height = 150.dp
+                    height = 120.dp
                 )
             }
         }
