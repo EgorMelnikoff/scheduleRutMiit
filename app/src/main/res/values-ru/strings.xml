@@ -5,6 +5,10 @@
     <string name="about_app">О приложении</string>
     <string name="add">Добавить</string>
     <string name="details">Детально</string>
+    <string name="display_each_lesson">Отображать каждую пару</string>
+    <string name="display_number_lessons">Отображать количество пар на день</string>
+    <string name="use_amoled">Использовать AMOLED</string>
+    <string name="dont_show">Не показывать</string>
     <string name="briefly">Кратко</string>
     <string name="off">Выключено</string>
     <string name="add_class">Добавить пару</string>
@@ -60,6 +64,7 @@
         <item quantity="one" tools:ignore="ImpliedQuantity">пара</item>
         <item quantity="other">пар</item>
     </plurals>
+    <string name="event_view">Вид пары</string>
     <string name="event_deleting_alert">Действие удалит пару, комментарии теги</string>
     <string name="event_visibility_alert">Будьте внимательны, занятие перестанет отображаться в расписании</string>
     <string name="events_count_error">Достигнуто максимальное количество пар на день</string>
@@ -97,6 +102,7 @@
     <string name="no_start_date_specified">Не указана дата начала</string>
     <string name="no_start_time_specified">Не указано время начала</string>
     <string name="not_delete_schedules">Не удалять расписания</string>
+    <string name="not_delete_schedules_message">После окончания расписания останутся в памяти и не будут удалены</string>
     <string name="not_specified">Не указан</string>
     <string name="nothing_found">Ничего не найдено</string>
     <string name="ok">Хорошо</string>
@@ -129,15 +135,16 @@
     <string name="search_curriculum_advice">Для поиска используйте идентификационный номер учебного плана</string>
     <string name="search_or_create">Найти или создать</string>
     <string name="send_logs">Отправить журнал</string>
-    <string name="send_logs_by_email">Отправить журнал по эл. почте</string>
+    <string name="email">Почта</string>
     <string name="serialization_error">Ошибка сериализации</string>
     <string name="server_error">Ошибка сервера</string>
     <string name="services">Сервисы</string>
     <string name="settings">Настройки</string>
-    <string name="show_count_classes">Количество пар</string>
+    <string name="show_count_classes">Количество пар в календаре</string>
     <string name="show_event">Показать пару</string>
     <string name="source_code">Исходный код</string>
-    <string name="sync_tag_comments">Синхронизировать теги и комменты</string>
+    <string name="sync_tag_comments">Синхронизировать теги и комментарии</string>
+    <string name="sync_tag_comments_message">У пар одного предмета и типа автоматически будут синхронизированы комментарии и теги</string>
     <string name="start_date">Дата начала</string>
     <string name="start_time">Время начала</string>
     <string name="summary">Сводка</string>

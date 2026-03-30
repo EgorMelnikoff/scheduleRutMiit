@@ -5,6 +5,10 @@
     <string name="about_app">About app</string>
     <string name="add">Add</string>
     <string name="details">Details</string>
+    <string name="display_each_lesson">Display each lesson</string>
+    <string name="display_number_lessons">Display the number of classes per day</string>
+    <string name="dont_show">Don`t show</string>
+    <string name="use_amoled">Use AMOLED</string>
     <string name="briefly">Briefly</string>
     <string name="off">Off</string>
     <string name="add_class">Add class</string>
@@ -62,6 +66,7 @@
         <item quantity="other">classes</item>
         <item quantity="two">classes</item>
     </plurals>
+    <string name="event_view">Class view</string>
     <string name="event_deleting_alert">The action will delete the lesson, comments and tags</string>
     <string name="event_visibility_alert">Please note, class will no longer appear in the schedule</string>
     <string name="events_count_error">The maximum number of classes per day has been reached</string>
@@ -102,6 +107,7 @@
     <string name="no_start_date_specified">No start date specified</string>
     <string name="no_start_time_specified">No start time specified</string>
     <string name="not_delete_schedules">Do not delete schedules</string>
+    <string name="not_delete_schedules_message">After the expiration date, the schedules will remain in memory and will not be deleted</string>
     <string name="not_specified">Not specified</string>
     <string name="nothing_found">Nothing found</string>
     <string name="ok">OK</string>
@@ -135,15 +141,16 @@
     <string name="search_curriculum_advice">Please use the curriculum identification number to search</string>
     <string name="search_or_create">Search or create</string>
     <string name="send_logs">Send logs</string>
-    <string name="send_logs_by_email">Send logs by email</string>
+    <string name="email">Email</string>
     <string name="serialization_error">Serialization error</string>
     <string name="server_error">Server error</string>
     <string name="services">Services</string>
     <string name="settings">Settings</string>
-    <string name="show_count_classes">Count classes</string>
+    <string name="show_count_classes">Count classes in calendar</string>
     <string name="show_event">Show class</string>
     <string name="source_code">Source code</string>
     <string name="sync_tag_comments">Synchronize tags and comments</string>
+    <string name="sync_tag_comments_message">Comments and tags will be automatically synchronized for classes of the same subject and type.</string>
     <string name="start_date">Start date</string>
     <string name="start_time">Start time</string>
     <string name="summary">Summary</string>
