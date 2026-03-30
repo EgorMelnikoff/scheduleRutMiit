@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.enums.DayPeriod
 import com.egormelnikoff.schedulerutmiit.app.extension.dayPeriod
@@ -141,40 +142,37 @@ fun ReviewScreen(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
+
+
                     scheduleState.defaultNamedScheduleData?.scheduleData?.reviewData?.let { reviewData ->
-                        when (reviewData.displayedDate) {
-                            currentDate -> {
-                                Text(
-                                    text = stringResource(R.string.today) +
-                                            " ${reviewData.events.size} " +
-                                            pluralStringResource(
-                                                R.plurals.events,
-                                                reviewData.events.size
-                                            ),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1
-                                )
+                        val eventsReview = StringBuilder().apply {
+                            when (reviewData.displayedDate) {
+                                currentDate -> append(stringResource(R.string.today))
+                                currentDate.plusDays(1) -> append(stringResource(R.string.tomorrow))
+                                else -> reviewData.displayedDate.format(dayMonthYearFormatter)
                             }
 
-                            currentDate.plusDays(1) -> {
-                                Text(
-                                    text = stringResource(R.string.tomorrow) +
-                                            " ${reviewData.events.size} " +
-                                            pluralStringResource(
-                                                R.plurals.events,
-                                                reviewData.events.size
-                                            ),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1
+                            append(" ")
+
+                            if (reviewData.events.isEmpty()) {
+                                append("пар нет")
+                            } else {
+                                append(
+                                    "${reviewData.events.size} " + pluralStringResource(
+                                        R.plurals.events,
+                                        reviewData.events.size
+                                    )
                                 )
-
                             }
-                        }
+                        }.toString()
 
+                        Text(
+                            text = eventsReview,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
                     }
                 }
             }
