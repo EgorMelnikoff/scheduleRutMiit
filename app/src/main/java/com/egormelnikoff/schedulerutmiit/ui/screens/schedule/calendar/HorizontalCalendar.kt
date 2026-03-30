@@ -59,11 +59,11 @@ fun HorizontalCalendar(
     scope: CoroutineScope
 ) {
     val firstDayOfCurrentWeek = remember(
-        scheduleUiState.pagerWeeksState.currentPage,
+        scheduleUiState.pagerWeeksState.settledPage,
         scheduleData.scheduleEntity
     ) {
         scheduleData.scheduleEntity.startDate
-            .plusWeeks(scheduleUiState.pagerWeeksState.currentPage.toLong())
+            .plusWeeks(scheduleUiState.pagerWeeksState.settledPage.toLong())
             .getFirstDayOfWeek()
     }
 
@@ -75,12 +75,12 @@ fun HorizontalCalendar(
 
     val enabledLeftButton by remember {
         derivedStateOf {
-            scheduleUiState.pagerWeeksState.currentPage != 0
+            scheduleUiState.pagerWeeksState.settledPage != 0
         }
     }
     val enabledRightButton by remember {
         derivedStateOf {
-            scheduleUiState.pagerWeeksState.currentPage != scheduleData.schedulePagerData.weeksCount - 1
+            scheduleUiState.pagerWeeksState.settledPage != scheduleData.schedulePagerData.weeksCount - 1
         }
     }
 
@@ -164,8 +164,7 @@ fun HorizontalCalendar(
                         text = stringResource(
                             R.string.week,
                             selectedWeek.toString()
-                        )
-                            .replaceFirstChar { it.lowercase() },
+                        ).replaceFirstChar { it.lowercase() } + " (${(scheduleUiState.pagerWeeksState.settledPage.plus(1))})",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center
@@ -339,8 +338,7 @@ fun EventsDetailSummary(
                 Box {
                     groupedEvents.value.forEach { event ->
                         val eventExtraData = eventsExtraData.find { it.id == event.id }
-                        val color = getColorByIndex(
-                            index = eventExtraData?.tag,
+                        val color = eventExtraData?.tag.getColorByIndex(
                             defaultColor = MaterialTheme.colorScheme.onBackground
                         )
                         Canvas(
