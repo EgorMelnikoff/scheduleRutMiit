@@ -1,6 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -110,7 +113,13 @@ fun ClickableItem(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = titleMaxLines
                     )
-                    titleLabel?.invoke()
+                    AnimatedVisibility(
+                        visible = titleLabel != null,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        titleLabel?.invoke()
+                    }
                 }
             }
             subtitle?.let {
