@@ -59,28 +59,28 @@ fun HorizontalCalendar(
     scope: CoroutineScope
 ) {
     val firstDayOfCurrentWeek = remember(
-        scheduleUiState.pagerWeeksState.settledPage,
+        scheduleUiState.pagerWeeksState.currentPage,
         scheduleData.scheduleEntity
     ) {
         scheduleData.scheduleEntity.startDate
-            .plusWeeks(scheduleUiState.pagerWeeksState.settledPage.toLong())
+            .plusWeeks(scheduleUiState.pagerWeeksState.currentPage.toLong())
             .getFirstDayOfWeek()
     }
 
     val displayDate =
         if (firstDayOfCurrentWeek == scheduleUiState.selectedDate.getFirstDayOfWeek()) {
             scheduleUiState.selectedDate
-        } else firstDayOfCurrentWeek.plusDays(4L)
+        } else firstDayOfCurrentWeek.plusDays(3L)
 
 
     val enabledLeftButton by remember {
         derivedStateOf {
-            scheduleUiState.pagerWeeksState.settledPage != 0
+            scheduleUiState.pagerWeeksState.currentPage != 0
         }
     }
     val enabledRightButton by remember {
         derivedStateOf {
-            scheduleUiState.pagerWeeksState.settledPage != scheduleData.schedulePagerData.weeksCount - 1
+            scheduleUiState.pagerWeeksState.currentPage != scheduleData.schedulePagerData.weeksCount - 1
         }
     }
 
@@ -164,7 +164,7 @@ fun HorizontalCalendar(
                         text = stringResource(
                             R.string.week,
                             selectedWeek.toString()
-                        ).replaceFirstChar { it.lowercase() } + " (${(scheduleUiState.pagerWeeksState.settledPage.plus(1))})",
+                        ).replaceFirstChar { it.lowercase() } + " (${(scheduleUiState.pagerWeeksState.currentPage.plus(1))})",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center
