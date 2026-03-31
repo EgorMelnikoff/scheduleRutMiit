@@ -30,6 +30,13 @@
     <string name="confirm">Подтвердить</string>
     <string name="create">Создать</string>
     <string name="current_on">Актуально на</string>
+    <string name="schedule_view">Вид расписания</string>
+    <string name="calendar">Календарь</string>
+    <string name="calendar_message">Отображение по неделям и дням</string>
+    <string name="by_weeks">По неделям</string>
+    <string name="by_weeks_message">Разделенный список для периодического расписания</string>
+    <string name="full_list">Полный список</string>
+    <string name="full_list_message">Все пары до конца расписания</string>
     <string name="curriculum_number">Номер учебного плана</string>
     <string name="dark">Темная</string>
     <string name="date">Дата</string>

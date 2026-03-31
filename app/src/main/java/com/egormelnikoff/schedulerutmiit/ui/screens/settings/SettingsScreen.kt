@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
@@ -29,6 +31,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.CountEventsModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.EventViewModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.InfoModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.ScheduleViewModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.ThemeModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
@@ -41,6 +44,14 @@ data class ThemeSelectorItemContent(
     val displayedName: String
 )
 
+sealed interface SettingsDialog {
+    object ScheduleView : SettingsDialog
+    object EventView : SettingsDialog
+    object CountEvents : SettingsDialog
+    object Decor : SettingsDialog
+    object Info : SettingsDialog
+}
+
 @Composable
 fun SettingsScreen(
     appUiState: AppUiState,
@@ -48,10 +59,21 @@ fun SettingsScreen(
     settingsViewModel: SettingsViewModel,
     externalPadding: PaddingValues
 ) {
-    var decorDialog by remember { mutableStateOf(false) }
-    var eventViewDialog by remember { mutableStateOf(false) }
-    var countEventsDialog by remember { mutableStateOf(false) }
-    var infoDialog by remember { mutableStateOf(false) }
+    var activeDialog by remember { mutableStateOf<SettingsDialog?>(null) }
+
+    val visibleSettingsIds by remember(appSettings.eventView) {
+        derivedStateOf {
+            buildList {
+                if (appSettings.eventView.groupsVisible) add(R.string.groups)
+                if (appSettings.eventView.roomsVisible) add(R.string.rooms)
+                if (appSettings.eventView.lecturersVisible) add(R.string.lecturers)
+                if (appSettings.eventView.tagVisible) add(R.string.tag)
+                if (appSettings.eventView.commentVisible) add(R.string.comment)
+            }
+        }
+    }
+
+    val visibleSettings = visibleSettingsIds.map { stringResource(it) }
 
     LazyVerticalStaggeredGrid(
         modifier = Modifier
@@ -69,32 +91,34 @@ fun SettingsScreen(
         state = appUiState.settingsListState
     ) {
         item {
-            val data = mutableListOf<String>()
-            if (appSettings.eventView.groupsVisible) {
-                data.add(stringResource(R.string.groups))
-            }
-
-            if (appSettings.eventView.roomsVisible) {
-                data.add(stringResource(R.string.rooms))
-            }
-
-            if (appSettings.eventView.lecturersVisible) {
-                data.add(stringResource(R.string.lecturers))
-            }
-
-            if (appSettings.eventView.tagVisible) {
-                data.add(stringResource(R.string.tag))
-            }
-
-            if (appSettings.eventView.commentVisible) {
-                data.add(stringResource(R.string.comment))
-            }
-
-
             ColumnGroup(
                 title = stringResource(R.string.schedule),
                 items = listOf(
                     {
+                        ClickableItem(
+                            title = stringResource(R.string.schedule_view),
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = when (appSettings.scheduleView) {
+                                        ScheduleView.CALENDAR -> ImageVector.vectorResource(R.drawable.calendar)
+                                        ScheduleView.SPLIT_WEEKS -> ImageVector.vectorResource(R.drawable.split)
+                                        ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
+                                    },
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            },
+                            subtitle = when (appSettings.scheduleView) {
+                                ScheduleView.CALENDAR -> stringResource(R.string.calendar)
+                                ScheduleView.SPLIT_WEEKS -> stringResource(R.string.by_weeks)
+                                ScheduleView.LIST -> stringResource(R.string.full_list)
+                            },
+                            defaultMinHeight = 36.dp
+                        ) {
+                            activeDialog = SettingsDialog.ScheduleView
+                        }
+                    }, {
                         ClickableItem(
                             title = stringResource(R.string.event_view),
                             leadingIcon = {
@@ -105,14 +129,14 @@ fun SettingsScreen(
                                     tint = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                             },
-                            subtitle = data
+                            subtitle = visibleSettings
                                 .joinToString(", ")
                                 .lowercase()
                                 .replaceFirstChar { it.uppercase() },
                             subtitleMaxLines = 2,
                             defaultMinHeight = 36.dp
                         ) {
-                            eventViewDialog = true
+                            activeDialog = SettingsDialog.EventView
                         }
                     }, {
                         ClickableItem(
@@ -136,7 +160,7 @@ fun SettingsScreen(
                             },
                             defaultMinHeight = 36.dp
                         ) {
-                            countEventsDialog = true
+                            activeDialog = SettingsDialog.CountEvents
                         }
                     }, {
                         ClickableItem(
@@ -218,7 +242,7 @@ fun SettingsScreen(
                             },
                             defaultMinHeight = 36.dp
                         ) {
-                            decorDialog = true
+                            activeDialog = SettingsDialog.Decor
                         }
                     }, {
                         ClickableItem(
@@ -233,7 +257,7 @@ fun SettingsScreen(
                             },
                             defaultMinHeight = 36.dp
                         ) {
-                            infoDialog = true
+                            activeDialog = SettingsDialog.Info
                         }
                     }
                 )
@@ -242,37 +266,51 @@ fun SettingsScreen(
     }
     StatusBarProtection()
 
-    if (eventViewDialog) {
-        EventViewModalDialog(
-            onDismiss = {
-                eventViewDialog = false
-            },
-            appSettings = appSettings,
-            settingsViewModel = settingsViewModel
-        )
-    }
-
-    if (decorDialog) {
-        ThemeModalDialog(
-            onDismiss = {
-                decorDialog = false
-            },
-            appSettings = appSettings,
-            settingsViewModel = settingsViewModel
-        )
-    }
-
-    if (countEventsDialog) {
-        CountEventsModalDialog(
-            {
-                countEventsDialog = false
-            }, appSettings, settingsViewModel
-        )
-    }
-
-    if (infoDialog) {
-        InfoModalDialog {
-            infoDialog = false
+    when (activeDialog) {
+        is SettingsDialog.ScheduleView -> {
+            ScheduleViewModalDialog(
+                onDismiss = {
+                    activeDialog = null
+                },
+                appSettings = appSettings,
+                settingsViewModel = settingsViewModel
+            )
         }
+
+        is SettingsDialog.EventView -> {
+            EventViewModalDialog(
+                onDismiss = {
+                    activeDialog = null
+                },
+                appSettings = appSettings,
+                settingsViewModel = settingsViewModel
+            )
+        }
+
+        is SettingsDialog.Info -> {
+            InfoModalDialog {
+                activeDialog = null
+            }
+        }
+
+        is SettingsDialog.Decor -> {
+            ThemeModalDialog(
+                onDismiss = {
+                    activeDialog = null
+                },
+                appSettings = appSettings,
+                settingsViewModel = settingsViewModel
+            )
+        }
+
+        is SettingsDialog.CountEvents -> {
+            CountEventsModalDialog(
+                {
+                    activeDialog = null
+                }, appSettings, settingsViewModel
+            )
+        }
+
+        else -> {}
     }
 }
