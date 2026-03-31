@@ -247,7 +247,7 @@ fun RootHost(
                 entry<Route.Dialog.HiddenEventsDialog> { key ->
                     HiddenEventsDialog(
                         namedScheduleEntity = key.namedScheduleEntity,
-                        scheduleEntity = key.scheduleEntity,
+                        scheduleEntity = scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity,
                         hiddenEvents = scheduleState.currentNamedScheduleData?.scheduleData?.hiddenEvents ?: listOf(),
                         scheduleViewModel = scheduleViewModel,
                         appBackStack = appUiState.appBackStack
@@ -362,6 +362,7 @@ fun PageHost(
                         scheduleState = scheduleState,
                         scheduleUiState = scheduleUiState,
                         appSettings = appSettings,
+                        currentDateTime = currentDateTime,
                         scheduleViewModel = scheduleViewModel,
                         settingsViewModel = settingsViewModel,
                         externalPadding = padding

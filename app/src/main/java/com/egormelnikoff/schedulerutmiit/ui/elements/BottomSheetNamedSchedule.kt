@@ -2,6 +2,8 @@ package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
@@ -46,12 +49,21 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 
+data class ActionItem(
+    val title: String,
+    val imageVector: ImageVector,
+    val secondImage: ImageVector? = null,
+    val onClick: () -> Unit,
+    val color: Color? = null
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModalDialogNamedSchedule(
     namedScheduleEntity: NamedScheduleEntity,
     currentScheduleEntity: ScheduleEntity? = null,
     schedules: List<ScheduleFormatted>? = null,
+    today: LocalDate,
 
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
@@ -63,6 +75,10 @@ fun ModalDialogNamedSchedule(
     onOpenNamedSchedule: (() -> Unit)? = null,
     onDismiss: (NamedScheduleEntity?) -> Unit
 ) {
+    val limitActions = remember { 1 }
+    val uriHandler = LocalUriHandler.current
+    var showDeleteDialog by remember { mutableStateOf<ScheduleFormatted?>(null) }
+
     CustomModalBottomSheet(
         onDismiss = {
             onDismiss(null)
@@ -73,6 +89,7 @@ fun ModalDialogNamedSchedule(
             scheduleViewModel = scheduleViewModel,
             namedScheduleEntity = namedScheduleEntity,
             isSavedNamedSchedule = isSavedNamedSchedule,
+            haveHiddenEvents = haveHiddenEvents,
             isDefaultNamedSchedule = isDefaultNamedSchedule,
             onDismiss = onDismiss
         )
@@ -86,10 +103,68 @@ fun ModalDialogNamedSchedule(
                         val angle by animateFloatAsState(
                             targetValue = if (showScheduleDialog) 0f else 180f
                         )
+                        val isDefaultSchedule =
+                            (schedule.scheduleEntity.id == currentScheduleEntity?.id && isSavedNamedSchedule)
+                                    || schedule.scheduleEntity.isDefault
+                        val actions = buildList {
+                            if (schedule.scheduleEntity.downloadUrl != null) {
+                                add(
+                                    ActionItem(
+                                        title = "${stringResource(R.string.download)} ${
+                                            stringResource(
+                                                R.string.schedule
+                                            ).replaceFirstChar { it.lowercase() }
+                                        }",
+                                        imageVector = ImageVector.vectorResource(R.drawable.download),
+                                        secondImage = ImageVector.vectorResource(R.drawable.pdf),
+                                        onClick = {
+                                            schedule.scheduleEntity.downloadUrl.let {
+                                                uriHandler.openUri(it)
+                                            }
+                                        }
+                                    )
+                                )
+                            }
+
+                            if (isSavedNamedSchedule && haveNotEmptySchedules) {
+                                add(
+                                    ActionItem(
+                                        title = stringResource(R.string.add_class),
+                                        imageVector = ImageVector.vectorResource(R.drawable.add),
+                                        onClick = {
+                                            appBackStack.openDialog(
+                                                Route.Dialog.AddEventDialog(
+                                                    namedScheduleEntity,
+                                                    schedule.scheduleEntity
+                                                )
+                                            )
+                                            onDismiss(null)
+                                        }
+                                    )
+                                )
+                            }
+                            if (today > schedule.scheduleEntity.endDate && namedScheduleEntity.type != NamedScheduleType.MY && isSavedNamedSchedule) {
+                                add(
+                                    ActionItem(
+                                        title = stringResource(R.string.delete),
+                                        imageVector = ImageVector.vectorResource(R.drawable.delete),
+                                        color = MaterialTheme.colorScheme.error,
+                                        onClick = {
+                                            showDeleteDialog = null
+                                            scheduleViewModel.deleteSchedule(
+                                                namedScheduleEntity.id,
+                                                schedule.scheduleEntity.id
+                                            )
+                                        }
+                                    )
+                                )
+                            }
+                        }
                         Column {
                             ClickableItem(
+                                defaultMinHeight = 40.dp,
                                 title = schedule.scheduleEntity.timetableType.typeName,
-                                titleLabel = if (schedule.scheduleEntity.id == currentScheduleEntity?.id && isSavedNamedSchedule) {
+                                titleLabel = if (isDefaultSchedule) {
                                     {
                                         Icon(
                                             modifier = Modifier.size(16.dp),
@@ -109,20 +184,25 @@ fun ModalDialogNamedSchedule(
                                                 dayMonthYearFormatter
                                             )
                                         }",
-                                onClick = {
-                                    showScheduleDialog = !showScheduleDialog
-                                },
+                                onClick = if (actions.size > limitActions || showScheduleDialog) {
+                                    { showScheduleDialog = !showScheduleDialog }
+                                } else null,
                                 trailingIcon = {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
-                                        if ((schedule.scheduleEntity.id != currentScheduleEntity?.id && isSavedNamedSchedule) || !schedule.scheduleEntity.isDefault) {
+                                        AnimatedVisibility(
+                                            visible = !isDefaultSchedule,
+                                            enter = fadeIn(),
+                                            exit = fadeOut()
+                                        ) {
                                             IconButton(
-                                                colors = IconButtonDefaults.iconButtonColors().copy(
-                                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                                ),
+                                                colors = IconButtonDefaults.iconButtonColors()
+                                                    .copy(
+                                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                                        contentColor = MaterialTheme.colorScheme.onBackground
+                                                    ),
                                                 onClick = {
                                                     scheduleViewModel.setDefaultSchedule(
                                                         schedule.scheduleEntity.id,
@@ -137,38 +217,63 @@ fun ModalDialogNamedSchedule(
                                                 )
                                             }
                                         }
-                                        Icon(
-                                            modifier = Modifier
-                                                .size(20.dp)
-                                                .graphicsLayer(
-                                                    rotationZ = angle
-                                                ),
-                                            imageVector = ImageVector.vectorResource(R.drawable.up),
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                        )
+
+                                        if (actions.size > limitActions) {
+                                            Icon(
+                                                modifier = Modifier
+                                                    .size(20.dp)
+                                                    .graphicsLayer(
+                                                        rotationZ = angle
+                                                    ),
+                                                imageVector = ImageVector.vectorResource(R.drawable.up),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                            )
+                                        } else {
+                                            actions.forEach { item ->
+                                                IconButton(
+                                                    colors = IconButtonDefaults.iconButtonColors()
+                                                        .copy(
+                                                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                                            contentColor = MaterialTheme.colorScheme.onBackground
+                                                        ),
+                                                    onClick = item.onClick
+                                                ) {
+                                                    Icon(
+                                                        modifier = Modifier.size(20.dp),
+                                                        imageVector = item.imageVector,
+                                                        contentDescription = null
+                                                    )
+                                                }
+                                            }
+                                        }
                                     }
                                 },
                                 showClickLabel = false,
                                 verticalPadding = 8.dp
                             )
+
                             ScheduleActionsDialog(
                                 showExpandedMenu = showScheduleDialog,
-                                namedScheduleEntity = namedScheduleEntity,
-                                schedule = schedule,
-
-                                scheduleViewModel = scheduleViewModel,
-                                appBackStack = appBackStack,
-
-                                isSavedNamedSchedule = isSavedNamedSchedule,
-                                haveDownloadUrl = schedule.scheduleEntity.downloadUrl != null,
-                                haveNotEmptySchedules = haveNotEmptySchedules,
-                                haveHiddenEvents = haveHiddenEvents,
-
-                                onDismissParentDialog = onDismiss
+                                actions = actions
                             )
                         }
                     }
+                }
+            )
+        }
+        showDeleteDialog?.let {
+            CustomAlertDialog(
+                dialogTitle = stringResource(R.string.delete_schedule),
+                dialogText = stringResource(R.string.do_you_want_continue),
+                onDismissRequest = {
+                    showDeleteDialog = null
+                },
+                onConfirmation = {
+                    scheduleViewModel.deleteSchedule(
+                        namedScheduleEntity.id,
+                        it.scheduleEntity.id
+                    )
                 }
             )
         }
@@ -193,6 +298,7 @@ fun ModalDialogNamedScheduleHeader(
     namedScheduleEntity: NamedScheduleEntity,
     isSavedNamedSchedule: Boolean,
     isDefaultNamedSchedule: Boolean,
+    haveHiddenEvents: Boolean = false,
     onDismiss: (NamedScheduleEntity?) -> Unit
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -229,6 +335,28 @@ fun ModalDialogNamedScheduleHeader(
                 )
 
             }
+        }
+        AnimatedVisibility(
+            visible = haveHiddenEvents,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            LargeIconButton(
+                onClick = {
+                    appBackStack.openDialog(
+                        Route.Dialog.HiddenEventsDialog(
+                            namedScheduleEntity
+                        )
+                    )
+                    onDismiss(null)
+                },
+                colors = IconButtonDefaults.iconButtonColors().copy(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onBackground
+                ),
+                icon = ImageVector.vectorResource(R.drawable.visibility_off),
+                contentDescription = stringResource(R.string.hidden_events)
+            )
         }
         if (isSavedNamedSchedule && !isDefaultNamedSchedule) {
             LargeIconButton(
@@ -302,20 +430,8 @@ fun ModalDialogNamedScheduleHeader(
 @Composable
 fun ScheduleActionsDialog(
     showExpandedMenu: Boolean,
-    namedScheduleEntity: NamedScheduleEntity,
-    schedule: ScheduleFormatted,
-
-    scheduleViewModel: ScheduleViewModel,
-    appBackStack: AppBackStack,
-    isSavedNamedSchedule: Boolean,
-    haveDownloadUrl: Boolean,
-    haveNotEmptySchedules: Boolean,
-    haveHiddenEvents: Boolean,
-
-    onDismissParentDialog: (NamedScheduleEntity?) -> Unit
+    actions: List<ActionItem>
 ) {
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    val uriHandler = LocalUriHandler.current
 
     AnimatedVisibility(
         visible = showExpandedMenu
@@ -325,120 +441,38 @@ fun ScheduleActionsDialog(
                 thickness = 0.5.dp,
                 color = MaterialTheme.colorScheme.outline
             )
-            if (haveDownloadUrl) {
-                ClickableItem(
-                    title = "${stringResource(R.string.download)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
-                    titleTypography = MaterialTheme.typography.titleMedium,
-                    leadingIcon = {
-                        Icon(
-                            modifier = Modifier.size(20.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.download),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    },
-                    trailingIcon = {
-                        Icon(
-                            modifier = Modifier.size(20.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.pdf),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    },
-                    showClickLabel = false
-                ) {
-                    schedule.scheduleEntity.downloadUrl?.let {
-                        uriHandler.openUri(it)
-                    }
-                }
-            }
-            if (isSavedNamedSchedule && haveNotEmptySchedules) {
-                ClickableItem(
-                    title = stringResource(R.string.add_class),
-                    titleTypography = MaterialTheme.typography.titleMedium,
-                    leadingIcon = {
-                        Icon(
-                            modifier = Modifier.size(20.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.add),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    },
-                    showClickLabel = false
-                ) {
-                    appBackStack.openDialog(
-                        Route.Dialog.AddEventDialog(
-                            namedScheduleEntity,
-                            schedule.scheduleEntity
-                        )
-                    )
-                    onDismissParentDialog(null)
-                }
-            }
-            if (isSavedNamedSchedule && haveHiddenEvents) {
-                ClickableItem(
-                    title = stringResource(R.string.hidden_events),
-                    titleTypography = MaterialTheme.typography.titleMedium,
-                    leadingIcon = {
-                        Icon(
-                            modifier = Modifier.size(20.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    },
-                    showClickLabel = false
-                ) {
-                    appBackStack.openDialog(
-                        Route.Dialog.HiddenEventsDialog(
-                            namedScheduleEntity,
-                            schedule.scheduleEntity
-                        )
-                    )
-                    onDismissParentDialog(null)
-                }
-            }
 
-            if (LocalDate.now() > schedule.scheduleEntity.endDate && namedScheduleEntity.type != NamedScheduleType.MY && isSavedNamedSchedule) {
+            actions.forEach { item ->
                 ClickableItem(
-                    title = stringResource(R.string.delete),
+                    title = item.title,
+                    titleColor = item.color ?: MaterialTheme.colorScheme.onBackground,
                     titleTypography = MaterialTheme.typography.titleMedium,
-                    titleColor = MaterialTheme.colorScheme.error,
                     leadingIcon = {
                         Icon(
                             modifier = Modifier.size(20.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.delete),
+                            imageVector = item.imageVector,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error
+                            tint = item.color ?: MaterialTheme.colorScheme.onSecondaryContainer,
                         )
                     },
-                    showClickLabel = false
-                ) {
-                    showDeleteDialog = true
-                    scheduleViewModel.deleteSchedule(
-                        namedScheduleEntity.id,
-                        schedule.scheduleEntity.id
-                    )
-                }
+                    trailingIcon = item.secondImage?.let {
+                        {
+                            Icon(
+                                modifier = Modifier.size(20.dp),
+                                imageVector = item.secondImage,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
+                    },
+                    showClickLabel = false,
+                    onClick = item.onClick
+                )
             }
         }
     }
 
-    if (showDeleteDialog) {
-        CustomAlertDialog(
-            dialogTitle = stringResource(R.string.delete_schedule),
-            dialogText = stringResource(R.string.do_you_want_continue),
-            onDismissRequest = {
-                showDeleteDialog = false
-            },
-            onConfirmation = {
-                scheduleViewModel.deleteSchedule(
-                    namedScheduleEntity.id,
-                    schedule.scheduleEntity.id
-                )
-            }
-        )
-    }
+
 }
 
 @Composable

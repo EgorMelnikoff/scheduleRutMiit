@@ -49,6 +49,7 @@ import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
+import java.time.LocalDateTime
 
 @Composable
 fun ScreenSchedule(
@@ -56,6 +57,7 @@ fun ScreenSchedule(
     scheduleState: ScheduleState,
     scheduleUiState: ScheduleUiState?,
     appSettings: AppSettings,
+    currentDateTime: LocalDateTime,
     scheduleViewModel: ScheduleViewModel,
     settingsViewModel: SettingsViewModel,
     externalPadding: PaddingValues
@@ -283,6 +285,7 @@ fun ScreenSchedule(
             namedScheduleEntity = it,
             currentScheduleEntity = scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity,
             schedules = scheduleState.currentNamedScheduleData?.namedSchedule?.schedules,
+            today = currentDateTime.toLocalDate(),
             scheduleViewModel = scheduleViewModel,
             appBackStack = appUiState.appBackStack,
 
