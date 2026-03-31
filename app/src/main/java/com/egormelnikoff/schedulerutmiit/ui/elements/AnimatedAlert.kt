@@ -41,7 +41,7 @@ fun AnimatedAlert(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp, horizontal = 16.dp)
+                .padding(vertical = 8.dp, horizontal = 16.dp)
                 .clip(MaterialTheme.shapes.medium)
                 .background(backgroundColor)
                 .padding(horizontal = 12.dp, vertical = 4.dp),
