@@ -73,7 +73,7 @@ fun ScheduleListView(
                     items = eventsForDay,
                     key = if (isSavedSchedule) {
                         {
-                            it.second.first().id
+                            Pair(it.second.first().id, it.second.first().startDatetime)
                         }
                     } else null
                 ) { eventsGrouped ->
