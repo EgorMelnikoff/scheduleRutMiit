@@ -99,22 +99,44 @@ fun ModalDialogNamedSchedule(
                                         )
                                     }
                                 } else null,
-                                subtitle = "${schedule.scheduleEntity.startDate.format(dayMonthYearFormatter)} - " +
-                                        "${schedule.scheduleEntity.endDate.format(dayMonthYearFormatter)}",
+                                subtitle = "${
+                                    schedule.scheduleEntity.startDate.format(
+                                        dayMonthYearFormatter
+                                    )
+                                } - " +
+                                        "${
+                                            schedule.scheduleEntity.endDate.format(
+                                                dayMonthYearFormatter
+                                            )
+                                        }",
                                 onClick = {
-                                    if (schedule.scheduleEntity.id != currentScheduleEntity?.id) {
-                                        scheduleViewModel.setDefaultSchedule(
-                                            schedule.scheduleEntity.id,
-                                            schedule.scheduleEntity.timetableId
-                                        )
-                                    }
+                                    showScheduleDialog = !showScheduleDialog
                                 },
                                 trailingIcon = {
-                                    IconButton(
-                                        onClick = {
-                                            showScheduleDialog = !showScheduleDialog
-                                        }
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
+                                        if ((schedule.scheduleEntity.id != currentScheduleEntity?.id && isSavedNamedSchedule) || !schedule.scheduleEntity.isDefault) {
+                                            IconButton(
+                                                colors = IconButtonDefaults.iconButtonColors().copy(
+                                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                                ),
+                                                onClick = {
+                                                    scheduleViewModel.setDefaultSchedule(
+                                                        schedule.scheduleEntity.id,
+                                                        schedule.scheduleEntity.timetableId
+                                                    )
+                                                }
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(20.dp),
+                                                    imageVector = ImageVector.vectorResource(R.drawable.check),
+                                                    contentDescription = null
+                                                )
+                                            }
+                                        }
                                         Icon(
                                             modifier = Modifier
                                                 .size(20.dp)
