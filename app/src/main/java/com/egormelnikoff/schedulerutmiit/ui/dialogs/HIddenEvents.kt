@@ -36,7 +36,7 @@ import java.util.Locale
 @Composable
 fun HiddenEventsDialog(
     namedScheduleEntity: NamedScheduleEntity,
-    scheduleEntity: ScheduleEntity,
+    scheduleEntity: ScheduleEntity?,
     hiddenEvents: List<EventEntity>,
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack
@@ -45,7 +45,7 @@ fun HiddenEventsDialog(
         topBar = {
             CustomTopAppBar(
                 titleText = stringResource(R.string.hidden_events),
-                subtitleText = "${namedScheduleEntity.shortName} (${scheduleEntity.timetableType.typeName})",
+                subtitleText = "${namedScheduleEntity.shortName} (${scheduleEntity?.timetableType?.typeName})",
                 navAction = {
                     appBackStack.onBack()
                 }
@@ -97,11 +97,13 @@ fun HiddenEventsDialog(
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
-                                        scheduleViewModel.updateEventHidden(
-                                            scheduleEntity,
-                                            event.id,
-                                            false
-                                        )
+                                        scheduleEntity?.let {
+                                            scheduleViewModel.updateEventHidden(
+                                                scheduleEntity,
+                                                event.id,
+                                                false
+                                            )
+                                        }
                                     },
                                     colors = IconButtonDefaults.iconButtonColors()
                                         .copy(

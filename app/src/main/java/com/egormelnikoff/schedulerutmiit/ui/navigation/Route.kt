@@ -33,8 +33,7 @@ sealed interface Route {
         ) : Dialog
 
         data class HiddenEventsDialog(
-            val namedScheduleEntity: NamedScheduleEntity,
-            val scheduleEntity: ScheduleEntity
+            val namedScheduleEntity: NamedScheduleEntity
         ) : Dialog
 
         data class RenameNamedScheduleDialog(
