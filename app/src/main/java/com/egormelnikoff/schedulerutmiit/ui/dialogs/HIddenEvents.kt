@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatterWithTime
+import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
@@ -68,30 +68,25 @@ fun HiddenEventsDialog(
                             .clip(MaterialTheme.shapes.medium)
                             .background(MaterialTheme.colorScheme.secondaryContainer)
                     ) {
+                        val startTime = event.startDatetime
+                            .toLocalTimeWithTimeZone()
+                            .format(hourMinuteFormatter)
+                        val endTime = event.endDatetime
+                            .toLocalTimeWithTimeZone()
+                            .format(hourMinuteFormatter)
+
+                        val day = if (event.recurrenceRule != null) {
+                            event.startDatetime.dayOfWeek.getDisplayName(
+                                java.time.format.TextStyle.FULL,
+                                Locale.getDefault()
+                            ).replaceFirstChar { c -> c.uppercase() }
+                        } else {
+                            event.startDatetime.format(dayMonthYearFormatter)
+                        }
                         ClickableItem(
                             title = event.name,
                             titleMaxLines = 1,
-                            subtitle = if (event.recurrenceRule != null) {
-                                val day = event.startDatetime.dayOfWeek.getDisplayName(
-                                    java.time.format.TextStyle.FULL,
-                                    Locale.getDefault()
-                                ).replaceFirstChar { c -> c.uppercase() }
-
-                                val startTime = event.startDatetime
-                                    .toLocalTimeWithTimeZone()
-                                    .format(hourMinuteFormatter)
-                                val endTime = event.endDatetime
-                                    .toLocalTimeWithTimeZone()
-                                    .format(hourMinuteFormatter)
-
-                                "${event.typeName} ($day, $startTime - $endTime)"
-                            } else {
-                                "${event.typeName} (${
-                                    event.startDatetime
-                                        .toLocalTimeWithTimeZone()
-                                        .format(dayMonthYearFormatterWithTime)
-                                })"
-                            },
+                            subtitle = "${event.typeName} ($day, $startTime - $endTime)",
                             subtitleMaxLines = 2,
                             showClickLabel = false,
                             trailingIcon = {
