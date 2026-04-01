@@ -25,8 +25,9 @@ fun CustomModalBottomSheet(
     sheetState: SheetState? = null,
     showDragHandle: Boolean = true,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
     onDismiss: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     ModalBottomSheet(
         dragHandle = {
@@ -55,7 +56,7 @@ fun CustomModalBottomSheet(
                 .fillMaxWidth()
                 .padding(bottom = 12.dp),
             horizontalAlignment = horizontalAlignment,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = verticalArrangement
         ) {
             content.invoke()
         }
