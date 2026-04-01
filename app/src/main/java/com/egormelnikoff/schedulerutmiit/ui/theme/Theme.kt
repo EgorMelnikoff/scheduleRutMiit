@@ -8,8 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
@@ -25,21 +26,27 @@ fun ScheduleRutMiitTheme(
     content: @Composable () -> Unit
 ) {
     val isDarkTheme = decorPreferences.theme.isDarkTheme()
-    val colorScheme = getCurrentColorScheme(
-        isDarkTheme = isDarkTheme,
-        isUsedAmoledTheme = decorPreferences.usedAmoled,
-        decorColorIndex = decorPreferences.decorColorIndex
+    val colorScheme = decorPreferences.getCurrentColorScheme(
+        isDarkTheme = isDarkTheme
     )
 
     val view = LocalView.current
+    val configuration = LocalConfiguration.current
+
     if (!view.isInEditMode) {
-        SideEffect {
+        DisposableEffect(isDarkTheme, configuration.orientation) {
             val window = (view.context as Activity).window
+            val insetsController = WindowCompat.getInsetsController(window, view)
+
             window.isNavigationBarContrastEnforced = false
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !isDarkTheme
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !isDarkTheme
+
+            insetsController.isAppearanceLightStatusBars = !isDarkTheme
+            insetsController.isAppearanceLightNavigationBars = !isDarkTheme
+
+            onDispose {}
         }
     }
+
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -50,27 +57,23 @@ fun ScheduleRutMiitTheme(
 }
 
 @Composable
-fun Theme.isDarkTheme(): Boolean {
-    return when (this) {
-        Theme.DARK -> true
-        Theme.LIGHT -> false
-        else -> isSystemInDarkTheme()
-    }
+fun Theme.isDarkTheme() = when (this) {
+    Theme.DARK -> true
+    Theme.LIGHT -> false
+    else -> isSystemInDarkTheme()
 }
 
-
 @Composable
-fun getCurrentColorScheme(
-    isDarkTheme: Boolean,
-    isUsedAmoledTheme: Boolean,
-    decorColorIndex: Int
+fun DecorPreferences.getCurrentColorScheme(
+    isDarkTheme: Boolean
 ): ColorScheme {
-    val currentColorTheme = themes[decorColorIndex] ?: defaultTheme
+    val currentColorTheme = themes[this.decorColorIndex] ?: defaultTheme
 
     val colorTheme = when {
-        isDarkTheme && isUsedAmoledTheme -> amoledColorScheme.copy(
+        isDarkTheme && this.usedAmoled -> amoledColorScheme.copy(
             primary = currentColorTheme.dark.primary
         )
+
         isDarkTheme -> currentColorTheme.dark
         else -> currentColorTheme.light
     }
