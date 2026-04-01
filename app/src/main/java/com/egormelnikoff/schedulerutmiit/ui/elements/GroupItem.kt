@@ -104,62 +104,64 @@ fun ColumnGroup(
     withBackground: Boolean = true,
     items: List<@Composable () -> Unit>
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        title?.let {
-            Text(
-                modifier = Modifier.padding(horizontal = 4.dp),
-                text = it,
-                style = MaterialTheme.typography.titleSmall,
-                color = titleColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-
+    if (items.isNotEmpty()) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(baseItemSpacing)
+            modifier = modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items.forEachIndexed { index, itemData ->
-                val isFirst = index == 0
-                val isLast = index == items.lastIndex
+            title?.let {
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = it,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = titleColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .let {
-                            if (withBackground) {
-                                val topStartRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
-                                val topEndRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
-                                val bottomStartRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
-                                val bottomEndRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(baseItemSpacing)
+            ) {
+                items.forEachIndexed { index, itemData ->
+                    val isFirst = index == 0
+                    val isLast = index == items.lastIndex
 
-                                val shape = remember(
-                                    topStartRadius,
-                                    topEndRadius,
-                                    bottomStartRadius,
-                                    bottomEndRadius
-                                ) {
-                                    RoundedCornerShape(
-                                        topStart = topStartRadius,
-                                        topEnd = topEndRadius,
-                                        bottomStart = bottomStartRadius,
-                                        bottomEnd = bottomEndRadius
-                                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .let {
+                                if (withBackground) {
+                                    val topStartRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
+                                    val topEndRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
+                                    val bottomStartRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
+                                    val bottomEndRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
+
+                                    val shape = remember(
+                                        topStartRadius,
+                                        topEndRadius,
+                                        bottomStartRadius,
+                                        bottomEndRadius
+                                    ) {
+                                        RoundedCornerShape(
+                                            topStart = topStartRadius,
+                                            topEnd = topEndRadius,
+                                            bottomStart = bottomStartRadius,
+                                            bottomEnd = bottomEndRadius
+                                        )
+                                    }
+                                    it
+                                        .clip(shape)
+                                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                                } else {
+                                    it
                                 }
-                                it
-                                    .clip(shape)
-                                    .background(MaterialTheme.colorScheme.secondaryContainer)
-                            } else {
-                                it
                             }
-                        }
 
-                ) {
-                    itemData()
+                    ) {
+                        itemData()
+                    }
                 }
             }
         }
