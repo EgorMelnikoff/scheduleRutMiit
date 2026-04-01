@@ -1,6 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
@@ -85,6 +88,7 @@ fun CustomTopAppBar(
 
 @Composable
 fun ScheduleTopAppBar(
+    navigateToHiddenEvents: (NamedScheduleEntity) -> Unit,
     onSetScheduleView: (ScheduleView) -> Unit,
     onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit,
 
@@ -92,7 +96,8 @@ fun ScheduleTopAppBar(
     scheduleView: ScheduleView,
     isPeriodic: Boolean
 ) {
-    val isCustomSchedule = namedScheduleData.namedSchedule.namedScheduleEntity.type == NamedScheduleType.MY
+    val isCustomSchedule =
+        namedScheduleData.namedSchedule.namedScheduleEntity.type == NamedScheduleType.MY
 
     CustomTopAppBar(
         titleText = namedScheduleData.namedSchedule.namedScheduleEntity.shortName,
@@ -100,6 +105,25 @@ fun ScheduleTopAppBar(
             namedScheduleData.scheduleData.scheduleEntity.timetableType.typeName
         } else null,
         actions = {
+            AnimatedVisibility(
+                visible = !namedScheduleData.scheduleData?.hiddenEvents.isNullOrEmpty(),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                IconButton(
+                    onClick = {
+                        navigateToHiddenEvents(namedScheduleData.namedSchedule.namedScheduleEntity)
+                    }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+
             IconButton(
                 onClick = {
                     onSetScheduleView(

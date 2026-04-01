@@ -108,6 +108,13 @@ fun ScreenSchedule(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
                     ScheduleTopAppBar(
+                        navigateToHiddenEvents = { namedScheduleEntity ->
+                            appUiState.appBackStack.openDialog(
+                                Route.Dialog.HiddenEventsDialog(
+                                    namedScheduleEntity
+                                )
+                            )
+                        },
                         onSetScheduleView = { value ->
                             settingsViewModel.onSetScheduleView(value)
                         },
@@ -292,8 +299,7 @@ fun ScreenSchedule(
             isSavedNamedSchedule = scheduleState.isSaved,
             isDefaultNamedSchedule = it.isDefault,
 
-            haveNotEmptySchedules = scheduleState.currentNamedScheduleData?.namedSchedule?.schedules?.isNotEmpty() == true && scheduleState.currentNamedScheduleData.scheduleData?.scheduleEntity != null,
-            haveHiddenEvents = !scheduleState.currentNamedScheduleData?.scheduleData?.hiddenEvents.isNullOrEmpty()
+            haveNotEmptySchedules = scheduleState.currentNamedScheduleData?.namedSchedule?.schedules?.isNotEmpty() == true && scheduleState.currentNamedScheduleData.scheduleData?.scheduleEntity != null
         ) {
             showNamedScheduleDialog = null
         }
