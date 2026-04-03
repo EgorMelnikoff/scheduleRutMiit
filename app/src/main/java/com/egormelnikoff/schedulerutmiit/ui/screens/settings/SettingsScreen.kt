@@ -1,5 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.settings
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -98,16 +102,23 @@ fun SettingsScreen(
                         ClickableItem(
                             title = stringResource(R.string.schedule_view),
                             leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.size(20.dp),
-                                    imageVector = when (appSettings.scheduleView) {
-                                        ScheduleView.CALENDAR -> ImageVector.vectorResource(R.drawable.calendar)
-                                        ScheduleView.SPLIT_WEEKS -> ImageVector.vectorResource(R.drawable.split)
-                                        ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
-                                    },
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
+                                AnimatedContent(
+                                    targetState = appSettings.scheduleView,
+                                    transitionSpec = {
+                                        scaleIn() togetherWith scaleOut()
+                                    }
+                                ) { state ->
+                                    Icon(
+                                        modifier = Modifier.size(20.dp),
+                                        imageVector = when (state) {
+                                            ScheduleView.CALENDAR -> ImageVector.vectorResource(R.drawable.calendar)
+                                            ScheduleView.SPLIT_WEEKS -> ImageVector.vectorResource(R.drawable.split)
+                                            ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
+                                        },
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                }
                             },
                             subtitle = when (appSettings.scheduleView) {
                                 ScheduleView.CALENDAR -> stringResource(R.string.calendar)
@@ -133,7 +144,7 @@ fun SettingsScreen(
                                 .joinToString(", ")
                                 .lowercase()
                                 .replaceFirstChar { it.uppercase() },
-                            subtitleMaxLines = 2,
+                            subtitleMaxLines = 1,
                             defaultMinHeight = 36.dp
                         ) {
                             activeDialog = SettingsDialog.EventView
@@ -147,16 +158,23 @@ fun SettingsScreen(
                                 EventsCountView.OFF -> stringResource(R.string.off)
                             },
                             leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.size(20.dp),
-                                    imageVector = when (appSettings.eventsCountView) {
-                                        EventsCountView.DETAILS -> ImageVector.vectorResource(R.drawable.points)
-                                        EventsCountView.BRIEFLY -> ImageVector.vectorResource(R.drawable.one)
-                                        EventsCountView.OFF -> ImageVector.vectorResource(R.drawable.visibility_off)
-                                    },
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
+                                AnimatedContent(
+                                    targetState = appSettings.eventsCountView,
+                                    transitionSpec = {
+                                        scaleIn() togetherWith scaleOut()
+                                    }
+                                ) { state ->
+                                    Icon(
+                                        modifier = Modifier.size(20.dp),
+                                        imageVector = when (state) {
+                                            EventsCountView.DETAILS -> ImageVector.vectorResource(R.drawable.points)
+                                            EventsCountView.BRIEFLY -> ImageVector.vectorResource(R.drawable.one)
+                                            EventsCountView.OFF -> ImageVector.vectorResource(R.drawable.visibility_off)
+                                        },
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                }
                             },
                             defaultMinHeight = 36.dp
                         ) {
@@ -230,15 +248,23 @@ fun SettingsScreen(
                                 Theme.SYSTEM -> stringResource(R.string.auto)
                             },
                             leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.size(20.dp),
-                                    imageVector = if (appSettings.decorPreferences.theme.isDarkTheme()) ImageVector.vectorResource(
-                                        R.drawable.moon
+                                AnimatedContent(
+                                    targetState = appSettings.decorPreferences.theme.isDarkTheme(),
+                                    transitionSpec = {
+                                        scaleIn() togetherWith scaleOut()
+                                    }
+                                ) { state ->
+                                    Icon(
+                                        modifier = Modifier.size(20.dp),
+                                        imageVector = if (state) {
+                                            ImageVector.vectorResource(R.drawable.moon)
+                                        } else {
+                                            ImageVector.vectorResource(R.drawable.sun)
+                                        },
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
                                     )
-                                    else ImageVector.vectorResource(R.drawable.sun),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
+                                }
                             },
                             defaultMinHeight = 36.dp
                         ) {
