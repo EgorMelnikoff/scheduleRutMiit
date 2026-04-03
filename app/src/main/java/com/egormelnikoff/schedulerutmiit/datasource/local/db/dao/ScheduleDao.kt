@@ -9,7 +9,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 @Dao
 interface ScheduleDao {
     @Insert(onConflict = REPLACE)
-    suspend fun insertAll(schedules: List<ScheduleEntity>): List<Long>
+    suspend fun insertAll(scheduleEntities: List<ScheduleEntity>): List<Long>
 
     @Insert(onConflict = REPLACE)
     suspend fun insert(scheduleEntity: ScheduleEntity): Long

@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.app.network.model
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
@@ -12,19 +12,19 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Keep
-data class Schedule(
-    val timetable: Timetable,
-    val periodicContent: PeriodicContent?,
-    val nonPeriodicContent: NonPeriodicContent?
+data class ScheduleModel(
+    val timetable: TimetableModel,
+    val periodicContent: PeriodicContentModel?,
+    val nonPeriodicContent: NonPeriodicContentModel?
 )
 
 @Keep
-data class Timetables(
-    val timetables: List<Timetable>
+data class TimetablesModel(
+    val timetables: List<TimetableModel>
 )
 
 @Keep
-data class Timetable(
+data class TimetableModel(
     val id: String,
     val name: String,
     val type: TimetableType,
@@ -34,18 +34,18 @@ data class Timetable(
 )
 
 @Keep
-data class PeriodicContent(
-    val events: List<Event>?,
+data class PeriodicContentModel(
+    val events: List<EventModel>?,
     val recurrence: Recurrence
 )
 
 @Keep
-data class NonPeriodicContent(
-    val events: List<Event>?,
+data class NonPeriodicContentModel(
+    val events: List<EventModel>?,
 )
 
 @Keep
-data class Event(
+data class EventModel(
     val startDatetime: LocalDateTime?,
     val endDatetime: LocalDateTime?,
     val recurrenceRule: RecurrenceRule?,
@@ -67,7 +67,7 @@ data class Event(
     }
 
     fun toEntity() = if (startDatetime != null && endDatetime != null && name != null)
-        EventEntity(
+        Event(
             startDatetime = startDatetime,
             endDatetime = endDatetime,
             recurrenceRule = recurrenceRule,
@@ -84,33 +84,33 @@ data class Event(
 
 
 @Keep
-data class Institutes(
-    val institutes: List<Institute>
+data class InstitutesModel(
+    val instituteModels: List<InstituteModel>
 )
 
 @Keep
-data class Institute(
+data class InstituteModel(
     val id: Int,
     val name: String,
     val abbreviation: String,
-    val courses: List<Course>
+    val courses: List<CourseModel>
 )
 
 @Keep
-data class Course(
+data class CourseModel(
     val course: String,
-    val specialties: List<Specialty>
+    val specialties: List<SpecialtyModel>
 )
 
 @Keep
-data class Specialty(
+data class SpecialtyModel(
     val name: String,
     val abbreviation: String,
     val groups: List<Group>
 )
 
 @Keep
-data class Person(
+data class PersonModel(
     val name: String,
     val id: Int,
     val position: String
@@ -118,27 +118,27 @@ data class Person(
 
 
 @Keep
-data class NewsList(
+data class NewsListModel(
     val maxPage: Int,
-    val items: List<NewsShort>
+    val items: List<NewsShortModel>
 )
 
 @Keep
-data class NewsShort(
+data class NewsShortModel(
     val idInformation: Long,
     val title: String,
     val date: LocalDateTime,
     val thumbnail: String,
-    val secondary: Secondary
+    val secondary: SecondaryModel
 )
 
 @Keep
-data class Secondary(
+data class SecondaryModel(
     val text: String
 )
 
 @Keep
-data class News(
+data class NewsModel(
     val idInformation: Long,
     val title: String,
     val hisdateDisplay: String,
@@ -147,13 +147,13 @@ data class News(
 
 @Keep
 data class NewsContent(
-    val news: News,
+    val newsModel: NewsModel,
     val elements: MutableList<Pair<String, Any>>,
     val images: MutableList<String>
 )
 
 @Keep
-data class Subject(
+data class SubjectModel(
     val title: String,
     val teachers: Set<String>
 )

@@ -5,7 +5,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 
 @Keep
 data class ScheduleState(
-    val savedNamedSchedules: List<NamedScheduleEntity> = emptyList(),
+    val savedNamedScheduleEntities: List<NamedScheduleEntity> = emptyList(),
     val defaultNamedScheduleData: NamedScheduleData? = null,
     val currentNamedScheduleData: NamedScheduleData? = null,
     val isRefreshing: Boolean = false,

@@ -5,9 +5,9 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
-import com.egormelnikoff.schedulerutmiit.app.network.model.NonPeriodicContent
-import com.egormelnikoff.schedulerutmiit.app.network.model.PeriodicContent
-import com.egormelnikoff.schedulerutmiit.app.network.model.Schedule
+import com.egormelnikoff.schedulerutmiit.app.network.model.NonPeriodicContentModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.PeriodicContentModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.ScheduleModel
 import com.egormelnikoff.schedulerutmiit.datasource.remote.schedule.ScheduleRemoteDataSource
 import java.time.temporal.WeekFields
 import javax.inject.Inject
@@ -18,14 +18,14 @@ class ScheduleApiNormalizer @Inject constructor(
     suspend operator fun invoke(
         namedScheduleType: NamedScheduleType,
         apiId: Int,
-        schedule: Schedule
-    ): Schedule {
+        schedule: ScheduleModel
+    ): ScheduleModel {
         val fixedSchedule = when (schedule.timetable.type) {
             TimetableType.NON_PERIODIC, TimetableType.SESSION -> {
-                Schedule(
+                ScheduleModel(
                     timetable = schedule.timetable,
                     periodicContent = null,
-                    nonPeriodicContent = NonPeriodicContent(
+                    nonPeriodicContent = NonPeriodicContentModel(
                         events = schedule.nonPeriodicContent?.events
                             ?: schedule.periodicContent?.events
                     )
@@ -33,7 +33,7 @@ class ScheduleApiNormalizer @Inject constructor(
             }
 
             TimetableType.PERIODIC -> {
-                Schedule(
+                ScheduleModel(
                     timetable = schedule.timetable,
                     nonPeriodicContent = null,
                     periodicContent = if (schedule.periodicContent != null) {
@@ -68,7 +68,7 @@ class ScheduleApiNormalizer @Inject constructor(
                             type = schedule.timetable.id.trim()
                         )
 
-                        PeriodicContent(
+                        PeriodicContentModel(
                             events = checkedEvents,
                             recurrence = Recurrence(
                                 currentNumber = currentPeriodNumber,

@@ -1,12 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.view_models.schedule
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.Schedule
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
@@ -20,28 +20,28 @@ import kotlin.math.abs
 
 @Keep
 data class NamedScheduleData(
-    val namedSchedule: NamedScheduleFormatted,
+    val namedSchedule: NamedSchedule,
     val scheduleData: ScheduleData? = null
 ) {
     companion object {
         fun findCurrentSchedule(
-            namedSchedule: NamedScheduleFormatted
-        ): ScheduleFormatted? {
+            namedSchedule: NamedSchedule
+        ): Schedule? {
             return namedSchedule.schedules.find { it.scheduleEntity.isDefault }
                 ?: namedSchedule.schedules.firstOrNull()
         }
 
         operator fun invoke(
-            namedScheduleFormatted: NamedScheduleFormatted?
+            namedSchedule: NamedSchedule?
         ): NamedScheduleData? {
-            namedScheduleFormatted ?: return null
-            val currentSchedule = findCurrentSchedule(namedScheduleFormatted)
+            namedSchedule ?: return null
+            val currentSchedule = findCurrentSchedule(namedSchedule)
             currentSchedule ?: return NamedScheduleData(
-                namedSchedule = namedScheduleFormatted
+                namedSchedule = namedSchedule
             )
 
             return NamedScheduleData(
-                namedSchedule = namedScheduleFormatted,
+                namedSchedule = namedSchedule,
                 scheduleData = ScheduleData(
                     schedule = currentSchedule
                 )
@@ -53,23 +53,23 @@ data class NamedScheduleData(
 @Keep
 data class ScheduleData(
     val scheduleEntity: ScheduleEntity,
-    val periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>? = null,
-    val nonPeriodicEvents: Map<LocalDate, List<EventEntity>>? = null,
-    val fullEventList: List<Pair<LocalDate, List<EventEntity>>> = listOf(),
-    val hiddenEvents: List<EventEntity> = listOf(),
+    val periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null,
+    val nonPeriodicEvents: Map<LocalDate, List<Event>>? = null,
+    val fullEventList: List<Pair<LocalDate, List<Event>>> = listOf(),
+    val hiddenEvents: List<Event> = listOf(),
     val eventsExtraData: List<EventExtraData> = listOf(),
     val schedulePagerData: SchedulePagerData,
     val reviewData: ReviewData
 ) {
     companion object {
         operator fun invoke(
-            schedule: ScheduleFormatted
+            schedule: Schedule
         ): ScheduleData {
             val today = LocalDateTime.now()
             val splitEvents = schedule.events.partition { it.isHidden }
 
-            var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<EventEntity>>>? = null
-            var nonPeriodicEventsForCalendar: Map<LocalDate, List<EventEntity>>? = null
+            var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
+            var nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>? = null
 
             if (schedule.scheduleEntity.recurrence != null) {
                 periodicEventsForCalendar = splitEvents.second.getPeriodicEvents(
@@ -115,9 +115,9 @@ data class ScheduleData(
             )
         }
 
-        fun List<EventEntity>.getPeriodicEvents(
+        fun List<Event>.getPeriodicEvents(
             interval: Int
-        ): Map<Int, Map<DayOfWeek, List<EventEntity>>> {
+        ): Map<Int, Map<DayOfWeek, List<Event>>> {
             return buildMap {
                 for (week in 1..interval) {
                     val eventsForWeek = this@getPeriodicEvents.filter { event ->
@@ -136,10 +136,10 @@ data class ScheduleData(
         private fun getFullEventsList(
             today: LocalDate,
             scheduleEntity: ScheduleEntity,
-            periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>?,
-            nonPeriodicEventsList: List<EventEntity>?
-        ): List<Pair<LocalDate, List<EventEntity>>> {
-            var fullEventsList = listOf<EventEntity>()
+            periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
+            nonPeriodicEventsList: List<Event>?
+        ): List<Pair<LocalDate, List<Event>>> {
+            var fullEventsList = listOf<Event>()
             when {
                 (periodicEvents == null && nonPeriodicEventsList == null) -> return listOf()
                 (periodicEvents != null && scheduleEntity.recurrence != null) -> {
@@ -272,15 +272,15 @@ data class SchedulePagerData(
 @Keep
 data class ReviewData(
     val displayedDate: LocalDate,
-    val events: Map<String, List<EventEntity>> = mapOf(),
+    val events: Map<String, List<Event>> = mapOf(),
     val currentWeek: Int = 0
 ) {
     companion object {
         operator fun invoke(
             date: LocalDateTime,
             scheduleEntity: ScheduleEntity,
-            periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>?,
-            nonPeriodicEvents: Map<LocalDate, List<EventEntity>>?
+            periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
+            nonPeriodicEvents: Map<LocalDate, List<Event>>?
         ): ReviewData {
             var displayedDate = date.toLocalDate()
             var events = date.toLocalDate().getEventsForDate(

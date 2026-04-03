@@ -17,8 +17,8 @@ class NamedScheduleReposImpl @Inject constructor(
     private val eventExtraDao: EventExtraDao
 ): NamedScheduleRepos {
     override suspend fun saveEntity(
-        namedSchedule: NamedScheduleEntity
-    ) = namedScheduleDao.insert(namedSchedule)
+        namedScheduleEntity: NamedScheduleEntity
+    ) = namedScheduleDao.insert(namedScheduleEntity)
 
     override suspend fun getCount(): Int = namedScheduleDao.getCount()
 

@@ -36,7 +36,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
@@ -249,7 +249,7 @@ fun HorizontalCalendarItem(
     isSelected: Boolean,
     eventsCountView: EventsCountView,
     isToday: Boolean,
-    events: Map<String, List<EventEntity>>,
+    events: Map<String, List<Event>>,
     eventsExtraData: List<EventExtraData>
 ) {
     val backgroundColor = when {
@@ -318,7 +318,7 @@ fun HorizontalCalendarItem(
 
 @Composable
 fun EventsDetailSummary(
-    events: Map<String, List<EventEntity>>,
+    events: Map<String, List<Event>>,
     eventsExtraData: List<EventExtraData>
 ) {
     FlowRow(

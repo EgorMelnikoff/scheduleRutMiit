@@ -31,7 +31,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
@@ -42,13 +42,13 @@ import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
 
 @Composable
 fun Event(
-    events: List<EventEntity>,
+    events: List<Event>,
     scheduleEntity: ScheduleEntity,
     eventsExtraData: List<EventExtraData>,
     isSavedSchedule: Boolean,
     eventView: EventView,
-    navigateToEvent: (ScheduleEntity, Boolean, EventEntity, EventExtraData?) -> Unit,
-    navigateToEditEvent: (ScheduleEntity, EventEntity) -> Unit,
+    navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
+    navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
     onDeleteEvent: (ScheduleEntity, Long) -> Unit,
     onUpdateHiddenEvent: (ScheduleEntity, Long) -> Unit
 ) {
@@ -104,14 +104,14 @@ fun Event(
 
 @Composable
 fun ScheduleSingleEvent(
-    navigateToEvent: (ScheduleEntity, Boolean, EventEntity, EventExtraData?) -> Unit,
-    navigateToEditEvent: (ScheduleEntity, EventEntity) -> Unit,
+    navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
+    navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
     onDeleteEvent: (ScheduleEntity, Long) -> Unit,
     onUpdateHiddenEvent: (ScheduleEntity, Long) -> Unit,
     scheduleEntity: ScheduleEntity,
     isSavedSchedule: Boolean,
     eventView: EventView,
-    event: EventEntity,
+    event: Event,
     eventExtraData: EventExtraData?
 ) {
     var showExpandedMenu by remember { mutableStateOf(false) }

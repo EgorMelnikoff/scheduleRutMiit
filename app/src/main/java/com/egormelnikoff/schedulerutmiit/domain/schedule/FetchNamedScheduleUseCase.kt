@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.exception.ScheduleLoadException
 import com.egormelnikoff.schedulerutmiit.app.extension.getShortName
@@ -107,7 +107,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
                     )
                     FetchNamedScheduleResult(
                         Result.Success(
-                            NamedScheduleFormatted(
+                            NamedSchedule(
                                 namedScheduleEntity = namedScheduleEntity,
                                 schedules = schedules
                             )

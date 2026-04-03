@@ -2,24 +2,24 @@ package com.egormelnikoff.schedulerutmiit.datasource.remote.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.network.model.Schedule
-import com.egormelnikoff.schedulerutmiit.app.network.model.Timetable
-import com.egormelnikoff.schedulerutmiit.app.network.model.Timetables
+import com.egormelnikoff.schedulerutmiit.app.network.model.ScheduleModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.TimetableModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.TimetablesModel
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 
 interface ScheduleRemoteDataSource {
     suspend fun fetchTimetables(
         apiId: Int,
         type: NamedScheduleType
-    ): Result<Timetables>
+    ): Result<TimetablesModel>
 
     suspend fun fetchSchedule(
         namedScheduleType: NamedScheduleType,
         name: String,
         apiId: Int,
-        timetable: Timetable,
+        timetable: TimetableModel,
         currentGroup: Group? = null
-    ): Result<Schedule>
+    ): Result<ScheduleModel>
 
     suspend fun fetchCurrentWeek(
         namedScheduleType: NamedScheduleType,

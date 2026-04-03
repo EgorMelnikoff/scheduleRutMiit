@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.Schedule
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
@@ -18,7 +18,7 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
         startDate: LocalDate,
         endDate: LocalDate
     ): ScheduleUseCaseResult {
-        val namedSchedule = NamedScheduleFormatted(
+        val namedScheduleEntityEntity = NamedSchedule(
             namedScheduleEntity = NamedScheduleEntity(
                 id = 0,
                 fullName = name,
@@ -29,7 +29,7 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
                 lastTimeUpdate = 0L
             ),
             schedules = listOf(
-                ScheduleFormatted(
+                Schedule(
                     scheduleEntity = ScheduleEntity(
                         id = 0,
                         isDefault = true,
@@ -47,6 +47,6 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
             )
         )
 
-        return saveNamedScheduleUseCase(namedSchedule)
+        return saveNamedScheduleUseCase(namedScheduleEntityEntity)
     }
 }

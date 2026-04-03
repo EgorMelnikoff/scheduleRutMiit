@@ -9,11 +9,11 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
-import com.egormelnikoff.schedulerutmiit.app.network.model.Event
-import com.egormelnikoff.schedulerutmiit.app.network.model.NonPeriodicContent
-import com.egormelnikoff.schedulerutmiit.app.network.model.PeriodicContent
-import com.egormelnikoff.schedulerutmiit.app.network.model.Schedule
-import com.egormelnikoff.schedulerutmiit.app.network.model.Timetable
+import com.egormelnikoff.schedulerutmiit.app.network.model.EventModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.NonPeriodicContentModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.PeriodicContentModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.ScheduleModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.TimetableModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Document
@@ -39,9 +39,9 @@ object ScheduleParser {
 
     suspend operator fun invoke(
         document: Document,
-        timetable: Timetable,
+        timetable: TimetableModel,
         currentGroup: Group?
-    ): Schedule = withContext(Dispatchers.Default) {
+    ): ScheduleModel = withContext(Dispatchers.Default) {
         return@withContext if (timetable.type == TimetableType.PERIODIC) {
             val periodicContent = document.parsePeriodicSchedule(
                 timetable.startDate,
@@ -54,9 +54,9 @@ object ScheduleParser {
                     currentGroup = currentGroup,
                     formatter = parserFormatter
                 )
-                Schedule(
+                ScheduleModel(
                     timetable = timetable,
-                    periodicContent = PeriodicContent(
+                    periodicContent = PeriodicContentModel(
                         events = nonPeriodicContent.events,
                         recurrence = Recurrence(
                             interval = 1,
@@ -67,7 +67,7 @@ object ScheduleParser {
                     nonPeriodicContent = null
                 )
             } else {
-                Schedule(
+                ScheduleModel(
                     timetable = timetable,
                     periodicContent = periodicContent,
                     nonPeriodicContent = null
@@ -79,7 +79,7 @@ object ScheduleParser {
                 formatter = parserFormatter
             )
 
-            Schedule(
+            ScheduleModel(
                 timetable = timetable,
                 periodicContent = null,
                 nonPeriodicContent = nonPeriodicContent
@@ -91,7 +91,7 @@ object ScheduleParser {
         startDate: LocalDate,
         currentGroup: Group?,
         formatter: DateTimeFormatter,
-    ): PeriodicContent = withContext(Dispatchers.Default) {
+    ): PeriodicContentModel = withContext(Dispatchers.Default) {
         val weekNumbers = this@parsePeriodicSchedule
             .select(".nav-link[aria-controls]")
             .map {
@@ -118,7 +118,7 @@ object ScheduleParser {
                 }.orEmpty()
         }
 
-        return@withContext PeriodicContent(
+        return@withContext PeriodicContentModel(
             events = events.normalizePeriodicEvents(),
             recurrence = getRecurrence(
                 startDate = startDate,
@@ -132,7 +132,7 @@ object ScheduleParser {
         isPeriodic: Boolean = false,
         currentGroup: Group?,
         formatter: DateTimeFormatter,
-    ): NonPeriodicContent = withContext(Dispatchers.Default) {
+    ): NonPeriodicContentModel = withContext(Dispatchers.Default) {
         val eventsByDates = this@parseNonPeriodicSchedule
             .select("div.info-block.info-block_collapse.show")
 
@@ -145,7 +145,7 @@ object ScheduleParser {
             }.orEmpty()
         }
         return@withContext if (isPeriodic) {
-            NonPeriodicContent(
+            NonPeriodicContentModel(
                 events = events.map {
                     it.copy(
                         periodNumber = 1,
@@ -156,7 +156,7 @@ object ScheduleParser {
                     )
                 }
             )
-        } else NonPeriodicContent(
+        } else NonPeriodicContentModel(
             events = events
         )
     }
@@ -191,7 +191,7 @@ object ScheduleParser {
         periodNumber: Int? = null,
         recurrenceRule: RecurrenceRule? = null,
         currentGroup: Group?
-    ): List<Event> = withContext(Dispatchers.Default) {
+    ): List<EventModel> = withContext(Dispatchers.Default) {
         return@withContext this@parseEvents
             .select(".timetable__list-timeslot")
             .map { element ->
@@ -236,7 +236,7 @@ object ScheduleParser {
                 val rooms = element.parseRooms()
                 val groups = element.parseGroups(currentGroup)
 
-                Event(
+                EventModel(
                     startDatetime = LocalDateTime.of(date, startTime),
                     endDatetime = LocalDateTime.of(date, endTime),
                     name = name,
@@ -323,7 +323,7 @@ object ScheduleParser {
         return@withContext weekNumber ?: 1
     }
 
-    private fun List<Event>.normalizePeriodicEvents(): List<Event> {
+    private fun List<EventModel>.normalizePeriodicEvents(): List<EventModel> {
         return this.groupBy { it.customHashCode(true) }
             .map { (_, events) ->
                 events.first().let { event ->

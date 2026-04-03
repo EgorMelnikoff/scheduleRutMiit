@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.app.widget
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ReviewData
@@ -21,14 +21,14 @@ data class WidgetData(
     val eventsExtraData: List<EventExtraData> = listOf()
 ) {
     companion object {
-        operator fun invoke(namedSchedule: NamedScheduleFormatted): WidgetData? {
+        operator fun invoke(namedSchedule: NamedSchedule): WidgetData? {
             val scheduleFormatted = NamedScheduleData.findCurrentSchedule(namedSchedule)
             return if (scheduleFormatted != null) {
                 val today = LocalDateTime.now()
                 val splitEvents = scheduleFormatted.events.partition { it.isHidden }
 
-                var periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>? = null
-                var nonPeriodicEvents: Map<LocalDate, List<EventEntity>>? = null
+                var periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null
+                var nonPeriodicEvents: Map<LocalDate, List<Event>>? = null
 
                 if (scheduleFormatted.scheduleEntity.recurrence != null) {
                     periodicEvents = splitEvents.second.getPeriodicEvents(

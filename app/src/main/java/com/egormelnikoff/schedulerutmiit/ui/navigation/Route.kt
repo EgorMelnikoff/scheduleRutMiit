@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.navigation
 
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
@@ -22,14 +22,14 @@ sealed interface Route {
             val namedScheduleEntity: NamedScheduleEntity,
             val scheduleEntity: ScheduleEntity,
             val isSavedSchedule: Boolean,
-            val event: EventEntity,
+            val event: Event,
             val eventExtraData: EventExtraData?
         ) : Dialog
 
         data class AddEventDialog(
             val namedScheduleEntity: NamedScheduleEntity,
             val scheduleEntity: ScheduleEntity,
-            val event: EventEntity? = null
+            val event: Event? = null
         ) : Dialog
 
         data class HiddenEventsDialog(

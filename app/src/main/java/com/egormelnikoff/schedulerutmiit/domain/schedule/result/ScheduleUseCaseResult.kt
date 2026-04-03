@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule.result
 
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
 
 data class ScheduleUseCaseResult(
-    val savedNamedSchedules: List<NamedScheduleEntity>?,
-    val namedScheduleFormatted: NamedScheduleFormatted?
+    val savedNamedScheduleEntities: List<NamedScheduleEntity>?,
+    val namedSchedule: NamedSchedule?
 )

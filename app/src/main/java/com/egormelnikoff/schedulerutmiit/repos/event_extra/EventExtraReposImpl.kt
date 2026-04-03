@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.repos.event_extra
 
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventExtraDao
 import javax.inject.Inject
@@ -9,7 +9,7 @@ class EventExtraReposImpl @Inject constructor(
     private val eventExtraDao: EventExtraDao
 ) : EventExtraRepos {
     override suspend fun save(
-        event: EventEntity,
+        event: Event,
         tag: Int,
         comment: String
     ) = eventExtraDao.insert(
@@ -24,19 +24,19 @@ class EventExtraReposImpl @Inject constructor(
     )
 
 
-    override suspend fun deleteByEvent(event: EventEntity) = eventExtraDao.deleteByEventId(event.id)
+    override suspend fun deleteByEvent(event: Event) = eventExtraDao.deleteByEventId(event.id)
 
     override suspend fun getByEventId(
         eventId: Long
     ) = eventExtraDao.getByEventId(eventId)
 
     override suspend fun updateComment(
-        event: EventEntity,
+        event: Event,
         newComment: String
     ) = eventExtraDao.updateComment(event.scheduleId, event.id, newComment)
 
     override suspend fun updateTag(
-        event: EventEntity,
+        event: Event,
         newTag: Int
     ) = eventExtraDao.updateTag(event.scheduleId, event.id, newTag)
 }

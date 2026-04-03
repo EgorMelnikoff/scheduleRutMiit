@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.app.network.model.Person
+import com.egormelnikoff.schedulerutmiit.app.network.model.PersonModel
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
@@ -61,7 +61,7 @@ class SearchViewModel @Inject constructor(
                     loadInstitutesOnce()
                     searchUseCase(
                         searchParams,
-                        _searchState.value.institutes
+                        _searchState.value.institutesModel
                     )
                 }.collect { result ->
                     result?.let { handleSearchResult(it) }
@@ -73,7 +73,7 @@ class SearchViewModel @Inject constructor(
         result: SearchResult
     ) {
         var groupsList = listOf<Group>()
-        var peopleList = listOf<Person>()
+        var peopleList = listOf<PersonModel>()
 
         if (result.groups != null) {
             when (result.groups) {
@@ -149,7 +149,7 @@ class SearchViewModel @Inject constructor(
 
     private suspend fun loadInstitutesOnce() {
         institutesMutex.withLock {
-            if (_searchState.value.institutes == null) {
+            if (_searchState.value.institutesModel == null) {
                 loadInstitutes()
             }
         }
@@ -164,7 +164,7 @@ class SearchViewModel @Inject constructor(
             is Result.Success -> {
                 _searchState.update {
                     it.copy(
-                        institutes = institutes.data
+                        institutesModel = institutes.data
                     )
                 }
             }

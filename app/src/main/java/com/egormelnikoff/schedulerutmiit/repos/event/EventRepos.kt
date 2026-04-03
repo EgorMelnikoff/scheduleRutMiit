@@ -1,12 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.repos.event
 
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 
 interface EventRepos {
-    suspend fun save(event: EventEntity)
+    suspend fun save(event: Event)
     suspend fun saveWithExtra(
-        events: List<EventEntity>,
+        events: List<Event>,
         eventsExtraData: List<EventExtraData>,
         scheduleId: Long
     )
@@ -18,7 +18,7 @@ interface EventRepos {
         scheduleId: Long
     ): Int
 
-    suspend fun update(event: EventEntity)
+    suspend fun update(event: Event)
     suspend fun updateIsHidden(
         eventId: Long,
         isHidden: Boolean

@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
@@ -83,7 +83,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDialog(
-    event: EventEntity,
+    event: Event,
     eventExtraData: EventExtraData?,
     namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
@@ -442,7 +442,7 @@ fun EventDialog(
 @Composable
 fun EventHeader(
     scheduleEntity: ScheduleEntity,
-    event: EventEntity,
+    event: Event,
     horizontalPadding: Dp
 ) {
     Column(

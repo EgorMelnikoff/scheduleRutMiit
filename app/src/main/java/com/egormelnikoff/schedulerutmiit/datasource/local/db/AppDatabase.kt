@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
@@ -20,7 +20,7 @@ import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.SearchQueryDao
     entities = [
         NamedScheduleEntity::class,
         ScheduleEntity::class,
-        EventEntity::class,
+        Event::class,
         EventExtraData::class,
         SearchQuery::class
     ],

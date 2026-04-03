@@ -63,7 +63,7 @@ fun ScreenSchedule(
     externalPadding: PaddingValues
 ) {
     var showBackDialog by remember { mutableStateOf(false) }
-    var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
+    var showNamedScheduleEntityDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
     var showDeleteNamedScheduleDialog by remember { mutableStateOf(false) }
 
     when {
@@ -93,7 +93,7 @@ fun ScreenSchedule(
 
         scheduleState.currentNamedScheduleData?.namedSchedule != null -> {
             BackHandler(
-                scheduleState.savedNamedSchedules.isNotEmpty() && !scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault
+                scheduleState.savedNamedScheduleEntities.isNotEmpty() && !scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault
             ) {
                 showBackDialog = true
             }
@@ -119,7 +119,7 @@ fun ScreenSchedule(
                             settingsViewModel.onSetScheduleView(value)
                         },
                         onShowNamedScheduleDialog = { newValue ->
-                            showNamedScheduleDialog = newValue
+                            showNamedScheduleEntityDialog = newValue
                         },
                         namedScheduleData = scheduleState.currentNamedScheduleData,
                         isPeriodic = scheduleState.currentNamedScheduleData.scheduleData?.scheduleEntity?.timetableType == TimetableType.PERIODIC,
@@ -253,7 +253,7 @@ fun ScreenSchedule(
             }
         }
 
-        scheduleState.savedNamedSchedules.isEmpty() -> {
+        scheduleState.savedNamedScheduleEntities.isEmpty() -> {
             ErrorScreen(
                 title = stringResource(R.string.no_saved_schedule),
                 subtitle = stringResource(R.string.empty_base),
@@ -287,7 +287,7 @@ fun ScreenSchedule(
             )
         }
     }
-    showNamedScheduleDialog?.let {
+    showNamedScheduleEntityDialog?.let {
         ModalDialogNamedSchedule(
             namedScheduleEntity = it,
             currentScheduleEntity = scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity,
@@ -301,7 +301,7 @@ fun ScreenSchedule(
 
             haveNotEmptySchedules = scheduleState.currentNamedScheduleData?.namedSchedule?.schedules?.isNotEmpty() == true && scheduleState.currentNamedScheduleData.scheduleData?.scheduleEntity != null
         ) {
-            showNamedScheduleDialog = null
+            showNamedScheduleEntityDialog = null
         }
     }
 

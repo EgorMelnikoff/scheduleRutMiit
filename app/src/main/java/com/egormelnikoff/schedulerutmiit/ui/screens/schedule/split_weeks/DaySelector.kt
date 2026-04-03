@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsByDayAndWeek
@@ -88,7 +88,7 @@ fun DaySelectorItem(
     isSelected: Boolean,
     eventsCountView: EventsCountView,
     isToday: Boolean,
-    events: Map<String, List<EventEntity>>?,
+    events: Map<String, List<Event>>?,
     eventsExtraData: List<EventExtraData>
 ) {
     Column(

@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import com.egormelnikoff.schedulerutmiit.repos.schedule.ScheduleRepos
@@ -12,7 +12,7 @@ class ManageSchedulesUseCase @Inject constructor(
     private val widgetDataUpdater: WidgetDataUpdater,
 ) {
     suspend operator fun invoke(
-        currentNamedSchedule: NamedScheduleFormatted,
+        currentNamedSchedule: NamedSchedule,
         scheduleId: Long,
         timetableId: String,
         isSaved: Boolean
@@ -34,8 +34,8 @@ class ManageSchedulesUseCase @Inject constructor(
         }
 
         return ScheduleUseCaseResult(
-            savedNamedSchedules = null,
-            namedScheduleFormatted = currentNamedSchedule.copy(schedules = updatedSchedules)
+            savedNamedScheduleEntities = null,
+            namedSchedule = currentNamedSchedule.copy(schedules = updatedSchedules)
         )
     }
 }

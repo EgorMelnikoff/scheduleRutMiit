@@ -18,8 +18,8 @@ class DeleteNamedScheduleUseCase @Inject constructor(
         if (savedNamedSchedules.isEmpty()) {
             workScheduler.cancelPeriodicScheduleUpdating()
             return ScheduleUseCaseResult(
-                savedNamedSchedules = emptyList(),
-                namedScheduleFormatted = null
+                savedNamedScheduleEntities = emptyList(),
+                namedSchedule = null
             )
         }
 
@@ -34,8 +34,8 @@ class DeleteNamedScheduleUseCase @Inject constructor(
             ?: savedNamedSchedules.first()
 
         return ScheduleUseCaseResult(
-            savedNamedSchedules = namedScheduleRepos.getAllEntities(),
-            namedScheduleFormatted = namedScheduleRepos.getById(defaultNamedSchedule.id)
+            savedNamedScheduleEntities = namedScheduleRepos.getAllEntities(),
+            namedSchedule = namedScheduleRepos.getById(defaultNamedSchedule.id)
         )
     }
 }

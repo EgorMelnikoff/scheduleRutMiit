@@ -131,7 +131,7 @@ fun NewsDialogContent(
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        text = news.news.title.trim(),
+                        text = news.newsModel.title.trim(),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         overflow = TextOverflow.Ellipsis,
@@ -141,7 +141,7 @@ fun NewsDialogContent(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
                         DateNews(
-                            date = news.news.hisdateDisplay
+                            date = news.newsModel.hisdateDisplay
                         )
                     }
                     Spacer(

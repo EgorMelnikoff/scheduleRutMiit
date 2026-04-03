@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
@@ -18,7 +18,7 @@ class UpdateEventExtraDataUseCase @Inject constructor(
     suspend operator fun invoke(
         namedScheduleId: Long,
         scheduleId: Long,
-        event: EventEntity,
+        event: Event,
         tag: Int,
         comment: String
     ): ScheduleUseCaseResult {
@@ -27,8 +27,8 @@ class UpdateEventExtraDataUseCase @Inject constructor(
                 eventExtraRepos.deleteByEvent(event)
             }
             return ScheduleUseCaseResult(
-                savedNamedSchedules = null,
-                namedScheduleFormatted = namedScheduleRepos.getById(
+                savedNamedScheduleEntities = null,
+                namedSchedule = namedScheduleRepos.getById(
                     namedScheduleId
                 )
             )
@@ -51,14 +51,14 @@ class UpdateEventExtraDataUseCase @Inject constructor(
         }
 
         return ScheduleUseCaseResult(
-            savedNamedSchedules = null,
-            namedScheduleFormatted = namedScheduleRepos.getById(namedScheduleId)
+            savedNamedScheduleEntities = null,
+            namedSchedule = namedScheduleRepos.getById(namedScheduleId)
         )
     }
 
     suspend fun synchronizeEventExtraAction(
-        event: EventEntity,
-        action: suspend (EventEntity) -> Unit
+        event: Event,
+        action: suspend (Event) -> Unit
     ) {
         if (preferencesDataStore.syncTagCommentsFlow.first()) {
             eventDao.getByNameAndType(

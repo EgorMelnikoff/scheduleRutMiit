@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.egormelnikoff.schedulerutmiit.app.network.model.NewsShort
+import com.egormelnikoff.schedulerutmiit.app.network.model.NewsShortModel
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
@@ -31,7 +31,7 @@ class NewsViewModel @Inject constructor(
 
     private var newsJob: Job? = null
 
-    val newsListFlow: Flow<PagingData<NewsShort>> = getNewsListUseCase()
+    val newsListFlow: Flow<PagingData<NewsShortModel>> = getNewsListUseCase()
         .cachedIn(viewModelScope)
 
     fun getNewsById(id: Long) {

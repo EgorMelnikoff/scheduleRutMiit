@@ -52,7 +52,7 @@ data class ScheduleEntity(
 
 @Keep
 @Entity(tableName = "Events")
-data class EventEntity(
+data class Event(
     @ColumnInfo(name = "EventId")
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -82,32 +82,32 @@ data class EventEntity(
         return hashString.hashCode()
     }
 
-    fun customEquals(other: EventEntity): Boolean {
+    fun customEquals(other: Event): Boolean {
         return this.customHashCode() == other.customHashCode()
     }
 
     fun customToString(context: Context): String {
         return StringBuilder().apply {
-            append("${context.getString(R.string._class)}: ${this@EventEntity.name}")
-            this@EventEntity.typeName?.let {
+            append("${context.getString(R.string._class)}: ${this@Event.name}")
+            this@Event.typeName?.let {
                 append("\n${context.getString(R.string.class_type)}: $it")
             }
-            append("\n${context.getString(R.string.time)}: ${this@EventEntity.startDatetime.toLocalTimeWithTimeZone()} - ${this@EventEntity.endDatetime.toLocalTimeWithTimeZone()}")
+            append("\n${context.getString(R.string.time)}: ${this@Event.startDatetime.toLocalTimeWithTimeZone()} - ${this@Event.endDatetime.toLocalTimeWithTimeZone()}")
 
-            this@EventEntity.timeSlotName?.let {
+            this@Event.timeSlotName?.let {
                 append(" ($it)")
             }
 
-            if (!this@EventEntity.rooms.isNullOrEmpty()) {
-                append("\n${context.getString(R.string.place)}: ${this@EventEntity.rooms.joinToString { it.name }}")
+            if (!this@Event.rooms.isNullOrEmpty()) {
+                append("\n${context.getString(R.string.place)}: ${this@Event.rooms.joinToString { it.name }}")
             }
 
-            if (!this@EventEntity.lecturers.isNullOrEmpty()) {
-                append("\n${context.getString(R.string.lecturers)}: ${this@EventEntity.lecturers.joinToString { it.shortFio }}")
+            if (!this@Event.lecturers.isNullOrEmpty()) {
+                append("\n${context.getString(R.string.lecturers)}: ${this@Event.lecturers.joinToString { it.shortFio }}")
             }
 
-            if (!this@EventEntity.groups.isNullOrEmpty()) {
-                append("\n${context.getString(R.string.groups)}: ${this@EventEntity.groups.joinToString { it.name }}")
+            if (!this@Event.groups.isNullOrEmpty()) {
+                append("\n${context.getString(R.string.groups)}: ${this@Event.groups.joinToString { it.name }}")
             }
         }.toString()
     }
@@ -140,7 +140,7 @@ data class SearchQuery(
 )
 
 @Keep
-data class NamedScheduleFormatted(
+data class NamedSchedule(
     @Embedded
     val namedScheduleEntity: NamedScheduleEntity,
     @Relation(
@@ -148,19 +148,19 @@ data class NamedScheduleFormatted(
         parentColumn = "NamedScheduleId",
         entityColumn = "namedScheduleId"
     )
-    val schedules: List<ScheduleFormatted>
+    val schedules: List<Schedule>
 )
 
 @Keep
-data class ScheduleFormatted(
+data class Schedule(
     @Embedded
     val scheduleEntity: ScheduleEntity,
     @Relation(
-        entity = EventEntity::class,
+        entity = Event::class,
         parentColumn = "ScheduleId",
         entityColumn = "eventScheduleId"
     )
-    val events: List<EventEntity>,
+    val events: List<Event>,
     @Relation(
         entity = EventExtraData::class,
         parentColumn = "ScheduleId",

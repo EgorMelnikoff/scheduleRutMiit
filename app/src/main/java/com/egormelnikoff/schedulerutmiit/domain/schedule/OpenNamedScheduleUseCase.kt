@@ -22,8 +22,8 @@ class OpenNamedScheduleUseCase @Inject constructor(
         }
 
         return ScheduleUseCaseResult(
-            savedNamedSchedules = namedScheduleRepos.getAllEntities(),
-            namedScheduleFormatted = namedScheduleRepos.getById(namedScheduleId)
+            savedNamedScheduleEntities = namedScheduleRepos.getAllEntities(),
+            namedSchedule = namedScheduleRepos.getById(namedScheduleId)
         )
     }
 }

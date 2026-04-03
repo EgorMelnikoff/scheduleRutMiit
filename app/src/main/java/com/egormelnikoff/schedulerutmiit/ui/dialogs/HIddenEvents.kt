@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.hourMinuteFormatter
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
@@ -37,7 +37,7 @@ import java.util.Locale
 fun HiddenEventsDialog(
     namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity?,
-    hiddenEvents: List<EventEntity>,
+    hiddenEvents: List<Event>,
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack
 ) {

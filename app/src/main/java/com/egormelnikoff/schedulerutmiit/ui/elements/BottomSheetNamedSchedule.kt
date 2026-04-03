@@ -37,7 +37,7 @@ import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameForm
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.Schedule
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
@@ -60,7 +60,7 @@ data class ActionItem(
 fun ModalDialogNamedSchedule(
     namedScheduleEntity: NamedScheduleEntity,
     currentScheduleEntity: ScheduleEntity? = null,
-    schedules: List<ScheduleFormatted>? = null,
+    schedules: List<Schedule>? = null,
     today: LocalDate,
 
     scheduleViewModel: ScheduleViewModel,
@@ -74,7 +74,7 @@ fun ModalDialogNamedSchedule(
 ) {
     val limitActions = remember { 1 }
     val uriHandler = LocalUriHandler.current
-    var showDeleteDialog by remember { mutableStateOf<ScheduleFormatted?>(null) }
+    var showDeleteDialog by remember { mutableStateOf<Schedule?>(null) }
 
     CustomModalBottomSheet(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -106,6 +106,7 @@ fun ModalDialogNamedSchedule(
                                     contentDescription = null
                                 )
                             },
+                            defaultMinHeight = 24.dp,
                             showClickLabel = false
                         ) {
                             scheduleViewModel.getSavedNamedSchedule(
@@ -128,7 +129,8 @@ fun ModalDialogNamedSchedule(
                                     tint = MaterialTheme.colorScheme.onBackground,
                                     contentDescription = null
                                 )
-                            }
+                            },
+                            defaultMinHeight = 24.dp
                         ) {
                             onOpenNamedSchedule()
                             onDismiss(null)

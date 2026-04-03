@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.repos.event
 
 import androidx.room.withTransaction
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.AppDatabase
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventDao
@@ -13,10 +13,10 @@ class EventReposImpl @Inject constructor(
     private val eventDao: EventDao,
     private val eventExtraDao: EventExtraDao
 ) : EventRepos {
-    override suspend fun save(event: EventEntity) = eventDao.insert(event)
+    override suspend fun save(event: Event) = eventDao.insert(event)
 
     override suspend fun saveWithExtra(
-        events: List<EventEntity>,
+        events: List<Event>,
         eventsExtraData: List<EventExtraData>,
         scheduleId: Long
     ) {
@@ -50,7 +50,7 @@ class EventReposImpl @Inject constructor(
     ) = eventDao.getCountPerDate(date, scheduleId)
 
 
-    override suspend fun update(event: EventEntity) = db.withTransaction {
+    override suspend fun update(event: Event) = db.withTransaction {
         eventDao.deleteById(event.id)
         eventDao.insert(event)
     }

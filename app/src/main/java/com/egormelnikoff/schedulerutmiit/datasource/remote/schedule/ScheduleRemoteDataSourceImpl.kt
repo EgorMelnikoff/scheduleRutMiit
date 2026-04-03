@@ -4,8 +4,8 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
 import com.egormelnikoff.schedulerutmiit.app.network.NetworkHelper
-import com.egormelnikoff.schedulerutmiit.app.network.model.Schedule
-import com.egormelnikoff.schedulerutmiit.app.network.model.Timetable
+import com.egormelnikoff.schedulerutmiit.app.network.model.ScheduleModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.TimetableModel
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.ScheduleParser
 import com.egormelnikoff.schedulerutmiit.datasource.remote.api.MiitApi
@@ -34,9 +34,9 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
         namedScheduleType: NamedScheduleType,
         name: String,
         apiId: Int,
-        timetable: Timetable,
+        timetable: TimetableModel,
         currentGroup: Group?
-    ): Result<Schedule> {
+    ): Result<ScheduleModel> {
         networkHelper.callNetwork(
             requestType = "ScheduleParser",
             requestParams = "Id: $apiId; Type: $namedScheduleType; Start date: ${timetable.startDate}",

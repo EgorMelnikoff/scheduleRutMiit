@@ -4,15 +4,15 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 
 @Dao
 interface EventDao {
     @Insert(onConflict = REPLACE)
-    suspend fun insert(event: EventEntity)
+    suspend fun insert(event: Event)
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertAll(events: List<EventEntity>)
+    suspend fun insertAll(events: List<Event>)
 
     @Query("DELETE FROM Events WHERE eventScheduleId = :scheduleId")
     suspend fun deleteByScheduleId(scheduleId: Long)
@@ -28,7 +28,7 @@ interface EventDao {
         name: String,
         typeName: String?,
         scheduleId: Long
-    ): List<EventEntity>
+    ): List<Event>
 
     @Query("UPDATE Events SET isHidden = :isHidden WHERE EventId = :eventId")
     suspend fun updateIsHidden(

@@ -41,7 +41,7 @@ import androidx.glance.unit.ColorProvider
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.app.di.ProviderEntryPoint
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetData
@@ -234,7 +234,7 @@ class EventsWidget : GlanceAppWidget() {
 
     @Composable
     private fun Event(
-        events: List<EventEntity>,
+        events: List<Event>,
         eventsExtraData: List<EventExtraData>
     ) {
         Row(
@@ -289,7 +289,7 @@ class EventsWidget : GlanceAppWidget() {
     @SuppressLint("RestrictedApi")
     @Composable
     private fun EventSingle(
-        event: EventEntity,
+        event: Event,
         eventExtraData: EventExtraData?
     ) {
         event.typeName?.let {

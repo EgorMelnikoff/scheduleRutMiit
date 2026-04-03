@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.datasource.remote.news.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.egormelnikoff.schedulerutmiit.app.network.model.NewsShort
+import com.egormelnikoff.schedulerutmiit.app.network.model.NewsShortModel
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
@@ -11,8 +11,8 @@ import com.egormelnikoff.schedulerutmiit.datasource.remote.news.NewsRemoteDataSo
 class PagingNewsSource(
     private val newsRemoteDataSource: NewsRemoteDataSource,
     private val resourcesManager: ResourcesManager
-) : PagingSource<Int, NewsShort>() {
-    override fun getRefreshKey(state: PagingState<Int, NewsShort>): Int? {
+) : PagingSource<Int, NewsShortModel>() {
+    override fun getRefreshKey(state: PagingState<Int, NewsShortModel>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
@@ -21,7 +21,7 @@ class PagingNewsSource(
 
     override suspend fun load(
         params: LoadParams<Int>
-    ): LoadResult<Int, NewsShort> {
+    ): LoadResult<Int, NewsShortModel> {
         val currentPage = params.key ?: 1
         val pageSize = params.loadSize
 

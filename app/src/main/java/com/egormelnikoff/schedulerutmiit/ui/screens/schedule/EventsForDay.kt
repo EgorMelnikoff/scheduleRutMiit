@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
@@ -27,7 +27,7 @@ fun EventsForDay(
 
     namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
-    eventsForDate: List<Pair<String, List<EventEntity>>>?,
+    eventsForDate: List<Pair<String, List<Event>>>?,
     eventsExtraData: List<EventExtraData>,
 
     isSavedSchedule: Boolean,

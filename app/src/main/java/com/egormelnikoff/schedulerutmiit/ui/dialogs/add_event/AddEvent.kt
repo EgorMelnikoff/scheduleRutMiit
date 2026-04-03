@@ -35,7 +35,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.RecurrenceRule
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
@@ -61,7 +61,7 @@ import java.time.ZoneOffset
 fun AddEditEventDialog(
     namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
-    editableEvent: EventEntity? = null,
+    editableEvent: Event? = null,
     appUiState: AppUiState,
     currentDateTime: LocalDateTime,
 
@@ -136,7 +136,7 @@ fun AddEditEventDialog(
                                 .withZoneSameInstant(ZoneOffset.UTC)
                                 .toLocalDateTime()
 
-                            val event = EventEntity(
+                            val event = Event(
                                 id = editableEvent?.id ?: 0,
                                 scheduleId = scheduleEntity.id,
                                 name = nameEvent.trim(),

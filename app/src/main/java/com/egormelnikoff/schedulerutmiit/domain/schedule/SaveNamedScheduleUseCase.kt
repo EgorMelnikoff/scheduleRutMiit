@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
@@ -13,7 +13,7 @@ class SaveNamedScheduleUseCase @Inject constructor(
     private val workScheduler: WorkScheduler
 ) {
     suspend operator fun invoke(
-        currentNamedSchedule: NamedScheduleFormatted
+        currentNamedSchedule: NamedSchedule
     ): ScheduleUseCaseResult {
         val namedScheduleId = namedScheduleRepos.saveEntity(currentNamedSchedule.namedScheduleEntity)
 
@@ -28,8 +28,8 @@ class SaveNamedScheduleUseCase @Inject constructor(
 
 
         return ScheduleUseCaseResult(
-            savedNamedSchedules = namedScheduleRepos.getAllEntities(),
-            namedScheduleFormatted = namedScheduleRepos.getById(namedScheduleId)
+            savedNamedScheduleEntities = namedScheduleRepos.getAllEntities(),
+            namedSchedule = namedScheduleRepos.getById(namedScheduleId)
         )
     }
 }

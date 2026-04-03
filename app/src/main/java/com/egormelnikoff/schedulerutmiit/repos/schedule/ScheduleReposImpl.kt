@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.repos.schedule
 
 import androidx.room.withTransaction
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleFormatted
+import com.egormelnikoff.schedulerutmiit.app.entity.Schedule
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.AppDatabase
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventExtraDao
@@ -18,7 +18,7 @@ class ScheduleReposImpl @Inject constructor(
 ) : ScheduleRepos {
     override suspend fun saveAllSchedules(
         namedScheduleId: Long,
-        schedules: List<ScheduleFormatted>
+        schedules: List<Schedule>
     ) = db.withTransaction {
         val schedulesToInsert = schedules.map {
             it.scheduleEntity.copy(namedScheduleId = namedScheduleId)
@@ -37,16 +37,16 @@ class ScheduleReposImpl @Inject constructor(
 
     override suspend fun save(
         namedScheduleId: Long,
-        scheduleFormatted: ScheduleFormatted
+        schedule: Schedule
     ) = db.withTransaction {
         val scheduleId = scheduleDao.insert(
-            scheduleFormatted.scheduleEntity.copy(
+            schedule.scheduleEntity.copy(
                 namedScheduleId = namedScheduleId
             )
         )
         eventRepos.saveWithExtra(
-            events = scheduleFormatted.events,
-            eventsExtraData = scheduleFormatted.eventsExtraData,
+            events = schedule.events,
+            eventsExtraData = schedule.eventsExtraData,
             scheduleId = scheduleId
         )
 
@@ -63,13 +63,13 @@ class ScheduleReposImpl @Inject constructor(
 
     override suspend fun updateEvents(
         scheduleId: Long,
-        scheduleFormatted: ScheduleFormatted
+        schedule: Schedule
     ) = db.withTransaction {
         eventDao.deleteByScheduleId(scheduleId)
         eventExtraDao.deleteByScheduleId(scheduleId)
         eventRepos.saveWithExtra(
-            scheduleFormatted.events,
-            scheduleFormatted.eventsExtraData,
+            schedule.events,
+            schedule.eventsExtraData,
             scheduleId
         )
     }

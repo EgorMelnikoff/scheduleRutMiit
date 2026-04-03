@@ -2,9 +2,9 @@ package com.egormelnikoff.schedulerutmiit.domain.search
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.app.network.model.Institute
-import com.egormelnikoff.schedulerutmiit.app.network.model.Institutes
-import com.egormelnikoff.schedulerutmiit.app.network.model.Person
+import com.egormelnikoff.schedulerutmiit.app.network.model.InstituteModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.InstitutesModel
+import com.egormelnikoff.schedulerutmiit.app.network.model.PersonModel
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.domain.search.result.SearchResult
@@ -16,13 +16,13 @@ class SearchUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         searchParams: SearchParams,
-        institutes: Institutes?
+        institutesModel: InstitutesModel?
     ): SearchResult {
         var groups: Result<List<Group>>? = null
-        var people: Result<List<Person>>? = null
+        var people: Result<List<PersonModel>>? = null
 
-        if ((searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.GROUPS) && institutes != null) {
-            groups = Result.Success(getGroupsByQuery(institutes, searchParams.query))
+        if ((searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.GROUPS) && institutesModel != null) {
+            groups = Result.Success(getGroupsByQuery(institutesModel, searchParams.query))
         }
 
         if (searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.PEOPLE) {
@@ -37,10 +37,10 @@ class SearchUseCase @Inject constructor(
 
 
     fun getGroupsByQuery(
-        institutes: Institutes,
+        institutesModel: InstitutesModel,
         query: String
     ): List<Group> {
-        val groups = getGroups(institutes.institutes)
+        val groups = getGroups(institutesModel.instituteModels)
 
         return groups.filter {
             compareValues(it.name, query)
@@ -54,8 +54,8 @@ class SearchUseCase @Inject constructor(
         return cleanValue.contains(cleanQuery, ignoreCase = true)
     }
 
-    private fun getGroups(institutes: List<Institute>): List<Group> {
-        return institutes.flatMap { institute ->
+    private fun getGroups(instituteModels: List<InstituteModel>): List<Group> {
+        return instituteModels.flatMap { institute ->
             institute.courses.flatMap { course ->
                 course.specialties.flatMap { specialty ->
                     specialty.groups

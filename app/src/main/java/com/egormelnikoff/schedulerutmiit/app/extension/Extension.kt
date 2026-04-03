@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.app.extension
 
-import com.egormelnikoff.schedulerutmiit.app.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.enums.DayPeriod
@@ -40,7 +40,7 @@ fun LocalDate.getCurrentWeek(
     return ((weeksFromStart + recurrence.firstWeekNumber) % recurrence.interval).plus(1)
 }
 
-fun List<EventEntity>.getGroupedEvents(): Map<String, List<EventEntity>> {
+fun List<Event>.getGroupedEvents(): Map<String, List<Event>> {
     if (this.isEmpty()) return mapOf()
     return this
         .sortedBy { event ->
@@ -55,12 +55,12 @@ fun List<EventEntity>.getGroupedEvents(): Map<String, List<EventEntity>> {
 
 fun LocalDate.getEventsForDate(
     scheduleEntity: ScheduleEntity,
-    periodicEvents: Map<Int, Map<DayOfWeek, List<EventEntity>>>?,
-    nonPeriodicEvents: Map<LocalDate, List<EventEntity>>?
-): Map<String, List<EventEntity>> {
+    periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
+    nonPeriodicEvents: Map<LocalDate, List<Event>>?
+): Map<String, List<Event>> {
     if (scheduleEntity.startDate > this || this > scheduleEntity.endDate) return mapOf()
 
-    var displayedEvents = listOf<EventEntity>()
+    var displayedEvents = listOf<Event>()
     when {
         (periodicEvents != null && scheduleEntity.recurrence != null) -> {
             val currentWeek = this@getEventsForDate.getCurrentWeek(
@@ -87,10 +87,10 @@ fun LocalDate.getEventsForDate(
     return displayedEvents.getGroupedEvents()
 }
 
-fun Map<Int, Map<DayOfWeek, List<EventEntity>>>.getEventsByDayAndWeek(
+fun Map<Int, Map<DayOfWeek, List<Event>>>.getEventsByDayAndWeek(
     dayOfWeek: DayOfWeek,
     week: Int
-): Map<String, List<EventEntity>> {
+): Map<String, List<Event>> {
     val events = this[week]?.filter {
         it.key == dayOfWeek
     }?.values?.flatten()

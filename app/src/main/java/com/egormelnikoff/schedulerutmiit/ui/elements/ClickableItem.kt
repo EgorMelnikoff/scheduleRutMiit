@@ -44,6 +44,7 @@ import com.egormelnikoff.schedulerutmiit.R
 
 @Composable
 fun ClickableItem(
+    modifier: Modifier = Modifier,
     horizontalPadding: Dp = 12.dp,
     verticalPadding: Dp = 12.dp,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(4.dp),
@@ -72,7 +73,7 @@ fun ClickableItem(
     onClick: (() -> Unit)? = null,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .let { modifier ->
                 onClick?.let {

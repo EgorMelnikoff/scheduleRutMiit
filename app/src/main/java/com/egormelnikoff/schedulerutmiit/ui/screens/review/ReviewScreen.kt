@@ -95,8 +95,8 @@ fun ReviewScreen(
         }
     }
 
-    var showNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
-    var showDeleteNamedScheduleDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
+    var showNamedScheduleEntityDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
+    var showDeleteNamedScheduleEntityDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
 
     Scaffold { paddingValues ->
         Box(
@@ -244,21 +244,21 @@ fun ReviewScreen(
                         )
                     )
                     Spacer(modifier = Modifier.height(2.dp))
-                    if (scheduleState.savedNamedSchedules.isNotEmpty()) {
+                    if (scheduleState.savedNamedScheduleEntities.isNotEmpty()) {
                         ExpandedItem(
                             title = stringResource(R.string.saved_schedules),
                             visible = reviewUiState.visibleSavedSchedules,
                             onChangeVisibility = reviewUiState.onChangeVisibilitySavedSchedules
                         ) {
                             ColumnGroup(
-                                items = scheduleState.savedNamedSchedules.map { namedScheduleEntity ->
+                                items = scheduleState.savedNamedScheduleEntities.map { namedScheduleEntity ->
                                     {
                                         ClickableItem(
                                             title = namedScheduleEntity.shortName,
                                             titleMaxLines = 1,
                                             defaultMinHeight = 32.dp,
                                             onClick = {
-                                                showNamedScheduleDialog = namedScheduleEntity
+                                                showNamedScheduleEntityDialog = namedScheduleEntity
                                             },
                                             trailingIcon = if (namedScheduleEntity.isDefault) {
                                                 {
@@ -296,7 +296,7 @@ fun ReviewScreen(
         }
 
 
-        showNamedScheduleDialog?.let {
+        showNamedScheduleEntityDialog?.let {
             ModalDialogNamedSchedule(
                 namedScheduleEntity = it,
                 scheduleViewModel = scheduleViewModel,
@@ -312,17 +312,17 @@ fun ReviewScreen(
                     appBackStack.navigateToStartRage()
                 }
             ) {
-                showNamedScheduleDialog = null
+                showNamedScheduleEntityDialog = null
             }
         }
 
-        showDeleteNamedScheduleDialog?.let {
+        showDeleteNamedScheduleEntityDialog?.let {
             CustomAlertDialog(
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                 dialogTitle = "${stringResource(R.string.delete_schedule)}?",
                 dialogText = stringResource(R.string.impossible_restore_eventextra),
                 onDismissRequest = {
-                    showDeleteNamedScheduleDialog = null
+                    showDeleteNamedScheduleEntityDialog = null
                 },
                 onConfirmation = {
                     scheduleViewModel.deleteNamedSchedule(
