@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.repos.named_schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 
 interface NamedScheduleRepos {
     suspend fun saveEntity(namedScheduleEntity: NamedScheduleEntity): Long

@@ -1,19 +1,19 @@
 package com.egormelnikoff.schedulerutmiit.datasource.local.parser
 
 import android.os.Build
-import com.egormelnikoff.schedulerutmiit.app.entity.Group
-import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
-import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
-import com.egormelnikoff.schedulerutmiit.app.entity.RecurrenceRule
-import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
-import com.egormelnikoff.schedulerutmiit.app.network.model.EventModel
-import com.egormelnikoff.schedulerutmiit.app.network.model.NonPeriodicContentModel
-import com.egormelnikoff.schedulerutmiit.app.network.model.PeriodicContentModel
-import com.egormelnikoff.schedulerutmiit.app.network.model.ScheduleModel
-import com.egormelnikoff.schedulerutmiit.app.network.model.TimetableModel
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.EventDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.NonPeriodicContentDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.PeriodicContentDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.RecurrenceDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.ScheduleDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RecurrenceEventDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.timetable.TimetableDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Document
@@ -39,9 +39,9 @@ object ScheduleParser {
 
     suspend operator fun invoke(
         document: Document,
-        timetable: TimetableModel,
-        currentGroup: Group?
-    ): ScheduleModel = withContext(Dispatchers.Default) {
+        timetable: TimetableDto,
+        currentGroup: GroupDto?
+    ): ScheduleDto = withContext(Dispatchers.Default) {
         return@withContext if (timetable.type == TimetableType.PERIODIC) {
             val periodicContent = document.parsePeriodicSchedule(
                 timetable.startDate,
@@ -54,23 +54,23 @@ object ScheduleParser {
                     currentGroup = currentGroup,
                     formatter = parserFormatter
                 )
-                ScheduleModel(
+                ScheduleDto(
                     timetable = timetable,
-                    periodicContent = PeriodicContentModel(
+                    periodic = PeriodicContentDto(
                         events = nonPeriodicContent.events,
-                        recurrence = Recurrence(
+                        recurrence = RecurrenceDto(
                             interval = 1,
                             currentNumber = 1,
                             firstWeekNumber = 1
                         )
                     ),
-                    nonPeriodicContent = null
+                    nonPeriodic = null
                 )
             } else {
-                ScheduleModel(
+                ScheduleDto(
                     timetable = timetable,
-                    periodicContent = periodicContent,
-                    nonPeriodicContent = null
+                    periodic = periodicContent,
+                    nonPeriodic = null
                 )
             }
         } else {
@@ -79,19 +79,19 @@ object ScheduleParser {
                 formatter = parserFormatter
             )
 
-            ScheduleModel(
+            ScheduleDto(
                 timetable = timetable,
-                periodicContent = null,
-                nonPeriodicContent = nonPeriodicContent
+                periodic = null,
+                nonPeriodic = nonPeriodicContent
             )
         }
     }
 
     private suspend fun Document.parsePeriodicSchedule(
         startDate: LocalDate,
-        currentGroup: Group?,
+        currentGroup: GroupDto?,
         formatter: DateTimeFormatter,
-    ): PeriodicContentModel = withContext(Dispatchers.Default) {
+    ): PeriodicContentDto = withContext(Dispatchers.Default) {
         val weekNumbers = this@parsePeriodicSchedule
             .select(".nav-link[aria-controls]")
             .map {
@@ -108,7 +108,7 @@ object ScheduleParser {
                         element.parseEvents(
                             date = date,
                             periodNumber = periodNumber,
-                            recurrenceRule = RecurrenceRule(
+                            recurrenceRule = RecurrenceEventDto(
                                 frequency = "WEEKLY",
                                 interval = 2
                             ),
@@ -118,7 +118,7 @@ object ScheduleParser {
                 }.orEmpty()
         }
 
-        return@withContext PeriodicContentModel(
+        return@withContext PeriodicContentDto(
             events = events.normalizePeriodicEvents(),
             recurrence = getRecurrence(
                 startDate = startDate,
@@ -130,9 +130,9 @@ object ScheduleParser {
 
     private suspend fun Document.parseNonPeriodicSchedule(
         isPeriodic: Boolean = false,
-        currentGroup: Group?,
+        currentGroup: GroupDto?,
         formatter: DateTimeFormatter,
-    ): NonPeriodicContentModel = withContext(Dispatchers.Default) {
+    ): NonPeriodicContentDto = withContext(Dispatchers.Default) {
         val eventsByDates = this@parseNonPeriodicSchedule
             .select("div.info-block.info-block_collapse.show")
 
@@ -145,18 +145,18 @@ object ScheduleParser {
             }.orEmpty()
         }
         return@withContext if (isPeriodic) {
-            NonPeriodicContentModel(
+            NonPeriodicContentDto(
                 events = events.map {
                     it.copy(
                         periodNumber = 1,
-                        recurrenceRule = RecurrenceRule(
+                        recurrence = RecurrenceEventDto(
                             frequency = "WEEKLY",
                             interval = 1
                         )
                     )
                 }
             )
-        } else NonPeriodicContentModel(
+        } else NonPeriodicContentDto(
             events = events
         )
     }
@@ -189,9 +189,9 @@ object ScheduleParser {
     private suspend fun Element.parseEvents(
         date: LocalDate,
         periodNumber: Int? = null,
-        recurrenceRule: RecurrenceRule? = null,
-        currentGroup: Group?
-    ): List<EventModel> = withContext(Dispatchers.Default) {
+        recurrenceRule: RecurrenceEventDto? = null,
+        currentGroup: GroupDto?
+    ): List<EventDto> = withContext(Dispatchers.Default) {
         return@withContext this@parseEvents
             .select(".timetable__list-timeslot")
             .map { element ->
@@ -236,7 +236,7 @@ object ScheduleParser {
                 val rooms = element.parseRooms()
                 val groups = element.parseGroups(currentGroup)
 
-                EventModel(
+                EventDto(
                     startDatetime = LocalDateTime.of(date, startTime),
                     endDatetime = LocalDateTime.of(date, endTime),
                     name = name,
@@ -246,12 +246,12 @@ object ScheduleParser {
                     rooms = rooms,
                     groups = groups,
                     periodNumber = periodNumber,
-                    recurrenceRule = recurrenceRule
+                    recurrence = recurrenceRule
                 )
             }
     }
 
-    private suspend fun Element.parseLecturers(): MutableList<Lecturer> =
+    private suspend fun Element.parseLecturers(): MutableList<LecturerDto> =
         withContext(Dispatchers.Default) {
             return@withContext this@parseLecturers
                 .select(".icon-academic-cap")
@@ -265,7 +265,7 @@ object ScheduleParser {
 
                     val title = a.attr("title")
 
-                    Lecturer(
+                    LecturerDto(
                         id = id,
                         shortFio = a.text().trim(),
                         fullFio = title.substringBefore(",").trim(),
@@ -274,7 +274,7 @@ object ScheduleParser {
                 }.toMutableList()
         }
 
-    private suspend fun Element.parseRooms(): MutableList<Room> = withContext(Dispatchers.Default) {
+    private suspend fun Element.parseRooms(): MutableList<RoomDto> = withContext(Dispatchers.Default) {
         return@withContext this@parseRooms
             .select(".icon-location")
             .mapNotNull { a ->
@@ -288,7 +288,7 @@ object ScheduleParser {
 
                 val title = a.attr("title")
 
-                Room(
+                RoomDto(
                     id = id,
                     name = a.text().trim(),
                     hint = title.trim()
@@ -297,8 +297,8 @@ object ScheduleParser {
     }
 
     private suspend fun Element.parseGroups(
-        currentGroup: Group?
-    ): MutableList<Group> = withContext(Dispatchers.Default) {
+        currentGroup: GroupDto?
+    ): MutableList<GroupDto> = withContext(Dispatchers.Default) {
         return@withContext this@parseGroups
             .select(".icon-community")
             .mapNotNull {
@@ -306,7 +306,7 @@ object ScheduleParser {
                     .substringAfter("/timetable/")
                     .toIntOrNull() ?: currentGroup?.id ?: return@mapNotNull null
 
-                Group(
+                GroupDto(
                     id = id,
                     name = it.text().trim()
                 )
@@ -323,13 +323,13 @@ object ScheduleParser {
         return@withContext weekNumber ?: 1
     }
 
-    private fun List<EventModel>.normalizePeriodicEvents(): List<EventModel> {
+    private fun List<EventDto>.normalizePeriodicEvents(): List<EventDto> {
         return this.groupBy { it.customHashCode(true) }
             .map { (_, events) ->
                 events.first().let { event ->
                     if (events.size > 1)
                         event.copy(
-                            recurrenceRule = event.recurrenceRule?.copy(interval = 1)
+                            recurrence = event.recurrence?.copy(interval = 1)
                         )
                     else event
                 }
@@ -340,7 +340,7 @@ object ScheduleParser {
         interval: Int,
         currentNumber: Int,
         startDate: LocalDate
-    ): Recurrence {
+    ): RecurrenceDto {
         val today = LocalDate.now()
         return if (today > startDate && interval > 1) {
             val currentWeekIndex = abs(
@@ -354,12 +354,12 @@ object ScheduleParser {
                 ((currentWeekIndex + currentNumber) % interval)
                     .plus(1)
 
-            Recurrence(
+            RecurrenceDto(
                 interval, currentNumber,
                 firstWeekNumber = firstWeekNumber.toInt()
             )
         } else {
-            Recurrence(
+            RecurrenceDto(
                 interval, currentNumber,
                 firstWeekNumber = currentNumber
             )

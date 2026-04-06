@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos

@@ -37,10 +37,10 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.RecurrenceRule
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RecurrenceEventDto
 import com.egormelnikoff.schedulerutmiit.app.validator.EventValidation
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetTimePicker
@@ -153,7 +153,7 @@ fun AddEditEventDialog(
                                     endDateTime = endDateTime
                                 ),
                                 recurrenceRule = scheduleEntity.recurrence?.let {
-                                    RecurrenceRule(
+                                    RecurrenceEventDto(
                                         frequency = "WEEKLY",
                                         interval = currentInterval
                                     )

@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.app.entity
+package com.egormelnikoff.schedulerutmiit.app.entity.adapter
 
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.google.gson.JsonParseException

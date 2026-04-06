@@ -42,7 +42,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_MIIT_URL
-import com.egormelnikoff.schedulerutmiit.app.network.model.NewsShortModel
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
@@ -53,7 +53,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun NewsScreen(
-    newsListFlow: Flow<PagingData<NewsShortModel>>,
+    newsListFlow: Flow<PagingData<NewsShortDto>>,
     onGetNewsById: (Long) -> Unit,
     newsGridListState: LazyStaggeredGridState,
     appBackStack: AppBackStack,
@@ -104,9 +104,9 @@ fun NewsScreen(
                     val newsShort = newsList[index]
                     if (newsShort != null) {
                         NewsShort(
-                            newsShortModel = newsShort,
+                            newsShortDto = newsShort,
                             onClick = {
-                                onGetNewsById(newsShort.idInformation)
+                                onGetNewsById(newsShort.id)
                                 appBackStack.openDialog(Route.Dialog.NewsDialog)
                             }
                         )
@@ -136,10 +136,10 @@ fun NewsScreen(
 
 @Composable
 fun NewsShort(
-    newsShortModel: NewsShortModel,
+    newsShortDto: NewsShortDto,
     onClick: () -> Unit
 ) {
-    val model = rememberAsyncImagePainter("$BASE_MIIT_URL${newsShortModel.thumbnail}")
+    val model = rememberAsyncImagePainter("$BASE_MIIT_URL${newsShortDto.picUrl}")
     val transition by animateFloatAsState(
         targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
     )
@@ -170,14 +170,14 @@ fun NewsShort(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = newsShortModel.title.trim(),
+                text = newsShortDto.title.trim(),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 3
             )
             DateNews(
-                date = newsShortModel.date.format(dayMonthNameFormatter)
+                date = newsShortDto.date.format(dayMonthNameFormatter)
             )
         }
     }

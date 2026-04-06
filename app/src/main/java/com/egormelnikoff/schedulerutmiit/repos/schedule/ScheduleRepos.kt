@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.repos.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.entity.Schedule
+import com.egormelnikoff.schedulerutmiit.app.entity.relation.Schedule
 
 interface ScheduleRepos {
     suspend fun save(

@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.view_models.news
 
-import com.egormelnikoff.schedulerutmiit.app.network.model.NewsContent
+import com.egormelnikoff.schedulerutmiit.app.dto.local.news.NewsParsedDto
 
 data class NewsState(
-    val currentNews: NewsContent? = null,
+    val currentNews: NewsParsedDto? = null,
     val isLoading: Boolean = false,
     val error: String? = null
 )

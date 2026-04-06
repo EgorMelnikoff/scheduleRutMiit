@@ -17,8 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsByDayAndWeek
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.RecurrenceDto
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButtonRow
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.EventsForDay
@@ -36,7 +36,7 @@ fun ScheduleSplitWeeksView(
 
     namedScheduleData: NamedScheduleData,
     scheduleData: ScheduleData,
-    recurrence: Recurrence,
+    recurrence: RecurrenceDto,
 
     isSavedSchedule: Boolean,
     appSettings: AppSettings,

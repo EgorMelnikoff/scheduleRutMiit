@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.network.model.NewsContent
+import com.egormelnikoff.schedulerutmiit.app.dto.local.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
@@ -82,7 +82,7 @@ fun NewsDialog(
 
 @Composable
 fun NewsDialogContent(
-    news: NewsContent
+    news: NewsParsedDto
 ) {
     Scaffold { paddingValues ->
         Box(
@@ -131,7 +131,7 @@ fun NewsDialogContent(
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        text = news.newsModel.title.trim(),
+                        text = news.newsDto.title.trim(),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         overflow = TextOverflow.Ellipsis,
@@ -141,7 +141,7 @@ fun NewsDialogContent(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
                         DateNews(
-                            date = news.newsModel.hisdateDisplay
+                            date = news.newsDto.date
                         )
                     }
                     Spacer(

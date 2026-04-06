@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.exception.ScheduleLoadException
 import com.egormelnikoff.schedulerutmiit.app.extension.getShortName
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import com.egormelnikoff.schedulerutmiit.datasource.remote.schedule.ScheduleRemoteDataSource
@@ -68,7 +68,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
                                 apiId = apiId,
                                 timetable = timetable,
                                 currentGroup = if (namedScheduleType == NamedScheduleType.GROUP) {
-                                    Group(
+                                    GroupDto(
                                         id = apiId,
                                         name = name
                                     )
@@ -76,7 +76,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
                             ).let { schedule ->
                                 when (schedule) {
                                     is Result.Success -> {
-                                        if (schedule.data.periodicContent?.events.isNullOrEmpty() || schedule.data.nonPeriodicContent?.events.isNullOrEmpty()) {
+                                        if (schedule.data.periodic?.events.isNullOrEmpty() || schedule.data.nonPeriodic?.events.isNullOrEmpty()) {
                                             scheduleMapper(
                                                 schedule.data,
                                                 namedScheduleId,

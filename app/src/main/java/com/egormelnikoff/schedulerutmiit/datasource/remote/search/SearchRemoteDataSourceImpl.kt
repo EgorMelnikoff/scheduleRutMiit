@@ -2,8 +2,8 @@ package com.egormelnikoff.schedulerutmiit.datasource.remote.search
 
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
 import com.egormelnikoff.schedulerutmiit.app.network.NetworkHelper
-import com.egormelnikoff.schedulerutmiit.app.network.model.InstitutesModel
-import com.egormelnikoff.schedulerutmiit.app.network.model.PersonModel
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.institutes.InstitutesDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.person.PersonDto
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SearchParser
 import com.egormelnikoff.schedulerutmiit.datasource.remote.api.MiitApi
@@ -16,7 +16,7 @@ class SearchRemoteDataSourceImpl @Inject constructor(
     private val searchParser: SearchParser,
     private val networkHelper: NetworkHelper
 ) : SearchRemoteDataSource {
-    override suspend fun fetchInstitutes(): Result<InstitutesModel> =
+    override suspend fun fetchInstitutes(): Result<InstitutesDto> =
         networkHelper.callNetwork(
             requestType = "Institutes",
             callApi = {
@@ -25,7 +25,7 @@ class SearchRemoteDataSourceImpl @Inject constructor(
             callJsoup = null
         )
 
-    override suspend fun fetchPeopleByQuery(query: String): Result<List<PersonModel>> {
+    override suspend fun fetchPeopleByQuery(query: String): Result<List<PersonDto>> {
         networkHelper.callNetwork(
             requestType = "Person",
             requestParams = "Query: $query",

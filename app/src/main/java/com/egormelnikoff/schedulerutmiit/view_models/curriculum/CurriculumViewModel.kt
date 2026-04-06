@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.view_models.curriculum
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.app.network.model.SubjectModel
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.subjects.SubjectDto
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
@@ -50,7 +50,7 @@ class CurriculumViewModel @Inject constructor(
     }
 
     fun handSubjectsListResult(
-        result: Result<List<SubjectModel>>
+        result: Result<List<SubjectDto>>
     ) {
         when (result) {
             is Result.Error -> {

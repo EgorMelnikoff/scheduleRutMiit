@@ -2,10 +2,10 @@ package com.egormelnikoff.schedulerutmiit.view_models.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.app.network.model.PersonModel
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.person.PersonDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
@@ -61,7 +61,7 @@ class SearchViewModel @Inject constructor(
                     loadInstitutesOnce()
                     searchUseCase(
                         searchParams,
-                        _searchState.value.institutesModel
+                        _searchState.value.institutesDto
                     )
                 }.collect { result ->
                     result?.let { handleSearchResult(it) }
@@ -72,8 +72,8 @@ class SearchViewModel @Inject constructor(
     fun handleSearchResult(
         result: SearchResult
     ) {
-        var groupsList = listOf<Group>()
-        var peopleList = listOf<PersonModel>()
+        var groupsList = listOf<GroupDto>()
+        var peopleList = listOf<PersonDto>()
 
         if (result.groups != null) {
             when (result.groups) {
@@ -149,7 +149,7 @@ class SearchViewModel @Inject constructor(
 
     private suspend fun loadInstitutesOnce() {
         institutesMutex.withLock {
-            if (_searchState.value.institutesModel == null) {
+            if (_searchState.value.institutesDto == null) {
                 loadInstitutes()
             }
         }
@@ -164,7 +164,7 @@ class SearchViewModel @Inject constructor(
             is Result.Success -> {
                 _searchState.update {
                     it.copy(
-                        institutesModel = institutes.data
+                        institutesDto = institutes.data
                     )
                 }
             }

@@ -11,16 +11,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Group
-import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
-import com.egormelnikoff.schedulerutmiit.app.entity.Room
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.RemoveButton
 
 @Composable
 fun LecturerInput(
-    lecturer: Lecturer,
-    onValueChanged: (Lecturer) -> Unit,
+    lecturer: LecturerDto,
+    onValueChanged: (LecturerDto) -> Unit,
     onRemove: () -> Unit
 ) {
     Row(
@@ -30,7 +30,7 @@ fun LecturerInput(
     ) {
         CustomTextField(
             modifier = Modifier.weight(1f),
-            value = lecturer.shortFio ?: "",
+            value = lecturer.shortFio,
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next
@@ -46,8 +46,8 @@ fun LecturerInput(
 
 @Composable
 fun RoomInput(
-    room: Room,
-    onValueChanged: (Room) -> Unit,
+    room: RoomDto,
+    onValueChanged: (RoomDto) -> Unit,
     onRemove: () -> Unit
 ) {
     Row(
@@ -57,7 +57,7 @@ fun RoomInput(
     ) {
         CustomTextField(
             modifier = Modifier.weight(1f),
-            value = room.name ?: "",
+            value = room.name,
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next
@@ -72,8 +72,8 @@ fun RoomInput(
 
 @Composable
 fun GroupInput(
-    group: Group,
-    onValueChanged: (Group) -> Unit,
+    group: GroupDto,
+    onValueChanged: (GroupDto) -> Unit,
     onRemove: () -> Unit
 ) {
     Row(
@@ -83,7 +83,7 @@ fun GroupInput(
     ) {
         CustomTextField(
             modifier = Modifier.weight(1f),
-            value = group.name ?: "",
+            value = group.name,
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next

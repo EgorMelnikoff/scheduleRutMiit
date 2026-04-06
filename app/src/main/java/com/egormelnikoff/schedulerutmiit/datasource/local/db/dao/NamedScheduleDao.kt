@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 
 @Dao
 interface NamedScheduleDao {

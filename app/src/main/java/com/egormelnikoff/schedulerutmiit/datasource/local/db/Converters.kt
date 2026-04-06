@@ -2,9 +2,6 @@ package com.egormelnikoff.schedulerutmiit.datasource.local.db
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.egormelnikoff.schedulerutmiit.app.entity.Group
-import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
-import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.google.gson.Gson
@@ -19,46 +16,46 @@ class Converters @Inject constructor(
     private val gson: Gson
 ) {
     @TypeConverter
-    fun fromListLecturer(lecturers: List<Lecturer>?): String? {
+    fun fromListLecturer(lecturers: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto>?): String? {
         return lecturers?.let {
             gson.toJson(lecturers)
         }
     }
 
     @TypeConverter
-    fun toListLecturer(lecturersString: String?): List<Lecturer>? {
+    fun toListLecturer(lecturersString: String?): List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto>? {
         return lecturersString?.let {
-            val type = object : TypeToken<List<Lecturer>?>() {}.type
+            val type = object : TypeToken<List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto>?>() {}.type
             gson.fromJson(lecturersString, type)
         }
     }
 
     @TypeConverter
-    fun fromListRoom(rooms: List<Room>?): String? {
+    fun fromListRoom(rooms: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto>?): String? {
         return rooms?.let {
             return gson.toJson(rooms)
         }
     }
 
     @TypeConverter
-    fun toListRoom(roomsString: String?): List<Room>? {
+    fun toListRoom(roomsString: String?): List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto>? {
         return roomsString?.let {
-            val type = object : TypeToken<List<Room>?>() {}.type
+            val type = object : TypeToken<List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto>?>() {}.type
             gson.fromJson(roomsString, type)
         }
     }
 
     @TypeConverter
-    fun fromListGroup(groups: List<Group>?): String? {
+    fun fromListGroup(groups: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto>?): String? {
         return groups?.let {
             gson.toJson(groups)
         }
     }
 
     @TypeConverter
-    fun toListGroup(groupsString: String?): List<Group>? {
+    fun toListGroup(groupsString: String?): List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto>? {
         return groupsString?.let {
-            val type = object : TypeToken<List<Group>?>() {}.type
+            val type = object : TypeToken<List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto>?>() {}.type
             gson.fromJson(groupsString, type)
         }
     }

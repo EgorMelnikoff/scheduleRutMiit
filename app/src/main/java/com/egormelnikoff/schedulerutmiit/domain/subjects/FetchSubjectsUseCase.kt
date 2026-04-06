@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.subjects
 
-import com.egormelnikoff.schedulerutmiit.app.network.model.SubjectModel
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.subjects.SubjectDto
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SubjectsListParser
 import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDataSource
@@ -23,8 +23,8 @@ class FetchSubjectsUseCase @Inject constructor(
                 }
 
                 is Result.Success -> {
-                    val subjectModels = mutableListOf<SubjectModel>()
-                    subjectModels += subjectsListParser
+                    val subjectDtos = mutableListOf<SubjectDto>()
+                    subjectDtos += subjectsListParser
                         .parseListSubjectsByPage(firstPage.data)
                         .toSubjects()
 
@@ -43,7 +43,7 @@ class FetchSubjectsUseCase @Inject constructor(
                                 }
 
                                 is Result.Success -> {
-                                    subjectModels += subjectsListParser
+                                    subjectDtos += subjectsListParser
                                         .parseListSubjectsByPage(result.data)
                                         .toSubjects()
                                 }
@@ -51,7 +51,7 @@ class FetchSubjectsUseCase @Inject constructor(
                         }
                     }
                     return@supervisorScope Result.Success(
-                        subjectModels
+                        subjectDtos
                             .normalizeSubjects()
                             .sortedBy { s -> s.title }
                     )
@@ -61,12 +61,12 @@ class FetchSubjectsUseCase @Inject constructor(
     }
 
 
-    private fun MutableMap<String, MutableSet<String>>.toSubjects(): List<SubjectModel> {
-        val result = mutableListOf<SubjectModel>()
+    private fun MutableMap<String, MutableSet<String>>.toSubjects(): List<SubjectDto> {
+        val result = mutableListOf<SubjectDto>()
 
         this.forEach { (subject, teachers) ->
             result.add(
-                SubjectModel(
+                SubjectDto(
                     title = subject,
                     teachers = teachers
                 )
@@ -76,7 +76,7 @@ class FetchSubjectsUseCase @Inject constructor(
         return result
     }
 
-    private fun List<SubjectModel>.normalizeSubjects(): List<SubjectModel> {
+    private fun List<SubjectDto>.normalizeSubjects(): List<SubjectDto> {
         val map = mutableMapOf<String, MutableSet<String>>()
 
         forEach { subject ->
@@ -90,7 +90,7 @@ class FetchSubjectsUseCase @Inject constructor(
         }
 
         return map.map { (title, teachers) ->
-            SubjectModel(
+            SubjectDto(
                 title = title,
                 teachers = teachers
             )

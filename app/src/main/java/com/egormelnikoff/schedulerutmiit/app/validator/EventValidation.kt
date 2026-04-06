@@ -2,9 +2,6 @@ package com.egormelnikoff.schedulerutmiit.app.validator
 
 import android.content.Context
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Group
-import com.egormelnikoff.schedulerutmiit.app.entity.Lecturer
-import com.egormelnikoff.schedulerutmiit.app.entity.Room
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -19,9 +16,9 @@ sealed class EventValidation {
             date: LocalDate?,
             startTime: LocalTime?,
             endTime: LocalTime?,
-            roomsList: List<Room>,
-            lecturersList: List<Lecturer>,
-            groupsList: List<Group>
+            roomsList: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto>,
+            lecturersList: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto>,
+            groupsList: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto>
         ): EventValidation {
             val errors = mutableListOf<String>()
             if (name.isBlank()) errors.add(context.getString(R.string.no_name_specified))

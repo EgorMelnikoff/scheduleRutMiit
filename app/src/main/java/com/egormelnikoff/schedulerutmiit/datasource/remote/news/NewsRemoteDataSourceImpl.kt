@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.datasource.remote.news
 
 import com.egormelnikoff.schedulerutmiit.app.network.NetworkHelper
-import com.egormelnikoff.schedulerutmiit.app.network.model.NewsContent
+import com.egormelnikoff.schedulerutmiit.app.dto.local.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.datasource.remote.api.MiitApi
@@ -21,7 +21,7 @@ class NewsRemoteDataSourceImpl @Inject constructor(
         callJsoup = null
     )
 
-    override suspend fun getNewsById(id: Long): Result<NewsContent> {
+    override suspend fun getNewsById(id: Long): Result<NewsParsedDto> {
         networkHelper.callNetwork(
             requestType = "News",
             requestParams = "News id: $id",

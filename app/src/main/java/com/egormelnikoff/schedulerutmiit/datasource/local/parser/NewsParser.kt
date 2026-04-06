@@ -8,8 +8,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_MIIT_URL
-import com.egormelnikoff.schedulerutmiit.app.network.model.NewsModel
-import com.egormelnikoff.schedulerutmiit.app.network.model.NewsContent
+import com.egormelnikoff.schedulerutmiit.app.dto.local.news.NewsParsedDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.news.NewsDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
@@ -17,8 +17,8 @@ import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 
 object NewsParser {
-    suspend operator fun invoke(newsModel: NewsModel): NewsContent = withContext(Dispatchers.Default) {
-        val document = Jsoup.parse(newsModel.content)
+    suspend operator fun invoke(newsDto: NewsDto): NewsParsedDto = withContext(Dispatchers.Default) {
+        val document = Jsoup.parse(newsDto.content)
         val elements = document.select("p, li, tr, img")
         val parsedElements = mutableListOf<Pair<String, Any>>()
         val parsedImages = mutableListOf<String>()
@@ -59,8 +59,8 @@ object NewsParser {
             }
         }
 
-        return@withContext NewsContent(
-            newsModel, parsedElements, parsedImages
+        return@withContext NewsParsedDto(
+            newsDto, parsedElements, parsedImages
         )
     }
 

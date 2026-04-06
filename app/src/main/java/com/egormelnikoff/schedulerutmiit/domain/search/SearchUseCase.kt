@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.domain.search
 
-import com.egormelnikoff.schedulerutmiit.app.entity.Group
 import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.app.network.model.InstituteModel
-import com.egormelnikoff.schedulerutmiit.app.network.model.InstitutesModel
-import com.egormelnikoff.schedulerutmiit.app.network.model.PersonModel
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.institutes.InstituteDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.institutes.InstitutesDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.person.PersonDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.domain.search.result.SearchResult
@@ -16,13 +16,13 @@ class SearchUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         searchParams: SearchParams,
-        institutesModel: InstitutesModel?
+        institutesDto: InstitutesDto?
     ): SearchResult {
-        var groups: Result<List<Group>>? = null
-        var people: Result<List<PersonModel>>? = null
+        var groups: Result<List<GroupDto>>? = null
+        var people: Result<List<PersonDto>>? = null
 
-        if ((searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.GROUPS) && institutesModel != null) {
-            groups = Result.Success(getGroupsByQuery(institutesModel, searchParams.query))
+        if ((searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.GROUPS) && institutesDto != null) {
+            groups = Result.Success(getGroupsByQuery(institutesDto, searchParams.query))
         }
 
         if (searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.PEOPLE) {
@@ -37,10 +37,10 @@ class SearchUseCase @Inject constructor(
 
 
     fun getGroupsByQuery(
-        institutesModel: InstitutesModel,
+        institutesDto: InstitutesDto,
         query: String
-    ): List<Group> {
-        val groups = getGroups(institutesModel.instituteModels)
+    ): List<GroupDto> {
+        val groups = getGroups(institutesDto.institutes)
 
         return groups.filter {
             compareValues(it.name, query)
@@ -54,7 +54,7 @@ class SearchUseCase @Inject constructor(
         return cleanValue.contains(cleanQuery, ignoreCase = true)
     }
 
-    private fun getGroups(instituteModels: List<InstituteModel>): List<Group> {
+    private fun getGroups(instituteModels: List<InstituteDto>): List<GroupDto> {
         return instituteModels.flatMap { institute ->
             institute.courses.flatMap { course ->
                 course.specialties.flatMap { specialty ->

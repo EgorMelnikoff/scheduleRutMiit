@@ -3,14 +3,14 @@ package com.egormelnikoff.schedulerutmiit.view_models.schedule
 import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
+import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.Schedule
+import com.egormelnikoff.schedulerutmiit.app.entity.relation.Schedule
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.RecurrenceDto
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget.Companion.eveningTime
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -185,7 +185,7 @@ data class ScheduleData(
             currentStartDate: LocalDate,
             startDate: LocalDate,
             endDate: LocalDate,
-            recurrence: Recurrence
+            recurrence: RecurrenceDto
         ): List<Int> {
             val weeksCount = ChronoUnit.WEEKS.between(
                 startDate.getFirstDayOfWeek(),

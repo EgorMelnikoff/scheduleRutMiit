@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.app.di
 
 import android.content.Context
 import androidx.work.WorkManager
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleTypeAdapter
+import com.egormelnikoff.schedulerutmiit.app.entity.adapter.NamedScheduleTypeAdapter
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.network.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore

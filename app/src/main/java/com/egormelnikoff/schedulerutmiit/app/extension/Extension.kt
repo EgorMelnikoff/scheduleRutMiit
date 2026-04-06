@@ -1,7 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.app.extension
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
-import com.egormelnikoff.schedulerutmiit.app.entity.Recurrence
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.enums.DayPeriod
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
@@ -34,7 +33,7 @@ fun LocalDate.getFirstDayOfWeek(): LocalDate {
 
 fun LocalDate.getCurrentWeek(
     startDate: LocalDate,
-    recurrence: Recurrence
+    recurrence: com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.RecurrenceDto
 ): Int {
     val weeksFromStart = abs(ChronoUnit.WEEKS.between(this, startDate)).plus(1).toInt()
     return ((weeksFromStart + recurrence.firstWeekNumber) % recurrence.interval).plus(1)

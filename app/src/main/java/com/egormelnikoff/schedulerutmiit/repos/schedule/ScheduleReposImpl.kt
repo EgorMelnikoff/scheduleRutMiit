@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.repos.schedule
 
 import androidx.room.withTransaction
-import com.egormelnikoff.schedulerutmiit.app.entity.Schedule
+import com.egormelnikoff.schedulerutmiit.app.entity.relation.Schedule
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.AppDatabase
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventExtraDao
