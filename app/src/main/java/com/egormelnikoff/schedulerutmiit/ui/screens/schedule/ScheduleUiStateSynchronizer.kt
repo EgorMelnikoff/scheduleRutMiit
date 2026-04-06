@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
@@ -16,15 +17,24 @@ fun ScheduleUiStateSynchronizer(
     currentDateTime: LocalDateTime,
     scheduleViewModel: ScheduleViewModel,
 ) {
-    if (scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity != null && scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData != null && scheduleUiState != null) {
+    if (scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity != null && scheduleUiState != null) {
         LaunchedEffect(
-            scheduleState.currentNamedScheduleData.namedSchedule?.namedScheduleEntity?.apiId,
+            scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.apiId,
             scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.timetableId
         ) {
             scheduleUiState.pagerDaysState.scrollToPage(
                 scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.daysStartIndex
             )
             scheduleUiState.scheduleListState.scrollToItem(0)
+            scheduleUiState.pagerSplitWeeks.scrollToPage(scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.dayOfWeek.value - 1)
+            scheduleUiState.onSelectWeek(
+                if (scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence != null) {
+                    scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.getCurrentWeek(
+                        scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.startDate,
+                        scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence
+                    )
+                } else 0
+            )
         }
 
         LaunchedEffect(scheduleUiState.selectedDate) {
@@ -58,7 +68,7 @@ fun ScheduleUiStateSynchronizer(
         if (scheduleState.isSaved) {
             LaunchedEffect(currentDateTime) {
                 scheduleViewModel.refreshScheduleState(
-                    namedScheduleId = scheduleState.currentNamedScheduleData.namedSchedule?.namedScheduleEntity?.id,
+                    namedScheduleId = scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
                     showLoading = false
                 )
             }

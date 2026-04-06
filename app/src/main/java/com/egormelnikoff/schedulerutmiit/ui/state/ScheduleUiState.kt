@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
 import java.time.LocalDate
 
@@ -53,8 +54,11 @@ data class ScheduleUiState(
 
                 var selectedWeek by remember {
                     mutableIntStateOf(
-                        if (scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity?.recurrence != null) {
-                            scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence.currentNumber
+                        if (scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence != null) {
+                            scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.getCurrentWeek(
+                                scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.startDate,
+                                scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence
+                            )
                         } else 0
                     )
                 }
