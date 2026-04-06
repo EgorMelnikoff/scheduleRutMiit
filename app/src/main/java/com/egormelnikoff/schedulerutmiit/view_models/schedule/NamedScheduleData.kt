@@ -289,7 +289,7 @@ data class ReviewData(
                 nonPeriodicEvents = nonPeriodicEvents
             )
 
-            val currentWeek = scheduleEntity.recurrence?.let {
+            var currentWeek = scheduleEntity.recurrence?.let {
                 displayedDate.getCurrentWeek(
                     startDate = scheduleEntity.startDate,
                     recurrence = scheduleEntity.recurrence
@@ -305,11 +305,17 @@ data class ReviewData(
             if (isFinishedEvents || nextDay) {
                 val tomorrow = date.plusDays(1)
                 displayedDate = tomorrow.toLocalDate()
-                events = tomorrow.toLocalDate().getEventsForDate(
+                events = displayedDate.getEventsForDate(
                     scheduleEntity = scheduleEntity,
                     periodicEvents = periodicEvents,
                     nonPeriodicEvents = nonPeriodicEvents
                 )
+                currentWeek = scheduleEntity.recurrence?.let {
+                    displayedDate.getCurrentWeek(
+                        startDate = scheduleEntity.startDate,
+                        recurrence = scheduleEntity.recurrence
+                    )
+                } ?: 0
             }
 
             return ReviewData(
