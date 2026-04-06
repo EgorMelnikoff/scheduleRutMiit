@@ -24,7 +24,7 @@ class EventExtraReposImpl @Inject constructor(
     )
 
 
-    override suspend fun deleteByEvent(event: Event) = eventExtraDao.deleteByEventId(event.id)
+    override suspend fun deleteByEventId(eventId: Long) = eventExtraDao.deleteByEventId(eventId)
 
     override suspend fun getByEventId(
         eventId: Long

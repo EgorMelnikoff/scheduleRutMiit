@@ -10,7 +10,7 @@ interface EventExtraRepos {
         comment: String
     )
 
-    suspend fun deleteByEvent(event: Event)
+    suspend fun deleteByEventId(eventId: Long)
 
     suspend fun getByEventId(eventId: Long): EventExtraData?
 
