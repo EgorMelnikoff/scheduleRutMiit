@@ -24,7 +24,7 @@ class UpdateEventExtraDataUseCase @Inject constructor(
     ): ScheduleUseCaseResult {
         if (comment == "" && tag == 0) {
             synchronizeEventExtraAction(event) {
-                eventExtraRepos.deleteByEvent(event)
+                eventExtraRepos.deleteByEventId(it.id)
             }
             return ScheduleUseCaseResult(
                 savedNamedScheduleEntities = null,
@@ -38,14 +38,14 @@ class UpdateEventExtraDataUseCase @Inject constructor(
 
         if (eventExtraData != null) {
             synchronizeEventExtraAction(event) {
-                eventExtraRepos.updateComment(event, comment)
+                eventExtraRepos.updateComment(it, comment)
             }
             synchronizeEventExtraAction(event) {
-                eventExtraRepos.updateTag(event, tag)
+                eventExtraRepos.updateTag(it, tag)
             }
         } else {
             synchronizeEventExtraAction(event) {
-                eventExtraRepos.save(event, tag, comment)
+                eventExtraRepos.save(it, tag, comment)
             }
 
         }
