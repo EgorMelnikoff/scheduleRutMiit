@@ -11,6 +11,7 @@ import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.ScheduleParser
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SearchParser
+import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SubjectsListParser
 import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -106,4 +107,7 @@ object AppModule {
 
     @Provides
     fun provideSearchParser(): SearchParser = SearchParser
+
+    @Provides
+    fun provideSubjectsListParser(): SubjectsListParser = SubjectsListParser
 }

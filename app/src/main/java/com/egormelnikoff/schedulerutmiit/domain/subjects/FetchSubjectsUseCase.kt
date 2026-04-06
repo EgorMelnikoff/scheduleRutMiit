@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.domain.subjects
 
 import com.egormelnikoff.schedulerutmiit.app.network.model.SubjectModel
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
-import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SearchParser
+import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SubjectsListParser
 import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDataSource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class FetchSubjectsUseCase @Inject constructor(
     private val searchRemoteDataSource: SearchRemoteDataSource,
-    private val searchParser: SearchParser
+    private val subjectsListParser: SubjectsListParser
 ) {
     suspend operator fun invoke(
         id: String
@@ -24,11 +24,11 @@ class FetchSubjectsUseCase @Inject constructor(
 
                 is Result.Success -> {
                     val subjectModels = mutableListOf<SubjectModel>()
-                    subjectModels += searchParser
+                    subjectModels += subjectsListParser
                         .parseListSubjectsByPage(firstPage.data)
                         .toSubjects()
 
-                    val pages = searchParser.parsePagesCount(firstPage.data)
+                    val pages = subjectsListParser.parsePagesCount(firstPage.data)
                     if (pages > 1) {
                         val deferredPages = (2..pages).map { currentPage ->
                             async {
@@ -43,7 +43,7 @@ class FetchSubjectsUseCase @Inject constructor(
                                 }
 
                                 is Result.Success -> {
-                                    subjectModels += searchParser
+                                    subjectModels += subjectsListParser
                                         .parseListSubjectsByPage(result.data)
                                         .toSubjects()
                                 }
