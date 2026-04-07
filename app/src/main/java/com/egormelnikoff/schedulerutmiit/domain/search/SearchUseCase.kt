@@ -8,7 +8,7 @@ import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.domain.search.result.SearchResult
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
+import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchParams
 import javax.inject.Inject
 
 class SearchUseCase @Inject constructor(

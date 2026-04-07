@@ -24,8 +24,8 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButtonRow
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.EventsForDay
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.NamedScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 @Composable
@@ -34,8 +34,8 @@ fun ScheduleSplitWeeksView(
     appUiState: AppUiState,
     scheduleUiState: ScheduleUiState,
 
-    namedScheduleData: NamedScheduleData,
-    scheduleData: ScheduleData,
+    namedScheduleUiDto: NamedScheduleUiDto,
+    scheduleUiDto: ScheduleUiDto,
     recurrence: RecurrenceDto,
 
     isSavedSchedule: Boolean,
@@ -47,7 +47,7 @@ fun ScheduleSplitWeeksView(
     Column {
         DaySelector(
             scheduleUiState = scheduleUiState,
-            scheduleData = scheduleData,
+            scheduleUiDto = scheduleUiDto,
             eventsCountView = appSettings.eventsCountView,
             selectedWeek = scheduleUiState.selectedWeek,
             scope = appUiState.scope
@@ -78,15 +78,15 @@ fun ScheduleSplitWeeksView(
             verticalAlignment = Alignment.Top,
             pageSpacing = 12.dp
         ) { index ->
-            val currentDate = scheduleData.scheduleEntity.startDate.plusDays(index.toLong())
+            val currentDate = scheduleUiDto.scheduleEntity.startDate.plusDays(index.toLong())
 
             val eventsForDate by remember(
-                namedScheduleData.namedSchedule,
-                namedScheduleData.scheduleData,
+                namedScheduleUiDto.namedSchedule,
+                namedScheduleUiDto.scheduleUiDto,
                 scheduleUiState.selectedWeek
             ) {
                 mutableStateOf(
-                    scheduleData.periodicEvents?.getEventsByDayAndWeek(
+                    scheduleUiDto.periodicEvents?.getEventsByDayAndWeek(
                         currentDate.dayOfWeek,
                         scheduleUiState.selectedWeek
                     )?.toList()
@@ -97,10 +97,10 @@ fun ScheduleSplitWeeksView(
                 scheduleViewModel = scheduleViewModel,
                 appBackStack = appUiState.appBackStack,
 
-                namedScheduleEntity = namedScheduleData.namedSchedule.namedScheduleEntity,
-                scheduleEntity = scheduleData.scheduleEntity,
+                namedScheduleEntity = namedScheduleUiDto.namedSchedule.namedScheduleEntity,
+                scheduleEntity = scheduleUiDto.scheduleEntity,
                 eventsForDate = eventsForDate,
-                eventsExtraData = scheduleData.eventsExtraData,
+                eventsExtraData = scheduleUiDto.eventsExtraData,
                 isSavedSchedule = isSavedSchedule,
                 eventView = appSettings.eventView,
                 paddingBottom = paddingBottom

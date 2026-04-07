@@ -10,6 +10,7 @@ import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.datasource.remote.news.NewsRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.domain.news.GetNewsListUseCase
+import com.egormelnikoff.schedulerutmiit.view_models.news.state.NewsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin

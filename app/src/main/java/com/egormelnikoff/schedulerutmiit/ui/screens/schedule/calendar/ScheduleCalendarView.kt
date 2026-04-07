@@ -19,16 +19,16 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.EventsForDay
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.NamedScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 @Composable
 fun ScheduleCalendarView(
     scheduleViewModel: ScheduleViewModel,
     appUiState: AppUiState,
-    namedScheduleData: NamedScheduleData,
-    scheduleData: ScheduleData,
+    namedScheduleUiDto: NamedScheduleUiDto,
+    scheduleUiDto: ScheduleUiDto,
     isSavedSchedule: Boolean,
     scheduleUiState: ScheduleUiState,
     eventView: EventView,
@@ -37,7 +37,7 @@ fun ScheduleCalendarView(
 ) {
     Column {
         HorizontalCalendar(
-            scheduleData = scheduleData,
+            scheduleUiDto = scheduleUiDto,
             scope = appUiState.scope,
             scheduleUiState = scheduleUiState,
             eventsCountView = eventsCountView
@@ -46,8 +46,8 @@ fun ScheduleCalendarView(
             scheduleViewModel = scheduleViewModel,
             appBackStack = appUiState.appBackStack,
 
-            namedScheduleData = namedScheduleData,
-            scheduleData = scheduleData,
+            namedScheduleUiDto = namedScheduleUiDto,
+            scheduleUiDto = scheduleUiDto,
             pagerDaysState = scheduleUiState.pagerDaysState,
 
             isSavedSchedule = isSavedSchedule,
@@ -63,8 +63,8 @@ fun PagedDays(
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
 
-    namedScheduleData: NamedScheduleData,
-    scheduleData: ScheduleData,
+    namedScheduleUiDto: NamedScheduleUiDto,
+    scheduleUiDto: ScheduleUiDto,
     pagerDaysState: PagerState,
 
     isSavedSchedule: Boolean,
@@ -77,17 +77,17 @@ fun PagedDays(
         verticalAlignment = Alignment.Top,
         pageSpacing = 12.dp
     ) { index ->
-        val currentDate = scheduleData.scheduleEntity.startDate.plusDays(index.toLong())
+        val currentDate = scheduleUiDto.scheduleEntity.startDate.plusDays(index.toLong())
 
         val eventsForDate by remember(
-            namedScheduleData.namedSchedule,
-            scheduleData
+            namedScheduleUiDto.namedSchedule,
+            scheduleUiDto
         ) {
             mutableStateOf(
                 currentDate.getEventsForDate(
-                    scheduleEntity = scheduleData.scheduleEntity,
-                    periodicEvents = scheduleData.periodicEvents,
-                    nonPeriodicEvents = scheduleData.nonPeriodicEvents
+                    scheduleEntity = scheduleUiDto.scheduleEntity,
+                    periodicEvents = scheduleUiDto.periodicEvents,
+                    nonPeriodicEvents = scheduleUiDto.nonPeriodicEvents
                 ).toList()
             )
         }
@@ -96,9 +96,9 @@ fun PagedDays(
             scheduleViewModel = scheduleViewModel,
             appBackStack = appBackStack,
 
-            namedScheduleEntity = namedScheduleData.namedSchedule.namedScheduleEntity,
-            scheduleEntity = scheduleData.scheduleEntity,
-            eventsExtraData = scheduleData.eventsExtraData,
+            namedScheduleEntity = namedScheduleUiDto.namedSchedule.namedScheduleEntity,
+            scheduleEntity = scheduleUiDto.scheduleEntity,
+            eventsExtraData = scheduleUiDto.eventsExtraData,
             eventsForDate = eventsForDate,
             isSavedSchedule = isSavedSchedule,
             eventView = eventView,

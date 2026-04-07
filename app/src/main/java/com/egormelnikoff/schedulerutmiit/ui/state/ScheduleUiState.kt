@@ -12,7 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import java.time.LocalDate
 
 @Keep
@@ -33,38 +33,38 @@ data class ScheduleUiState(
         operator fun invoke(
             scheduleState: ScheduleState
         ): ScheduleUiState? {
-            return if (scheduleState.currentNamedScheduleData?.namedSchedule != null && scheduleState.currentNamedScheduleData.scheduleData?.schedulePagerData != null) {
+            return if (scheduleState.currentNamedSchedule?.namedSchedule != null && scheduleState.currentNamedSchedule.scheduleUiDto?.schedulePagerUiDto != null) {
                 val scheduleListState = rememberLazyListState()
                 val pagerDaysState = rememberPagerState(
-                    pageCount = { scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.daysCount },
-                    initialPage = scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.daysStartIndex
+                    pageCount = { scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.daysCount },
+                    initialPage = scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.daysStartIndex
                 )
                 val pagerWeeksState = rememberPagerState(
-                    pageCount = { scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.weeksCount },
-                    initialPage = scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.weeksStartIndex
+                    pageCount = { scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.weeksCount },
+                    initialPage = scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.weeksStartIndex
                 )
 
                 var selectedDate by remember(
-                    scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.apiId
+                    scheduleState.currentNamedSchedule.namedSchedule.namedScheduleEntity.apiId
                 ) {
                     mutableStateOf(
-                        scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate
+                        scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate
                     )
                 }
 
                 var selectedWeek by remember {
                     mutableIntStateOf(
-                        if (scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence != null) {
-                            scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.getCurrentWeek(
-                                scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.startDate,
-                                scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence
+                        if (scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence != null) {
+                            scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.getCurrentWeek(
+                                scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.startDate,
+                                scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence
                             )
                         } else 0
                     )
                 }
 
                 val pagerSplitWeeks = rememberPagerState(
-                    initialPage = scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.dayOfWeek.value - 1,
+                    initialPage = scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.dayOfWeek.value - 1,
                     pageCount = { 7 }
                 )
 

@@ -33,7 +33,7 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -49,18 +49,18 @@ fun ScheduleListView(
 
     isSavedSchedule: Boolean,
     namedScheduleEntity: NamedScheduleEntity,
-    scheduleData: ScheduleData,
+    scheduleUiDto: ScheduleUiDto,
 
     eventView: EventView,
     paddingBottom: Dp
 ) {
-    if (scheduleData.fullEventList.isNotEmpty()) {
+    if (scheduleUiDto.fullEventList.isNotEmpty()) {
         LazyColumn(
             state = scheduleUiState.scheduleListState,
             contentPadding = PaddingValues(bottom = paddingBottom),
             modifier = Modifier.fillMaxSize(),
         ) {
-            scheduleData.fullEventList.forEachIndexed { index, events ->
+            scheduleUiDto.fullEventList.forEachIndexed { index, events ->
                 val eventsForDay = events.second.getGroupedEvents().toList()
                 stickyHeader {
                     DateHeader(
@@ -106,13 +106,13 @@ fun ScheduleListView(
                                 scheduleViewModel.updateEventHidden(scheduleEntity, eventId, true)
                             },
                             events = eventsGrouped.second,
-                            scheduleEntity = scheduleData.scheduleEntity,
-                            eventsExtraData = scheduleData.eventsExtraData,
+                            scheduleEntity = scheduleUiDto.scheduleEntity,
+                            eventsExtraData = scheduleUiDto.eventsExtraData,
                             isSavedSchedule = isSavedSchedule,
                             eventView = eventView
                         )
                     }
-                    if (index != scheduleData.fullEventList.lastIndex) {
+                    if (index != scheduleUiDto.fullEventList.lastIndex) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }

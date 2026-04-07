@@ -5,7 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -17,21 +17,21 @@ fun ScheduleUiStateSynchronizer(
     currentDateTime: LocalDateTime,
     scheduleViewModel: ScheduleViewModel,
 ) {
-    if (scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity != null && scheduleUiState != null) {
+    if (scheduleState.currentNamedSchedule?.scheduleUiDto?.scheduleEntity != null && scheduleUiState != null) {
         LaunchedEffect(
-            scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.apiId,
-            scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.timetableId
+            scheduleState.currentNamedSchedule.namedSchedule.namedScheduleEntity.apiId,
+            scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.timetableId
         ) {
             scheduleUiState.pagerDaysState.scrollToPage(
-                scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.daysStartIndex
+                scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.daysStartIndex
             )
             scheduleUiState.scheduleListState.scrollToItem(0)
-            scheduleUiState.pagerSplitWeeks.scrollToPage(scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.dayOfWeek.value - 1)
+            scheduleUiState.pagerSplitWeeks.scrollToPage(scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.dayOfWeek.value - 1)
             scheduleUiState.onSelectWeek(
-                if (scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence != null) {
-                    scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.getCurrentWeek(
-                        scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.startDate,
-                        scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence
+                if (scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence != null) {
+                    scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.getCurrentWeek(
+                        scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.startDate,
+                        scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence
                     )
                 } else 0
             )
@@ -39,7 +39,7 @@ fun ScheduleUiStateSynchronizer(
 
         LaunchedEffect(scheduleUiState.selectedDate) {
             val targetPage = ChronoUnit.DAYS.between(
-                scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.startDate,
+                scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.startDate,
                 scheduleUiState.selectedDate
             ).toInt()
 
@@ -50,13 +50,13 @@ fun ScheduleUiStateSynchronizer(
 
         LaunchedEffect(scheduleUiState.pagerDaysState.currentPage) {
             val newSelectedDate =
-                scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.startDate.plusDays(
+                scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.startDate.plusDays(
                     scheduleUiState.pagerDaysState.currentPage.toLong()
                 )
             scheduleUiState.onSelectDate(newSelectedDate)
 
             val targetWeekIndex = ChronoUnit.WEEKS.between(
-                scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.startDate.getFirstDayOfWeek(),
+                scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.startDate.getFirstDayOfWeek(),
                 newSelectedDate.getFirstDayOfWeek()
             ).toInt()
 
@@ -68,7 +68,7 @@ fun ScheduleUiStateSynchronizer(
         if (scheduleState.isSaved) {
             LaunchedEffect(currentDateTime) {
                 scheduleViewModel.refreshScheduleState(
-                    namedScheduleId = scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
+                    namedScheduleId = scheduleState.currentNamedSchedule.namedSchedule.namedScheduleEntity.id,
                     showLoading = false
                 )
             }

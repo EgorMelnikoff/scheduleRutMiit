@@ -6,9 +6,9 @@ import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.NamedScheduleData
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ReviewData
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData.Companion.getPeriodicEvents
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.NamedScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ReviewUiDto
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto.Companion.getPeriodicEvents
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,14 +17,13 @@ import java.time.LocalDateTime
 data class WidgetData(
     val namedScheduleEntity: NamedScheduleEntity? = null,
     val settledScheduleEntity: ScheduleEntity? = null,
-    val reviewData: ReviewData? = null,
+    val reviewUiDto: ReviewUiDto? = null,
     val eventsExtraData: List<EventExtraData> = listOf()
 ) {
     companion object {
         operator fun invoke(namedSchedule: NamedSchedule): WidgetData? {
-            val scheduleFormatted = NamedScheduleData.findCurrentSchedule(namedSchedule)
+            val scheduleFormatted = NamedScheduleUiDto.findCurrentSchedule(namedSchedule)
             return if (scheduleFormatted != null) {
-                val today = LocalDateTime.now()
                 val splitEvents = scheduleFormatted.events.partition { it.isHidden }
 
                 var periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null
@@ -39,17 +38,16 @@ data class WidgetData(
                         it.startDatetime.toLocalDate()
                     }
                 }
-                val reviewData = ReviewData(
-                    date = today,
-                    scheduleEntity = scheduleFormatted.scheduleEntity,
-                    periodicEvents = periodicEvents,
-                    nonPeriodicEvents = nonPeriodicEvents
-                )
                 WidgetData(
                     namedScheduleEntity = namedSchedule.namedScheduleEntity,
                     settledScheduleEntity = scheduleFormatted.scheduleEntity,
                     eventsExtraData = scheduleFormatted.eventsExtraData,
-                    reviewData = reviewData
+                    reviewUiDto = ReviewUiDto(
+                        date = LocalDateTime.now(),
+                        scheduleEntity = scheduleFormatted.scheduleEntity,
+                        periodicEvents = periodicEvents,
+                        nonPeriodicEvents = nonPeriodicEvents
+                    )
                 )
             } else null
         }

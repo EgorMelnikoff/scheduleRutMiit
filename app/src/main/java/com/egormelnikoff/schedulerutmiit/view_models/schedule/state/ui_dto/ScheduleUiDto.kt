@@ -1,70 +1,32 @@
-package com.egormelnikoff.schedulerutmiit.view_models.schedule
+package com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto
 
 import androidx.annotation.Keep
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.RecurrenceDto
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.relation.Schedule
-import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
-import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.RecurrenceDto
-import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget.Companion.eveningTime
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import kotlin.math.abs
 
 @Keep
-data class NamedScheduleData(
-    val namedSchedule: NamedSchedule,
-    val scheduleData: ScheduleData? = null
-) {
-    companion object {
-        fun findCurrentSchedule(
-            namedSchedule: NamedSchedule
-        ): Schedule? {
-            return namedSchedule.schedules.find { it.scheduleEntity.isDefault }
-                ?: namedSchedule.schedules.firstOrNull()
-        }
-
-        operator fun invoke(
-            namedSchedule: NamedSchedule?
-        ): NamedScheduleData? {
-            namedSchedule ?: return null
-            val currentSchedule = findCurrentSchedule(namedSchedule)
-            currentSchedule ?: return NamedScheduleData(
-                namedSchedule = namedSchedule
-            )
-
-            return NamedScheduleData(
-                namedSchedule = namedSchedule,
-                scheduleData = ScheduleData(
-                    schedule = currentSchedule
-                )
-            )
-        }
-    }
-}
-
-@Keep
-data class ScheduleData(
+data class ScheduleUiDto(
     val scheduleEntity: ScheduleEntity,
     val periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null,
     val nonPeriodicEvents: Map<LocalDate, List<Event>>? = null,
     val fullEventList: List<Pair<LocalDate, List<Event>>> = listOf(),
     val hiddenEvents: List<Event> = listOf(),
     val eventsExtraData: List<EventExtraData> = listOf(),
-    val schedulePagerData: SchedulePagerData,
-    val reviewData: ReviewData
+    val schedulePagerUiDto: SchedulePagerUiDto,
+    val reviewUiDto: ReviewUiDto
 ) {
     companion object {
         operator fun invoke(
             schedule: Schedule
-        ): ScheduleData {
+        ): ScheduleUiDto {
             val today = LocalDateTime.now()
             val splitEvents = schedule.events.partition { it.isHidden }
 
@@ -88,30 +50,30 @@ data class ScheduleData(
                 scheduleEntity = schedule.scheduleEntity,
             )
 
-            val schedulePagerData = SchedulePagerData(
+            val schedulePagerUiDto = SchedulePagerUiDto(
                 today = today.toLocalDate(),
                 startDate = schedule.scheduleEntity.startDate,
                 endDate = schedule.scheduleEntity.endDate
             )
 
-            val reviewData = ReviewData(
+            val reviewUiDto = ReviewUiDto(
                 date = today,
                 scheduleEntity = schedule.scheduleEntity,
                 periodicEvents = periodicEventsForCalendar,
                 nonPeriodicEvents = nonPeriodicEventsForCalendar
             )
 
-            return ScheduleData(
+            return ScheduleUiDto(
                 scheduleEntity = schedule.scheduleEntity,
 
                 periodicEvents = periodicEventsForCalendar,
-                schedulePagerData = schedulePagerData,
+                schedulePagerUiDto = schedulePagerUiDto,
                 nonPeriodicEvents = nonPeriodicEventsForCalendar,
                 fullEventList = fullEventList,
 
                 eventsExtraData = schedule.eventsExtraData,
                 hiddenEvents = splitEvents.first,
-                reviewData = reviewData
+                reviewUiDto = reviewUiDto
             )
         }
 
@@ -201,128 +163,6 @@ data class ScheduleData(
                 ((week + recurrence.firstWeekNumber) % recurrence.interval)
                     .plus(1)
             }
-        }
-    }
-}
-
-@Keep
-data class SchedulePagerData(
-    val today: LocalDate,
-    val defaultDate: LocalDate,
-    val weeksCount: Int,
-    val weeksStartIndex: Int,
-    val daysCount: Int,
-    val daysStartIndex: Int,
-) {
-    companion object {
-        operator fun invoke(
-            today: LocalDate,
-            startDate: LocalDate,
-            endDate: LocalDate
-        ): SchedulePagerData {
-            val weeksCount = ChronoUnit.WEEKS.between(
-                startDate.getFirstDayOfWeek(),
-                endDate.getFirstDayOfWeek()
-            ).plus(1).toInt()
-
-            val daysCount = ChronoUnit.DAYS.between(
-                startDate,
-                endDate
-            ).plus(1).toInt()
-
-            val defaultDate: LocalDate
-            val weeksStartIndex: Int
-            val daysStartIndex: Int
-
-            if (today in startDate..endDate) {
-                weeksStartIndex = abs(
-                    ChronoUnit.WEEKS.between(
-                        startDate.getFirstDayOfWeek(),
-                        today.getFirstDayOfWeek()
-                    ).toInt()
-                )
-                daysStartIndex = abs(
-                    ChronoUnit.DAYS.between(
-                        startDate,
-                        today
-                    ).toInt()
-                )
-                defaultDate = today
-            } else if (today < startDate) {
-                weeksStartIndex = 0
-                daysStartIndex = 0
-                defaultDate = startDate
-            } else {
-                weeksStartIndex = weeksCount
-                daysStartIndex = weeksCount * 7
-                defaultDate = endDate
-            }
-            return SchedulePagerData(
-                today = today,
-                defaultDate = defaultDate,
-                weeksCount = weeksCount,
-                weeksStartIndex = weeksStartIndex,
-                daysCount = daysCount,
-                daysStartIndex = daysStartIndex
-            )
-        }
-    }
-}
-
-@Keep
-data class ReviewData(
-    val displayedDate: LocalDate,
-    val events: Map<String, List<Event>> = mapOf(),
-    val currentWeek: Int = 0
-) {
-    companion object {
-        operator fun invoke(
-            date: LocalDateTime,
-            scheduleEntity: ScheduleEntity,
-            periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
-            nonPeriodicEvents: Map<LocalDate, List<Event>>?
-        ): ReviewData {
-            var displayedDate = date.toLocalDate()
-            var events = date.toLocalDate().getEventsForDate(
-                scheduleEntity = scheduleEntity,
-                periodicEvents = periodicEvents,
-                nonPeriodicEvents = nonPeriodicEvents
-            )
-
-            var currentWeek = scheduleEntity.recurrence?.let {
-                displayedDate.getCurrentWeek(
-                    startDate = scheduleEntity.startDate,
-                    recurrence = scheduleEntity.recurrence
-                )
-            } ?: 0
-
-            val isFinishedEvents = events.isNotEmpty() && date.toLocalTime().isAfter(
-                events.values.flatten().last().endDatetime.toLocalTimeWithTimeZone()
-            )
-
-            val nextDay = events.isEmpty() && date.toLocalTime().isAfter(eveningTime)
-
-            if (isFinishedEvents || nextDay) {
-                val tomorrow = date.plusDays(1)
-                displayedDate = tomorrow.toLocalDate()
-                events = displayedDate.getEventsForDate(
-                    scheduleEntity = scheduleEntity,
-                    periodicEvents = periodicEvents,
-                    nonPeriodicEvents = nonPeriodicEvents
-                )
-                currentWeek = scheduleEntity.recurrence?.let {
-                    displayedDate.getCurrentWeek(
-                        startDate = scheduleEntity.startDate,
-                        recurrence = scheduleEntity.recurrence
-                    )
-                } ?: 0
-            }
-
-            return ReviewData(
-                displayedDate = displayedDate,
-                currentWeek = currentWeek,
-                events = events
-            )
         }
     }
 }

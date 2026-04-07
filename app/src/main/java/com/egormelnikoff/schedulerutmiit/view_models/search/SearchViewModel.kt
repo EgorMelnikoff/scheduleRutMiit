@@ -13,6 +13,8 @@ import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDa
 import com.egormelnikoff.schedulerutmiit.domain.search.SearchUseCase
 import com.egormelnikoff.schedulerutmiit.domain.search.result.SearchResult
 import com.egormelnikoff.schedulerutmiit.repos.search_query.SearchQueryRepos
+import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchParams
+import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

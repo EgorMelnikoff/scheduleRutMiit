@@ -46,7 +46,7 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.list.ScheduleListVi
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.split_weeks.ScheduleSplitWeeksView
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import java.time.LocalDateTime
@@ -91,9 +91,9 @@ fun ScreenSchedule(
             )
         }
 
-        scheduleState.currentNamedScheduleData?.namedSchedule != null -> {
+        scheduleState.currentNamedSchedule?.namedSchedule != null -> {
             BackHandler(
-                scheduleState.savedNamedScheduleEntities.isNotEmpty() && !scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault
+                scheduleState.savedNamedScheduleEntities.isNotEmpty() && !scheduleState.currentNamedSchedule.namedSchedule.namedScheduleEntity.isDefault
             ) {
                 showBackDialog = true
             }
@@ -121,13 +121,13 @@ fun ScreenSchedule(
                         onShowNamedScheduleDialog = { newValue ->
                             showNamedScheduleEntityDialog = newValue
                         },
-                        namedScheduleData = scheduleState.currentNamedScheduleData,
-                        isPeriodic = scheduleState.currentNamedScheduleData.scheduleData?.scheduleEntity?.timetableType == TimetableType.PERIODIC,
+                        namedScheduleUiDto = scheduleState.currentNamedSchedule,
+                        isPeriodic = scheduleState.currentNamedSchedule.scheduleUiDto?.scheduleEntity?.timetableType == TimetableType.PERIODIC,
                         scheduleView = appSettings.scheduleView
                     )
                 }
             ) { padding ->
-                if (scheduleUiState != null && scheduleState.currentNamedScheduleData.scheduleData?.scheduleEntity != null) {
+                if (scheduleUiState != null && scheduleState.currentNamedSchedule.scheduleUiDto?.scheduleEntity != null) {
                     CustomPullToRefreshBox(
                         modifier = Modifier
                             .fillMaxSize()
@@ -137,7 +137,7 @@ fun ScreenSchedule(
                                 scheduleViewModel.refreshScheduleState(
                                     showLoading = false,
                                     updating = true,
-                                    namedScheduleId = scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id
+                                    namedScheduleId = scheduleState.currentNamedSchedule.namedSchedule.namedScheduleEntity.id
                                 )
                             }
                         },
@@ -172,8 +172,8 @@ fun ScreenSchedule(
 
                                             appUiState = appUiState,
 
-                                            namedScheduleData = scheduleState.currentNamedScheduleData,
-                                            scheduleData = scheduleState.currentNamedScheduleData.scheduleData,
+                                            namedScheduleUiDto = scheduleState.currentNamedSchedule,
+                                            scheduleUiDto = scheduleState.currentNamedSchedule.scheduleUiDto,
                                             isSavedSchedule = scheduleState.isSaved,
 
                                             scheduleUiState = scheduleUiState,
@@ -191,8 +191,8 @@ fun ScreenSchedule(
                                             scheduleUiState = scheduleUiState,
 
                                             isSavedSchedule = scheduleState.isSaved,
-                                            namedScheduleEntity = scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity,
-                                            scheduleData = scheduleState.currentNamedScheduleData.scheduleData,
+                                            namedScheduleEntity = scheduleState.currentNamedSchedule.namedSchedule.namedScheduleEntity,
+                                            scheduleUiDto = scheduleState.currentNamedSchedule.scheduleUiDto,
 
                                             eventView = appSettings.eventView,
                                             paddingBottom = externalPadding.calculateBottomPadding()
@@ -200,16 +200,16 @@ fun ScreenSchedule(
                                     }
 
                                     ScheduleView.SPLIT_WEEKS -> {
-                                        if (scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.timetableType == TimetableType.PERIODIC && scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence != null) {
+                                        if (scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.timetableType == TimetableType.PERIODIC && scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence != null) {
                                             ScheduleSplitWeeksView(
                                                 scheduleViewModel = scheduleViewModel,
 
                                                 appUiState = appUiState,
                                                 scheduleUiState = scheduleUiState,
 
-                                                namedScheduleData = scheduleState.currentNamedScheduleData,
-                                                scheduleData = scheduleState.currentNamedScheduleData.scheduleData,
-                                                recurrence = scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence,
+                                                namedScheduleUiDto = scheduleState.currentNamedSchedule,
+                                                scheduleUiDto = scheduleState.currentNamedSchedule.scheduleUiDto,
+                                                recurrence = scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence,
                                                 isSavedSchedule = scheduleState.isSaved,
                                                 appSettings = appSettings,
                                                 paddingBottom = externalPadding.calculateBottomPadding()
@@ -236,8 +236,8 @@ fun ScreenSchedule(
                             },
                             onConfirmation = {
                                 scheduleViewModel.deleteNamedSchedule(
-                                    scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.id,
-                                    scheduleState.currentNamedScheduleData.namedSchedule.namedScheduleEntity.isDefault
+                                    scheduleState.currentNamedSchedule.namedSchedule.namedScheduleEntity.id,
+                                    scheduleState.currentNamedSchedule.namedSchedule.namedScheduleEntity.isDefault
                                 )
                             }
                         )
@@ -290,8 +290,8 @@ fun ScreenSchedule(
     showNamedScheduleEntityDialog?.let {
         ModalDialogNamedSchedule(
             namedScheduleEntity = it,
-            currentScheduleEntity = scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity,
-            schedules = scheduleState.currentNamedScheduleData?.namedSchedule?.schedules,
+            currentScheduleEntity = scheduleState.currentNamedSchedule?.scheduleUiDto?.scheduleEntity,
+            schedules = scheduleState.currentNamedSchedule?.namedSchedule?.schedules,
             today = currentDateTime.toLocalDate(),
             scheduleViewModel = scheduleViewModel,
             appBackStack = appUiState.appBackStack,
@@ -299,7 +299,7 @@ fun ScreenSchedule(
             isSavedNamedSchedule = scheduleState.isSaved,
             isDefaultNamedSchedule = it.isDefault,
 
-            haveNotEmptySchedules = scheduleState.currentNamedScheduleData?.namedSchedule?.schedules?.isNotEmpty() == true && scheduleState.currentNamedScheduleData.scheduleData?.scheduleEntity != null
+            haveNotEmptySchedules = scheduleState.currentNamedSchedule?.namedSchedule?.schedules?.isNotEmpty() == true && scheduleState.currentNamedSchedule.scheduleUiDto?.scheduleEntity != null
         ) {
             showNamedScheduleEntityDialog = null
         }

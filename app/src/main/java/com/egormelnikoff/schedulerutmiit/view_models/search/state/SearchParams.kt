@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.view_models.search
+package com.egormelnikoff.schedulerutmiit.view_models.search.state
 
 import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.enums.SearchType

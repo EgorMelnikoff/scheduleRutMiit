@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.view_models.curriculum
+package com.egormelnikoff.schedulerutmiit.view_models.curriculum.state
 
 import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.subjects.SubjectDto

@@ -29,16 +29,14 @@ import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.EventsBrieflySummary
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.EventsDetailSummary
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleData
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun DaySelector(
     scheduleUiState: ScheduleUiState,
-
-    scheduleData: ScheduleData,
-
+    scheduleUiDto: ScheduleUiDto,
     selectedWeek: Int,
     eventsCountView: EventsCountView,
     scope: CoroutineScope
@@ -49,13 +47,13 @@ fun DaySelector(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        val firstDayOfWeek = scheduleData.scheduleEntity.startDate.getFirstDayOfWeek()
+        val firstDayOfWeek = scheduleUiDto.scheduleEntity.startDate.getFirstDayOfWeek()
 
         stringArrayResource(R.array.days_of_week).forEachIndexed { index, day ->
             val currentDate = firstDayOfWeek.plusDays(index.toLong())
 
             val eventsForDate =
-                scheduleData.periodicEvents?.getEventsByDayAndWeek(
+                scheduleUiDto.periodicEvents?.getEventsByDayAndWeek(
                     dayOfWeek = currentDate.dayOfWeek,
                     week = selectedWeek
                 )
@@ -63,7 +61,7 @@ fun DaySelector(
             DaySelectorItem(
                 title = day,
                 events = eventsForDate,
-                eventsExtraData = scheduleData.eventsExtraData,
+                eventsExtraData = scheduleUiDto.eventsExtraData,
                 eventsCountView = eventsCountView,
                 isSelected = index == scheduleUiState.pagerSplitWeeks.currentPage,
                 isSunday = currentDate.dayOfWeek.value == 7,
@@ -73,7 +71,7 @@ fun DaySelector(
                         scheduleUiState.pagerSplitWeeks.scrollToPage(date)
                     }
                 },
-                isToday = (currentDate == scheduleData.schedulePagerData.today)
+                isToday = (currentDate == scheduleUiDto.schedulePagerUiDto.today)
             )
         }
     }

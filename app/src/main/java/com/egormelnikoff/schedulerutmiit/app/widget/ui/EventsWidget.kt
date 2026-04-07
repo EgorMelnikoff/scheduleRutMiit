@@ -118,20 +118,20 @@ class EventsWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (widgetData?.settledScheduleEntity != null && widgetData.reviewData != null) {
-                val header = when (widgetData.reviewData.displayedDate) {
+            if (widgetData?.settledScheduleEntity != null && widgetData.reviewUiDto != null) {
+                val header = when (widgetData.reviewUiDto.displayedDate) {
                     today -> {
                         "${glanceStringResource(R.string.today)}, " +
-                                "${widgetData.reviewData.displayedDate.format(dayMonthNameFormatter)}"
+                                "${widgetData.reviewUiDto.displayedDate.format(dayMonthNameFormatter)}"
                     }
 
                     today.plusDays(1) -> {
                         "${glanceStringResource(R.string.tomorrow)}, " +
-                                "${widgetData.reviewData.displayedDate.format(dayMonthNameFormatter)}"
+                                "${widgetData.reviewUiDto.displayedDate.format(dayMonthNameFormatter)}"
                     }
 
                     else -> {
-                        widgetData.reviewData.displayedDate.format(dayMonthNameFormatter)
+                        widgetData.reviewUiDto.displayedDate.format(dayMonthNameFormatter)
                     }
                 }
 
@@ -156,11 +156,11 @@ class EventsWidget : GlanceAppWidget() {
                                 maxLines = 1
                             )
 
-                            if (widgetData.reviewData.currentWeek != 0) {
+                            if (widgetData.reviewUiDto.currentWeek != 0) {
                                 Spacer(modifier = GlanceModifier.width(4.dp))
                                 Image(
                                     modifier = GlanceModifier.size(16.dp),
-                                    provider = when (widgetData.reviewData.currentWeek) {
+                                    provider = when (widgetData.reviewUiDto.currentWeek) {
                                         1 -> ImageProvider(R.drawable.one)
                                         2 -> ImageProvider(R.drawable.two)
                                         else -> ImageProvider(R.drawable.resource_null)
@@ -198,7 +198,7 @@ class EventsWidget : GlanceAppWidget() {
                         )
                     )
                 }
-                val displayedEvents = widgetData.reviewData.events.toList()
+                val displayedEvents = widgetData.reviewUiDto.events.toList()
 
                 if (displayedEvents.isNotEmpty()) {
                     Spacer(modifier = GlanceModifier.height(12.dp))
@@ -312,8 +312,8 @@ class EventsWidget : GlanceAppWidget() {
             maxLines = 1
         )
         if (!event.rooms.isNullOrEmpty()) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            EventComment(
+                title = event.rooms.joinToString { it.name },
             ) {
                 Image(
                     modifier = GlanceModifier.size(8.dp),
@@ -323,47 +323,48 @@ class EventsWidget : GlanceAppWidget() {
                         colorProvider = GlanceTheme.colors.onSecondaryContainer
                     )
                 )
-                Spacer(modifier = GlanceModifier.width(4.dp))
-                event.rooms.forEach { group ->
-                    Text(
-                        text = group.name,
-                        style = TextStyle(
-                            fontSize = 10.sp,
-                            color = GlanceTheme.colors.onSecondaryContainer
-                        ),
-                        maxLines = 1
-                    )
-                    Spacer(modifier = GlanceModifier.width(4.dp))
-                }
             }
         }
         if (eventExtraData != null && eventExtraData.comment.isNotBlank()) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            EventComment(
+                title = eventExtraData.comment.replace(Regex("\\s+"), " "),
             ) {
-                if (eventExtraData.tag != 0) {
-                    val color = eventExtraData.tag.getColorByIndex()
-                    Image(
-                        modifier = GlanceModifier.size(8.dp),
-                        provider = ImageProvider(R.drawable.circle),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(
-                            colorProvider = ColorProvider(
-                                color = color
-                            )
+                val color = eventExtraData.tag.getColorByIndex()
+                Image(
+                    modifier = GlanceModifier.size(8.dp),
+                    provider = ImageProvider(R.drawable.circle),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(
+                        colorProvider = ColorProvider(
+                            color = color
                         )
                     )
-                    Spacer(modifier = GlanceModifier.width(4.dp))
-                }
-                Text(
-                    text = eventExtraData.comment,
-                    style = TextStyle(
-                        fontSize = 10.sp,
-                        color = GlanceTheme.colors.onSecondaryContainer
-                    ),
-                    maxLines = 1
                 )
             }
         }
+    }
+}
+
+@Composable
+fun EventComment(
+    title: String,
+    image: (@Composable () -> Unit)?
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        image?.let {
+            it.invoke()
+            Spacer(modifier = GlanceModifier.width(4.dp))
+        }
+        image?.invoke()
+        Text(
+            text = title,
+            style = TextStyle(
+                fontSize = 10.sp,
+                color = GlanceTheme.colors.onSecondaryContainer
+            ),
+            maxLines = 1
+        )
     }
 }

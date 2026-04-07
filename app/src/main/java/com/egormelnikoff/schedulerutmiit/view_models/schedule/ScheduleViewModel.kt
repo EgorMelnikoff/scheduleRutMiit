@@ -23,6 +23,9 @@ import com.egormelnikoff.schedulerutmiit.domain.schedule.UpdateEventExtraDataUse
 import com.egormelnikoff.schedulerutmiit.repos.event.EventRepos
 import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.repos.schedule.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.event.UiEvent
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.NamedScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -173,7 +176,7 @@ class ScheduleViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val currentId =
-                _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id
+                _scheduleState.value.currentNamedSchedule?.namedSchedule?.namedScheduleEntity?.id
             if (namedScheduleId == currentId && !setDefault) {
                 return@launch
             }
@@ -196,7 +199,7 @@ class ScheduleViewModel @Inject constructor(
     fun saveCurrentNamedSchedule() {
         viewModelScope.launch {
             val currentNamedSchedule =
-                _scheduleState.value.currentNamedScheduleData?.namedSchedule ?: return@launch
+                _scheduleState.value.currentNamedSchedule?.namedSchedule ?: return@launch
 
             val result = saveNamedScheduleUseCase(
                 currentNamedSchedule
@@ -221,7 +224,7 @@ class ScheduleViewModel @Inject constructor(
             _scheduleState.update {
                 it.copy(
                     savedNamedScheduleEntities = result.savedNamedScheduleEntities ?: listOf(),
-                    currentNamedScheduleData = NamedScheduleData(result.namedSchedule),
+                    currentNamedSchedule = NamedScheduleUiDto(result.namedSchedule),
                     isSaved = true
                 )
             }
@@ -236,7 +239,7 @@ class ScheduleViewModel @Inject constructor(
             scheduleRepos.deleteById(scheduleId)
             updateState(
                 namedScheduleEntities = namedScheduleRepos.getAllEntities(),
-                namedSchedule = if (namedScheduleId == _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
+                namedSchedule = if (namedScheduleId == _scheduleState.value.currentNamedSchedule?.namedSchedule?.namedScheduleEntity?.id) {
                     namedScheduleRepos.getById(namedScheduleId)
                 } else null
             )
@@ -259,7 +262,7 @@ class ScheduleViewModel @Inject constructor(
 
             updateState(
                 namedScheduleEntities = namedScheduleRepos.getAllEntities(),
-                namedSchedule = if (namedScheduleEntity.id == _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id) {
+                namedSchedule = if (namedScheduleEntity.id == _scheduleState.value.currentNamedSchedule?.namedSchedule?.namedScheduleEntity?.id) {
                     namedScheduleRepos.getById(namedScheduleEntity.id)
                 } else null
             )
@@ -290,7 +293,7 @@ class ScheduleViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val currentNamedSchedule =
-                _scheduleState.value.currentNamedScheduleData?.namedSchedule ?: return@launch
+                _scheduleState.value.currentNamedSchedule?.namedSchedule ?: return@launch
 
             val result = manageSchedulesUseCase(
                 currentNamedSchedule = currentNamedSchedule,
@@ -313,10 +316,10 @@ class ScheduleViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val namedScheduleId =
-                _scheduleState.value.currentNamedScheduleData?.namedSchedule?.namedScheduleEntity?.id
+                _scheduleState.value.currentNamedSchedule?.namedSchedule?.namedScheduleEntity?.id
                     ?: return@launch
             val scheduleId =
-                _scheduleState.value.currentNamedScheduleData?.scheduleData?.scheduleEntity?.id
+                _scheduleState.value.currentNamedSchedule?.scheduleUiDto?.scheduleEntity?.id
                     ?: return@launch
 
             val result = updateEventExtraDataUseCase(
@@ -410,15 +413,15 @@ class ScheduleViewModel @Inject constructor(
         }
 
         namedSchedule?.let {
-            val namedScheduleData = NamedScheduleData.invoke(
+            val namedScheduleUiDto = NamedScheduleUiDto.invoke(
                 namedSchedule = namedSchedule
             )
             _scheduleState.update {
                 it.copy(
-                    currentNamedScheduleData = namedScheduleData ?: it.currentNamedScheduleData,
-                    defaultNamedScheduleData = if (namedSchedule.namedScheduleEntity.isDefault) {
-                        namedScheduleData
-                    } else it.defaultNamedScheduleData,
+                    currentNamedSchedule = namedScheduleUiDto ?: it.currentNamedSchedule,
+                    defaultNamedSchedule = if (namedSchedule.namedScheduleEntity.isDefault) {
+                        namedScheduleUiDto
+                    } else it.defaultNamedSchedule,
                 )
             }
         }

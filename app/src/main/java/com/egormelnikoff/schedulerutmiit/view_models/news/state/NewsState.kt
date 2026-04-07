@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.view_models.news
+package com.egormelnikoff.schedulerutmiit.view_models.news.state
 
 import com.egormelnikoff.schedulerutmiit.app.dto.local.news.NewsParsedDto
 

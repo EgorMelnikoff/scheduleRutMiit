@@ -5,7 +5,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.UiEvent
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.event.UiEvent
 
 @Composable
 fun ScheduleUiEventProcessor(

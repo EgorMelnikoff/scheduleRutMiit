@@ -58,7 +58,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import java.time.LocalDateTime
 
@@ -144,7 +144,7 @@ fun ReviewScreen(
                     )
 
 
-                    scheduleState.defaultNamedScheduleData?.scheduleData?.reviewData?.let { reviewData ->
+                    scheduleState.defaultNamedSchedule?.scheduleUiDto?.reviewUiDto?.let { reviewData ->
                         val eventsReview = StringBuilder().apply {
                             when (reviewData.displayedDate) {
                                 currentDate -> append(stringResource(R.string.today))

@@ -54,8 +54,8 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchState
+import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchParams
+import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchState
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 
 @Composable

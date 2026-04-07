@@ -44,12 +44,12 @@ import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.view_models.curriculum.CurriculumViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.news.NewsState
+import com.egormelnikoff.schedulerutmiit.view_models.news.state.NewsState
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchParams
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchState
+import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchParams
+import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchState
 import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -247,8 +247,8 @@ fun RootHost(
                 entry<Route.Dialog.HiddenEventsDialog> { key ->
                     HiddenEventsDialog(
                         namedScheduleEntity = key.namedScheduleEntity,
-                        scheduleEntity = scheduleState.currentNamedScheduleData?.scheduleData?.scheduleEntity,
-                        hiddenEvents = scheduleState.currentNamedScheduleData?.scheduleData?.hiddenEvents ?: listOf(),
+                        scheduleEntity = scheduleState.currentNamedSchedule?.scheduleUiDto?.scheduleEntity,
+                        hiddenEvents = scheduleState.currentNamedSchedule?.scheduleUiDto?.hiddenEvents ?: listOf(),
                         scheduleViewModel = scheduleViewModel,
                         appBackStack = appUiState.appBackStack
                     )
@@ -282,12 +282,12 @@ fun PageHost(
                     onScheduleClick = {
                         appUiState.scope.launch {
                             when {
-                                scheduleUiState != null && scheduleState.currentNamedScheduleData?.scheduleData?.schedulePagerData != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
+                                scheduleUiState != null && scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
                                     scheduleUiState.onSelectDate(
-                                        scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate
+                                        scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate
                                     )
                                     scheduleUiState.pagerWeeksState.animateScrollToPage(
-                                        scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.weeksStartIndex
+                                        scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.weeksStartIndex
                                     )
                                 }
 
@@ -295,12 +295,12 @@ fun PageHost(
                                     scheduleUiState.scheduleListState.animateScrollToItem(0)
                                 }
 
-                                scheduleUiState != null && scheduleState.currentNamedScheduleData?.scheduleData?.schedulePagerData != null && appSettings.scheduleView == ScheduleView.SPLIT_WEEKS -> {
+                                scheduleUiState != null && scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.SPLIT_WEEKS -> {
                                     scheduleUiState.pagerSplitWeeks.scrollToPage(
-                                        scheduleState.currentNamedScheduleData.scheduleData.schedulePagerData.defaultDate.dayOfWeek.value - 1
+                                        scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.dayOfWeek.value - 1
                                     )
                                     scheduleUiState.onSelectWeek(
-                                        scheduleState.currentNamedScheduleData.scheduleData.scheduleEntity.recurrence?.currentNumber
+                                        scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence?.currentNumber
                                             ?: 0
                                     )
                                 }
