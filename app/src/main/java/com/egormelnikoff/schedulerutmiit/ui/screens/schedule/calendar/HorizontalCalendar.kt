@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
@@ -164,11 +165,25 @@ fun HorizontalCalendar(
                         text = stringResource(
                             R.string.week,
                             selectedWeek.toString()
-                        ).replaceFirstChar { it.lowercase() } + " (${(scheduleUiState.pagerWeeksState.currentPage.plus(1))})",
+                        ).replaceFirstChar { it.lowercase() },
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center
                     )
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.secondaryContainer),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = (scheduleUiState.pagerWeeksState.currentPage + 1).toString(),
+                            fontSize = 12.sp,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                 }
             }
             Icon(
