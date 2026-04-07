@@ -4,6 +4,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
+import com.egormelnikoff.schedulerutmiit.repos.event.EventRepos
 import com.egormelnikoff.schedulerutmiit.repos.event_extra.EventExtraRepos
 import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
 import kotlinx.coroutines.flow.first
@@ -11,9 +12,9 @@ import javax.inject.Inject
 
 class UpdateEventExtraDataUseCase @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
+    private val eventRepos: EventRepos,
     private val eventExtraRepos: EventExtraRepos,
-    private val preferencesDataStore: PreferencesDataStore,
-    private val eventDao: EventDao
+    private val preferencesDataStore: PreferencesDataStore
 ) {
     suspend operator fun invoke(
         namedScheduleId: Long,
@@ -61,7 +62,7 @@ class UpdateEventExtraDataUseCase @Inject constructor(
         action: suspend (Event) -> Unit
     ) {
         if (preferencesDataStore.syncTagCommentsFlow.first()) {
-            eventDao.getByNameAndType(
+            eventRepos.getByNameAndType(
                 event.name,
                 event.typeName,
                 event.scheduleId

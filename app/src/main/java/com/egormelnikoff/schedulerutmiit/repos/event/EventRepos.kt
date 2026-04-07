@@ -17,6 +17,11 @@ interface EventRepos {
         date: String,
         scheduleId: Long
     ): Int
+    suspend fun getByNameAndType(
+        name: String,
+        typeName: String?,
+        scheduleId: Long
+    ): List<Event>
 
     suspend fun update(event: Event)
     suspend fun updateIsHidden(

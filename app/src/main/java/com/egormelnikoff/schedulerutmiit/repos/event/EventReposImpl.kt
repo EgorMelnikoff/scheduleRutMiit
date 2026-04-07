@@ -49,6 +49,11 @@ class EventReposImpl @Inject constructor(
         scheduleId: Long
     ) = eventDao.getCountPerDate(date, scheduleId)
 
+    override suspend fun getByNameAndType(
+        name: String,
+        typeName: String?,
+        scheduleId: Long
+    ) = eventDao.getByNameAndType(name, typeName, scheduleId)
 
     override suspend fun update(event: Event) = db.withTransaction {
         eventDao.deleteById(event.id)
