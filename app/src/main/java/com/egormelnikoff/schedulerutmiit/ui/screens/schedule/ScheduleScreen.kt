@@ -46,8 +46,8 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.list.ScheduleListVi
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.split_weeks.ScheduleSplitWeeksView
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import java.time.LocalDateTime
 

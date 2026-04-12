@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.datasource.remote.api
 
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.institutes.InstitutesDto
-import com.egormelnikoff.schedulerutmiit.app.dto.remote.news.NewsListDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.news.NewsDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.news.NewsListDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.timetable.TimetablesDto
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

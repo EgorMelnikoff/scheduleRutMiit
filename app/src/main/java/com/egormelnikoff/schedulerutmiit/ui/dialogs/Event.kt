@@ -63,6 +63,7 @@ import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.personImageUrl
+import com.egormelnikoff.schedulerutmiit.domain.schedule.EventAction
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -105,7 +106,7 @@ fun EventDialog(
     if (isSavedSchedule) {
         LaunchedEffect(comment, tag) {
             delay(500)
-            scheduleViewModel.updateEventExtra(event, comment, tag)
+            scheduleViewModel.updateEventExtra(scheduleEntity, event, comment, tag)
         }
     }
 
@@ -342,6 +343,7 @@ fun EventDialog(
                                             onClick = {
                                                 comment = ""
                                                 scheduleViewModel.updateEventExtra(
+                                                    scheduleEntity,
                                                     event,
                                                     "",
                                                     tag
@@ -418,7 +420,7 @@ fun EventDialog(
                 showEventDeleteDialog = false
             },
             onConfirmation = {
-                scheduleViewModel.deleteCustomEvent(scheduleEntity, event.id)
+                scheduleViewModel.eventAction(scheduleEntity, event, EventAction.Delete)
                 appBackStack.onBack()
             }
         )
@@ -432,7 +434,7 @@ fun EventDialog(
                 showEventHideDialog = false
             },
             onConfirmation = {
-                scheduleViewModel.updateEventHidden(scheduleEntity, event.id, true)
+                scheduleViewModel.eventAction(scheduleEntity, event, EventAction.UpdateHidden(true))
                 appBackStack.onBack()
             }
         )

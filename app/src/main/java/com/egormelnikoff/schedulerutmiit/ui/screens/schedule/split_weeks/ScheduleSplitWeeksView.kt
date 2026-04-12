@@ -17,16 +17,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.extension.getEventsByDayAndWeek
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.RecurrenceDto
+import com.egormelnikoff.schedulerutmiit.app.extension.getEventsByDayAndWeek
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButtonRow
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.EventsForDay
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.NamedScheduleUiDto
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 @Composable
 fun ScheduleSplitWeeksView(

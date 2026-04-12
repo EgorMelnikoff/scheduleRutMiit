@@ -58,8 +58,8 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import java.time.LocalDateTime
 
 @Composable

@@ -2,10 +2,10 @@ package com.egormelnikoff.schedulerutmiit.view_models.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
-import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.person.PersonDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
+import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager

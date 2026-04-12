@@ -109,7 +109,8 @@ fun RenameDialog(
                 enabled = renameEnabled,
                 onClick = {
                     scheduleViewModel.renameNamedSchedule(
-                        namedScheduleEntity = namedScheduleEntity,
+                        namedScheduleId = namedScheduleEntity.id,
+                        currentName = namedScheduleEntity.fullName,
                         newName = newName.trim()
                     )
                     appBackStack.onBack()

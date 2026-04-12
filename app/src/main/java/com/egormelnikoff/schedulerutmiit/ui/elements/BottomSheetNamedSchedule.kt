@@ -72,7 +72,7 @@ fun ModalDialogNamedSchedule(
     onOpenNamedSchedule: (() -> Unit)? = null,
     onDismiss: (NamedScheduleEntity?) -> Unit
 ) {
-    val limitActions = remember { 1 }
+    val limitActions = remember { 2 }
     val uriHandler = LocalUriHandler.current
     var showDeleteDialog by remember { mutableStateOf<Schedule?>(null) }
 

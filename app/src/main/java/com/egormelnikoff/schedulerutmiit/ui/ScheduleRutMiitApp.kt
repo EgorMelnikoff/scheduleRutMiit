@@ -44,13 +44,13 @@ import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.view_models.curriculum.CurriculumViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.news.state.NewsState
 import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.news.state.NewsState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchParams
 import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchState
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime

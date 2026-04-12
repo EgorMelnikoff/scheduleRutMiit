@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
+import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
 import com.egormelnikoff.schedulerutmiit.repos.event.EventRepos
 import com.egormelnikoff.schedulerutmiit.repos.event_extra.EventExtraRepos
@@ -10,29 +10,60 @@ import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
-class UpdateEventExtraDataUseCase @Inject constructor(
+sealed class EventAction {
+    data object Add : EventAction()
+    data object Update : EventAction()
+    data object Delete : EventAction()
+    data class UpdateHidden(
+        val isHidden: Boolean
+    ) : EventAction()
+
+    data class UpdateExtra(
+        val tag: Int,
+        val comment: String
+    ) : EventAction()
+}
+
+class EventActionUseCase @Inject constructor(
+    private val preferencesDataStore: PreferencesDataStore,
     private val namedScheduleRepos: NamedScheduleRepos,
     private val eventRepos: EventRepos,
-    private val eventExtraRepos: EventExtraRepos,
-    private val preferencesDataStore: PreferencesDataStore
+    private val eventExtraRepos: EventExtraRepos
 ) {
     suspend operator fun invoke(
-        namedScheduleId: Long,
-        scheduleId: Long,
+        scheduleEntity: ScheduleEntity,
+        event: Event,
+        eventAction: EventAction,
+    ): ScheduleUseCaseResult {
+        when (eventAction) {
+            is EventAction.Add -> eventRepos.save(event)
+            is EventAction.Delete -> eventRepos.deleteById(event.id)
+            is EventAction.Update -> eventRepos.update(event)
+            is EventAction.UpdateHidden -> eventRepos.updateIsHidden(event.id, eventAction.isHidden)
+            is EventAction.UpdateExtra -> updateEventExtra(
+                event,
+                eventAction.tag,
+                eventAction.comment
+            )
+        }
+
+        return ScheduleUseCaseResult(
+            savedNamedScheduleEntities = null,
+            namedSchedule = namedScheduleRepos.getById(scheduleEntity.namedScheduleId)
+        )
+    }
+
+
+    private suspend fun updateEventExtra(
         event: Event,
         tag: Int,
         comment: String
-    ): ScheduleUseCaseResult {
+    ) {
         if (comment == "" && tag == 0) {
             synchronizeEventExtraAction(event) {
                 eventExtraRepos.deleteByEventId(it.id)
             }
-            return ScheduleUseCaseResult(
-                savedNamedScheduleEntities = null,
-                namedSchedule = namedScheduleRepos.getById(
-                    namedScheduleId
-                )
-            )
+            return
         }
 
         val eventExtraData = eventExtraRepos.getByEventId(event.id)
@@ -50,14 +81,9 @@ class UpdateEventExtraDataUseCase @Inject constructor(
             }
 
         }
-
-        return ScheduleUseCaseResult(
-            savedNamedScheduleEntities = null,
-            namedSchedule = namedScheduleRepos.getById(namedScheduleId)
-        )
     }
 
-    suspend fun synchronizeEventExtraAction(
+    private suspend fun synchronizeEventExtraAction(
         event: Event,
         action: suspend (Event) -> Unit
     ) {

@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.datasource.remote.news
 
-import com.egormelnikoff.schedulerutmiit.app.network.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.app.dto.local.news.NewsParsedDto
+import com.egormelnikoff.schedulerutmiit.app.network.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.datasource.remote.api.MiitApi

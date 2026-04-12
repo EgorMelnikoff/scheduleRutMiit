@@ -29,12 +29,13 @@ import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameForm
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.domain.schedule.EventAction
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -100,10 +101,18 @@ fun ScheduleListView(
                                 )
                             },
                             onDeleteEvent = { scheduleEntity, eventId ->
-                                scheduleViewModel.deleteCustomEvent(scheduleEntity, eventId)
+                                scheduleViewModel.eventAction(
+                                    scheduleEntity,
+                                    eventId,
+                                    EventAction.Delete
+                                )
                             },
-                            onUpdateHiddenEvent = { scheduleEntity, eventId ->
-                                scheduleViewModel.updateEventHidden(scheduleEntity, eventId, true)
+                            onUpdateHiddenEvent = { scheduleEntity, event ->
+                                scheduleViewModel.eventAction(
+                                    scheduleEntity,
+                                    event,
+                                    EventAction.UpdateHidden(true)
+                                )
                             },
                             events = eventsGrouped.second,
                             scheduleEntity = scheduleUiDto.scheduleEntity,

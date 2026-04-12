@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.relation.Schedule
-import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.ScheduleDto
 import javax.inject.Inject
 
 class ScheduleMapper @Inject constructor() {

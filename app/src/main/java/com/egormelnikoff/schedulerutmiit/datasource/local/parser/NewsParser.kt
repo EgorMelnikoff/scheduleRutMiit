@@ -7,9 +7,9 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_MIIT_URL
 import com.egormelnikoff.schedulerutmiit.app.dto.local.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.news.NewsDto
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_MIIT_URL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup

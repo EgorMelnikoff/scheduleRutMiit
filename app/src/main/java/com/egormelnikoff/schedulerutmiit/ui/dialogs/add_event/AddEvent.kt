@@ -35,13 +35,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RecurrenceEventDto
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RecurrenceEventDto
 import com.egormelnikoff.schedulerutmiit.app.validator.EventValidation
+import com.egormelnikoff.schedulerutmiit.domain.schedule.EventAction
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -162,13 +163,10 @@ fun AddEditEventDialog(
                             )
                             editableEvent?.let {
                                 if (editableEvent != event) {
-                                    scheduleViewModel.updateCustomEvent(
-                                        scheduleEntity,
-                                        event
-                                    )
+                                    scheduleViewModel.eventAction(scheduleEntity, event, EventAction.Update)
                                 }
-                            } ?: scheduleViewModel.addCustomEvent(
-                                scheduleEntity, event
+                            } ?: scheduleViewModel.eventAction(
+                                scheduleEntity, event, EventAction.Add
                             )
                             appUiState.appBackStack.onBack()
                         }

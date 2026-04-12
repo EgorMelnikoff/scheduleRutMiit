@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.datasource.remote.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
-import com.egormelnikoff.schedulerutmiit.app.network.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.timetable.TimetableDto
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
+import com.egormelnikoff.schedulerutmiit.app.network.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.ScheduleParser
 import com.egormelnikoff.schedulerutmiit.datasource.remote.api.MiitApi

@@ -49,8 +49,8 @@ fun Event(
     eventView: EventView,
     navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
     navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
-    onDeleteEvent: (ScheduleEntity, Long) -> Unit,
-    onUpdateHiddenEvent: (ScheduleEntity, Long) -> Unit
+    onDeleteEvent: (ScheduleEntity, Event) -> Unit,
+    onUpdateHiddenEvent: (ScheduleEntity, Event) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -106,8 +106,8 @@ fun Event(
 fun ScheduleSingleEvent(
     navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
     navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
-    onDeleteEvent: (ScheduleEntity, Long) -> Unit,
-    onUpdateHiddenEvent: (ScheduleEntity, Long) -> Unit,
+    onDeleteEvent: (ScheduleEntity, Event) -> Unit,
+    onUpdateHiddenEvent: (ScheduleEntity, Event) -> Unit,
     scheduleEntity: ScheduleEntity,
     isSavedSchedule: Boolean,
     eventView: EventView,
@@ -368,7 +368,7 @@ fun ScheduleSingleEvent(
             CustomAlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 onConfirmation = {
-                    onDeleteEvent(scheduleEntity, event.id)
+                    onDeleteEvent(scheduleEntity, event)
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                 dialogTitle = "${stringResource(R.string.delete_event)}?",
@@ -379,7 +379,7 @@ fun ScheduleSingleEvent(
             CustomAlertDialog(
                 onDismissRequest = { showHideDialog = false },
                 onConfirmation = {
-                    onUpdateHiddenEvent(scheduleEntity, event.id)
+                    onUpdateHiddenEvent(scheduleEntity, event)
                     showHideDialog = false
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),

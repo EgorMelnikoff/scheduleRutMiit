@@ -102,6 +102,7 @@ fun ColumnGroup(
     title: String? = null,
     titleColor: Color? = null,
     withBackground: Boolean = true,
+    backgroundColor: Color = MaterialTheme.colorScheme.secondaryContainer,
     items: List<@Composable () -> Unit>
 ) {
     if (items.isNotEmpty()) {
@@ -153,7 +154,7 @@ fun ColumnGroup(
                                     }
                                     it
                                         .clip(shape)
-                                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                                        .background(backgroundColor)
                                 } else {
                                     it
                                 }

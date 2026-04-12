@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.entity.relation.Schedule
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType

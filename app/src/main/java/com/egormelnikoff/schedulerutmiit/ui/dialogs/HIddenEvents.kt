@@ -26,6 +26,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.Event
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.domain.schedule.EventAction
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
@@ -93,10 +94,10 @@ fun HiddenEventsDialog(
                                 IconButton(
                                     onClick = {
                                         scheduleEntity?.let {
-                                            scheduleViewModel.updateEventHidden(
+                                            scheduleViewModel.eventAction(
                                                 scheduleEntity,
-                                                event.id,
-                                                false
+                                                event,
+                                                EventAction.UpdateHidden(false)
                                             )
                                         }
                                     },

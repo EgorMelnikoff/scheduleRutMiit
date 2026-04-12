@@ -1,13 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.yearDateMonthFormatter
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.NonPeriodicContentDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.PeriodicContentDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.RecurrenceDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.ScheduleDto
+import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.datasource.remote.schedule.ScheduleRemoteDataSource
 import java.time.temporal.WeekFields
 import javax.inject.Inject

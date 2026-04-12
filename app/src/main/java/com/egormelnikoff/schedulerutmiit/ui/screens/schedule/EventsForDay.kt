@@ -15,6 +15,7 @@ import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.domain.schedule.EventAction
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
@@ -69,10 +70,10 @@ fun EventsForDay(
                         )
                     },
                     onDeleteEvent = { scheduleEntity, eventId ->
-                        scheduleViewModel.deleteCustomEvent(scheduleEntity, eventId)
+                        scheduleViewModel.eventAction(scheduleEntity, eventId, EventAction.Delete)
                     },
-                    onUpdateHiddenEvent = { scheduleEntity, eventId ->
-                        scheduleViewModel.updateEventHidden(scheduleEntity, eventId, true)
+                    onUpdateHiddenEvent = { scheduleEntity, event ->
+                        scheduleViewModel.eventAction(scheduleEntity, event, EventAction.UpdateHidden(true))
                     },
 
                     events = events.second,

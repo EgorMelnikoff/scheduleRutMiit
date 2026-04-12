@@ -1,7 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
 import com.egormelnikoff.schedulerutmiit.domain.schedule.result.ScheduleUseCaseResult
-import com.egormelnikoff.schedulerutmiit.repos.event.EventRepos
 import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.repos.schedule.ScheduleRepos
 import javax.inject.Inject

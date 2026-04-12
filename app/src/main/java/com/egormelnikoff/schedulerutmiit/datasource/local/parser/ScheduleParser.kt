@@ -1,19 +1,19 @@
 package com.egormelnikoff.schedulerutmiit.datasource.local.parser
 
 import android.os.Build
-import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
-import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.EventDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.NonPeriodicContentDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.PeriodicContentDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.RecurrenceDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.ScheduleDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.EventDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RecurrenceEventDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.timetable.TimetableDto
+import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Document

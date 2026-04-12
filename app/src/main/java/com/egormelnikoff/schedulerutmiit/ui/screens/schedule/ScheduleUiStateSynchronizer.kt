@@ -5,8 +5,8 @@ import androidx.compose.runtime.LaunchedEffect
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 

@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.datasource.remote.search
 
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
-import com.egormelnikoff.schedulerutmiit.app.network.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.institutes.InstitutesDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.person.PersonDto
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
+import com.egormelnikoff.schedulerutmiit.app.network.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SearchParser
 import com.egormelnikoff.schedulerutmiit.datasource.remote.api.MiitApi

@@ -19,9 +19,9 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.EventsForDay
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.NamedScheduleUiDto
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
 
 @Composable
 fun ScheduleCalendarView(
