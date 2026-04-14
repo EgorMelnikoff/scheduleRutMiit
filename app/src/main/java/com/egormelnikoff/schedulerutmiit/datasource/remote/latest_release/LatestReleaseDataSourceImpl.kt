@@ -13,6 +13,7 @@ class LatestReleaseDataSourceImpl @Inject constructor(
         callApi = {
             githubApi.getLatestRelease()
         },
+        timeoutMs = 2000,
         callJsoup = null
     )
 }
