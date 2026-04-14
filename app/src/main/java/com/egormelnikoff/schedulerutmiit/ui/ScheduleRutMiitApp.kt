@@ -38,9 +38,9 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleUiStateSynchronizer
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState

@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.domain.schedule
 
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
 import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.exception.ScheduleLoadException
 import com.egormelnikoff.schedulerutmiit.app.extension.getShortName
-import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
 import com.egormelnikoff.schedulerutmiit.app.network.result.Result
 import com.egormelnikoff.schedulerutmiit.app.network.result.TypedError
 import com.egormelnikoff.schedulerutmiit.datasource.remote.schedule.ScheduleRemoteDataSource

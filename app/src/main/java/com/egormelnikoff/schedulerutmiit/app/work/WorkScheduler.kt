@@ -5,8 +5,8 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.egormelnikoff.schedulerutmiit.app.work.worker.ScheduleWorker
 import com.egormelnikoff.schedulerutmiit.app.work.worker.FetchLatestReleaseWorker
+import com.egormelnikoff.schedulerutmiit.app.work.worker.ScheduleWorker
 import com.egormelnikoff.schedulerutmiit.app.work.worker.WidgetWorker
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

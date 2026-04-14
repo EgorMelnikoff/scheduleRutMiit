@@ -38,11 +38,11 @@ import androidx.core.net.toUri
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.DEVELOPER
 import com.egormelnikoff.schedulerutmiit.app.AppConst.DEVELOPER_EMAIL
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.TG_APP_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.GITHUB_APP_LATEST_RELEASE_DOWNLOAD
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.GITHUB_APP_REPOS
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.TG_AUTHOR_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.RU_STORE
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.TG_APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.TG_AUTHOR_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
