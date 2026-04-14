@@ -343,28 +343,27 @@ class EventsWidget : GlanceAppWidget() {
             }
         }
     }
-}
 
-@Composable
-fun EventComment(
-    title: String,
-    image: (@Composable () -> Unit)?
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically
+    @Composable
+    fun EventComment(
+        title: String,
+        image: (@Composable () -> Unit)?
     ) {
-        image?.let {
-            it.invoke()
-            Spacer(modifier = GlanceModifier.width(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            image?.let {
+                it.invoke()
+                Spacer(modifier = GlanceModifier.width(4.dp))
+            }
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    color = GlanceTheme.colors.onSecondaryContainer
+                ),
+                maxLines = 1
+            )
         }
-        image?.invoke()
-        Text(
-            text = title,
-            style = TextStyle(
-                fontSize = 10.sp,
-                color = GlanceTheme.colors.onSecondaryContainer
-            ),
-            maxLines = 1
-        )
     }
 }
