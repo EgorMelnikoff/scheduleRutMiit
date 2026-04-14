@@ -9,7 +9,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.app.dto.local.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.news.NewsDto
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_MIIT_URL
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_RUT_MIIT_URL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
@@ -53,7 +53,7 @@ object NewsParser {
                 "img" -> {
                     val imageUrl = element.attr("src")
                     if (imageUrl.isNotEmpty()) {
-                        parsedImages.add("$BASE_MIIT_URL$imageUrl")
+                        parsedImages.add("$BASE_RUT_MIIT_URL$imageUrl")
                     }
                 }
             }
@@ -63,8 +63,6 @@ object NewsParser {
             newsDto, parsedElements, parsedImages
         )
     }
-
-
 
     /* CONVERTERS */
     private fun htmlToAnnotatedString(html: String): AnnotatedString {

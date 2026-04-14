@@ -38,10 +38,10 @@ import androidx.core.net.toUri
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.AppConst.DEVELOPER
 import com.egormelnikoff.schedulerutmiit.app.AppConst.DEVELOPER_EMAIL
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_CHANNEL_URL
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_GITHUB_LATEST_RELEASE_DOWNLOAD
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.APP_GITHUB_REPOS
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.AUTHOR_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.TG_APP_CHANNEL_URL
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.GITHUB_APP_LATEST_RELEASE_DOWNLOAD
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.GITHUB_APP_REPOS
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.TG_AUTHOR_CHANNEL_URL
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.RU_STORE
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -183,11 +183,11 @@ fun InfoModalDialog(
                             showClickLabel = false,
                             onLongClick = {
                                 clipboard.nativeClipboard.setPrimaryClip(
-                                    ClipData.newPlainText(null, APP_GITHUB_LATEST_RELEASE_DOWNLOAD)
+                                    ClipData.newPlainText(null, GITHUB_APP_LATEST_RELEASE_DOWNLOAD)
                                 )
                             }
                         ) {
-                            uriHandler.openUri(APP_GITHUB_LATEST_RELEASE_DOWNLOAD)
+                            uriHandler.openUri(GITHUB_APP_LATEST_RELEASE_DOWNLOAD)
                         }
                     }, {
                         ClickableItem(
@@ -224,11 +224,11 @@ fun InfoModalDialog(
                             showClickLabel = false,
                             onLongClick = {
                                 clipboard.nativeClipboard.setPrimaryClip(
-                                    ClipData.newPlainText(null, APP_CHANNEL_URL)
+                                    ClipData.newPlainText(null, TG_APP_CHANNEL_URL)
                                 )
                             }
                         ) {
-                            uriHandler.openUri(APP_CHANNEL_URL)
+                            uriHandler.openUri(TG_APP_CHANNEL_URL)
                         }
                     }, {
                         ClickableItem(
@@ -274,11 +274,11 @@ fun InfoModalDialog(
                         subtitle = stringResource(R.string.source_code),
                         onLongClick = {
                             clipboard.nativeClipboard.setPrimaryClip(
-                                ClipData.newPlainText(null, APP_GITHUB_REPOS)
+                                ClipData.newPlainText(null, GITHUB_APP_REPOS)
                             )
                         }
                     ) {
-                        uriHandler.openUri(APP_GITHUB_REPOS)
+                        uriHandler.openUri(GITHUB_APP_REPOS)
                     }
                 }
             )
@@ -290,11 +290,11 @@ fun InfoModalDialog(
                         subtitle = stringResource(R.string.developer),
                         onLongClick = {
                             clipboard.nativeClipboard.setPrimaryClip(
-                                ClipData.newPlainText(null, AUTHOR_CHANNEL_URL)
+                                ClipData.newPlainText(null, TG_AUTHOR_CHANNEL_URL)
                             )
                         }
                     ) {
-                        uriHandler.openUri(AUTHOR_CHANNEL_URL)
+                        uriHandler.openUri(TG_AUTHOR_CHANNEL_URL)
                     }
                 }
 

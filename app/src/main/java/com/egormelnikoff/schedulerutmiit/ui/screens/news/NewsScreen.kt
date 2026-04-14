@@ -42,7 +42,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.news.NewsShortDto
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_MIIT_URL
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_RUT_MIIT_URL
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
@@ -139,7 +139,7 @@ fun NewsShort(
     newsShortDto: NewsShortDto,
     onClick: () -> Unit
 ) {
-    val model = rememberAsyncImagePainter("$BASE_MIIT_URL${newsShortDto.picUrl}")
+    val model = rememberAsyncImagePainter("$BASE_RUT_MIIT_URL${newsShortDto.picUrl}")
     val transition by animateFloatAsState(
         targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
     )

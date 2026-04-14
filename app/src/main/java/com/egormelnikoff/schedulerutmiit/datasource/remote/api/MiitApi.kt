@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.datasource.remote.api
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.institutes.InstitutesDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.news.NewsDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.news.NewsListDto
-import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.timetable.TimetablesDto
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints
 import retrofit2.Response
@@ -21,18 +20,19 @@ interface MiitApi {
         @Path("apiId") apiId: Int
     ): Response<TimetablesDto>
 
-    @GET(Endpoints.SCHEDULE)
-    suspend fun getSchedule(
-        @Path("type") typeName: String,
-        @Path("apiId") apiId: String,
-        @Path("timetableId") timetableId: String?
-    ): Response<ScheduleDto>
+//    @GET(Endpoints.SCHEDULE)
+//    suspend fun getSchedule(
+//        @Path("type") typeName: String,
+//        @Path("apiId") apiId: String,
+//        @Path("timetableId") timetableId: String?
+//    ): Response<ScheduleDto>
 
     @GET(Endpoints.NEWS_CATALOG)
     suspend fun getNewsList(
         @Query("page_size") pageSize: Int,
         @Query("from") fromPage: Int,
-        @Query("to") toPage: Int
+        @Query("to") toPage: Int,
+        @Query("idk_information_category") idCategory: Int = 2
     ): Response<NewsListDto>
 
     @GET(Endpoints.NEWS)
