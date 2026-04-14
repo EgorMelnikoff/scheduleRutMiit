@@ -1,6 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.app.di
 
+import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.API_GITHUB
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_RUT_MIIT_URL
+import com.egormelnikoff.schedulerutmiit.datasource.remote.api.GithubApi
 import com.egormelnikoff.schedulerutmiit.datasource.remote.api.MiitApi
 import com.google.gson.Gson
 import dagger.Module
@@ -35,21 +37,34 @@ object NetworkModule {
             }
             .build()
     }
+}
 
+@Module
+@InstallIn(SingletonComponent::class)
+object MiitModule {
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
-        val retrofit = Retrofit.Builder()
+    fun provideMiitApi(okHttpClient: OkHttpClient, gson: Gson): MiitApi {
+        return Retrofit.Builder()
             .baseUrl(BASE_RUT_MIIT_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-        return retrofit
+            .create(MiitApi::class.java)
     }
+}
 
+@Module
+@InstallIn(SingletonComponent::class)
+object GithubModule {
     @Provides
     @Singleton
-    fun provideMiitApi(retrofit: Retrofit): MiitApi {
-        return retrofit.create(MiitApi::class.java)
+    fun provideGithubApi(okHttpClient: OkHttpClient, gson: Gson): GithubApi {
+        return Retrofit.Builder()
+            .baseUrl(API_GITHUB)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+            .create(GithubApi::class.java)
     }
 }

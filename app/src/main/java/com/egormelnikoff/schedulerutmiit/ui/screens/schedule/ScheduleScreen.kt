@@ -7,14 +7,20 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -32,6 +39,7 @@ import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.AnimatedAlert
+import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomPullToRefreshBox
@@ -145,15 +153,40 @@ fun ScreenSchedule(
                     ) {
                         Column {
                             AnimatedAlert(
-                                isHidden = scheduleState.isSaved,
-                                title = stringResource(R.string.schedule_is_not_saved),
-                                imageVector = ImageVector.vectorResource(R.drawable.alert),
-                                backgroundColor = MaterialTheme.colorScheme.error,
-                                actionTitle = stringResource(R.string.save),
-                                action = {
-                                    scheduleViewModel.saveCurrentNamedSchedule()
+                                isHidden = scheduleState.isSaved
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(MaterialTheme.shapes.medium)
+                                        .background(
+                                            MaterialTheme.colorScheme.error
+                                        )
+                                ) {
+                                    ClickableItem(
+                                        verticalPadding = 12.dp,
+                                        title = stringResource(R.string.schedule_is_not_saved),
+                                        titleColor = MaterialTheme.colorScheme.onPrimary,
+                                        leadingIcon = {
+                                            Icon(
+                                                modifier = Modifier.size(24.dp),
+                                                imageVector = ImageVector.vectorResource(R.drawable.info),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onPrimary
+                                            )
+                                        },
+                                        trailingIcon = {
+                                            Text(
+                                                text = stringResource(R.string.save),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onPrimary
+                                            )
+                                        },
+                                        showClickLabel = false
+                                    ) {
+                                        scheduleViewModel.saveCurrentNamedSchedule()
+                                    }
                                 }
-                            )
+                            }
                             AnimatedContent(
                                 targetState = appSettings.scheduleView,
                                 transitionSpec = {

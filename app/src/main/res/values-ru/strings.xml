@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <plurals name="events">
+        <item quantity="few">пары</item>
+        <item quantity="many">пар</item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">пара</item>
+        <item quantity="other">пар</item>
+    </plurals>
     <string name="_class">Пара</string>
     <string name="_default">Основное</string>
     <string name="about_app">О приложении</string>
     <string name="add">Добавить</string>
-    <string name="details">Детально</string>
-    <string name="display_each_lesson">Отображать каждую пару</string>
-    <string name="display_number_lessons">Отображать количество пар на день</string>
-    <string name="use_amoled">Использовать AMOLED</string>
-    <string name="dont_show">Не показывать</string>
-    <string name="briefly">Кратко</string>
-    <string name="off">Выключено</string>
     <string name="add_class">Добавить пару</string>
     <string name="adding_a_class">Добавление пары</string>
     <string name="adding_a_schedule">Добавление расписания</string>
@@ -19,6 +18,11 @@
     <string name="author">Автор</string>
     <string name="auto">Авто</string>
     <string name="back">Назад</string>
+    <string name="briefly">Кратко</string>
+    <string name="by_weeks">По неделям</string>
+    <string name="by_weeks_message">Разделенный список для периодического расписания</string>
+    <string name="calendar">Календарь</string>
+    <string name="calendar_message">Отображение по неделям и дням</string>
     <string name="class_name">Название</string>
     <string name="class_type">Тип занятия</string>
     <string name="collapse">Свернуть</string>
@@ -30,13 +34,6 @@
     <string name="confirm">Подтвердить</string>
     <string name="create">Создать</string>
     <string name="current_on">Актуально на</string>
-    <string name="schedule_view">Вид расписания</string>
-    <string name="calendar">Календарь</string>
-    <string name="calendar_message">Отображение по неделям и дням</string>
-    <string name="by_weeks">По неделям</string>
-    <string name="by_weeks_message">Разделенный список для периодического расписания</string>
-    <string name="full_list">Полный список</string>
-    <string name="full_list_message">Все пары до конца расписания</string>
     <string name="curriculum_number">Номер учебного плана</string>
     <string name="dark">Темная</string>
     <string name="date">Дата</string>
@@ -47,12 +44,17 @@
     <string name="delete">Удалить</string>
     <string name="delete_event">Удалить пару</string>
     <string name="delete_schedule">Удалить расписание</string>
+    <string name="details">Детально</string>
     <string name="developer">Разработчик</string>
+    <string name="display_each_lesson">Отображать каждую пару</string>
+    <string name="display_number_lessons">Отображать количество пар на день</string>
     <string name="do_you_want_continue">Вы действительно хотите продолжить?</string>
+    <string name="dont_show">Не показывать</string>
     <string name="download">Скачать</string>
     <string name="download_latest_release">Скачать последнюю версию</string>
     <string name="edit">Редактировать</string>
     <string name="editing">Редактирование</string>
+    <string name="email">Почта</string>
     <string name="empty_base">Сохраните как минимум одно расписание для его отображения</string>
     <string name="empty_day">На этот день пары не запланированы</string>
     <string name="empty_here">Здесь пусто</string>
@@ -65,20 +67,16 @@
     <string name="error_adding_log_to_file">Ошибка записи лога в файл</string>
     <string name="error_load_schedule">Произошла ошибка загрузки расписания</string>
     <string name="error_sending_logs">Ошибка при отправке журнала</string>
-    <plurals name="events">
-        <item quantity="few">пары</item>
-        <item quantity="many">пар</item>
-        <item quantity="one" tools:ignore="ImpliedQuantity">пара</item>
-        <item quantity="other">пар</item>
-    </plurals>
-    <string name="event_view">Вид пары</string>
     <string name="event_deleting_alert">Действие удалит пару, комментарии теги</string>
+    <string name="event_view">Вид пары</string>
     <string name="event_visibility_alert">Будьте внимательны, занятие перестанет отображаться в расписании</string>
     <string name="events_count_error">Достигнуто максимальное количество пар на день</string>
     <string name="every_week">Каждую неделю</string>
     <string name="failed_update">Не удалось обновить расписание</string>
     <string name="find">Найти</string>
     <string name="for_example">Например</string>
+    <string name="full_list">Полный список</string>
+    <string name="full_list_message">Все пары до конца расписания</string>
     <string name="full_name_of_lecturer">ФИО преподавателя</string>
     <string name="general">Общее</string>
     <string name="group_number">Номер группы</string>
@@ -96,6 +94,8 @@
     <string name="my">Мои</string>
     <string name="name">Имя</string>
     <string name="network_error">Ошибка сети</string>
+    <string name="new_version_available">Доступна новая версия</string>
+    <string name="no_updates">Обновлений нет</string>
     <string name="news">Новости</string>
     <string name="news_updates">Новости и обновления</string>
     <string name="next_week">Следующая неделя</string>
@@ -112,10 +112,11 @@
     <string name="not_delete_schedules_message">После окончания расписания останутся в памяти и не будут удалены</string>
     <string name="not_specified">Не указан</string>
     <string name="nothing_found">Ничего не найдено</string>
+    <string name="off">Выключено</string>
     <string name="ok">Хорошо</string>
-    <string name="or">или</string>
     <string name="once_week">Раз в %1$d недели</string>
     <string name="open">Открыть</string>
+    <string name="or">или</string>
     <string name="people">Преподаватели</string>
     <string name="place">Место</string>
     <string name="provide_the_names_of_all_lecturers">Укажите имена всех преподавателей</string>
@@ -137,12 +138,12 @@
     <string name="schedule">Расписание</string>
     <string name="schedule_is_not_saved">Расписание не сохранено</string>
     <string name="schedule_name">Название</string>
+    <string name="schedule_view">Вид расписания</string>
     <string name="schedules">Расписания</string>
     <string name="search">Поиск</string>
     <string name="search_curriculum_advice">Для поиска используйте идентификационный номер учебного плана</string>
     <string name="search_or_create">Найти или создать</string>
     <string name="send_logs">Отправить журнал</string>
-    <string name="email">Почта</string>
     <string name="serialization_error">Ошибка сериализации</string>
     <string name="server_error">Ошибка сервера</string>
     <string name="services">Сервисы</string>
@@ -150,12 +151,12 @@
     <string name="show_count_classes">Количество пар в календаре</string>
     <string name="show_event">Показать пару</string>
     <string name="source_code">Исходный код</string>
-    <string name="sync_tag_comments">Синхронизировать теги и комментарии</string>
-    <string name="sync_tag_comments_message">У пар одного предмета и типа автоматически будут синхронизированы комментарии и теги</string>
     <string name="start_date">Дата начала</string>
     <string name="start_time">Время начала</string>
     <string name="summary">Сводка</string>
     <string name="support">Поддержать</string>
+    <string name="sync_tag_comments">Синхронизировать теги и комментарии</string>
+    <string name="sync_tag_comments_message">У пар одного предмета и типа автоматически будут синхронизированы комментарии и теги</string>
     <string name="tag">Тег</string>
     <string name="theme">Тема</string>
     <string name="time">Время</string>
@@ -167,6 +168,7 @@
     <string name="unable_load_news_list">Не удалось загрузить список новостей</string>
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="update">Обновить</string>
+    <string name="use_amoled">Использовать AMOLED</string>
     <string name="week">Неделя %1$s</string>
     <string name="yes">Да</string>
 </resources>

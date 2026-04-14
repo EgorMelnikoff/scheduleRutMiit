@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
@@ -29,13 +31,14 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.NewsDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.RenameDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event.AddEditEventDialog
+import com.egormelnikoff.schedulerutmiit.ui.elements.BarItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
+import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBarItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
-import com.egormelnikoff.schedulerutmiit.ui.elements.barItems
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleUiEventProcessor
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleUiStateSynchronizer
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
@@ -52,6 +55,7 @@ import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchParams
 import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchState
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.settings.state.SettingsState
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -68,13 +72,15 @@ fun ScheduleRutMiitApp(
     val scheduleState = scheduleViewModel.scheduleState.collectAsStateWithLifecycle().value
     val newsState = newsViewModel.newsState.collectAsStateWithLifecycle().value
     val currentDateTime = settingsViewModel.currentDate.collectAsStateWithLifecycle().value
+    val settingsState = settingsViewModel.settingsState.collectAsStateWithLifecycle().value
 
     val appUiState = AppUiState()
     val scheduleUiState = ScheduleUiState(scheduleState)
     val reviewUiState = ReviewUiState()
 
-    ScheduleUiEventProcessor(
+    UiEventProcessor(
         scheduleViewModel = scheduleViewModel,
+        settingsViewModel = settingsViewModel,
         snackBarHostState = appUiState.snackBarHostState
     )
 
@@ -95,6 +101,7 @@ fun ScheduleRutMiitApp(
                     newsViewModel = newsViewModel,
                     settingsViewModel = settingsViewModel,
                     scheduleState = scheduleState,
+                    settingsState = settingsState,
                     scheduleUiState = scheduleUiState,
                     reviewUiState = reviewUiState,
                     appSettings = appSettings
@@ -215,7 +222,7 @@ fun RootHost(
                         searchParams = searchParams,
                         searchState = searchState,
 
-                    )
+                        )
                 }
                 entry<Route.Dialog.CurriculumDialog> {
                     val curriculumViewModel = hiltViewModel<CurriculumViewModel>()
@@ -248,7 +255,8 @@ fun RootHost(
                     HiddenEventsDialog(
                         namedScheduleEntity = key.namedScheduleEntity,
                         scheduleEntity = scheduleState.currentNamedSchedule?.scheduleUiDto?.scheduleEntity,
-                        hiddenEvents = scheduleState.currentNamedSchedule?.scheduleUiDto?.hiddenEvents ?: listOf(),
+                        hiddenEvents = scheduleState.currentNamedSchedule?.scheduleUiDto?.hiddenEvents
+                            ?: listOf(),
                         scheduleViewModel = scheduleViewModel,
                         appBackStack = appUiState.appBackStack
                     )
@@ -265,6 +273,7 @@ fun PageHost(
     settingsViewModel: SettingsViewModel,
 
     scheduleState: ScheduleState,
+    settingsState: SettingsState,
     currentDateTime: LocalDateTime,
 
     appUiState: AppUiState,
@@ -273,51 +282,108 @@ fun PageHost(
 
     appSettings: AppSettings
 ) {
+    val barItems = remember {
+        arrayOf(
+            BarItem(
+                title = R.string.review,
+                iconRes = R.drawable.review,
+                selectedIconRes = R.drawable.review_fill,
+                page = Route.Page.Review
+            ),
+            BarItem(
+                title = R.string.schedule,
+                iconRes = R.drawable.schedule,
+                selectedIconRes = R.drawable.schedule_fill,
+                page = Route.Page.Schedule,
+                onClick = {
+                    appUiState.scope.launch {
+                        when {
+                            scheduleUiState != null && scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
+                                scheduleUiState.onSelectDate(
+                                    scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate
+                                )
+                                scheduleUiState.pagerWeeksState.animateScrollToPage(
+                                    scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.weeksStartIndex
+                                )
+                            }
+
+                            scheduleUiState != null && appSettings.scheduleView == ScheduleView.LIST -> {
+                                scheduleUiState.scheduleListState.animateScrollToItem(0)
+                            }
+
+                            scheduleUiState != null && scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.SPLIT_WEEKS -> {
+                                scheduleUiState.pagerSplitWeeks.scrollToPage(
+                                    scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.dayOfWeek.value - 1
+                                )
+                                scheduleUiState.onSelectWeek(
+                                    scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence?.currentNumber
+                                        ?: 0
+                                )
+                            }
+                        }
+                    }
+                }
+            ),
+            BarItem(
+                title = R.string.news,
+                iconRes = R.drawable.news,
+                page = Route.Page.NewsList,
+                onClick = {
+                    appUiState.scope.launch {
+                        appUiState.newsListState.animateScrollToItem(0)
+                    }
+                },
+            ),
+            BarItem(
+                title = R.string.settings,
+                iconRes = R.drawable.settings,
+                selectedIconRes = R.drawable.settings_fill,
+                page = Route.Page.Settings,
+                onClick = {
+                    appUiState.scope.launch {
+                        appUiState.settingsListState.animateScrollToItem(0)
+                    }
+                }
+            ),
+        )
+    }
+
+    val navigate: (Route.Page) -> Unit = remember {
+        { page ->
+            appUiState.appBackStack.openPage(page)
+        }
+    }
+
+    val selectedPage = appUiState.appBackStack.lastPage()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             CustomNavigationBar(
                 appBackStack = appUiState.appBackStack,
-                barItems = barItems(
-                    onScheduleClick = {
-                        appUiState.scope.launch {
-                            when {
-                                scheduleUiState != null && scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
-                                    scheduleUiState.onSelectDate(
-                                        scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate
-                                    )
-                                    scheduleUiState.pagerWeeksState.animateScrollToPage(
-                                        scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.weeksStartIndex
-                                    )
-                                }
-
-                                scheduleUiState != null && appSettings.scheduleView == ScheduleView.LIST -> {
-                                    scheduleUiState.scheduleListState.animateScrollToItem(0)
-                                }
-
-                                scheduleUiState != null && scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.SPLIT_WEEKS -> {
-                                    scheduleUiState.pagerSplitWeeks.scrollToPage(
-                                        scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.dayOfWeek.value - 1
-                                    )
-                                    scheduleUiState.onSelectWeek(
-                                        scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence?.currentNumber
-                                            ?: 0
-                                    )
-                                }
-                            }
-                        }
-                    },
-                    onNewsClick = {
-                        appUiState.scope.launch {
-                            appUiState.newsListState.animateScrollToItem(0)
-                        }
-                    },
-                    onSettingsClick = {
-                        appUiState.scope.launch {
-                            appUiState.settingsListState.animateScrollToItem(0)
-                        }
-                    }
-                ),
+                barItems = {
+                    CustomNavigationBarItem(
+                        barItem = barItems[0],
+                        selectedPage = selectedPage,
+                        navigate = navigate
+                    )
+                    CustomNavigationBarItem(
+                        barItem = barItems[1],
+                        selectedPage = selectedPage,
+                        navigate = navigate
+                    )
+                    CustomNavigationBarItem(
+                        barItem = barItems[2],
+                        selectedPage = selectedPage,
+                        navigate = navigate
+                    )
+                    CustomNavigationBarItem(
+                        barItem = barItems[3],
+                        selectedPage = selectedPage,
+                        showBadge = settingsState.updatesAvailable,
+                        navigate = navigate
+                    )
+                },
                 isDarkTheme = appSettings.decorPreferences.theme.isDarkTheme()
             )
         }
@@ -385,6 +451,7 @@ fun PageHost(
                     SettingsScreen(
                         appUiState = appUiState,
                         appSettings = appSettings,
+                        settingsState = settingsState,
                         settingsViewModel = settingsViewModel,
                         externalPadding = padding
                     )

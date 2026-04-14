@@ -41,6 +41,7 @@ import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.settings.state.SettingsState
 
 data class ThemeSelectorItemContent(
     val theme: Theme,
@@ -60,6 +61,7 @@ sealed interface SettingsDialog {
 fun SettingsScreen(
     appUiState: AppUiState,
     appSettings: AppSettings,
+    settingsState: SettingsState,
     settingsViewModel: SettingsViewModel,
     externalPadding: PaddingValues
 ) {
@@ -273,6 +275,7 @@ fun SettingsScreen(
                     }, {
                         ClickableItem(
                             title = stringResource(R.string.about_app),
+                            showBadge = settingsState.updatesAvailable,
                             leadingIcon = {
                                 Icon(
                                     modifier = Modifier.size(20.dp),
@@ -314,7 +317,10 @@ fun SettingsScreen(
         }
 
         is SettingsDialog.Info -> {
-            InfoModalDialog {
+            InfoModalDialog(
+                settingsState = settingsState,
+                settingsViewModel = settingsViewModel
+            ) {
                 activeDialog = null
             }
         }

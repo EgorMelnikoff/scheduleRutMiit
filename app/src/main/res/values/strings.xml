@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="events">
+        <item quantity="few">classes</item>
+        <item quantity="many">classes</item>
+        <item quantity="one">class</item>
+        <item quantity="other">classes</item>
+        <item quantity="two">classes</item>
+    </plurals>
     <string name="_class">Class</string>
     <string name="_default">Default</string>
     <string name="about_app">About app</string>
     <string name="add">Add</string>
-    <string name="details">Details</string>
-    <string name="display_each_lesson">Display each lesson</string>
-    <string name="display_number_lessons">Display the number of classes per day</string>
-    <string name="dont_show">Don`t show</string>
-    <string name="use_amoled">Use AMOLED</string>
-    <string name="briefly">Briefly</string>
-    <string name="off">Off</string>
     <string name="add_class">Add class</string>
     <string name="adding_a_class">Adding a class</string>
     <string name="adding_a_schedule">Adding a schedule</string>
@@ -20,6 +20,11 @@
     <string name="author">Author</string>
     <string name="auto">Auto</string>
     <string name="back">Back</string>
+    <string name="briefly">Briefly</string>
+    <string name="by_weeks">By weeks</string>
+    <string name="by_weeks_message">Split list for periodic schedule</string>
+    <string name="calendar">Calendar</string>
+    <string name="calendar_message">Display by week and day</string>
     <string name="class_name">Class name</string>
     <string name="class_type">Class type</string>
     <string name="collapse">Collapse</string>
@@ -41,12 +46,17 @@
     <string name="delete">Delete</string>
     <string name="delete_event">Delete class</string>
     <string name="delete_schedule">Delete schedule</string>
+    <string name="details">Details</string>
     <string name="developer">Developer</string>
+    <string name="display_each_lesson">Display each lesson</string>
+    <string name="display_number_lessons">Display the number of classes per day</string>
     <string name="do_you_want_continue">Do you really want to continue?</string>
+    <string name="dont_show">Don`t show</string>
     <string name="download">Download</string>
     <string name="download_latest_release">Download latest release</string>
     <string name="edit">Edit</string>
     <string name="editing">Editing</string>
+    <string name="email">Email</string>
     <string name="empty_base">Save at least one schedule to display it</string>
     <string name="empty_day">There are no classes scheduled for this day</string>
     <string name="empty_here">It`s empty here</string>
@@ -59,15 +69,8 @@
     <string name="error_adding_log_to_file">Error adding log to file</string>
     <string name="error_load_schedule">There was an error loading the schedule</string>
     <string name="error_sending_logs">Error sending logs</string>
-    <plurals name="events">
-        <item quantity="few">classes</item>
-        <item quantity="many">classes</item>
-        <item quantity="one">class</item>
-        <item quantity="other">classes</item>
-        <item quantity="two">classes</item>
-    </plurals>
-    <string name="event_view">Class view</string>
     <string name="event_deleting_alert">The action will delete the lesson, comments and tags</string>
+    <string name="event_view">Class view</string>
     <string name="event_visibility_alert">Please note, class will no longer appear in the schedule</string>
     <string name="events_count_error">The maximum number of classes per day has been reached</string>
     <string name="every_week">Every week</string>
@@ -76,6 +79,8 @@
     <string name="failed_update">Failed to update schedule</string>
     <string name="find">Find</string>
     <string name="for_example">For example</string>
+    <string name="full_list">Full list</string>
+    <string name="full_list_message">All classes until the end of the schedule</string>
     <string name="full_name_of_lecturer">Full name of lecturer</string>
     <string name="general">General</string>
     <string name="github" translatable="false">GitHub</string>
@@ -94,6 +99,8 @@
     <string name="my">My</string>
     <string name="name">Name</string>
     <string name="network_error">Network error</string>
+    <string name="new_version_available">New version available</string>
+    <string name="no_updates">No updates</string>
     <string name="news">News</string>
     <string name="news_updates">News, updates</string>
     <string name="next_week">Next week</string>
@@ -110,10 +117,11 @@
     <string name="not_delete_schedules_message">After the expiration date, the schedules will remain in memory and will not be deleted</string>
     <string name="not_specified">Not specified</string>
     <string name="nothing_found">Nothing found</string>
+    <string name="off">Off</string>
     <string name="ok">OK</string>
-    <string name="or">or</string>
     <string name="once_week">Once every %1$d week</string>
     <string name="open">Open</string>
+    <string name="or">or</string>
     <string name="people">People</string>
     <string name="place">Place</string>
     <string name="provide_the_names_of_all_lecturers">Provide the names of all lecturers</string>
@@ -126,22 +134,22 @@
     <string name="return_default">Return default</string>
     <string name="return_default_schedule">Return to the default schedule</string>
     <string name="review">Review</string>
-    <string name="rustore" translatable="false">RuStore</string>
     <string name="room">Room</string>
     <string name="room_number">Room number</string>
     <string name="room_number_not_specified">Room number not specified</string>
     <string name="rooms">Rooms</string>
+    <string name="rustore" translatable="false">RuStore</string>
     <string name="save">Save</string>
     <string name="saved_schedules">Saved schedules</string>
     <string name="schedule">Schedule</string>
     <string name="schedule_is_not_saved">Schedule is not saved</string>
     <string name="schedule_name">Schedule name</string>
+    <string name="schedule_view">Schedule view</string>
     <string name="schedules">Schedules</string>
     <string name="search">Search</string>
     <string name="search_curriculum_advice">Please use the curriculum identification number to search</string>
     <string name="search_or_create">Search or create</string>
     <string name="send_logs">Send logs</string>
-    <string name="email">Email</string>
     <string name="serialization_error">Serialization error</string>
     <string name="server_error">Server error</string>
     <string name="services">Services</string>
@@ -149,19 +157,12 @@
     <string name="show_count_classes">Count classes in calendar</string>
     <string name="show_event">Show class</string>
     <string name="source_code">Source code</string>
-    <string name="sync_tag_comments">Synchronize tags and comments</string>
-    <string name="sync_tag_comments_message">Comments and tags will be automatically synchronized for classes of the same subject and type.</string>
     <string name="start_date">Start date</string>
     <string name="start_time">Start time</string>
     <string name="summary">Summary</string>
     <string name="support">Support</string>
-    <string name="schedule_view">Schedule view</string>
-    <string name="calendar">Calendar</string>
-    <string name="calendar_message">Display by week and day</string>
-    <string name="by_weeks">By weeks</string>
-    <string name="by_weeks_message">Split list for periodic schedule</string>
-    <string name="full_list">Full list</string>
-    <string name="full_list_message">All classes until the end of the schedule</string>
+    <string name="sync_tag_comments">Synchronize tags and comments</string>
+    <string name="sync_tag_comments_message">Comments and tags will be automatically synchronized for classes of the same subject and type.</string>
     <string name="tag">Tag</string>
     <string name="telegram" translatable="false">Telegram</string>
     <string name="theme">Theme</string>
@@ -174,6 +175,7 @@
     <string name="unable_load_news_list">Unable to load news list</string>
     <string name="unknown_error">Unknown error</string>
     <string name="update">Update</string>
+    <string name="use_amoled">Use AMOLED</string>
     <string name="week">Week %1$s</string>
     <string name="yes">Yes</string>
 </resources>

@@ -17,10 +17,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -41,7 +49,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.ui.theme.color.Red
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClickableItem(
     modifier: Modifier = Modifier,
@@ -51,6 +61,7 @@ fun ClickableItem(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(12.dp),
     defaultMinHeight: Dp? = null,
 
+    showBadge: Boolean = false,
     title: String? = null,
     titleTypography: TextStyle = MaterialTheme.typography.titleMedium,
     titleMaxLines: Int = 1,
@@ -67,89 +78,116 @@ fun ClickableItem(
     trailingIcon: (@Composable () -> Unit)? = null,
     clickLabel: ImageVector = ImageVector.vectorResource(R.drawable.right),
     showClickLabel: Boolean = true,
-    clickLabelColor: Color =  MaterialTheme.colorScheme.onSecondaryContainer,
+    clickLabelColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
     onLongClick: (() -> Unit)? = null,
     onDoubleCLick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .let { modifier ->
-                onClick?.let {
-                    modifier.combinedClickable(
-                        onClick = onClick,
-                        onLongClick = onLongClick,
-                        onDoubleClick = onDoubleCLick
-                    )
-                } ?: modifier
-            }
-            .padding(horizontal = horizontalPadding, vertical = verticalPadding)
-            .let { modifier ->
-                if (defaultMinHeight != null) {
-                    modifier.defaultMinSize(
-                        minHeight = defaultMinHeight
-                    )
-                } else modifier
-            },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = horizontalArrangement
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Above,
+            spacingBetweenTooltipAndAnchor = 2.dp
+        ),
+        tooltip = {
+            PlainTooltip (
+                modifier = Modifier.padding(horizontal = 2.dp),
+
+            ) { Text(title.toString()) }
+        },
+        state = rememberTooltipState()
     ) {
-        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-            leadingIcon?.invoke()
-        }
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = verticalArrangement,
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .let { modifier ->
+                    onClick?.let {
+                        modifier.combinedClickable(
+                            onClick = onClick,
+                            onLongClick = onLongClick,
+                            onDoubleClick = onDoubleCLick
+                        )
+                    } ?: modifier
+                }
+                .padding(horizontal = horizontalPadding, vertical = verticalPadding)
+                .let { modifier ->
+                    if (defaultMinHeight != null) {
+                        modifier.defaultMinSize(
+                            minHeight = defaultMinHeight
+                        )
+                    } else modifier
+                },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = horizontalArrangement
         ) {
-            title?.let {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = title,
-                        style = titleTypography,
-                        color = titleColor,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = titleMaxLines
-                    )
-                    AnimatedVisibility(
-                        visible = titleLabel != null,
-                        enter = fadeIn(),
-                        exit = fadeOut()
+            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                leadingIcon?.let {
+                    BadgedBox(
+                        badge = {
+                            if (showBadge) {
+                                Badge(
+                                    containerColor = Red,
+                                    contentColor = Color.Unspecified
+                                )
+                            }
+                        }
                     ) {
-                        titleLabel?.invoke()
+                        leadingIcon.invoke()
                     }
                 }
             }
-            subtitle?.let {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    subtitleLabel?.invoke()
-                    Text(
-                        text = subtitle,
-                        style = subtitleTypography,
-                        color = subtitleColor,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = subtitleMaxLines
-                    )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = verticalArrangement,
+            ) {
+                title?.let {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = title,
+                            style = titleTypography,
+                            color = titleColor,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = titleMaxLines
+                        )
+                        AnimatedVisibility(
+                            visible = titleLabel != null,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            titleLabel?.invoke()
+                        }
+                    }
+                }
+                subtitle?.let {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        subtitleLabel?.invoke()
+                        Text(
+                            text = subtitle,
+                            style = subtitleTypography,
+                            color = subtitleColor,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = subtitleMaxLines
+                        )
+                    }
                 }
             }
-        }
-        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-            trailingIcon?.invoke()
-        }
+            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                trailingIcon?.invoke()
+            }
 
-        if (showClickLabel && onClick != null) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = clickLabel,
-                contentDescription = null,
-                tint = clickLabelColor
-            )
+            if (showClickLabel && onClick != null) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = clickLabel,
+                    contentDescription = null,
+                    tint = clickLabelColor
+                )
+            }
         }
     }
 }

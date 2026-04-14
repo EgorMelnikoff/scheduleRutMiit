@@ -1,11 +1,15 @@
 package com.egormelnikoff.schedulerutmiit.app.di
 
+import com.egormelnikoff.schedulerutmiit.datasource.remote.latest_release.LatestReleaseDataSource
+import com.egormelnikoff.schedulerutmiit.datasource.remote.latest_release.LatestReleaseDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.datasource.remote.news.NewsRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.datasource.remote.news.NewsRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.datasource.remote.schedule.ScheduleRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.datasource.remote.schedule.ScheduleRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.datasource.remote.search.SearchRemoteDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.domain.updates.AppInfoProvider
+import com.egormelnikoff.schedulerutmiit.domain.updates.AppInfoProviderImpl
 import com.egormelnikoff.schedulerutmiit.repos.event.EventRepos
 import com.egormelnikoff.schedulerutmiit.repos.event.EventReposImpl
 import com.egormelnikoff.schedulerutmiit.repos.event_extra.EventExtraRepos
@@ -37,6 +41,9 @@ abstract class BindModule {
     @Singleton
     abstract fun bindSearchRemoteDataSource(searchRemoteDataSourceImpl: SearchRemoteDataSourceImpl): SearchRemoteDataSource
 
+    @Binds
+    @Singleton
+    abstract fun bindLatestReleaseDataSource(latestReleaseDataSourceImpl: LatestReleaseDataSourceImpl): LatestReleaseDataSource
 
     @Binds
     @Singleton
@@ -58,4 +65,10 @@ abstract class BindModule {
     @Binds
     @Singleton
     abstract fun bindSearchQueryRepos(searchQueryReposImpl: SearchQueryReposImpl): SearchQueryRepos
+
+
+
+    @Binds
+    @Singleton
+    abstract fun bindAppInfoProvider(appInfoProviderImpl: AppInfoProviderImpl): AppInfoProvider
 }

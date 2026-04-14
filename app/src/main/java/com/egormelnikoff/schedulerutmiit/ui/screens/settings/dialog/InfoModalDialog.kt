@@ -6,6 +6,7 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,10 +48,14 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
+import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.view_models.settings.state.SettingsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfoModalDialog(
+    settingsState: SettingsState,
+    settingsViewModel: SettingsViewModel,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -58,7 +64,7 @@ fun InfoModalDialog(
     val clipboard = LocalClipboard.current
 
     CustomModalBottomSheet(
-        modifier = Modifier.padding(start = 16.dp,end = 16.dp, top = 24.dp, bottom = 16.dp),
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp),
         showDragHandle = false,
         onDismiss = onDismiss
     ) {
@@ -104,6 +110,62 @@ fun InfoModalDialog(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+            }
+
+
+            Box(
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(
+                        if (settingsState.updatesAvailable) {
+                            MaterialTheme.colorScheme.error
+                        } else
+                            MaterialTheme.colorScheme.secondaryContainer
+                    )
+            ) {
+                ClickableItem(
+                    title = when {
+                        settingsState.isUpdating -> "Проверка обновлений..."
+                        settingsState.updatesAvailable -> stringResource(R.string.new_version_available)
+                        else -> "Проверить обновления"
+                    },
+                    titleColor = if (settingsState.updatesAvailable) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
+                    leadingIcon = {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.info),
+                            contentDescription = null,
+                            tint = if (settingsState.updatesAvailable) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
+                        )
+                    },
+                    trailingIcon = when {
+                        settingsState.isUpdating -> {
+                            {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+
+                        !settingsState.updatesAvailable -> {
+                            {
+                                Icon(
+                                    modifier = Modifier.size(24.dp),
+                                    imageVector = ImageVector.vectorResource(R.drawable.right),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
+                        }
+
+                        else -> null
+                    },
+                    showClickLabel = false,
+                    onClick = if (!settingsState.updatesAvailable && !settingsState.isUpdating) {
+                        { settingsViewModel.checkUpdates() }
+                    } else null
+                )
             }
 
             RowGroup(

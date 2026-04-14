@@ -12,6 +12,7 @@ import com.egormelnikoff.schedulerutmiit.datasource.local.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.ScheduleParser
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SearchParser
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SubjectsListParser
+import com.egormelnikoff.schedulerutmiit.domain.updates.AppInfoProviderImpl
 import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -33,8 +34,13 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun providePreferencesDataStore(@ApplicationContext context: Context): PreferencesDataStore =
-        PreferencesDataStore(context)
+    fun provideAppProvider(@ApplicationContext context: Context): AppInfoProviderImpl =
+        AppInfoProviderImpl(context)
+
+    @Provides
+    @Singleton
+    fun providePreferencesDataStore(@ApplicationContext context: Context, gson: Gson): PreferencesDataStore =
+        PreferencesDataStore(context, gson)
 
     @Provides
     @Singleton

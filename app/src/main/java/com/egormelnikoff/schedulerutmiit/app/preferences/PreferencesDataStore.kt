@@ -5,9 +5,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.latest_release.LatestReleaseFetchDto
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -15,8 +17,15 @@ import javax.inject.Inject
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "Settings")
 
 class PreferencesDataStore @Inject constructor(
-    private val context: Context
+    private val context: Context,
+    private val gson: Gson
 ) {
+    suspend fun setLatestRelease(latestReleaseFetchDto: LatestReleaseFetchDto) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LATEST_RELEASE] = gson.toJson(latestReleaseFetchDto)
+        }
+    }
+
     suspend fun setTheme(theme: Theme) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.THEME] = theme.name
@@ -94,6 +103,11 @@ class PreferencesDataStore @Inject constructor(
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.COUNT_CLASSES_VIEW] = eventsCountView.name
         }
+    }
+
+    val latestReleaseFlow: Flow<LatestReleaseFetchDto?> = context.dataStore.data.map { preferences ->
+        val latestReleaseString = preferences[PreferencesKeys.LATEST_RELEASE]
+        return@map gson.fromJson(latestReleaseString, LatestReleaseFetchDto::class.java)
     }
 
     val themeFlow: Flow<Theme> = context.dataStore.data.map { preferences ->

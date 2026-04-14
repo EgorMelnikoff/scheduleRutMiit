@@ -5,6 +5,8 @@ import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 object Endpoints {
     const val BASE_RUT_MIIT_URL = "https://rut-miit.ru/"
     const val BASE_MIIT_URL = "https://www.miit.ru"
+    const val API_GITHUB = "https://api.github.com/"
+
 
     const val GROUPS = "data-service/data/timetable/groups-catalog"
     const val TIMETABLE = "data-service/data/timetable/v2/{type}/{apiId}"
@@ -35,6 +37,7 @@ object Endpoints {
     const val APP_CHANNEL_URL = "https://t.me/schedule_rut_miit"
     const val APP_GITHUB_REPOS = "https://github.com/EgorMelnikoff/scheduleRutMiit"
     const val APP_GITHUB_LATEST_RELEASE_DOWNLOAD = "https://github.com/EgorMelnikoff/scheduleRutMiit/releases/latest/download/app-release.apk"
+    const val APP_GITHUB_API_LATEST_RELEASE = "repos/EgorMelnikoff/scheduleRutMiit/releases/latest"
     const val RU_STORE = "https://www.rustore.ru/catalog/app/com.egormelnikoff.schedulerutmiit"
     const val AUTHOR_CHANNEL_URL = "https://t.me/EgorMelnikoff"
 }

@@ -12,8 +12,9 @@ object PreferencesKeys {
     val SCHEDULES_DELETABLE = booleanPreferencesKey(name = "schedules_deletable")
     val COUNT_CLASSES_VIEW = stringPreferencesKey(name = "count_classes_view")
     val SYNC_TAGS_AND_COMMENTS = booleanPreferencesKey(name = "sync_tags_and_comments")
-    val SKIP_WELCOME_PAGE = booleanPreferencesKey(name = "skipWelcomePage")
+    val SKIP_WELCOME_PAGE = booleanPreferencesKey(name = "skip_welcome_page")
 
+    val LATEST_RELEASE = stringPreferencesKey(name = "latest_release")
     val EVENT_GROUPS_VISIBILITY = booleanPreferencesKey(name = "event_groups_visibility")
     val EVENT_ROOMS_VISIBILITY = booleanPreferencesKey(name = "event_rooms_visibility")
     val EVENT_LECTURERS_VISIBILITY = booleanPreferencesKey(name = "event_lecturers_visibility")

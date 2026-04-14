@@ -1,5 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.ui.elements
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -16,13 +18,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,6 +44,7 @@ import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -50,23 +53,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.Grey
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.Red
 
 data class BarItem(
-    val title: String,
-    val icon: ImageVector,
-    val selectedIcon: ImageVector?,
-    val route: Route.Page,
-    val onClick: (() -> Unit)?
+    @param:StringRes
+    val title: Int,
+    @param:DrawableRes
+    val iconRes: Int,
+    @param:DrawableRes
+    val selectedIconRes: Int? = null,
+    val page: Route.Page,
+    val onClick: () -> Unit = {}
 )
 
 @Composable
 fun CustomNavigationBar(
-    barItems: Array<BarItem>,
+    barItems: @Composable RowScope.() -> Unit,
     appBackStack: AppBackStack,
     isDarkTheme: Boolean
 ) {
@@ -136,9 +141,11 @@ fun CustomNavigationBar(
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .offset(x = indicatorOffset)
                     .width(68.dp)
                     .align(Alignment.CenterStart)
+                    .graphicsLayer {
+                        translationX = indicatorOffset.toPx()
+                    }
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.secondaryContainer)
             )
@@ -146,31 +153,18 @@ fun CustomNavigationBar(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                barItems.forEach { barItem ->
-                    CustomNavigationItem(
-                        barItem = barItem,
-                        isSelected = appBackStack.lastPage() == barItem.route,
-                        showBadge = false,
-                        onClick = {
-                            if (barItem.route == appBackStack.lastPage()) {
-                                barItem.onClick?.invoke()
-                            } else {
-                                appBackStack.openPage(barItem.route)
-                            }
-                        }
-                    )
-                }
+                barItems()
             }
         }
     }
 }
 
 @Composable
-fun CustomNavigationItem(
+fun CustomNavigationBarItem(
     barItem: BarItem,
-    isSelected: Boolean,
+    selectedPage: Route.Page,
     showBadge: Boolean = false,
-    onClick: () -> Unit
+    navigate: (Route.Page) -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -181,12 +175,18 @@ fun CustomNavigationItem(
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
     )
 
+    val isSelected = selectedPage == barItem.page
+
     Column(
         modifier = Modifier
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = onClick
+                onClick = if (isSelected) {
+                    barItem.onClick
+                } else {
+                    { navigate(barItem.page) }
+                }
             )
             .scale(scale)
             .padding(8.dp)
@@ -206,15 +206,17 @@ fun CustomNavigationItem(
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                imageVector = if (isSelected && barItem.selectedIcon != null) barItem.selectedIcon else barItem.icon,
-                contentDescription = barItem.title,
+                imageVector = if (isSelected && barItem.selectedIconRes != null)
+                    ImageVector.vectorResource(barItem.selectedIconRes)
+                else ImageVector.vectorResource(barItem.iconRes),
+                contentDescription = stringResource(barItem.title),
                 tint = if (isSelected) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
 
         Text(
-            text = barItem.title,
+            text = stringResource(barItem.title),
             style = MaterialTheme.typography.bodySmall,
             color = if (isSelected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.onSecondaryContainer,
@@ -223,43 +225,4 @@ fun CustomNavigationItem(
             textAlign = TextAlign.Center
         )
     }
-}
-
-
-@Composable
-fun barItems(
-    onScheduleClick: () -> Unit,
-    onNewsClick: () -> Unit,
-    onSettingsClick: () -> Unit
-): Array<BarItem> {
-    return arrayOf(
-        BarItem(
-            title = stringResource(R.string.review),
-            icon = ImageVector.vectorResource(R.drawable.review),
-            selectedIcon = ImageVector.vectorResource(R.drawable.review_fill),
-            route = Route.Page.Review,
-            onClick = null
-        ),
-        BarItem(
-            title = stringResource(R.string.schedule),
-            icon = ImageVector.vectorResource(R.drawable.schedule),
-            selectedIcon = ImageVector.vectorResource(R.drawable.schedule_fill),
-            route = Route.Page.Schedule,
-            onClick = onScheduleClick
-        ),
-        BarItem(
-            title = stringResource(R.string.news),
-            icon = ImageVector.vectorResource(R.drawable.news),
-            selectedIcon = null,
-            route = Route.Page.NewsList,
-            onClick = onNewsClick
-        ),
-        BarItem(
-            title = stringResource(R.string.settings),
-            icon = ImageVector.vectorResource(R.drawable.settings),
-            selectedIcon = ImageVector.vectorResource(R.drawable.settings_fill),
-            route = Route.Page.Settings,
-            onClick = onSettingsClick
-        )
-    )
 }
