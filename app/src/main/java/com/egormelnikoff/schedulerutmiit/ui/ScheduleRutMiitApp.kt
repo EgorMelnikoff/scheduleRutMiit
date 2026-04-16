@@ -282,23 +282,23 @@ fun PageHost(
 
     appSettings: AppSettings
 ) {
-    val barItems = remember {
-        arrayOf(
-            BarItem(
-                title = R.string.review,
-                iconRes = R.drawable.review,
-                selectedIconRes = R.drawable.review_fill,
-                page = Route.Page.Review
-            ),
-            BarItem(
-                title = R.string.schedule,
-                iconRes = R.drawable.schedule,
-                selectedIconRes = R.drawable.schedule_fill,
-                page = Route.Page.Schedule,
-                onClick = {
+    val barItems = arrayOf(
+        BarItem(
+            title = R.string.review,
+            iconRes = R.drawable.review,
+            selectedIconRes = R.drawable.review_fill,
+            page = Route.Page.Review
+        ),
+        BarItem(
+            title = R.string.schedule,
+            iconRes = R.drawable.schedule,
+            selectedIconRes = R.drawable.schedule_fill,
+            page = Route.Page.Schedule,
+            onClick = scheduleUiState?.let {
+                {
                     appUiState.scope.launch {
                         when {
-                            scheduleUiState != null && scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
+                            scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
                                 scheduleUiState.onSelectDate(
                                     scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate
                                 )
@@ -307,11 +307,11 @@ fun PageHost(
                                 )
                             }
 
-                            scheduleUiState != null && appSettings.scheduleView == ScheduleView.LIST -> {
+                            appSettings.scheduleView == ScheduleView.LIST -> {
                                 scheduleUiState.scheduleListState.animateScrollToItem(0)
                             }
 
-                            scheduleUiState != null && scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.SPLIT_WEEKS -> {
+                            scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.SPLIT_WEEKS -> {
                                 scheduleUiState.pagerSplitWeeks.scrollToPage(
                                     scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.dayOfWeek.value - 1
                                 )
@@ -323,30 +323,30 @@ fun PageHost(
                         }
                     }
                 }
-            ),
-            BarItem(
-                title = R.string.news,
-                iconRes = R.drawable.news,
-                page = Route.Page.NewsList,
-                onClick = {
-                    appUiState.scope.launch {
-                        appUiState.newsListState.animateScrollToItem(0)
-                    }
-                },
-            ),
-            BarItem(
-                title = R.string.settings,
-                iconRes = R.drawable.settings,
-                selectedIconRes = R.drawable.settings_fill,
-                page = Route.Page.Settings,
-                onClick = {
-                    appUiState.scope.launch {
-                        appUiState.settingsListState.animateScrollToItem(0)
-                    }
+            }
+        ),
+        BarItem(
+            title = R.string.news,
+            iconRes = R.drawable.news,
+            page = Route.Page.NewsList,
+            onClick = {
+                appUiState.scope.launch {
+                    appUiState.newsListState.animateScrollToItem(0)
                 }
-            ),
-        )
-    }
+            },
+        ),
+        BarItem(
+            title = R.string.settings,
+            iconRes = R.drawable.settings,
+            selectedIconRes = R.drawable.settings_fill,
+            page = Route.Page.Settings,
+            onClick = {
+                appUiState.scope.launch {
+                    appUiState.settingsListState.animateScrollToItem(0)
+                }
+            }
+        ),
+    )
 
     val navigate: (Route.Page) -> Unit = remember {
         { page ->

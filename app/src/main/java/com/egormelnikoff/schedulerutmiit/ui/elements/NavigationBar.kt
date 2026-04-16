@@ -66,7 +66,7 @@ data class BarItem(
     @param:DrawableRes
     val selectedIconRes: Int? = null,
     val page: Route.Page,
-    val onClick: () -> Unit = {}
+    val onClick: (() -> Unit)? = null
 )
 
 @Composable
@@ -183,7 +183,7 @@ fun CustomNavigationBarItem(
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = if (isSelected) {
-                    barItem.onClick
+                    { barItem.onClick?.invoke() }
                 } else {
                     { navigate(barItem.page) }
                 }
