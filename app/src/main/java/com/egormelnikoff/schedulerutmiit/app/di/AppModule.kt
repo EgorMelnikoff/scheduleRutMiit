@@ -2,11 +2,11 @@ package com.egormelnikoff.schedulerutmiit.app.di
 
 import android.content.Context
 import androidx.work.WorkManager
-import com.egormelnikoff.schedulerutmiit.app.entity.adapter.NamedScheduleTypeAdapter
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.network.logger.Logger
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.app.serializers.LocalDateSerializer
+import com.egormelnikoff.schedulerutmiit.app.serializers.LocalDateTimeSerializer
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.ScheduleParser
@@ -14,19 +14,15 @@ import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SearchParser
 import com.egormelnikoff.schedulerutmiit.datasource.local.parser.SubjectsListParser
 import com.egormelnikoff.schedulerutmiit.domain.updates.AppInfoProviderImpl
 import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonPrimitive
-import com.google.gson.JsonSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Singleton
 
 @Module
@@ -39,8 +35,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePreferencesDataStore(@ApplicationContext context: Context, gson: Gson): PreferencesDataStore =
-        PreferencesDataStore(context, gson)
+    fun providePreferencesDataStore(@ApplicationContext context: Context, json: Json): PreferencesDataStore =
+        PreferencesDataStore(context, json)
 
     @Provides
     @Singleton
@@ -58,44 +54,25 @@ object AppModule {
     fun provideWidgetUpdater(
         @ApplicationContext context: Context,
         namedScheduleRepos: NamedScheduleRepos,
-        gson: Gson
+        json: Json
     ): WidgetDataUpdater = WidgetDataUpdater(
         context = context,
         namedScheduleRepos = namedScheduleRepos,
-        gson = gson
+        json = json
     )
 
     @Provides
     @Singleton
-    fun provideGson(): Gson {
-        return GsonBuilder()
-            .registerTypeAdapter(
-                NamedScheduleType::class.java,
-                NamedScheduleTypeAdapter()
-            )
-            .registerTypeAdapter(
-                LocalDate::class.java,
-                JsonDeserializer { json, _, _ ->
-                    LocalDate.parse(json.asString, DateTimeFormatter.ISO_DATE)
-                }
-            )
-            .registerTypeAdapter(
-                LocalDate::class.java,
-                JsonSerializer<LocalDate> { src, _, _ ->
-                    JsonPrimitive(DateTimeFormatter.ISO_DATE.format(src))
-                }
-            )
-            .registerTypeAdapter(
-                LocalDateTime::class.java,
-                JsonDeserializer { json, _, _ ->
-                    LocalDateTime.parse(json.asString, DateTimeFormatter.ISO_ZONED_DATE_TIME)
-                }
-            ).registerTypeAdapter(
-                LocalDateTime::class.java,
-                JsonSerializer<LocalDateTime> { src, _, _ ->
-                    JsonPrimitive(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(src))
-                }
-            ).create()
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+            encodeDefaults = true
+            serializersModule = SerializersModule {
+                contextual(LocalDate::class, LocalDateSerializer)
+                contextual(LocalDateTime::class, LocalDateTimeSerializer)
+            }
+        }
     }
 
     @Provides

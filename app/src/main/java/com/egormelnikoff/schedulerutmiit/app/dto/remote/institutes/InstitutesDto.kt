@@ -1,10 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.app.dto.remote.institutes
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class InstitutesDto(
-    @SerializedName("institutes")
+    @SerialName("institutes")
     val institutes: List<InstituteDto>
 )

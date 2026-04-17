@@ -2,105 +2,72 @@ package com.egormelnikoff.schedulerutmiit.datasource.local.db
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @ProvidedTypeConverter
 class Converters @Inject constructor(
-    private val gson: Gson
+    private val json: Json
 ) {
     @TypeConverter
-    fun fromListLecturer(lecturers: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto>?): String? {
-        return lecturers?.let {
-            gson.toJson(lecturers)
-        }
+    fun fromListLecturer(lecturers: List<LecturerDto>?): String? {
+        return lecturers?.let { json.encodeToString(it) }
     }
 
     @TypeConverter
-    fun toListLecturer(lecturersString: String?): List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto>? {
-        return lecturersString?.let {
-            val type = object : TypeToken<List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto>?>() {}.type
-            gson.fromJson(lecturersString, type)
-        }
-    }
-
-    @TypeConverter
-    fun fromListRoom(rooms: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto>?): String? {
-        return rooms?.let {
-            return gson.toJson(rooms)
-        }
-    }
-
-    @TypeConverter
-    fun toListRoom(roomsString: String?): List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto>? {
-        return roomsString?.let {
-            val type = object : TypeToken<List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto>?>() {}.type
-            gson.fromJson(roomsString, type)
-        }
-    }
-
-    @TypeConverter
-    fun fromListGroup(groups: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto>?): String? {
-        return groups?.let {
-            gson.toJson(groups)
-        }
-    }
-
-    @TypeConverter
-    fun toListGroup(groupsString: String?): List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto>? {
-        return groupsString?.let {
-            val type = object : TypeToken<List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto>?>() {}.type
-            gson.fromJson(groupsString, type)
-        }
+    fun toListLecturer(lecturersString: String?): List<LecturerDto>? {
+        return lecturersString?.let { json.decodeFromString(it) }
     }
 
 
     @TypeConverter
-    fun toLocalDateString(localDate: LocalDate?): String? {
-        return localDate?.let {
-            localDate.format(DateTimeFormatter.ISO_DATE)
-        }
+    fun fromListRoom(rooms: List<RoomDto>?): String? {
+        return rooms?.let { json.encodeToString(it) }
     }
 
     @TypeConverter
-    fun toLocalDate(localDateString: String?): LocalDate? {
-        return localDateString?.let {
-            LocalDate.parse(localDateString, DateTimeFormatter.ISO_DATE)
-        }
+    fun toListRoom(roomsString: String?): List<RoomDto>? {
+        return roomsString?.let { json.decodeFromString(it) }
     }
 
     @TypeConverter
-    fun toLocalDateTimeString(localDateTime: LocalDateTime?): String? {
-        return localDateTime?.let {
-            localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-        }
+    fun fromListGroup(groups: List<GroupDto>?): String? {
+        return groups?.let { json.encodeToString(it) }
     }
 
     @TypeConverter
-    fun toLocalDateTime(localDateTimeString: String?): LocalDateTime? {
-        return localDateTimeString?.let {
-            LocalDateTime.parse(localDateTimeString, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-        }
+    fun toListGroup(groupsString: String?): List<GroupDto>? {
+        return groupsString?.let { json.decodeFromString(it) }
     }
 
-    @TypeConverter
-    fun fromNamedScheduleType(type: NamedScheduleType) = type.id
 
     @TypeConverter
-    fun toNamedScheduleType(value: Int): NamedScheduleType {
-        return when (value) {
-            0 -> NamedScheduleType.GROUP
-            1 -> NamedScheduleType.PERSON
-            2 -> NamedScheduleType.ROOM
-            else -> NamedScheduleType.MY
-        }
-    }
+    fun toLocalDateString(localDate: LocalDate?): String? = localDate?.toString()
+
+    @TypeConverter
+    fun toLocalDate(localDateString: String?): LocalDate? =
+        localDateString?.let { LocalDate.parse(it) }
+
+    @TypeConverter
+    fun toLocalDateTimeString(localDateTime: LocalDateTime?): String? = localDateTime?.toString()
+
+    @TypeConverter
+    fun toLocalDateTime(localDateTimeString: String?): LocalDateTime? =
+        localDateTimeString?.let { LocalDateTime.parse(it) }
+
+
+    @TypeConverter
+    fun fromNamedScheduleType(type: NamedScheduleType) = type.ordinal
+
+    @TypeConverter
+    fun toNamedScheduleType(value: Int) = NamedScheduleType.entries[value]
 
     @TypeConverter
     fun fromTimetableType(type: TimetableType): Int = type.ordinal

@@ -2,30 +2,35 @@ package com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event
 
 import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.entity.Event
-import com.google.gson.annotations.SerializedName
+import com.egormelnikoff.schedulerutmiit.app.serializers.LocalDateTimeSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Keep
+@Serializable
 data class EventDto(
-    @SerializedName("startDatetime")
+    @Serializable(with = LocalDateTimeSerializer::class)
+    @SerialName("startDatetime")
     val startDatetime: LocalDateTime?,
-    @SerializedName("endDatetime")
+    @Serializable(with = LocalDateTimeSerializer::class)
+    @SerialName("endDatetime")
     val endDatetime: LocalDateTime?,
-    @SerializedName("recurrenceRule")
+    @SerialName("recurrenceRule")
     val recurrence: RecurrenceEventDto?,
-    @SerializedName("periodNumber")
+    @SerialName("periodNumber")
     val periodNumber: Int?,
-    @SerializedName("name")
+    @SerialName("name")
     val name: String?,
-    @SerializedName("typeName")
+    @SerialName("typeName")
     val typeName: String?,
-    @SerializedName("timeSlotName")
+    @SerialName("timeSlotName")
     val timeSlotName: String?,
-    @SerializedName("lecturers")
+    @SerialName("lecturers")
     val lecturers: List<LecturerDto>?,
-    @SerializedName("rooms")
+    @SerialName("rooms")
     val rooms: List<RoomDto>?,
-    @SerializedName("groups")
+    @SerialName("groups")
     val groups: List<GroupDto>?
 ) {
     fun customHashCode(forceNonPeriodic: Boolean = false): Int {

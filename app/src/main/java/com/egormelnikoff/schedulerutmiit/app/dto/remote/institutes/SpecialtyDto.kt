@@ -2,14 +2,16 @@ package com.egormelnikoff.schedulerutmiit.app.dto.remote.institutes
 
 import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class SpecialtyDto(
-    @SerializedName("name")
+    @SerialName("name")
     val name: String,
-    @SerializedName("abbreviation")
+    @SerialName("abbreviation")
     val abbreviation: String,
-    @SerializedName("groups")
+    @SerialName("groups")
     val groups: List<GroupDto>
 )

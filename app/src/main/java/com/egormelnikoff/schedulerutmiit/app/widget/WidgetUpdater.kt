@@ -7,13 +7,13 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.work.ListenableWorker
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget
 import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
-import com.google.gson.Gson
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class WidgetDataUpdater @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
     private val context: Context,
-    private val gson: Gson
+    private val json: Json
 ) {
     suspend fun updateAll(): ListenableWorker.Result {
         namedScheduleRepos.getDefault()?.let { namedScheduleEntity ->
@@ -21,7 +21,7 @@ class WidgetDataUpdater @Inject constructor(
                 namedSchedule = namedScheduleRepos.getById(namedScheduleEntity.id)
             )
             widgetData?.let {
-                val widgetDataString = gson.toJson(widgetData)
+                val widgetDataString = json.encodeToString(widgetData)
                 GlanceAppWidgetManager(context)
                     .getGlanceIds(EventsWidget::class.java)
                     .forEach { glanceId ->

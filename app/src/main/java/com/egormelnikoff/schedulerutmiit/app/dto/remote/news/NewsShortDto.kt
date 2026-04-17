@@ -1,19 +1,23 @@
 package com.egormelnikoff.schedulerutmiit.app.dto.remote.news
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import com.egormelnikoff.schedulerutmiit.app.serializers.LocalDateTimeInstantSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Keep
+@Serializable
 data class NewsShortDto(
-    @SerializedName("idInformation")
+    @SerialName("idInformation")
     val id: Long,
-    @SerializedName("title")
+    @SerialName("title")
     val title: String,
-    @SerializedName("date")
+    @Serializable(with = LocalDateTimeInstantSerializer::class)
+    @SerialName("date")
     val date: LocalDateTime,
-    @SerializedName("thumbnail")
+    @SerialName("thumbnail")
     val picUrl: String,
-    @SerializedName("secondary")
+    @SerialName("secondary")
     val secondary: SecondaryDto
 )

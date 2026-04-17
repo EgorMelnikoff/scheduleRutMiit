@@ -1,10 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.app.dto.remote.timetable
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class TimetablesDto(
-    @SerializedName("timetables")
+    @SerialName("timetables")
     val timetables: List<TimetableDto>
 )

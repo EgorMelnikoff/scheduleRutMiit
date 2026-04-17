@@ -7,10 +7,17 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RecurrenceEventDto
+import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.serializers.LocalDateTimeSerializer
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Keep
+@Serializable
 @Entity(tableName = "Events")
 data class Event(
     @ColumnInfo(name = "EventId")
@@ -20,18 +27,19 @@ data class Event(
     val scheduleId: Long = -1,
     val isHidden: Boolean = false,
     val isCustomEvent: Boolean = false,
-
+    @Serializable(with = LocalDateTimeSerializer::class)
     val startDatetime: LocalDateTime,
+    @Serializable(with = LocalDateTimeSerializer::class)
     val endDatetime: LocalDateTime,
     @Embedded
-    val recurrenceRule: com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RecurrenceEventDto?,
+    val recurrenceRule: RecurrenceEventDto?,
     val periodNumber: Int?,
     val name: String,
     val typeName: String?,
     val timeSlotName: String?,
-    val lecturers: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto>?,
-    val rooms: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto>?,
-    val groups: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto>?
+    val lecturers: List<LecturerDto>?,
+    val rooms: List<RoomDto>?,
+    val groups: List<GroupDto>?
 ) {
     fun customHashCode(forceNonPeriodic: Boolean = false): Int {
         val hashString = when {

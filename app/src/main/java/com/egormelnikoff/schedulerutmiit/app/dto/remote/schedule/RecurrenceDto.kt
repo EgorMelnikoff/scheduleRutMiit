@@ -1,13 +1,15 @@
 package com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class RecurrenceDto(
-    @SerializedName("interval")
+    @SerialName("interval")
     val interval: Int,
-    @SerializedName("currentNumber")
+    @SerialName("currentNumber")
     val currentNumber: Int,
     val firstWeekNumber: Int
 )

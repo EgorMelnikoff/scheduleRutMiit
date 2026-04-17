@@ -8,12 +8,12 @@ import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.NamedScheduleDao
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.ScheduleDao
 import com.egormelnikoff.schedulerutmiit.datasource.local.db.dao.SearchQueryDao
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -46,5 +46,5 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideConverters(gson: Gson): Converters = Converters(gson)
+    fun provideConverters(json: Json): Converters = Converters(json)
 }

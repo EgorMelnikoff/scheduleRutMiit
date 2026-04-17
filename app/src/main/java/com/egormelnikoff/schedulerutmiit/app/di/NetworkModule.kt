@@ -4,14 +4,15 @@ import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.API_GITHUB
 import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.BASE_RUT_MIIT_URL
 import com.egormelnikoff.schedulerutmiit.datasource.remote.api.GithubApi
 import com.egormelnikoff.schedulerutmiit.datasource.remote.api.MiitApi
-import com.google.gson.Gson
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -44,11 +45,13 @@ object NetworkModule {
 object MiitModule {
     @Provides
     @Singleton
-    fun provideMiitApi(okHttpClient: OkHttpClient, gson: Gson): MiitApi {
+    fun provideMiitApi(okHttpClient: OkHttpClient, json: Json): MiitApi {
+        val contentType = "application/json".toMediaType()
+
         return Retrofit.Builder()
             .baseUrl(BASE_RUT_MIIT_URL)
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(json.asConverterFactory(contentType))
             .build()
             .create(MiitApi::class.java)
     }
@@ -59,11 +62,13 @@ object MiitModule {
 object GithubModule {
     @Provides
     @Singleton
-    fun provideGithubApi(okHttpClient: OkHttpClient, gson: Gson): GithubApi {
+    fun provideGithubApi(okHttpClient: OkHttpClient, json: Json): GithubApi {
+        val contentType = "application/json".toMediaType()
+
         return Retrofit.Builder()
             .baseUrl(API_GITHUB)
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(json.asConverterFactory(contentType))
             .build()
             .create(GithubApi::class.java)
     }

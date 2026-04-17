@@ -1,14 +1,16 @@
 package com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class RoomDto(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Int,
-    @SerializedName("name")
+    @SerialName("name")
     val name: String,
-    @SerializedName("hint")
+    @SerialName("hint")
     val hint: String
 )

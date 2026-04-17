@@ -1,13 +1,17 @@
 package com.egormelnikoff.schedulerutmiit.app.dto.remote.latest_release
 
-import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Keep
+@Serializable
 data class LatestReleaseFetchDto(
-    @SerializedName("html_url")
+    @SerialName("html_url")
     val url: String,
-    @SerializedName("name")
+    @SerialName("name")
     val name: String,
-    @SerializedName("tag_name")
+    @SerialName("tag_name")
     val tag: String,
     val time: Long = System.currentTimeMillis()
 ) {

@@ -48,14 +48,14 @@ import com.egormelnikoff.schedulerutmiit.app.widget.WidgetData
 import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.theme.ScheduleGlanceTheme
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
-import com.google.gson.Gson
 import dagger.hilt.EntryPoints
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.LocalTime
 
 class EventsWidget : GlanceAppWidget() {
-    private lateinit var gson: Gson
+    private lateinit var json: Json
     private lateinit var widgetDataUpdater: WidgetDataUpdater
 
     companion object {
@@ -70,17 +70,17 @@ class EventsWidget : GlanceAppWidget() {
         id: GlanceId
     ) {
         val provider = EntryPoints.get(context, ProviderEntryPoint::class.java)
-        gson = provider.gson()
+        json = provider.json()
         widgetDataUpdater = provider.widgetDataUpdater()
 
         provideContent {
             val scope = rememberCoroutineScope()
             val prefs = currentState<Preferences>()
             val widgetDataString = prefs[widgetDataKey]
-            val widgetData = gson.fromJson(
-                widgetDataString,
-                WidgetData::class.java
-            )
+            val widgetData = widgetDataString?.let {
+                json.decodeFromString<WidgetData>(it)
+            }
+
             ScheduleGlanceTheme {
                 EventsWidgetContent(
                     widgetData = widgetData,

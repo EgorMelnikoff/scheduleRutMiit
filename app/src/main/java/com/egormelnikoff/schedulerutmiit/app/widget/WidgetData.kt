@@ -9,10 +9,12 @@ import com.egormelnikoff.schedulerutmiit.app.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.NamedScheduleUiDto
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ReviewUiDto
 import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto.Companion.getPeriodicEvents
+import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@Serializable
 @Keep
 data class WidgetData(
     val namedScheduleEntity: NamedScheduleEntity? = null,

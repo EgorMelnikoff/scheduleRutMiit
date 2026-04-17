@@ -6,13 +6,17 @@ import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.app.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget.Companion.eveningTime
+import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@Serializable
 @Keep
 data class ReviewUiDto(
+    @Serializable(with = LocalDateSerializer::class)
     val displayedDate: LocalDate,
     val events: Map<String, List<Event>> = mapOf(),
     val currentWeek: Int = 0

@@ -7,9 +7,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.RecurrenceDto
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.app.serializers.LocalDateSerializer
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
+
 @Keep
+@Serializable
 @Entity(tableName = "Schedules")
 data class ScheduleEntity(
     @ColumnInfo(name = "ScheduleId")
@@ -20,7 +24,9 @@ data class ScheduleEntity(
     val timetableId: String,
     val timetableType: TimetableType,
     val downloadUrl: String?,
+    @Serializable(with = LocalDateSerializer::class)
     val startDate: LocalDate,
+    @Serializable(with = LocalDateSerializer::class)
     val endDate: LocalDate,
     @Embedded
     val recurrence: RecurrenceDto?,

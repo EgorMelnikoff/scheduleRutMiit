@@ -1,16 +1,18 @@
 package com.egormelnikoff.schedulerutmiit.app.dto.remote.news
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class NewsDto(
-    @SerializedName("idInformation")
+    @SerialName("idInformation")
     val id: Long,
-    @SerializedName("title")
+    @SerialName("title")
     val title: String,
-    @SerializedName("hisdateDisplay")
+    @SerialName("hisdateDisplay")
     val date: String,
-    @SerializedName("content")
+    @SerialName("content")
     val content: String
 )

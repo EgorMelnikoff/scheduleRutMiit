@@ -58,11 +58,11 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     implementation(libs.retrofit)
-    implementation(libs.converter.gson)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.jsoup)
 
     implementation(libs.androidx.room.ktx)
-    implementation(libs.kotlinx.serialization.json)
     ksp(libs.androidx.room.room.compiler)
     implementation(libs.androidx.datastore.preferences)
 

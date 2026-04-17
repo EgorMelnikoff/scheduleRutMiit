@@ -2,14 +2,16 @@ package com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule
 
 import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.app.dto.remote.timetable.TimetableDto
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class ScheduleDto(
-    @SerializedName("timetable")
+    @SerialName("timetable")
     val timetable: TimetableDto,
-    @SerializedName("periodicContent")
+    @SerialName("periodicContent")
     val periodic: PeriodicContentDto?,
-    @SerializedName("nonPeriodicContent")
+    @SerialName("nonPeriodicContent")
     val nonPeriodic: NonPeriodicContentDto?
 )

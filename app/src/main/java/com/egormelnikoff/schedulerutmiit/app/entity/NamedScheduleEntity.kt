@@ -5,8 +5,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 @Entity(tableName = "NamedSchedules")
 data class NamedScheduleEntity(
     @ColumnInfo(name = "NamedScheduleId")

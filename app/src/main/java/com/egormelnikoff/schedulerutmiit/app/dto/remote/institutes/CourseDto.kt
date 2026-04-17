@@ -1,12 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.app.dto.remote.institutes
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class CourseDto(
-    @SerializedName("course")
+    @SerialName("course")
     val course: String,
-    @SerializedName("specialties")
+    @SerialName("specialties")
     val specialties: List<SpecialtyDto>
 )

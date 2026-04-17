@@ -9,20 +9,20 @@ import com.egormelnikoff.schedulerutmiit.app.dto.remote.latest_release.LatestRel
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "Settings")
 
 class PreferencesDataStore @Inject constructor(
     private val context: Context,
-    private val gson: Gson
+    private val json: Json
 ) {
     suspend fun setLatestRelease(latestReleaseFetchDto: LatestReleaseFetchDto) {
         context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.LATEST_RELEASE] = gson.toJson(latestReleaseFetchDto)
+            preferences[PreferencesKeys.LATEST_RELEASE] = json.encodeToString(latestReleaseFetchDto)
         }
     }
 
@@ -105,10 +105,13 @@ class PreferencesDataStore @Inject constructor(
         }
     }
 
-    val latestReleaseFlow: Flow<LatestReleaseFetchDto?> = context.dataStore.data.map { preferences ->
-        val latestReleaseString = preferences[PreferencesKeys.LATEST_RELEASE]
-        return@map gson.fromJson(latestReleaseString, LatestReleaseFetchDto::class.java)
-    }
+    val latestReleaseFlow: Flow<LatestReleaseFetchDto?> =
+        context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.LATEST_RELEASE]?.let {
+                json.decodeFromString<LatestReleaseFetchDto>(it)
+            }
+        }
+
 
     val themeFlow: Flow<Theme> = context.dataStore.data.map { preferences ->
         val theme = preferences[PreferencesKeys.THEME]
