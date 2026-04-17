@@ -1,31 +1,23 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.devtoolsKsp)
-    id ("dagger.hilt.android.plugin")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "2.3.20"
 }
 
 android {
     namespace = "com.egormelnikoff.schedulerutmiit"
-    compileSdk = 36
-
-    buildFeatures {
-        buildConfig = false
-        compose = true
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 29
-        targetSdk = 36
-        versionCode = 70
-        versionName = "2.3.6"
-
+        targetSdk = 37
+        versionCode = 71
+        versionName = "2.3.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -46,64 +38,46 @@ android {
         }
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+    buildFeatures {
+        compose = true
     }
 }
 
 dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics.ndk)
 
-    implementation (libs.hilt.android)
-    implementation (libs.androidx.hilt.lifecycle.viewmodel)
+    implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.compose.ui)
-    ksp (libs.hilt.android.compiler)
-    ksp (libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.work)
-
+    ksp(libs.hilt.android.compiler)
 
     implementation(libs.retrofit)
-    implementation (libs.jsoup)
-    implementation (libs.google.gson)
     implementation(libs.converter.gson)
+    implementation(libs.jsoup)
 
     implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.room.runtime)
+    implementation(libs.kotlinx.serialization.json)
     ksp(libs.androidx.room.room.compiler)
-    annotationProcessor(libs.androidx.room.room.compiler)
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.work.runtime.ktx)
 
-    implementation (libs.androidx.datastore.preferences)
-
-    implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.navigation3.ui)
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.glance.material3)
-
-    implementation(libs.androidx.core.ktx)
-    implementation (libs.androidx.runtime.livedata)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.paging.compose)
+
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
