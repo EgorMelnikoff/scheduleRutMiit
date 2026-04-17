@@ -31,7 +31,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 

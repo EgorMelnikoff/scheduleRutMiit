@@ -37,14 +37,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.dto.local.news.NewsParsedDto
+import com.egormelnikoff.schedulerutmiit.data.local.dto.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
-import com.egormelnikoff.schedulerutmiit.view_models.news.state.NewsState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.news.state.NewsState
 
 @Composable
 fun NewsDialog(

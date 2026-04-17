@@ -21,15 +21,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
-import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsByDayAndWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.EventsBrieflySummary
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.EventsDetailSummary
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.ScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.ScheduleUiDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

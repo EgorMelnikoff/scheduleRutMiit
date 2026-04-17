@@ -11,8 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventHeader
 
 @OptIn(ExperimentalMaterial3Api::class)

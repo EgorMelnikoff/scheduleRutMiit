@@ -4,14 +4,14 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.egormelnikoff.schedulerutmiit.app.network.logger.Logger
-import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.domain.schedule.RefreshNamedScheduleUseCase
-import com.egormelnikoff.schedulerutmiit.repos.named_schedule.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.data.local.preferences.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.data.remote.network.logger.Logger
+import com.egormelnikoff.schedulerutmiit.domain.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.RefreshNamedScheduleUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
-import com.egormelnikoff.schedulerutmiit.app.network.result.Result as ApiResult
+import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result as ApiResult
 
 @HiltWorker
 class ScheduleWorker @AssistedInject constructor(

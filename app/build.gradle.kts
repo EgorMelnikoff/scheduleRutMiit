@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.egormelnikoff.schedulerutmiit"
-    compileSdk = 37
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.egormelnikoff.schedulerutmiit"

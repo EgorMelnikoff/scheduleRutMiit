@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event
 
-import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto
-import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto
-import com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto
+import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.GroupDto
+import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.LecturerDto
+import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.RoomDto
 
 object DefaultEventParams {
     val types = arrayOf(

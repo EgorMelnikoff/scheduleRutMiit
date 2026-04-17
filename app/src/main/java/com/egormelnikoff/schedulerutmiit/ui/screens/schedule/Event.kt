@@ -31,11 +31,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
-import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.app.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.local.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex

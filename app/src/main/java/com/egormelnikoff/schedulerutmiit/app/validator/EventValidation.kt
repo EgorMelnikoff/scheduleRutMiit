@@ -16,9 +16,9 @@ sealed class EventValidation {
             date: LocalDate?,
             startTime: LocalTime?,
             endTime: LocalTime?,
-            roomsList: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.RoomDto>,
-            lecturersList: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.LecturerDto>,
-            groupsList: List<com.egormelnikoff.schedulerutmiit.app.dto.remote.schedule.event.GroupDto>
+            roomsList: List<com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.RoomDto>,
+            lecturersList: List<com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.LecturerDto>,
+            groupsList: List<com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.GroupDto>
         ): EventValidation {
             val errors = mutableListOf<String>()
             if (name.isBlank()) errors.add(context.getString(R.string.no_name_specified))

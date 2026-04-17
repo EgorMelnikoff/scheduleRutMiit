@@ -35,13 +35,13 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.relation.Schedule
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.Schedule
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime

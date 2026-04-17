@@ -33,10 +33,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.AnimatedAlert
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
@@ -53,9 +53,9 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.list.ScheduleListVi
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.split_weeks.ScheduleSplitWeeksView
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
-import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
 import java.time.LocalDateTime
 
 @Composable

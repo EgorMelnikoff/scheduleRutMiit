@@ -41,10 +41,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.app.network.Endpoints.personImageUrl
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.data.remote.network.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
@@ -53,10 +53,10 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchParams
-import com.egormelnikoff.schedulerutmiit.view_models.search.state.SearchState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.search.state.SearchParams
+import com.egormelnikoff.schedulerutmiit.ui.view_models.search.state.SearchState
 
 @Composable
 fun SearchDialog(

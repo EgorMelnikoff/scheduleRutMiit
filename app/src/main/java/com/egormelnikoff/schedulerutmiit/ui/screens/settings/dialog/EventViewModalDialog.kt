@@ -14,12 +14,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomCheckBox
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

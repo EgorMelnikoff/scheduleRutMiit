@@ -45,9 +45,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.enums.DayPeriod
 import com.egormelnikoff.schedulerutmiit.app.extension.dayPeriod
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
@@ -58,8 +58,8 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ScheduleState
 import java.time.LocalDateTime
 
 @Composable

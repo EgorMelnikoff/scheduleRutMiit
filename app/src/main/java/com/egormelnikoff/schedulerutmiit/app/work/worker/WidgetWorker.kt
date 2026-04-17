@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.egormelnikoff.schedulerutmiit.app.widget.WidgetDataUpdater
+import com.egormelnikoff.schedulerutmiit.ui.widget.WidgetDataUpdater
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 

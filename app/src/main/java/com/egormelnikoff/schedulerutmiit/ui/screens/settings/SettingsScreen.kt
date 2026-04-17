@@ -28,7 +28,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
-import com.egormelnikoff.schedulerutmiit.app.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.data.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
@@ -40,8 +40,8 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.ThemeModalDi
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.ui.theme.isDarkTheme
-import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.settings.state.SettingsState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.state.SettingsState
 
 data class ThemeSelectorItemContent(
     val theme: Theme,

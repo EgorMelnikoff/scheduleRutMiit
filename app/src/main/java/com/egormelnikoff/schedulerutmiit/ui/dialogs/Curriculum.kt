@@ -43,8 +43,8 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.view_models.curriculum.CurriculumViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.curriculum.state.CurriculumState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.curriculum.CurriculumViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.curriculum.state.CurriculumState
 
 @Composable
 fun CurriculumDialog(

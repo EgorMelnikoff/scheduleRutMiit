@@ -24,10 +24,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ui_dto.NamedScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.NamedScheduleUiDto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

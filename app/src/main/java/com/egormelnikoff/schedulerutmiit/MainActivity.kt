@@ -10,10 +10,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
-import com.egormelnikoff.schedulerutmiit.view_models.news.NewsViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.search.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.view_models.settings.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

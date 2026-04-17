@@ -4,12 +4,13 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".ScheduleApplication"
-        android:enableOnBackInvokedCallback="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,9 +21,9 @@
         tools:targetApi="36">
         <activity
             android:name=".MainActivity"
+            android:configChanges="uiMode|orientation|screenSize"
             android:exported="true"
             android:launchMode="singleTask"
-            android:configChanges="uiMode|orientation|screenSize"
             android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,8 +38,24 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
+                android:name="com.egormelnikoff.schedulerutmiit.app.work.worker.WidgetWorker"
+                android:value="androidx.startup" />
+
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
                 android:name="com.egormelnikoff.schedulerutmiit.app.work.worker.ScheduleWorker"
                 android:value="androidx.startup" />
+
             <meta-data
                 android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
@@ -56,7 +73,7 @@
         </provider>
 
         <receiver
-            android:name=".app.widget.receivers.EventsWidgetReceiver"
+            android:name=".ui.widget.receivers.EventsWidgetReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

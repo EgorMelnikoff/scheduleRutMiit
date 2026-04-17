@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.ui.navigation
 
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
-import com.egormelnikoff.schedulerutmiit.app.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
 
 sealed interface Route {
     sealed class Page(

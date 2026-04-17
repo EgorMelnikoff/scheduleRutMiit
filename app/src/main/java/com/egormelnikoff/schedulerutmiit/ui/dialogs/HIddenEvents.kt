@@ -22,16 +22,16 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.hourMinuteFormatter
-import com.egormelnikoff.schedulerutmiit.app.entity.Event
-import com.egormelnikoff.schedulerutmiit.app.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.app.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.domain.schedule.EventAction
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.EventAction
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import java.util.Locale
 
 @Composable

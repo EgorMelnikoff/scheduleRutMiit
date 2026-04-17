@@ -12,7 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
-import com.egormelnikoff.schedulerutmiit.view_models.schedule.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ScheduleState
 import java.time.LocalDate
 
 @Keep
