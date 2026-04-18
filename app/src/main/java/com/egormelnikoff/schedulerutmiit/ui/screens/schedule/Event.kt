@@ -91,7 +91,7 @@ fun Event(
                         event = event,
                         scheduleEntity = scheduleEntity,
                         eventExtraData = eventsExtraData.find {
-                            it.id == event.id
+                            it.eventId == event.id
                         },
                         isSavedSchedule = isSavedSchedule,
                         eventView = eventView

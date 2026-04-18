@@ -15,7 +15,7 @@ class EventExtraReposImpl @Inject constructor(
         comment: String
     ) = eventExtraDao.insert(
         EventExtraData(
-            id = event.id,
+            eventId = event.id,
             scheduleId = event.scheduleId,
             eventName = event.name,
             eventStartDatetime = event.startDatetime,

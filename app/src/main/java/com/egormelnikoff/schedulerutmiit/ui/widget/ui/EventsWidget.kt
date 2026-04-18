@@ -276,7 +276,7 @@ class EventsWidget : GlanceAppWidget() {
                 events.forEachIndexed { index, event ->
                     EventSingle(
                         event = event,
-                        eventExtraData = eventsExtraData.find { it.id == event.id }
+                        eventExtraData = eventsExtraData.find { it.eventId == event.id }
                     )
                     if (index != events.lastIndex) {
                         Spacer(modifier = GlanceModifier.height(8.dp))

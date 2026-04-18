@@ -17,20 +17,20 @@ interface EventExtraDao {
     @Query("DELETE FROM EventsExtraData WHERE eventExtraScheduleId = :scheduleId")
     suspend fun deleteByScheduleId(scheduleId: Long)
 
-    @Query("DELETE FROM EventsExtraData WHERE EventExtraId = :eventId")
+    @Query("DELETE FROM EventsExtraData WHERE eventId = :eventId")
     suspend fun deleteByEventId(eventId: Long)
 
-    @Query("SELECT * FROM EventsExtraData WHERE EventExtraId = :eventId")
+    @Query("SELECT * FROM EventsExtraData WHERE eventId = :eventId")
     suspend fun getByEventId(eventId: Long): EventExtraData?
 
-    @Query("UPDATE eventsextradata SET tag = :tag WHERE eventExtraScheduleId = :scheduleId AND EventExtraId = :eventId")
+    @Query("UPDATE eventsextradata SET tag = :tag WHERE eventExtraScheduleId = :scheduleId AND eventId = :eventId")
     suspend fun updateTag(
         scheduleId: Long,
         eventId: Long,
         tag: Int
     )
 
-    @Query("UPDATE eventsextradata SET comment = :comment WHERE eventExtraScheduleId = :scheduleId AND EventExtraId = :eventId")
+    @Query("UPDATE eventsextradata SET comment = :comment WHERE eventExtraScheduleId = :scheduleId AND eventId = :eventId")
     suspend fun updateComment(
         scheduleId: Long,
         eventId: Long,

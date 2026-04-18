@@ -24,7 +24,7 @@ import com.egormelnikoff.schedulerutmiit.data.local.db.entity.SearchQuery
         EventExtraData::class,
         SearchQuery::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -54,6 +54,7 @@ abstract class AppDatabase : RoomDatabase() {
                     .addMigrations(MIGRATION_5_6)
                     .addMigrations(MIGRATION_6_7)
                     .addMigrations(MIGRATION_7_8)
+                    .addMigrations(MIGRATION_8_9)
                     .build()
                 INSTANCE = instance
                 instance

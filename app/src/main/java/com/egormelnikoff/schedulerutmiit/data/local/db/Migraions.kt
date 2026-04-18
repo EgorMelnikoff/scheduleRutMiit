@@ -220,3 +220,42 @@ val MIGRATION_7_8 = object : Migration(7, 8) {
         db.execSQL("ALTER TABLE Events_new RENAME TO Events")
     }
 }
+
+val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS EventsExtraData_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                eventId INTEGER NOT NULL,
+                eventExtraScheduleId INTEGER NOT NULL,
+                eventName TEXT,
+                eventStartDatetime TEXT,
+                comment TEXT NOT NULL,
+                tag INTEGER NOT NULL
+            )
+        """.trimIndent())
+
+        db.execSQL("""
+            INSERT INTO EventsExtraData_new (
+                eventId,
+                eventExtraScheduleId,
+                eventName,
+                eventStartDatetime,
+                comment,
+                tag
+            )
+            SELECT
+                EventExtraId,
+                eventExtraScheduleId,
+                eventName,
+                eventStartDatetime,
+                comment,
+                tag
+            FROM EventsExtraData
+        """.trimIndent())
+
+        db.execSQL("DROP TABLE EventsExtraData")
+
+        db.execSQL("ALTER TABLE EventsExtraData_new RENAME TO EventsExtraData")
+    }
+}

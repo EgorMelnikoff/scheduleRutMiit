@@ -352,7 +352,7 @@ fun EventsDetailSummary(
             ) {
                 Box {
                     groupedEvents.value.forEach { event ->
-                        val eventExtraData = eventsExtraData.find { it.id == event.id }
+                        val eventExtraData = eventsExtraData.find { it.eventId == event.id }
                         val color = eventExtraData?.tag.getColorByIndex(
                             defaultColor = MaterialTheme.colorScheme.onBackground
                         )
