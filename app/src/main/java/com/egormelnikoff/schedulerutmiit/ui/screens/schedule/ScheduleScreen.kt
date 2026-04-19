@@ -34,7 +34,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.AnimatedAlert
@@ -50,7 +49,6 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.ScheduleLoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.ScheduleCalendarView
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.list.ScheduleListView
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.split_weeks.ScheduleSplitWeeksView
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
@@ -129,7 +127,6 @@ fun ScreenSchedule(
                             showNamedScheduleEntityDialog = newValue
                         },
                         namedScheduleUiDto = scheduleState.currentNamedSchedule,
-                        isPeriodic = scheduleState.currentNamedSchedule.scheduleUiDto?.scheduleEntity?.timetableType == TimetableType.PERIODIC,
                         scheduleView = appSettings.scheduleView
                     )
                 }
@@ -165,6 +162,7 @@ fun ScreenSchedule(
                                         verticalPadding = 12.dp,
                                         title = stringResource(R.string.schedule_is_not_saved),
                                         titleColor = MaterialTheme.colorScheme.onPrimary,
+                                        titleTypography = MaterialTheme.typography.titleSmall,
                                         leadingIcon = {
                                             Icon(
                                                 modifier = Modifier.size(24.dp),
@@ -175,6 +173,7 @@ fun ScreenSchedule(
                                         },
                                         trailingIcon = {
                                             Text(
+                                                modifier = Modifier.padding(end = 4.dp),
                                                 text = stringResource(R.string.save),
                                                 style = MaterialTheme.typography.bodyMedium,
                                                 color = MaterialTheme.colorScheme.onPrimary
@@ -209,8 +208,7 @@ fun ScreenSchedule(
                                             isSavedSchedule = scheduleState.isSaved,
 
                                             scheduleUiState = scheduleUiState,
-                                            eventsCountView = appSettings.eventsCountView,
-                                            eventView = appSettings.eventView,
+                                            appSettings = appSettings,
                                             paddingBottom = externalPadding.calculateBottomPadding()
                                         )
                                     }
@@ -226,33 +224,9 @@ fun ScreenSchedule(
                                             namedScheduleEntity = scheduleState.currentNamedSchedule.namedSchedule.namedScheduleEntity,
                                             scheduleUiDto = scheduleState.currentNamedSchedule.scheduleUiDto,
 
-                                            eventView = appSettings.eventView,
+                                            appSettings = appSettings,
                                             paddingBottom = externalPadding.calculateBottomPadding()
                                         )
-                                    }
-
-                                    ScheduleView.SPLIT_WEEKS -> {
-                                        if (scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.timetableType == TimetableType.PERIODIC && scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence != null) {
-                                            ScheduleSplitWeeksView(
-                                                scheduleViewModel = scheduleViewModel,
-
-                                                appUiState = appUiState,
-                                                scheduleUiState = scheduleUiState,
-
-                                                namedScheduleUiDto = scheduleState.currentNamedSchedule,
-                                                scheduleUiDto = scheduleState.currentNamedSchedule.scheduleUiDto,
-                                                recurrence = scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence,
-                                                isSavedSchedule = scheduleState.isSaved,
-                                                appSettings = appSettings,
-                                                paddingBottom = externalPadding.calculateBottomPadding()
-                                            )
-                                        } else {
-                                            settingsViewModel.onSetScheduleView(
-                                                appSettings.scheduleView.next(
-                                                    false
-                                                )
-                                            )
-                                        }
                                     }
                                 }
                             }

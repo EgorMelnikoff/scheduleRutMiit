@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
@@ -26,15 +25,6 @@ fun ScheduleUiStateSynchronizer(
                 scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.daysStartIndex
             )
             scheduleUiState.scheduleListState.scrollToItem(0)
-            scheduleUiState.pagerSplitWeeks.scrollToPage(scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.dayOfWeek.value - 1)
-            scheduleUiState.onSelectWeek(
-                if (scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence != null) {
-                    scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.getCurrentWeek(
-                        scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.startDate,
-                        scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence
-                    )
-                } else 0
-            )
         }
 
         LaunchedEffect(scheduleUiState.selectedDate) {
