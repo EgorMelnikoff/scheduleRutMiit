@@ -140,7 +140,7 @@ class PreferencesDataStore @Inject constructor(
 
     val eventExtraPolicyFlow: Flow<EventExtraPolicy> = context.dataStore.data.map { preferences ->
         val name = preferences[PreferencesKeys.EVENT_EXTRA_POLICY]
-        EventExtraPolicy.entries.find { it.name == name } ?: EventExtraPolicy.BY_DATES
+        EventExtraPolicy.entries.find { it.name == name } ?: EventExtraPolicy.DEFAULT
     }
 
 
