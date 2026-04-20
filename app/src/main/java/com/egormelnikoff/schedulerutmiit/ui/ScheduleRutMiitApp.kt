@@ -134,7 +134,7 @@ fun RootHost(
     searchParams: SearchParams,
     scheduleState: ScheduleState,
     newsState: NewsState,
-    currentDateTime: LocalDateTime,
+    currentDateTime: LocalDateTime
 ) {
     Scaffold(
         snackbarHost = {
@@ -186,6 +186,7 @@ fun RootHost(
                         namedScheduleEntity = key.namedScheduleEntity,
                         scheduleEntity = key.scheduleEntity,
                         isSavedSchedule = key.isSavedSchedule,
+                        dateTime = key.dateTime,
                         event = key.event,
                         eventExtraData = key.eventExtraData,
                         appBackStack = appUiState.appBackStack,
@@ -309,16 +310,6 @@ fun PageHost(
 
                             appSettings.scheduleView == ScheduleView.LIST -> {
                                 scheduleUiState.scheduleListState.animateScrollToItem(0)
-                            }
-
-                            scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.SPLIT_WEEKS -> {
-                                scheduleUiState.pagerSplitWeeks.scrollToPage(
-                                    scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate.dayOfWeek.value - 1
-                                )
-                                scheduleUiState.onSelectWeek(
-                                    scheduleState.currentNamedSchedule.scheduleUiDto.scheduleEntity.recurrence?.currentNumber
-                                        ?: 0
-                                )
                             }
                         }
                     }

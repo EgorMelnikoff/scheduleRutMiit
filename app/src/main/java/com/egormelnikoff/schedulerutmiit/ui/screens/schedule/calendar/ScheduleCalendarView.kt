@@ -12,9 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
-import com.egormelnikoff.schedulerutmiit.data.local.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.data.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.EventsForDay
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
@@ -31,8 +30,7 @@ fun ScheduleCalendarView(
     scheduleUiDto: ScheduleUiDto,
     isSavedSchedule: Boolean,
     scheduleUiState: ScheduleUiState,
-    eventView: EventView,
-    eventsCountView: EventsCountView,
+    appSettings: AppSettings,
     paddingBottom: Dp
 ) {
     Column {
@@ -40,7 +38,8 @@ fun ScheduleCalendarView(
             scheduleUiDto = scheduleUiDto,
             scope = appUiState.scope,
             scheduleUiState = scheduleUiState,
-            eventsCountView = eventsCountView
+            eventsCountView = appSettings.eventsCountView,
+            eventExtraPolicy = appSettings.eventExtraPolicy
         )
         PagedDays(
             scheduleViewModel = scheduleViewModel,
@@ -51,7 +50,7 @@ fun ScheduleCalendarView(
             pagerDaysState = scheduleUiState.pagerDaysState,
 
             isSavedSchedule = isSavedSchedule,
-            eventView = eventView,
+            appSettings = appSettings,
             paddingBottom = paddingBottom
         )
     }
@@ -68,7 +67,7 @@ fun PagedDays(
     pagerDaysState: PagerState,
 
     isSavedSchedule: Boolean,
-    eventView: EventView,
+    appSettings: AppSettings,
     paddingBottom: Dp
 ) {
     HorizontalPager(
@@ -100,8 +99,9 @@ fun PagedDays(
             scheduleEntity = scheduleUiDto.scheduleEntity,
             eventsExtraData = scheduleUiDto.eventsExtraData,
             eventsForDate = eventsForDate,
+            date = currentDate,
             isSavedSchedule = isSavedSchedule,
-            eventView = eventView,
+            appSettings = appSettings,
             paddingBottom = paddingBottom
 
         )

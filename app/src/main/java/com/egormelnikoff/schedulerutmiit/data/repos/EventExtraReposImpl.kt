@@ -4,6 +4,7 @@ import com.egormelnikoff.schedulerutmiit.data.local.db.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.domain.repos.EventExtraRepos
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class EventExtraReposImpl @Inject constructor(
@@ -11,6 +12,7 @@ class EventExtraReposImpl @Inject constructor(
 ) : EventExtraRepos {
     override suspend fun save(
         event: Event,
+        dateTime: LocalDateTime?,
         tag: Int,
         comment: String
     ) = eventExtraDao.insert(
@@ -18,26 +20,52 @@ class EventExtraReposImpl @Inject constructor(
             eventId = event.id,
             scheduleId = event.scheduleId,
             eventName = event.name,
-            eventStartDatetime = event.startDatetime,
+            dateTime = dateTime ?: event.startDatetime,
             comment = comment,
             tag = tag
         )
     )
 
 
-    override suspend fun deleteByEventId(eventId: Long) = eventExtraDao.deleteByEventId(eventId)
+    override suspend fun delete(eventId: Long, dateTime: LocalDateTime?) {
+        if (dateTime != null) {
+            eventExtraDao.deleteByEventIdAndDateTime(eventId, dateTime)
+        } else {
+            eventExtraDao.deleteByEventId(eventId)
+        }
+    }
 
-    override suspend fun getByEventId(
-        eventId: Long
-    ) = eventExtraDao.getByEventId(eventId)
+    override suspend fun get(
+        eventId: Long,
+        dateTime: LocalDateTime?
+    ): EventExtraData? {
+        if (dateTime != null) {
+            return eventExtraDao.getByEventIdAndDateTime(eventId, dateTime)
+        }
+        return eventExtraDao.getByEventId(eventId)
+    }
 
     override suspend fun updateComment(
         event: Event,
+        dateTime: LocalDateTime?,
         newComment: String
-    ) = eventExtraDao.updateComment(event.scheduleId, event.id, newComment)
+    ) {
+        if (dateTime != null) {
+            eventExtraDao.updateCommentByEventIdAndDateTime(event.id, dateTime, newComment)
+        } else {
+            eventExtraDao.updateCommentByEventId(event.id, newComment)
+        }
+    }
 
     override suspend fun updateTag(
         event: Event,
+        dateTime: LocalDateTime?,
         newTag: Int
-    ) = eventExtraDao.updateTag(event.scheduleId, event.id, newTag)
+    ) {
+        if (dateTime != null) {
+            eventExtraDao.updateTagByEventIdAndDateTime(event.id, dateTime, newTag)
+        } else {
+            eventExtraDao.updateTagByEventId(event.id, newTag)
+        }
+    }
 }

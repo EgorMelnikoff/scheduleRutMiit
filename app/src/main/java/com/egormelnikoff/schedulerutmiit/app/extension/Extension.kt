@@ -1,8 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.app.extension
 
 import com.egormelnikoff.schedulerutmiit.app.enums.DayPeriod
+import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
 import java.time.DayOfWeek
 import java.time.Duration
@@ -86,17 +88,6 @@ fun LocalDate.getEventsForDate(
     return displayedEvents.getGroupedEvents()
 }
 
-fun Map<Int, Map<DayOfWeek, List<Event>>>.getEventsByDayAndWeek(
-    dayOfWeek: DayOfWeek,
-    week: Int
-): Map<String, List<Event>> {
-    val events = this[week]?.filter {
-        it.key == dayOfWeek
-    }?.values?.flatten()
-
-    return events?.getGroupedEvents().orEmpty()
-}
-
 fun String.getShortName(type: NamedScheduleType): String {
     if (type != NamedScheduleType.PERSON) return this
     val nameParts = this.split(" ")
@@ -111,6 +102,18 @@ fun LocalDateTime.dayPeriod(): DayPeriod {
         in LocalTime.of(12, 0)..LocalTime.of(17, 59) -> DayPeriod.DAY
         in LocalTime.of(18, 0)..LocalTime.of(21, 59) -> DayPeriod.EVENING
         else -> DayPeriod.NIGHT
+    }
+}
+
+fun List<EventExtraData>.findEventExtra(
+    eventExtraPolicy: EventExtraPolicy,
+    event: Event,
+    dateTime: LocalDateTime
+): EventExtraData? {
+    return  if (eventExtraPolicy == EventExtraPolicy.BY_DATES) {
+        this.find { it.eventId == event.id && it.dateTime == dateTime }
+    } else {
+        this.find { it.eventId == event.id }
     }
 }
 

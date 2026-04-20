@@ -22,6 +22,7 @@ import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.OpenNamedSched
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.RefreshNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.RenameNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.SaveNamedScheduleUseCase
+import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.UpdateEventExtraUseCase
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.event.UiEvent
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.NamedScheduleUiDto
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,7 +55,8 @@ class ScheduleViewModel @Inject constructor(
     private val manageSchedulesUseCase: ManageSchedulesUseCase,
     private val deleteScheduleUseCase: DeleteScheduleUseCase,
 
-    private val eventActionUseCase: EventActionUseCase
+    private val eventActionUseCase: EventActionUseCase,
+    private val updateEventExtraUseCase: UpdateEventExtraUseCase
 ) : ViewModel() {
     private val _scheduleState = MutableStateFlow(ScheduleState())
     private val _isDataLoading = MutableStateFlow(true)
@@ -214,15 +217,15 @@ class ScheduleViewModel @Inject constructor(
             deleteNamedScheduleUseCase(
                 namedScheduleId, isDefault
             ).let { result ->
-                NamedScheduleUiDto.invoke(result.namedSchedule).let { uiDto ->
-                    _scheduleState.update {
-                        it.copy(
-                            savedNamedScheduleEntities = it.savedNamedScheduleEntities,
-                            currentNamedSchedule = uiDto,
-                            defaultNamedSchedule = uiDto,
-                            isSaved = it.savedNamedScheduleEntities.isNotEmpty()
-                        )
-                    }
+                val uiDto = NamedScheduleUiDto.invoke(result.namedSchedule)
+
+                _scheduleState.update {
+                    it.copy(
+                        savedNamedScheduleEntities = result.savedNamedScheduleEntities ?: listOf(),
+                        currentNamedSchedule = uiDto,
+                        defaultNamedSchedule = uiDto,
+                        isSaved = it.savedNamedScheduleEntities.isNotEmpty()
+                    )
                 }
             }
         }
@@ -310,12 +313,13 @@ class ScheduleViewModel @Inject constructor(
     fun updateEventExtra(
         scheduleEntity: ScheduleEntity,
         event: Event,
+        dateTime: LocalDateTime,
         comment: String,
         tag: Int
     ) {
         viewModelScope.launch {
-            eventActionUseCase(
-                scheduleEntity, event, EventAction.UpdateExtra(tag, comment)
+            updateEventExtraUseCase(
+                 scheduleEntity, event, dateTime, tag, comment
             ).let {
                 updateState(
                     namedSchedule = it.namedSchedule

@@ -31,6 +31,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.app.extension.findEventExtra
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
@@ -39,12 +41,16 @@ import com.egormelnikoff.schedulerutmiit.data.local.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 fun Event(
     events: List<Event>,
     scheduleEntity: ScheduleEntity,
     eventsExtraData: List<EventExtraData>,
+    date: LocalDate,
+    eventExtraPolicy: EventExtraPolicy,
     isSavedSchedule: Boolean,
     eventView: EventView,
     navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
@@ -90,9 +96,9 @@ fun Event(
                         onUpdateHiddenEvent = onUpdateHiddenEvent,
                         event = event,
                         scheduleEntity = scheduleEntity,
-                        eventExtraData = eventsExtraData.find {
-                            it.eventId == event.id
-                        },
+                        eventExtraData = eventsExtraData.findEventExtra(
+                            eventExtraPolicy, event, LocalDateTime.of(date, event.startDatetime.toLocalTime())
+                        ),
                         isSavedSchedule = isSavedSchedule,
                         eventView = eventView
                     )

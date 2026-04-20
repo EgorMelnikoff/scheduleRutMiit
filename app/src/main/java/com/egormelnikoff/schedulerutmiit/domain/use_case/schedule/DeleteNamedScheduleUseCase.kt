@@ -18,24 +18,26 @@ class DeleteNamedScheduleUseCase @Inject constructor(
         if (savedNamedSchedules.isEmpty()) {
             workScheduler.cancelPeriodicScheduleUpdating()
             return ScheduleUseCaseResult(
-                savedNamedScheduleEntities = emptyList(),
+                savedNamedScheduleEntities = listOf(),
                 namedSchedule = null
             )
         }
 
         if (isDefault) {
-            val namedSchedules = namedScheduleRepos.getAllEntities()
-            if (namedSchedules.isNotEmpty()) {
-                namedScheduleRepos.setDefaultNamedSchedule(namedSchedules[0].id)
-            }
+            namedScheduleRepos.setDefaultNamedSchedule(savedNamedSchedules[0].id)
         }
 
-        val defaultNamedSchedule = savedNamedSchedules.find { it.isDefault }
-            ?: savedNamedSchedules.first()
+        namedScheduleRepos.getAllEntities().let { namedScheduleEntities ->
+            val defaultNamedSchedule = namedScheduleEntities.find { it.isDefault }
+                ?: namedScheduleEntities.firstOrNull()
 
-        return ScheduleUseCaseResult(
-            savedNamedScheduleEntities = namedScheduleRepos.getAllEntities(),
-            namedSchedule = namedScheduleRepos.getById(defaultNamedSchedule.id)
-        )
+
+            return ScheduleUseCaseResult(
+                savedNamedScheduleEntities = namedScheduleEntities,
+                namedSchedule = defaultNamedSchedule?.let {
+                    namedScheduleRepos.getById(defaultNamedSchedule.id)
+                }
+            )
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
+import java.time.LocalDateTime
 
 sealed interface Route {
     sealed class Page(
@@ -22,6 +23,7 @@ sealed interface Route {
             val namedScheduleEntity: NamedScheduleEntity,
             val scheduleEntity: ScheduleEntity,
             val isSavedSchedule: Boolean,
+            val dateTime: LocalDateTime,
             val event: Event,
             val eventExtraData: EventExtraData?
         ) : Dialog

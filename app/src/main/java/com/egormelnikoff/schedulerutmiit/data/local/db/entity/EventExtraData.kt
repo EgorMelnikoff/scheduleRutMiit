@@ -21,7 +21,7 @@ data class EventExtraData(
     val scheduleId: Long = 0,
     val eventName: String?,
     @Serializable(with = LocalDateTimeSerializer::class)
-    val eventStartDatetime: LocalDateTime?,
+    val dateTime: LocalDateTime?,
     val comment: String = "",
     val tag: Int = 0
 )

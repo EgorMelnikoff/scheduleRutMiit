@@ -93,8 +93,7 @@ fun ScheduleTopAppBar(
     onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit,
 
     namedScheduleUiDto: NamedScheduleUiDto,
-    scheduleView: ScheduleView,
-    isPeriodic: Boolean
+    scheduleView: ScheduleView
 ) {
     val isCustomSchedule =
         namedScheduleUiDto.namedSchedule.namedScheduleEntity.type == NamedScheduleType.MY
@@ -127,7 +126,7 @@ fun ScheduleTopAppBar(
             IconButton(
                 onClick = {
                     onSetScheduleView(
-                        scheduleView.next(isPeriodic)
+                        scheduleView.next()
                     )
                 }
             ) {
@@ -141,11 +140,6 @@ fun ScheduleTopAppBar(
                         modifier = Modifier.size(24.dp),
                         imageVector = when (view) {
                             ScheduleView.CALENDAR -> {
-                                if (isPeriodic) ImageVector.vectorResource(R.drawable.split)
-                                else ImageVector.vectorResource(R.drawable.list)
-                            }
-
-                            ScheduleView.SPLIT_WEEKS -> {
                                 ImageVector.vectorResource(R.drawable.list)
                             }
 

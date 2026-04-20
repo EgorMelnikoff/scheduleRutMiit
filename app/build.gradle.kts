@@ -17,7 +17,7 @@ android {
         minSdk = 29
         targetSdk = 37
         versionCode = 71
-        versionName = "2.3.7"
+        versionName = "2.4.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.hilt.work)
     ksp(libs.hilt.android.compiler)
+    ksp(libs.androidx.hilt.compiler)
 
     implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization.json)

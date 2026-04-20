@@ -3,6 +3,7 @@ package com.egormelnikoff.schedulerutmiit.ui.view_models.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
@@ -144,17 +145,16 @@ class SettingsViewModel @Inject constructor(
                 decorFlow,
                 eventFlow,
                 scheduleFlow,
-                preferencesDataStore.syncTagCommentsFlow,
+                preferencesDataStore.eventExtraPolicyFlow,
                 preferencesDataStore.skipWelcomeFLow
-            ) { decor, eventView, scheduleSettings, syncTagsFlow, skipWelcome ->
+            ) { decor, eventView, scheduleSettings, eventExtraPolicy, skipWelcome ->
                 AppSettings(
                     decorPreferences = decor,
                     scheduleView = scheduleSettings.first,
                     eventView = eventView,
                     schedulesDeletable = scheduleSettings.second,
                     eventsCountView = scheduleSettings.third,
-                    syncTagsAndComments = syncTagsFlow,
-
+                    eventExtraPolicy = eventExtraPolicy,
                     skipWelcomePage = skipWelcome
                 )
             }.collect { settings ->
@@ -245,9 +245,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun onSetSyncTagsComments(isSynchronizable: Boolean) {
+    fun onSetEventExtraPolicy(eventExtraPolicy: EventExtraPolicy) {
         viewModelScope.launch {
-            preferencesDataStore.setSyncTagsComments(isSynchronizable)
+            preferencesDataStore.setEventExtraPolicy(eventExtraPolicy)
         }
     }
 }

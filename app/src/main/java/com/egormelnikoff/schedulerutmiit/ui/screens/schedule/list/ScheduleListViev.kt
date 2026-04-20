@@ -28,7 +28,7 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.app.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.data.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.EventAction
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
@@ -52,7 +52,7 @@ fun ScheduleListView(
     namedScheduleEntity: NamedScheduleEntity,
     scheduleUiDto: ScheduleUiDto,
 
-    eventView: EventView,
+    appSettings: AppSettings,
     paddingBottom: Dp
 ) {
     if (scheduleUiDto.fullEventList.isNotEmpty()) {
@@ -88,6 +88,7 @@ fun ScheduleListView(
                                         namedScheduleEntity = namedScheduleEntity,
                                         scheduleEntity = scheduleEntity,
                                         isSavedSchedule = isSavedSchedule,
+                                        dateTime = event.startDatetime,
                                         event = event,
                                         eventExtraData = eventExtraData
                                     )
@@ -115,10 +116,12 @@ fun ScheduleListView(
                                 )
                             },
                             events = eventsGrouped.second,
+                            date = events.first,
                             scheduleEntity = scheduleUiDto.scheduleEntity,
                             eventsExtraData = scheduleUiDto.eventsExtraData,
                             isSavedSchedule = isSavedSchedule,
-                            eventView = eventView
+                            eventExtraPolicy = appSettings.eventExtraPolicy,
+                            eventView = appSettings.eventView
                         )
                     }
                     if (index != scheduleUiDto.fullEventList.lastIndex) {

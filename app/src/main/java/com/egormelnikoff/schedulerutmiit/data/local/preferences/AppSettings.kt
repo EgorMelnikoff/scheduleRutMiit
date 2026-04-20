@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.data.local.preferences
 
+import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
@@ -10,8 +11,8 @@ data class AppSettings(
     val eventView: EventView,
     val eventsCountView: EventsCountView,
     val schedulesDeletable: Boolean,
-    val syncTagsAndComments: Boolean,
-    val skipWelcomePage: Boolean
+    val skipWelcomePage: Boolean,
+    val eventExtraPolicy: EventExtraPolicy
 )
 
 data class DecorPreferences(

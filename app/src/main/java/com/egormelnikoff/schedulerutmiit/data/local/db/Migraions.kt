@@ -229,7 +229,7 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
                 eventId INTEGER NOT NULL,
                 eventExtraScheduleId INTEGER NOT NULL,
                 eventName TEXT,
-                eventStartDatetime TEXT,
+                dateTime TEXT,
                 comment TEXT NOT NULL,
                 tag INTEGER NOT NULL
             )
@@ -240,7 +240,7 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
                 eventId,
                 eventExtraScheduleId,
                 eventName,
-                eventStartDatetime,
+                dateTime,
                 comment,
                 tag
             )

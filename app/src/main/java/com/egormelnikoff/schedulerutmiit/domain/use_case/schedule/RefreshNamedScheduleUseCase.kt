@@ -92,8 +92,14 @@ class RefreshNamedScheduleUseCase @Inject constructor(
                 mergeAndUpdateSchedules(
                     oldNamedSchedule = oldNamedSchedule,
                     newNamedSchedule = updatedNamedSchedule.data,
-                    deletableOldSchedules = deletableOldSchedules
                 )
+
+                if (deletableOldSchedules) {
+                    deleteOldSchedules(
+                        newNamedSchedule = updatedNamedSchedule.data,
+                        oldNamedSchedule = oldNamedSchedule
+                    )
+                }
 
                 namedScheduleRepos.updateLastTimeUpdate(
                     namedScheduleId = oldNamedSchedule.namedScheduleEntity.id
@@ -106,8 +112,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
 
     private suspend fun mergeAndUpdateSchedules(
         oldNamedSchedule: NamedSchedule,
-        newNamedSchedule: NamedSchedule,
-        deletableOldSchedules: Boolean
+        newNamedSchedule: NamedSchedule
     ) {
         val oldSchedulesMap = oldNamedSchedule.schedules
             .filter { schedule ->
@@ -147,13 +152,6 @@ class RefreshNamedScheduleUseCase @Inject constructor(
                     updatedSchedule
                 )
             }
-        }
-
-        if (deletableOldSchedules) {
-            deleteOldSchedules(
-                newNamedSchedule,
-                oldNamedSchedule
-            )
         }
     }
 

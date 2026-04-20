@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
@@ -33,6 +34,7 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSwitch
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.CountEventsModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.EventExtraPolicyModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.EventViewModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.InfoModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.ScheduleViewModalDialog
@@ -55,6 +57,7 @@ sealed interface SettingsDialog {
     object CountEvents : SettingsDialog
     object Decor : SettingsDialog
     object Info : SettingsDialog
+    object EventExtraPolicy : SettingsDialog
 }
 
 @Composable
@@ -114,7 +117,6 @@ fun SettingsScreen(
                                         modifier = Modifier.size(20.dp),
                                         imageVector = when (state) {
                                             ScheduleView.CALENDAR -> ImageVector.vectorResource(R.drawable.calendar)
-                                            ScheduleView.SPLIT_WEEKS -> ImageVector.vectorResource(R.drawable.split)
                                             ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
                                         },
                                         contentDescription = null,
@@ -124,7 +126,6 @@ fun SettingsScreen(
                             },
                             subtitle = when (appSettings.scheduleView) {
                                 ScheduleView.CALENDAR -> stringResource(R.string.calendar)
-                                ScheduleView.SPLIT_WEEKS -> stringResource(R.string.by_weeks)
                                 ScheduleView.LIST -> stringResource(R.string.full_list)
                             },
                             defaultMinHeight = 36.dp
@@ -184,6 +185,43 @@ fun SettingsScreen(
                         }
                     }, {
                         ClickableItem(
+                            title = stringResource(R.string.comments_and_tags),
+                            subtitle = when (appSettings.eventExtraPolicy) {
+                                EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
+                                EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string._synchronized)
+                                EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates)
+                            },
+                            leadingIcon = {
+                                AnimatedContent(
+                                    targetState = appSettings.eventExtraPolicy,
+                                    transitionSpec = {
+                                        scaleIn() togetherWith scaleOut()
+                                    }
+                                ) { state ->
+                                    Icon(
+                                        modifier = Modifier.size(20.dp),
+                                        imageVector = when (state) {
+                                            EventExtraPolicy.SYNCHRONIZED -> ImageVector.vectorResource(
+                                                R.drawable.sync
+                                            )
+
+                                            EventExtraPolicy.BY_DATES -> ImageVector.vectorResource(
+                                                R.drawable.calendar
+                                            )
+
+                                            EventExtraPolicy.DEFAULT -> ImageVector.vectorResource(R.drawable.split)
+                                        },
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                }
+                            },
+                            defaultMinHeight = 36.dp
+                        ) {
+                            activeDialog = SettingsDialog.EventExtraPolicy
+                        }
+                    }, {
+                        ClickableItem(
                             title = stringResource(R.string.not_delete_schedules),
                             subtitle = stringResource(R.string.not_delete_schedules_message),
                             subtitleMaxLines = 3,
@@ -206,31 +244,6 @@ fun SettingsScreen(
                             showClickLabel = false
                         ) {
                             settingsViewModel.onSetSchedulesDeletable(!appSettings.schedulesDeletable)
-                        }
-                    }, {
-                        ClickableItem(
-                            title = stringResource(R.string.sync_tag_comments),
-                            subtitle = stringResource(R.string.sync_tag_comments_message),
-                            leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.size(20.dp),
-                                    imageVector = ImageVector.vectorResource(R.drawable.sync),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                            },
-                            subtitleMaxLines = 3,
-                            defaultMinHeight = 36.dp,
-                            trailingIcon = {
-                                CustomSwitch(
-                                    checked = appSettings.syncTagsAndComments
-                                ) {
-                                    settingsViewModel.onSetSyncTagsComments(it)
-                                }
-                            },
-                            showClickLabel = false
-                        ) {
-                            settingsViewModel.onSetSyncTagsComments(!appSettings.syncTagsAndComments)
                         }
                     }
                 )
@@ -340,6 +353,16 @@ fun SettingsScreen(
                 {
                     activeDialog = null
                 }, appSettings, settingsViewModel
+            )
+        }
+
+        is SettingsDialog.EventExtraPolicy -> {
+            EventExtraPolicyModalDialog(
+                onDismiss = {
+                    activeDialog = null
+                },
+                appSettings = appSettings,
+                settingsViewModel = settingsViewModel
             )
         }
 

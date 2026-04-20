@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.data.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
@@ -22,7 +22,7 @@ import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewMod
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleViewModalDialog(
+fun EventExtraPolicyModalDialog(
     onDismiss: () -> Unit,
     appSettings: AppSettings,
     settingsViewModel: SettingsViewModel
@@ -32,25 +32,28 @@ fun ScheduleViewModalDialog(
         onDismiss = onDismiss
     ) {
         ColumnGroup(
-            title = "Вид расписания",
-            items = ScheduleView.entries.map {
+            title = stringResource(R.string.comments_and_tags),
+            items = EventExtraPolicy.entries.map {
                 {
                     ClickableItem(
                         title = when (it) {
-                            ScheduleView.CALENDAR -> stringResource(R.string.calendar)
-                            ScheduleView.LIST -> stringResource(R.string.full_list)
+                            EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
+                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string._synchronized)
+                            EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates)
                         },
-                        subtitle = when (it) {
-                            ScheduleView.CALENDAR -> stringResource(R.string.calendar_message)
-                            ScheduleView.LIST -> stringResource(R.string.full_list_message)
+                        subtitle =  when (it) {
+                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string.sync_tag_comments_message)
+                            EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates_message)
+                            EventExtraPolicy.DEFAULT -> null
                         },
                         subtitleMaxLines = 2,
                         leadingIcon = {
                             Icon(
                                 modifier = Modifier.size(20.dp),
                                 imageVector = when (it) {
-                                    ScheduleView.CALENDAR -> ImageVector.vectorResource(R.drawable.calendar)
-                                    ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
+                                    EventExtraPolicy.SYNCHRONIZED -> ImageVector.vectorResource(R.drawable.sync)
+                                    EventExtraPolicy.BY_DATES -> ImageVector.vectorResource(R.drawable.calendar)
+                                    EventExtraPolicy.DEFAULT -> ImageVector.vectorResource(R.drawable.split)
                                 },
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer
@@ -58,15 +61,15 @@ fun ScheduleViewModalDialog(
                         },
                         trailingIcon = {
                             RadioButton(
-                                selected = (it == appSettings.scheduleView),
+                                selected = (it == appSettings.eventExtraPolicy),
                                 onClick = {
-                                    settingsViewModel.onSetScheduleView(it)
+                                    settingsViewModel.onSetEventExtraPolicy(it)
                                 }
                             )
                         },
                         showClickLabel = false
                     ) {
-                        settingsViewModel.onSetScheduleView(it)
+                        settingsViewModel.onSetEventExtraPolicy(it)
                     }
                 }
 

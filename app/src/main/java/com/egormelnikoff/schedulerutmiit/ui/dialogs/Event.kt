@@ -78,6 +78,7 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModel
 import kotlinx.coroutines.delay
+import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -89,6 +90,7 @@ fun EventDialog(
     namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
     isSavedSchedule: Boolean,
+    dateTime: LocalDateTime,
     searchViewModel: SearchViewModel,
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack
@@ -106,7 +108,13 @@ fun EventDialog(
     if (isSavedSchedule) {
         LaunchedEffect(comment, tag) {
             delay(500)
-            scheduleViewModel.updateEventExtra(scheduleEntity, event, comment, tag)
+            scheduleViewModel.updateEventExtra(
+                scheduleEntity,
+                event,
+                dateTime,
+                comment,
+                tag
+            )
         }
     }
 
@@ -217,7 +225,10 @@ fun EventDialog(
                                                         },
                                                         onLongClick = {
                                                             clipboard.nativeClipboard.setPrimaryClip(
-                                                                ClipData.newPlainText(null, group.name)
+                                                                ClipData.newPlainText(
+                                                                    null,
+                                                                    group.name
+                                                                )
                                                             )
                                                         }
                                                     )
@@ -345,6 +356,7 @@ fun EventDialog(
                                                 scheduleViewModel.updateEventExtra(
                                                     scheduleEntity,
                                                     event,
+                                                    dateTime,
                                                     "",
                                                     tag
                                                 )

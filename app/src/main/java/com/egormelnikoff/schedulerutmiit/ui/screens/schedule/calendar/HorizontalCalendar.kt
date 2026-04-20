@@ -37,7 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.app.extension.findEventExtra
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
@@ -49,12 +51,14 @@ import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.Sc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
 fun HorizontalCalendar(
     eventsCountView: EventsCountView,
+    eventExtraPolicy: EventExtraPolicy,
     scheduleUiDto: ScheduleUiDto,
     scheduleUiState: ScheduleUiState,
     scope: CoroutineScope
@@ -247,7 +251,8 @@ fun HorizontalCalendar(
                         eventsCountView = eventsCountView,
                         isDisabled = currentDate !in scheduleUiDto.scheduleEntity.startDate..scheduleUiDto.scheduleEntity.endDate,
                         isSelected = currentDate == scheduleUiState.selectedDate,
-                        isToday = (currentDate == scheduleUiDto.schedulePagerUiDto.today)
+                        isToday = (currentDate == scheduleUiDto.schedulePagerUiDto.today),
+                        eventExtraPolicy = eventExtraPolicy
                     )
                 }
             }
@@ -265,7 +270,8 @@ fun HorizontalCalendarItem(
     eventsCountView: EventsCountView,
     isToday: Boolean,
     events: Map<String, List<Event>>,
-    eventsExtraData: List<EventExtraData>
+    eventsExtraData: List<EventExtraData>,
+    eventExtraPolicy: EventExtraPolicy,
 ) {
     val backgroundColor = when {
         isSelected -> MaterialTheme.colorScheme.primary
@@ -320,8 +326,10 @@ fun HorizontalCalendarItem(
         }
         if (eventsCountView == EventsCountView.DETAILS) {
             EventsDetailSummary(
+                currentDate = currentDate,
                 events = events,
-                eventsExtraData = eventsExtraData
+                eventsExtraData = eventsExtraData,
+                eventExtraPolicy = eventExtraPolicy
             )
         } else if (eventsCountView == EventsCountView.BRIEFLY && events.isNotEmpty()) {
             EventsBrieflySummary(
@@ -333,8 +341,10 @@ fun HorizontalCalendarItem(
 
 @Composable
 fun EventsDetailSummary(
+    currentDate: LocalDate,
     events: Map<String, List<Event>>,
-    eventsExtraData: List<EventExtraData>
+    eventsExtraData: List<EventExtraData>,
+    eventExtraPolicy: EventExtraPolicy
 ) {
     FlowRow(
         modifier = Modifier.defaultMinSize(minHeight = 6.dp),
@@ -352,7 +362,14 @@ fun EventsDetailSummary(
             ) {
                 Box {
                     groupedEvents.value.forEach { event ->
-                        val eventExtraData = eventsExtraData.find { it.eventId == event.id }
+                        val eventExtraData = eventsExtraData.findEventExtra(
+                            eventExtraPolicy = eventExtraPolicy,
+                            event = event,
+                            dateTime = LocalDateTime.of(
+                                currentDate,
+                                event.startDatetime.toLocalTime()
+                            )
+                        )
                         val color = eventExtraData?.tag.getColorByIndex(
                             defaultColor = MaterialTheme.colorScheme.onBackground
                         )

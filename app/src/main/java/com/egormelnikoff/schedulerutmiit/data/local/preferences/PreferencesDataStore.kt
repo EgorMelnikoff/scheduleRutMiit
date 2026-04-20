@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.app.enums.Theme
@@ -61,9 +62,9 @@ class PreferencesDataStore @Inject constructor(
         }
     }
 
-    suspend fun setSyncTagsComments(isSynchronizable: Boolean) {
+    suspend fun setEventExtraPolicy(eventExtraPolicy: EventExtraPolicy) {
         context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SYNC_TAGS_AND_COMMENTS] = isSynchronizable
+            preferences[PreferencesKeys.EVENT_EXTRA_POLICY] = eventExtraPolicy.name
         }
     }
 
@@ -111,7 +112,6 @@ class PreferencesDataStore @Inject constructor(
             }
         }
 
-
     val themeFlow: Flow<Theme> = context.dataStore.data.map { preferences ->
         val theme = preferences[PreferencesKeys.THEME]
         Theme.entries.find { it.name == theme?.uppercase() } ?: Theme.SYSTEM
@@ -138,9 +138,13 @@ class PreferencesDataStore @Inject constructor(
         preferences[PreferencesKeys.SCHEDULES_DELETABLE] ?: true
     }
 
-    val syncTagCommentsFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
-        preferences[PreferencesKeys.SYNC_TAGS_AND_COMMENTS] ?: false
+    val eventExtraPolicyFlow: Flow<EventExtraPolicy> = context.dataStore.data.map { preferences ->
+        val name = preferences[PreferencesKeys.EVENT_EXTRA_POLICY]
+        EventExtraPolicy.entries.find { it.name == name } ?: EventExtraPolicy.BY_DATES
     }
+
+
+
 
     val eventCountViewFlow: Flow<EventsCountView> = context.dataStore.data.map { preferences ->
         val name = preferences[PreferencesKeys.COUNT_CLASSES_VIEW]

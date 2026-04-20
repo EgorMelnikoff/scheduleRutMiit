@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.di
 
+import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.egormelnikoff.schedulerutmiit.data.local.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.data.local.serializers.LocalDateTimeSerializer
-import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.egormelnikoff.schedulerutmiit.data.remote.network.logger.Logger
 import com.egormelnikoff.schedulerutmiit.ui.widget.WidgetDataUpdater
 import dagger.hilt.EntryPoint

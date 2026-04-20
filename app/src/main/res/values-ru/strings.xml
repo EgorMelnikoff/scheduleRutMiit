@@ -20,6 +20,9 @@
     <string name="back">Назад</string>
     <string name="briefly">Кратко</string>
     <string name="by_weeks">По неделям</string>
+    <string name="by_default">По умолчанию</string>
+    <string name="by_dates">По датам</string>
+    <string name="by_dates_message">Комментарии и теги будут прикрепляться к определенной дате</string>
     <string name="by_weeks_message">Разделенный список для периодического расписания</string>
     <string name="calendar">Календарь</string>
     <string name="calendar_message">Отображение по неделям и дням</string>
@@ -28,6 +31,7 @@
     <string name="collapse">Свернуть</string>
     <string name="color_style">Цветовое оформление</string>
     <string name="comment">Комментарий</string>
+    <string name="comments_and_tags">Комментарии и теги</string>
     <string name="comments_on_events">Комментарии к парам</string>
     <string name="comments_on_tomorrow_events">Комментарии к завтрашним парам</string>
     <string name="compact_view">Компактный вид</string>
@@ -148,6 +152,7 @@
     <string name="server_error">Ошибка сервера</string>
     <string name="services">Сервисы</string>
     <string name="settings">Настройки</string>
+    <string name="_synchronized">Cинхронизированно</string>
     <string name="show_count_classes">Количество пар в календаре</string>
     <string name="show_event">Показать пару</string>
     <string name="source_code">Исходный код</string>

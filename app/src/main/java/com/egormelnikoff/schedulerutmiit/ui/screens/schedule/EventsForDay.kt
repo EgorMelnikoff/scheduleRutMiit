@@ -14,12 +14,14 @@ import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.data.local.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.EventAction
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 fun EventsForDay(
@@ -28,11 +30,11 @@ fun EventsForDay(
 
     namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
+    date: LocalDate,
     eventsForDate: List<Pair<String, List<Event>>>?,
     eventsExtraData: List<EventExtraData>,
-
     isSavedSchedule: Boolean,
-    eventView: EventView,
+    appSettings: AppSettings,
     paddingBottom: Dp
 ) {
     LazyColumn(
@@ -58,6 +60,7 @@ fun EventsForDay(
                                 scheduleEntity = scheduleEntity,
                                 isSavedSchedule = isSavedSchedule,
                                 event = event,
+                                dateTime = LocalDateTime.of(date, event.startDatetime.toLocalTime()),
                                 eventExtraData = eventExtraData
                             )
                         )
@@ -77,11 +80,12 @@ fun EventsForDay(
                     },
 
                     events = events.second,
+                    date = date,
                     scheduleEntity = scheduleEntity,
                     eventsExtraData = eventsExtraData,
-
                     isSavedSchedule = isSavedSchedule,
-                    eventView = eventView
+                    eventExtraPolicy = appSettings.eventExtraPolicy,
+                    eventView = appSettings.eventView
                 )
             }
         } else {
