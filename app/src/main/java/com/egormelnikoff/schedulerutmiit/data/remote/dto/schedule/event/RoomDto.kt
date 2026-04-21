@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RoomDto(
     @SerialName("id")
-    val id: Int,
+    val id: Int = -1,
     @SerialName("name")
     val name: String,
     @SerialName("hint")
-    val hint: String
+    val hint: String = ""
 )
