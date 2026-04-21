@@ -33,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -77,7 +76,6 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModel
-import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
@@ -104,19 +102,6 @@ fun EventDialog(
 
     var tag by remember { mutableIntStateOf(eventExtraData?.tag ?: 0) }
     var comment by remember { mutableStateOf(eventExtraData?.comment ?: "") }
-
-    if (isSavedSchedule) {
-        LaunchedEffect(comment, tag) {
-            delay(500)
-            scheduleViewModel.updateEventExtra(
-                scheduleEntity,
-                event,
-                dateTime,
-                comment,
-                tag
-            )
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -353,12 +338,11 @@ fun EventDialog(
                                         IconButton(
                                             onClick = {
                                                 comment = ""
-                                                scheduleViewModel.updateEventExtra(
+                                                scheduleViewModel.updateEventComment(
                                                     scheduleEntity,
                                                     event,
                                                     dateTime,
-                                                    "",
-                                                    tag
+                                                    comment
                                                 )
                                             }
                                         ) {
@@ -372,6 +356,12 @@ fun EventDialog(
                                 }
                             ) { newValue ->
                                 comment = newValue
+                                scheduleViewModel.updateEventComment(
+                                    scheduleEntity,
+                                    event,
+                                    dateTime,
+                                    newValue
+                                )
                             }
                         }
                     )
@@ -382,8 +372,14 @@ fun EventDialog(
                         items = listOf {
                             ColorSelector(
                                 currentSelected = tag,
-                                onColorSelect = { value ->
-                                    tag = value
+                                onColorSelect = { newTag ->
+                                    tag = newTag
+                                    scheduleViewModel.updateEventTag(
+                                        scheduleEntity,
+                                        event,
+                                        dateTime,
+                                        newTag
+                                    )
                                 }
                             )
                         }

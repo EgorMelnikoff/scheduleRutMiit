@@ -8,20 +8,19 @@ class RenameNamedScheduleUseCase @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos
 ) {
     suspend operator fun invoke(
-        currentNamedScheduleId: Long,
-        settledNamedScheduleId: Long?,
+        namedScheduleId: Long,
+        currentNamedScheduleId: Long?,
         newName: String
     ): ScheduleUseCaseResult {
         namedScheduleRepos.updateName(
-            namedScheduleId = currentNamedScheduleId,
+            namedScheduleId = namedScheduleId,
             newName = newName
         )
 
-
         return ScheduleUseCaseResult(
             savedNamedScheduleEntities = namedScheduleRepos.getAllEntities(),
-            namedSchedule = if (currentNamedScheduleId == settledNamedScheduleId) {
-                namedScheduleRepos.getById(currentNamedScheduleId)
+            namedSchedule = if (namedScheduleId == currentNamedScheduleId) {
+                namedScheduleRepos.getById(namedScheduleId)
             } else null
         )
     }

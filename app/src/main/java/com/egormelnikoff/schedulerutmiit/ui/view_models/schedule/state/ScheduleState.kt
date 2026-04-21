@@ -1,16 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state
 
-import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.NamedScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.ReviewUiDto
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.ScheduleUiDto
 
-@Keep
 data class ScheduleState(
-    val savedNamedScheduleEntities: List<NamedScheduleEntity> = emptyList(),
-    val defaultNamedSchedule: NamedScheduleUiDto? = null,
-    val currentNamedSchedule: NamedScheduleUiDto? = null,
-    val isRefreshing: Boolean = false,
-    val isError: Boolean = false,
-    val isLoading: Boolean = false,
-    val isSaved: Boolean = false
+    val reviewUiDto: ReviewUiDto? = null,
+    val scheduleUiDto: ScheduleUiDto? = null
 )

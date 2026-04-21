@@ -54,9 +54,11 @@ object AppModule {
     fun provideWidgetUpdater(
         @ApplicationContext context: Context,
         namedScheduleRepos: NamedScheduleRepos,
+        preferencesDataStore: PreferencesDataStore,
         json: Json
     ): WidgetDataUpdater = WidgetDataUpdater(
         context = context,
+        preferencesDataStore = preferencesDataStore,
         namedScheduleRepos = namedScheduleRepos,
         json = json
     )

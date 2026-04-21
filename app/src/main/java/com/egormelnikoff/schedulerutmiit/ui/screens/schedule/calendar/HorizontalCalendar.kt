@@ -43,6 +43,7 @@ import com.egormelnikoff.schedulerutmiit.app.extension.findEventExtra
 import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.app.extension.replaceDate
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
@@ -51,7 +52,6 @@ import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.Sc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -365,10 +365,7 @@ fun EventsDetailSummary(
                         val eventExtraData = eventsExtraData.findEventExtra(
                             eventExtraPolicy = eventExtraPolicy,
                             event = event,
-                            dateTime = LocalDateTime.of(
-                                currentDate,
-                                event.startDatetime.toLocalTime()
-                            )
+                            dateTime = event.startDatetime.replaceDate(currentDate)
                         )
                         val color = eventExtraData?.tag.getColorByIndex(
                             defaultColor = MaterialTheme.colorScheme.onBackground

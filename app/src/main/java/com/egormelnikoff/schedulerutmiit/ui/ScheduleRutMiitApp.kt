@@ -50,6 +50,8 @@ import com.egormelnikoff.schedulerutmiit.ui.view_models.curriculum.CurriculumVie
 import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.news.state.NewsState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.CurrentState
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.NamedScheduleState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.search.state.SearchParams
@@ -69,13 +71,17 @@ fun ScheduleRutMiitApp(
 ) {
     val searchParams = searchViewModel.searchParams.collectAsStateWithLifecycle().value
     val searchState = searchViewModel.searchState.collectAsStateWithLifecycle().value
+
+    val currentState = scheduleViewModel.currentState.collectAsStateWithLifecycle().value
+    val namedScheduleState = scheduleViewModel.namedScheduleState.collectAsStateWithLifecycle().value
     val scheduleState = scheduleViewModel.scheduleState.collectAsStateWithLifecycle().value
+
     val newsState = newsViewModel.newsState.collectAsStateWithLifecycle().value
     val currentDateTime = settingsViewModel.currentDate.collectAsStateWithLifecycle().value
     val settingsState = settingsViewModel.settingsState.collectAsStateWithLifecycle().value
 
     val appUiState = AppUiState()
-    val scheduleUiState = ScheduleUiState(scheduleState)
+    val scheduleUiState = ScheduleUiState(namedScheduleState, scheduleState)
     val reviewUiState = ReviewUiState()
 
     UiEventProcessor(
@@ -86,7 +92,9 @@ fun ScheduleRutMiitApp(
 
     ScheduleUiStateSynchronizer(
         scheduleUiState = scheduleUiState,
+        currentState = currentState,
         scheduleState = scheduleState,
+        namedScheduleState = namedScheduleState,
         scheduleViewModel = scheduleViewModel,
         currentDateTime = currentDateTime
     )
@@ -101,6 +109,8 @@ fun ScheduleRutMiitApp(
                     newsViewModel = newsViewModel,
                     settingsViewModel = settingsViewModel,
                     scheduleState = scheduleState,
+                    currentState = currentState,
+                    namedScheduleState = namedScheduleState,
                     settingsState = settingsState,
                     scheduleUiState = scheduleUiState,
                     reviewUiState = reviewUiState,
@@ -255,8 +265,8 @@ fun RootHost(
                 entry<Route.Dialog.HiddenEventsDialog> { key ->
                     HiddenEventsDialog(
                         namedScheduleEntity = key.namedScheduleEntity,
-                        scheduleEntity = scheduleState.currentNamedSchedule?.scheduleUiDto?.scheduleEntity,
-                        hiddenEvents = scheduleState.currentNamedSchedule?.scheduleUiDto?.hiddenEvents
+                        scheduleEntity = scheduleState.scheduleUiDto?.scheduleEntity,
+                        hiddenEvents = scheduleState.scheduleUiDto?.hiddenEvents
                             ?: listOf(),
                         scheduleViewModel = scheduleViewModel,
                         appBackStack = appUiState.appBackStack
@@ -274,6 +284,8 @@ fun PageHost(
     settingsViewModel: SettingsViewModel,
 
     scheduleState: ScheduleState,
+    currentState: CurrentState,
+    namedScheduleState: NamedScheduleState,
     settingsState: SettingsState,
     currentDateTime: LocalDateTime,
 
@@ -299,12 +311,12 @@ fun PageHost(
                 {
                     appUiState.scope.launch {
                         when {
-                            scheduleState.currentNamedSchedule?.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
+                            scheduleState.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
                                 scheduleUiState.onSelectDate(
-                                    scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate
+                                    scheduleState.scheduleUiDto.schedulePagerUiDto.defaultDate
                                 )
                                 scheduleUiState.pagerWeeksState.animateScrollToPage(
-                                    scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.weeksStartIndex
+                                    scheduleState.scheduleUiDto.schedulePagerUiDto.weeksStartIndex
                                 )
                             }
 
@@ -404,6 +416,7 @@ fun PageHost(
                 entry<Route.Page.Review> {
                     ReviewScreen(
                         scheduleState = scheduleState,
+                        currentState = currentState,
                         reviewUiState = reviewUiState,
                         currentDateTime = currentDateTime,
                         scheduleViewModel = scheduleViewModel,
@@ -416,7 +429,11 @@ fun PageHost(
                 entry<Route.Page.Schedule> {
                     ScreenSchedule(
                         appUiState = appUiState,
+
+                        currentState = currentState,
+                        namedScheduleState = namedScheduleState,
                         scheduleState = scheduleState,
+
                         scheduleUiState = scheduleUiState,
                         appSettings = appSettings,
                         currentDateTime = currentDateTime,

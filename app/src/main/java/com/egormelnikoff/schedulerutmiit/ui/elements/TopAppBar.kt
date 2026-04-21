@@ -27,7 +27,8 @@ import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.NamedScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.ScheduleUiDto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,26 +93,26 @@ fun ScheduleTopAppBar(
     onSetScheduleView: (ScheduleView) -> Unit,
     onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit,
 
-    namedScheduleUiDto: NamedScheduleUiDto,
+    namedSchedule: NamedSchedule,
+    scheduleUiDto: ScheduleUiDto?,
     scheduleView: ScheduleView
 ) {
-    val isCustomSchedule =
-        namedScheduleUiDto.namedSchedule.namedScheduleEntity.type == NamedScheduleType.MY
+    val isCustomSchedule = namedSchedule.namedScheduleEntity.type == NamedScheduleType.MY
 
     CustomTopAppBar(
-        titleText = namedScheduleUiDto.namedSchedule.namedScheduleEntity.shortName,
-        subtitleText = if (namedScheduleUiDto.scheduleUiDto?.scheduleEntity != null && !isCustomSchedule) {
-            namedScheduleUiDto.scheduleUiDto.scheduleEntity.timetableType.typeName
+        titleText = namedSchedule.namedScheduleEntity.shortName,
+        subtitleText = if (scheduleUiDto?.scheduleEntity != null && !isCustomSchedule) {
+            scheduleUiDto.scheduleEntity.timetableType.typeName
         } else null,
         actions = {
             AnimatedVisibility(
-                visible = !namedScheduleUiDto.scheduleUiDto?.hiddenEvents.isNullOrEmpty(),
+                visible = !scheduleUiDto?.hiddenEvents.isNullOrEmpty(),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
                 IconButton(
                     onClick = {
-                        navigateToHiddenEvents(namedScheduleUiDto.namedSchedule.namedScheduleEntity)
+                        navigateToHiddenEvents(namedSchedule.namedScheduleEntity)
                     }
                 ) {
                     Icon(
@@ -155,7 +156,7 @@ fun ScheduleTopAppBar(
             IconButton(
                 onClick = {
                     onShowNamedScheduleDialog(
-                        namedScheduleUiDto.namedSchedule.namedScheduleEntity
+                        namedSchedule.namedScheduleEntity
                     )
                 }
             ) {

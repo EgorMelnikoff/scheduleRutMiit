@@ -59,11 +59,13 @@ import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.CurrentState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ScheduleState
 import java.time.LocalDateTime
 
 @Composable
 fun ReviewScreen(
+    currentState: CurrentState,
     scheduleState: ScheduleState,
     reviewUiState: ReviewUiState,
     currentDateTime: LocalDateTime,
@@ -73,8 +75,16 @@ fun ReviewScreen(
     externalPadding: PaddingValues
 ) {
     val spacerHeight = 270.dp
-    val currentDate = currentDateTime.toLocalDate()
-    val dayPeriod = currentDateTime.dayPeriod()
+    val currentDate by remember(currentDateTime) {
+        mutableStateOf(
+            currentDateTime.toLocalDate()
+        )
+    }
+    val dayPeriod by remember(currentDateTime) {
+        mutableStateOf(
+            currentDateTime.dayPeriod()
+        )
+    }
 
     val view = LocalView.current
     val window = (view.context as Activity).window
@@ -144,7 +154,7 @@ fun ReviewScreen(
                     )
 
 
-                    scheduleState.defaultNamedSchedule?.scheduleUiDto?.reviewUiDto?.let { reviewData ->
+                    scheduleState.reviewUiDto?.let { reviewData ->
                         val eventsReview = StringBuilder().apply {
                             when (reviewData.displayedDate) {
                                 currentDate -> append(stringResource(R.string.today))
@@ -244,14 +254,14 @@ fun ReviewScreen(
                         )
                     )
                     Spacer(modifier = Modifier.height(2.dp))
-                    if (scheduleState.savedNamedScheduleEntities.isNotEmpty()) {
+                    if (currentState.namedScheduleEntities.isNotEmpty()) {
                         ExpandedItem(
                             title = stringResource(R.string.saved_schedules),
                             visible = reviewUiState.visibleSavedSchedules,
                             onChangeVisibility = reviewUiState.onChangeVisibilitySavedSchedules
                         ) {
                             ColumnGroup(
-                                items = scheduleState.savedNamedScheduleEntities.map { namedScheduleEntity ->
+                                items = currentState.namedScheduleEntities.map { namedScheduleEntity ->
                                     {
                                         ClickableItem(
                                             title = namedScheduleEntity.shortName,
@@ -306,7 +316,7 @@ fun ReviewScreen(
                 isDefaultNamedSchedule = it.isDefault,
 
                 onOpenNamedSchedule = {
-                    scheduleViewModel.getSavedNamedSchedule(
+                    scheduleViewModel.setNamedSchedule(
                         namedScheduleId = it.id
                     )
                     appBackStack.navigateToStartRage()

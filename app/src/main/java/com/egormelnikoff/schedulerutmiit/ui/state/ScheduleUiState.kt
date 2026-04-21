@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.NamedScheduleState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ScheduleState
 import java.time.LocalDate
 
@@ -25,24 +26,25 @@ data class ScheduleUiState(
     companion object {
         @Composable
         operator fun invoke(
+            namedScheduleState: NamedScheduleState,
             scheduleState: ScheduleState
         ): ScheduleUiState? {
-            return if (scheduleState.currentNamedSchedule?.namedSchedule != null && scheduleState.currentNamedSchedule.scheduleUiDto?.schedulePagerUiDto != null) {
+            return if (scheduleState.scheduleUiDto?.schedulePagerUiDto != null) {
                 val scheduleListState = rememberLazyListState()
                 val pagerDaysState = rememberPagerState(
-                    pageCount = { scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.daysCount },
-                    initialPage = scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.daysStartIndex
+                    pageCount = { scheduleState.scheduleUiDto.schedulePagerUiDto.daysCount },
+                    initialPage = scheduleState.scheduleUiDto.schedulePagerUiDto.daysStartIndex
                 )
                 val pagerWeeksState = rememberPagerState(
-                    pageCount = { scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.weeksCount },
-                    initialPage = scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.weeksStartIndex
+                    pageCount = { scheduleState.scheduleUiDto.schedulePagerUiDto.weeksCount },
+                    initialPage = scheduleState.scheduleUiDto.schedulePagerUiDto.weeksStartIndex
                 )
 
                 var selectedDate by remember(
-                    scheduleState.currentNamedSchedule.namedSchedule.namedScheduleEntity.apiId
+                    namedScheduleState.namedSchedule?.namedScheduleEntity?.apiId
                 ) {
                     mutableStateOf(
-                        scheduleState.currentNamedSchedule.scheduleUiDto.schedulePagerUiDto.defaultDate
+                        scheduleState.scheduleUiDto.schedulePagerUiDto.defaultDate
                     )
                 }
 

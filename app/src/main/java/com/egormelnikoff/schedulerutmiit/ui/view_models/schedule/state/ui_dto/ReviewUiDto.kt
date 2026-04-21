@@ -13,8 +13,8 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@Serializable
 @Keep
+@Serializable
 data class ReviewUiDto(
     @Serializable(with = LocalDateSerializer::class)
     val displayedDate: LocalDate,
@@ -23,24 +23,21 @@ data class ReviewUiDto(
 ) {
     companion object {
         operator fun invoke(
-            date: LocalDateTime,
             scheduleEntity: ScheduleEntity,
             periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
             nonPeriodicEvents: Map<LocalDate, List<Event>>?
         ): ReviewUiDto {
+            val date = LocalDateTime.now()
             var displayedDate = date.toLocalDate()
             var events = date.toLocalDate().getEventsForDate(
                 scheduleEntity = scheduleEntity,
                 periodicEvents = periodicEvents,
                 nonPeriodicEvents = nonPeriodicEvents
             )
-
-            var currentWeek = scheduleEntity.recurrence?.let {
-                displayedDate.getCurrentWeek(
-                    startDate = scheduleEntity.startDate,
-                    recurrence = scheduleEntity.recurrence
-                )
-            } ?: 0
+            var currentWeek = displayedDate.getCurrentWeek(
+                startDate = scheduleEntity.startDate,
+                recurrence = scheduleEntity.recurrence
+            )
 
             val isFinishedEvents = events.isNotEmpty() && date.toLocalTime().isAfter(
                 events.values.flatten().last().endDatetime.toLocalTimeWithTimeZone()
@@ -49,19 +46,16 @@ data class ReviewUiDto(
             val nextDay = events.isEmpty() && date.toLocalTime().isAfter(eveningTime)
 
             if (isFinishedEvents || nextDay) {
-                val tomorrow = date.plusDays(1)
-                displayedDate = tomorrow.toLocalDate()
+                displayedDate = displayedDate.plusDays(1)
                 events = displayedDate.getEventsForDate(
                     scheduleEntity = scheduleEntity,
                     periodicEvents = periodicEvents,
                     nonPeriodicEvents = nonPeriodicEvents
                 )
-                currentWeek = scheduleEntity.recurrence?.let {
-                    displayedDate.getCurrentWeek(
-                        startDate = scheduleEntity.startDate,
-                        recurrence = scheduleEntity.recurrence
-                    )
-                } ?: 0
+                currentWeek = displayedDate.getCurrentWeek(
+                    startDate = scheduleEntity.startDate,
+                    recurrence = scheduleEntity.recurrence
+                )
             }
 
             return ReviewUiDto(

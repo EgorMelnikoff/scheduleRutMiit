@@ -109,7 +109,7 @@ fun ModalDialogNamedSchedule(
                             defaultMinHeight = 24.dp,
                             showClickLabel = false
                         ) {
-                            scheduleViewModel.getSavedNamedSchedule(
+                            scheduleViewModel.setNamedSchedule(
                                 namedScheduleId = namedScheduleEntity.id,
                                 setDefault = true
                             )

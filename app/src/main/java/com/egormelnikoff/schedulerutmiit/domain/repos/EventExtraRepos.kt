@@ -6,13 +6,12 @@ import java.time.LocalDateTime
 
 interface EventExtraRepos {
     suspend fun save(
-        event: Event,
-        dateTime: LocalDateTime?,
-        tag: Int,
-        comment: String,
+        eventExtraData: EventExtraData
     )
 
     suspend fun delete(eventId: Long, dateTime: LocalDateTime?)
+
+    suspend fun getByScheduleId(scheduleId: Long): List<EventExtraData>
 
     suspend fun get(eventId: Long, dateTime: LocalDateTime?): EventExtraData?
 

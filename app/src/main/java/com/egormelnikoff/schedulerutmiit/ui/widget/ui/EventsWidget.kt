@@ -40,6 +40,9 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
+import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.app.extension.findEventExtra
+import com.egormelnikoff.schedulerutmiit.app.extension.replaceDate
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
@@ -76,8 +79,7 @@ class EventsWidget : GlanceAppWidget() {
         provideContent {
             val scope = rememberCoroutineScope()
             val prefs = currentState<Preferences>()
-            val widgetDataString = prefs[widgetDataKey]
-            val widgetData = widgetDataString?.let {
+            val widgetData = prefs[widgetDataKey]?.let {
                 json.decodeFromString<WidgetData>(it)
             }
 
@@ -207,7 +209,9 @@ class EventsWidget : GlanceAppWidget() {
                             Column {
                                 Event(
                                     events = events.second,
-                                    eventsExtraData = widgetData.eventsExtraData
+                                    eventsExtraData = widgetData.eventsExtraData,
+                                    date = widgetData.reviewUiDto.displayedDate,
+                                    eventExtraPolicy = widgetData.eventExtraPolicy
                                 )
                                 if (index != displayedEvents.lastIndex) {
                                     Spacer(modifier = GlanceModifier.height(4.dp))
@@ -235,7 +239,9 @@ class EventsWidget : GlanceAppWidget() {
     @Composable
     private fun Event(
         events: List<Event>,
-        eventsExtraData: List<EventExtraData>
+        eventsExtraData: List<EventExtraData>,
+        date: LocalDate,
+        eventExtraPolicy: EventExtraPolicy
     ) {
         Row(
             modifier = GlanceModifier
@@ -276,7 +282,11 @@ class EventsWidget : GlanceAppWidget() {
                 events.forEachIndexed { index, event ->
                     EventSingle(
                         event = event,
-                        eventExtraData = eventsExtraData.find { it.eventId == event.id }
+                        eventExtraData = eventsExtraData.findEventExtra(
+                            eventExtraPolicy = eventExtraPolicy,
+                            event = event,
+                            dateTime = event.startDatetime.replaceDate(date)
+                        )
                     )
                     if (index != events.lastIndex) {
                         Spacer(modifier = GlanceModifier.height(8.dp))

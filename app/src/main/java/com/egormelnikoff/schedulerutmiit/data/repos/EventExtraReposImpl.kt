@@ -11,20 +11,8 @@ class EventExtraReposImpl @Inject constructor(
     private val eventExtraDao: EventExtraDao
 ) : EventExtraRepos {
     override suspend fun save(
-        event: Event,
-        dateTime: LocalDateTime?,
-        tag: Int,
-        comment: String
-    ) = eventExtraDao.insert(
-        EventExtraData(
-            eventId = event.id,
-            scheduleId = event.scheduleId,
-            eventName = event.name,
-            dateTime = dateTime ?: event.startDatetime,
-            comment = comment,
-            tag = tag
-        )
-    )
+        eventExtraData: EventExtraData
+    ) = eventExtraDao.insert(eventExtraData)
 
 
     override suspend fun delete(eventId: Long, dateTime: LocalDateTime?) {
@@ -33,6 +21,10 @@ class EventExtraReposImpl @Inject constructor(
         } else {
             eventExtraDao.deleteByEventId(eventId)
         }
+    }
+
+    override suspend fun getByScheduleId(scheduleId: Long): List<EventExtraData> {
+        return eventExtraDao.getByScheduleId(scheduleId)
     }
 
     override suspend fun get(

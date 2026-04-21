@@ -4,6 +4,6 @@ import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntit
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.NamedSchedule
 
 data class ScheduleUseCaseResult(
-    val savedNamedScheduleEntities: List<NamedScheduleEntity>?,
+    val savedNamedScheduleEntities: List<NamedScheduleEntity>,
     val namedSchedule: NamedSchedule?
 )

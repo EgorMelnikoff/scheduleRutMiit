@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.egormelnikoff.schedulerutmiit.app.notifications.createChannels
 import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -23,7 +22,7 @@ class ScheduleApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        createChannels(applicationContext)
+        //createChannels(applicationContext)
         workScheduler.startPeriodicFetchingLatestVersion()
     }
 }

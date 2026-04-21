@@ -2,12 +2,11 @@ package com.egormelnikoff.schedulerutmiit.domain.use_case.schedule
 
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.domain.repos.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.result.ScheduleUseCaseResult
 import com.egormelnikoff.schedulerutmiit.ui.widget.WidgetDataUpdater
 import javax.inject.Inject
 
 
-class ManageSchedulesUseCase @Inject constructor(
+class SetDefaultScheduleUseCase @Inject constructor(
     private val scheduleRepos: ScheduleRepos,
     private val widgetDataUpdater: WidgetDataUpdater,
 ) {
@@ -16,7 +15,7 @@ class ManageSchedulesUseCase @Inject constructor(
         scheduleId: Long,
         timetableId: String,
         isSaved: Boolean
-    ): ScheduleUseCaseResult {
+    ): NamedSchedule {
         if (isSaved) {
             scheduleRepos.setDefaultSchedule(
                 namedScheduleId = currentNamedSchedule.namedScheduleEntity.id,
@@ -33,9 +32,6 @@ class ManageSchedulesUseCase @Inject constructor(
             )
         }
 
-        return ScheduleUseCaseResult(
-            savedNamedScheduleEntities = null,
-            namedSchedule = currentNamedSchedule.copy(schedules = updatedSchedules)
-        )
+        return currentNamedSchedule.copy(schedules = updatedSchedules)
     }
 }

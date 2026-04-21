@@ -31,8 +31,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.app.extension.findEventExtra
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
@@ -41,16 +39,11 @@ import com.egormelnikoff.schedulerutmiit.data.local.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Composable
 fun Event(
-    events: List<Event>,
+    eventsWithExtra: List<Pair<Event, EventExtraData?>>,
     scheduleEntity: ScheduleEntity,
-    eventsExtraData: List<EventExtraData>,
-    date: LocalDate,
-    eventExtraPolicy: EventExtraPolicy,
     isSavedSchedule: Boolean,
     eventView: EventView,
     navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
@@ -66,10 +59,10 @@ fun Event(
             modifier = Modifier.padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (events.first().timeSlotName != null) {
+            if (eventsWithExtra.first().first.timeSlotName != null) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = events.first().timeSlotName.toString(),
+                    text = eventsWithExtra.first().first.timeSlotName.toString(),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -77,9 +70,9 @@ fun Event(
             Text(
                 text =
                     "${
-                        events.first().startDatetime.toLocalTimeWithTimeZone()
+                        eventsWithExtra.first().first.startDatetime.toLocalTimeWithTimeZone()
                     } - ${
-                        events.first().endDatetime.toLocalTimeWithTimeZone()
+                        eventsWithExtra.first().first.endDatetime.toLocalTimeWithTimeZone()
                     }",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary
@@ -87,18 +80,16 @@ fun Event(
         }
 
         ColumnGroup(
-            items = events.map { event ->
+            items = eventsWithExtra.map { event ->
                 {
                     ScheduleSingleEvent(
                         navigateToEvent = navigateToEvent,
                         navigateToEditEvent = navigateToEditEvent,
                         onDeleteEvent = onDeleteEvent,
                         onUpdateHiddenEvent = onUpdateHiddenEvent,
-                        event = event,
+                        event = event.first,
                         scheduleEntity = scheduleEntity,
-                        eventExtraData = eventsExtraData.findEventExtra(
-                            eventExtraPolicy, event, LocalDateTime.of(date, event.startDatetime.toLocalTime())
-                        ),
+                        eventExtraData = event.second,
                         isSavedSchedule = isSavedSchedule,
                         eventView = eventView
                     )

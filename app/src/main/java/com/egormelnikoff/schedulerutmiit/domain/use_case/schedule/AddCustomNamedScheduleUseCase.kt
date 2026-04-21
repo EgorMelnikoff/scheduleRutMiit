@@ -18,35 +18,35 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
         startDate: LocalDate,
         endDate: LocalDate
     ): ScheduleUseCaseResult {
-        val namedScheduleEntityEntity = NamedSchedule(
-            namedScheduleEntity = NamedScheduleEntity(
-                id = 0,
-                fullName = name,
-                shortName = name,
-                apiId = null,
-                type = NamedScheduleType.MY,
-                isDefault = false,
-                lastTimeUpdate = 0L
-            ),
-            schedules = listOf(
-                Schedule(
-                    scheduleEntity = ScheduleEntity(
-                        id = 0,
-                        isDefault = true,
-                        namedScheduleId = 0,
-                        timetableId = "d=${startDate};t=2",
-                        timetableType = TimetableType.NON_PERIODIC,
-                        downloadUrl = null,
-                        startDate = startDate,
-                        endDate = endDate,
-                        recurrence = null
-                    ),
-                    events = listOf(),
-                    eventsExtraData = listOf()
+        return saveNamedScheduleUseCase(
+            currentNamedSchedule = NamedSchedule(
+                namedScheduleEntity = NamedScheduleEntity(
+                    id = 0,
+                    fullName = name,
+                    shortName = name,
+                    apiId = null,
+                    type = NamedScheduleType.MY,
+                    isDefault = false,
+                    lastTimeUpdate = 0L
+                ),
+                schedules = listOf(
+                    Schedule(
+                        scheduleEntity = ScheduleEntity(
+                            id = 0,
+                            isDefault = true,
+                            namedScheduleId = 0,
+                            timetableId = "d=${startDate};t=2",
+                            timetableType = TimetableType.NON_PERIODIC,
+                            downloadUrl = null,
+                            startDate = startDate,
+                            endDate = endDate,
+                            recurrence = null
+                        ),
+                        events = listOf(),
+                        eventsExtraData = listOf()
+                    )
                 )
             )
         )
-
-        return saveNamedScheduleUseCase(namedScheduleEntityEntity)
     }
 }
