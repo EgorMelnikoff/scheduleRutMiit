@@ -125,7 +125,7 @@ class ScheduleViewModel @Inject constructor(
                 )
                 updateScheduleState(
                     namedSchedule = result.namedSchedule,
-                    updateReview = currentNamedSchedule().namedScheduleEntity.isDefault
+                    updateReview = _namedScheduleState.value.namedSchedule?.namedScheduleEntity?.isDefault == true
                 )
                 updateCurrentState(
                     namedScheduleEntities = result.savedNamedScheduleEntities,
