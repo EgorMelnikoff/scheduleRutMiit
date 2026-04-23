@@ -1,29 +1,29 @@
 package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.app.validator.ScheduleValidation
+import com.egormelnikoff.schedulerutmiit.app.validator.isValidSchedule
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.ChooseDateTimeButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
@@ -32,15 +32,14 @@ import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun AddScheduleDialog(
     appUiState: AppUiState,
     scheduleViewModel: ScheduleViewModel
 ) {
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     var nameSchedule by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf<LocalDate?>(null) }
@@ -49,41 +48,22 @@ fun AddScheduleDialog(
     var showDialogStartDate by remember { mutableStateOf(false) }
     var showDialogEndDate by remember { mutableStateOf(false) }
 
+
+    val buttonEnabled by remember {
+        derivedStateOf {
+            isValidSchedule(
+                name = nameSchedule,
+                start = startDate,
+                end = endDate
+            )
+        }
+    }
+
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                titleText = stringResource(R.string.adding_a_schedule),
-                navAction = { appUiState.appBackStack.onBack() },
-                actions = {
-                    CustomButton(
-                        modifier = Modifier.padding(horizontal = 12.dp),
-                        buttonTitle = stringResource(R.string.create),
-                        onClick = {
-                            when (val result = ScheduleValidation.validate(
-                                context,
-                                nameSchedule,
-                                startDate,
-                                endDate
-                            )) {
-                                is ScheduleValidation.Success -> {
-                                    scheduleViewModel.addCustomNamedSchedule(
-                                        nameSchedule.trim(),
-                                        result.startDate,
-                                        result.endDate
-                                    )
-                                    appUiState.appBackStack.navigateToStartRage()
-                                    appUiState.appBackStack.onBack()
-                                }
-
-                                is ScheduleValidation.Error -> {
-                                    appUiState.scope.launch {
-                                        appUiState.snackBarHostState.showSnackbar(result.message)
-                                    }
-                                }
-                            }
-                        }
-                    )
-                }
+                titleText = stringResource(R.string.create_schedule),
+                navAction = { appUiState.appBackStack.onBack() }
             )
         }
     ) { innerPadding ->
@@ -95,11 +75,11 @@ fun AddScheduleDialog(
                     start = 16.dp,
                     end = 16.dp,
                     top = innerPadding.calculateTopPadding(),
-                    bottom = innerPadding.calculateBottomPadding()
+                    bottom = innerPadding.calculateBottomPadding() + 8.dp
                 )
-                .verticalScroll(rememberScrollState())
         ) {
             GridGroup(
+                modifier = Modifier.align(Alignment.TopCenter),
                 items = listOf(
                     listOf {
                         CustomTextField(
@@ -137,6 +117,26 @@ fun AddScheduleDialog(
                         }
                     )
                 )
+            )
+            CustomButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                buttonTitle = stringResource(R.string.create),
+                enabled = buttonEnabled,
+                onClick = {
+                    startDate?.let { startDate ->
+                        endDate?.let { endDate ->
+                            scheduleViewModel.addCustomNamedSchedule(
+                                nameSchedule.trim(),
+                                startDate,
+                                endDate
+                            )
+                            appUiState.appBackStack.navigateToStartRage()
+                            appUiState.appBackStack.onBack()
+                        }
+                    }
+                }
             )
         }
 

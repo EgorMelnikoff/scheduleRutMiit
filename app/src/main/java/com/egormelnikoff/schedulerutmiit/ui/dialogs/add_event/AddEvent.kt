@@ -2,8 +2,9 @@ package com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -11,11 +12,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -37,7 +36,8 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
 import com.egormelnikoff.schedulerutmiit.app.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.app.validator.EventValidation
+import com.egormelnikoff.schedulerutmiit.app.extension.toUtcDateTime
+import com.egormelnikoff.schedulerutmiit.app.validator.isValidEvent
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
@@ -46,59 +46,55 @@ import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.EventAction
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButtonRow
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.ui.elements.ListParam
+import com.egormelnikoff.schedulerutmiit.ui.elements.PagerScreenContainer
 import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 
 @Composable
 fun AddEditEventDialog(
     namedScheduleEntity: NamedScheduleEntity,
     scheduleEntity: ScheduleEntity,
-    editableEvent: Event? = null,
+    updatableEvent: Event? = null,
     appUiState: AppUiState,
     currentDateTime: LocalDateTime,
 
     scheduleViewModel: ScheduleViewModel
 ) {
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     var currentInterval by remember {
         mutableIntStateOf(
-            editableEvent?.recurrenceRule?.interval ?: 1
+            updatableEvent?.recurrenceRule?.interval ?: -1
         )
     }
-    var currentPeriod by remember { mutableIntStateOf(editableEvent?.periodNumber ?: 1) }
+    var currentPeriod by remember { mutableIntStateOf(updatableEvent?.periodNumber ?: 1) }
     var showDialogDate by remember { mutableStateOf(false) }
     var showDialogStart by remember { mutableStateOf(false) }
     var showDialogEnd by remember { mutableStateOf(false) }
 
-    var nameEvent by remember { mutableStateOf(editableEvent?.name ?: "") }
+    var nameEvent by remember { mutableStateOf(updatableEvent?.name ?: "") }
     var typeEvent by remember {
         mutableStateOf(
-            editableEvent?.typeName ?: DefaultEventParams.types.first()
+            updatableEvent?.typeName ?: DefaultEventParams.types.first()
         )
     }
-    var dateEvent by remember { mutableStateOf(editableEvent?.startDatetime?.toLocalDate()) }
-    var startTime by remember { mutableStateOf(editableEvent?.startDatetime?.toLocalTimeWithTimeZone()) }
-    var endTime by remember { mutableStateOf(editableEvent?.endDatetime?.toLocalTimeWithTimeZone()) }
+    var dateEvent by remember { mutableStateOf(updatableEvent?.startDatetime?.toLocalDate()) }
+    var startTime by remember { mutableStateOf(updatableEvent?.startDatetime?.toLocalTimeWithTimeZone()) }
+    var endTime by remember { mutableStateOf(updatableEvent?.endDatetime?.toLocalTimeWithTimeZone()) }
 
-    var roomsList by remember { mutableStateOf(editableEvent?.rooms ?: listOf()) }
-    var lecturersList by remember { mutableStateOf(editableEvent?.lecturers ?: listOf()) }
-    var groupsList by remember { mutableStateOf(editableEvent?.groups ?: listOf()) }
+    var roomsList by remember { mutableStateOf(updatableEvent?.rooms ?: listOf()) }
+    var lecturersList by remember { mutableStateOf(updatableEvent?.lecturers ?: listOf()) }
+    var groupsList by remember { mutableStateOf(updatableEvent?.groups ?: listOf()) }
 
     val buttonEnabled by remember {
         derivedStateOf {
-            EventValidation.validate(
-                context = context,
+            isValidEvent(
                 name = nameEvent,
                 date = dateEvent,
                 startTime = startTime,
@@ -106,240 +102,277 @@ fun AddEditEventDialog(
                 roomsList = roomsList,
                 lecturersList = lecturersList,
                 groupsList = groupsList
-            ) is EventValidation.Success
+            )
         }
     }
 
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                titleText = editableEvent?.let {
+                titleText = updatableEvent?.let {
                     stringResource(R.string.editing)
-                } ?: stringResource(R.string.adding_a_class),
+                } ?: stringResource(R.string.create_class),
                 subtitleText = "${namedScheduleEntity.shortName} (${scheduleEntity.timetableType.typeName})",
                 navAction = {
                     appUiState.appBackStack.onBack()
-                },
-                actions = {
-                    CustomButton(
-                        modifier = Modifier.padding(horizontal = 12.dp),
-                        buttonTitle = editableEvent?.let {
-                            stringResource(R.string.save)
-                        } ?: stringResource(R.string.create),
-                        enabled = buttonEnabled,
-                        onClick = {
-                            val startDateTime = LocalDateTime.of(dateEvent, startTime)
-                                .atZone(ZoneId.systemDefault())
-                                .withZoneSameInstant(ZoneOffset.UTC)
-                                .toLocalDateTime()
-                            val endDateTime = LocalDateTime.of(dateEvent, endTime)
-                                .atZone(ZoneId.systemDefault())
-                                .withZoneSameInstant(ZoneOffset.UTC)
-                                .toLocalDateTime()
-
-                            val event = Event(
-                                id = editableEvent?.id ?: 0,
-                                scheduleId = scheduleEntity.id,
-                                name = nameEvent.trim(),
-                                typeName = typeEvent,
-
-                                startDatetime = startDateTime,
-                                endDatetime = endDateTime,
-                                lecturers = lecturersList,
-                                rooms = roomsList,
-                                groups = groupsList,
-                                isCustomEvent = true,
-                                timeSlotName = getTimeSlotName(
-                                    startDateTime = startDateTime,
-                                    endDateTime = endDateTime
-                                ),
-                                recurrenceRule = scheduleEntity.recurrence?.let {
-                                    RecurrenceEventDto(
-                                        frequency = "WEEKLY",
-                                        interval = currentInterval
-                                    )
-                                },
-                                periodNumber = if (currentInterval > 1) currentPeriod else 1
-                            )
-                            editableEvent?.let {
-                                if (editableEvent != event) {
-                                    scheduleViewModel.eventAction(scheduleEntity, event, EventAction.Update)
-                                }
-                            } ?: scheduleViewModel.eventAction(
-                                scheduleEntity, event, EventAction.Add
-                            )
-                            appUiState.appBackStack.onBack()
-                        }
-                    )
                 }
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(
-                    start = 16.dp, end = 16.dp,
-                    top = innerPadding.calculateTopPadding()
-                )
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+        val pagerState = rememberPagerState(
+            initialPage = 0
+        ) { 3 }
 
-            CustomTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = nameEvent,
-                placeholderText = stringResource(R.string.class_name),
-                keyboardOptions = KeyboardOptions(
-                    autoCorrectEnabled = false,
-                    imeAction = ImeAction.Done
-                )
-            ) { newValue ->
-                nameEvent = newValue
+        val isScrollingBack by remember {
+            derivedStateOf {
+                pagerState.currentPageOffsetFraction <= 0f
             }
-            ColumnGroup(
-                title = stringResource(R.string.class_type),
-                withBackground = false,
-                items = listOf {
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(
-                            8.dp,
-                            Alignment.CenterVertically
+        }
+
+        PagerScreenContainer(
+            pagerState = pagerState,
+            scope = appUiState.scope,
+            isNextEnabled = { page ->
+                when (page) {
+                    0 -> nameEvent.isNotBlank()
+                    1 -> dateEvent != null && startTime != null && endTime != null && (scheduleEntity.recurrence != null && currentInterval != -1 || scheduleEntity.recurrence == null)
+                    2 -> buttonEnabled
+                    else -> true
+                } || isScrollingBack
+            },
+            onFinish = {
+                dateEvent?.let {
+                    val startDateTime = startTime?.toUtcDateTime(it)
+                    val endDateTime = endTime?.toUtcDateTime(it)
+                    if (startDateTime != null && endDateTime != null) {
+                        val event = Event(
+                            id = updatableEvent?.id ?: 0,
+                            scheduleId = scheduleEntity.id,
+                            name = nameEvent.trim(),
+                            typeName = typeEvent,
+
+                            startDatetime = startDateTime,
+                            endDatetime = endDateTime,
+                            lecturers = lecturersList,
+                            rooms = roomsList,
+                            groups = groupsList,
+                            isCustomEvent = true,
+                            timeSlotName = getTimeSlotName(
+                                startDateTime = startDateTime,
+                                endDateTime = endDateTime
+                            ),
+                            recurrenceRule = scheduleEntity.recurrence?.let {
+                                RecurrenceEventDto(
+                                    frequency = "WEEKLY",
+                                    interval = currentInterval
+                                )
+                            },
+                            periodNumber = if (currentInterval > 1) currentPeriod else 1
                         )
+                        if (updatableEvent != null) {
+                            scheduleViewModel.eventAction(
+                                scheduleEntity,
+                                event,
+                                EventAction.Update(updatableEvent)
+                            )
+                        } else {
+                            scheduleViewModel.eventAction(
+                                scheduleEntity, event, EventAction.Add
+                            )
+                        }
+                    }
+                }
+
+                appUiState.appBackStack.onBack()
+            },
+            paddingValues = innerPadding,
+            finishTitle = stringResource(R.string.create)
+        ) { page ->
+            when (page) {
+                0 -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        DefaultEventParams.types.forEach { type ->
-                            CustomFilterChip(
-                                title = type
-                                    ?: stringResource(R.string.not_specified),
-                                imageVector = null,
-                                selected = type == typeEvent,
-                                onSelect = {
-                                    typeEvent = type
-                                    focusManager.clearFocus()
+                        CustomTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = nameEvent,
+                            placeholderText = stringResource(R.string.class_name),
+                            keyboardOptions = KeyboardOptions(
+                                autoCorrectEnabled = false,
+                                imeAction = ImeAction.Done
+                            )
+                        ) { newValue ->
+                            nameEvent = newValue
+                        }
+                        ColumnGroup(
+                            title = stringResource(R.string.class_type),
+                            withBackground = false,
+                            items = listOf {
+                                FlowRow(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(
+                                        8.dp,
+                                        Alignment.CenterVertically
+                                    )
+                                ) {
+                                    DefaultEventParams.types.forEach { type ->
+                                        CustomFilterChip(
+                                            title = type
+                                                ?: stringResource(R.string.not_specified),
+                                            imageVector = null,
+                                            selected = type == typeEvent,
+                                            onSelect = {
+                                                typeEvent = type
+                                                focusManager.clearFocus()
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+
+                1 -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top)
+                    ) {
+                        if (scheduleEntity.recurrence != null) {
+                            DaySelector(
+                                currentDateTime = currentDateTime,
+                                dateEvent = dateEvent,
+                                onSelectDateEvent = { value ->
+                                    dateEvent = value
+                                },
+                                focusManager = focusManager
+                            )
+                            TimeSelector(
+                                focusManager = focusManager,
+                                startTime = startTime,
+                                endTime = endTime,
+                                onShowDialogStartTime = { value ->
+                                    showDialogStart = value
+                                },
+                                onShowDialogEndTime = { value ->
+                                    showDialogEnd = value
+                                }
+                            )
+                            RecurrenceField(
+                                maxInterval = scheduleEntity.recurrence.interval,
+                                currentInterval = currentInterval,
+                                currentPeriod = currentPeriod,
+                                onSelectInterval = { value ->
+                                    currentInterval = value
+                                },
+                                onSelectPeriod = { value ->
+                                    currentPeriod = value
+                                },
+                            )
+                        } else {
+                            DateTimeSelector(
+                                focusManager = focusManager,
+                                dateEvent = dateEvent,
+                                startTime = startTime,
+                                endTime = endTime,
+                                onShowDialogDate = { value ->
+                                    showDialogDate = value
+                                },
+                                onShowDialogStartTime = { value ->
+                                    showDialogStart = value
+                                },
+                                onShowDialogEndTime = { value ->
+                                    showDialogEnd = value
                                 }
                             )
                         }
                     }
                 }
-            )
 
-            scheduleEntity.recurrence?.let {
-                DateSelector(
-                    currentDateTime = currentDateTime,
-                    dateEvent = dateEvent,
-                    onSelectDateEvent = { value ->
-                        dateEvent = value
-                    },
-                    focusManager = focusManager
-                )
-                TimeSelector(
-                    focusManager = focusManager,
-                    startTime = startTime,
-                    endTime = endTime,
-                    onShowDialogStartTime = { value ->
-                        showDialogStart = value
-                    },
-                    onShowDialogEndTime = { value ->
-                        showDialogEnd = value
+                2 -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top)
+                    ) {
+                        ListParam(
+                            title = stringResource(R.string.room),
+                            elements = roomsList,
+                            onAddElement = {
+                                roomsList = (roomsList + DefaultEventParams.defaultRoom)
+                                focusManager.clearFocus()
+                            },
+                            maxCount = 1
+                        ) { index, room ->
+                            RoomInput(
+                                room = room,
+                                onValueChanged = { updatedRoom ->
+                                    roomsList =
+                                        roomsList.toMutableList()
+                                            .apply { this[index] = updatedRoom }
+                                },
+                                onRemove = {
+                                    roomsList =
+                                        roomsList.toMutableList().apply { removeAt(index) }
+                                }
+                            )
+                        }
+                        ListParam(
+                            title = stringResource(R.string.lecturers),
+                            elements = lecturersList,
+                            onAddElement = {
+                                lecturersList =
+                                    (lecturersList + DefaultEventParams.defaultLecturer)
+                                focusManager.clearFocus()
+                            },
+                            maxCount = 3
+                        ) { index, lecturer ->
+                            LecturerInput(
+                                lecturer = lecturer,
+                                onValueChanged = { updatedLecturer ->
+                                    lecturersList =
+                                        lecturersList.toMutableList()
+                                            .apply { this[index] = updatedLecturer }
+                                },
+                                onRemove = {
+                                    lecturersList =
+                                        lecturersList.toMutableList().apply { removeAt(index) }
+                                }
+                            )
+                        }
+                        ListParam(
+                            title = stringResource(R.string.groups),
+                            elements = groupsList,
+                            onAddElement = {
+                                groupsList = groupsList + DefaultEventParams.defaultGroup
+                                focusManager.clearFocus()
+                            },
+                            maxCount = 7
+                        ) { index, group ->
+                            GroupInput(
+                                group = group,
+                                onValueChanged = { updatedGroup ->
+                                    groupsList =
+                                        groupsList.toMutableList()
+                                            .apply { this[index] = updatedGroup }
+                                },
+                                onRemove = {
+                                    groupsList =
+                                        groupsList.toMutableList().apply { removeAt(index) }
+                                }
+                            )
+                        }
                     }
-                )
-                RecurrenceField(
-                    maxInterval = scheduleEntity.recurrence.interval,
-                    currentInterval = currentInterval,
-                    currentPeriod = currentPeriod,
-                    onSelectInterval = { value ->
-                        currentInterval = value
-                    },
-                    onSelectPeriod = { value ->
-                        currentPeriod = value
-                    },
-                )
-            } ?: DateTimeSelector(
-                focusManager = focusManager,
-                dateEvent = dateEvent,
-                startTime = startTime,
-                endTime = endTime,
-                onShowDialogDate = { value ->
-                    showDialogDate = value
-                },
-                onShowDialogStartTime = { value ->
-                    showDialogStart = value
-                },
-                onShowDialogEndTime = { value ->
-                    showDialogEnd = value
                 }
-            )
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                thickness = 0.5.dp,
-                color = MaterialTheme.colorScheme.outline
-            )
-            ListParam(
-                title = stringResource(R.string.room),
-                elements = roomsList,
-                onAddElement = {
-                    roomsList = (roomsList + DefaultEventParams.defaultRoom)
-                    focusManager.clearFocus()
-                },
-                maxCount = 1
-            ) { index, room ->
-                RoomInput(
-                    room = room,
-                    onValueChanged = { updatedRoom ->
-                        roomsList =
-                            roomsList.toMutableList().apply { this[index] = updatedRoom }
-                    },
-                    onRemove = {
-                        roomsList = roomsList.toMutableList().apply { removeAt(index) }
-                    }
-                )
-            }
-            ListParam(
-                title = stringResource(R.string.lecturers),
-                elements = lecturersList,
-                onAddElement = {
-                    lecturersList = (lecturersList + DefaultEventParams.defaultLecturer)
-                    focusManager.clearFocus()
-                },
-                maxCount = 3
-            ) { index, lecturer ->
-                LecturerInput(
-                    lecturer = lecturer,
-                    onValueChanged = { updatedLecturer ->
-                        lecturersList =
-                            lecturersList.toMutableList()
-                                .apply { this[index] = updatedLecturer }
-                    },
-                    onRemove = {
-                        lecturersList =
-                            lecturersList.toMutableList().apply { removeAt(index) }
-                    }
-                )
-            }
-            ListParam(
-                title = stringResource(R.string.groups),
-                elements = groupsList,
-                onAddElement = {
-                    groupsList = groupsList + DefaultEventParams.defaultGroup
-                    focusManager.clearFocus()
-                },
-                maxCount = 7
-            ) { index, group ->
-                GroupInput(
-                    group = group,
-                    onValueChanged = { updatedGroup ->
-                        groupsList =
-                            groupsList.toMutableList().apply { this[index] = updatedGroup }
-                    },
-                    onRemove = {
-                        groupsList = groupsList.toMutableList().apply { removeAt(index) }
-                    }
-                )
             }
         }
+
         if (showDialogDate) {
             BottomSheetDatePicker(
                 selectedDate = dateEvent,
@@ -412,8 +445,8 @@ fun RecurrenceField(
         Spacer(modifier = Modifier.height(12.dp))
         AnimatedVisibility(
             visible = currentInterval > 1,
-            enter = expandVertically(),
-            exit = shrinkVertically()
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
         ) {
             Column {
                 ColumnGroup(
@@ -439,3 +472,4 @@ fun RecurrenceField(
         }
     }
 }
+

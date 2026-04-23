@@ -2,6 +2,8 @@ package com.egormelnikoff.schedulerutmiit.ui.elements
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -19,8 +21,8 @@ fun AnimatedAlert(
 ) {
     AnimatedVisibility(
         visible = !isHidden,
-        enter = expandVertically(),
-        exit = shrinkVertically()
+        enter = expandVertically() + fadeIn(),
+        exit = shrinkVertically() + fadeOut()
     ) {
         Box(
             modifier = Modifier.padding(

@@ -10,7 +10,10 @@ import javax.inject.Inject
 
 sealed class EventAction {
     data object Add : EventAction()
-    data object Update : EventAction()
+    data class Update(
+        val updatableEvent: Event
+    ) : EventAction()
+
     data object Delete : EventAction()
     data class UpdateHidden(
         val isHidden: Boolean
@@ -30,7 +33,8 @@ class EventActionUseCase @Inject constructor(
         when (eventAction) {
             is EventAction.Add -> eventRepos.save(event)
             is EventAction.Delete -> eventRepos.deleteById(event.id)
-            is EventAction.Update -> eventRepos.update(event)
+            is EventAction.Update -> if (event != eventAction.updatableEvent) eventRepos.update(event)
+
             is EventAction.UpdateHidden -> eventRepos.updateIsHidden(event.id, eventAction.isHidden)
         }
 

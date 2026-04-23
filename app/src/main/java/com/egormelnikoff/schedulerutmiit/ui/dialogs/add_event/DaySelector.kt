@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.R
@@ -20,29 +22,33 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun DateSelector(
+fun DaySelector(
     currentDateTime: LocalDateTime,
     dateEvent: LocalDate?,
     onSelectDateEvent: (LocalDate) -> Unit,
     focusManager: FocusManager
 ) {
-    val firstDayOfWeek = currentDateTime.toLocalDate().getFirstDayOfWeek()
+    val firstDayOfWeek = remember {
+        currentDateTime.toLocalDate().getFirstDayOfWeek()
+    }
+    
     ColumnGroup(
         title = stringResource(R.string.day_of_week),
         withBackground = false,
         items = listOf {
             Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                for (date in 0L until 7L) {
-                    val currentDate = firstDayOfWeek.plusDays(date)
+                stringArrayResource(R.array.days_of_week).forEachIndexed { index, _ ->
+                    val currentDate = firstDayOfWeek.plusDays(index.toLong())
                     CustomFilterChip(
                         title = currentDate.dayOfWeek.getDisplayName(
                             TextStyle.SHORT,
                             Locale.getDefault()
-                        )
-                            ?: stringResource(R.string.not_specified),
+                        ) ?: stringResource(R.string.not_specified),
                         imageVector = null,
                         selected = currentDate.dayOfWeek == dateEvent?.dayOfWeek,
                         onSelect = {
@@ -51,7 +57,6 @@ fun DateSelector(
                         }
                     )
                 }
-
             }
         }
     )
