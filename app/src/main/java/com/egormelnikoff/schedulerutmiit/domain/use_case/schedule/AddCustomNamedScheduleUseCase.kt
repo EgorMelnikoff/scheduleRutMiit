@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.domain.use_case.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.Schedule
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.result.ScheduleUseCaseResult
 import java.time.LocalDate
 import javax.inject.Inject

@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_models.search.state
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.SearchQuery
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.institutes.InstitutesDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.person.PersonDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstitutesDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
 
 @Keep
 data class SearchState(

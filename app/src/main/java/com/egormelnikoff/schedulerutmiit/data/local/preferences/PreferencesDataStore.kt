@@ -5,10 +5,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
-import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
-import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.app.enums.Theme
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
+import com.egormelnikoff.schedulerutmiit.core.network.dto.latest_release.LatestReleaseFetchDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
@@ -20,7 +21,7 @@ class PreferencesDataStore @Inject constructor(
     private val context: Context,
     private val json: Json
 ) {
-    suspend fun setLatestRelease(latestReleaseFetchDto: com.egormelnikoff.schedulerutmiit.data.remote.dto.latest_release.LatestReleaseFetchDto) {
+    suspend fun setLatestRelease(latestReleaseFetchDto: LatestReleaseFetchDto) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.LATEST_RELEASE] = json.encodeToString(latestReleaseFetchDto)
         }
@@ -105,10 +106,10 @@ class PreferencesDataStore @Inject constructor(
         }
     }
 
-    val latestReleaseFlow: Flow<com.egormelnikoff.schedulerutmiit.data.remote.dto.latest_release.LatestReleaseFetchDto?> =
+    val latestReleaseFlow: Flow<LatestReleaseFetchDto?> =
         context.dataStore.data.map { preferences ->
             preferences[PreferencesKeys.LATEST_RELEASE]?.let {
-                json.decodeFromString<com.egormelnikoff.schedulerutmiit.data.remote.dto.latest_release.LatestReleaseFetchDto>(it)
+                json.decodeFromString<LatestReleaseFetchDto>(it)
             }
         }
 

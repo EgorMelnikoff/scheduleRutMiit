@@ -36,18 +36,18 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.app.enums.EventsCountView
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.egormelnikoff.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.app.extension.findEventExtra
-import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
-import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.app.extension.replaceDate
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getCurrentWeek
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.ui.ui_state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.ScheduleUiDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -153,7 +153,7 @@ fun HorizontalCalendar(
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
-                if (scheduleUiDto.scheduleEntity.recurrence != null && scheduleUiDto.scheduleEntity.recurrence.interval > 1) {
+                if (scheduleUiDto.scheduleEntity.recurrence != null && requireNotNull(scheduleUiDto.scheduleEntity.recurrence).interval > 1) {
                     val selectedWeek = firstDayOfCurrentWeek.getCurrentWeek(
                         startDate = scheduleUiDto.scheduleEntity.startDate,
                         recurrence = scheduleUiDto.scheduleEntity.recurrence
@@ -236,8 +236,8 @@ fun HorizontalCalendar(
                 stringArrayResource(R.array.days_of_week).forEachIndexed { index, day ->
                     val currentDate = firstDayOfWeek.plusDays(index.toLong())
 
-                    val eventsForDate = currentDate.getEventsForDate(
-                        scheduleEntity = scheduleUiDto.scheduleEntity,
+                    val eventsForDate = scheduleUiDto.scheduleEntity.getEventsForDate(
+                        date = currentDate,
                         periodicEvents = scheduleUiDto.periodicEvents,
                         nonPeriodicEvents = scheduleUiDto.nonPeriodicEvents
                     )

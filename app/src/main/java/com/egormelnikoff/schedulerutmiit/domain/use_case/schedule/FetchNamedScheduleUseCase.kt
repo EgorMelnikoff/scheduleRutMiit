@@ -1,13 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.domain.use_case.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.exception.ScheduleLoadException
+import com.egormelnikoff.schedulerutmiit.core.common.exception.ScheduleLoadException
 import com.egormelnikoff.schedulerutmiit.app.extension.getShortName
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.GroupDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.TypedError
+import com.egormelnikoff.schedulerutmiit.core.common.dto.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.domain.repos.ScheduleRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.result.FetchNamedScheduleResult

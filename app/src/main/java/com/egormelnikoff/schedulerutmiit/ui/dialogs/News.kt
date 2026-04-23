@@ -36,14 +36,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.data.local.dto.news.NewsParsedDto
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomButton
+import com.egormelnikoff.egormelnikoff.core.ui.elements.composable.ErrorScreen
+import com.egormelnikoff.egormelnikoff.core.ui.elements.composable.LoadingScreen
+import com.egormelnikoff.egormelnikoff.core.ui.theme.StatusBarProtection
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
-import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.DateNews
-import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.ui.view_models.news.state.NewsState
 
 @Composable

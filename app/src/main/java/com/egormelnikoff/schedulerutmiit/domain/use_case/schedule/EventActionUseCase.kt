@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.domain.use_case.schedule
 
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.domain.repos.EventRepos
 import com.egormelnikoff.schedulerutmiit.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.ui.widget.WidgetDataUpdater

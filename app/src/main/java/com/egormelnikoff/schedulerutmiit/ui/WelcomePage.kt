@@ -21,16 +21,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.ui.elements.PagerScreenContainer
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.egormelnikoff.core.ui.elements.PagerScreenContainer
 import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
 
 
 @Composable
 fun WelcomePage(
-    settingsViewModel: SettingsViewModel,
+    settingsViewModel: SettingsViewModel
 ) {
 
     Scaffold { padding ->
@@ -51,12 +52,14 @@ fun WelcomePage(
                 settingsViewModel.skipWelcomePage()
             },
             cancelTitle = stringResource(R.string.skip),
+            finishTitle = stringResource(R.string.start) + "!",
             paddingValues = padding
-        ) {page ->
+        ) { page ->
             when (page) {
                 0 -> {
                     Page(
                         title = stringResource(R.string.welcome_title),
+                        titleSize = 30.sp,
                         subtitle = stringResource(R.string.welcome_subtitle)
                     )
                 }
@@ -91,10 +94,11 @@ fun WelcomePage(
 
 @Composable
 fun Page(
-    height: Dp = 200.dp,
-    painter: Painter? = null,
     title: String,
+    titleSize: TextUnit = 26.sp,
     subtitle: String,
+    imageHeight: Dp = 200.dp,
+    painter: Painter? = null,
 ) {
     Box(
         modifier = Modifier.padding(horizontal = 20.dp)
@@ -106,11 +110,11 @@ fun Page(
                 Image(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(height)
+                        .height(imageHeight)
                         .clip(MaterialTheme.shapes.extraLarge),
                     painter = painter,
                     contentDescription = null,
-                    contentScale = ContentScale.FillWidth
+                    contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -120,7 +124,7 @@ fun Page(
                 text = title,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.titleLarge,
-                fontSize = 26.sp
+                fontSize = titleSize
             )
             Text(
                 text = subtitle,

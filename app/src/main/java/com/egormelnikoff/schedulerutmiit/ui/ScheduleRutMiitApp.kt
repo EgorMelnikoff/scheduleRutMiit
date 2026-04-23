@@ -20,9 +20,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.data.local.preferences.AppSettings
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomSnackbarHost
+import com.egormelnikoff.egormelnikoff.core.ui.theme.isDarkTheme
+import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddEditEventDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.CurriculumDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.EventDialog
@@ -30,11 +33,6 @@ import com.egormelnikoff.schedulerutmiit.ui.dialogs.HiddenEventsDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.NewsDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.RenameDialog
 import com.egormelnikoff.schedulerutmiit.ui.dialogs.SearchDialog
-import com.egormelnikoff.schedulerutmiit.ui.dialogs.add_event.AddEditEventDialog
-import com.egormelnikoff.schedulerutmiit.ui.elements.BarItem
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBar
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomNavigationBarItem
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.ui.screens.news.NewsScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
@@ -42,10 +40,9 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScheduleUiStateSync
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
-import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.ReviewUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.theme.isDarkTheme
+import com.egormelnikoff.schedulerutmiit.ui.ui_state.AppUiState
+import com.egormelnikoff.schedulerutmiit.ui.ui_state.ReviewUiState
+import com.egormelnikoff.schedulerutmiit.ui.ui_state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.curriculum.CurriculumViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.news.state.NewsState
@@ -363,7 +360,7 @@ fun PageHost(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             CustomNavigationBar(
-                appBackStack = appUiState.appBackStack,
+                currentPageIndex = appUiState.appBackStack.lastPage().index,
                 barItems = {
                     CustomNavigationBarItem(
                         barItem = barItems[0],

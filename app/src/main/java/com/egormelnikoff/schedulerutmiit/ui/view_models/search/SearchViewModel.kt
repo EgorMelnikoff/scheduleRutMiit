@@ -2,13 +2,14 @@ package com.egormelnikoff.schedulerutmiit.ui.view_models.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.SearchQuery
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.person.PersonDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.GroupDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.TypedError
+import com.egormelnikoff.schedulerutmiit.app.resources.getErrorMessage
+import com.egormelnikoff.schedulerutmiit.core.common.dto.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
 import com.egormelnikoff.schedulerutmiit.domain.repos.SearchQueryRepos
 import com.egormelnikoff.schedulerutmiit.domain.repos.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.domain.use_case.search.SearchUseCase
@@ -191,7 +192,7 @@ class SearchViewModel @Inject constructor(
     ) {
         _searchState.update {
             it.copy(
-                error = TypedError.getErrorMessage(
+                error = getErrorMessage(
                     resourcesManager = resourcesManager,
                     typedError = typedError
                 ),

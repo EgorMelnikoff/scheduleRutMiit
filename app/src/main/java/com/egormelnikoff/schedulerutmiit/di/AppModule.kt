@@ -3,14 +3,13 @@ package com.egormelnikoff.schedulerutmiit.di
 import android.content.Context
 import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
 import com.egormelnikoff.schedulerutmiit.data.local.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.data.local.parser.ScheduleParser
 import com.egormelnikoff.schedulerutmiit.data.local.parser.SearchParser
 import com.egormelnikoff.schedulerutmiit.data.local.parser.SubjectsListParser
 import com.egormelnikoff.schedulerutmiit.data.local.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.data.local.serializers.LocalDateSerializer
-import com.egormelnikoff.schedulerutmiit.data.local.serializers.LocalDateTimeSerializer
-import com.egormelnikoff.schedulerutmiit.data.remote.network.logger.Logger
 import com.egormelnikoff.schedulerutmiit.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.domain.use_case.updates.AppInfoProviderImpl
 import com.egormelnikoff.schedulerutmiit.ui.widget.WidgetDataUpdater
@@ -76,13 +75,6 @@ object AppModule {
             }
         }
     }
-
-    @Provides
-    @Singleton
-    fun provideLogger(
-        @ApplicationContext context: Context,
-        resourcesManager: ResourcesManager
-    ): Logger = Logger(context, resourcesManager)
 
     @Provides
     fun provideNewsParser(): NewsParser = NewsParser

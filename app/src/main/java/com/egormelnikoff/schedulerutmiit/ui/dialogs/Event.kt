@@ -51,29 +51,30 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.SearchQuery
-import com.egormelnikoff.schedulerutmiit.data.remote.network.Endpoints.personImageUrl
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.egormelnikoff.core.ui.elements.ClickableItem
+import com.egormelnikoff.egormelnikoff.core.ui.elements.ColorSelector
+import com.egormelnikoff.egormelnikoff.core.ui.elements.ColumnGroup
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomAlertDialog
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomFilterChip
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomTextField
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomTopAppBar
+import com.egormelnikoff.egormelnikoff.core.ui.elements.LeadingAsyncImage
+import com.egormelnikoff.schedulerutmiit.app.extension.customToString
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.EventAction
-import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.ui.elements.ColorSelector
-import com.egormelnikoff.schedulerutmiit.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomFilterChip
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.ui.elements.LeadingAsyncImage
-import com.egormelnikoff.schedulerutmiit.ui.elements.ModalDialogEvent
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.event.ModalDialogEvent
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModel
 import java.time.LocalDateTime
@@ -170,7 +171,9 @@ fun EventDialog(
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                if (!event.groups.isNullOrEmpty()) {
+                val groups = event.groups
+
+                if (!groups.isNullOrEmpty()) {
                     ColumnGroup(
                         title = stringResource(R.string.groups),
                         titleColor = MaterialTheme.colorScheme.primary,
@@ -182,7 +185,7 @@ fun EventDialog(
                                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                                 verticalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                event.groups.forEach { group ->
+                                groups.forEach { group ->
                                     Box(
                                         contentAlignment = Alignment.Center,
                                         modifier = Modifier
@@ -234,11 +237,12 @@ fun EventDialog(
                         }
                     )
                 }
-                if (!event.rooms.isNullOrEmpty()) {
+                val rooms = event.rooms
+                if (!rooms.isNullOrEmpty()) {
                     ColumnGroup(
                         title = stringResource(R.string.room),
                         titleColor = MaterialTheme.colorScheme.primary,
-                        items = event.rooms.map { room ->
+                        items = rooms.map { room ->
                             {
                                 ClickableItem(
                                     title = room.hint,
@@ -268,11 +272,12 @@ fun EventDialog(
 
                     )
                 }
-                if (!event.lecturers.isNullOrEmpty()) {
+                val lecturers = event.lecturers
+                if (!lecturers.isNullOrEmpty()) {
                     ColumnGroup(
                         title = stringResource(R.string.lecturers),
                         titleColor = MaterialTheme.colorScheme.primary,
-                        items = event.lecturers.map { lecturer ->
+                        items = lecturers.map { lecturer ->
                             {
                                 ClickableItem(
                                     title = lecturer.fullFio,
@@ -521,9 +526,10 @@ fun EventHeader(
                 ),
                 title = "${event.startDatetime.toLocalTimeWithTimeZone()} - ${event.endDatetime.toLocalTimeWithTimeZone()}"
             )
-            event.typeName?.let {
+            val typeName = event.typeName
+            typeName?.let {
                 CustomFilterChip(
-                    title = event.typeName,
+                    title = typeName,
                     border = BorderStroke(
                         width = 0.5.dp,
                         color = MaterialTheme.colorScheme.outline

@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.domain.use_case.schedule
 
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
 import java.time.LocalDateTime
 import javax.inject.Inject
 

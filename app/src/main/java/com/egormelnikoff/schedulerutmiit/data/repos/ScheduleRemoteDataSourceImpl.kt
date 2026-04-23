@@ -1,15 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.data.repos
 
-
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.dto.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetableDto
+import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
+import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.data.local.parser.ScheduleParser
-import com.egormelnikoff.schedulerutmiit.data.remote.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.ScheduleDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.GroupDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.timetable.TimetableDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.Endpoints
-import com.egormelnikoff.schedulerutmiit.data.remote.network.NetworkHelper
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
 import com.egormelnikoff.schedulerutmiit.domain.repos.ScheduleRemoteDataSource
 import org.jsoup.Jsoup
 import javax.inject.Inject

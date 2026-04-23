@@ -1,16 +1,15 @@
 package com.egormelnikoff.schedulerutmiit.domain.use_case.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.data.local.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.domain.repos.EventExtraRepos
 import com.egormelnikoff.schedulerutmiit.domain.repos.EventRepos
 import kotlinx.coroutines.flow.first
 import java.time.LocalDateTime
 import javax.inject.Inject
-
 
 class UpdateEventExtraCore @Inject constructor(
     private val preferencesDataStore: PreferencesDataStore,

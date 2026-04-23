@@ -39,16 +39,16 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.news.NewsShortDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.Endpoints.BASE_RUT_MIIT_URL
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomButton
+import com.egormelnikoff.egormelnikoff.core.ui.elements.composable.ErrorScreen
+import com.egormelnikoff.egormelnikoff.core.ui.elements.composable.NewsLoadingScreen
+import com.egormelnikoff.egormelnikoff.core.ui.theme.StatusBarProtection
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
+import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.BASE_RUT_MIIT_URL
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.ui.screens.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.ui.screens.NewsLoadingScreen
-import com.egormelnikoff.schedulerutmiit.ui.theme.StatusBarProtection
 import kotlinx.coroutines.flow.Flow
 
 @Composable

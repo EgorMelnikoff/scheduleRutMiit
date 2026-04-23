@@ -1,12 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.domain.use_case.schedule
 
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.Schedule
 import com.egormelnikoff.schedulerutmiit.data.local.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
 import com.egormelnikoff.schedulerutmiit.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.domain.repos.ScheduleRepos
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.result.ScheduleUseCaseResult

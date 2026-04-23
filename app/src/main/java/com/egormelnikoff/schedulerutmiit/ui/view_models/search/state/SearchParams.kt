@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_models.search.state
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.enums.SearchType
+import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
 
 @Keep
 data class SearchParams(

@@ -1,0 +1,17 @@
+package com.egormelnikoff.schedulerutmiit.core.network.dto.institutes
+
+import androidx.annotation.Keep
+import com.egormelnikoff.schedulerutmiit.core.common.dto.GroupDto
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Keep
+@Serializable
+data class SpecialtyDto(
+    @SerialName("name")
+    val name: String,
+    @SerialName("abbreviation")
+    val abbreviation: String,
+    @SerialName("groups")
+    val groups: List<GroupDto>
+)

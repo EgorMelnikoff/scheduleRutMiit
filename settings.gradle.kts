@@ -21,4 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "scheduleRutMiit"
 include(":app")
- 
+include(":core-network")
+include(":core-database")
+include(":core-common")
+include(":core-ui")

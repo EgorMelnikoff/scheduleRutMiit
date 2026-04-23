@@ -1,8 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.app.extension
 
-import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
+import android.content.Context
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.EventDto
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -67,3 +71,42 @@ fun List<Pair<String, List<Event>>>?.getEnrichedEvents(
         title to enriched
     } ?: emptyList()
 }
+
+fun Event.customToString(context: Context): String {
+    return StringBuilder().apply {
+        append("${context.getString(R.string._class)}: ${this@customToString.name}")
+        this@customToString.typeName?.let {
+            append("\n${context.getString(R.string.class_type)}: $it")
+        }
+        append("\n${context.getString(R.string.time)}: ${this@customToString.startDatetime.toLocalTimeWithTimeZone()} - ${this@customToString.endDatetime.toLocalTimeWithTimeZone()}")
+
+        this@customToString.timeSlotName?.let {
+            append(" ($it)")
+        }
+
+        if (!this@customToString.rooms.isNullOrEmpty()) {
+            append("\n${context.getString(R.string.place)}: ${this@customToString.rooms?.joinToString { it.name }}")
+        }
+
+        if (!this@customToString.lecturers.isNullOrEmpty()) {
+            append("\n${context.getString(R.string.lecturers)}: ${this@customToString.lecturers?.joinToString { it.shortFio }}")
+        }
+
+        if (!this@customToString.groups.isNullOrEmpty()) {
+            append("\n${context.getString(R.string.groups)}: ${this@customToString.groups?.joinToString { it.name }}")
+        }
+    }.toString()
+}
+
+fun EventDto.toEntity() = Event(
+    startDatetime = requireNotNull(this.startDatetime),
+    endDatetime = requireNotNull(this.endDatetime),
+    recurrenceRule = recurrence,
+    periodNumber = periodNumber,
+    name = requireNotNull(this.name),
+    typeName = typeName,
+    timeSlotName = timeSlotName,
+    lecturers = lecturers,
+    groups = groups,
+    rooms = rooms
+)

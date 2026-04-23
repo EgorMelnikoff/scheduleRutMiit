@@ -1,9 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.domain.use_case.schedule
 
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.Schedule
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.ScheduleDto
+import com.egormelnikoff.schedulerutmiit.app.extension.toEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.Schedule
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
 import javax.inject.Inject
 
 class ScheduleMapper @Inject constructor() {

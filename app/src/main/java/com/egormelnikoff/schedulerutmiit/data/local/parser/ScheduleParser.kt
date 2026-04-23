@@ -1,19 +1,19 @@
 package com.egormelnikoff.schedulerutmiit.data.local.parser
 
 import android.os.Build
-import com.egormelnikoff.schedulerutmiit.app.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.app.extension.toUtcTime
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.NonPeriodicContentDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.PeriodicContentDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.RecurrenceDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.ScheduleDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.EventDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.GroupDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.LecturerDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.RecurrenceEventDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.RoomDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.timetable.TimetableDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.LecturerDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.RecurrenceDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.RecurrenceEventDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.RoomDto
+import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcTime
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.EventDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.NonPeriodicContentDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.PeriodicContentDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetableDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Document
@@ -270,27 +270,28 @@ object ScheduleParser {
                 }.toMutableList()
         }
 
-    private suspend fun Element.parseRooms(): MutableList<RoomDto> = withContext(Dispatchers.Default) {
-        return@withContext this@parseRooms
-            .select(".icon-location")
-            .mapNotNull { a ->
+    private suspend fun Element.parseRooms(): MutableList<RoomDto> =
+        withContext(Dispatchers.Default) {
+            return@withContext this@parseRooms
+                .select(".icon-location")
+                .mapNotNull { a ->
 
-                val href = a.attr("href")
+                    val href = a.attr("href")
 
-                val id = href
-                    .substringAfter("room=")
-                    .substringBefore("&")
-                    .toIntOrNull() ?: return@mapNotNull null
+                    val id = href
+                        .substringAfter("room=")
+                        .substringBefore("&")
+                        .toIntOrNull() ?: return@mapNotNull null
 
-                val title = a.attr("title")
+                    val title = a.attr("title")
 
-                RoomDto(
-                    id = id,
-                    name = a.text().trim(),
-                    hint = title.trim()
-                )
-            }.toMutableList()
-    }
+                    RoomDto(
+                        id = id,
+                        name = a.text().trim(),
+                        hint = title.trim()
+                    )
+                }.toMutableList()
+        }
 
     private suspend fun Element.parseGroups(
         currentGroup: GroupDto?

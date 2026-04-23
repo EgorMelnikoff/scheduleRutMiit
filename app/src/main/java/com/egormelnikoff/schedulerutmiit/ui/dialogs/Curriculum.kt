@@ -37,12 +37,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.ui.elements.AdviceDialog
-import com.egormelnikoff.schedulerutmiit.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
-import com.egormelnikoff.schedulerutmiit.ui.screens.LoadingScreen
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.egormelnikoff.core.ui.elements.AdviceDialog
+import com.egormelnikoff.egormelnikoff.core.ui.elements.ClickableItem
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomTextField
+import com.egormelnikoff.egormelnikoff.core.ui.elements.composable.Empty
+import com.egormelnikoff.egormelnikoff.core.ui.elements.composable.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.ui.view_models.curriculum.CurriculumViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.curriculum.state.CurriculumState
 

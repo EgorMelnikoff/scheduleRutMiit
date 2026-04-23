@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.domain.use_case.news
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.news.NewsShortDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.data.repos.paging.PagingNewsSourceFactory
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

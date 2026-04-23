@@ -38,16 +38,16 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthNameFormatter
-import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.egormelnikoff.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.app.extension.findEventExtra
-import com.egormelnikoff.schedulerutmiit.app.extension.replaceDate
-import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.di.ProviderEntryPoint
-import com.egormelnikoff.schedulerutmiit.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.ui.widget.WidgetData
 import com.egormelnikoff.schedulerutmiit.ui.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.ui.widget.ui.theme.ScheduleGlanceTheme
@@ -321,9 +321,10 @@ class EventsWidget : GlanceAppWidget() {
             ),
             maxLines = 1
         )
-        if (!event.rooms.isNullOrEmpty()) {
+        val rooms = event.rooms
+        if (!rooms.isNullOrEmpty()) {
             EventComment(
-                title = event.rooms.joinToString { it.name },
+                title = rooms.joinToString { it.name },
             ) {
                 Image(
                     modifier = GlanceModifier.size(8.dp),

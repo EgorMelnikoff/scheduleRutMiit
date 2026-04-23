@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.data.repos
 
-import com.egormelnikoff.schedulerutmiit.data.remote.api.GithubApi
-import com.egormelnikoff.schedulerutmiit.data.remote.network.NetworkHelper
+import com.egormelnikoff.schedulerutmiit.core.network.api.GithubApi
+import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.domain.repos.LatestReleaseDataSource
 import javax.inject.Inject
 

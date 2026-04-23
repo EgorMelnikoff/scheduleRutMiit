@@ -1,8 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.domain.repos
 
-import com.egormelnikoff.schedulerutmiit.data.local.dto.news.NewsParsedDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.news.NewsListDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsListDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
 
 interface NewsRemoteDataSource {
     suspend fun getNewsById(id: Long): Result<NewsParsedDto>

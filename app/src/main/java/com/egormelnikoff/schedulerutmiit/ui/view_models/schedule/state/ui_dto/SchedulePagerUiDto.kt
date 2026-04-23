@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs

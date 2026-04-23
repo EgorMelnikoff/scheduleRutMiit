@@ -3,9 +3,9 @@ package com.egormelnikoff.schedulerutmiit.data.repos.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.news.NewsShortDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.TypedError
+import com.egormelnikoff.schedulerutmiit.app.resources.getErrorMessage
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.domain.repos.NewsRemoteDataSource
 
 class PagingNewsSource(
@@ -30,7 +30,7 @@ class PagingNewsSource(
             is Result.Error -> {
                 LoadResult.Error(
                     Exception(
-                        TypedError.getErrorMessage(
+                        getErrorMessage(
                             resourcesManager,
                             response.typedError
                         )

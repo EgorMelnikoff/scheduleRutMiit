@@ -1,13 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getPeriodicEvents
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.Schedule
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.RecurrenceDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.RecurrenceDto
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.Schedule
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -36,7 +36,7 @@ data class ScheduleUiDto(
 
             if (schedule.scheduleEntity.recurrence != null) {
                 periodicEventsForCalendar = splitEvents.second.getPeriodicEvents(
-                    schedule.scheduleEntity.recurrence.interval
+                    requireNotNull(schedule.scheduleEntity.recurrence).interval
                 )
             } else {
                 nonPeriodicEventsForCalendar = splitEvents.second.groupBy {
@@ -86,7 +86,7 @@ data class ScheduleUiDto(
                         currentStartDate = currentStartDate,
                         startDate = scheduleEntity.startDate,
                         endDate = scheduleEntity.endDate,
-                        recurrence = scheduleEntity.recurrence
+                        recurrence = requireNotNull(scheduleEntity.recurrence)
                     )
 
                     buildList {

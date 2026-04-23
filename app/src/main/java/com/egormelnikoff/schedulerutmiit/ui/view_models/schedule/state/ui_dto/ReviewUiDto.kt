@@ -1,12 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
-import com.egormelnikoff.schedulerutmiit.app.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.serializers.LocalDateSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getCurrentWeek
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.ui.widget.ui.EventsWidget.Companion.eveningTime
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
@@ -29,8 +29,8 @@ data class ReviewUiDto(
         ): ReviewUiDto {
             val date = LocalDateTime.now()
             var displayedDate = date.toLocalDate()
-            var events = date.toLocalDate().getEventsForDate(
-                scheduleEntity = scheduleEntity,
+            var events = scheduleEntity.getEventsForDate(
+                date = displayedDate,
                 periodicEvents = periodicEvents,
                 nonPeriodicEvents = nonPeriodicEvents
             )
@@ -47,8 +47,8 @@ data class ReviewUiDto(
 
             if (isFinishedEvents || nextDay) {
                 displayedDate = displayedDate.plusDays(1)
-                events = displayedDate.getEventsForDate(
-                    scheduleEntity = scheduleEntity,
+                events = scheduleEntity.getEventsForDate(
+                    date = displayedDate,
                     periodicEvents = periodicEvents,
                     nonPeriodicEvents = nonPeriodicEvents
                 )

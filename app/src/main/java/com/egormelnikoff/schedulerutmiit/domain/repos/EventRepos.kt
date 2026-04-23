@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.domain.repos
 
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
 
 interface EventRepos {
     suspend fun save(event: Event)

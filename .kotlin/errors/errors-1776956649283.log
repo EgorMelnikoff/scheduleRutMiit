@@ -1,0 +1,1710 @@
+kotlin version: 2.3.20
+error message: org.jetbrains.kotlin.fir.pipeline.IrGenerationExtensionException: Back-end: Please report this problem https://kotl.in/issue
+/Users/egor/AndroidStudioProjects/scheduleRutMiit/app/src/main/java/com/egormelnikoff/schedulerutmiit/data/local/db/entity/Event.kt:21:1
+Problem with `@Keep
+@Serializable
+@Entity(tableName = "Events")
+@StabilityInferred(parameters = 0)
+data class Event {
+  constructor(id: Long = 0L, scheduleId: Long = -1L, isHidden: Boolean = false, isCustomEvent: Boolean = false, startDatetime: LocalDateTime, endDatetime: LocalDateTime, recurrenceRule: RecurrenceEventDto?, periodNumber: Int?, name: String, typeName: String?, timeSlotName: String?, lecturers: List<LecturerDto>?, rooms: List<RoomDto>?, groups: List<GroupDto>?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val id: Long
+    field = id
+    get
+
+  val scheduleId: Long
+    field = scheduleId
+    get
+
+  val isHidden: Boolean
+    field = isHidden
+    get
+
+  val isCustomEvent: Boolean
+    field = isCustomEvent
+    get
+
+  @Serializable(with = LocalDateTimeSerializer::class)
+  val startDatetime: LocalDateTime
+    field = startDatetime
+    get
+
+  @Serializable(with = LocalDateTimeSerializer::class)
+  val endDatetime: LocalDateTime
+    field = endDatetime
+    get
+
+  @Contextual
+  val recurrenceRule: RecurrenceEventDto?
+    field = recurrenceRule
+    get
+
+  val periodNumber: Int?
+    field = periodNumber
+    get
+
+  val name: String
+    field = name
+    get
+
+  val typeName: String?
+    field = typeName
+    get
+
+  val timeSlotName: String?
+    field = timeSlotName
+    get
+
+  val lecturers: List<LecturerDto>?
+    field = lecturers
+    get
+
+  val rooms: List<RoomDto>?
+    field = rooms
+    get
+
+  val groups: List<GroupDto>?
+    field = groups
+    get
+
+  fun customHashCode(forceNonPeriodic: Boolean = false): Int {
+    val hashString: String = when {
+      forceNonPeriodic -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>().getDayOfWeek() + <this>.<get-startDatetime>().toLocalTime() + <this>.<get-groups>()
+      EQEQ(arg0 = <this>.<get-recurrenceRule>(), arg1 = null).not() -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>().getDayOfWeek() + <this>.<get-startDatetime>().toLocalTime() + <this>.<get-recurrenceRule>() /*as RecurrenceEventDto */.<get-interval>() + <this>.<get-periodNumber>() + <this>.<get-groups>()
+      else -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>() + <this>.<get-groups>()
+    }
+    return hashString.hashCode()
+  }
+
+  fun customEquals(other: Event): Boolean {
+    return EQEQ(arg0 = <this>.customHashCode(), arg1 = other.customHashCode())
+  }
+
+  fun customToString(context: Context): String {
+    return apply<StringBuilder>(/* <this> = StringBuilder(), */ block = local fun StringBuilder.<anonymous>() {
+      $this$apply.append(p0 = context.getString(p0 = super<string>.#_class) + ": " + <this>.<get-name>()) /*~> Unit */
+      { // BLOCK
+        val tmp0_safe_receiver: String? = <this>.<get-typeName>()
+        when {
+          EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+          else -> let<String, @FlexibleNullability StringBuilder?>(/* <this> = tmp0_safe_receiver /*as String */, */ block = local fun <anonymous>(it: String): @FlexibleNullability StringBuilder? {
+            return $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#class_type) + ": " + it)
+          }
+)
+        }
+      } /*~> Unit */
+      $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#time) + ": " + toLocalTimeWithTimeZone(/* <this> = <this>.<get-startDatetime>() */) + " - " + toLocalTimeWithTimeZone(/* <this> = <this>.<get-endDatetime>() */)) /*~> Unit */
+      { // BLOCK
+        val tmp1_safe_receiver: String? = <this>.<get-timeSlotName>()
+        when {
+          EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
+          else -> let<String, @FlexibleNullability StringBuilder?>(/* <this> = tmp1_safe_receiver /*as String */, */ block = local fun <anonymous>(it: String): @FlexibleNullability StringBuilder? {
+            return $this$apply.append(p0 = " (" + it + ")")
+          }
+)
+        }
+      } /*~> Unit */
+      when {
+        isNullOrEmpty<RoomDto>(/* <this> = <this>.<get-rooms>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#place) + ": " + joinToString<RoomDto>(/* <this> = <this>.<get-rooms>() /*as List<RoomDto> */, */ transform = local fun <anonymous>(it: RoomDto): CharSequence {
+            return it.<get-name>()
+          }
+)) /*~> Unit */
+        }
+      }
+      when {
+        isNullOrEmpty<LecturerDto>(/* <this> = <this>.<get-lecturers>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#lecturers) + ": " + joinToString<LecturerDto>(/* <this> = <this>.<get-lecturers>() /*as List<LecturerDto> */, */ transform = local fun <anonymous>(it: LecturerDto): CharSequence {
+            return it.<get-shortFio>()
+          }
+)) /*~> Unit */
+        }
+      }
+      when {
+        isNullOrEmpty<GroupDto>(/* <this> = <this>.<get-groups>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#groups) + ": " + joinToString<GroupDto>(/* <this> = <this>.<get-groups>() /*as List<GroupDto> */, */ transform = local fun <anonymous>(it: GroupDto): CharSequence {
+            return it.<get-name>()
+          }
+)) /*~> Unit */
+        }
+      }
+    }
+).toString() /*!! String */
+  }
+
+  companion object Companion {
+    val $childSerializers: Array<Lazy<KSerializer<Any>>>
+      field = arrayOf<Lazy<KSerializer<Any>>>(elements = [null, null, null, null, null, null, lazy<KSerializer<RecurrenceEventDto?>>(mode = LazyThreadSafetyMode.PUBLICATION, initializer = local fun <anonymous>(): KSerializer<RecurrenceEventDto?> {
+        return ContextualSerializer(serializableClass = RecurrenceEventDto::class, fallbackSerializer = null, typeArgumentsSerializers = arrayOf<KSerializer<out RecurrenceEventDto?>>(elements = []))
+      }
+), null, null, null, null, null, null, null])
+      private get(): Array<Lazy<KSerializer<Any>>> {
+        return <this>.#$childSerializers
+      }
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun serializer(): KSerializer<Event>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+  }
+
+  @Deprecated(message = "This synthesized declaration should not be used directly", level = DeprecationLevel.HIDDEN)
+  @StabilityInferred(parameters = 0)
+  object $serializer : GeneratedSerializer<Event> {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    override fun serialize(encoder: Encoder, value: Event)
+
+    override fun deserialize(decoder: Decoder): Event
+
+    override val descriptor: SerialDescriptor
+      override get
+
+    override fun childSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override fun typeParametersSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+    /* static final field */ val $stable: Int = 8
+  }
+
+  operator fun component1(): Long {
+    return <this>.#id
+  }
+
+  operator fun component2(): Long {
+    return <this>.#scheduleId
+  }
+
+  operator fun component3(): Boolean {
+    return <this>.#isHidden
+  }
+
+  operator fun component4(): Boolean {
+    return <this>.#isCustomEvent
+  }
+
+  operator fun component5(): LocalDateTime {
+    return <this>.#startDatetime
+  }
+
+  operator fun component6(): LocalDateTime {
+    return <this>.#endDatetime
+  }
+
+  operator fun component7(): RecurrenceEventDto? {
+    return <this>.#recurrenceRule
+  }
+
+  operator fun component8(): Int? {
+    return <this>.#periodNumber
+  }
+
+  operator fun component9(): String {
+    return <this>.#name
+  }
+
+  operator fun component10(): String? {
+    return <this>.#typeName
+  }
+
+  operator fun component11(): String? {
+    return <this>.#timeSlotName
+  }
+
+  operator fun component12(): List<LecturerDto>? {
+    return <this>.#lecturers
+  }
+
+  operator fun component13(): List<RoomDto>? {
+    return <this>.#rooms
+  }
+
+  operator fun component14(): List<GroupDto>? {
+    return <this>.#groups
+  }
+
+  fun copy(id: Long = <this>.#id, scheduleId: Long = <this>.#scheduleId, isHidden: Boolean = <this>.#isHidden, isCustomEvent: Boolean = <this>.#isCustomEvent, startDatetime: LocalDateTime = <this>.#startDatetime, endDatetime: LocalDateTime = <this>.#endDatetime, recurrenceRule: RecurrenceEventDto? = <this>.#recurrenceRule, periodNumber: Int? = <this>.#periodNumber, name: String = <this>.#name, typeName: String? = <this>.#typeName, timeSlotName: String? = <this>.#timeSlotName, lecturers: List<LecturerDto>? = <this>.#lecturers, rooms: List<RoomDto>? = <this>.#rooms, groups: List<GroupDto>? = <this>.#groups): Event {
+    return Event(id = id, scheduleId = scheduleId, isHidden = isHidden, isCustomEvent = isCustomEvent, startDatetime = startDatetime, endDatetime = endDatetime, recurrenceRule = recurrenceRule, periodNumber = periodNumber, name = name, typeName = typeName, timeSlotName = timeSlotName, lecturers = lecturers, rooms = rooms, groups = groups)
+  }
+
+  override fun toString(): String {
+    return "Event(" + "id=" + <this>.#id + ", " + "scheduleId=" + <this>.#scheduleId + ", " + "isHidden=" + <this>.#isHidden + ", " + "isCustomEvent=" + <this>.#isCustomEvent + ", " + "startDatetime=" + <this>.#startDatetime + ", " + "endDatetime=" + <this>.#endDatetime + ", " + "recurrenceRule=" + <this>.#recurrenceRule + ", " + "periodNumber=" + <this>.#periodNumber + ", " + "name=" + <this>.#name + ", " + "typeName=" + <this>.#typeName + ", " + "timeSlotName=" + <this>.#timeSlotName + ", " + "lecturers=" + <this>.#lecturers + ", " + "rooms=" + <this>.#rooms + ", " + "groups=" + <this>.#groups + ")"
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#id.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#scheduleId.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#isHidden.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#isCustomEvent.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#startDatetime.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#endDatetime.hashCode())
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#recurrenceRule, arg1 = null) -> 0
+      else -> <this>.#recurrenceRule.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#periodNumber, arg1 = null) -> 0
+      else -> <this>.#periodNumber.hashCode()
+    })
+    result = result.times(other = 31).plus(other = <this>.#name.hashCode())
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#typeName, arg1 = null) -> 0
+      else -> <this>.#typeName.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#timeSlotName, arg1 = null) -> 0
+      else -> <this>.#timeSlotName.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#lecturers, arg1 = null) -> 0
+      else -> <this>.#lecturers.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#rooms, arg1 = null) -> 0
+      else -> <this>.#rooms.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#groups, arg1 = null) -> 0
+      else -> <this>.#groups.hashCode()
+    })
+    return result
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Event -> return false
+    }
+    val tmp0_other_with_cast: Event = other /*as Event */
+    when {
+      EQEQ(arg0 = <this>.#id, arg1 = tmp0_other_with_cast.#id).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#scheduleId, arg1 = tmp0_other_with_cast.#scheduleId).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#isHidden, arg1 = tmp0_other_with_cast.#isHidden).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#isCustomEvent, arg1 = tmp0_other_with_cast.#isCustomEvent).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#startDatetime, arg1 = tmp0_other_with_cast.#startDatetime).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#endDatetime, arg1 = tmp0_other_with_cast.#endDatetime).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#recurrenceRule, arg1 = tmp0_other_with_cast.#recurrenceRule).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#periodNumber, arg1 = tmp0_other_with_cast.#periodNumber).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#name, arg1 = tmp0_other_with_cast.#name).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#typeName, arg1 = tmp0_other_with_cast.#typeName).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#timeSlotName, arg1 = tmp0_other_with_cast.#timeSlotName).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#lecturers, arg1 = tmp0_other_with_cast.#lecturers).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#rooms, arg1 = tmp0_other_with_cast.#rooms).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#groups, arg1 = tmp0_other_with_cast.#groups).not() -> return false
+    }
+    return true
+  }
+
+  /* static final field */ val $stable: Int = 8
+  @JvmStatic
+  internal /* static */ fun write$Self(self: Event, output: CompositeEncoder, serialDesc: SerialDescriptor)
+
+  internal constructor(seen0: Int, id: Long, scheduleId: Long, isHidden: Boolean, isCustomEvent: Boolean, startDatetime: LocalDateTime?, endDatetime: LocalDateTime?, recurrenceRule: RecurrenceEventDto?, periodNumber: Int?, name: String?, typeName: String?, timeSlotName: String?, lecturers: List<LecturerDto>?, rooms: List<RoomDto>?, groups: List<GroupDto>?, serializationConstructorMarker: SerializationConstructorMarker?) {
+    when {
+      EQEQ(arg0 = 16368, arg1 = 16368.and(other = seen0)).not() -> throwMissingFieldException(seen = seen0, goldenMask = 16368, descriptor = $serializer.<get-descriptor>())
+    }
+    super/*Any*/()
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 1)) -> <this>.#id = 0L
+      else -> <this>.#id = id
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 2)) -> <this>.#scheduleId = -1L
+      else -> <this>.#scheduleId = scheduleId
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 4)) -> <this>.#isHidden = false
+      else -> <this>.#isHidden = isHidden
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 8)) -> <this>.#isCustomEvent = false
+      else -> <this>.#isCustomEvent = isCustomEvent
+    }
+    <this>.#startDatetime = startDatetime
+    <this>.#endDatetime = endDatetime
+    <this>.#recurrenceRule = recurrenceRule
+    <this>.#periodNumber = periodNumber
+    <this>.#name = name
+    <this>.#typeName = typeName
+    <this>.#timeSlotName = timeSlotName
+    <this>.#lecturers = lecturers
+    <this>.#rooms = rooms
+    <this>.#groups = groups
+  }
+
+}
+
+`
+Details: kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.applyIrGenerationExtensions(convertToIr.kt:584)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.runActualizationPipeline(convertToIr.kt:283)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.convertToIrAndActualize(convertToIr.kt:154)
+	at org.jetbrains.kotlin.fir.pipeline.ConvertToIrKt.convertToIrAndActualize-MT2kVtw(convertToIr.kt:119)
+	at org.jetbrains.kotlin.fir.pipeline.ConvertToIrKt.convertToIrAndActualize-MT2kVtw$default(convertToIr.kt:92)
+	at org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.JvmCompilerPipelineKt.convertToIrAndActualizeForJvm-_I1IR-w(jvmCompilerPipeline.kt:98)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:30)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:25)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:19)
+	at org.jetbrains.kotlin.cli.pipeline.PipelinePhase.phaseBody(PipelinePhase.kt:68)
+	at org.jetbrains.kotlin.cli.pipeline.PipelinePhase.phaseBody(PipelinePhase.kt:58)
+	at org.jetbrains.kotlin.config.phaser.NamedCompilerPhase.invoke(CompilerPhase.kt:102)
+	at org.jetbrains.kotlin.backend.common.phaser.CompositePhase.invoke(PhaseBuilders.kt:22)
+	at org.jetbrains.kotlin.config.phaser.CompilerPhaseKt.invokeToplevel(CompilerPhase.kt:53)
+	at org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline.runPhasedPipeline(AbstractCliPipeline.kt:109)
+	at org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline.execute(AbstractCliPipeline.kt:68)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecutePhased(K2JVMCompiler.kt:51)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecutePhased(K2JVMCompiler.kt:42)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.execImpl(CLICompiler.kt:91)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.exec(CLICompiler.kt:363)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase.runCompiler(IncrementalJvmCompilerRunnerBase.kt:210)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase.runCompiler(IncrementalJvmCompilerRunnerBase.kt:52)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.doCompile(IncrementalCompilerRunner.kt:510)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileImpl(IncrementalCompilerRunner.kt:422)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileNonIncrementally(IncrementalCompilerRunner.kt:304)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compile(IncrementalCompilerRunner.kt:131)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.execIncrementalCompiler(CompileServiceImpl.kt:764)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.access$execIncrementalCompiler(CompileServiceImpl.kt:107)
+	at org.jetbrains.kotlin.daemon.CompileServiceImpl.compile(CompileServiceImpl.kt:2026)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: org.jetbrains.kotlin.backend.common.CompilationException: Back-end: Please report this problem https://kotl.in/issue
+/Users/egor/AndroidStudioProjects/scheduleRutMiit/app/src/main/java/com/egormelnikoff/schedulerutmiit/data/local/db/entity/Event.kt:21:1
+Problem with `@Keep
+@Serializable
+@Entity(tableName = "Events")
+@StabilityInferred(parameters = 0)
+data class Event {
+  constructor(id: Long = 0L, scheduleId: Long = -1L, isHidden: Boolean = false, isCustomEvent: Boolean = false, startDatetime: LocalDateTime, endDatetime: LocalDateTime, recurrenceRule: RecurrenceEventDto?, periodNumber: Int?, name: String, typeName: String?, timeSlotName: String?, lecturers: List<LecturerDto>?, rooms: List<RoomDto>?, groups: List<GroupDto>?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val id: Long
+    field = id
+    get
+
+  val scheduleId: Long
+    field = scheduleId
+    get
+
+  val isHidden: Boolean
+    field = isHidden
+    get
+
+  val isCustomEvent: Boolean
+    field = isCustomEvent
+    get
+
+  @Serializable(with = LocalDateTimeSerializer::class)
+  val startDatetime: LocalDateTime
+    field = startDatetime
+    get
+
+  @Serializable(with = LocalDateTimeSerializer::class)
+  val endDatetime: LocalDateTime
+    field = endDatetime
+    get
+
+  @Contextual
+  val recurrenceRule: RecurrenceEventDto?
+    field = recurrenceRule
+    get
+
+  val periodNumber: Int?
+    field = periodNumber
+    get
+
+  val name: String
+    field = name
+    get
+
+  val typeName: String?
+    field = typeName
+    get
+
+  val timeSlotName: String?
+    field = timeSlotName
+    get
+
+  val lecturers: List<LecturerDto>?
+    field = lecturers
+    get
+
+  val rooms: List<RoomDto>?
+    field = rooms
+    get
+
+  val groups: List<GroupDto>?
+    field = groups
+    get
+
+  fun customHashCode(forceNonPeriodic: Boolean = false): Int {
+    val hashString: String = when {
+      forceNonPeriodic -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>().getDayOfWeek() + <this>.<get-startDatetime>().toLocalTime() + <this>.<get-groups>()
+      EQEQ(arg0 = <this>.<get-recurrenceRule>(), arg1 = null).not() -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>().getDayOfWeek() + <this>.<get-startDatetime>().toLocalTime() + <this>.<get-recurrenceRule>() /*as RecurrenceEventDto */.<get-interval>() + <this>.<get-periodNumber>() + <this>.<get-groups>()
+      else -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>() + <this>.<get-groups>()
+    }
+    return hashString.hashCode()
+  }
+
+  fun customEquals(other: Event): Boolean {
+    return EQEQ(arg0 = <this>.customHashCode(), arg1 = other.customHashCode())
+  }
+
+  fun customToString(context: Context): String {
+    return apply<StringBuilder>(/* <this> = StringBuilder(), */ block = local fun StringBuilder.<anonymous>() {
+      $this$apply.append(p0 = context.getString(p0 = super<string>.#_class) + ": " + <this>.<get-name>()) /*~> Unit */
+      { // BLOCK
+        val tmp0_safe_receiver: String? = <this>.<get-typeName>()
+        when {
+          EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+          else -> let<String, @FlexibleNullability StringBuilder?>(/* <this> = tmp0_safe_receiver /*as String */, */ block = local fun <anonymous>(it: String): @FlexibleNullability StringBuilder? {
+            return $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#class_type) + ": " + it)
+          }
+)
+        }
+      } /*~> Unit */
+      $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#time) + ": " + toLocalTimeWithTimeZone(/* <this> = <this>.<get-startDatetime>() */) + " - " + toLocalTimeWithTimeZone(/* <this> = <this>.<get-endDatetime>() */)) /*~> Unit */
+      { // BLOCK
+        val tmp1_safe_receiver: String? = <this>.<get-timeSlotName>()
+        when {
+          EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
+          else -> let<String, @FlexibleNullability StringBuilder?>(/* <this> = tmp1_safe_receiver /*as String */, */ block = local fun <anonymous>(it: String): @FlexibleNullability StringBuilder? {
+            return $this$apply.append(p0 = " (" + it + ")")
+          }
+)
+        }
+      } /*~> Unit */
+      when {
+        isNullOrEmpty<RoomDto>(/* <this> = <this>.<get-rooms>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#place) + ": " + joinToString<RoomDto>(/* <this> = <this>.<get-rooms>() /*as List<RoomDto> */, */ transform = local fun <anonymous>(it: RoomDto): CharSequence {
+            return it.<get-name>()
+          }
+)) /*~> Unit */
+        }
+      }
+      when {
+        isNullOrEmpty<LecturerDto>(/* <this> = <this>.<get-lecturers>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#lecturers) + ": " + joinToString<LecturerDto>(/* <this> = <this>.<get-lecturers>() /*as List<LecturerDto> */, */ transform = local fun <anonymous>(it: LecturerDto): CharSequence {
+            return it.<get-shortFio>()
+          }
+)) /*~> Unit */
+        }
+      }
+      when {
+        isNullOrEmpty<GroupDto>(/* <this> = <this>.<get-groups>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#groups) + ": " + joinToString<GroupDto>(/* <this> = <this>.<get-groups>() /*as List<GroupDto> */, */ transform = local fun <anonymous>(it: GroupDto): CharSequence {
+            return it.<get-name>()
+          }
+)) /*~> Unit */
+        }
+      }
+    }
+).toString() /*!! String */
+  }
+
+  companion object Companion {
+    val $childSerializers: Array<Lazy<KSerializer<Any>>>
+      field = arrayOf<Lazy<KSerializer<Any>>>(elements = [null, null, null, null, null, null, lazy<KSerializer<RecurrenceEventDto?>>(mode = LazyThreadSafetyMode.PUBLICATION, initializer = local fun <anonymous>(): KSerializer<RecurrenceEventDto?> {
+        return ContextualSerializer(serializableClass = RecurrenceEventDto::class, fallbackSerializer = null, typeArgumentsSerializers = arrayOf<KSerializer<out RecurrenceEventDto?>>(elements = []))
+      }
+), null, null, null, null, null, null, null])
+      private get(): Array<Lazy<KSerializer<Any>>> {
+        return <this>.#$childSerializers
+      }
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun serializer(): KSerializer<Event>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+  }
+
+  @Deprecated(message = "This synthesized declaration should not be used directly", level = DeprecationLevel.HIDDEN)
+  @StabilityInferred(parameters = 0)
+  object $serializer : GeneratedSerializer<Event> {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    override fun serialize(encoder: Encoder, value: Event)
+
+    override fun deserialize(decoder: Decoder): Event
+
+    override val descriptor: SerialDescriptor
+      override get
+
+    override fun childSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override fun typeParametersSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+    /* static final field */ val $stable: Int = 8
+  }
+
+  operator fun component1(): Long {
+    return <this>.#id
+  }
+
+  operator fun component2(): Long {
+    return <this>.#scheduleId
+  }
+
+  operator fun component3(): Boolean {
+    return <this>.#isHidden
+  }
+
+  operator fun component4(): Boolean {
+    return <this>.#isCustomEvent
+  }
+
+  operator fun component5(): LocalDateTime {
+    return <this>.#startDatetime
+  }
+
+  operator fun component6(): LocalDateTime {
+    return <this>.#endDatetime
+  }
+
+  operator fun component7(): RecurrenceEventDto? {
+    return <this>.#recurrenceRule
+  }
+
+  operator fun component8(): Int? {
+    return <this>.#periodNumber
+  }
+
+  operator fun component9(): String {
+    return <this>.#name
+  }
+
+  operator fun component10(): String? {
+    return <this>.#typeName
+  }
+
+  operator fun component11(): String? {
+    return <this>.#timeSlotName
+  }
+
+  operator fun component12(): List<LecturerDto>? {
+    return <this>.#lecturers
+  }
+
+  operator fun component13(): List<RoomDto>? {
+    return <this>.#rooms
+  }
+
+  operator fun component14(): List<GroupDto>? {
+    return <this>.#groups
+  }
+
+  fun copy(id: Long = <this>.#id, scheduleId: Long = <this>.#scheduleId, isHidden: Boolean = <this>.#isHidden, isCustomEvent: Boolean = <this>.#isCustomEvent, startDatetime: LocalDateTime = <this>.#startDatetime, endDatetime: LocalDateTime = <this>.#endDatetime, recurrenceRule: RecurrenceEventDto? = <this>.#recurrenceRule, periodNumber: Int? = <this>.#periodNumber, name: String = <this>.#name, typeName: String? = <this>.#typeName, timeSlotName: String? = <this>.#timeSlotName, lecturers: List<LecturerDto>? = <this>.#lecturers, rooms: List<RoomDto>? = <this>.#rooms, groups: List<GroupDto>? = <this>.#groups): Event {
+    return Event(id = id, scheduleId = scheduleId, isHidden = isHidden, isCustomEvent = isCustomEvent, startDatetime = startDatetime, endDatetime = endDatetime, recurrenceRule = recurrenceRule, periodNumber = periodNumber, name = name, typeName = typeName, timeSlotName = timeSlotName, lecturers = lecturers, rooms = rooms, groups = groups)
+  }
+
+  override fun toString(): String {
+    return "Event(" + "id=" + <this>.#id + ", " + "scheduleId=" + <this>.#scheduleId + ", " + "isHidden=" + <this>.#isHidden + ", " + "isCustomEvent=" + <this>.#isCustomEvent + ", " + "startDatetime=" + <this>.#startDatetime + ", " + "endDatetime=" + <this>.#endDatetime + ", " + "recurrenceRule=" + <this>.#recurrenceRule + ", " + "periodNumber=" + <this>.#periodNumber + ", " + "name=" + <this>.#name + ", " + "typeName=" + <this>.#typeName + ", " + "timeSlotName=" + <this>.#timeSlotName + ", " + "lecturers=" + <this>.#lecturers + ", " + "rooms=" + <this>.#rooms + ", " + "groups=" + <this>.#groups + ")"
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#id.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#scheduleId.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#isHidden.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#isCustomEvent.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#startDatetime.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#endDatetime.hashCode())
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#recurrenceRule, arg1 = null) -> 0
+      else -> <this>.#recurrenceRule.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#periodNumber, arg1 = null) -> 0
+      else -> <this>.#periodNumber.hashCode()
+    })
+    result = result.times(other = 31).plus(other = <this>.#name.hashCode())
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#typeName, arg1 = null) -> 0
+      else -> <this>.#typeName.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#timeSlotName, arg1 = null) -> 0
+      else -> <this>.#timeSlotName.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#lecturers, arg1 = null) -> 0
+      else -> <this>.#lecturers.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#rooms, arg1 = null) -> 0
+      else -> <this>.#rooms.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#groups, arg1 = null) -> 0
+      else -> <this>.#groups.hashCode()
+    })
+    return result
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Event -> return false
+    }
+    val tmp0_other_with_cast: Event = other /*as Event */
+    when {
+      EQEQ(arg0 = <this>.#id, arg1 = tmp0_other_with_cast.#id).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#scheduleId, arg1 = tmp0_other_with_cast.#scheduleId).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#isHidden, arg1 = tmp0_other_with_cast.#isHidden).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#isCustomEvent, arg1 = tmp0_other_with_cast.#isCustomEvent).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#startDatetime, arg1 = tmp0_other_with_cast.#startDatetime).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#endDatetime, arg1 = tmp0_other_with_cast.#endDatetime).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#recurrenceRule, arg1 = tmp0_other_with_cast.#recurrenceRule).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#periodNumber, arg1 = tmp0_other_with_cast.#periodNumber).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#name, arg1 = tmp0_other_with_cast.#name).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#typeName, arg1 = tmp0_other_with_cast.#typeName).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#timeSlotName, arg1 = tmp0_other_with_cast.#timeSlotName).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#lecturers, arg1 = tmp0_other_with_cast.#lecturers).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#rooms, arg1 = tmp0_other_with_cast.#rooms).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#groups, arg1 = tmp0_other_with_cast.#groups).not() -> return false
+    }
+    return true
+  }
+
+  /* static final field */ val $stable: Int = 8
+  @JvmStatic
+  internal /* static */ fun write$Self(self: Event, output: CompositeEncoder, serialDesc: SerialDescriptor)
+
+  internal constructor(seen0: Int, id: Long, scheduleId: Long, isHidden: Boolean, isCustomEvent: Boolean, startDatetime: LocalDateTime?, endDatetime: LocalDateTime?, recurrenceRule: RecurrenceEventDto?, periodNumber: Int?, name: String?, typeName: String?, timeSlotName: String?, lecturers: List<LecturerDto>?, rooms: List<RoomDto>?, groups: List<GroupDto>?, serializationConstructorMarker: SerializationConstructorMarker?) {
+    when {
+      EQEQ(arg0 = 16368, arg1 = 16368.and(other = seen0)).not() -> throwMissingFieldException(seen = seen0, goldenMask = 16368, descriptor = $serializer.<get-descriptor>())
+    }
+    super/*Any*/()
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 1)) -> <this>.#id = 0L
+      else -> <this>.#id = id
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 2)) -> <this>.#scheduleId = -1L
+      else -> <this>.#scheduleId = scheduleId
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 4)) -> <this>.#isHidden = false
+      else -> <this>.#isHidden = isHidden
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 8)) -> <this>.#isCustomEvent = false
+      else -> <this>.#isCustomEvent = isCustomEvent
+    }
+    <this>.#startDatetime = startDatetime
+    <this>.#endDatetime = endDatetime
+    <this>.#recurrenceRule = recurrenceRule
+    <this>.#periodNumber = periodNumber
+    <this>.#name = name
+    <this>.#typeName = typeName
+    <this>.#timeSlotName = timeSlotName
+    <this>.#lecturers = lecturers
+    <this>.#rooms = rooms
+    <this>.#groups = groups
+  }
+
+}
+
+`
+Details: kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassLowering.lower(SerializationLoweringExtension.kt:243)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt$runOnFileInOrder$1.visitClass(SerializationLoweringExtension.kt:52)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitClass(IrVisitorVoid.kt:44)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitClass(IrVisitorVoid.kt:18)
+	at org.jetbrains.kotlin.ir.declarations.IrClass.accept(IrClass.kt:72)
+	at org.jetbrains.kotlin.ir.declarations.IrPackageFragment.acceptChildren(IrPackageFragment.kt:27)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorsKt.acceptChildrenVoid(IrVisitors.kt:23)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt$runOnFileInOrder$1.visitElement(SerializationLoweringExtension.kt:48)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitPackageFragment(IrVisitorVoid.kt:168)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:184)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:180)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:18)
+	at org.jetbrains.kotlin.ir.declarations.IrFile.accept(IrFile.kt:27)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorsKt.acceptVoid(IrVisitors.kt:11)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt.runOnFileInOrder(SerializationLoweringExtension.kt:46)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension.generate(SerializationLoweringExtension.kt:207)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.applyIrGenerationExtensions(convertToIr.kt:578)
+	... 43 more
+Caused by: java.lang.IllegalStateException: Serializer for element of type com.egormelnikoff.schedulerutmiit.core.network.di.dto.schedule.event.LecturerDto has not been found
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerSearchUtilKt.findTypeSerializerOrContext(SerializerSearchUtil.kt:81)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.Instantiator.regularArgs(Instantiator.kt:273)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.Instantiator.serializerInstance(Instantiator.kt:95)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.serializerInstance(BaseIrGenerator.kt:535)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.formEncodeDecodePropertyCall(BaseIrGenerator.kt:263)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.formEncodeDecodePropertyCall$default(BaseIrGenerator.kt:253)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.serializeAllProperties(BaseIrGenerator.kt:201)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator.generateWriteSelfMethod$lambda$0(SerializableIrGenerator.kt:356)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.IrBuilderWithPluginContext.addFunctionBody(IrBuilderWithPluginContext.kt:50)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator.generateWriteSelfMethod(SerializableIrGenerator.kt:296)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator.generateSyntheticMethods(SerializableIrGenerator.kt:384)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator.generate(SerializableIrGenerator.kt:368)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator$Companion.generate(SerializableIrGenerator.kt:395)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassLowering.lower(SerializationLoweringExtension.kt:159)
+	... 59 more
+
+
+error message: org.jetbrains.kotlin.fir.pipeline.IrGenerationExtensionException: Back-end: Please report this problem https://kotl.in/issue
+/Users/egor/AndroidStudioProjects/scheduleRutMiit/app/src/main/java/com/egormelnikoff/schedulerutmiit/data/local/db/entity/Event.kt:21:1
+Problem with `@Keep
+@Serializable
+@Entity(tableName = "Events")
+@StabilityInferred(parameters = 0)
+data class Event {
+  constructor(id: Long = 0L, scheduleId: Long = -1L, isHidden: Boolean = false, isCustomEvent: Boolean = false, startDatetime: LocalDateTime, endDatetime: LocalDateTime, recurrenceRule: RecurrenceEventDto?, periodNumber: Int?, name: String, typeName: String?, timeSlotName: String?, lecturers: List<LecturerDto>?, rooms: List<RoomDto>?, groups: List<GroupDto>?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val id: Long
+    field = id
+    get
+
+  val scheduleId: Long
+    field = scheduleId
+    get
+
+  val isHidden: Boolean
+    field = isHidden
+    get
+
+  val isCustomEvent: Boolean
+    field = isCustomEvent
+    get
+
+  @Serializable(with = LocalDateTimeSerializer::class)
+  val startDatetime: LocalDateTime
+    field = startDatetime
+    get
+
+  @Serializable(with = LocalDateTimeSerializer::class)
+  val endDatetime: LocalDateTime
+    field = endDatetime
+    get
+
+  @Contextual
+  val recurrenceRule: RecurrenceEventDto?
+    field = recurrenceRule
+    get
+
+  val periodNumber: Int?
+    field = periodNumber
+    get
+
+  val name: String
+    field = name
+    get
+
+  val typeName: String?
+    field = typeName
+    get
+
+  val timeSlotName: String?
+    field = timeSlotName
+    get
+
+  val lecturers: List<LecturerDto>?
+    field = lecturers
+    get
+
+  val rooms: List<RoomDto>?
+    field = rooms
+    get
+
+  val groups: List<GroupDto>?
+    field = groups
+    get
+
+  fun customHashCode(forceNonPeriodic: Boolean = false): Int {
+    val hashString: String = when {
+      forceNonPeriodic -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>().getDayOfWeek() + <this>.<get-startDatetime>().toLocalTime() + <this>.<get-groups>()
+      EQEQ(arg0 = <this>.<get-recurrenceRule>(), arg1 = null).not() -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>().getDayOfWeek() + <this>.<get-startDatetime>().toLocalTime() + <this>.<get-recurrenceRule>() /*as RecurrenceEventDto */.<get-interval>() + <this>.<get-periodNumber>() + <this>.<get-groups>()
+      else -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>() + <this>.<get-groups>()
+    }
+    return hashString.hashCode()
+  }
+
+  fun customEquals(other: Event): Boolean {
+    return EQEQ(arg0 = <this>.customHashCode(), arg1 = other.customHashCode())
+  }
+
+  fun customToString(context: Context): String {
+    return apply<StringBuilder>(/* <this> = StringBuilder(), */ block = local fun StringBuilder.<anonymous>() {
+      $this$apply.append(p0 = context.getString(p0 = super<string>.#_class) + ": " + <this>.<get-name>()) /*~> Unit */
+      { // BLOCK
+        val tmp0_safe_receiver: String? = <this>.<get-typeName>()
+        when {
+          EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+          else -> let<String, @FlexibleNullability StringBuilder?>(/* <this> = tmp0_safe_receiver /*as String */, */ block = local fun <anonymous>(it: String): @FlexibleNullability StringBuilder? {
+            return $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#class_type) + ": " + it)
+          }
+)
+        }
+      } /*~> Unit */
+      $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#time) + ": " + toLocalTimeWithTimeZone(/* <this> = <this>.<get-startDatetime>() */) + " - " + toLocalTimeWithTimeZone(/* <this> = <this>.<get-endDatetime>() */)) /*~> Unit */
+      { // BLOCK
+        val tmp1_safe_receiver: String? = <this>.<get-timeSlotName>()
+        when {
+          EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
+          else -> let<String, @FlexibleNullability StringBuilder?>(/* <this> = tmp1_safe_receiver /*as String */, */ block = local fun <anonymous>(it: String): @FlexibleNullability StringBuilder? {
+            return $this$apply.append(p0 = " (" + it + ")")
+          }
+)
+        }
+      } /*~> Unit */
+      when {
+        isNullOrEmpty<RoomDto>(/* <this> = <this>.<get-rooms>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#place) + ": " + joinToString<RoomDto>(/* <this> = <this>.<get-rooms>() /*as List<RoomDto> */, */ transform = local fun <anonymous>(it: RoomDto): CharSequence {
+            return it.<get-name>()
+          }
+)) /*~> Unit */
+        }
+      }
+      when {
+        isNullOrEmpty<LecturerDto>(/* <this> = <this>.<get-lecturers>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#lecturers) + ": " + joinToString<LecturerDto>(/* <this> = <this>.<get-lecturers>() /*as List<LecturerDto> */, */ transform = local fun <anonymous>(it: LecturerDto): CharSequence {
+            return it.<get-shortFio>()
+          }
+)) /*~> Unit */
+        }
+      }
+      when {
+        isNullOrEmpty<GroupDto>(/* <this> = <this>.<get-groups>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#groups) + ": " + joinToString<GroupDto>(/* <this> = <this>.<get-groups>() /*as List<GroupDto> */, */ transform = local fun <anonymous>(it: GroupDto): CharSequence {
+            return it.<get-name>()
+          }
+)) /*~> Unit */
+        }
+      }
+    }
+).toString() /*!! String */
+  }
+
+  companion object Companion {
+    val $childSerializers: Array<Lazy<KSerializer<Any>>>
+      field = arrayOf<Lazy<KSerializer<Any>>>(elements = [null, null, null, null, null, null, lazy<KSerializer<RecurrenceEventDto?>>(mode = LazyThreadSafetyMode.PUBLICATION, initializer = local fun <anonymous>(): KSerializer<RecurrenceEventDto?> {
+        return ContextualSerializer(serializableClass = RecurrenceEventDto::class, fallbackSerializer = null, typeArgumentsSerializers = arrayOf<KSerializer<out RecurrenceEventDto?>>(elements = []))
+      }
+), null, null, null, null, null, null, null])
+      private get(): Array<Lazy<KSerializer<Any>>> {
+        return <this>.#$childSerializers
+      }
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun serializer(): KSerializer<Event>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+  }
+
+  @Deprecated(message = "This synthesized declaration should not be used directly", level = DeprecationLevel.HIDDEN)
+  @StabilityInferred(parameters = 0)
+  object $serializer : GeneratedSerializer<Event> {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    override fun serialize(encoder: Encoder, value: Event)
+
+    override fun deserialize(decoder: Decoder): Event
+
+    override val descriptor: SerialDescriptor
+      override get
+
+    override fun childSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override fun typeParametersSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+    /* static final field */ val $stable: Int = 8
+  }
+
+  operator fun component1(): Long {
+    return <this>.#id
+  }
+
+  operator fun component2(): Long {
+    return <this>.#scheduleId
+  }
+
+  operator fun component3(): Boolean {
+    return <this>.#isHidden
+  }
+
+  operator fun component4(): Boolean {
+    return <this>.#isCustomEvent
+  }
+
+  operator fun component5(): LocalDateTime {
+    return <this>.#startDatetime
+  }
+
+  operator fun component6(): LocalDateTime {
+    return <this>.#endDatetime
+  }
+
+  operator fun component7(): RecurrenceEventDto? {
+    return <this>.#recurrenceRule
+  }
+
+  operator fun component8(): Int? {
+    return <this>.#periodNumber
+  }
+
+  operator fun component9(): String {
+    return <this>.#name
+  }
+
+  operator fun component10(): String? {
+    return <this>.#typeName
+  }
+
+  operator fun component11(): String? {
+    return <this>.#timeSlotName
+  }
+
+  operator fun component12(): List<LecturerDto>? {
+    return <this>.#lecturers
+  }
+
+  operator fun component13(): List<RoomDto>? {
+    return <this>.#rooms
+  }
+
+  operator fun component14(): List<GroupDto>? {
+    return <this>.#groups
+  }
+
+  fun copy(id: Long = <this>.#id, scheduleId: Long = <this>.#scheduleId, isHidden: Boolean = <this>.#isHidden, isCustomEvent: Boolean = <this>.#isCustomEvent, startDatetime: LocalDateTime = <this>.#startDatetime, endDatetime: LocalDateTime = <this>.#endDatetime, recurrenceRule: RecurrenceEventDto? = <this>.#recurrenceRule, periodNumber: Int? = <this>.#periodNumber, name: String = <this>.#name, typeName: String? = <this>.#typeName, timeSlotName: String? = <this>.#timeSlotName, lecturers: List<LecturerDto>? = <this>.#lecturers, rooms: List<RoomDto>? = <this>.#rooms, groups: List<GroupDto>? = <this>.#groups): Event {
+    return Event(id = id, scheduleId = scheduleId, isHidden = isHidden, isCustomEvent = isCustomEvent, startDatetime = startDatetime, endDatetime = endDatetime, recurrenceRule = recurrenceRule, periodNumber = periodNumber, name = name, typeName = typeName, timeSlotName = timeSlotName, lecturers = lecturers, rooms = rooms, groups = groups)
+  }
+
+  override fun toString(): String {
+    return "Event(" + "id=" + <this>.#id + ", " + "scheduleId=" + <this>.#scheduleId + ", " + "isHidden=" + <this>.#isHidden + ", " + "isCustomEvent=" + <this>.#isCustomEvent + ", " + "startDatetime=" + <this>.#startDatetime + ", " + "endDatetime=" + <this>.#endDatetime + ", " + "recurrenceRule=" + <this>.#recurrenceRule + ", " + "periodNumber=" + <this>.#periodNumber + ", " + "name=" + <this>.#name + ", " + "typeName=" + <this>.#typeName + ", " + "timeSlotName=" + <this>.#timeSlotName + ", " + "lecturers=" + <this>.#lecturers + ", " + "rooms=" + <this>.#rooms + ", " + "groups=" + <this>.#groups + ")"
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#id.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#scheduleId.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#isHidden.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#isCustomEvent.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#startDatetime.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#endDatetime.hashCode())
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#recurrenceRule, arg1 = null) -> 0
+      else -> <this>.#recurrenceRule.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#periodNumber, arg1 = null) -> 0
+      else -> <this>.#periodNumber.hashCode()
+    })
+    result = result.times(other = 31).plus(other = <this>.#name.hashCode())
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#typeName, arg1 = null) -> 0
+      else -> <this>.#typeName.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#timeSlotName, arg1 = null) -> 0
+      else -> <this>.#timeSlotName.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#lecturers, arg1 = null) -> 0
+      else -> <this>.#lecturers.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#rooms, arg1 = null) -> 0
+      else -> <this>.#rooms.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#groups, arg1 = null) -> 0
+      else -> <this>.#groups.hashCode()
+    })
+    return result
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Event -> return false
+    }
+    val tmp0_other_with_cast: Event = other /*as Event */
+    when {
+      EQEQ(arg0 = <this>.#id, arg1 = tmp0_other_with_cast.#id).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#scheduleId, arg1 = tmp0_other_with_cast.#scheduleId).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#isHidden, arg1 = tmp0_other_with_cast.#isHidden).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#isCustomEvent, arg1 = tmp0_other_with_cast.#isCustomEvent).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#startDatetime, arg1 = tmp0_other_with_cast.#startDatetime).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#endDatetime, arg1 = tmp0_other_with_cast.#endDatetime).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#recurrenceRule, arg1 = tmp0_other_with_cast.#recurrenceRule).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#periodNumber, arg1 = tmp0_other_with_cast.#periodNumber).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#name, arg1 = tmp0_other_with_cast.#name).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#typeName, arg1 = tmp0_other_with_cast.#typeName).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#timeSlotName, arg1 = tmp0_other_with_cast.#timeSlotName).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#lecturers, arg1 = tmp0_other_with_cast.#lecturers).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#rooms, arg1 = tmp0_other_with_cast.#rooms).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#groups, arg1 = tmp0_other_with_cast.#groups).not() -> return false
+    }
+    return true
+  }
+
+  /* static final field */ val $stable: Int = 8
+  @JvmStatic
+  internal /* static */ fun write$Self(self: Event, output: CompositeEncoder, serialDesc: SerialDescriptor)
+
+  internal constructor(seen0: Int, id: Long, scheduleId: Long, isHidden: Boolean, isCustomEvent: Boolean, startDatetime: LocalDateTime?, endDatetime: LocalDateTime?, recurrenceRule: RecurrenceEventDto?, periodNumber: Int?, name: String?, typeName: String?, timeSlotName: String?, lecturers: List<LecturerDto>?, rooms: List<RoomDto>?, groups: List<GroupDto>?, serializationConstructorMarker: SerializationConstructorMarker?) {
+    when {
+      EQEQ(arg0 = 16368, arg1 = 16368.and(other = seen0)).not() -> throwMissingFieldException(seen = seen0, goldenMask = 16368, descriptor = $serializer.<get-descriptor>())
+    }
+    super/*Any*/()
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 1)) -> <this>.#id = 0L
+      else -> <this>.#id = id
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 2)) -> <this>.#scheduleId = -1L
+      else -> <this>.#scheduleId = scheduleId
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 4)) -> <this>.#isHidden = false
+      else -> <this>.#isHidden = isHidden
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 8)) -> <this>.#isCustomEvent = false
+      else -> <this>.#isCustomEvent = isCustomEvent
+    }
+    <this>.#startDatetime = startDatetime
+    <this>.#endDatetime = endDatetime
+    <this>.#recurrenceRule = recurrenceRule
+    <this>.#periodNumber = periodNumber
+    <this>.#name = name
+    <this>.#typeName = typeName
+    <this>.#timeSlotName = timeSlotName
+    <this>.#lecturers = lecturers
+    <this>.#rooms = rooms
+    <this>.#groups = groups
+  }
+
+}
+
+`
+Details: kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.applyIrGenerationExtensions(convertToIr.kt:584)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.runActualizationPipeline(convertToIr.kt:283)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.convertToIrAndActualize(convertToIr.kt:154)
+	at org.jetbrains.kotlin.fir.pipeline.ConvertToIrKt.convertToIrAndActualize-MT2kVtw(convertToIr.kt:119)
+	at org.jetbrains.kotlin.fir.pipeline.ConvertToIrKt.convertToIrAndActualize-MT2kVtw$default(convertToIr.kt:92)
+	at org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.JvmCompilerPipelineKt.convertToIrAndActualizeForJvm-_I1IR-w(jvmCompilerPipeline.kt:98)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:30)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:25)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:19)
+	at org.jetbrains.kotlin.cli.pipeline.PipelinePhase.phaseBody(PipelinePhase.kt:68)
+	at org.jetbrains.kotlin.cli.pipeline.PipelinePhase.phaseBody(PipelinePhase.kt:58)
+	at org.jetbrains.kotlin.config.phaser.NamedCompilerPhase.invoke(CompilerPhase.kt:102)
+	at org.jetbrains.kotlin.backend.common.phaser.CompositePhase.invoke(PhaseBuilders.kt:22)
+	at org.jetbrains.kotlin.config.phaser.CompilerPhaseKt.invokeToplevel(CompilerPhase.kt:53)
+	at org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline.runPhasedPipeline(AbstractCliPipeline.kt:109)
+	at org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline.execute(AbstractCliPipeline.kt:68)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecutePhased(K2JVMCompiler.kt:51)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecutePhased(K2JVMCompiler.kt:42)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.execImpl(CLICompiler.kt:91)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.exec(CLICompiler.kt:363)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase.runCompiler(IncrementalJvmCompilerRunnerBase.kt:210)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase.runCompiler(IncrementalJvmCompilerRunnerBase.kt:52)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.doCompile(IncrementalCompilerRunner.kt:510)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileImpl(IncrementalCompilerRunner.kt:422)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileNonIncrementally(IncrementalCompilerRunner.kt:304)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compile(IncrementalCompilerRunner.kt:131)
+	at org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl.compileInProcess(JvmCompilationOperationImpl.kt:423)
+	at org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl.compileInProcess(JvmCompilationOperationImpl.kt:337)
+	at org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl.executeCancellableImpl(JvmCompilationOperationImpl.kt:149)
+	at org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl.executeCancellableImpl(JvmCompilationOperationImpl.kt:69)
+	at org.jetbrains.kotlin.buildtools.internal.CancellableBuildOperationImpl.executeImpl(CancellableBuildOperationImpl.kt:58)
+	at org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl.execute(BuildOperationImpl.kt:34)
+	at org.jetbrains.kotlin.buildtools.internal.KotlinToolchainsImpl$BuildSessionImpl.executeOperation$lambda$1(KotlinToolchainsImpl.kt:70)
+	at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: org.jetbrains.kotlin.backend.common.CompilationException: Back-end: Please report this problem https://kotl.in/issue
+/Users/egor/AndroidStudioProjects/scheduleRutMiit/app/src/main/java/com/egormelnikoff/schedulerutmiit/data/local/db/entity/Event.kt:21:1
+Problem with `@Keep
+@Serializable
+@Entity(tableName = "Events")
+@StabilityInferred(parameters = 0)
+data class Event {
+  constructor(id: Long = 0L, scheduleId: Long = -1L, isHidden: Boolean = false, isCustomEvent: Boolean = false, startDatetime: LocalDateTime, endDatetime: LocalDateTime, recurrenceRule: RecurrenceEventDto?, periodNumber: Int?, name: String, typeName: String?, timeSlotName: String?, lecturers: List<LecturerDto>?, rooms: List<RoomDto>?, groups: List<GroupDto>?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val id: Long
+    field = id
+    get
+
+  val scheduleId: Long
+    field = scheduleId
+    get
+
+  val isHidden: Boolean
+    field = isHidden
+    get
+
+  val isCustomEvent: Boolean
+    field = isCustomEvent
+    get
+
+  @Serializable(with = LocalDateTimeSerializer::class)
+  val startDatetime: LocalDateTime
+    field = startDatetime
+    get
+
+  @Serializable(with = LocalDateTimeSerializer::class)
+  val endDatetime: LocalDateTime
+    field = endDatetime
+    get
+
+  @Contextual
+  val recurrenceRule: RecurrenceEventDto?
+    field = recurrenceRule
+    get
+
+  val periodNumber: Int?
+    field = periodNumber
+    get
+
+  val name: String
+    field = name
+    get
+
+  val typeName: String?
+    field = typeName
+    get
+
+  val timeSlotName: String?
+    field = timeSlotName
+    get
+
+  val lecturers: List<LecturerDto>?
+    field = lecturers
+    get
+
+  val rooms: List<RoomDto>?
+    field = rooms
+    get
+
+  val groups: List<GroupDto>?
+    field = groups
+    get
+
+  fun customHashCode(forceNonPeriodic: Boolean = false): Int {
+    val hashString: String = when {
+      forceNonPeriodic -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>().getDayOfWeek() + <this>.<get-startDatetime>().toLocalTime() + <this>.<get-groups>()
+      EQEQ(arg0 = <this>.<get-recurrenceRule>(), arg1 = null).not() -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>().getDayOfWeek() + <this>.<get-startDatetime>().toLocalTime() + <this>.<get-recurrenceRule>() /*as RecurrenceEventDto */.<get-interval>() + <this>.<get-periodNumber>() + <this>.<get-groups>()
+      else -> <this>.<get-name>() + <this>.<get-typeName>() + <this>.<get-startDatetime>() + <this>.<get-groups>()
+    }
+    return hashString.hashCode()
+  }
+
+  fun customEquals(other: Event): Boolean {
+    return EQEQ(arg0 = <this>.customHashCode(), arg1 = other.customHashCode())
+  }
+
+  fun customToString(context: Context): String {
+    return apply<StringBuilder>(/* <this> = StringBuilder(), */ block = local fun StringBuilder.<anonymous>() {
+      $this$apply.append(p0 = context.getString(p0 = super<string>.#_class) + ": " + <this>.<get-name>()) /*~> Unit */
+      { // BLOCK
+        val tmp0_safe_receiver: String? = <this>.<get-typeName>()
+        when {
+          EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+          else -> let<String, @FlexibleNullability StringBuilder?>(/* <this> = tmp0_safe_receiver /*as String */, */ block = local fun <anonymous>(it: String): @FlexibleNullability StringBuilder? {
+            return $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#class_type) + ": " + it)
+          }
+)
+        }
+      } /*~> Unit */
+      $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#time) + ": " + toLocalTimeWithTimeZone(/* <this> = <this>.<get-startDatetime>() */) + " - " + toLocalTimeWithTimeZone(/* <this> = <this>.<get-endDatetime>() */)) /*~> Unit */
+      { // BLOCK
+        val tmp1_safe_receiver: String? = <this>.<get-timeSlotName>()
+        when {
+          EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
+          else -> let<String, @FlexibleNullability StringBuilder?>(/* <this> = tmp1_safe_receiver /*as String */, */ block = local fun <anonymous>(it: String): @FlexibleNullability StringBuilder? {
+            return $this$apply.append(p0 = " (" + it + ")")
+          }
+)
+        }
+      } /*~> Unit */
+      when {
+        isNullOrEmpty<RoomDto>(/* <this> = <this>.<get-rooms>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#place) + ": " + joinToString<RoomDto>(/* <this> = <this>.<get-rooms>() /*as List<RoomDto> */, */ transform = local fun <anonymous>(it: RoomDto): CharSequence {
+            return it.<get-name>()
+          }
+)) /*~> Unit */
+        }
+      }
+      when {
+        isNullOrEmpty<LecturerDto>(/* <this> = <this>.<get-lecturers>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#lecturers) + ": " + joinToString<LecturerDto>(/* <this> = <this>.<get-lecturers>() /*as List<LecturerDto> */, */ transform = local fun <anonymous>(it: LecturerDto): CharSequence {
+            return it.<get-shortFio>()
+          }
+)) /*~> Unit */
+        }
+      }
+      when {
+        isNullOrEmpty<GroupDto>(/* <this> = <this>.<get-groups>() */).not() -> { // BLOCK
+          $this$apply.append(p0 = "\n" + context.getString(p0 = super<string>.#groups) + ": " + joinToString<GroupDto>(/* <this> = <this>.<get-groups>() /*as List<GroupDto> */, */ transform = local fun <anonymous>(it: GroupDto): CharSequence {
+            return it.<get-name>()
+          }
+)) /*~> Unit */
+        }
+      }
+    }
+).toString() /*!! String */
+  }
+
+  companion object Companion {
+    val $childSerializers: Array<Lazy<KSerializer<Any>>>
+      field = arrayOf<Lazy<KSerializer<Any>>>(elements = [null, null, null, null, null, null, lazy<KSerializer<RecurrenceEventDto?>>(mode = LazyThreadSafetyMode.PUBLICATION, initializer = local fun <anonymous>(): KSerializer<RecurrenceEventDto?> {
+        return ContextualSerializer(serializableClass = RecurrenceEventDto::class, fallbackSerializer = null, typeArgumentsSerializers = arrayOf<KSerializer<out RecurrenceEventDto?>>(elements = []))
+      }
+), null, null, null, null, null, null, null])
+      private get(): Array<Lazy<KSerializer<Any>>> {
+        return <this>.#$childSerializers
+      }
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun serializer(): KSerializer<Event>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+  }
+
+  @Deprecated(message = "This synthesized declaration should not be used directly", level = DeprecationLevel.HIDDEN)
+  @StabilityInferred(parameters = 0)
+  object $serializer : GeneratedSerializer<Event> {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    override fun serialize(encoder: Encoder, value: Event)
+
+    override fun deserialize(decoder: Decoder): Event
+
+    override val descriptor: SerialDescriptor
+      override get
+
+    override fun childSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override fun typeParametersSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+    /* static final field */ val $stable: Int = 8
+  }
+
+  operator fun component1(): Long {
+    return <this>.#id
+  }
+
+  operator fun component2(): Long {
+    return <this>.#scheduleId
+  }
+
+  operator fun component3(): Boolean {
+    return <this>.#isHidden
+  }
+
+  operator fun component4(): Boolean {
+    return <this>.#isCustomEvent
+  }
+
+  operator fun component5(): LocalDateTime {
+    return <this>.#startDatetime
+  }
+
+  operator fun component6(): LocalDateTime {
+    return <this>.#endDatetime
+  }
+
+  operator fun component7(): RecurrenceEventDto? {
+    return <this>.#recurrenceRule
+  }
+
+  operator fun component8(): Int? {
+    return <this>.#periodNumber
+  }
+
+  operator fun component9(): String {
+    return <this>.#name
+  }
+
+  operator fun component10(): String? {
+    return <this>.#typeName
+  }
+
+  operator fun component11(): String? {
+    return <this>.#timeSlotName
+  }
+
+  operator fun component12(): List<LecturerDto>? {
+    return <this>.#lecturers
+  }
+
+  operator fun component13(): List<RoomDto>? {
+    return <this>.#rooms
+  }
+
+  operator fun component14(): List<GroupDto>? {
+    return <this>.#groups
+  }
+
+  fun copy(id: Long = <this>.#id, scheduleId: Long = <this>.#scheduleId, isHidden: Boolean = <this>.#isHidden, isCustomEvent: Boolean = <this>.#isCustomEvent, startDatetime: LocalDateTime = <this>.#startDatetime, endDatetime: LocalDateTime = <this>.#endDatetime, recurrenceRule: RecurrenceEventDto? = <this>.#recurrenceRule, periodNumber: Int? = <this>.#periodNumber, name: String = <this>.#name, typeName: String? = <this>.#typeName, timeSlotName: String? = <this>.#timeSlotName, lecturers: List<LecturerDto>? = <this>.#lecturers, rooms: List<RoomDto>? = <this>.#rooms, groups: List<GroupDto>? = <this>.#groups): Event {
+    return Event(id = id, scheduleId = scheduleId, isHidden = isHidden, isCustomEvent = isCustomEvent, startDatetime = startDatetime, endDatetime = endDatetime, recurrenceRule = recurrenceRule, periodNumber = periodNumber, name = name, typeName = typeName, timeSlotName = timeSlotName, lecturers = lecturers, rooms = rooms, groups = groups)
+  }
+
+  override fun toString(): String {
+    return "Event(" + "id=" + <this>.#id + ", " + "scheduleId=" + <this>.#scheduleId + ", " + "isHidden=" + <this>.#isHidden + ", " + "isCustomEvent=" + <this>.#isCustomEvent + ", " + "startDatetime=" + <this>.#startDatetime + ", " + "endDatetime=" + <this>.#endDatetime + ", " + "recurrenceRule=" + <this>.#recurrenceRule + ", " + "periodNumber=" + <this>.#periodNumber + ", " + "name=" + <this>.#name + ", " + "typeName=" + <this>.#typeName + ", " + "timeSlotName=" + <this>.#timeSlotName + ", " + "lecturers=" + <this>.#lecturers + ", " + "rooms=" + <this>.#rooms + ", " + "groups=" + <this>.#groups + ")"
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#id.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#scheduleId.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#isHidden.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#isCustomEvent.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#startDatetime.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#endDatetime.hashCode())
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#recurrenceRule, arg1 = null) -> 0
+      else -> <this>.#recurrenceRule.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#periodNumber, arg1 = null) -> 0
+      else -> <this>.#periodNumber.hashCode()
+    })
+    result = result.times(other = 31).plus(other = <this>.#name.hashCode())
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#typeName, arg1 = null) -> 0
+      else -> <this>.#typeName.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#timeSlotName, arg1 = null) -> 0
+      else -> <this>.#timeSlotName.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#lecturers, arg1 = null) -> 0
+      else -> <this>.#lecturers.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#rooms, arg1 = null) -> 0
+      else -> <this>.#rooms.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#groups, arg1 = null) -> 0
+      else -> <this>.#groups.hashCode()
+    })
+    return result
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Event -> return false
+    }
+    val tmp0_other_with_cast: Event = other /*as Event */
+    when {
+      EQEQ(arg0 = <this>.#id, arg1 = tmp0_other_with_cast.#id).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#scheduleId, arg1 = tmp0_other_with_cast.#scheduleId).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#isHidden, arg1 = tmp0_other_with_cast.#isHidden).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#isCustomEvent, arg1 = tmp0_other_with_cast.#isCustomEvent).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#startDatetime, arg1 = tmp0_other_with_cast.#startDatetime).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#endDatetime, arg1 = tmp0_other_with_cast.#endDatetime).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#recurrenceRule, arg1 = tmp0_other_with_cast.#recurrenceRule).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#periodNumber, arg1 = tmp0_other_with_cast.#periodNumber).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#name, arg1 = tmp0_other_with_cast.#name).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#typeName, arg1 = tmp0_other_with_cast.#typeName).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#timeSlotName, arg1 = tmp0_other_with_cast.#timeSlotName).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#lecturers, arg1 = tmp0_other_with_cast.#lecturers).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#rooms, arg1 = tmp0_other_with_cast.#rooms).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#groups, arg1 = tmp0_other_with_cast.#groups).not() -> return false
+    }
+    return true
+  }
+
+  /* static final field */ val $stable: Int = 8
+  @JvmStatic
+  internal /* static */ fun write$Self(self: Event, output: CompositeEncoder, serialDesc: SerialDescriptor)
+
+  internal constructor(seen0: Int, id: Long, scheduleId: Long, isHidden: Boolean, isCustomEvent: Boolean, startDatetime: LocalDateTime?, endDatetime: LocalDateTime?, recurrenceRule: RecurrenceEventDto?, periodNumber: Int?, name: String?, typeName: String?, timeSlotName: String?, lecturers: List<LecturerDto>?, rooms: List<RoomDto>?, groups: List<GroupDto>?, serializationConstructorMarker: SerializationConstructorMarker?) {
+    when {
+      EQEQ(arg0 = 16368, arg1 = 16368.and(other = seen0)).not() -> throwMissingFieldException(seen = seen0, goldenMask = 16368, descriptor = $serializer.<get-descriptor>())
+    }
+    super/*Any*/()
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 1)) -> <this>.#id = 0L
+      else -> <this>.#id = id
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 2)) -> <this>.#scheduleId = -1L
+      else -> <this>.#scheduleId = scheduleId
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 4)) -> <this>.#isHidden = false
+      else -> <this>.#isHidden = isHidden
+    }
+    when {
+      EQEQ(arg0 = 0, arg1 = seen0.and(other = 8)) -> <this>.#isCustomEvent = false
+      else -> <this>.#isCustomEvent = isCustomEvent
+    }
+    <this>.#startDatetime = startDatetime
+    <this>.#endDatetime = endDatetime
+    <this>.#recurrenceRule = recurrenceRule
+    <this>.#periodNumber = periodNumber
+    <this>.#name = name
+    <this>.#typeName = typeName
+    <this>.#timeSlotName = timeSlotName
+    <this>.#lecturers = lecturers
+    <this>.#rooms = rooms
+    <this>.#groups = groups
+  }
+
+}
+
+`
+Details: kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassLowering.lower(SerializationLoweringExtension.kt:243)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt$runOnFileInOrder$1.visitClass(SerializationLoweringExtension.kt:52)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitClass(IrVisitorVoid.kt:44)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitClass(IrVisitorVoid.kt:18)
+	at org.jetbrains.kotlin.ir.declarations.IrClass.accept(IrClass.kt:72)
+	at org.jetbrains.kotlin.ir.declarations.IrPackageFragment.acceptChildren(IrPackageFragment.kt:27)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorsKt.acceptChildrenVoid(IrVisitors.kt:23)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt$runOnFileInOrder$1.visitElement(SerializationLoweringExtension.kt:48)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitPackageFragment(IrVisitorVoid.kt:168)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:184)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:180)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:18)
+	at org.jetbrains.kotlin.ir.declarations.IrFile.accept(IrFile.kt:27)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorsKt.acceptVoid(IrVisitors.kt:11)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt.runOnFileInOrder(SerializationLoweringExtension.kt:46)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension.generate(SerializationLoweringExtension.kt:207)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.applyIrGenerationExtensions(convertToIr.kt:578)
+	... 36 more
+Caused by: java.lang.IllegalStateException: Serializer for element of type com.egormelnikoff.schedulerutmiit.core.network.di.dto.schedule.event.LecturerDto has not been found
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerSearchUtilKt.findTypeSerializerOrContext(SerializerSearchUtil.kt:81)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.Instantiator.regularArgs(Instantiator.kt:273)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.Instantiator.serializerInstance(Instantiator.kt:95)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.serializerInstance(BaseIrGenerator.kt:535)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.formEncodeDecodePropertyCall(BaseIrGenerator.kt:263)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.formEncodeDecodePropertyCall$default(BaseIrGenerator.kt:253)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.serializeAllProperties(BaseIrGenerator.kt:201)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator.generateWriteSelfMethod$lambda$0(SerializableIrGenerator.kt:356)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.IrBuilderWithPluginContext.addFunctionBody(IrBuilderWithPluginContext.kt:50)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator.generateWriteSelfMethod(SerializableIrGenerator.kt:296)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator.generateSyntheticMethods(SerializableIrGenerator.kt:384)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator.generate(SerializableIrGenerator.kt:368)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator$Companion.generate(SerializableIrGenerator.kt:395)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassLowering.lower(SerializationLoweringExtension.kt:159)
+	... 52 more
+
+

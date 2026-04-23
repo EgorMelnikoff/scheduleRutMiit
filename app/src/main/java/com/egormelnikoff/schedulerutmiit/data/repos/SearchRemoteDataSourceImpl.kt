@@ -1,12 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.data.repos
 
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
+import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
+import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
+import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.data.local.parser.SearchParser
-import com.egormelnikoff.schedulerutmiit.data.remote.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.institutes.InstitutesDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.person.PersonDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.Endpoints
-import com.egormelnikoff.schedulerutmiit.data.remote.network.NetworkHelper
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
 import com.egormelnikoff.schedulerutmiit.domain.repos.SearchRemoteDataSource
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -17,7 +16,7 @@ class SearchRemoteDataSourceImpl @Inject constructor(
     private val searchParser: SearchParser,
     private val networkHelper: NetworkHelper
 ) : SearchRemoteDataSource {
-    override suspend fun fetchInstitutes(): Result<InstitutesDto> =
+    override suspend fun fetchInstitutes() =
         networkHelper.callNetwork(
             requestType = "Institutes",
             callApi = {

@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.domain.use_case.updates
 
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.data.local.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

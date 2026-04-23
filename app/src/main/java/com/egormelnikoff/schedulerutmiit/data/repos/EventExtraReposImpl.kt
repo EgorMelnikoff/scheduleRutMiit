@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.data.repos
 
-import com.egormelnikoff.schedulerutmiit.data.local.db.dao.EventExtraDao
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.domain.repos.EventExtraRepos
 import java.time.LocalDateTime
 import javax.inject.Inject

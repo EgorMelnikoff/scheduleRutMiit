@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.ui.dialogs
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,16 +22,17 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.app.validator.isValidSchedule
-import com.egormelnikoff.schedulerutmiit.ui.elements.BottomSheetDatePicker
-import com.egormelnikoff.schedulerutmiit.ui.elements.ChooseDateTimeButton
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomButton
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.ui.elements.GridGroup
-import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.egormelnikoff.core.ui.elements.BottomSheetDatePicker
+import com.egormelnikoff.egormelnikoff.core.ui.elements.ChooseDateTimeButton
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomAlertDialog
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomButton
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomTextField
+import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomTopAppBar
+import com.egormelnikoff.egormelnikoff.core.ui.elements.GridGroup
+import com.egormelnikoff.schedulerutmiit.core.common.validator.isValidSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
+import com.egormelnikoff.schedulerutmiit.ui.ui_state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import java.time.LocalDate
 
@@ -40,6 +42,8 @@ fun AddScheduleDialog(
     appUiState: AppUiState,
     scheduleViewModel: ScheduleViewModel
 ) {
+    var showBackDialog by remember { mutableStateOf(false) }
+
     val focusManager = LocalFocusManager.current
     var nameSchedule by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf<LocalDate?>(null) }
@@ -57,6 +61,10 @@ fun AddScheduleDialog(
                 end = endDate
             )
         }
+    }
+
+    BackHandler {
+        showBackDialog = true
     }
 
     Scaffold(
@@ -162,6 +170,19 @@ fun AddScheduleDialog(
                     showDialogEndDate = newValue
                 },
                 startDate = startDate
+            )
+        }
+
+        if (showBackDialog) {
+            CustomAlertDialog(
+                dialogTitle = stringResource(R.string.exit),
+                dialogText = stringResource(R.string.exit_message),
+                onDismissRequest = {
+                    showBackDialog = false
+                },
+                onConfirmation = {
+                    appUiState.appBackStack.onBack()
+                }
             )
         }
     }

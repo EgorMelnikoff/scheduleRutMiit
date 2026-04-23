@@ -17,19 +17,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.egormelnikoff.core.ui.R
+import com.egormelnikoff.egormelnikoff.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.app.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.app.extension.getEventsForDate
-import com.egormelnikoff.schedulerutmiit.app.extension.replaceDate
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.data.local.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.EventAction
 import com.egormelnikoff.schedulerutmiit.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.ui.screens.Empty
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.Event
-import com.egormelnikoff.schedulerutmiit.ui.state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.event.Event
+import com.egormelnikoff.schedulerutmiit.ui.ui_state.AppUiState
+import com.egormelnikoff.schedulerutmiit.ui.ui_state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.ScheduleUiDto
 
@@ -91,9 +91,9 @@ fun PagedDays(
 
         val enrichedEvents by remember(namedSchedule, scheduleUiDto) {
             mutableStateOf(
-                currentDate
+                scheduleUiDto.scheduleEntity
                     .getEventsForDate(
-                        scheduleEntity = scheduleUiDto.scheduleEntity,
+                        date = currentDate,
                         periodicEvents = scheduleUiDto.periodicEvents,
                         nonPeriodicEvents = scheduleUiDto.nonPeriodicEvents
                     )

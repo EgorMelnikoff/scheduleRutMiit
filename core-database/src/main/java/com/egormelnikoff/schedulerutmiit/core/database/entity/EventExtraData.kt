@@ -1,0 +1,27 @@
+package com.egormelnikoff.schedulerutmiit.core.database.entity
+
+import androidx.annotation.Keep
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
+import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
+
+@Keep
+@Serializable
+@Entity(tableName = "EventsExtraData")
+data class EventExtraData(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    val id: Long = 0,
+    @ColumnInfo(name = "eventId")
+    val eventId: Long,
+    @ColumnInfo(name = "eventExtraScheduleId")
+    val scheduleId: Long = 0,
+    val eventName: String?,
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val dateTime: LocalDateTime?,
+    val comment: String = "",
+    val tag: Int = 0
+)

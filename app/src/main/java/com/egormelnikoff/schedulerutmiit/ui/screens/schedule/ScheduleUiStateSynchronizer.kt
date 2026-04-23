@@ -2,8 +2,8 @@ package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.egormelnikoff.schedulerutmiit.app.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.ui.state.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.ui.ui_state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.CurrentState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.NamedScheduleState

@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state
 
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
 
 data class CurrentState(
     val namedScheduleEntities: List<NamedScheduleEntity> = emptyList(),

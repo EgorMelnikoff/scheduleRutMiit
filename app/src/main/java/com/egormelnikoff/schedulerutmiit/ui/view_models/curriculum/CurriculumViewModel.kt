@@ -3,9 +3,10 @@ package com.egormelnikoff.schedulerutmiit.ui.view_models.curriculum
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.subjects.SubjectDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.TypedError
+import com.egormelnikoff.schedulerutmiit.app.resources.getErrorMessage
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import com.egormelnikoff.schedulerutmiit.core.network.dto.subjects.SubjectDto
 import com.egormelnikoff.schedulerutmiit.domain.use_case.subjects.FetchSubjectsUseCase
 import com.egormelnikoff.schedulerutmiit.ui.view_models.curriculum.state.CurriculumState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -92,7 +93,7 @@ class CurriculumViewModel @Inject constructor(
     ) {
         _curriculumState.update {
             it.copy(
-                error = TypedError.getErrorMessage(
+                error = getErrorMessage(
                     resourcesManager = resourcesManager,
                     typedError = data
                 ),

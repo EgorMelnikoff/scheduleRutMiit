@@ -1,13 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.ui.widget
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.app.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.app.extension.getPeriodicEvents
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.Schedule
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ui_dto.ReviewUiDto
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
@@ -36,7 +36,7 @@ data class WidgetData(
 
                 if (schedule.scheduleEntity.recurrence != null) {
                     periodicEvents = splitEvents.second.getPeriodicEvents(
-                        schedule.scheduleEntity.recurrence.interval,
+                        requireNotNull(schedule.scheduleEntity.recurrence).interval,
                     )
                 } else {
                     nonPeriodicEvents = splitEvents.second.groupBy {

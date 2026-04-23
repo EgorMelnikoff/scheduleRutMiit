@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.domain.repos
 
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.ScheduleDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.schedule.event.GroupDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.timetable.TimetableDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.timetable.TimetablesDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.dto.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetableDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetablesDto
 
 interface ScheduleRemoteDataSource {
     suspend fun fetchTimetables(

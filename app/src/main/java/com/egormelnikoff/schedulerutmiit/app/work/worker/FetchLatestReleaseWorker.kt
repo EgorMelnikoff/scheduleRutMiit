@@ -16,8 +16,8 @@ class FetchLatestReleaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         return when (fetchLatestReleaseUseCase()) {
-            is com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result.Error -> Result.retry()
-            is com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result.Success -> Result.success()
+            is com.egormelnikoff.schedulerutmiit.core.common.result.Result.Error -> Result.retry()
+            is com.egormelnikoff.schedulerutmiit.core.common.result.Result.Success -> Result.success()
         }
     }
 }

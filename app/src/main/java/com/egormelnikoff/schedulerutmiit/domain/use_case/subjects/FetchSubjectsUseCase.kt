@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.domain.use_case.subjects
 
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.network.dto.subjects.SubjectDto
 import com.egormelnikoff.schedulerutmiit.data.local.parser.SubjectsListParser
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.subjects.SubjectDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
 import com.egormelnikoff.schedulerutmiit.domain.repos.SearchRemoteDataSource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

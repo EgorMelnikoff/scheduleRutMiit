@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.domain.repos
 
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.institutes.InstitutesDto
-import com.egormelnikoff.schedulerutmiit.data.remote.dto.person.PersonDto
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstitutesDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
 import org.jsoup.nodes.Document
 
 interface SearchRemoteDataSource {

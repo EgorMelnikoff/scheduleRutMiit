@@ -17,7 +17,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.egormelnikoff.core.ui.R
 
 @Composable
 fun Empty(

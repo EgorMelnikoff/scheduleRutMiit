@@ -1,12 +1,51 @@
 package com.egormelnikoff.schedulerutmiit.app.extension
 
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getCurrentWeek
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.Schedule
+import java.time.DayOfWeek
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 fun List<Schedule>.findDefaultSchedule(): Schedule? {
     return this.find { it.scheduleEntity.isDefault } ?: this.firstOrNull()
+}
+
+fun ScheduleEntity.getEventsForDate(
+    date: LocalDate,
+    periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
+    nonPeriodicEvents: Map<LocalDate, List<Event>>?
+): Map<String, List<Event>> {
+    if (this.startDate > date || date > this.endDate) return mapOf()
+
+    var displayedEvents = listOf<Event>()
+    when {
+        (periodicEvents != null && this.recurrence != null) -> {
+            val currentWeek = date.getCurrentWeek(
+                startDate = this.startDate,
+                recurrence = this.recurrence
+            )
+            val events = periodicEvents[currentWeek]?.filter {
+                it.key == date.dayOfWeek
+            }?.values?.flatten()
+
+            events?.let {
+                displayedEvents = events
+            }
+        }
+
+        (nonPeriodicEvents != null) -> {
+            val events = nonPeriodicEvents.filter {
+                it.key == date
+            }
+            displayedEvents = events.values.flatten()
+        }
+    }
+
+    return displayedEvents.getGroupedEvents()
 }
 
 fun String.getShortName(type: NamedScheduleType): String {

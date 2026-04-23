@@ -2,16 +2,16 @@ package com.egormelnikoff.schedulerutmiit.ui.view_models.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.app.enums.NamedScheduleType
+import com.egormelnikoff.egormelnikoff.core.ui.R
 import com.egormelnikoff.schedulerutmiit.app.extension.findDefaultSchedule
 import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.relation.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.Result
-import com.egormelnikoff.schedulerutmiit.data.remote.network.result.TypedError
+import com.egormelnikoff.schedulerutmiit.app.resources.getErrorMessage
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.AddCustomNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.DeleteNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.domain.use_case.schedule.DeleteScheduleUseCase
@@ -181,7 +181,7 @@ class ScheduleViewModel @Inject constructor(
                     )
 
                     sendErrorUiEvent(
-                        message = TypedError.getErrorMessage(
+                        message = getErrorMessage(
                             resourcesManager = resourcesManager,
                             typedError = newNamedSchedule.typedError
                         )
@@ -422,8 +422,7 @@ class ScheduleViewModel @Inject constructor(
     }
 
     private fun currentNamedSchedule(): NamedSchedule {
-        return _namedScheduleState.value.namedSchedule
-            ?: throw NullPointerException()
+        return requireNotNull(_namedScheduleState.value.namedSchedule)
     }
 
     private fun updateCurrentState(

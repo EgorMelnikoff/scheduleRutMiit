@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.data.repos
 
 import androidx.room.withTransaction
-import com.egormelnikoff.schedulerutmiit.data.local.db.AppDatabase
-import com.egormelnikoff.schedulerutmiit.data.local.db.dao.EventDao
-import com.egormelnikoff.schedulerutmiit.data.local.db.dao.EventExtraDao
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.Event
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.dao.EventDao
+import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
+import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
+import com.egormelnikoff.schedulerutmiit.core.database.entity.Event
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraData
 import com.egormelnikoff.schedulerutmiit.domain.repos.EventRepos
 import javax.inject.Inject
 

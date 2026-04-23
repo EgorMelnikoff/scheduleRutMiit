@@ -8,9 +8,9 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.egormelnikoff.egormelnikoff.core.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
 import com.egormelnikoff.schedulerutmiit.ui.WelcomePage
-import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.search.SearchViewModel

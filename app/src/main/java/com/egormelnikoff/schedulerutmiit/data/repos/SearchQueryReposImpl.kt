@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.data.repos
 
 import androidx.room.withTransaction
-import com.egormelnikoff.schedulerutmiit.data.local.db.AppDatabase
-import com.egormelnikoff.schedulerutmiit.data.local.db.dao.SearchQueryDao
-import com.egormelnikoff.schedulerutmiit.data.local.db.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.database.dao.SearchQueryDao
+import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
+import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.domain.repos.SearchQueryRepos
 import javax.inject.Inject
 
