@@ -123,12 +123,6 @@ fun AddEditEventDialog(
             initialPage = 0
         ) { 3 }
 
-        val isScrollingBack by remember {
-            derivedStateOf {
-                pagerState.currentPageOffsetFraction <= 0f
-            }
-        }
-
         PagerScreenContainer(
             pagerState = pagerState,
             scope = appUiState.scope,
@@ -138,7 +132,7 @@ fun AddEditEventDialog(
                     1 -> dateEvent != null && startTime != null && endTime != null && (scheduleEntity.recurrence != null && currentInterval != -1 || scheduleEntity.recurrence == null)
                     2 -> buttonEnabled
                     else -> true
-                } || isScrollingBack
+                }
             },
             onFinish = {
                 dateEvent?.let {
