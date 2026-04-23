@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
+import com.egormelnikoff.schedulerutmiit.ui.WelcomePage
 import com.egormelnikoff.schedulerutmiit.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.ui.view_models.news.NewsViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
@@ -38,13 +39,17 @@ class MainActivity : ComponentActivity() {
                 ScheduleRutMiitTheme(
                     decorPreferences = settings.decorPreferences
                 ) {
-                    ScheduleRutMiitApp(
-                        searchViewModel = searchViewModel,
-                        scheduleViewModel = scheduleViewModel,
-                        newsViewModel = newsViewModel,
-                        settingsViewModel = settingsViewModel,
-                        appSettings = settings
-                    )
+                    if (settings.skipWelcomePage) {
+                        ScheduleRutMiitApp(
+                            searchViewModel = searchViewModel,
+                            scheduleViewModel = scheduleViewModel,
+                            newsViewModel = newsViewModel,
+                            settingsViewModel = settingsViewModel,
+                            appSettings = settings
+                        )
+                    } else {
+                        WelcomePage(settingsViewModel)
+                    }
                 }
             }
         }

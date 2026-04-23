@@ -12,8 +12,8 @@
     <string name="about_app">About app</string>
     <string name="add">Add</string>
     <string name="add_class">Add class</string>
-    <string name="adding_a_class">Adding a class</string>
-    <string name="adding_a_schedule">Adding a schedule</string>
+    <string name="create_class">Create class</string>
+    <string name="create_schedule">Create schedule</string>
     <string name="all">All</string>
     <string name="amoled" translatable="false">AMOLED</string>
     <string name="app_name">Schedule MIIT</string>
@@ -183,4 +183,21 @@
     <string name="use_amoled">Use AMOLED</string>
     <string name="week">Week %1$s</string>
     <string name="yes">Yes</string>
+
+    <string name="welcome_title">Welcome!</string>
+    <string name="welcome_subtitle">An app to find and save RUT (MIIT) university schedules</string>
+
+    <string name="schedule_title">Schedules</string>
+    <string name="schedule_subtitle">Saved schedules are available even without an internet connection!</string>
+
+    <string name="features_title">Comments and Tags</string>
+    <string name="features_subtitle">Add text notes and color tags to your classes</string>
+
+    <string name="widget_title">Widget</string>
+    <string name="widget_subtitle">Use the home screen widget to check your upcoming classes instantly!</string>
+
+    <string name="skip">Skip</string>
+    <string name="forward">Forward</string>
+    <string name="cancel">Cancel</string>
+    <string name="ready">Ready</string>
 </resources>

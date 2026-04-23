@@ -219,7 +219,7 @@ fun RootHost(
                     AddEditEventDialog(
                         namedScheduleEntity = key.namedScheduleEntity,
                         scheduleEntity = key.scheduleEntity,
-                        editableEvent = key.event,
+                        updatableEvent = key.event,
                         currentDateTime = currentDateTime,
                         appUiState = appUiState,
                         scheduleViewModel = scheduleViewModel
