@@ -1,25 +1,27 @@
 package com.egormelnikoff.schedulerutmiit.di
 
-import com.egormelnikoff.schedulerutmiit.data.repos.EventExtraReposImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.EventReposImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.LatestReleaseDataSourceImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.NamedScheduleReposImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.NewsRemoteDataSourceImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.ScheduleRemoteDataSourceImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.ScheduleReposImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.SearchQueryReposImpl
-import com.egormelnikoff.schedulerutmiit.data.repos.SearchRemoteDataSourceImpl
-import com.egormelnikoff.schedulerutmiit.domain.repos.EventExtraRepos
-import com.egormelnikoff.schedulerutmiit.domain.repos.EventRepos
-import com.egormelnikoff.schedulerutmiit.domain.repos.LatestReleaseDataSource
-import com.egormelnikoff.schedulerutmiit.domain.repos.NamedScheduleRepos
-import com.egormelnikoff.schedulerutmiit.domain.repos.NewsRemoteDataSource
-import com.egormelnikoff.schedulerutmiit.domain.repos.ScheduleRemoteDataSource
-import com.egormelnikoff.schedulerutmiit.domain.repos.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.domain.repos.SearchQueryRepos
-import com.egormelnikoff.schedulerutmiit.domain.repos.SearchRemoteDataSource
-import com.egormelnikoff.schedulerutmiit.domain.use_case.updates.AppInfoProvider
-import com.egormelnikoff.schedulerutmiit.domain.use_case.updates.AppInfoProviderImpl
+import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.repos.CurriculumRemoteDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.repos.CurriculumRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.latest_release.data.repos.AppInfoProviderImpl
+import com.egormelnikoff.schedulerutmiit.latest_release.data.repos.LatestReleaseDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.latest_release.domain.repos.AppInfoProvider
+import com.egormelnikoff.schedulerutmiit.latest_release.domain.repos.LatestReleaseDataSource
+import com.egormelnikoff.schedulerutmiit.news.data.repos.NewsRemoteDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.schedule.data.repos.EventExtraReposImpl
+import com.egormelnikoff.schedulerutmiit.schedule.data.repos.EventReposImpl
+import com.egormelnikoff.schedulerutmiit.schedule.data.repos.NamedScheduleReposImpl
+import com.egormelnikoff.schedulerutmiit.schedule.data.repos.ScheduleRemoteDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.schedule.data.repos.ScheduleReposImpl
+import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
+import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
+import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.search.data.repos.SearchQueryReposImpl
+import com.egormelnikoff.schedulerutmiit.search.data.repos.SearchRemoteDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchQueryRepos
+import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -40,6 +42,11 @@ abstract class BindModule {
     @Binds
     @Singleton
     abstract fun bindSearchRemoteDataSource(searchRemoteDataSourceImpl: SearchRemoteDataSourceImpl): SearchRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindCurriculumRemoteDataSource(curriculumRemoteDataSourceImpl: CurriculumRemoteDataSourceImpl): CurriculumRemoteDataSource
+
 
     @Binds
     @Singleton

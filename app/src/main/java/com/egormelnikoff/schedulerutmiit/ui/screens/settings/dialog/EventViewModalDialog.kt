@@ -13,12 +13,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.egormelnikoff.core.ui.R
-import com.egormelnikoff.egormelnikoff.core.ui.elements.ClickableItem
-import com.egormelnikoff.egormelnikoff.core.ui.elements.ColumnGroup
-import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomCheckBox
-import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomCheckBox
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
+import com.egormelnikoff.egormelnikoff.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

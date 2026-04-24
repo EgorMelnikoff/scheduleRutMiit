@@ -2,18 +2,18 @@ package com.egormelnikoff.schedulerutmiit.ui.view_models.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.egormelnikoff.core.ui.R
-import com.egormelnikoff.schedulerutmiit.app.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.DecorPreferences
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.EventView
-import com.egormelnikoff.schedulerutmiit.data.local.preferences.PreferencesDataStore
-import com.egormelnikoff.schedulerutmiit.domain.use_case.updates.CheckLatestReleaseUseCase
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.event.UiEvent
+import com.egormelnikoff.egormelnikoff.core.ui.preferences.AppSettings
+import com.egormelnikoff.egormelnikoff.core.ui.preferences.DecorPreferences
+import com.egormelnikoff.egormelnikoff.core.ui.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.latest_release.domain.use_case.CheckLatestReleaseUseCase
+import com.egormelnikoff.schedulerutmiit.schedule.view_model.event.UiEvent
 import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.state.SettingsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

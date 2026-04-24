@@ -2,9 +2,9 @@ package com.egormelnikoff.schedulerutmiit.core.database.db
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.egormelnikoff.schedulerutmiit.core.common.dto.GroupDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.LecturerDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.RoomDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.LecturerDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.RoomDto
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import kotlinx.serialization.json.Json

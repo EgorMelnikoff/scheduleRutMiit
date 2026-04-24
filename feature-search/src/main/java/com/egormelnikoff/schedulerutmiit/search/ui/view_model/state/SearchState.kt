@@ -1,0 +1,18 @@
+package com.egormelnikoff.schedulerutmiit.search.ui.view_model.state
+
+import androidx.annotation.Keep
+import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.common.dto.institutes.InstitutesDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.person.PersonDto
+
+@Keep
+data class SearchState(
+    val history: List<SearchQuery> = listOf(),
+    val institutesDto: InstitutesDto? = null,
+    val groups: List<GroupDto> = listOf(),
+    val people: List<PersonDto> = listOf(),
+    val error: String? = null,
+    val isEmptyQuery: Boolean = true,
+    val isLoading: Boolean = false
+)

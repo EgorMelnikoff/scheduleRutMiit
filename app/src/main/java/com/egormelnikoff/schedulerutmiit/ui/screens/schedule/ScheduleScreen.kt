@@ -32,27 +32,29 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.egormelnikoff.core.ui.R
-import com.egormelnikoff.egormelnikoff.core.ui.elements.AnimatedAlert
-import com.egormelnikoff.egormelnikoff.core.ui.elements.ClickableItem
-import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomButton
-import com.egormelnikoff.egormelnikoff.core.ui.elements.CustomPullToRefreshBox
-import com.egormelnikoff.egormelnikoff.core.ui.elements.composable.Empty
-import com.egormelnikoff.egormelnikoff.core.ui.elements.composable.ErrorScreen
-import com.egormelnikoff.egormelnikoff.core.ui.elements.composable.ScheduleLoadingScreen
+import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AnimatedAlert
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomPullToRefreshBox
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ScheduleLoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.calendar.ScheduleCalendarView
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.list.ScheduleListView
-import com.egormelnikoff.schedulerutmiit.ui.ui_state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.ui_state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.CurrentState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.NamedScheduleState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.schedule.state.ScheduleState
+import com.egormelnikoff.egormelnikoff.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ModalDialogNamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ScheduleTopAppBar
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.calendar.ScheduleCalendarView
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.list.ScheduleListView
+import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.schedule.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.CurrentState
+import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.NamedScheduleState
+import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
 import java.time.LocalDateTime
 
@@ -100,7 +102,7 @@ fun ScreenSchedule(
 
         namedScheduleState.namedSchedule != null -> {
             BackHandler(
-                currentState.namedScheduleEntities.isNotEmpty() && !namedScheduleState.namedSchedule.namedScheduleEntity.isDefault
+                currentState.namedScheduleEntities.isNotEmpty() && !requireNotNull(namedScheduleState.namedSchedule).namedScheduleEntity.isDefault
             ) {
                 showBackDialog = true
             }
@@ -128,7 +130,7 @@ fun ScreenSchedule(
                         onShowNamedScheduleDialog = { newValue ->
                             showNamedScheduleEntityDialog = newValue
                         },
-                        namedSchedule = namedScheduleState.namedSchedule,
+                        namedSchedule = requireNotNull(namedScheduleState.namedSchedule),
                         scheduleUiDto = scheduleState.scheduleUiDto,
                         scheduleView = appSettings.scheduleView
                     )
@@ -144,7 +146,7 @@ fun ScreenSchedule(
                                 scheduleViewModel.refreshScheduleState(
                                     showLoading = false,
                                     updating = true,
-                                    namedScheduleId = namedScheduleState.namedSchedule.namedScheduleEntity.id
+                                    namedScheduleId = requireNotNull(namedScheduleState.namedSchedule).namedScheduleEntity.id
                                 )
                             }
                         },
@@ -206,8 +208,8 @@ fun ScreenSchedule(
 
                                             appUiState = appUiState,
 
-                                            namedSchedule = namedScheduleState.namedSchedule,
-                                            scheduleUiDto = scheduleState.scheduleUiDto,
+                                            namedSchedule = requireNotNull(namedScheduleState.namedSchedule),
+                                            scheduleUiDto = requireNotNull(scheduleState.scheduleUiDto),
                                             isSavedSchedule = currentState.isSaved,
 
                                             scheduleUiState = scheduleUiState,
@@ -224,8 +226,8 @@ fun ScreenSchedule(
                                             scheduleUiState = scheduleUiState,
 
                                             isSavedSchedule = currentState.isSaved,
-                                            namedScheduleEntity = namedScheduleState.namedSchedule.namedScheduleEntity,
-                                            scheduleUiDto = scheduleState.scheduleUiDto,
+                                            namedScheduleEntity = requireNotNull(namedScheduleState.namedSchedule).namedScheduleEntity,
+                                            scheduleUiDto = requireNotNull(scheduleState.scheduleUiDto),
 
                                             appSettings = appSettings,
                                             paddingBottom = externalPadding.calculateBottomPadding()
@@ -245,8 +247,8 @@ fun ScreenSchedule(
                             },
                             onConfirmation = {
                                 scheduleViewModel.deleteNamedSchedule(
-                                    namedScheduleState.namedSchedule.namedScheduleEntity.id,
-                                    namedScheduleState.namedSchedule.namedScheduleEntity.isDefault
+                                    requireNotNull(namedScheduleState.namedSchedule).namedScheduleEntity.id,
+                                    requireNotNull(namedScheduleState.namedSchedule).namedScheduleEntity.isDefault
                                 )
                             }
                         )

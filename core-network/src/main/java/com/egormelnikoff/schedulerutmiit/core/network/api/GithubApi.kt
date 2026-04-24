@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.core.network.api
 
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
-import com.egormelnikoff.schedulerutmiit.core.network.dto.latest_release.LatestReleaseFetchDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.latest_release.LatestReleaseFetchDto
 import retrofit2.Response
 import retrofit2.http.GET
 

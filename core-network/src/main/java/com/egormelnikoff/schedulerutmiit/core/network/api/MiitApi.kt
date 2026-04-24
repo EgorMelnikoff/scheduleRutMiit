@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.core.network.api
 
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
-import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstitutesDto
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsDto
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsListDto
-import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetablesDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.institutes.InstitutesDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.news.NewsDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.news.NewsListDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.timetable.TimetablesDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

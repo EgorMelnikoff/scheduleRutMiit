@@ -15,6 +15,11 @@
             <option value="$PROJECT_DIR$/core-database" />
             <option value="$PROJECT_DIR$/core-network" />
             <option value="$PROJECT_DIR$/core-ui" />
+            <option value="$PROJECT_DIR$/feature-curriculum" />
+            <option value="$PROJECT_DIR$/feature-latest-release" />
+            <option value="$PROJECT_DIR$/feature-news" />
+            <option value="$PROJECT_DIR$/feature-schedule" />
+            <option value="$PROJECT_DIR$/feature-search" />
           </set>
         </option>
       </GradleProjectSettings>

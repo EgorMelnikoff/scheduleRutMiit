@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
-import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
 
 @Dao
 interface ScheduleDao {

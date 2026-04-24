@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.core.common.validator
 
 
-import com.egormelnikoff.schedulerutmiit.core.common.dto.GroupDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.LecturerDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.RoomDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.LecturerDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.RoomDto
 import java.time.LocalDate
 import java.time.LocalTime
 

@@ -1,0 +1,27 @@
+package com.egormelnikoff.schedulerutmiit.schedule.domain.repos
+
+import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.Schedule
+
+interface ScheduleRepos {
+    suspend fun save(
+        namedScheduleId: Long,
+        schedule: Schedule
+    ): Long
+
+    suspend fun saveAllSchedules(
+        namedScheduleId: Long,
+        schedules: List<Schedule>
+    )
+
+    suspend fun deleteById(scheduleId: Long)
+
+    suspend fun updateEvents(
+        scheduleId: Long,
+        schedule: Schedule
+    )
+
+    suspend fun setDefaultSchedule(
+        namedScheduleId: Long,
+        scheduleId: Long
+    )
+}

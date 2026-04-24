@@ -1,10 +1,10 @@
 plugins {
-    id("com.android.library")
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.egormelnikoff.egormelnikoff.core.ui"
+    namespace = "com.egormelnikoff.schedulerutmiit.core.ui"
     compileSdk = 36
 
     defaultConfig {
@@ -32,13 +32,12 @@ android {
 
 dependencies {
     implementation(project(":core-common"))
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.coil.compose)
-    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation3.ui)
-    implementation(libs.androidx.paging.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

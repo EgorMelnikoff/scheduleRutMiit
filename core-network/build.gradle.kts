@@ -1,8 +1,8 @@
 plugins {
-    id("com.android.library")
+    alias(libs.plugins.android.library)
     alias(libs.plugins.devtoolsKsp)
     alias(libs.plugins.dagger.hilt.android)
-    kotlin("plugin.serialization") version "2.3.20"
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -33,10 +33,9 @@ android {
 
 dependencies {
     implementation(project(":core-common"))
-    
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    ksp(libs.androidx.hilt.compiler)
 
     implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization.json)

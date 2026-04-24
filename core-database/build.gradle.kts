@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.library")
+    alias(libs.plugins.android.library)
     alias(libs.plugins.devtoolsKsp)
-    kotlin("plugin.serialization") version "2.3.20"
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -32,7 +32,6 @@ dependencies {
     implementation(project(":core-common"))
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    ksp(libs.androidx.hilt.compiler)
 
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.room.compiler)

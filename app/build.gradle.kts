@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.compose)
-    kotlin("plugin.serialization") version "2.3.20"
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -53,12 +53,17 @@ dependencies {
     implementation(project(":core-ui"))
     implementation(project(":core-network"))
     implementation(project(":core-database"))
+    implementation(project(":feature-schedule"))
+    implementation(project(":feature-search"))
+    implementation(project(":feature-curriculum"))
+    implementation(project(":feature-latest-release"))
+    implementation(project(":feature-news"))
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.hilt.work)
+
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.hilt.compiler)
 
@@ -67,19 +72,15 @@ dependencies {
     implementation(libs.jsoup)
 
     implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.work.runtime.ktx)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.coil.compose)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.paging.compose)
-
-    implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.glance.material3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
+import com.egormelnikoff.schedulerutmiit.latest_release.work.FetchReleaseScheduler
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -13,7 +13,7 @@ class ScheduleApplication : Application(), Configuration.Provider {
     lateinit var workerFactory: HiltWorkerFactory
 
     @Inject
-    lateinit var workScheduler: WorkScheduler
+    lateinit var fetchReleaseScheduler: FetchReleaseScheduler
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
@@ -23,6 +23,6 @@ class ScheduleApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         //createChannels(applicationContext)
-        workScheduler.startPeriodicFetchingLatestVersion()
+        fetchReleaseScheduler.startPeriodicFetchingLatestVersion()
     }
 }

@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.core.common.extension
 
-import com.egormelnikoff.schedulerutmiit.core.common.dto.RecurrenceDto
+import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.RecurrenceDto
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs

@@ -1,4 +1,4 @@
-package com.egormelnikoff.egormelnikoff.core.ui
+package com.egormelnikoff.schedulerutmiit.core.ui
 
 import org.junit.Test
 
