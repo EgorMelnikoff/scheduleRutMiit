@@ -1,12 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto
 
-import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
-@Keep
 data class SchedulePagerUiDto(
     val today: LocalDate,
     val defaultDate: LocalDate,

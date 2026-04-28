@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.core.database.entity.relation
 
-import androidx.annotation.Keep
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
@@ -10,7 +9,6 @@ import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.toDomain
 import com.egormelnikoff.schedulerutmiit.core.database.entity.toEntity
 
-@Keep
 data class ScheduleWithEventsRelation(
     @Embedded
     val scheduleEntity: ScheduleEntity,

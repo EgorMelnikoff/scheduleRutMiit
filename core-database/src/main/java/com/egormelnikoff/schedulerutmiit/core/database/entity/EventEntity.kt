@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.core.database.entity
 
-import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
@@ -8,7 +7,6 @@ import androidx.room.PrimaryKey
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import java.time.LocalDateTime
 
-@Keep
 @Entity(tableName = "Events")
 data class EventEntity(
     @ColumnInfo(name = "EventId")

@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto
 
-import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
@@ -16,7 +15,6 @@ import java.time.LocalTime
 
 val eveningTime: LocalTime = LocalTime.of(18, 0)
 
-@Keep
 @Serializable
 data class ReviewUiDto(
     @Serializable(with = LocalDateSerializer::class)

@@ -1,13 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.core.network.dto.schedule
 
-import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
-@Keep
 @Serializable
 data class EventDto(
     @Serializable(with = LocalDateTimeSerializer::class)

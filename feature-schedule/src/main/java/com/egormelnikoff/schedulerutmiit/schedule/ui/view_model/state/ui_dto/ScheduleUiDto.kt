@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto
 
-import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
@@ -12,7 +11,6 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-@Keep
 data class ScheduleUiDto(
     val schedule: Schedule,
 

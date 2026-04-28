@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state
 
-import androidx.annotation.Keep
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
@@ -14,7 +13,6 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedSched
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
 import java.time.LocalDate
 
-@Keep
 data class ScheduleUiState(
     val scheduleListState: LazyListState,
 

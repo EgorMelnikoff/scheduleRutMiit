@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.widget
 
-import androidx.annotation.Keep
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
@@ -13,7 +12,6 @@ import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-@Keep
 @Serializable
 data class WidgetData(
     val namedSchedule: NamedSchedule? = null,
