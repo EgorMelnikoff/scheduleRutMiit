@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.egormelnikoff.schedulerutmiit.latest_release"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 29
@@ -41,7 +41,6 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     implementation(libs.retrofit)
-    implementation(libs.jsoup)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)

@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.egormelnikoff.schedulerutmiit.schedule"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 29

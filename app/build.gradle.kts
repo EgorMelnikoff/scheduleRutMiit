@@ -10,14 +10,14 @@ plugins {
 
 android {
     namespace = "com.egormelnikoff.schedulerutmiit"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.egormelnikoff.schedulerutmiit"
         minSdk = 29
         targetSdk = 37
-        versionCode = 75
-        versionName = "2.4.3"
+        versionCode = 76
+        versionName = "2.4.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
