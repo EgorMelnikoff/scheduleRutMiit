@@ -1,16 +1,16 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.core.common.exception.ScheduleLoadException
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.exception.ScheduleLoadException
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.result.FetchNamedScheduleResult
-import com.egormelnikoff.schedulerutmiit.schedule.extension.getShortName
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
@@ -68,7 +68,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
                                 apiId = apiId,
                                 timetable = timetable,
                                 currentGroup = if (namedScheduleType == NamedScheduleType.GROUP) {
-                                    GroupDto(
+                                    Group(
                                         id = apiId,
                                         name = name
                                     )
@@ -96,7 +96,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
 
                 try {
                     val schedules = deferredSchedules.awaitAll()
-                    val namedScheduleEntity = NamedScheduleEntity(
+                    val namedSchedule = NamedSchedule(
                         id = namedScheduleId,
                         fullName = name,
                         shortName = name.getShortName(namedScheduleType),
@@ -107,9 +107,9 @@ class FetchNamedScheduleUseCase @Inject constructor(
                     )
                     FetchNamedScheduleResult(
                         Result.Success(
-                            NamedSchedule(
-                                namedScheduleEntity = namedScheduleEntity,
-                                schedules = schedules
+                            NamedScheduleWithSchedules(
+                                namedSchedule = namedSchedule,
+                                scheduleWithEvents = schedules
                             )
                         ), false
                     )

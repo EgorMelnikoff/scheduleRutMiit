@@ -1,14 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
+import com.egormelnikoff.schedulerutmiit.schedule.data.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.result.ScheduleUseCaseResult
-import com.egormelnikoff.schedulerutmiit.schedule.widget.WidgetDataUpdater
-import com.egormelnikoff.schedulerutmiit.schedule.work.Scheduler
 import javax.inject.Inject
 
 class DeleteNamedScheduleUseCase @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
-    private val scheduler: Scheduler,
     private val widgetDataUpdater: WidgetDataUpdater,
 ) {
     suspend operator fun invoke(
@@ -16,13 +14,12 @@ class DeleteNamedScheduleUseCase @Inject constructor(
         isDefault: Boolean
     ): ScheduleUseCaseResult {
         namedScheduleRepos.deleteById(namedScheduleId)
-        val savedNamedSchedules = namedScheduleRepos.getAllEntities()
+        val savedNamedSchedules = namedScheduleRepos.getAll()
         if (savedNamedSchedules.isEmpty()) {
-            scheduler.cancelPeriodicScheduleUpdating()
             widgetDataUpdater.updateAll()
             return ScheduleUseCaseResult(
-                savedNamedScheduleEntities = listOf(),
-                namedSchedule = null
+                savedNamedSchedules = listOf(),
+                namedScheduleWithSchedules = null
             )
         }
 
@@ -31,14 +28,14 @@ class DeleteNamedScheduleUseCase @Inject constructor(
             widgetDataUpdater.updateAll()
         }
 
-        namedScheduleRepos.getAllEntities().let { namedScheduleEntities ->
-            val defaultNamedSchedule = namedScheduleEntities.find { it.isDefault }
-                ?: namedScheduleEntities.firstOrNull()
+        namedScheduleRepos.getAll().let { namedSchedules ->
+            val defaultNamedSchedule = namedSchedules.find { it.isDefault }
+                ?: namedSchedules.firstOrNull()
 
 
             return ScheduleUseCaseResult(
-                savedNamedScheduleEntities = namedScheduleEntities,
-                namedSchedule = defaultNamedSchedule?.let {
+                savedNamedSchedules = namedSchedules,
+                namedScheduleWithSchedules = defaultNamedSchedule?.let {
                     namedScheduleRepos.getById(defaultNamedSchedule.id)
                 }
             )

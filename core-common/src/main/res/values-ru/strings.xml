@@ -30,6 +30,8 @@
     <string name="class_type">Тип занятия</string>
     <string name="collapse">Свернуть</string>
     <string name="color_style">Цветовое оформление</string>
+    <string name="check_for_updates">Проверить обновления</string>
+    <string name="checking_for_updates">Проверка обновлений</string>
     <string name="comment">Комментарий</string>
     <string name="comments_and_tags">Комментарии и теги</string>
     <string name="comments_on_events">Комментарии к парам</string>
@@ -83,6 +85,10 @@
     <string name="full_list_message">Все пары до конца расписания</string>
     <string name="full_name_of_lecturer">ФИО преподавателя</string>
     <string name="general">Общее</string>
+    <string name="good_morning">Доброе утро</string>
+    <string name="good_afternoon">Добрый день</string>
+    <string name="good_evening">Добрый вечер</string>
+    <string name="good_night">Доброй ночи</string>
     <string name="group_number">Номер группы</string>
     <string name="groups">Группы</string>
     <string name="hidden_events">Скрытые пары</string>
@@ -110,6 +116,7 @@
     <string name="no_end_time_specified">Не указано время окончания</string>
     <string name="no_name_specified">Не указано назввание</string>
     <string name="no_saved_schedule">Отсутствует сохраненное расписание</string>
+    <string name="no_events">Нет пар</string>
     <string name="no_start_date_specified">Не указана дата начала</string>
     <string name="no_start_time_specified">Не указано время начала</string>
     <string name="not_delete_schedules">Не удалять расписания</string>

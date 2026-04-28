@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
-import com.egormelnikoff.egormelnikoff.core.ui.preferences.DecorPreferences
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.DecorPreferences
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.amoledColorScheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.animation
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.defaultTheme

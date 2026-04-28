@@ -32,6 +32,8 @@
     <string name="class_type">Class type</string>
     <string name="collapse">Collapse</string>
     <string name="color_style">Color style</string>
+    <string name="check_for_updates">Check for updates</string>
+    <string name="checking_for_updates">Checking for updates</string>
     <string name="comment">Comment</string>
     <string name="comments_and_tags">Comments and tags</string>
     <string name="comments_on_events">Comments on classes</string>
@@ -88,6 +90,10 @@
     <string name="full_name_of_lecturer">Full name of lecturer</string>
     <string name="general">General</string>
     <string name="github" translatable="false">GitHub</string>
+    <string name="good_morning">Good morning</string>
+    <string name="good_afternoon">Good afternoon</string>
+    <string name="good_evening">Good evening</string>
+    <string name="good_night">Good night</string>
     <string name="group_number">Group number</string>
     <string name="groups">Groups</string>
     <string name="hidden_events">Hidden events</string>
@@ -115,6 +121,7 @@
     <string name="no_end_time_specified">No end time specified</string>
     <string name="no_name_specified">No name specified</string>
     <string name="no_saved_schedule">No saved schedule</string>
+    <string name="no_events">No classes</string>
     <string name="no_start_date_specified">No start date specified</string>
     <string name="no_start_time_specified">No start time specified</string>
     <string name="not_delete_schedules">Do not delete schedules</string>

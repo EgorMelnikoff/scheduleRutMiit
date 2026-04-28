@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.search.domain.repos
 
-import com.egormelnikoff.schedulerutmiit.core.common.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
 
 interface SearchQueryRepos {
     suspend fun insert(searchQuery: SearchQuery)

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.PagerScreenContainer
-import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
 
 
 @Composable
@@ -56,37 +56,32 @@ fun WelcomePage(
             paddingValues = padding
         ) { page ->
             when (page) {
-                0 -> {
-                    Page(
-                        title = stringResource(R.string.welcome_title),
-                        titleSize = 30.sp,
-                        subtitle = stringResource(R.string.welcome_subtitle)
-                    )
-                }
+                0 -> Page(
+                    title = stringResource(R.string.welcome_title),
+                    titleSize = 30.sp,
+                    subtitle = stringResource(R.string.welcome_subtitle)
+                )
 
-                1 -> {
-                    Page(
-                        title = stringResource(R.string.schedule_title),
-                        subtitle = stringResource(R.string.schedule_subtitle),
-                        painter = painterResource(R.drawable.schedules),
-                    )
-                }
 
-                2 -> {
-                    Page(
-                        title = stringResource(R.string.features_title),
-                        subtitle = stringResource(R.string.features_subtitle),
-                        painter = painterResource(R.drawable.comment_and_tag),
-                    )
-                }
+                1 -> Page(
+                    title = stringResource(R.string.schedule_title),
+                    subtitle = stringResource(R.string.schedule_subtitle),
+                    painter = painterResource(R.drawable.schedules),
+                )
 
-                3 -> {
-                    Page(
-                        title = stringResource(R.string.widget_title),
-                        subtitle = stringResource(R.string.widget_subtitle),
-                        painter = painterResource(R.drawable.widget),
-                    )
-                }
+
+                2 -> Page(
+                    title = stringResource(R.string.features_title),
+                    subtitle = stringResource(R.string.features_subtitle),
+                    painter = painterResource(R.drawable.comment_and_tag),
+                )
+
+
+                3 -> Page(
+                    title = stringResource(R.string.widget_title),
+                    subtitle = stringResource(R.string.widget_subtitle),
+                    painter = painterResource(R.drawable.widget),
+                )
             }
         }
     }

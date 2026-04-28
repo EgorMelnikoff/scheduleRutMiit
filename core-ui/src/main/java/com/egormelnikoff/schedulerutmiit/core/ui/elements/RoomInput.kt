@@ -11,12 +11,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.RoomDto
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Room
 
 @Composable
 fun RoomInput(
-    room: RoomDto,
-    onValueChanged: (RoomDto) -> Unit,
+    room: Room,
+    onValueChanged: (Room) -> Unit,
     onRemove: () -> Unit
 ) {
     Row(

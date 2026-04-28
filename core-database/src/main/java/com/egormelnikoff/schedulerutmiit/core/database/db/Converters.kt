@@ -2,11 +2,11 @@ package com.egormelnikoff.schedulerutmiit.core.database.db
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.LecturerDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.RoomDto
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.database.entity.GroupEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.LecturerEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.RoomEntity
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,33 +17,33 @@ class Converters @Inject constructor(
     private val json: Json
 ) {
     @TypeConverter
-    fun fromListLecturer(lecturers: List<LecturerDto>?): String? {
+    fun fromListLecturer(lecturers: List<LecturerEntity>?): String? {
         return lecturers?.let { json.encodeToString(it) }
     }
 
     @TypeConverter
-    fun toListLecturer(lecturersString: String?): List<LecturerDto>? {
+    fun toListLecturer(lecturersString: String?): List<LecturerEntity>? {
         return lecturersString?.let { json.decodeFromString(it) }
     }
 
 
     @TypeConverter
-    fun fromListRoom(rooms: List<RoomDto>?): String? {
+    fun fromListRoom(rooms: List<RoomEntity>?): String? {
         return rooms?.let { json.encodeToString(it) }
     }
 
     @TypeConverter
-    fun toListRoom(roomsString: String?): List<RoomDto>? {
+    fun toListRoom(roomsString: String?): List<RoomEntity>? {
         return roomsString?.let { json.decodeFromString(it) }
     }
 
     @TypeConverter
-    fun fromListGroup(groups: List<GroupDto>?): String? {
+    fun fromListGroup(groups: List<GroupEntity>?): String? {
         return groups?.let { json.encodeToString(it) }
     }
 
     @TypeConverter
-    fun toListGroup(groupsString: String?): List<GroupDto>? {
+    fun toListGroup(groupsString: String?): List<GroupEntity>? {
         return groupsString?.let { json.decodeFromString(it) }
     }
 

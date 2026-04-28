@@ -17,6 +17,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -31,14 +32,11 @@ android {
 
 dependencies {
     implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-    ksp(libs.androidx.hilt.compiler)
 
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.kotlinx.serialization.json)
-
-    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

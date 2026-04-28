@@ -7,8 +7,8 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.core.common.dto.news.NewsDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.news.NewsParsedDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -86,7 +86,7 @@ object NewsParser {
                                     url = url,
                                     styles = TextLinkStyles(
                                         style = SpanStyle(
-                                            textDecoration = TextDecoration.Companion.Underline,
+                                            textDecoration = TextDecoration.Underline,
                                             fontSize = 16.sp
                                         )
                                     )

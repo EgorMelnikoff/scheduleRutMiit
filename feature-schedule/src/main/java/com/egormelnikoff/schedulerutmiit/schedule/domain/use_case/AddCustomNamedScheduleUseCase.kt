@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.Schedule
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.result.ScheduleUseCaseResult
 import java.time.LocalDate
 import javax.inject.Inject
@@ -19,8 +19,8 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
         endDate: LocalDate
     ): ScheduleUseCaseResult {
         return saveNamedScheduleUseCase(
-            currentNamedSchedule = NamedSchedule(
-                namedScheduleEntity = NamedScheduleEntity(
+            currentNamedScheduleWithSchedules = NamedScheduleWithSchedules(
+                namedSchedule = NamedSchedule(
                     id = 0,
                     fullName = name,
                     shortName = name,
@@ -29,9 +29,9 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
                     isDefault = false,
                     lastTimeUpdate = 0L
                 ),
-                schedules = listOf(
-                    Schedule(
-                        scheduleEntity = ScheduleEntity(
+                scheduleWithEvents = listOf(
+                    ScheduleWithEvents(
+                        schedule = Schedule(
                             id = 0,
                             isDefault = true,
                             namedScheduleId = 0,

@@ -1,5 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.di
 
+import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.repos.CurriculumRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.repos.CurriculumRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.latest_release.data.repos.AppInfoProviderImpl
@@ -74,6 +76,9 @@ abstract class BindModule {
     abstract fun bindSearchQueryRepos(searchQueryReposImpl: SearchQueryReposImpl): SearchQueryRepos
 
 
+    @Binds
+    @Singleton
+    abstract fun bindPreferences(preferencesRepos: PreferencesDataSourceImpl): PreferencesDataSource
 
     @Binds
     @Singleton

@@ -35,6 +35,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.RecurrenceEvent
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
+import com.egormelnikoff.schedulerutmiit.core.network.dto.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
@@ -51,24 +58,17 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.ListParam
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.PagerScreenContainer
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoomInput
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.TimeSelector
-import com.egormelnikoff.schedulerutmiit.core.common.validator.isValidEvent
-import com.egormelnikoff.schedulerutmiit.core.common.DefaultEventParams
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.RecurrenceEventDto
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getTimeSlotName
+import com.egormelnikoff.schedulerutmiit.schedule.data.validator.isValidEvent
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
-import com.egormelnikoff.schedulerutmiit.schedule.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.LocalDateTime
 
 @Composable
 fun AddEditEventDialog(
-    namedScheduleEntity: NamedScheduleEntity,
-    scheduleEntity: ScheduleEntity,
+    namedSchedule: NamedSchedule,
+    schedule: Schedule,
     updatableEvent: Event? = null,
     appUiState: AppUiState,
     currentDateTime: LocalDateTime,
@@ -128,7 +128,7 @@ fun AddEditEventDialog(
                 titleText = updatableEvent?.let {
                     stringResource(R.string.editing)
                 } ?: stringResource(R.string.create_class),
-                subtitleText = "${namedScheduleEntity.shortName} (${scheduleEntity.timetableType.typeName})",
+                subtitleText = "${namedSchedule.shortName} (${schedule.timetableType.typeName})",
                 navAction = {
                     appUiState.appBackStack.onBack()
                 }
@@ -145,7 +145,7 @@ fun AddEditEventDialog(
             isNextEnabled = { page ->
                 when (page) {
                     0 -> nameEvent.isNotBlank()
-                    1 -> dateEvent != null && startTime != null && endTime != null && (scheduleEntity.recurrence != null && currentInterval != -1 || scheduleEntity.recurrence == null)
+                    1 -> dateEvent != null && startTime != null && endTime != null && (schedule.recurrence != null && currentInterval != -1 || schedule.recurrence == null)
                     2 -> buttonEnabled
                     else -> true
                 }
@@ -157,7 +157,7 @@ fun AddEditEventDialog(
                     if (startDateTime != null && endDateTime != null) {
                         val event = Event(
                             id = updatableEvent?.id ?: 0,
-                            scheduleId = scheduleEntity.id,
+                            scheduleId = schedule.id,
                             name = nameEvent.trim(),
                             typeName = typeEvent,
 
@@ -171,8 +171,8 @@ fun AddEditEventDialog(
                                 startDateTime = startDateTime,
                                 endDateTime = endDateTime
                             ),
-                            recurrenceRule = scheduleEntity.recurrence?.let {
-                                RecurrenceEventDto(
+                            recurrenceRule = schedule.recurrence?.let {
+                                RecurrenceEvent(
                                     frequency = "WEEKLY",
                                     interval = currentInterval
                                 )
@@ -181,13 +181,13 @@ fun AddEditEventDialog(
                         )
                         if (updatableEvent != null) {
                             scheduleViewModel.eventAction(
-                                scheduleEntity,
+                                schedule,
                                 event,
                                 EventAction.Update(updatableEvent)
                             )
                         } else {
                             scheduleViewModel.eventAction(
-                                scheduleEntity, event, EventAction.Add
+                                schedule, event, EventAction.Add
                             )
                         }
                     }
@@ -253,7 +253,7 @@ fun AddEditEventDialog(
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top)
                     ) {
-                        if (scheduleEntity.recurrence != null) {
+                        if (schedule.recurrence != null) {
                             DaySelector(
                                 currentDateTime = currentDateTime,
                                 dateEvent = dateEvent,
@@ -274,7 +274,7 @@ fun AddEditEventDialog(
                                 }
                             )
                             RecurrenceField(
-                                maxInterval = requireNotNull(scheduleEntity.recurrence).interval,
+                                maxInterval = requireNotNull(schedule.recurrence).interval,
                                 currentInterval = currentInterval,
                                 currentPeriod = currentPeriod,
                                 onSelectInterval = { value ->
@@ -388,8 +388,8 @@ fun AddEditEventDialog(
                 selectedDate = dateEvent,
                 onDateSelect = { newValue -> dateEvent = newValue },
                 onShowDialog = { newValue -> showDialogDate = newValue },
-                startDate = scheduleEntity.startDate,
-                endDate = scheduleEntity.endDate
+                startDate = schedule.startDate,
+                endDate = schedule.endDate
             )
         }
         if (showDialogStart) {

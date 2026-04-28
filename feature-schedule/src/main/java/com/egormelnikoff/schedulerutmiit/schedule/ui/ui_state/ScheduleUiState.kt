@@ -10,8 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.NamedScheduleState
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
 import java.time.LocalDate
 
 @Keep
@@ -41,7 +41,7 @@ data class ScheduleUiState(
                 )
 
                 var selectedDate by remember(
-                    namedScheduleState.namedSchedule?.namedScheduleEntity?.apiId
+                    namedScheduleState.namedScheduleWithSchedules?.namedSchedule?.apiId
                 ) {
                     mutableStateOf(
                         requireNotNull(scheduleState.scheduleUiDto).schedulePagerUiDto.defaultDate

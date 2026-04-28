@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.state
 
 import androidx.annotation.Keep
-import com.egormelnikoff.schedulerutmiit.core.common.dto.subjects.SubjectDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.subjects.SubjectDto
 
 @Keep
 data class CurriculumState(

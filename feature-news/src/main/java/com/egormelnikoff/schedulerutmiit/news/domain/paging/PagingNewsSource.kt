@@ -2,10 +2,10 @@ package com.egormelnikoff.schedulerutmiit.news.domain.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.egormelnikoff.schedulerutmiit.core.common.dto.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
 
 class PagingNewsSource(

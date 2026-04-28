@@ -4,16 +4,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
-import com.egormelnikoff.schedulerutmiit.core.common.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraDataEntity
 import java.time.LocalDateTime
 
 @Dao
 interface EventExtraDao {
     @Insert(onConflict = REPLACE)
-    suspend fun insert(eventExtraData: EventExtraData)
+    suspend fun insert(eventExtraData: EventExtraDataEntity)
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertAll(events: List<EventExtraData>)
+    suspend fun insertAll(events: List<EventExtraDataEntity>)
 
     @Query("DELETE FROM EventsExtraData WHERE eventExtraScheduleId = :scheduleId")
     suspend fun deleteByScheduleId(scheduleId: Long)
@@ -25,13 +25,13 @@ interface EventExtraDao {
     suspend fun deleteByEventIdAndDateTime(eventId: Long, dateTime: LocalDateTime)
 
     @Query("SELECT * FROM EventsExtraData WHERE eventExtraScheduleId = :scheduleId")
-    suspend fun getByScheduleId(scheduleId: Long): List<EventExtraData>
+    suspend fun getByScheduleId(scheduleId: Long): List<EventExtraDataEntity>
 
     @Query("SELECT * FROM EventsExtraData WHERE eventId = :eventId")
-    suspend fun getByEventId(eventId: Long): EventExtraData?
+    suspend fun getByEventId(eventId: Long): EventExtraDataEntity?
 
     @Query("SELECT * FROM EventsExtraData WHERE eventId = :eventId AND dateTime = :dateTime")
-    suspend fun getByEventIdAndDateTime(eventId: Long, dateTime: LocalDateTime): EventExtraData?
+    suspend fun getByEventIdAndDateTime(eventId: Long, dateTime: LocalDateTime): EventExtraDataEntity?
 
 
     @Query("UPDATE eventsextradata SET tag = :tag WHERE eventId = :eventId")

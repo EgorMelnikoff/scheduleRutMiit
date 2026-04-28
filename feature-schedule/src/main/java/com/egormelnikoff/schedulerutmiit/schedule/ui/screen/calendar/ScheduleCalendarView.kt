@@ -17,27 +17,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
-import com.egormelnikoff.egormelnikoff.core.ui.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEnrichedEvents
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
-import com.egormelnikoff.schedulerutmiit.schedule.extension.getEnrichedEvents
-import com.egormelnikoff.schedulerutmiit.schedule.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.event.Event
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.ui_dto.ScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ScheduleUiDto
 
 @Composable
 fun ScheduleCalendarView(
     scheduleViewModel: ScheduleViewModel,
     appUiState: AppUiState,
-    namedSchedule: NamedSchedule,
+    namedScheduleWithSchedules: NamedScheduleWithSchedules,
     scheduleUiDto: ScheduleUiDto,
     isSavedSchedule: Boolean,
     scheduleUiState: ScheduleUiState,
@@ -56,7 +56,7 @@ fun ScheduleCalendarView(
             scheduleViewModel = scheduleViewModel,
             appBackStack = appUiState.appBackStack,
 
-            namedSchedule = namedSchedule,
+            namedScheduleWithSchedules = namedScheduleWithSchedules,
             scheduleUiDto = scheduleUiDto,
             pagerDaysState = scheduleUiState.pagerDaysState,
 
@@ -73,7 +73,7 @@ fun PagedDays(
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
 
-    namedSchedule: NamedSchedule,
+    namedScheduleWithSchedules: NamedScheduleWithSchedules,
     scheduleUiDto: ScheduleUiDto,
     pagerDaysState: PagerState,
 
@@ -87,11 +87,11 @@ fun PagedDays(
         verticalAlignment = Alignment.Top,
         pageSpacing = 12.dp
     ) { index ->
-        val currentDate = scheduleUiDto.scheduleEntity.startDate.plusDays(index.toLong())
+        val currentDate = scheduleUiDto.schedule.startDate.plusDays(index.toLong())
 
-        val enrichedEvents by remember(namedSchedule, scheduleUiDto) {
+        val enrichedEvents by remember(namedScheduleWithSchedules, scheduleUiDto.schedule, scheduleUiDto.fullEventList) {
             mutableStateOf(
-                scheduleUiDto.scheduleEntity
+                scheduleUiDto.schedule
                     .getEventsForDate(
                         date = currentDate,
                         periodicEvents = scheduleUiDto.periodicEvents,
@@ -122,11 +122,11 @@ fun PagedDays(
                     } else null
                 ) { events ->
                     Event(
-                        navigateToEvent = { scheduleEntity, isSavedSchedule, event, eventExtraData ->
+                        navigateToEvent = { schedule, isSavedSchedule, event, eventExtraData ->
                             appBackStack.openDialog(
                                 Route.Dialog.EventDialog(
-                                    namedScheduleEntity = namedSchedule.namedScheduleEntity,
-                                    scheduleEntity = scheduleEntity,
+                                    namedSchedule = namedScheduleWithSchedules.namedSchedule,
+                                    schedule = schedule,
                                     isSavedSchedule = isSavedSchedule,
                                     event = event,
                                     dateTime = event.startDatetime.replaceDate(currentDate),
@@ -134,30 +134,30 @@ fun PagedDays(
                                 )
                             )
                         },
-                        navigateToEditEvent = { scheduleEntity, event ->
+                        navigateToEditEvent = { schedule, event ->
                             appBackStack.openDialog(
                                 Route.Dialog.AddEventDialog(
-                                    namedSchedule.namedScheduleEntity, scheduleEntity, event
+                                    namedScheduleWithSchedules.namedSchedule, schedule, event
                                 )
                             )
                         },
-                        onDeleteEvent = { scheduleEntity, eventId ->
+                        onDeleteEvent = { schedule, eventId ->
                             scheduleViewModel.eventAction(
-                                scheduleEntity,
+                                schedule,
                                 eventId,
                                 EventAction.Delete
                             )
                         },
-                        onUpdateHiddenEvent = { scheduleEntity, event ->
+                        onUpdateHiddenEvent = { schedule, event ->
                             scheduleViewModel.eventAction(
-                                scheduleEntity,
+                                schedule,
                                 event,
                                 EventAction.UpdateHidden(true)
                             )
                         },
 
                         eventsWithExtra = events.second,
-                        scheduleEntity = scheduleUiDto.scheduleEntity,
+                        schedule = scheduleUiDto.schedule,
                         isSavedSchedule = isSavedSchedule,
                         eventView = appSettings.eventView
                     )

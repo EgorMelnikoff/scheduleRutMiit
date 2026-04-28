@@ -1,8 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.repos
 
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.entity.toDomain
+import com.egormelnikoff.schedulerutmiit.core.database.entity.toEntity
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -12,7 +14,7 @@ class EventExtraReposImpl @Inject constructor(
 ) : EventExtraRepos {
     override suspend fun save(
         eventExtraData: EventExtraData
-    ) = eventExtraDao.insert(eventExtraData)
+    ) = eventExtraDao.insert(eventExtraData.toEntity())
 
 
     override suspend fun delete(eventId: Long, dateTime: LocalDateTime?) {
@@ -24,7 +26,7 @@ class EventExtraReposImpl @Inject constructor(
     }
 
     override suspend fun getByScheduleId(scheduleId: Long): List<EventExtraData> {
-        return eventExtraDao.getByScheduleId(scheduleId)
+        return eventExtraDao.getByScheduleId(scheduleId).map { it.toDomain() }
     }
 
     override suspend fun get(
@@ -32,9 +34,9 @@ class EventExtraReposImpl @Inject constructor(
         dateTime: LocalDateTime?
     ): EventExtraData? {
         if (dateTime != null) {
-            return eventExtraDao.getByEventIdAndDateTime(eventId, dateTime)
+            return eventExtraDao.getByEventIdAndDateTime(eventId, dateTime)?.toDomain()
         }
-        return eventExtraDao.getByEventId(eventId)
+        return eventExtraDao.getByEventId(eventId)?.toDomain()
     }
 
     override suspend fun updateComment(

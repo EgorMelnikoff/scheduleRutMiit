@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.repos
 
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.ScheduleDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.timetable.TimetableDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetableDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.schedule.data.parser.ScheduleParser
@@ -36,7 +36,7 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
         name: String,
         apiId: Int,
         timetable: TimetableDto,
-        currentGroup: GroupDto?
+        currentGroup: Group?
     ): Result<ScheduleDto> {
         networkHelper.callNetwork(
             requestType = "ScheduleParser",

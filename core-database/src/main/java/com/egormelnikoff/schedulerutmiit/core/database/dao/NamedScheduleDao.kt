@@ -5,8 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedScheduleWithSchedulesRelation
 
 @Dao
 interface NamedScheduleDao {
@@ -21,11 +21,11 @@ interface NamedScheduleDao {
 
     @Transaction
     @Query("SELECT * FROM NamedSchedules WHERE apiId = :apiId")
-    suspend fun getByApiId(apiId: Int): NamedSchedule?
+    suspend fun getByApiId(apiId: Int): NamedScheduleWithSchedulesRelation?
 
     @Transaction
     @Query("SELECT * FROM NamedSchedules WHERE NamedScheduleId = :namedScheduleId")
-    suspend fun getById(namedScheduleId: Long): NamedSchedule
+    suspend fun getById(namedScheduleId: Long): NamedScheduleWithSchedulesRelation
 
     @Query("SELECT COUNT(*) FROM NamedSchedules")
     suspend fun getCount(): Int

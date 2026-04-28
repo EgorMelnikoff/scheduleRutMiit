@@ -38,9 +38,10 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     implementation(libs.retrofit)
+    implementation(libs.jsoup)
+
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
-    implementation(libs.jsoup)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

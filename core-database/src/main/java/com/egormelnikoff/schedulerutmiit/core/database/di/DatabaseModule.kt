@@ -1,13 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.core.database.di
 
 import android.content.Context
-import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
-import com.egormelnikoff.schedulerutmiit.core.database.db.Converters
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.NamedScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.ScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.SearchQueryDao
+import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
+import com.egormelnikoff.schedulerutmiit.core.database.db.Converters
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

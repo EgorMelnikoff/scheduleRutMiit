@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataStore
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import kotlinx.coroutines.flow.first
@@ -12,20 +12,20 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 
 class UpdateEventExtraCore @Inject constructor(
-    private val preferencesDataStore: PreferencesDataStore,
+    private val preferencesDataSource: PreferencesDataSource,
     private val eventRepos: EventRepos,
     val eventExtraRepos: EventExtraRepos
 ) {
     suspend operator fun invoke(
         dateTime: LocalDateTime,
-        scheduleEntity: ScheduleEntity,
+        schedule: Schedule,
         event: Event,
         shouldDelete: (EventExtraData?) -> Boolean,
         onUpdate: suspend (Event, LocalDateTime?) -> Unit,
         onCreate: suspend (Event, LocalDateTime?) -> Unit
     ): List<EventExtraData> {
 
-        val policy = preferencesDataStore.eventExtraPolicyFlow.first()
+        val policy = preferencesDataSource.eventExtraPolicyFlow.first()
 
         val eventExtraData = eventExtraRepos.get(
             event.id,
@@ -36,7 +36,7 @@ class UpdateEventExtraCore @Inject constructor(
             eventExtraAction(policy, event, dateTime) { e, dt ->
                 eventExtraRepos.delete(e.id, dt)
             }
-            return eventExtraRepos.getByScheduleId(scheduleEntity.id)
+            return eventExtraRepos.getByScheduleId(schedule.id)
         }
 
         if (eventExtraData != null) {
@@ -45,7 +45,7 @@ class UpdateEventExtraCore @Inject constructor(
             eventExtraAction(policy, event, dateTime, onCreate)
         }
 
-        return eventExtraRepos.getByScheduleId(scheduleEntity.id)
+        return eventExtraRepos.getByScheduleId(schedule.id)
     }
 
     private suspend fun eventExtraAction(

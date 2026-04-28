@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.navigation
 
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import java.time.LocalDateTime
 
 sealed interface Route {
@@ -20,8 +20,8 @@ sealed interface Route {
         data object Empty : Dialog
 
         data class EventDialog(
-            val namedScheduleEntity: NamedScheduleEntity,
-            val scheduleEntity: ScheduleEntity,
+            val namedSchedule: NamedSchedule,
+            val schedule: Schedule,
             val isSavedSchedule: Boolean,
             val dateTime: LocalDateTime,
             val event: Event,
@@ -29,17 +29,17 @@ sealed interface Route {
         ) : Dialog
 
         data class AddEventDialog(
-            val namedScheduleEntity: NamedScheduleEntity,
-            val scheduleEntity: ScheduleEntity,
+            val namedSchedule: NamedSchedule,
+            val schedule: Schedule,
             val event: Event? = null
         ) : Dialog
 
         data class HiddenEventsDialog(
-            val namedScheduleEntity: NamedScheduleEntity
+            val namedSchedule: NamedSchedule
         ) : Dialog
 
         data class RenameNamedScheduleDialog(
-            val namedScheduleEntity: NamedScheduleEntity
+            val namedSchedule: NamedSchedule
         ) : Dialog
 
         data object NewsDialog : Dialog

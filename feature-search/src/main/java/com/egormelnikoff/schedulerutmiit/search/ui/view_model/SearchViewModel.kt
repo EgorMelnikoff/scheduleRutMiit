@@ -1,15 +1,15 @@
 package com.egormelnikoff.schedulerutmiit.search.ui.view_model
 
-import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.dto.person.PersonDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
-import com.egormelnikoff.schedulerutmiit.core.common.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.GroupDto
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchQueryRepos
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.search.domain.use_case.SearchResult
@@ -80,7 +80,7 @@ class SearchViewModel @Inject constructor(
 
         if (result.groups != null) {
             when (result.groups) {
-                is com.egormelnikoff.schedulerutmiit.core.common.result.Result.Error -> {
+                is Result.Error -> {
                     setErrorSearchState(result.groups.typedError)
                     return
                 }
@@ -93,7 +93,7 @@ class SearchViewModel @Inject constructor(
 
         if (result.people != null) {
             when (result.people) {
-                is com.egormelnikoff.schedulerutmiit.core.common.result.Result.Error -> {
+                is Result.Error -> {
                     setErrorSearchState(result.people.typedError)
                     return
                 }
@@ -160,7 +160,7 @@ class SearchViewModel @Inject constructor(
 
     private suspend fun loadInstitutes() {
         when (val institutes = searchRemoteDataSource.fetchInstitutes()) {
-            is com.egormelnikoff.schedulerutmiit.core.common.result.Result.Error -> {
+            is Result.Error -> {
                 setErrorSearchState(institutes.typedError)
             }
 

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.devtoolsKsp)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -39,8 +40,6 @@ dependencies {
     implementation(project(":core-common"))
 
     implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.work)
-    ksp(libs.hilt.android.compiler)
 
     implementation(libs.kotlinx.serialization.json)
 
@@ -49,10 +48,10 @@ dependencies {
 
     implementation(libs.androidx.room.ktx)
 
+    implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.work.runtime.ktx)
 
-    implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.glance.material3)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)

@@ -11,23 +11,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.egormelnikoff.core.ui.preferences.EventView
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 
 @Composable
 fun Event(
     eventsWithExtra: List<Pair<Event, EventExtraData?>>,
-    scheduleEntity: ScheduleEntity,
+    schedule: Schedule,
     isSavedSchedule: Boolean,
     eventView: EventView,
-    navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
-    navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
-    onDeleteEvent: (ScheduleEntity, Event) -> Unit,
-    onUpdateHiddenEvent: (ScheduleEntity, Event) -> Unit
+    navigateToEvent: (Schedule, Boolean, Event, EventExtraData?) -> Unit,
+    navigateToEditEvent: (Schedule, Event) -> Unit,
+    onDeleteEvent: (Schedule, Event) -> Unit,
+    onUpdateHiddenEvent: (Schedule, Event) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -66,7 +66,7 @@ fun Event(
                         onDeleteEvent = onDeleteEvent,
                         onUpdateHiddenEvent = onUpdateHiddenEvent,
                         event = event.first,
-                        scheduleEntity = scheduleEntity,
+                        schedule = schedule,
                         eventExtraData = event.second,
                         isSavedSchedule = isSavedSchedule,
                         eventView = eventView

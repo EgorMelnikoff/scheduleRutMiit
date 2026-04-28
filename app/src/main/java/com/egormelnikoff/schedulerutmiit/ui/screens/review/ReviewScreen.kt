@@ -43,24 +43,24 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.enums.DayPeriod
+import com.egormelnikoff.schedulerutmiit.core.common.extension.dayPeriod
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RowGroup
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.enums.DayPeriod
-import com.egormelnikoff.schedulerutmiit.core.common.extension.dayPeriod
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ReviewUiState
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.CurrentState
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.CurrentState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
 import java.time.LocalDateTime
 
 @Composable
@@ -105,8 +105,8 @@ fun ReviewScreen(
         }
     }
 
-    var showNamedScheduleEntityDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
-    var showDeleteNamedScheduleEntityDialog by remember { mutableStateOf<NamedScheduleEntity?>(null) }
+    var showNamedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
+    var showDeleteNamedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
 
     Scaffold { paddingValues ->
         Box(
@@ -141,11 +141,11 @@ fun ReviewScreen(
                 ) {
                     Text(
                         text = when (dayPeriod) {
-                            DayPeriod.MORNING -> "Доброе утро!"
-                            DayPeriod.DAY -> "Добрый день!"
-                            DayPeriod.EVENING -> "Добрый вечер!"
-                            DayPeriod.NIGHT -> "Доброй ночи!"
-                        },
+                            DayPeriod.MORNING -> stringResource(R.string.good_morning)
+                            DayPeriod.DAY -> stringResource(R.string.good_afternoon)
+                            DayPeriod.EVENING -> stringResource(R.string.good_evening)
+                            DayPeriod.NIGHT -> stringResource(R.string.good_night)
+                        } + "!",
                         style = MaterialTheme.typography.titleLarge,
                         fontSize = 20.sp,
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -165,7 +165,7 @@ fun ReviewScreen(
                             append(" ")
 
                             if (reviewData.events.isEmpty()) {
-                                append("пар нет")
+                                append(stringResource(R.string.no_events).replaceFirstChar { it.lowercase() })
                             } else {
                                 append(
                                     "${reviewData.events.size} " + pluralStringResource(
@@ -254,23 +254,23 @@ fun ReviewScreen(
                         )
                     )
                     Spacer(modifier = Modifier.height(2.dp))
-                    if (currentState.namedScheduleEntities.isNotEmpty()) {
+                    if (currentState.namedSchedules.isNotEmpty()) {
                         ExpandedItem(
                             title = stringResource(R.string.saved_schedules),
                             visible = reviewUiState.visibleSavedSchedules,
                             onChangeVisibility = reviewUiState.onChangeVisibilitySavedSchedules
                         ) {
                             ColumnGroup(
-                                items = currentState.namedScheduleEntities.map { namedScheduleEntity ->
+                                items = currentState.namedSchedules.map { namedSchedule ->
                                     {
                                         ClickableItem(
-                                            title = namedScheduleEntity.shortName,
+                                            title = namedSchedule.shortName,
                                             titleMaxLines = 1,
                                             defaultMinHeight = 32.dp,
                                             onClick = {
-                                                showNamedScheduleEntityDialog = namedScheduleEntity
+                                                showNamedScheduleDialog = namedSchedule
                                             },
-                                            trailingIcon = if (namedScheduleEntity.isDefault) {
+                                            trailingIcon = if (namedSchedule.isDefault) {
                                                 {
                                                     Icon(
                                                         modifier = Modifier.size(20.dp),
@@ -306,9 +306,9 @@ fun ReviewScreen(
         }
 
 
-        showNamedScheduleEntityDialog?.let {
+        showNamedScheduleDialog?.let {
             ModalDialogNamedSchedule(
-                namedScheduleEntity = it,
+                namedSchedule = it,
                 scheduleViewModel = scheduleViewModel,
                 appBackStack = appBackStack,
                 today = currentDateTime.toLocalDate(),
@@ -322,17 +322,17 @@ fun ReviewScreen(
                     appBackStack.navigateToStartRage()
                 }
             ) {
-                showNamedScheduleEntityDialog = null
+                showNamedScheduleDialog = null
             }
         }
 
-        showDeleteNamedScheduleEntityDialog?.let {
+        showDeleteNamedScheduleDialog?.let {
             CustomAlertDialog(
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                 dialogTitle = "${stringResource(R.string.delete_schedule)}?",
                 dialogText = stringResource(R.string.impossible_restore_eventextra),
                 onDismissRequest = {
-                    showDeleteNamedScheduleEntityDialog = null
+                    showDeleteNamedScheduleDialog = null
                 },
                 onConfirmation = {
                     scheduleViewModel.deleteNamedSchedule(

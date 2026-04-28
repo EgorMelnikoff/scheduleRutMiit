@@ -11,12 +11,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.LecturerDto
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Lecturer
 
 @Composable
 fun LecturerInput(
-    lecturer: LecturerDto,
-    onValueChanged: (LecturerDto) -> Unit,
+    lecturer: Lecturer,
+    onValueChanged: (Lecturer) -> Unit,
     onRemove: () -> Unit
 ) {
     Row(

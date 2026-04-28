@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.schedule.data.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.schedule.widget.WidgetDataUpdater
 import javax.inject.Inject
 
 
@@ -11,27 +11,28 @@ class SetDefaultScheduleUseCase @Inject constructor(
     private val widgetDataUpdater: WidgetDataUpdater,
 ) {
     suspend operator fun invoke(
-        currentNamedSchedule: NamedSchedule,
+        currentNamedScheduleWithSchedules: NamedScheduleWithSchedules,
         scheduleId: Long,
         timetableId: String,
         isSaved: Boolean
-    ): NamedSchedule {
+    ): NamedScheduleWithSchedules {
         if (isSaved) {
-            scheduleRepos.setDefaultSchedule(
-                namedScheduleId = currentNamedSchedule.namedScheduleEntity.id,
+            scheduleRepos.setDefault(
+                namedScheduleId = currentNamedScheduleWithSchedules.namedSchedule.id,
                 scheduleId = scheduleId
             )
             widgetDataUpdater.updateAll()
         }
 
-        val updatedSchedules = currentNamedSchedule.schedules.map { schedule ->
-            schedule.copy(
-                scheduleEntity = schedule.scheduleEntity.copy(
-                    isDefault = schedule.scheduleEntity.timetableId == timetableId
+        val updatedSchedules =
+            currentNamedScheduleWithSchedules.scheduleWithEvents.map { schedule ->
+                schedule.copy(
+                    schedule = schedule.schedule.copy(
+                        isDefault = schedule.schedule.timetableId == timetableId
+                    )
                 )
-            )
-        }
+            }
 
-        return currentNamedSchedule.copy(schedules = updatedSchedules)
+        return currentNamedScheduleWithSchedules.copy(scheduleWithEvents = updatedSchedules)
     }
 }

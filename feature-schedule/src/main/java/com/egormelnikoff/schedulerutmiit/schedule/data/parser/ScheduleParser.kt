@@ -1,19 +1,20 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.parser
 
 import android.os.Build
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.LecturerDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.RecurrenceDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.RecurrenceEventDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.RoomDto
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcTime
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.EventDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.NonPeriodicContentDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.PeriodicContentDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.ScheduleDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.timetable.TimetableDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.EventDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.LecturerDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.NonPeriodicContentDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.PeriodicContentDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.RecurrenceDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.RecurrenceEventDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.RoomDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetableDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Document
@@ -40,7 +41,7 @@ object ScheduleParser {
     suspend operator fun invoke(
         document: Document,
         timetable: TimetableDto,
-        currentGroup: GroupDto?
+        currentGroup: Group?
     ): ScheduleDto = withContext(Dispatchers.Default) {
         return@withContext if (timetable.type == TimetableType.PERIODIC) {
             val periodicContent = document.parsePeriodicSchedule(
@@ -89,7 +90,7 @@ object ScheduleParser {
 
     private suspend fun Document.parsePeriodicSchedule(
         startDate: LocalDate,
-        currentGroup: GroupDto?,
+        currentGroup: Group?,
         formatter: DateTimeFormatter,
     ): PeriodicContentDto = withContext(Dispatchers.Default) {
         val weekNumbers = this@parsePeriodicSchedule
@@ -130,7 +131,7 @@ object ScheduleParser {
 
     private suspend fun Document.parseNonPeriodicSchedule(
         isPeriodic: Boolean = false,
-        currentGroup: GroupDto?,
+        currentGroup: Group?,
         formatter: DateTimeFormatter,
     ): NonPeriodicContentDto = withContext(Dispatchers.Default) {
         val eventsByDates = this@parseNonPeriodicSchedule
@@ -190,7 +191,7 @@ object ScheduleParser {
         date: LocalDate,
         periodNumber: Int? = null,
         recurrenceRule: RecurrenceEventDto? = null,
-        currentGroup: GroupDto?
+        currentGroup: Group?
     ): List<EventDto> = withContext(Dispatchers.Default) {
         return@withContext this@parseEvents
             .select(".timetable__list-timeslot")
@@ -294,7 +295,7 @@ object ScheduleParser {
         }
 
     private suspend fun Element.parseGroups(
-        currentGroup: GroupDto?
+        currentGroup: Group?
     ): MutableList<GroupDto> = withContext(Dispatchers.Default) {
         return@withContext this@parseGroups
             .select(".icon-community")

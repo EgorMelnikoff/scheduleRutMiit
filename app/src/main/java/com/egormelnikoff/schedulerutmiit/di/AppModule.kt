@@ -2,16 +2,16 @@ package com.egormelnikoff.schedulerutmiit.di
 
 import android.content.Context
 import androidx.work.WorkManager
+import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.parser.SubjectsListParser
 import com.egormelnikoff.schedulerutmiit.latest_release.data.repos.AppInfoProviderImpl
 import com.egormelnikoff.schedulerutmiit.news.data.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.schedule.data.parser.ScheduleParser
+import com.egormelnikoff.schedulerutmiit.schedule.data.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
-import com.egormelnikoff.schedulerutmiit.schedule.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.search.data.parser.SearchParser
 import dagger.Module
 import dagger.Provides
@@ -34,8 +34,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePreferencesDataStore(@ApplicationContext context: Context, json: Json): PreferencesDataStore =
-        PreferencesDataStore(context, json)
+    fun providePreferencesRepos(@ApplicationContext context: Context, json: Json): PreferencesDataSourceImpl =
+        PreferencesDataSourceImpl(context, json)
 
     @Provides
     @Singleton
@@ -53,11 +53,11 @@ object AppModule {
     fun provideWidgetUpdater(
         @ApplicationContext context: Context,
         namedScheduleRepos: NamedScheduleRepos,
-        preferencesDataStore: PreferencesDataStore,
+        preferencesRepos: PreferencesDataSourceImpl,
         json: Json
     ): WidgetDataUpdater = WidgetDataUpdater(
         context = context,
-        preferencesDataStore = preferencesDataStore,
+        preferencesDataSource = preferencesRepos,
         namedScheduleRepos = namedScheduleRepos,
         json = json
     )

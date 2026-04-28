@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -11,13 +11,13 @@ class UpdateEventTagUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         dateTime: LocalDateTime,
-        scheduleEntity: ScheduleEntity,
+        schedule: Schedule,
         event: Event,
         tag: Int
     ): List<EventExtraData> {
         return core(
             dateTime = dateTime,
-            scheduleEntity = scheduleEntity,
+            schedule = schedule,
             event = event,
 
             shouldDelete = { data ->

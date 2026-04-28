@@ -39,16 +39,16 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
+import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.BASE_RUT_MIIT_URL
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.NewsLoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.dto.news.NewsShortDto
-import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.BASE_RUT_MIIT_URL
 import kotlinx.coroutines.flow.Flow
 
 @Composable

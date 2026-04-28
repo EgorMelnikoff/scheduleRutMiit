@@ -30,20 +30,20 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 
 @Composable
 fun RenameDialog(
-    namedScheduleEntity: NamedScheduleEntity,
+    namedSchedule: NamedSchedule,
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
 ) {
-    var newName by remember { mutableStateOf(namedScheduleEntity.fullName) }
+    var newName by remember { mutableStateOf(namedSchedule.fullName) }
     val renameEnabled by remember {
         derivedStateOf {
             newName.isNotBlank()
@@ -109,8 +109,8 @@ fun RenameDialog(
                 enabled = renameEnabled,
                 onClick = {
                     scheduleViewModel.renameNamedSchedule(
-                        namedScheduleId = namedScheduleEntity.id,
-                        currentName = namedScheduleEntity.fullName,
+                        namedScheduleId = namedSchedule.id,
+                        currentName = namedSchedule.fullName,
                         newName = newName.trim()
                     )
                     appBackStack.onBack()

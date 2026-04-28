@@ -1,4 +1,4 @@
-package com.egormelnikoff.egormelnikoff.core.ui.preferences
+package com.egormelnikoff.schedulerutmiit.core.ui.preferences
 
 import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
 

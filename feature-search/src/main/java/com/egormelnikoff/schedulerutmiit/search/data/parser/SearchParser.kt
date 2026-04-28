@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.search.data.parser
 
-import com.egormelnikoff.schedulerutmiit.core.common.dto.person.PersonDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Element

@@ -17,29 +17,29 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.ui_dto.ScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ScheduleUiDto
 
 @Composable
 fun ScheduleTopAppBar(
-    navigateToHiddenEvents: (NamedScheduleEntity) -> Unit,
+    navigateToHiddenEvents: (NamedSchedule) -> Unit,
     onSetScheduleView: (ScheduleView) -> Unit,
-    onShowNamedScheduleDialog: (NamedScheduleEntity) -> Unit,
+    onShowNamedScheduleDialog: (NamedSchedule) -> Unit,
 
-    namedSchedule: NamedSchedule,
+    namedScheduleWithSchedules: NamedScheduleWithSchedules,
     scheduleUiDto: ScheduleUiDto?,
     scheduleView: ScheduleView
 ) {
-    val isCustomSchedule = namedSchedule.namedScheduleEntity.type == NamedScheduleType.MY
+    val isCustomSchedule = namedScheduleWithSchedules.namedSchedule.type == NamedScheduleType.MY
 
     CustomTopAppBar(
-        titleText = namedSchedule.namedScheduleEntity.shortName,
-        subtitleText = if (scheduleUiDto?.scheduleEntity != null && !isCustomSchedule) {
-            scheduleUiDto.scheduleEntity.timetableType.typeName
+        titleText = namedScheduleWithSchedules.namedSchedule.shortName,
+        subtitleText = if (scheduleUiDto?.schedule != null && !isCustomSchedule) {
+            scheduleUiDto.schedule.timetableType.typeName
         } else null,
         actions = {
             AnimatedVisibility(
@@ -49,7 +49,7 @@ fun ScheduleTopAppBar(
             ) {
                 IconButton(
                     onClick = {
-                        navigateToHiddenEvents(namedSchedule.namedScheduleEntity)
+                        navigateToHiddenEvents(namedScheduleWithSchedules.namedSchedule)
                     }
                 ) {
                     Icon(
@@ -93,7 +93,7 @@ fun ScheduleTopAppBar(
             IconButton(
                 onClick = {
                     onShowNamedScheduleDialog(
-                        namedSchedule.namedScheduleEntity
+                        namedScheduleWithSchedules.namedSchedule
                     )
                 }
             ) {

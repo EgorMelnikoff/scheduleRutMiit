@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule.data.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
-import com.egormelnikoff.schedulerutmiit.schedule.widget.WidgetDataUpdater
 import javax.inject.Inject
 
 sealed class EventAction {
@@ -26,10 +26,10 @@ class EventActionUseCase @Inject constructor(
     private val widgetDataUpdater: WidgetDataUpdater
 ) {
     suspend operator fun invoke(
-        scheduleEntity: ScheduleEntity,
+        schedule: Schedule,
         event: Event,
         eventAction: EventAction,
-    ): NamedSchedule {
+    ): NamedScheduleWithSchedules {
         when (eventAction) {
             is EventAction.Add -> eventRepos.save(event)
             is EventAction.Delete -> eventRepos.deleteById(event.id)
@@ -38,8 +38,8 @@ class EventActionUseCase @Inject constructor(
             is EventAction.UpdateHidden -> eventRepos.updateIsHidden(event.id, eventAction.isHidden)
         }
 
-        namedScheduleRepos.getById(scheduleEntity.namedScheduleId).let {
-            if (it.namedScheduleEntity.isDefault) {
+        namedScheduleRepos.getById(schedule.namedScheduleId).let {
+            if (it.namedSchedule.isDefault) {
                 widgetDataUpdater.updateAll()
             }
             return it

@@ -11,16 +11,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ActionDialogButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.EventHeader
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModalDialogEvent(
-    scheduleEntity: ScheduleEntity,
+    schedule: Schedule,
     event: Event,
     onHideEvent: (() -> Unit)? = null,
     onDeleteEvent: (() -> Unit)? = null,
@@ -33,7 +33,7 @@ fun ModalDialogEvent(
         }
     ) {
         EventHeader(
-            scheduleEntity, event, 16.dp
+            schedule, event, 16.dp
         )
         Spacer(modifier = Modifier.height(0.dp))
         onHideEvent?.let {

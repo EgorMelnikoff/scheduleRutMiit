@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.search.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.common.dto.institutes.InstituteDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.institutes.InstitutesDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.person.PersonDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstituteDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstitutesDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.GroupDto
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchParams
 import javax.inject.Inject

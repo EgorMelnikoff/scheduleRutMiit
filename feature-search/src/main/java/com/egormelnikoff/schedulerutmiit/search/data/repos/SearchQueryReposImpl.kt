@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.search.data.repos
 import androidx.room.withTransaction
 import com.egormelnikoff.schedulerutmiit.core.database.dao.SearchQueryDao
 import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
-import com.egormelnikoff.schedulerutmiit.core.common.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchQueryRepos
 import javax.inject.Inject
 

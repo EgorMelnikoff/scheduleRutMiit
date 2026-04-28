@@ -1,11 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.repos
 
 import androidx.room.withTransaction
+import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.ScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.Schedule
+import com.egormelnikoff.schedulerutmiit.core.database.entity.toEntity
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRepos
 import javax.inject.Inject
@@ -17,19 +18,21 @@ class ScheduleReposImpl @Inject constructor(
     private val eventExtraDao: EventExtraDao,
     private val eventRepos: EventRepos
 ) : ScheduleRepos {
-    override suspend fun saveAllSchedules(
+    override suspend fun saveAll(
         namedScheduleId: Long,
-        schedules: List<Schedule>
+        scheduleWithEvents: List<ScheduleWithEvents>
     ) = db.withTransaction {
-        val schedulesToInsert = schedules.map {
-            it.scheduleEntity.copy(namedScheduleId = namedScheduleId)
+        val schedulesToInsert = scheduleWithEvents.map {
+            it.schedule.toEntity(
+                newNamedScheduleId = namedScheduleId
+            )
         }
 
         val scheduleIds = scheduleDao.insertAll(schedulesToInsert)
 
-        val eventsToInsert = schedules.zip(scheduleIds) { formatted, id ->
+        val eventsToInsert = scheduleWithEvents.zip(scheduleIds) { formatted, id ->
             formatted.events.map { event ->
-                event.copy(scheduleId = id)
+                event.toEntity(newScheduleId = id)
             }
         }.flatten()
 
@@ -38,16 +41,16 @@ class ScheduleReposImpl @Inject constructor(
 
     override suspend fun save(
         namedScheduleId: Long,
-        schedule: Schedule
+        scheduleWithEvents: ScheduleWithEvents
     ) = db.withTransaction {
         val scheduleId = scheduleDao.insert(
-            schedule.scheduleEntity.copy(
-                namedScheduleId = namedScheduleId
+            scheduleWithEvents.schedule.toEntity(
+                newNamedScheduleId = namedScheduleId
             )
         )
         eventRepos.saveWithExtra(
-            events = schedule.events,
-            eventsExtraData = schedule.eventsExtraData,
+            events = scheduleWithEvents.events,
+            eventsExtraData = scheduleWithEvents.eventsExtraData,
             scheduleId = scheduleId
         )
 
@@ -64,18 +67,18 @@ class ScheduleReposImpl @Inject constructor(
 
     override suspend fun updateEvents(
         scheduleId: Long,
-        schedule: Schedule
+        scheduleWithEvents: ScheduleWithEvents
     ) = db.withTransaction {
         eventDao.deleteByScheduleId(scheduleId)
         eventExtraDao.deleteByScheduleId(scheduleId)
         eventRepos.saveWithExtra(
-            schedule.events,
-            schedule.eventsExtraData,
+            scheduleWithEvents.events,
+            scheduleWithEvents.eventsExtraData,
             scheduleId
         )
     }
 
-    override suspend fun setDefaultSchedule(
+    override suspend fun setDefault(
         namedScheduleId: Long,
         scheduleId: Long
     ) = db.withTransaction {

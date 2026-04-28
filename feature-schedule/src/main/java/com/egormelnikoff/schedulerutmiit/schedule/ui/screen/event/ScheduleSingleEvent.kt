@@ -29,21 +29,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
-import com.egormelnikoff.egormelnikoff.core.ui.preferences.EventView
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
 
 @Composable
 fun ScheduleSingleEvent(
-    navigateToEvent: (ScheduleEntity, Boolean, Event, EventExtraData?) -> Unit,
-    navigateToEditEvent: (ScheduleEntity, Event) -> Unit,
-    onDeleteEvent: (ScheduleEntity, Event) -> Unit,
-    onUpdateHiddenEvent: (ScheduleEntity, Event) -> Unit,
-    scheduleEntity: ScheduleEntity,
+    navigateToEvent: (Schedule, Boolean, Event, EventExtraData?) -> Unit,
+    navigateToEditEvent: (Schedule, Event) -> Unit,
+    onDeleteEvent: (Schedule, Event) -> Unit,
+    onUpdateHiddenEvent: (Schedule, Event) -> Unit,
+    schedule: Schedule,
     isSavedSchedule: Boolean,
     eventView: EventView,
     event: Event,
@@ -59,7 +59,7 @@ fun ScheduleSingleEvent(
             .combinedClickable(
                 onClick = {
                     navigateToEvent(
-                        scheduleEntity,
+                        schedule,
                         isSavedSchedule,
                         event,
                         eventExtraData
@@ -222,7 +222,7 @@ fun ScheduleSingleEvent(
                 onClick = {
                     showExpandedMenu = false
                     navigateToEvent(
-                        scheduleEntity,
+                        schedule,
                         isSavedSchedule,
                         event,
                         eventExtraData
@@ -270,7 +270,7 @@ fun ScheduleSingleEvent(
                         )
                     },
                     onClick = {
-                        navigateToEditEvent(scheduleEntity, event)
+                        navigateToEditEvent(schedule, event)
                         showExpandedMenu = false
                     }
                 )
@@ -303,7 +303,7 @@ fun ScheduleSingleEvent(
             CustomAlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 onConfirmation = {
-                    onDeleteEvent(scheduleEntity, event)
+                    onDeleteEvent(schedule, event)
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                 dialogTitle = "${stringResource(R.string.delete_event)}?",
@@ -314,7 +314,7 @@ fun ScheduleSingleEvent(
             CustomAlertDialog(
                 onDismissRequest = { showHideDialog = false },
                 onConfirmation = {
-                    onUpdateHiddenEvent(scheduleEntity, event)
+                    onUpdateHiddenEvent(schedule, event)
                     showHideDialog = false
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),

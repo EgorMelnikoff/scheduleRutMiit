@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.repos
 
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.ScheduleDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.timetable.TimetableDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.timetable.TimetablesDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetableDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetablesDto
 
 interface ScheduleRemoteDataSource {
     suspend fun fetchTimetables(
@@ -18,7 +18,7 @@ interface ScheduleRemoteDataSource {
         name: String,
         apiId: Int,
         timetable: TimetableDto,
-        currentGroup: GroupDto? = null
+        currentGroup: Group? = null
     ): Result<ScheduleDto>
 
     suspend fun fetchCurrentWeek(

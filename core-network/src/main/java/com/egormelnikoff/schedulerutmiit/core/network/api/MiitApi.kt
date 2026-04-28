@@ -1,10 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.core.network.api
 
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
-import com.egormelnikoff.schedulerutmiit.core.common.dto.institutes.InstitutesDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.news.NewsDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.news.NewsListDto
-import com.egormelnikoff.schedulerutmiit.core.common.dto.timetable.TimetablesDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -12,13 +8,13 @@ import retrofit2.http.Query
 
 interface MiitApi {
     @GET(Endpoints.GROUPS)
-    suspend fun getInstitutes(): Response<InstitutesDto>
+    suspend fun getInstitutes(): Response<com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstitutesDto>
 
     @GET(Endpoints.TIMETABLE)
     suspend fun getTimetables(
         @Path("type") typeName: String,
         @Path("apiId") apiId: Int
-    ): Response<TimetablesDto>
+    ): Response<com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetablesDto>
 
 //    @GET(Endpoints.SCHEDULE)
 //    suspend fun getSchedule(
@@ -33,10 +29,10 @@ interface MiitApi {
         @Query("from") fromPage: Int,
         @Query("to") toPage: Int,
         @Query("idk_information_category") idCategory: Int = 2
-    ): Response<NewsListDto>
+    ): Response<com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsListDto>
 
     @GET(Endpoints.NEWS)
     suspend fun getNewsById(
         @Path("newsId") newsId: Long
-    ): Response<NewsDto>
+    ): Response<com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsDto>
 }

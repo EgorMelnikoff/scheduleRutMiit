@@ -18,8 +18,8 @@ class RenameNamedScheduleUseCase @Inject constructor(
         )
 
         return ScheduleUseCaseResult(
-            savedNamedScheduleEntities = namedScheduleRepos.getAllEntities(),
-            namedSchedule = if (namedScheduleId == currentNamedScheduleId) {
+            savedNamedSchedules = namedScheduleRepos.getAll(),
+            namedScheduleWithSchedules = if (namedScheduleId == currentNamedScheduleId) {
                 namedScheduleRepos.getById(namedScheduleId)
             } else null
         )

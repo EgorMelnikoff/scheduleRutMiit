@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.common.dto.subjects.SubjectDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.subjects.SubjectDto
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.parser.SubjectsListParser
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.repos.CurriculumRemoteDataSource
 import kotlinx.coroutines.async

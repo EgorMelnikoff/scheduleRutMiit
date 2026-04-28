@@ -32,24 +32,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.Schedule
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import androidx.compose.ui.platform.LocalLocale
 
 data class ActionItem(
     val title: String,
@@ -62,9 +63,9 @@ data class ActionItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModalDialogNamedSchedule(
-    namedScheduleEntity: NamedScheduleEntity,
-    currentScheduleEntity: ScheduleEntity? = null,
-    schedules: List<Schedule>? = null,
+    namedSchedule: NamedSchedule,
+    currentSchedule: Schedule? = null,
+    scheduleWithEvents: List<ScheduleWithEvents>? = null,
     today: LocalDate,
 
     scheduleViewModel: ScheduleViewModel,
@@ -74,11 +75,11 @@ fun ModalDialogNamedSchedule(
     haveNotEmptySchedules: Boolean = false,
 
     onOpenNamedSchedule: (() -> Unit)? = null,
-    onDismiss: (NamedScheduleEntity?) -> Unit
+    onDismiss: (NamedSchedule?) -> Unit
 ) {
     val limitActions = remember { 1 }
     val uriHandler = LocalUriHandler.current
-    var showDeleteDialog by remember { mutableStateOf<Schedule?>(null) }
+    var showDeleteDialog by remember { mutableStateOf<ScheduleWithEvents?>(null) }
 
     CustomModalBottomSheet(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -89,7 +90,7 @@ fun ModalDialogNamedSchedule(
         ModalDialogNamedScheduleHeader(
             appBackStack = appBackStack,
             scheduleViewModel = scheduleViewModel,
-            namedScheduleEntity = namedScheduleEntity,
+            namedSchedule = namedSchedule,
             isSavedNamedSchedule = isSavedNamedSchedule,
             isDefaultNamedSchedule = isDefaultNamedSchedule,
             onDismiss = onDismiss
@@ -114,7 +115,7 @@ fun ModalDialogNamedSchedule(
                             showClickLabel = false
                         ) {
                             scheduleViewModel.setNamedSchedule(
-                                namedScheduleId = namedScheduleEntity.id,
+                                namedScheduleId = namedSchedule.id,
                                 setDefault = true
                             )
                             onDismiss(null)
@@ -144,20 +145,20 @@ fun ModalDialogNamedSchedule(
             }
         )
 
-        schedules?.let {
+        scheduleWithEvents?.let {
             ColumnGroup(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                items = schedules.map { schedule ->
+                items = scheduleWithEvents.map { schedule ->
                     {
                         var showScheduleDialog by remember { mutableStateOf(false) }
                         val angle by animateFloatAsState(
                             targetValue = if (showScheduleDialog) 0f else 180f
                         )
                         val isDefaultSchedule =
-                            (schedule.scheduleEntity.id == currentScheduleEntity?.id && isSavedNamedSchedule)
-                                    || schedule.scheduleEntity.isDefault
+                            (schedule.schedule.id == currentSchedule?.id && isSavedNamedSchedule)
+                                    || schedule.schedule.isDefault
                         val actions = buildList {
-                            if (schedule.scheduleEntity.downloadUrl != null) {
+                            if (schedule.schedule.downloadUrl != null) {
                                 add(
                                     ActionItem(
                                         title = "${stringResource(R.string.download)} ${
@@ -168,7 +169,7 @@ fun ModalDialogNamedSchedule(
                                         imageVector = ImageVector.vectorResource(R.drawable.download),
                                         secondImage = ImageVector.vectorResource(R.drawable.pdf),
                                         onClick = {
-                                            schedule.scheduleEntity.downloadUrl.let {
+                                            schedule.schedule.downloadUrl.let {
                                                 uriHandler.openUri(requireNotNull(it))
                                             }
                                         }
@@ -184,8 +185,8 @@ fun ModalDialogNamedSchedule(
                                         onClick = {
                                             appBackStack.openDialog(
                                                 Route.Dialog.AddEventDialog(
-                                                    namedScheduleEntity,
-                                                    schedule.scheduleEntity
+                                                    namedSchedule,
+                                                    schedule.schedule
                                                 )
                                             )
                                             onDismiss(null)
@@ -193,7 +194,7 @@ fun ModalDialogNamedSchedule(
                                     )
                                 )
                             }
-                            if (today > schedule.scheduleEntity.endDate && namedScheduleEntity.type != NamedScheduleType.MY && isSavedNamedSchedule) {
+                            if (today > schedule.schedule.endDate && namedSchedule.type != NamedScheduleType.MY && isSavedNamedSchedule) {
                                 add(
                                     ActionItem(
                                         title = stringResource(R.string.delete),
@@ -202,8 +203,8 @@ fun ModalDialogNamedSchedule(
                                         onClick = {
                                             showDeleteDialog = null
                                             scheduleViewModel.deleteSchedule(
-                                                namedScheduleEntity.id,
-                                                schedule.scheduleEntity.id
+                                                namedSchedule.id,
+                                                schedule.schedule.id
                                             )
                                         }
                                     )
@@ -213,7 +214,7 @@ fun ModalDialogNamedSchedule(
                         Column {
                             ClickableItem(
                                 defaultMinHeight = 40.dp,
-                                title = schedule.scheduleEntity.timetableType.typeName,
+                                title = schedule.schedule.timetableType.typeName,
                                 titleLabel = if (isDefaultSchedule) {
                                     {
                                         Icon(
@@ -225,12 +226,12 @@ fun ModalDialogNamedSchedule(
                                     }
                                 } else null,
                                 subtitle = "${
-                                    schedule.scheduleEntity.startDate.format(
+                                    schedule.schedule.startDate.format(
                                         dayMonthYearFormatter
                                     )
                                 } - " +
                                         "${
-                                            schedule.scheduleEntity.endDate.format(
+                                            schedule.schedule.endDate.format(
                                                 dayMonthYearFormatter
                                             )
                                         }",
@@ -255,8 +256,8 @@ fun ModalDialogNamedSchedule(
                                                     ),
                                                 onClick = {
                                                     scheduleViewModel.setDefaultSchedule(
-                                                        schedule.scheduleEntity.id,
-                                                        schedule.scheduleEntity.timetableId
+                                                        schedule.schedule.id,
+                                                        schedule.schedule.timetableId
                                                     )
                                                 }
                                             ) {
@@ -322,8 +323,8 @@ fun ModalDialogNamedSchedule(
                 },
                 onConfirmation = {
                     scheduleViewModel.deleteSchedule(
-                        namedScheduleEntity.id,
-                        it.scheduleEntity.id
+                        namedSchedule.id,
+                        it.schedule.id
                     )
                 }
             )
@@ -335,10 +336,10 @@ fun ModalDialogNamedSchedule(
 fun ModalDialogNamedScheduleHeader(
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
-    namedScheduleEntity: NamedScheduleEntity,
+    namedSchedule: NamedSchedule,
     isSavedNamedSchedule: Boolean,
     isDefaultNamedSchedule: Boolean,
-    onDismiss: (NamedScheduleEntity?) -> Unit
+    onDismiss: (NamedSchedule?) -> Unit
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -352,18 +353,18 @@ fun ModalDialogNamedScheduleHeader(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = namedScheduleEntity.shortName,
+                text = namedSchedule.shortName,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
 
-            if (namedScheduleEntity.type != NamedScheduleType.MY && isSavedNamedSchedule) {
+            if (namedSchedule.type != NamedScheduleType.MY && isSavedNamedSchedule) {
                 val lastTimeUpdate = LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(namedScheduleEntity.lastTimeUpdate),
+                    Instant.ofEpochMilli(namedSchedule.lastTimeUpdate),
                     ZoneId.systemDefault()
-                ).format(dayMonthNameFormatter)
+                ).format(dayMonthNameFormatter.withLocale(LocalLocale.current.platformLocale))
 
                 Text(
                     text = "${stringResource(R.string.current_on)} $lastTimeUpdate",
@@ -380,7 +381,7 @@ fun ModalDialogNamedScheduleHeader(
                 onClick = {
                     appBackStack.openDialog(
                         Route.Dialog.RenameNamedScheduleDialog(
-                            namedScheduleEntity
+                            namedSchedule
                         )
                     )
                     onDismiss(null)
@@ -417,7 +418,7 @@ fun ModalDialogNamedScheduleHeader(
             },
             onConfirmation = {
                 scheduleViewModel.deleteNamedSchedule(
-                    namedScheduleEntity.id,
+                    namedSchedule.id,
                     isDefaultNamedSchedule
                 )
                 onDismiss(null)

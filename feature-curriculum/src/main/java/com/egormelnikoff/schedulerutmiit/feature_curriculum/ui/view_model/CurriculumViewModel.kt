@@ -2,11 +2,11 @@ package com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.dto.subjects.SubjectDto
 import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import com.egormelnikoff.schedulerutmiit.core.network.dto.subjects.SubjectDto
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.use_case.FetchSubjectsUseCase
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.state.CurriculumState
 import dagger.hilt.android.lifecycle.HiltViewModel

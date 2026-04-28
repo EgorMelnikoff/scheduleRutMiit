@@ -1,19 +1,19 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.repos
 
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.relation.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 
 interface NamedScheduleRepos {
-    suspend fun saveEntity(namedScheduleEntity: NamedScheduleEntity): Long
+    suspend fun save(namedSchedule: NamedSchedule): Long
     suspend fun deleteById(
         namedScheduleId: Long
     )
 
     suspend fun getCount(): Int
-    suspend fun getAllEntities(): List<NamedScheduleEntity>
-    suspend fun getDefault(): NamedScheduleEntity?
-    suspend fun getByApiId(apiId: Int): NamedSchedule?
-    suspend fun getById(namedScheduleId: Long): NamedSchedule
+    suspend fun getAll(): List<NamedSchedule>
+    suspend fun getDefault(): NamedSchedule?
+    suspend fun getByApiId(apiId: Int): NamedScheduleWithSchedules?
+    suspend fun getById(namedScheduleId: Long): NamedScheduleWithSchedules
 
     suspend fun setDefaultNamedSchedule(namedScheduleId: Long)
     suspend fun updateName(

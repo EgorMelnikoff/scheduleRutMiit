@@ -10,18 +10,18 @@ import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.NamedScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.ScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.SearchQueryDao
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraDataEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
 
 @Database(
     entities = [
         NamedScheduleEntity::class,
         ScheduleEntity::class,
-        Event::class,
-        EventExtraData::class,
+        EventEntity::class,
+        EventExtraDataEntity::class,
         SearchQuery::class
     ],
     version = 9,

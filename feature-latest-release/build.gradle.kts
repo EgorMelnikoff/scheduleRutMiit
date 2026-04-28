@@ -38,13 +38,9 @@ dependencies {
     implementation(project(":core-common"))
 
     implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.work)
-    ksp(libs.hilt.android.compiler)
 
     implementation(libs.retrofit)
     implementation(libs.jsoup)
-
-    implementation(libs.androidx.work.runtime.ktx)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)

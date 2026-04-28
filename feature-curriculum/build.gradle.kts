@@ -38,7 +38,6 @@ dependencies {
     implementation(project(":core-common"))
 
     implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
 
     implementation(libs.retrofit)
     implementation(libs.jsoup)
@@ -47,7 +46,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.coil.compose)
-    implementation(libs.androidx.paging.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

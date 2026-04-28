@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.news.data.repos
 
-import com.egormelnikoff.schedulerutmiit.core.common.dto.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.news.data.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource

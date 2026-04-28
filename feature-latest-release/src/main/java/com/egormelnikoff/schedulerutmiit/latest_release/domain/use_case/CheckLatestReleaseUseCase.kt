@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.latest_release.domain.use_case
 
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataStore
 import com.egormelnikoff.schedulerutmiit.latest_release.domain.repos.AppInfoProvider
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class CheckLatestReleaseUseCase @Inject constructor(
     private val fetchLatestReleaseUseCase: FetchLatestReleaseUseCase,
-    private val preferencesDataStore: PreferencesDataStore,
+    private val preferencesDataStore: PreferencesDataSource,
     private val appInfoProvider: AppInfoProvider
 ) {
     companion object {

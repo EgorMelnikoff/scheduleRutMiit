@@ -1,11 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.repos
 
 import androidx.room.withTransaction
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.database.entity.toDomain
+import com.egormelnikoff.schedulerutmiit.core.database.entity.toEntity
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import javax.inject.Inject
 
@@ -14,7 +16,7 @@ class EventReposImpl @Inject constructor(
     private val eventDao: EventDao,
     private val eventExtraDao: EventExtraDao
 ) : EventRepos {
-    override suspend fun save(event: Event) = eventDao.insert(event)
+    override suspend fun save(event: Event) = eventDao.insert(event.toEntity())
 
     override suspend fun saveWithExtra(
         events: List<Event>,
@@ -22,14 +24,14 @@ class EventReposImpl @Inject constructor(
         scheduleId: Long
     ) {
         val eventsExtraData = eventsExtraData.map {
-            it.copy(
-                scheduleId = scheduleId
+            it.toEntity(
+                newScheduleId = scheduleId
             )
         }
 
         val events = events.map {
-            it.copy(
-                scheduleId = scheduleId
+            it.toEntity(
+                newScheduleId = scheduleId
             )
         }
 
@@ -54,11 +56,11 @@ class EventReposImpl @Inject constructor(
         name: String,
         typeName: String?,
         scheduleId: Long
-    ) = eventDao.getByNameAndType(name, typeName, scheduleId)
+    ) = eventDao.getByNameAndType(name, typeName, scheduleId).map { it.toDomain() }
 
     override suspend fun update(event: Event) = db.withTransaction {
         eventDao.deleteById(event.id)
-        eventDao.insert(event)
+        eventDao.insert(event.toEntity())
     }
 
     override suspend fun updateIsHidden(

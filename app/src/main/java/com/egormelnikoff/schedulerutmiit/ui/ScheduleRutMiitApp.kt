@@ -20,41 +20,41 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSnackbarHost
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
-import com.egormelnikoff.egormelnikoff.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSnackbarHost
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
+import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumDialog
+import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.CurriculumViewModel
+import com.egormelnikoff.schedulerutmiit.news.ui.NewsDialog
+import com.egormelnikoff.schedulerutmiit.news.ui.NewsScreen
+import com.egormelnikoff.schedulerutmiit.news.view_model.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.news.view_model.state.NewsState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.AddEditEventDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.EventDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.HiddenEventsDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.RenameDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumDialog
-import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.CurriculumViewModel
-import com.egormelnikoff.schedulerutmiit.news.ui.NewsDialog
-import com.egormelnikoff.schedulerutmiit.news.ui.NewsScreen
-import com.egormelnikoff.schedulerutmiit.news.view_model.state.NewsState
-import com.egormelnikoff.schedulerutmiit.news.view_model.NewsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ScheduleUiStateSynchronizer
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.UiEventProcessor
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ScheduleUiState
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.CurrentState
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.NamedScheduleState
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.CurrentState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.SearchViewModel
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchParams
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchState
+import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
+import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.ui.screens.search.SearchDialog
-import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.state.SettingsState
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
+import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.state.SettingsState
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -190,8 +190,8 @@ fun RootHost(
 
                 entry<Route.Dialog.EventDialog> { key ->
                     EventDialog(
-                        namedScheduleEntity = key.namedScheduleEntity,
-                        scheduleEntity = key.scheduleEntity,
+                        namedSchedule = key.namedSchedule,
+                        schedule = key.schedule,
                         isSavedSchedule = key.isSavedSchedule,
                         dateTime = key.dateTime,
                         event = key.event,
@@ -213,8 +213,8 @@ fun RootHost(
 
                 entry<Route.Dialog.AddEventDialog> { key ->
                     AddEditEventDialog(
-                        namedScheduleEntity = key.namedScheduleEntity,
-                        scheduleEntity = key.scheduleEntity,
+                        namedSchedule = key.namedSchedule,
+                        schedule = key.schedule,
                         updatableEvent = key.event,
                         currentDateTime = currentDateTime,
                         appUiState = appUiState,
@@ -253,15 +253,15 @@ fun RootHost(
                 }
                 entry<Route.Dialog.RenameNamedScheduleDialog> { key ->
                     RenameDialog(
-                        namedScheduleEntity = key.namedScheduleEntity,
+                        namedSchedule = key.namedSchedule,
                         appBackStack = appUiState.appBackStack,
                         scheduleViewModel = scheduleViewModel
                     )
                 }
                 entry<Route.Dialog.HiddenEventsDialog> { key ->
                     HiddenEventsDialog(
-                        namedScheduleEntity = key.namedScheduleEntity,
-                        scheduleEntity = scheduleState.scheduleUiDto?.scheduleEntity,
+                        namedSchedule = key.namedSchedule,
+                        schedule = scheduleState.scheduleUiDto?.schedule,
                         hiddenEvents = scheduleState.scheduleUiDto?.hiddenEvents
                             ?: listOf(),
                         scheduleViewModel = scheduleViewModel,

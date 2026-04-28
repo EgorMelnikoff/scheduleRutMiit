@@ -51,7 +51,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
@@ -60,32 +69,23 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingAsyncImage
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.customToString
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
-import com.egormelnikoff.schedulerutmiit.schedule.extension.customToString
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.event.ModalDialogEvent
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.LocalDateTime
 import java.time.format.TextStyle
-import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDialog(
     event: Event,
     eventExtraData: EventExtraData?,
-    namedScheduleEntity: NamedScheduleEntity,
-    scheduleEntity: ScheduleEntity,
+    namedSchedule: NamedSchedule,
+    schedule: Schedule,
     isSavedSchedule: Boolean,
     dateTime: LocalDateTime,
     scheduleViewModel: ScheduleViewModel,
@@ -159,7 +159,7 @@ fun EventDialog(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             EventHeader(
-                scheduleEntity, event, 16.dp
+                schedule, event, 16.dp
             )
             Spacer(modifier = Modifier.height(0.dp))
             Column(
@@ -327,7 +327,7 @@ fun EventDialog(
                                             onClick = {
                                                 comment = ""
                                                 scheduleViewModel.updateEventComment(
-                                                    scheduleEntity,
+                                                    schedule,
                                                     event,
                                                     dateTime,
                                                     comment
@@ -345,7 +345,7 @@ fun EventDialog(
                             ) { newValue ->
                                 comment = newValue
                                 scheduleViewModel.updateEventComment(
-                                    scheduleEntity,
+                                    schedule,
                                     event,
                                     dateTime,
                                     newValue
@@ -363,7 +363,7 @@ fun EventDialog(
                                 onColorSelect = { newTag ->
                                     tag = newTag
                                     scheduleViewModel.updateEventTag(
-                                        scheduleEntity,
+                                        schedule,
                                         event,
                                         dateTime,
                                         newTag
@@ -379,15 +379,15 @@ fun EventDialog(
     }
     if (showEventActionsDialog) {
         ModalDialogEvent(
-            scheduleEntity = scheduleEntity,
+            schedule = schedule,
             event = event,
             onEditEvent = if (event.isCustomEvent) {
                 {
                     appBackStack.onBack()
                     appBackStack.openDialog(
                         Route.Dialog.AddEventDialog(
-                            namedScheduleEntity,
-                            scheduleEntity,
+                            namedSchedule,
+                            schedule,
                             event
                         )
                     )
@@ -416,7 +416,7 @@ fun EventDialog(
                 showEventDeleteDialog = false
             },
             onConfirmation = {
-                scheduleViewModel.eventAction(scheduleEntity, event, EventAction.Delete)
+                scheduleViewModel.eventAction(schedule, event, EventAction.Delete)
                 appBackStack.onBack()
             }
         )
@@ -430,7 +430,7 @@ fun EventDialog(
                 showEventHideDialog = false
             },
             onConfirmation = {
-                scheduleViewModel.eventAction(scheduleEntity, event, EventAction.UpdateHidden(true))
+                scheduleViewModel.eventAction(schedule, event, EventAction.UpdateHidden(true))
                 appBackStack.onBack()
             }
         )
@@ -439,7 +439,7 @@ fun EventDialog(
 
 @Composable
 fun EventHeader(
-    scheduleEntity: ScheduleEntity,
+    schedule: Schedule,
     event: Event,
     horizontalPadding: Dp
 ) {
@@ -476,10 +476,10 @@ fun EventHeader(
                     width = 0.5.dp,
                     color = MaterialTheme.colorScheme.outline
                 ),
-                title = if (scheduleEntity.timetableType == TimetableType.PERIODIC) {
+                title = if (schedule.timetableType == TimetableType.PERIODIC) {
                     val dayName = event.startDatetime.dayOfWeek.getDisplayName(
                         TextStyle.FULL,
-                        Locale.getDefault()
+                        LocalLocale.current.platformLocale
                     ).toString().replaceFirstChar { it.uppercase() }
                     if (event.recurrenceRule?.interval == 1) {
                         dayName

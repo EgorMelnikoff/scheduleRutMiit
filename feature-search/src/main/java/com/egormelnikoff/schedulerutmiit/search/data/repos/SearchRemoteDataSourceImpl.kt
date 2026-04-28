@@ -2,13 +2,12 @@ package com.egormelnikoff.schedulerutmiit.search.data.repos
 
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.core.common.dto.person.PersonDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.search.data.parser.SearchParser
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import javax.inject.Inject
 
 class SearchRemoteDataSourceImpl @Inject constructor(

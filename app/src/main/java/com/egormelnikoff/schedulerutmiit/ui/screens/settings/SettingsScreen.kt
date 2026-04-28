@@ -24,26 +24,26 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSwitch
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
-import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
-import com.egormelnikoff.egormelnikoff.core.ui.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.CountEventsModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.EventExtraPolicyModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.EventViewModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.InfoModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.ScheduleViewModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.dialog.ThemeModalDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.SettingsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_models.settings.state.SettingsState
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.CountEventsModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.EventExtraPolicyModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.EventViewModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.InfoModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.ScheduleViewModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.ThemeModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.state.SettingsState
 
 sealed interface SettingsDialog {
     object ScheduleView : SettingsDialog

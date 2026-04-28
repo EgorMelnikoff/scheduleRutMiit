@@ -11,12 +11,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.dto.schedule.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 
 @Composable
 fun GroupInput(
-    group: GroupDto,
-    onValueChanged: (GroupDto) -> Unit,
+    group: Group,
+    onValueChanged: (Group) -> Unit,
     onRemove: () -> Unit
 ) {
     Row(

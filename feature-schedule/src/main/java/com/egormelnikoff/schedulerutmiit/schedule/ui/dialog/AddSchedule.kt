@@ -18,22 +18,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetDatePicker
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ChooseDateTimeButton
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.GridGroup
-import com.egormelnikoff.schedulerutmiit.core.common.validator.isValidSchedule
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
+import com.egormelnikoff.schedulerutmiit.schedule.data.validator.isValidSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.LocalDate
 
 @SuppressLint("LocalContextGetResourceValueCall")
@@ -104,20 +107,37 @@ fun AddScheduleDialog(
                     },
                     listOf(
                         {
-                            ChooseDateTimeButton(
-                                modifier = Modifier.fillMaxWidth(),
+                            ClickableItem(
+                                defaultMinHeight = 32.dp,
+                                showClickLabel = false,
                                 title = startDate?.format(dayMonthYearFormatter)
-                                    ?: stringResource(R.string.start_date)
+                                    ?: stringResource(R.string.start_date),
+                                titleTypography = MaterialTheme.typography.titleSmall,
+                                leadingIcon = {
+                                    LeadingIcon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                                        iconSize = 20.dp,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
                             ) {
                                 focusManager.clearFocus()
                                 showDialogStartDate = true
                             }
                         }, {
-                            ChooseDateTimeButton(
-                                modifier = Modifier.fillMaxWidth(),
+                            ClickableItem(
+                                defaultMinHeight = 32.dp,
+                                showClickLabel = false,
                                 title = endDate?.format(dayMonthYearFormatter)
                                     ?: stringResource(R.string.end_date),
-                                enabled = startDate != null
+                                titleTypography = MaterialTheme.typography.titleSmall,
+                                leadingIcon = {
+                                    LeadingIcon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                                        iconSize = 20.dp,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
                             ) {
                                 focusManager.clearFocus()
                                 showDialogEndDate = true

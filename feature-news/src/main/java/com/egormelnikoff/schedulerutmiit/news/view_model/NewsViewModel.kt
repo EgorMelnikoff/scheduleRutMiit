@@ -1,13 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.news.view_model
 
-import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.egormelnikoff.schedulerutmiit.core.common.dto.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.news.domain.use_case.GetNewsListUseCase
 import com.egormelnikoff.schedulerutmiit.news.view_model.state.NewsState

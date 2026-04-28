@@ -1,4 +1,4 @@
-package com.egormelnikoff.egormelnikoff.core.ui.preferences
+package com.egormelnikoff.schedulerutmiit.core.ui.preferences
 
 data class EventView(
     val groupsVisible: Boolean,

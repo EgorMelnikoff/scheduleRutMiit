@@ -1,12 +1,15 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.repos
 
 import androidx.room.withTransaction
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.NamedScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.ScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.toDomain
+import com.egormelnikoff.schedulerutmiit.core.database.entity.toDomain
+import com.egormelnikoff.schedulerutmiit.core.database.entity.toEntity
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import javax.inject.Inject
 
@@ -17,26 +20,26 @@ class NamedScheduleReposImpl @Inject constructor(
     private val eventDao: EventDao,
     private val eventExtraDao: EventExtraDao
 ) : NamedScheduleRepos {
-    override suspend fun saveEntity(
-        namedScheduleEntity: NamedScheduleEntity
-    ) = namedScheduleDao.insert(namedScheduleEntity)
+    override suspend fun save(
+        namedSchedule: NamedSchedule
+    ) = namedScheduleDao.insert(namedSchedule.toEntity())
 
     override suspend fun getCount(): Int = namedScheduleDao.getCount()
 
-    override suspend fun getAllEntities() = namedScheduleDao.getAllEntities()
+    override suspend fun getAll() = namedScheduleDao.getAllEntities().map { it.toDomain() }
 
     override suspend fun getById(
         namedScheduleId: Long
-    ) = namedScheduleDao.getById(namedScheduleId)
+    ) = namedScheduleDao.getById(namedScheduleId).toDomain()
 
 
     override suspend fun getByApiId(
         apiId: Int
-    ) = namedScheduleDao.getByApiId(apiId)
+    ) = namedScheduleDao.getByApiId(apiId)?.toDomain()
 
 
     override suspend fun getDefault(
-    ) = namedScheduleDao.getDefault()
+    ) = namedScheduleDao.getDefault()?.toDomain()
 
 
     override suspend fun setDefaultNamedSchedule(

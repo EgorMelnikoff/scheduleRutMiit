@@ -19,26 +19,26 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.hourMinuteFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.core.common.entity.Event
-import com.egormelnikoff.schedulerutmiit.core.common.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.common.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
-import com.egormelnikoff.schedulerutmiit.schedule.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.format.TextStyle
-import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 @Composable
 fun HiddenEventsDialog(
-    namedScheduleEntity: NamedScheduleEntity,
-    scheduleEntity: ScheduleEntity?,
+    namedSchedule: NamedSchedule,
+    schedule: Schedule?,
     hiddenEvents: List<Event>,
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack
@@ -47,7 +47,7 @@ fun HiddenEventsDialog(
         topBar = {
             CustomTopAppBar(
                 titleText = stringResource(R.string.hidden_events),
-                subtitleText = "${namedScheduleEntity.shortName} (${scheduleEntity?.timetableType?.typeName})",
+                subtitleText = "${namedSchedule.shortName} (${schedule?.timetableType?.typeName})",
                 navAction = {
                     appBackStack.onBack()
                 }
@@ -80,7 +80,7 @@ fun HiddenEventsDialog(
                         val day = if (event.recurrenceRule != null) {
                             event.startDatetime.dayOfWeek.getDisplayName(
                                 TextStyle.FULL,
-                                Locale.getDefault()
+                                LocalLocale.current.platformLocale
                             ).replaceFirstChar { c -> c.uppercase() }
                         } else {
                             event.startDatetime.format(dayMonthYearFormatter)
@@ -94,9 +94,9 @@ fun HiddenEventsDialog(
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
-                                        scheduleEntity?.let {
+                                        schedule?.let {
                                             scheduleViewModel.eventAction(
-                                                scheduleEntity,
+                                                schedule,
                                                 event,
                                                 EventAction.UpdateHidden(false)
                                             )
