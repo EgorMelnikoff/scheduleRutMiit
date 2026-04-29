@@ -21,15 +21,13 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
     override suspend fun fetchTimetables(
         apiId: Int,
         type: NamedScheduleType
-    ) = networkHelper.callNetwork(
+    ) = networkHelper.callApi(
         requestType = "Timetables",
         requestParams = "Type: $type; ApiId: $apiId",
-        timeoutMs = 5000,
-        callApi = {
-            miitApi.getTimetables(type.typeName, apiId)
-        },
-        callJsoup = null
-    )
+        timeoutMs = 5000
+    ) {
+        miitApi.getTimetables(type.typeName, apiId)
+    }
 
     override suspend fun fetchSchedule(
         namedScheduleType: NamedScheduleType,
@@ -38,21 +36,15 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
         timetable: TimetableDto,
         currentGroup: Group?
     ): Result<ScheduleDto> {
-        networkHelper.callNetwork(
+        networkHelper.callJsoup(
             requestType = "ScheduleParser",
             requestParams = "Id: $apiId; Type: $namedScheduleType; Start date: ${timetable.startDate}",
-            timeoutMs = 10000,
-            callJsoup = {
-                Jsoup.connect(
-                    Endpoints.scheduleUrl(
-                        namedScheduleType,
-                        apiId,
-                        timetable.startDate.toString(),
-                        timetable.type.id.toString()
-                    )
-                ).get()
-            },
-            callApi = null
+            url = Endpoints.scheduleUrl(
+                namedScheduleType,
+                apiId,
+                timetable.startDate.toString(),
+                timetable.type.id.toString()
+            )
         ).let { document ->
             return when (document) {
                 is Result.Error -> document
@@ -74,17 +66,13 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
         startDate: String,
         type: String
     ): Int {
-        networkHelper.callNetwork(
+        networkHelper.callJsoup(
             requestType = "CurrentWeek",
             requestParams = "id: $apiId",
-            callJsoup = {
-                Jsoup.connect(
-                    Endpoints.scheduleUrl(
-                        namedScheduleType, apiId, startDate, type
-                    )
-                ).get()
-            },
-            callApi = null
+            timeoutMs = 5000,
+            url = Endpoints.scheduleUrl(
+                namedScheduleType, apiId, startDate, type
+            )
         ).let { document ->
             return when (document) {
                 is Result.Error -> 1

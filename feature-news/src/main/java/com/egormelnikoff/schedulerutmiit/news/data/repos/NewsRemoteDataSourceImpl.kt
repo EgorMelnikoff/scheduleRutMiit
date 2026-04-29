@@ -13,24 +13,21 @@ class NewsRemoteDataSourceImpl @Inject constructor(
     private val newsParser: NewsParser,
     private val networkHelper: NetworkHelper
 ) : NewsRemoteDataSource {
-    override suspend fun getNewsList(pageSize: Int, page: Int) = networkHelper.callNetwork(
+
+    override suspend fun getNewsList(pageSize: Int, page: Int) = networkHelper.callApi(
         requestType = "News list",
-        requestParams = "From page: $page; To page: $page",
-        callApi = {
-            miitApi.getNewsList(pageSize, page, page)
-        },
-        callJsoup = null
-    )
+        requestParams = "From page: $page; To page: $page"
+    ) {
+        miitApi.getNewsList(pageSize, page, page)
+    }
 
     override suspend fun getNewsById(id: Long): Result<NewsParsedDto> {
-        networkHelper.callNetwork(
+        networkHelper.callApi(
             requestType = "News",
-            requestParams = "News id: $id",
-            callApi = {
-                miitApi.getNewsById(id)
-            },
-            callJsoup = null
-        ).let {
+            requestParams = "News id: $id"
+        ) {
+            miitApi.getNewsById(id)
+        }.let {
             return when (it) {
                 is Result.Error -> it
                 is Result.Success -> Result.Success(

@@ -10,6 +10,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.SerializationException
 import org.jsoup.HttpStatusException
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
@@ -17,133 +19,113 @@ import javax.inject.Inject
 class NetworkHelper @Inject constructor(
     private val logger: Logger
 ) {
-    suspend fun <T : Any> callNetwork(
-        requestType: String = "Unknown",
+    private suspend fun <T> runWithRetry(
+        requestType: String,
         requestParams: String? = null,
-        retries: Int = 3,
-        timeoutMs: Long = 20000,
-        callApi: (suspend () -> Response<T>)?,
-        callJsoup: (suspend () -> T)?
+        retries: Int,
+        timeoutMillis: Long,
+        block: suspend () -> Result<T>
     ): Result<T> = withContext(Dispatchers.IO) {
         repeat(retries) { attempt ->
             try {
-                val result = withTimeout(timeoutMs) {
-                    callApi?.let {
-                        executeApiCall(requestType, requestParams, it)
-                    } ?: callJsoup?.let {
-                        executeJsoupCall(requestType, requestParams, it)
+                val result = withTimeout(timeoutMillis + 2000) {
+                    block()
+                }
+
+                when (result) {
+                    is Result.Success -> return@withContext result
+                    is Result.Error -> {
+                        val typedError = result.typedError
+                        if (typedError is TypedError.HttpError && typedError.code >= 500) {
+                            logError(
+                                "Server error ${typedError.code}, retrying...",
+                                requestType,
+                                requestParams
+                            )
+                        } else {
+                            return@withContext result
+                        }
+
                     }
                 }
 
-                result?.let {
-                    return@withContext result
-                }
-            } catch (e: IOException) {
-                logError(
-                    message = "Network error (${attempt + 1}/$retries)",
-                    requestType = requestType,
-                    requestParams = requestParams,
-                    e = e
-                )
-                if (attempt == retries - 1) {
-                    return@withContext Result.Error(TypedError.NetworkError(e))
-                }
-                delay(1000)
             } catch (e: TimeoutCancellationException) {
-                logError(
-                    message = "Timeout error (${attempt + 1}/$retries)",
-                    requestType = requestType,
-                    requestParams = requestParams,
-                    e = e
-                )
+                logError("Timeout (${attempt + 1}/$retries)", requestType, requestParams, e)
+
                 if (attempt == retries - 1) {
                     return@withContext Result.Error(TypedError.TimeoutError(e))
                 }
-                delay(1000)
+            } catch (e: IOException) {
+                logError("Network error (${attempt + 1}/$retries)", requestType, requestParams, e)
+
+                if (attempt == retries - 1) {
+                    return@withContext Result.Error(TypedError.NetworkError(e))
+                }
+
             }
+
+            delay(1000L * (attempt + 1))
+
         }
-        return@withContext Result.Error(TypedError.UnexpectedError(Exception("Unknown error")))
+
+        return@withContext Result.Error(TypedError.UnexpectedError(Exception("Retry failed")))
     }
 
-    private suspend fun <T : Any> executeApiCall(
-        requestType: String, requestParams: String? = null, call: suspend () -> Response<T>
-    ): Result<T> {
-        return try {
+    suspend fun <T : Any> callApi(
+        requestType: String,
+        requestParams: String? = null,
+        retries: Int = 3,
+        timeoutMs: Long = 20000,
+        call: suspend () -> Response<T>
+    ): Result<T> = runWithRetry(
+        requestType = requestType,
+        requestParams = requestParams,
+        retries = retries,
+        timeoutMillis = timeoutMs
+    ) {
+        try {
             val response = call()
 
             if (response.isSuccessful) {
                 response.body()?.let {
-                    logInfo(
-                        message = "Success fetched data",
-                        requestType = requestType,
-                        requestParams = requestParams
-                    )
-
+                    logInfo("Success fetched data", requestType, requestParams)
                     Result.Success(it)
-                } ?: run {
-                    logInfo(
-                        message = "Empty body",
-                        requestType = requestType,
-                        requestParams = requestParams
-                    )
-                    Result.Error(TypedError.EmptyBodyError)
-                }
+                } ?: Result.Error(TypedError.EmptyBodyError)
             } else {
                 logError(
-                    message = "Http error: ${response.code()}, ${response.message()}",
-                    requestType = requestType,
-                    requestParams = requestParams
+                    "Http error: ${response.code()} ${response.message()}",
+                    requestType,
+                    requestParams
                 )
-                Result.Error(
-                    TypedError.HttpError(
-                        code = response.code(), message = response.message()
-                    )
-                )
+                Result.Error(TypedError.HttpError(response.code(), response.message()))
             }
         } catch (e: SerializationException) {
-            logError(
-                message = "Serialization error",
-                requestType = requestType,
-                requestParams = requestParams,
-                e = e
-            )
+            logError("Serialization error", requestType, requestParams, e)
             Result.Error(TypedError.SerializationError(e))
         }
     }
 
-    private suspend fun <T : Any> executeJsoupCall(
-        requestType: String, requestParams: String? = null, call: suspend () -> T
-    ): Result<T> {
-        return try {
-            val document = call()
-            logInfo(
-                message = "Success parsed data",
-                requestType = requestType,
-                requestParams = requestParams
-            )
-            Result.Success(
-                data = document
-            )
+    suspend fun callJsoup(
+        requestType: String,
+        requestParams: String? = null,
+        retries: Int = 3,
+        timeoutMs: Long = 20000,
+        url: String
+    ): Result<Document> = runWithRetry(
+        requestType = requestType,
+        requestParams = requestParams,
+        retries = retries,
+        timeoutMillis = timeoutMs
+    ) {
+        try {
+            val result = Jsoup.connect(url).get()
+            logInfo("Success parsed data", requestType, requestParams)
+            Result.Success(result)
         } catch (e: HttpStatusException) {
-            logError(
-                message = "Http error",
-                requestType = requestType,
-                requestParams = requestParams,
-                e = e
-            )
-            return Result.Error(
-                TypedError.HttpError(
-                    code = e.statusCode,
-                    message = e.message,
-                )
-            )
+            logError("Http error", requestType, requestParams, e)
+            Result.Error(TypedError.HttpError(e.statusCode, e.message))
         } catch (e: IllegalArgumentException) {
-            logError(
-                message = "Illegal argument error",
-                requestType = requestType,
-                requestParams = requestParams,
-                e = e
-            )
+            logError("Illegal argument", requestType, requestParams, e)
             Result.Error(TypedError.IllegalArgumentError(e))
         }
     }
