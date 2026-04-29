@@ -74,7 +74,9 @@ fun ReviewScreen(
     isDarkTheme: Boolean,
     externalPadding: PaddingValues
 ) {
-    val spacerHeight = 270.dp
+    val spacerHeight = remember {
+        270.dp
+    }
     val currentDate by remember(currentDateTime) {
         mutableStateOf(
             currentDateTime.toLocalDate()
