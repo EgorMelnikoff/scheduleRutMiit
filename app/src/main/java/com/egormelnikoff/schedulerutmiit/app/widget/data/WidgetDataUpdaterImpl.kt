@@ -1,25 +1,26 @@
-package com.egormelnikoff.schedulerutmiit.schedule.data.widget
+package com.egormelnikoff.schedulerutmiit.app.widget.data
 
 import android.content.Context
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.work.ListenableWorker
+import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefaultSchedule
-import com.egormelnikoff.schedulerutmiit.schedule.data.widget.ui.EventsWidget
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdater
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class WidgetDataUpdater @Inject constructor(
+class WidgetDataUpdaterImpl @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
     private val preferencesDataSource: PreferencesDataSource,
     private val context: Context,
     private val json: Json
-) {
-    suspend fun updateAll(): ListenableWorker.Result {
+) : WidgetDataUpdater {
+    override suspend fun updateAll(): ListenableWorker.Result {
         namedScheduleRepos.getDefault()?.let { namedSchedule ->
             val glanceIds = GlanceAppWidgetManager(context)
                 .getGlanceIds(EventsWidget::class.java)
@@ -38,7 +39,6 @@ class WidgetDataUpdater @Inject constructor(
                     }
                 }
             }
-
         }
         return ListenableWorker.Result.success()
     }

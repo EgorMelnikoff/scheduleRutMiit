@@ -24,6 +24,5 @@ class ScheduleApplication : Application(), Configuration.Provider {
         super.onCreate()
         workScheduler.startPeriodicFetchingLatestVersion()
         workScheduler.startPeriodicScheduleUpdating()
-        workScheduler.startPeriodicWidgetUpdating()
     }
 }

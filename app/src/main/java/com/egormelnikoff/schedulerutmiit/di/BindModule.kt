@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.di
 
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.repos.CurriculumRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.repos.CurriculumRemoteDataSource
@@ -15,6 +16,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.data.repos.EventReposImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.NamedScheduleReposImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.ScheduleRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.ScheduleReposImpl
+import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
@@ -83,4 +85,8 @@ abstract class BindModule {
     @Binds
     @Singleton
     abstract fun bindAppInfoProvider(appInfoProviderImpl: AppInfoProviderImpl): AppInfoProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindWidgetDataUpdater(widgetDataUpdaterImpl: WidgetDataUpdaterImpl): WidgetDataUpdater
 }

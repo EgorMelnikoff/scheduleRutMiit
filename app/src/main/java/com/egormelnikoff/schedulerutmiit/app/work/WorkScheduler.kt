@@ -20,7 +20,7 @@ class WorkScheduler @Inject constructor(
         private const val UPDATING_WIDGET_PERIODICALLY = "updatingWidgetPeriodically"
         private const val UPDATING_WIDGET_INTERVAL = 15L //Minutes
         private const val FETCH_LATEST_RELEASE_PERIODICALLY = "fetchLatestReleasePeriodically"
-        private const val FETCH_LATEST_INTERVAL = 10L
+        private const val FETCH_LATEST_INTERVAL = 10L //Hours
     }
 
     fun startPeriodicScheduleUpdating() {
@@ -56,6 +56,10 @@ class WorkScheduler @Inject constructor(
             ExistingPeriodicWorkPolicy.KEEP,
             widgetWorkRequest
         )
+    }
+
+    fun cancelPeriodicWidgetUpdating() {
+        workManager.cancelAllWorkByTag(UPDATING_WIDGET_PERIODICALLY)
     }
 
     fun startPeriodicFetchingLatestVersion() {

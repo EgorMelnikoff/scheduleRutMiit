@@ -1,8 +1,10 @@
-package com.egormelnikoff.schedulerutmiit.schedule.di
+package com.egormelnikoff.schedulerutmiit.di
 
+import com.egormelnikoff.schedulerutmiit.app.work.WorkScheduler
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
-import com.egormelnikoff.schedulerutmiit.schedule.data.widget.WidgetDataUpdater
+import com.egormelnikoff.schedulerutmiit.core.network.logger.Logger
+import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdater
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -26,4 +28,8 @@ interface ProviderEntryPoint {
     }
 
     fun widgetDataUpdater(): WidgetDataUpdater
+
+    fun workScheduler(): WorkScheduler
+
+    fun logger(): Logger
 }

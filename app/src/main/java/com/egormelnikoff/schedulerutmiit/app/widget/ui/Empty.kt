@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule.data.widget.ui
+package com.egormelnikoff.schedulerutmiit.app.widget.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp

@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule.data.widget
+package com.egormelnikoff.schedulerutmiit.app.widget.data
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
@@ -45,7 +45,7 @@ data class WidgetData(
                     namedSchedule = namedSchedule,
                     settledSchedule = scheduleWithEvents.schedule,
                     eventsExtraData = scheduleWithEvents.eventsExtraData,
-                    reviewUiDto = ReviewUiDto(
+                    reviewUiDto = ReviewUiDto.Companion(
                         schedule = scheduleWithEvents.schedule,
                         periodicEvents = periodicEvents,
                         nonPeriodicEvents = nonPeriodicEvents

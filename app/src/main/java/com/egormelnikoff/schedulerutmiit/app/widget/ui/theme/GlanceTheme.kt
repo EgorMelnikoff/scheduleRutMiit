@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule.data.widget.ui.theme
+package com.egormelnikoff.schedulerutmiit.app.widget.ui.theme
 
 
 import androidx.compose.material3.darkColorScheme

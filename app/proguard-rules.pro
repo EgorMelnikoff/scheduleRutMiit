@@ -10,5 +10,5 @@
 -keep class com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.** { *; }
 -keep class com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.** { *; }
 -keep class com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.state.** { *; }
--keep class com.egormelnikoff.schedulerutmiit.schedule.data.widget.receivers.EventsWidgetReceiver
--keep class com.egormelnikoff.schedulerutmiit.schedule.data.widget.WidgetData
+-keep class com.egormelnikoff.schedulerutmiit.app.widget.receiver.EventsWidgetReceiver
+-keep class com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetData

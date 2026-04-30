@@ -54,7 +54,7 @@
         </provider>
 
         <receiver
-            android:name=".schedule.data.widget.receivers.EventsWidgetReceiver"
+            android:name=".app.widget.receiver.EventsWidgetReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
 import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedScheduleWithSchedulesRelation
 
 @Dao
@@ -13,11 +14,17 @@ interface NamedScheduleDao {
     @Insert(onConflict = REPLACE)
     suspend fun insert(namedScheduleEntity: NamedScheduleEntity): Long
 
+    @Insert(onConflict = REPLACE)
+    suspend fun insertAll(namedScheduleEntities: List<NamedScheduleEntity>): List<Long>
+
     @Query("DELETE FROM NamedSchedules WHERE NamedScheduleId = :namedScheduleId")
     suspend fun deleteById(namedScheduleId: Long)
 
+    @Query("DELETE FROM NamedSchedules")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM NamedSchedules")
-    suspend fun getAllEntities(): List<NamedScheduleEntity>
+    suspend fun getAll(): List<NamedScheduleEntity>
 
     @Transaction
     @Query("SELECT * FROM NamedSchedules WHERE apiId = :apiId")

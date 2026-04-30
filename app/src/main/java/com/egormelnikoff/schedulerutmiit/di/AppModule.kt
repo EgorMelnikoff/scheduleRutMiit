@@ -10,7 +10,7 @@ import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.parser.Subjects
 import com.egormelnikoff.schedulerutmiit.latest_release.data.repos.AppInfoProviderImpl
 import com.egormelnikoff.schedulerutmiit.news.data.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.schedule.data.parser.ScheduleParser
-import com.egormelnikoff.schedulerutmiit.schedule.data.widget.WidgetDataUpdater
+import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.search.data.parser.SearchParser
 import dagger.Module
@@ -55,7 +55,7 @@ object AppModule {
         namedScheduleRepos: NamedScheduleRepos,
         preferencesRepos: PreferencesDataSourceImpl,
         json: Json
-    ): WidgetDataUpdater = WidgetDataUpdater(
+    ): WidgetDataUpdaterImpl = WidgetDataUpdaterImpl(
         context = context,
         preferencesDataSource = preferencesRepos,
         namedScheduleRepos = namedScheduleRepos,
