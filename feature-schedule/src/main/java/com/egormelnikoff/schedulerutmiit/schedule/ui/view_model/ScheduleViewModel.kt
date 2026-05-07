@@ -205,11 +205,10 @@ class ScheduleViewModel @Inject constructor(
             openNamedScheduleUseCase(
                 namedScheduleId, setDefault
             ).let { result ->
-                if (setDefault) {
-                    updateCurrentState(
-                        namedSchedules = result.savedNamedSchedules
-                    )
-                }
+                updateCurrentState(
+                    namedSchedules = if (setDefault) result.savedNamedSchedules else null,
+                    isSaved = true
+                )
                 updateNamedScheduleState(
                     namedScheduleWithSchedules = result.namedScheduleWithSchedules
                 )
