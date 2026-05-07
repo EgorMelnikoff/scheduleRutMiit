@@ -122,7 +122,8 @@ fun SettingsScreen(
                                 ScheduleView.CALENDAR -> stringResource(R.string.calendar)
                                 ScheduleView.LIST -> stringResource(R.string.full_list)
                             },
-                            defaultMinHeight = 36.dp
+                            defaultMinHeight = 36.dp,
+                            enableToolTip = true
                         ) {
                             activeDialog = SettingsDialog.ScheduleView
                         }
@@ -142,7 +143,8 @@ fun SettingsScreen(
                                 .lowercase()
                                 .replaceFirstChar { it.uppercase() },
                             subtitleMaxLines = 1,
-                            defaultMinHeight = 36.dp
+                            defaultMinHeight = 36.dp,
+                            enableToolTip = true
                         ) {
                             activeDialog = SettingsDialog.EventView
                         }
@@ -173,7 +175,8 @@ fun SettingsScreen(
                                     )
                                 }
                             },
-                            defaultMinHeight = 36.dp
+                            defaultMinHeight = 36.dp,
+                            enableToolTip = true
                         ) {
                             activeDialog = SettingsDialog.CountEvents
                         }
@@ -210,7 +213,8 @@ fun SettingsScreen(
                                     )
                                 }
                             },
-                            defaultMinHeight = 36.dp
+                            defaultMinHeight = 36.dp,
+                            enableToolTip = true
                         ) {
                             activeDialog = SettingsDialog.EventExtraPolicy
                         }
@@ -235,7 +239,8 @@ fun SettingsScreen(
                                     settingsViewModel.onSetSchedulesDeletable(!it)
                                 }
                             },
-                            showClickLabel = false
+                            showClickLabel = false,
+                            enableToolTip = true
                         ) {
                             settingsViewModel.onSetSchedulesDeletable(!appSettings.schedulesDeletable)
                         }
@@ -275,7 +280,8 @@ fun SettingsScreen(
                                     )
                                 }
                             },
-                            defaultMinHeight = 36.dp
+                            defaultMinHeight = 36.dp,
+                            enableToolTip = true
                         ) {
                             activeDialog = SettingsDialog.Decor
                         }
@@ -291,7 +297,8 @@ fun SettingsScreen(
                                     tint = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                             },
-                            defaultMinHeight = 36.dp
+                            defaultMinHeight = 36.dp,
+                            enableToolTip = true
                         ) {
                             activeDialog = SettingsDialog.Info
                         }

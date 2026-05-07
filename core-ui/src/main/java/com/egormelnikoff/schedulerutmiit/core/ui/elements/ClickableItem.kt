@@ -78,6 +78,7 @@ fun ClickableItem(
     trailingIcon: (@Composable () -> Unit)? = null,
     clickLabel: ImageVector = ImageVector.vectorResource(R.drawable.right),
     showClickLabel: Boolean = true,
+    enableToolTip: Boolean = false,
     clickLabelColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
     onLongClick: (() -> Unit)? = null,
     onDoubleCLick: (() -> Unit)? = null,
@@ -89,11 +90,12 @@ fun ClickableItem(
             spacingBetweenTooltipAndAnchor = 2.dp
         ),
         tooltip = {
-            PlainTooltip (
+            PlainTooltip(
                 modifier = Modifier.padding(horizontal = 2.dp),
 
-            ) { Text(title.toString()) }
+                ) { Text(title.toString()) }
         },
+        enableUserInput = enableToolTip,
         state = rememberTooltipState()
     ) {
         Row(
