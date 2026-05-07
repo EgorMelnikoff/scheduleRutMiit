@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,11 +17,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -164,7 +169,7 @@ fun ScreenSchedule(
                                         )
                                 ) {
                                     ClickableItem(
-                                        verticalPadding = 12.dp,
+                                        verticalPadding = 4.dp,
                                         title = stringResource(R.string.schedule_is_not_saved),
                                         titleColor = MaterialTheme.colorScheme.onPrimary,
                                         titleTypography = MaterialTheme.typography.titleSmall,
@@ -177,17 +182,33 @@ fun ScreenSchedule(
                                             )
                                         },
                                         trailingIcon = {
-                                            Text(
-                                                modifier = Modifier.padding(end = 4.dp),
-                                                text = stringResource(R.string.save),
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onPrimary
-                                            )
-                                        },
-                                        showClickLabel = false
-                                    ) {
-                                        scheduleViewModel.saveCurrentNamedSchedule()
-                                    }
+                                                OutlinedButton(
+                                                    colors = ButtonDefaults.outlinedButtonColors()
+                                                        .copy(
+                                                            containerColor = MaterialTheme.colorScheme.error,
+                                                            contentColor = MaterialTheme.colorScheme.onPrimary
+                                                        ),
+                                                    onClick = {
+                                                        scheduleViewModel.saveCurrentNamedSchedule()
+                                                    },
+                                                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp),
+                                                    border = BorderStroke(
+                                                        width = 0.5.dp,
+                                                        MaterialTheme.colorScheme.onPrimary
+                                                    )
+                                                ) {
+                                                    CompositionLocalProvider(
+                                                        LocalMinimumInteractiveComponentSize provides 0.dp
+                                                    ) {
+                                                        Text(
+                                                            text = stringResource(R.string.save),
+                                                            style = MaterialTheme.typography.titleSmall
+                                                        )
+                                                    }
+                                                }
+
+                                        }
+                                    )
                                 }
                             }
                             AnimatedContent(
@@ -208,7 +229,9 @@ fun ScreenSchedule(
 
                                             appUiState = appUiState,
 
-                                            namedScheduleWithSchedules = requireNotNull(namedScheduleState.namedScheduleWithSchedules),
+                                            namedScheduleWithSchedules = requireNotNull(
+                                                namedScheduleState.namedScheduleWithSchedules
+                                            ),
                                             scheduleUiDto = requireNotNull(scheduleState.scheduleUiDto),
                                             isSavedSchedule = currentState.isSaved,
 
@@ -300,7 +323,7 @@ fun ScreenSchedule(
     }
     showNamedScheduleDialog?.let {
         ModalDialogNamedSchedule(
-            namedSchedule = it,
+            namedSchedule = namedScheduleState.namedScheduleWithSchedules?.namedSchedule ?: it,
             currentSchedule = scheduleState.scheduleUiDto?.schedule,
             scheduleWithEvents = namedScheduleState.namedScheduleWithSchedules?.scheduleWithEvents,
             today = currentDateTime.toLocalDate(),
