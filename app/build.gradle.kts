@@ -58,6 +58,7 @@ dependencies {
     implementation(project(":feature-curriculum"))
     implementation(project(":feature-latest-release"))
     implementation(project(":feature-news"))
+    implementation(project(":feature-export"))
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 

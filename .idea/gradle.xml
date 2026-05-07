@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/core-network" />
             <option value="$PROJECT_DIR$/core-ui" />
             <option value="$PROJECT_DIR$/feature-curriculum" />
+            <option value="$PROJECT_DIR$/feature-export" />
             <option value="$PROJECT_DIR$/feature-latest-release" />
             <option value="$PROJECT_DIR$/feature-news" />
             <option value="$PROJECT_DIR$/feature-schedule" />
