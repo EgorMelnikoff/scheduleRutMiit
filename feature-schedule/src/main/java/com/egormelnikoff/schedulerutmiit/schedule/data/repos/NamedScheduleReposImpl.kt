@@ -26,7 +26,7 @@ class NamedScheduleReposImpl @Inject constructor(
 
     override suspend fun getCount(): Int = namedScheduleDao.getCount()
 
-    override suspend fun getAll() = namedScheduleDao.getAllEntities().map { it.toDomain() }
+    override suspend fun getAll() = namedScheduleDao.getAll().map { it.toDomain() }
 
     override suspend fun getById(
         namedScheduleId: Long

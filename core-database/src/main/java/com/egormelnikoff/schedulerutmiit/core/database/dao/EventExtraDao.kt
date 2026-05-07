@@ -24,6 +24,9 @@ interface EventExtraDao {
     @Query("DELETE FROM EventsExtraData WHERE eventId = :eventId AND dateTime =:dateTime")
     suspend fun deleteByEventIdAndDateTime(eventId: Long, dateTime: LocalDateTime)
 
+    @Query("DELETE FROM EventsExtraData")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM EventsExtraData WHERE eventExtraScheduleId = :scheduleId")
     suspend fun getByScheduleId(scheduleId: Long): List<EventExtraDataEntity>
 
@@ -33,6 +36,8 @@ interface EventExtraDao {
     @Query("SELECT * FROM EventsExtraData WHERE eventId = :eventId AND dateTime = :dateTime")
     suspend fun getByEventIdAndDateTime(eventId: Long, dateTime: LocalDateTime): EventExtraDataEntity?
 
+    @Query("SELECT * FROM EventsExtraData")
+    suspend fun getAll(): List<EventExtraDataEntity>
 
     @Query("UPDATE eventsextradata SET tag = :tag WHERE eventId = :eventId")
     suspend fun updateTagByEventId(

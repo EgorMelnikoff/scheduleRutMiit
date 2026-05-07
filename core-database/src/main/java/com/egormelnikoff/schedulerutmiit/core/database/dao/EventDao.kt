@@ -20,6 +20,9 @@ interface EventDao {
     @Query("DELETE FROM Events WHERE EventId = :eventId")
     suspend fun deleteById(eventId: Long)
 
+    @Query("DELETE FROM Events")
+    suspend fun deleteAll()
+
     @Query("SELECT COUNT(*) FROM Events WHERE eventScheduleId = :scheduleId AND SUBSTRING(startDatetime, 1, 10) = :date")
     suspend fun getCountPerDate(date: String, scheduleId: Long): Int
 
@@ -29,6 +32,9 @@ interface EventDao {
         typeName: String?,
         scheduleId: Long
     ): List<EventEntity>
+
+    @Query("SELECT * FROM Events")
+    suspend fun getAll(): List<EventEntity>
 
     @Query("UPDATE Events SET isHidden = :isHidden WHERE EventId = :eventId")
     suspend fun updateIsHidden(
