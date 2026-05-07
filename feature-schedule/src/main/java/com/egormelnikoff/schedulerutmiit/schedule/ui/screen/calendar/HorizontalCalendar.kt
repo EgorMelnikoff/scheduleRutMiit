@@ -61,6 +61,8 @@ fun HorizontalCalendar(
     eventExtraPolicy: EventExtraPolicy,
     scheduleUiDto: ScheduleUiDto,
     scheduleUiState: ScheduleUiState,
+    showCalendarDialog: Boolean,
+    onShowCalendarDialog: (Boolean) -> Unit,
     scope: CoroutineScope
 ) {
     val firstDayOfCurrentWeek = remember(
@@ -130,16 +132,9 @@ fun HorizontalCalendar(
                 modifier = Modifier
                     .weight(1f)
                     .clip(CircleShape)
-                    .clickable(
-                        onClick = {
-                            scope.launch {
-                                scheduleUiState.pagerWeeksState.animateScrollToPage(
-                                    scheduleUiDto.schedulePagerUiDto.weeksStartIndex
-                                )
-                            }
-                            scheduleUiState.onSelectDate(scheduleUiDto.schedulePagerUiDto.defaultDate)
-                        }
-                    )
+                    .clickable {
+                        onShowCalendarDialog(!showCalendarDialog)
+                    }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .height(32.dp),
                 verticalAlignment = Alignment.CenterVertically,

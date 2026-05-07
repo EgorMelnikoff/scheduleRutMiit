@@ -145,9 +145,11 @@ fun RootHost(
 ) {
     Scaffold(
         snackbarHost = {
-            CustomSnackbarHost(
-                snackBarHostState = appUiState.snackBarHostState
-            )
+            if (appUiState.appBackStack.dialogBackStack.size > 1) {
+                CustomSnackbarHost(
+                    snackBarHostState = appUiState.snackBarHostState
+                )
+            }
         }
     ) {
         NavDisplay(
@@ -357,6 +359,13 @@ fun PageHost(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        snackbarHost = {
+            if (appUiState.appBackStack.dialogBackStack.size <= 1) {
+                CustomSnackbarHost(
+                    snackBarHostState = appUiState.snackBarHostState
+                )
+            }
+        },
         bottomBar = {
             CustomNavigationBar(
                 currentPageIndex = appUiState.appBackStack.lastPage().index,

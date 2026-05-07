@@ -7,6 +7,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppSnackbarVisuals
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.event.UiEvent
 import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
@@ -42,8 +43,11 @@ suspend fun handleUiEvent(
         is UiEvent.ErrorMessage -> {
             if (useSnackbar) {
                 snackBarHostState.showSnackbar(
-                    message = event.message,
-                    duration = SnackbarDuration.Long
+                    AppSnackbarVisuals(
+                        message = event.message,
+                        isError = true,
+                        duration = SnackbarDuration.Long
+                    )
                 )
             } else {
                 Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
@@ -53,8 +57,11 @@ suspend fun handleUiEvent(
         is UiEvent.InfoMessage -> {
             if (useSnackbar) {
                 snackBarHostState.showSnackbar(
-                    message = event.message,
-                    duration = SnackbarDuration.Short
+                    AppSnackbarVisuals(
+                        message = event.message,
+                        isError = false,
+                        duration = SnackbarDuration.Short
+                    )
                 )
             } else {
                 Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,6 +22,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
@@ -44,13 +46,19 @@ fun ScheduleCalendarView(
     appSettings: AppSettings,
     paddingBottom: Dp
 ) {
+    var showCalendarDialog by remember { mutableStateOf(false) }
+
     Column {
         HorizontalCalendar(
             scheduleUiDto = scheduleUiDto,
             scope = appUiState.scope,
             scheduleUiState = scheduleUiState,
             eventsCountView = appSettings.eventsCountView,
-            eventExtraPolicy = appSettings.eventExtraPolicy
+            eventExtraPolicy = appSettings.eventExtraPolicy,
+            showCalendarDialog = showCalendarDialog,
+            onShowCalendarDialog = {
+                showCalendarDialog = it
+            }
         )
         PagedDays(
             scheduleViewModel = scheduleViewModel,
@@ -63,6 +71,18 @@ fun ScheduleCalendarView(
             isSavedSchedule = isSavedSchedule,
             appSettings = appSettings,
             paddingBottom = paddingBottom
+        )
+    }
+
+    if (showCalendarDialog) {
+        BottomSheetDatePicker(
+            selectedDate = scheduleUiState.selectedDate,
+            onDateSelect = scheduleUiState.onSelectDate,
+            startDate = scheduleUiDto.schedule.startDate,
+            endDate = scheduleUiDto.schedule.endDate,
+            onShowDialog = {
+                showCalendarDialog = it
+            }
         )
     }
 }
@@ -89,7 +109,11 @@ fun PagedDays(
     ) { index ->
         val currentDate = scheduleUiDto.schedule.startDate.plusDays(index.toLong())
 
-        val enrichedEvents by remember(namedScheduleWithSchedules, scheduleUiDto.schedule, scheduleUiDto.fullEventList) {
+        val enrichedEvents by remember(
+            namedScheduleWithSchedules,
+            scheduleUiDto.schedule,
+            scheduleUiDto.fullEventList
+        ) {
             mutableStateOf(
                 scheduleUiDto.schedule
                     .getEventsForDate(
