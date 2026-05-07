@@ -342,19 +342,22 @@ class EventsWidget : GlanceAppWidget() {
         if (eventExtraData != null && eventExtraData.comment.isNotBlank()) {
             EventComment(
                 title = eventExtraData.comment.replace(Regex("\\s+"), " "),
-            ) {
-                val color = eventExtraData.tag.getColorByIndex()
-                Image(
-                    modifier = GlanceModifier.size(8.dp),
-                    provider = ImageProvider(R.drawable.circle),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(
-                        colorProvider = ColorProvider(
-                            color = color
+                image = if (eventExtraData.tag != 0) {
+                    {
+                        val color = eventExtraData.tag.getColorByIndex()
+                        Image(
+                            modifier = GlanceModifier.size(8.dp),
+                            provider = ImageProvider(R.drawable.circle),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                colorProvider = ColorProvider(
+                                    color = color
+                                )
+                            )
                         )
-                    )
-                )
-            }
+                    }
+                } else null
+            )
         }
     }
 
