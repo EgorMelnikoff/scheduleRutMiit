@@ -28,7 +28,7 @@ class NetworkHelper @Inject constructor(
     ): Result<T> = withContext(Dispatchers.IO) {
         repeat(retries) { attempt ->
             try {
-                val result = withTimeout(timeoutMillis + 2000) {
+                val result = withTimeout(timeoutMillis + 500) {
                     block()
                 }
 
