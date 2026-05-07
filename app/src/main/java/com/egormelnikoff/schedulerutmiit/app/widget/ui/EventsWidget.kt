@@ -108,10 +108,10 @@ class EventsWidget : GlanceAppWidget() {
 
         val subHeader = StringBuilder().apply {
             if (widgetData?.namedSchedule != null) {
-                append(requireNotNull(widgetData.namedSchedule).shortName)
+                append(widgetData.namedSchedule.shortName)
             }
             if (widgetData?.settledSchedule != null) {
-                append(" (${requireNotNull(widgetData.settledSchedule).timetableType.typeName})")
+                append(" (${widgetData.settledSchedule.timetableType.typeName})")
             }
         }.toString()
 
@@ -124,19 +124,19 @@ class EventsWidget : GlanceAppWidget() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (widgetData?.settledSchedule != null && widgetData.reviewUiDto != null) {
-                val header = when (requireNotNull(widgetData.reviewUiDto).displayedDate) {
+                val header = when (widgetData.reviewUiDto.displayedDate) {
                     today -> {
                         "${glanceStringResource(R.string.today)}, " +
-                                "${requireNotNull(widgetData.reviewUiDto).displayedDate.format(dayMonthNameFormatter)}"
+                                "${widgetData.reviewUiDto.displayedDate.format(dayMonthNameFormatter)}"
                     }
 
                     today.plusDays(1) -> {
                         "${glanceStringResource(R.string.tomorrow)}, " +
-                                "${requireNotNull(widgetData.reviewUiDto).displayedDate.format(dayMonthNameFormatter)}"
+                                "${widgetData.reviewUiDto.displayedDate.format(dayMonthNameFormatter)}"
                     }
 
                     else -> {
-                        requireNotNull(widgetData.reviewUiDto).displayedDate.format(dayMonthNameFormatter)
+                        widgetData.reviewUiDto.displayedDate.format(dayMonthNameFormatter)
                     }
                 }
 
@@ -161,11 +161,11 @@ class EventsWidget : GlanceAppWidget() {
                                 maxLines = 1
                             )
 
-                            if (requireNotNull(widgetData.reviewUiDto).currentWeek != 0) {
+                            if (widgetData.reviewUiDto.currentWeek != -1) {
                                 Spacer(modifier = GlanceModifier.width(4.dp))
                                 Image(
                                     modifier = GlanceModifier.size(16.dp),
-                                    provider = when (requireNotNull(widgetData.reviewUiDto).currentWeek) {
+                                    provider = when (widgetData.reviewUiDto.currentWeek) {
                                         1 -> ImageProvider(R.drawable.one)
                                         2 -> ImageProvider(R.drawable.two)
                                         else -> ImageProvider(R.drawable.resource_null)
@@ -203,7 +203,7 @@ class EventsWidget : GlanceAppWidget() {
                         )
                     )
                 }
-                val displayedEvents = requireNotNull(widgetData.reviewUiDto).events.toList()
+                val displayedEvents = widgetData.reviewUiDto.events.toList()
 
                 if (displayedEvents.isNotEmpty()) {
                     Spacer(modifier = GlanceModifier.height(12.dp))
@@ -213,7 +213,7 @@ class EventsWidget : GlanceAppWidget() {
                                 Event(
                                     events = events.second,
                                     eventsExtraData = widgetData.eventsExtraData,
-                                    date = requireNotNull(widgetData.reviewUiDto).displayedDate,
+                                    date = widgetData.reviewUiDto.displayedDate,
                                     eventExtraPolicy = widgetData.eventExtraPolicy
                                 )
                                 if (index != displayedEvents.lastIndex) {
