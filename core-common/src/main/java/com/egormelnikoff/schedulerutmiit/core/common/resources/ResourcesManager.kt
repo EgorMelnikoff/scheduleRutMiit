@@ -30,35 +30,43 @@ fun getErrorMessage(
                 R.string.network_error
             )
         }
-        is TimeoutError-> {
+
+        is TimeoutError -> {
             resourcesManager.getString(
                 R.string.timeout_expired
             )
         }
+
         is HttpError -> {
-            "${resourcesManager.getString(
-                R.string.server_error
-            )}: ${typedError.code}"
+            "${
+                resourcesManager.getString(
+                    R.string.server_error
+                )
+            }: ${typedError.code}"
         }
+
         is SerializationError -> {
             resourcesManager.getString(
                 R.string.serialization_error
             )
         }
+
         is IllegalArgumentError -> {
             resourcesManager.getString(
                 R.string.illegal_argument
             )
         }
+
         is EmptyBodyError -> {
             resourcesManager.getString(
                 R.string.empty_response
             )
         }
+
         is UnexpectedError -> {
-            resourcesManager.getString(
-                R.string.unknown_error
-            )
+            typedError.exception.message?.let {
+                "${resourcesManager.getString(R.string.error)}: $it}"
+            } ?: resourcesManager.getString(R.string.unknown_error)
         }
     }
 }
