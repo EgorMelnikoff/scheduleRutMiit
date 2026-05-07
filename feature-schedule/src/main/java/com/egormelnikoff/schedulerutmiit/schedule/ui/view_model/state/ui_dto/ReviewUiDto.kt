@@ -12,7 +12,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-
 val eveningTime: LocalTime = LocalTime.of(18, 0)
 
 @Serializable
@@ -20,7 +19,7 @@ data class ReviewUiDto(
     @Serializable(with = LocalDateSerializer::class)
     val displayedDate: LocalDate,
     val events: Map<String, List<Event>> = mapOf(),
-    val currentWeek: Int = 0
+    val currentWeek: Int = -1
 ) {
     companion object {
         operator fun invoke(
