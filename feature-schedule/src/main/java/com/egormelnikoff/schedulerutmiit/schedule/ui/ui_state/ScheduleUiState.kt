@@ -30,19 +30,19 @@ data class ScheduleUiState(
             return if (scheduleState.scheduleUiDto?.schedulePagerUiDto != null) {
                 val scheduleListState = rememberLazyListState()
                 val pagerDaysState = rememberPagerState(
-                    pageCount = { requireNotNull(scheduleState.scheduleUiDto).schedulePagerUiDto.daysCount },
-                    initialPage = requireNotNull(scheduleState.scheduleUiDto).schedulePagerUiDto.daysStartIndex
+                    pageCount = { scheduleState.scheduleUiDto.schedulePagerUiDto.daysCount },
+                    initialPage = scheduleState.scheduleUiDto.schedulePagerUiDto.daysStartIndex
                 )
                 val pagerWeeksState = rememberPagerState(
-                    pageCount = { requireNotNull(scheduleState.scheduleUiDto).schedulePagerUiDto.weeksCount },
-                    initialPage = requireNotNull(scheduleState.scheduleUiDto).schedulePagerUiDto.weeksStartIndex
+                    pageCount = { scheduleState.scheduleUiDto.schedulePagerUiDto.weeksCount },
+                    initialPage = scheduleState.scheduleUiDto.schedulePagerUiDto.weeksStartIndex
                 )
 
                 var selectedDate by remember(
                     namedScheduleState.namedScheduleWithSchedules?.namedSchedule?.apiId
                 ) {
                     mutableStateOf(
-                        requireNotNull(scheduleState.scheduleUiDto).schedulePagerUiDto.defaultDate
+                        scheduleState.scheduleUiDto.schedulePagerUiDto.defaultDate
                     )
                 }
 
