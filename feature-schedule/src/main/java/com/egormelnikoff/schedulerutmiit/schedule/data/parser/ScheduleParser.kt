@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.parser
 
-import android.os.Build
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.parserFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
@@ -25,19 +25,9 @@ import java.time.LocalTime
 import java.time.Year
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Locale
 import kotlin.math.abs
 
 object ScheduleParser {
-    val ruLocale: Locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-        Locale.of("ru", "RU")
-    } else {
-        @Suppress("DEPRECATION")
-        Locale("ru", "RU")
-    }
-
-    val parserFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", ruLocale)
-
     suspend operator fun invoke(
         document: Document,
         timetable: TimetableDto,
