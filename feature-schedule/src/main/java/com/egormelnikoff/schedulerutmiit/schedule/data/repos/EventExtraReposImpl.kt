@@ -3,8 +3,8 @@ package com.egormelnikoff.schedulerutmiit.schedule.data.repos
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
-import com.egormelnikoff.schedulerutmiit.core.database.entity.toDomain
-import com.egormelnikoff.schedulerutmiit.core.database.entity.toEntity
+import com.egormelnikoff.schedulerutmiit.core.database.mapper.toDomain
+import com.egormelnikoff.schedulerutmiit.core.database.mapper.toEntity
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
 import java.time.LocalDateTime
 import javax.inject.Inject

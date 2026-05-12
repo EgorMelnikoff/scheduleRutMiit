@@ -7,11 +7,3 @@ data class RecurrenceEntity(
     val currentNumber: Int,
     val firstWeekNumber: Int
 )
-
-fun RecurrenceEntity.toDomain() = Recurrence(
-    interval, currentNumber, firstWeekNumber
-)
-
-fun Recurrence.toEntity() = RecurrenceEntity(
-    interval, currentNumber, firstWeekNumber
-)

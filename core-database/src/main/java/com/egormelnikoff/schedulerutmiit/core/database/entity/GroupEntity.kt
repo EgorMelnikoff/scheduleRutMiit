@@ -9,6 +9,3 @@ data class GroupEntity(
     val name: String
 )
 
-fun GroupEntity.toDomain() = Group(id, name)
-
-fun Group.toEntity() = GroupEntity(id, name)

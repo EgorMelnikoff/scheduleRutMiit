@@ -13,6 +13,3 @@ data class RecurrenceDto(
     val firstWeekNumber: Int
 )
 
-fun RecurrenceDto.toDomain() = Recurrence(
-    interval, currentNumber, firstWeekNumber
-)

@@ -41,15 +41,3 @@ data class EventDto(
     }
 }
 
-fun EventDto.toDomain() = Event(
-    startDatetime = requireNotNull(this.startDatetime),
-    endDatetime = requireNotNull(this.endDatetime),
-    recurrenceRule = recurrence?.toDomain(),
-    periodNumber = periodNumber,
-    name = requireNotNull(this.name),
-    typeName = typeName,
-    timeSlotName = timeSlotName,
-    lecturers = lecturers?.map { it.toDomain() },
-    groups = groups?.map { it.toDomain() },
-    rooms = rooms?.map { it.toDomain() }
-)

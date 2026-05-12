@@ -25,29 +25,3 @@ data class ScheduleEntity(
     @ColumnInfo(name = "isDefaultSchedule")
     val isDefault: Boolean = false,
 )
-
-fun ScheduleEntity.toDomain() = Schedule(
-    id,
-    namedScheduleId,
-    timetableId,
-    timetableType,
-    downloadUrl,
-    startDate,
-    endDate,
-    recurrence?.toDomain(),
-    isDefault
-)
-
-fun Schedule.toEntity(
-    newNamedScheduleId: Long? = null
-) = ScheduleEntity(
-    id,
-    newNamedScheduleId ?: namedScheduleId,
-    timetableId,
-    timetableType,
-    downloadUrl,
-    startDate,
-    endDate,
-    recurrence?.toEntity(),
-    isDefault
-)

@@ -15,10 +15,3 @@ data class LecturerDto(
     @SerialName("hint")
     val hint: String = ""
 )
-
-fun LecturerDto.toDomain() = Lecturer(
-    id = id,
-    shortFio = shortFio,
-    fullFio = fullFio,
-    hint = hint
-)

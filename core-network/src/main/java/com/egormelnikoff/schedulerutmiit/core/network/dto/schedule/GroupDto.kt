@@ -12,6 +12,3 @@ data class GroupDto(
     val name: String
 )
 
-fun GroupDto.toDomain() = Group(
-    id = id, name = name
-)

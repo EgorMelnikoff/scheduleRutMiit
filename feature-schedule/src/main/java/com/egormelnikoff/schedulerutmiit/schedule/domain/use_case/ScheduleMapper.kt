@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
-import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.toDomain
+import com.egormelnikoff.schedulerutmiit.core.network.mapper.toDomain
 import javax.inject.Inject
 
 class ScheduleMapper @Inject constructor() {

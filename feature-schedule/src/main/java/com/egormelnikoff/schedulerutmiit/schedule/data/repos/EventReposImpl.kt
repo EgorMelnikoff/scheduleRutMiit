@@ -6,8 +6,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
-import com.egormelnikoff.schedulerutmiit.core.database.entity.toDomain
-import com.egormelnikoff.schedulerutmiit.core.database.entity.toEntity
+import com.egormelnikoff.schedulerutmiit.core.database.mapper.toDomain
+import com.egormelnikoff.schedulerutmiit.core.database.mapper.toEntity
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import javax.inject.Inject
 

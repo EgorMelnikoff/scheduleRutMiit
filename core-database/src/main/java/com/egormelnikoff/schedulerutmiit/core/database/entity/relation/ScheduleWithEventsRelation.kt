@@ -6,8 +6,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraDataEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.toDomain
-import com.egormelnikoff.schedulerutmiit.core.database.entity.toEntity
+import com.egormelnikoff.schedulerutmiit.core.database.mapper.toDomain
+import com.egormelnikoff.schedulerutmiit.core.database.mapper.toEntity
 
 data class ScheduleWithEventsRelation(
     @Embedded

@@ -5,7 +5,7 @@ import androidx.room.Relation
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.toDomain
+import com.egormelnikoff.schedulerutmiit.core.database.mapper.toDomain
 
 data class NamedScheduleWithSchedulesRelation(
     @Embedded

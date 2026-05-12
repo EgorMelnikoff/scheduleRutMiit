@@ -19,11 +19,3 @@ data class NamedScheduleEntity(
     val isDefault: Boolean,
     val lastTimeUpdate: Long
 )
-
-fun NamedScheduleEntity.toDomain() = NamedSchedule(
-    id, fullName, shortName, apiId, type, isDefault, lastTimeUpdate
-)
-
-fun NamedSchedule.toEntity() = NamedScheduleEntity(
-    id, fullName, shortName, apiId, type, isDefault, lastTimeUpdate
-)

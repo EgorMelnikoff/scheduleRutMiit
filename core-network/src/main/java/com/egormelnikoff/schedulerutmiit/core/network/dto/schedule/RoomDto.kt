@@ -14,8 +14,3 @@ data class RoomDto(
     val hint: String = ""
 )
 
-fun RoomDto.toDomain() = Room(
-    id = id,
-    name = name,
-    hint = hint
-)

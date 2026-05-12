@@ -13,9 +13,3 @@ data class LatestReleaseFetchDto(
     @SerialName("tag_name")
     val tag: String
 )
-
-fun LatestReleaseFetchDto.toDomain() = LatestRelease(
-    url = url,
-    name = name,
-    tag = tag
-)

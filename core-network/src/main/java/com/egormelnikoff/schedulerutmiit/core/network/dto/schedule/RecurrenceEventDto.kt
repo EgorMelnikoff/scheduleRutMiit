@@ -11,8 +11,3 @@ data class RecurrenceEventDto(
     @SerialName("interval")
     val interval: Int
 )
-
-fun RecurrenceEventDto.toDomain() = RecurrenceEvent(
-    frequency = frequency,
-    interval = interval
-)

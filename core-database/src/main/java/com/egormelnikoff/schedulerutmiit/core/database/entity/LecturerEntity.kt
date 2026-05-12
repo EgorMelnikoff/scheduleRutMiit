@@ -11,10 +11,3 @@ data class LecturerEntity(
     val hint: String = ""
 )
 
-fun LecturerEntity.toDomain() = Lecturer(
-    id, shortFio, fullFio, hint
-)
-
-fun Lecturer.toEntity() = LecturerEntity(
-    id, shortFio, fullFio, hint
-)

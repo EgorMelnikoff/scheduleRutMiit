@@ -13,11 +13,3 @@ data class RoomEntity(
     @SerialName("hint")
     val hint: String = ""
 )
-
-fun RoomEntity.toDomain() = Room(
-    id, name, hint
-)
-
-fun Room.toEntity() = RoomEntity(
-    id, name, hint
-)
