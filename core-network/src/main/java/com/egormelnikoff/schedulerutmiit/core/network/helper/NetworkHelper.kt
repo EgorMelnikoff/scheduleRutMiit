@@ -102,6 +102,9 @@ class NetworkHelper @Inject constructor(
         } catch (e: SerializationException) {
             logError("Serialization error", requestType, requestParams, e)
             Result.Error(TypedError.SerializationError(e))
+        } catch (e: IllegalArgumentException) {
+            logError("Illegal argument", requestType, requestParams, e)
+            Result.Error(TypedError.IllegalArgumentError(e))
         }
     }
 
