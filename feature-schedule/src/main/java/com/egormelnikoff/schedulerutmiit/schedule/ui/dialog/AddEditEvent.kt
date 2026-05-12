@@ -41,7 +41,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.RecurrenceEvent
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
-import com.egormelnikoff.schedulerutmiit.core.network.dto.DefaultEventParams
+import com.egormelnikoff.schedulerutmiit.core.common.domain.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup

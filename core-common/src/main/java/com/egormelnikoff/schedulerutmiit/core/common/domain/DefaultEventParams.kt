@@ -1,8 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.core.network.dto
-
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Lecturer
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Room
+package com.egormelnikoff.schedulerutmiit.core.common.domain
 
 object DefaultEventParams {
     val types = arrayOf(
