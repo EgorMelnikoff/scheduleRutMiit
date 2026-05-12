@@ -40,8 +40,7 @@ fun CustomSnackbarHost(
                     else MaterialTheme.colorScheme.primary,
                     shape = MaterialTheme.shapes.medium
                 )
-                .padding(horizontal = 12.dp, vertical = 4.dp)
-                .width((68 * 4).dp),
+                .padding(horizontal = 12.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
