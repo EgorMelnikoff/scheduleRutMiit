@@ -191,7 +191,7 @@ fun ScreenSchedule(
                                                     onClick = {
                                                         scheduleViewModel.saveCurrentNamedSchedule()
                                                     },
-                                                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp),
+                                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
                                                     border = BorderStroke(
                                                         width = 0.5.dp,
                                                         MaterialTheme.colorScheme.onPrimary
