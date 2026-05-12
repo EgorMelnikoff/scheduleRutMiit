@@ -14,8 +14,9 @@ class SaveNamedScheduleUseCase @Inject constructor(
     suspend operator fun invoke(
         currentNamedScheduleWithSchedules: NamedScheduleWithSchedules
     ): ScheduleUseCaseResult {
-        val namedScheduleId =
-            namedScheduleRepos.save(currentNamedScheduleWithSchedules.namedSchedule)
+        val namedScheduleId = namedScheduleRepos.save(
+            currentNamedScheduleWithSchedules.namedSchedule
+        )
         scheduleRepos.saveAll(
             namedScheduleId, currentNamedScheduleWithSchedules.scheduleWithEvents
         )
