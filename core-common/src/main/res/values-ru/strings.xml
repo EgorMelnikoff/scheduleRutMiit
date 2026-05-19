@@ -116,7 +116,7 @@
     <string name="no_end_time_specified">Не указано время окончания</string>
     <string name="no_name_specified">Не указано назввание</string>
     <string name="no_saved_schedule">Отсутствует сохраненное расписание</string>
-    <string name="no_events">Нет пар</string>
+    <string name="no_events">Пар нет</string>
     <string name="no_start_date_specified">Не указана дата начала</string>
     <string name="no_start_time_specified">Не указано время начала</string>
     <string name="not_delete_schedules">Не удалять расписания</string>
