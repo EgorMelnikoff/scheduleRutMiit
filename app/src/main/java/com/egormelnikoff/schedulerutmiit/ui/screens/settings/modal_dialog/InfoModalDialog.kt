@@ -48,14 +48,14 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RowGroup
-import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_model.state.SettingsState
+import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfoModalDialog(
-    settingsState: SettingsState,
-    settingsViewModel: SettingsViewModel,
+    appState: AppState,
+    mainViewModel: MainViewModel,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -117,7 +117,7 @@ fun InfoModalDialog(
                 modifier = Modifier
                     .clip(MaterialTheme.shapes.medium)
                     .background(
-                        if (settingsState.updatesAvailable) {
+                        if (appState.updatesAvailable) {
                             MaterialTheme.colorScheme.error
                         } else
                             MaterialTheme.colorScheme.secondaryContainer
@@ -125,21 +125,21 @@ fun InfoModalDialog(
             ) {
                 ClickableItem(
                     title = when {
-                        settingsState.isUpdating -> stringResource(R.string.checking_for_updates) + "..."
-                        settingsState.updatesAvailable -> stringResource(R.string.new_version_available)
+                        appState.isUpdating -> stringResource(R.string.checking_for_updates) + "..."
+                        appState.updatesAvailable -> stringResource(R.string.new_version_available)
                         else ->stringResource(R.string.check_for_updates)
                     },
-                    titleColor = if (settingsState.updatesAvailable) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
+                    titleColor = if (appState.updatesAvailable) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
                     leadingIcon = {
                         Icon(
                             modifier = Modifier.size(24.dp),
                             imageVector = ImageVector.vectorResource(R.drawable.info),
                             contentDescription = null,
-                            tint = if (settingsState.updatesAvailable) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
+                            tint = if (appState.updatesAvailable) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
                         )
                     },
                     trailingIcon = when {
-                        settingsState.isUpdating -> {
+                        appState.isUpdating -> {
                             {
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(24.dp),
@@ -148,7 +148,7 @@ fun InfoModalDialog(
                             }
                         }
 
-                        !settingsState.updatesAvailable -> {
+                        !appState.updatesAvailable -> {
                             {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
@@ -162,8 +162,8 @@ fun InfoModalDialog(
                         else -> null
                     },
                     showClickLabel = false,
-                    onClick = if (!settingsState.updatesAvailable && !settingsState.isUpdating) {
-                        { settingsViewModel.checkUpdates() }
+                    onClick = if (!appState.updatesAvailable && !appState.isUpdating) {
+                        { mainViewModel.checkUpdates() }
                     } else null
                 )
             }

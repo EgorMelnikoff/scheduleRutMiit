@@ -10,18 +10,18 @@ import androidx.compose.ui.platform.LocalContext
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppSnackbarVisuals
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.event.UiEvent
-import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
 
 @Composable
 fun UiEventProcessor(
     scheduleViewModel: ScheduleViewModel,
-    settingsViewModel: SettingsViewModel,
+    mainViewModel: MainViewModel,
     snackBarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        settingsViewModel.uiEvent.collect {
+        mainViewModel.uiEvent.collect {
             handleUiEvent(it, context, snackBarHostState, useSnackbar = false)
         }
     }

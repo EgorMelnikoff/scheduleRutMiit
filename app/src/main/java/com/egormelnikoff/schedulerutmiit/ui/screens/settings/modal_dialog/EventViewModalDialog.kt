@@ -13,20 +13,20 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomCheckBox
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventViewModalDialog(
     onDismiss: () -> Unit,
     appSettings: AppSettings,
-    settingsViewModel: SettingsViewModel
+    preferencesViewModel: PreferencesViewModel
 ) {
     CustomModalBottomSheet(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -49,13 +49,13 @@ fun EventViewModalDialog(
                             CustomCheckBox(
                                 checked = appSettings.eventView.groupsVisible,
                                 onCheckedChange = { visible ->
-                                    settingsViewModel.onSetEventGroupVisibility(visible)
+                                    preferencesViewModel.onSetEventGroupVisibility(visible)
                                 }
                             )
                         },
                         showClickLabel = false
                     ) {
-                        settingsViewModel.onSetEventGroupVisibility(!appSettings.eventView.groupsVisible)
+                        preferencesViewModel.onSetEventGroupVisibility(!appSettings.eventView.groupsVisible)
                     }
                 }, {
                     ClickableItem(
@@ -72,13 +72,13 @@ fun EventViewModalDialog(
                             CustomCheckBox(
                                 checked = appSettings.eventView.roomsVisible,
                                 onCheckedChange = { visible ->
-                                    settingsViewModel.onSetEventRoomsVisibility(visible)
+                                    preferencesViewModel.onSetEventRoomsVisibility(visible)
                                 }
                             )
                         },
                         showClickLabel = false
                     ) {
-                        settingsViewModel.onSetEventRoomsVisibility(!appSettings.eventView.roomsVisible)
+                        preferencesViewModel.onSetEventRoomsVisibility(!appSettings.eventView.roomsVisible)
                     }
                 }, {
                     ClickableItem(
@@ -95,13 +95,13 @@ fun EventViewModalDialog(
                             CustomCheckBox(
                                 checked = appSettings.eventView.lecturersVisible,
                                 onCheckedChange = { visible ->
-                                    settingsViewModel.onSetEventLecturersVisibility(visible)
+                                    preferencesViewModel.onSetEventLecturersVisibility(visible)
                                 }
                             )
                         },
                         showClickLabel = false
                     ) {
-                        settingsViewModel.onSetEventLecturersVisibility(!appSettings.eventView.lecturersVisible)
+                        preferencesViewModel.onSetEventLecturersVisibility(!appSettings.eventView.lecturersVisible)
                     }
                 }
             )
@@ -124,13 +124,13 @@ fun EventViewModalDialog(
                             CustomCheckBox(
                                 checked = appSettings.eventView.tagVisible,
                                 onCheckedChange = { visible ->
-                                    settingsViewModel.onSetEventTagVisibility(visible)
+                                    preferencesViewModel.onSetEventTagVisibility(visible)
                                 }
                             )
                         },
                         showClickLabel = false
                     ) {
-                        settingsViewModel.onSetEventTagVisibility(!appSettings.eventView.tagVisible)
+                        preferencesViewModel.onSetEventTagVisibility(!appSettings.eventView.tagVisible)
                     }
                 }, {
                     ClickableItem(
@@ -147,13 +147,13 @@ fun EventViewModalDialog(
                             CustomCheckBox(
                                 checked = appSettings.eventView.commentVisible,
                                 onCheckedChange = { visible ->
-                                    settingsViewModel.onSetEventCommentVisibility(visible)
+                                    preferencesViewModel.onSetEventCommentVisibility(visible)
                                 }
                             )
                         },
                         showClickLabel = false
                     ) {
-                        settingsViewModel.onSetEventCommentVisibility(!appSettings.eventView.commentVisible)
+                        preferencesViewModel.onSetEventCommentVisibility(!appSettings.eventView.commentVisible)
                     }
                 }
             )

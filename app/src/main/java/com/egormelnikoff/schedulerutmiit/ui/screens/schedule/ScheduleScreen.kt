@@ -37,7 +37,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
@@ -50,6 +49,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ScheduleLoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ScheduleTopAppBar
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.calendar.ScheduleCalendarView
@@ -60,7 +60,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewMode
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.CurrentState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
-import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 import java.time.LocalDateTime
 
 @Composable
@@ -73,7 +73,7 @@ fun ScreenSchedule(
     appSettings: AppSettings,
     currentDateTime: LocalDateTime,
     scheduleViewModel: ScheduleViewModel,
-    settingsViewModel: SettingsViewModel,
+    preferencesViewModel: PreferencesViewModel,
     externalPadding: PaddingValues
 ) {
     var showBackDialog by remember { mutableStateOf(false) }
@@ -130,7 +130,7 @@ fun ScreenSchedule(
                             )
                         },
                         onSetScheduleView = { value ->
-                            settingsViewModel.onSetScheduleView(value)
+                            preferencesViewModel.onSetScheduleView(value)
                         },
                         onShowNamedScheduleDialog = { newValue ->
                             showNamedScheduleDialog = newValue

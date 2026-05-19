@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColorSelector
@@ -17,15 +16,16 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSwitch
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ThemeSelector
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
-import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThemeModalDialog(
     onDismiss: () -> Unit,
     appSettings: AppSettings,
-    settingsViewModel: SettingsViewModel
+    preferencesViewModel: PreferencesViewModel
 ) {
     CustomModalBottomSheet(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -40,7 +40,7 @@ fun ThemeModalDialog(
                     ) {
                         ThemeSelector(
                             setTheme = { value ->
-                                settingsViewModel.onSetTheme(value)
+                                preferencesViewModel.onSetTheme(value)
                             },
                             currentTheme = appSettings.decorPreferences.theme
                         )
@@ -54,7 +54,7 @@ fun ThemeModalDialog(
                                 checked = appSettings.decorPreferences.usedAmoled,
                                 enabled = appSettings.decorPreferences.theme.isDarkTheme(),
                             ) { used ->
-                                settingsViewModel.onSetUsedAmoled(used)
+                                preferencesViewModel.onSetUsedAmoled(used)
                             }
                         }
                     )
@@ -68,7 +68,7 @@ fun ThemeModalDialog(
                 ColorSelector(
                     currentSelected = appSettings.decorPreferences.decorColorIndex
                 ) { value ->
-                    settingsViewModel.onSetDecorColor(value)
+                    preferencesViewModel.onSetDecorColor(value)
                 }
 
             }

@@ -24,7 +24,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
@@ -33,6 +32,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSwitch
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
@@ -42,8 +42,9 @@ import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.EventV
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.InfoModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.ScheduleViewModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.ThemeModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_model.state.SettingsState
+import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState
 
 sealed interface SettingsDialog {
     object ScheduleView : SettingsDialog
@@ -58,8 +59,9 @@ sealed interface SettingsDialog {
 fun SettingsScreen(
     appUiState: AppUiState,
     appSettings: AppSettings,
-    settingsState: SettingsState,
-    settingsViewModel: SettingsViewModel,
+    appState: AppState,
+    preferencesViewModel: PreferencesViewModel,
+    mainViewModel: MainViewModel,
     externalPadding: PaddingValues
 ) {
     var activeDialog by remember { mutableStateOf<SettingsDialog?>(null) }
@@ -236,13 +238,13 @@ fun SettingsScreen(
                                 CustomSwitch(
                                     checked = !appSettings.schedulesDeletable
                                 ) {
-                                    settingsViewModel.onSetSchedulesDeletable(!it)
+                                    preferencesViewModel.onSetSchedulesDeletable(!it)
                                 }
                             },
                             showClickLabel = false,
                             enableToolTip = true
                         ) {
-                            settingsViewModel.onSetSchedulesDeletable(!appSettings.schedulesDeletable)
+                            preferencesViewModel.onSetSchedulesDeletable(!appSettings.schedulesDeletable)
                         }
                     }
                 )
@@ -288,7 +290,7 @@ fun SettingsScreen(
                     }, {
                         ClickableItem(
                             title = stringResource(R.string.about_app),
-                            showBadge = settingsState.updatesAvailable,
+                            showBadge = appState.updatesAvailable,
                             leadingIcon = {
                                 Icon(
                                     modifier = Modifier.size(20.dp),
@@ -316,7 +318,7 @@ fun SettingsScreen(
                     activeDialog = null
                 },
                 appSettings = appSettings,
-                settingsViewModel = settingsViewModel
+                preferencesViewModel = preferencesViewModel
             )
         }
 
@@ -326,14 +328,14 @@ fun SettingsScreen(
                     activeDialog = null
                 },
                 appSettings = appSettings,
-                settingsViewModel = settingsViewModel
+                preferencesViewModel = preferencesViewModel
             )
         }
 
         is SettingsDialog.Info -> {
             InfoModalDialog(
-                settingsState = settingsState,
-                settingsViewModel = settingsViewModel
+                appState = appState,
+                mainViewModel = mainViewModel
             ) {
                 activeDialog = null
             }
@@ -345,7 +347,7 @@ fun SettingsScreen(
                     activeDialog = null
                 },
                 appSettings = appSettings,
-                settingsViewModel = settingsViewModel
+                preferencesViewModel = preferencesViewModel
             )
         }
 
@@ -353,7 +355,7 @@ fun SettingsScreen(
             CountEventsModalDialog(
                 {
                     activeDialog = null
-                }, appSettings, settingsViewModel
+                }, appSettings, preferencesViewModel
             )
         }
 
@@ -363,7 +365,7 @@ fun SettingsScreen(
                     activeDialog = null
                 },
                 appSettings = appSettings,
-                settingsViewModel = settingsViewModel
+                preferencesViewModel = preferencesViewModel
             )
         }
 

@@ -12,20 +12,20 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleViewModalDialog(
     onDismiss: () -> Unit,
     appSettings: AppSettings,
-    settingsViewModel: SettingsViewModel
+    preferencesViewModel: PreferencesViewModel
 ) {
     CustomModalBottomSheet(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -60,13 +60,13 @@ fun ScheduleViewModalDialog(
                             RadioButton(
                                 selected = (it == appSettings.scheduleView),
                                 onClick = {
-                                    settingsViewModel.onSetScheduleView(it)
+                                    preferencesViewModel.onSetScheduleView(it)
                                 }
                             )
                         },
                         showClickLabel = false
                     ) {
-                        settingsViewModel.onSetScheduleView(it)
+                        preferencesViewModel.onSetScheduleView(it)
                     }
                 }
 
