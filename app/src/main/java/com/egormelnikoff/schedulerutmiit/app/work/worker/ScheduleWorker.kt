@@ -23,24 +23,31 @@ class ScheduleWorker @AssistedInject constructor(
     private val preferencesDataSource: PreferencesDataSource
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
-        val namedSchedule= namedScheduleRepos.getDefault()
-        logger.i("ScheduleWorker", "Default schedule:\n$namedSchedule")
-        namedSchedule ?: return Result.success()
+        val namedSchedules = namedScheduleRepos.getAll()
+        logger.i("ScheduleWorker", "Schedules size: ${namedSchedules.size}")
+        if (namedSchedules.isEmpty()) {
+            return Result.success()
+        }
 
-        val updateResult = refreshNamedScheduleUseCase.update(
-            namedSchedule = namedSchedule,
-            onStartUpdate = {
-                logger.i("ScheduleWorker", "Start schedule update")
-            },
-            deletableOldSchedules = preferencesDataSource.schedulesDeletableFlow.first()
-        )
+        val results = mutableListOf<CustomResult<String>>()
+        for (namedSchedule in namedSchedules) {
+            if (results.size == 3) break
+            val updateResult = refreshNamedScheduleUseCase.update(
+                namedSchedule = namedSchedule,
+                onStartUpdate = {
+                    logger.i("ScheduleWorker", "Update ${namedSchedule.apiId}")
+                },
+                deletableOldSchedules = preferencesDataSource.schedulesDeletableFlow.first()
+            )
+            results.add(updateResult)
+        }
 
-        return when(updateResult) {
-            is CustomResult.Success -> {
+        return when {
+            results.all { it is CustomResult.Success } -> {
                 Result.success()
             }
 
-            is CustomResult.Error -> {
+            else -> {
                 Result.retry()
             }
         }
