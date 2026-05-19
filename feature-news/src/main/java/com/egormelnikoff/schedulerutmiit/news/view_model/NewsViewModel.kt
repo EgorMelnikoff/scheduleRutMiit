@@ -2,43 +2,40 @@ package com.egormelnikoff.schedulerutmiit.news.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
-import com.egormelnikoff.schedulerutmiit.news.domain.use_case.GetNewsListUseCase
 import com.egormelnikoff.schedulerutmiit.news.view_model.state.NewsState
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class NewsViewModel @Inject constructor(
+@HiltViewModel(
+    assistedFactory = NewsViewModel.Factory::class
+)
+class NewsViewModel @AssistedInject constructor(
     private val newsRemoteDataSource: NewsRemoteDataSource,
-    getNewsListUseCase: GetNewsListUseCase,
-    private val resourcesManager: ResourcesManager
+    private val resourcesManager: ResourcesManager,
+    @Assisted
+    private val newsId: Long
 ) : ViewModel() {
     private val _newsState = MutableStateFlow(NewsState())
     val newsState = _newsState.asStateFlow()
 
-    private var newsJob: Job? = null
-
-    val newsListFlow: Flow<PagingData<NewsShortDto>> = getNewsListUseCase()
-        .cachedIn(viewModelScope)
+    init {
+        getNewsById(newsId)
+    }
 
     fun getNewsById(id: Long) {
-        _newsState.update { it.copy(isLoading = true) }
-        val newNewsJob = viewModelScope.launch {
-            newsJob?.cancelAndJoin()
+        viewModelScope.launch {
+            _newsState.update { it.copy(isLoading = true) }
+
             when (val news = newsRemoteDataSource.getNewsById(id)) {
                 is Result.Error -> _newsState.update {
                     it.copy(
@@ -61,16 +58,10 @@ class NewsViewModel @Inject constructor(
                 }
             }
         }
-        newsJob = newNewsJob
     }
 
-    fun setDefaultNewsState() {
-        _newsState.update {
-            it.copy(
-                isLoading = false,
-                error = null,
-                currentNews = null
-            )
-        }
+    @AssistedFactory
+    interface Factory {
+        fun create(newsId: Long): NewsViewModel
     }
 }

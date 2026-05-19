@@ -41,15 +41,13 @@ import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.news.view_model.state.NewsState
 
 @Composable
 fun NewsDialog(
-    setDefaultState: () -> Unit,
     newsState: NewsState,
-    appBackStack: AppBackStack,
+    onBack: () -> Unit
 ) {
     when {
         newsState.isLoading -> LoadingScreen()
@@ -62,10 +60,7 @@ fun NewsDialog(
                     modifier = Modifier.fillMaxWidth(),
                     buttonTitle = stringResource(R.string.back),
                     imageVector = ImageVector.vectorResource(R.drawable.back),
-                    onClick = {
-                        appBackStack.onBack()
-                        setDefaultState()
-                    },
+                    onClick = onBack,
                 )
             }
         )
