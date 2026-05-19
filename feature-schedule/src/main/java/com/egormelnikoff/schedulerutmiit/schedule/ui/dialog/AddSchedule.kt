@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -39,6 +40,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun AddScheduleDialog(
@@ -73,6 +75,7 @@ fun AddScheduleDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
+                shadowElevation = 4.dp,
                 titleText = stringResource(R.string.create_schedule),
                 navAction = { appUiState.appBackStack.onBack() }
             )
@@ -85,7 +88,7 @@ fun AddScheduleDialog(
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
-                    top = innerPadding.calculateTopPadding(),
+                    top = innerPadding.calculateTopPadding() + 12.dp,
                     bottom = innerPadding.calculateBottomPadding() + 8.dp
                 )
         ) {

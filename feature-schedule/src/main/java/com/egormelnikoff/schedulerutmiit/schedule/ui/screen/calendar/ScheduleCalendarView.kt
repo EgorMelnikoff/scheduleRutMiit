@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
@@ -26,6 +25,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction

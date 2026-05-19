@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import java.time.LocalDateTime
 
 @Entity(tableName = "Events")

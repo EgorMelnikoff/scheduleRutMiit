@@ -53,9 +53,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Grey
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Red
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 
 data class BarItem(
     @param:StringRes

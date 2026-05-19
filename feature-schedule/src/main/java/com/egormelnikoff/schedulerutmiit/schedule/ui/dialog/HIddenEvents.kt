@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -33,8 +35,8 @@ import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.format.TextStyle
-import androidx.compose.ui.platform.LocalLocale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HiddenEventsDialog(
     namedSchedule: NamedSchedule,
@@ -46,6 +48,7 @@ fun HiddenEventsDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
+                shadowElevation = 4.dp,
                 titleText = stringResource(R.string.hidden_events),
                 subtitleText = "${namedSchedule.shortName} (${schedule?.timetableType?.typeName})",
                 navAction = {
@@ -57,7 +60,7 @@ fun HiddenEventsDialog(
         LazyColumn(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             contentPadding = PaddingValues(
-                top = innerPadding.calculateTopPadding(),
+                top = innerPadding.calculateTopPadding() + 12.dp,
                 bottom = innerPadding.calculateBottomPadding(),
                 start = 16.dp, end = 16.dp
             ),

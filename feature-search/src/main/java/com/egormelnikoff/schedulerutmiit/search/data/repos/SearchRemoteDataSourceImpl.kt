@@ -7,7 +7,6 @@ import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.search.data.parser.SearchParser
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
-import org.jsoup.Jsoup
 import javax.inject.Inject
 
 class SearchRemoteDataSourceImpl @Inject constructor(

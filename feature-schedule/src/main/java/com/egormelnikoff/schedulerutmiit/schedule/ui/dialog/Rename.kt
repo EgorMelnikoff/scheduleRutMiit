@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +38,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RenameDialog(
     namedSchedule: NamedSchedule,
@@ -46,13 +48,14 @@ fun RenameDialog(
     var newName by remember { mutableStateOf(namedSchedule.fullName) }
     val renameEnabled by remember {
         derivedStateOf {
-            newName.isNotBlank()
+            newName.isNotBlank() && newName.trim() != namedSchedule.fullName
         }
     }
 
     Scaffold(
         topBar = {
             CustomTopAppBar(
+                shadowElevation = 4.dp,
                 titleText = stringResource(R.string.renaming),
                 navAction = {
                     appBackStack.onBack()
@@ -64,7 +67,7 @@ fun RenameDialog(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = innerPadding.calculateTopPadding(),
+                    top = innerPadding.calculateTopPadding() + 12.dp,
                     bottom = innerPadding.calculateBottomPadding(),
                     start = 16.dp, end = 16.dp
                 )

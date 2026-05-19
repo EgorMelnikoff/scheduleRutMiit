@@ -16,12 +16,12 @@ import com.egormelnikoff.schedulerutmiit.schedule.data.repos.EventReposImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.NamedScheduleReposImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.ScheduleRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.ScheduleReposImpl
-import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.search.data.repos.SearchQueryReposImpl
 import com.egormelnikoff.schedulerutmiit.search.data.repos.SearchRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchQueryRepos

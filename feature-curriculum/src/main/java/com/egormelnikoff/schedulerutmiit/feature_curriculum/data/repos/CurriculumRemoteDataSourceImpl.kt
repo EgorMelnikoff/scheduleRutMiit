@@ -4,7 +4,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.repos.CurriculumRemoteDataSource
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import javax.inject.Inject
 

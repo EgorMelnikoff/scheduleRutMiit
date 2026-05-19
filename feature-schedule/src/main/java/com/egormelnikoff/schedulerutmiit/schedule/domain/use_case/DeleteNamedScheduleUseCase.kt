@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.result.ScheduleUseCaseResult
+import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdater
 import javax.inject.Inject
 
 class DeleteNamedScheduleUseCase @Inject constructor(

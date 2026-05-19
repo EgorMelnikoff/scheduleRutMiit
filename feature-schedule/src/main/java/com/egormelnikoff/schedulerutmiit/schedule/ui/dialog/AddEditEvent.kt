@@ -9,6 +9,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,13 +37,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.RecurrenceEvent
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
-import com.egormelnikoff.schedulerutmiit.core.common.domain.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
@@ -65,6 +67,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditEventDialog(
     namedSchedule: NamedSchedule,
@@ -125,6 +128,7 @@ fun AddEditEventDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
+                shadowElevation = 4.dp,
                 titleText = updatableEvent?.let {
                     stringResource(R.string.editing)
                 } ?: stringResource(R.string.create_class),
@@ -195,7 +199,11 @@ fun AddEditEventDialog(
 
                 appUiState.appBackStack.onBack()
             },
-            paddingValues = innerPadding,
+            paddingValues = PaddingValues(
+                start = 16.dp, end = 16.dp,
+                top = innerPadding.calculateTopPadding() + 12.dp,
+                bottom = innerPadding.calculateBottomPadding()
+            ),
             finishTitle = stringResource(R.string.create)
         ) { page ->
             when (page) {

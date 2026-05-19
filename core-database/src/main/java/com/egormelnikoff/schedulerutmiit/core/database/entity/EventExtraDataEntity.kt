@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import java.time.LocalDateTime
 
 @Entity(tableName = "EventsExtraData")

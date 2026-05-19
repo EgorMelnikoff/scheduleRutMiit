@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
@@ -21,6 +20,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findEventExtra
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction

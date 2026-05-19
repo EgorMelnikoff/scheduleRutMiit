@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.core.network.dto.schedule
 
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.core.database.entity
 
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import kotlinx.serialization.Serializable
 
 @Serializable

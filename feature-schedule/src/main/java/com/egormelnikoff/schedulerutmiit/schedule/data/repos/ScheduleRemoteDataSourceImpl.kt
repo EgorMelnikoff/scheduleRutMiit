@@ -10,7 +10,6 @@ import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
 import com.egormelnikoff.schedulerutmiit.schedule.data.parser.ScheduleParser
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRemoteDataSource
-import org.jsoup.Jsoup
 import javax.inject.Inject
 
 class ScheduleRemoteDataSourceImpl @Inject constructor(

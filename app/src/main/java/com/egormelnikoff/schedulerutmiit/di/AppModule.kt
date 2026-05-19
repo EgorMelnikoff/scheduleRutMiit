@@ -3,6 +3,7 @@ package com.egormelnikoff.schedulerutmiit.di
 import android.content.Context
 import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataSourceImpl
+import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
 import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
@@ -10,7 +11,6 @@ import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.parser.Subjects
 import com.egormelnikoff.schedulerutmiit.latest_release.data.repos.AppInfoProviderImpl
 import com.egormelnikoff.schedulerutmiit.news.data.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.schedule.data.parser.ScheduleParser
-import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.search.data.parser.SearchParser
 import dagger.Module
