@@ -64,10 +64,7 @@ fun PagerScreenContainer(
         HorizontalPager(
             modifier = Modifier.weight(1f),
             state = pagerState,
-            contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp,
-                top = paddingValues.calculateTopPadding() + 4.dp
-            ),
+            contentPadding = paddingValues,
             userScrollEnabled = isNextEnabled(pagerState.currentPage),
             pageSpacing = 24.dp
         ) { page ->
