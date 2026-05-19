@@ -18,20 +18,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumDialog
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.CurriculumViewModel
 import com.egormelnikoff.schedulerutmiit.news.ui.NewsDialog
 import com.egormelnikoff.schedulerutmiit.news.ui.NewsScreen
+import com.egormelnikoff.schedulerutmiit.news.view_model.NewsListViewModel
 import com.egormelnikoff.schedulerutmiit.news.view_model.NewsViewModel
-import com.egormelnikoff.schedulerutmiit.news.view_model.state.NewsState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.AddEditEventDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.EventDialog
@@ -46,36 +48,31 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.CurrentSta
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchParams
-import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchState
 import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
 import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.ui.screens.search.SearchDialog
 import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
-import com.egormelnikoff.schedulerutmiit.ui.view_model.SettingsViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_model.state.SettingsState
+import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
+import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @Composable
 fun ScheduleRutMiitApp(
     scheduleViewModel: ScheduleViewModel,
-    searchViewModel: SearchViewModel,
-    newsViewModel: NewsViewModel,
-    settingsViewModel: SettingsViewModel,
+    preferencesViewModel: PreferencesViewModel,
     appSettings: AppSettings
 ) {
-    val searchParams = searchViewModel.searchParams.collectAsStateWithLifecycle().value
-    val searchState = searchViewModel.searchState.collectAsStateWithLifecycle().value
+    val mainViewModel = hiltViewModel<MainViewModel>()
 
     val currentState = scheduleViewModel.currentState.collectAsStateWithLifecycle().value
     val namedScheduleState = scheduleViewModel.namedScheduleState.collectAsStateWithLifecycle().value
     val scheduleState = scheduleViewModel.scheduleState.collectAsStateWithLifecycle().value
 
-    val newsState = newsViewModel.newsState.collectAsStateWithLifecycle().value
-    val currentDateTime = settingsViewModel.currentDate.collectAsStateWithLifecycle().value
-    val settingsState = settingsViewModel.settingsState.collectAsStateWithLifecycle().value
+    val currentDateTime = mainViewModel.currentDate.collectAsStateWithLifecycle().value
+    val appState = mainViewModel.appState.collectAsStateWithLifecycle().value
 
     val appUiState = AppUiState()
     val scheduleUiState = ScheduleUiState(namedScheduleState, scheduleState)
@@ -83,7 +80,7 @@ fun ScheduleRutMiitApp(
 
     UiEventProcessor(
         scheduleViewModel = scheduleViewModel,
-        settingsViewModel = settingsViewModel,
+        mainViewModel = mainViewModel,
         snackBarHostState = appUiState.snackBarHostState
     )
 
@@ -101,28 +98,23 @@ fun ScheduleRutMiitApp(
             pageHost = {
                 PageHost(
                     appUiState = appUiState,
+                    mainViewModel = mainViewModel,
                     scheduleViewModel = scheduleViewModel,
                     currentDateTime = currentDateTime,
-                    newsViewModel = newsViewModel,
-                    settingsViewModel = settingsViewModel,
+                    preferencesViewModel = preferencesViewModel,
                     scheduleState = scheduleState,
                     currentState = currentState,
                     namedScheduleState = namedScheduleState,
-                    settingsState = settingsState,
+                    appState = appState,
                     scheduleUiState = scheduleUiState,
                     reviewUiState = reviewUiState,
                     appSettings = appSettings
                 )
             },
             scheduleViewModel = scheduleViewModel,
-            newsViewModel = newsViewModel,
-            searchViewModel = searchViewModel,
 
             appUiState = appUiState,
             scheduleState = scheduleState,
-            newsState = newsState,
-            searchState = searchState,
-            searchParams = searchParams,
             currentDateTime = currentDateTime
         )
     }
@@ -133,14 +125,8 @@ fun ScheduleRutMiitApp(
 fun RootHost(
     pageHost: @Composable () -> Unit,
     scheduleViewModel: ScheduleViewModel,
-    searchViewModel: SearchViewModel,
-    newsViewModel: NewsViewModel,
-
     appUiState: AppUiState,
-    searchState: SearchState,
-    searchParams: SearchParams,
     scheduleState: ScheduleState,
-    newsState: NewsState,
     currentDateTime: LocalDateTime
 ) {
     Scaffold(
@@ -160,6 +146,10 @@ fun RootHost(
                         WindowInsetsSides.Horizontal
                     )
                 ),
+            entryDecorators = listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator()
+            ),
             backStack = appUiState.appBackStack.dialogBackStack,
             onBack = {
                 appUiState.appBackStack.onBack()
@@ -203,13 +193,18 @@ fun RootHost(
                     )
                 }
 
-                entry<Route.Dialog.NewsDialog> {
+                entry<Route.Dialog.NewsDialog> { key ->
+                    val newsViewModel =
+                        hiltViewModel<NewsViewModel, NewsViewModel.Factory> { factory ->
+                            factory.create(key.newsId)
+                        }
+                    val newsState = newsViewModel.newsState.collectAsStateWithLifecycle().value
+
                     NewsDialog(
-                        setDefaultState = {
-                            newsViewModel.setDefaultNewsState()
-                        },
                         newsState = newsState,
-                        appBackStack = appUiState.appBackStack,
+                        onBack = {
+                            appUiState.appBackStack.onBack()
+                        },
                     )
                 }
 
@@ -224,14 +219,20 @@ fun RootHost(
                     )
                 }
                 entry<Route.Dialog.SearchDialog> {
+                    val searchViewModel = hiltViewModel<SearchViewModel>()
+
+                    val searchParams =
+                        searchViewModel.searchParams.collectAsStateWithLifecycle().value
+                    val searchState =
+                        searchViewModel.searchState.collectAsStateWithLifecycle().value
+
                     SearchDialog(
                         scheduleViewModel = scheduleViewModel,
                         searchViewModel = searchViewModel,
                         appBackStack = appUiState.appBackStack,
                         searchParams = searchParams,
-                        searchState = searchState,
-
-                        )
+                        searchState = searchState
+                    )
                 }
                 entry<Route.Dialog.CurriculumDialog> {
                     val curriculumViewModel = hiltViewModel<CurriculumViewModel>()
@@ -277,14 +278,14 @@ fun RootHost(
 
 @Composable
 fun PageHost(
+    mainViewModel: MainViewModel,
     scheduleViewModel: ScheduleViewModel,
-    newsViewModel: NewsViewModel,
-    settingsViewModel: SettingsViewModel,
+    preferencesViewModel: PreferencesViewModel,
 
     scheduleState: ScheduleState,
     currentState: CurrentState,
     namedScheduleState: NamedScheduleState,
-    settingsState: SettingsState,
+    appState: AppState,
     currentDateTime: LocalDateTime,
 
     appUiState: AppUiState,
@@ -388,7 +389,7 @@ fun PageHost(
                     CustomNavigationBarItem(
                         barItem = barItems[3],
                         selectedPage = selectedPage,
-                        showBadge = settingsState.updatesAvailable,
+                        showBadge = appState.updatesAvailable,
                         navigate = navigate
                     )
                 },
@@ -443,19 +444,22 @@ fun PageHost(
                         appSettings = appSettings,
                         currentDateTime = currentDateTime,
                         scheduleViewModel = scheduleViewModel,
-                        settingsViewModel = settingsViewModel,
+                        preferencesViewModel = preferencesViewModel,
                         externalPadding = padding
                     )
                 }
 
                 entry<Route.Page.NewsList> {
+                    val newsListViewModel = hiltViewModel<NewsListViewModel>()
+
                     NewsScreen(
-                        newsListFlow = newsViewModel.newsListFlow,
+                        newsListFlow = newsListViewModel.newsListFlow,
                         onGetNewsById = { id ->
-                            newsViewModel.getNewsById(id)
+                            appUiState.appBackStack.openDialog(
+                                Route.Dialog.NewsDialog(id)
+                            )
                         },
                         newsGridListState = appUiState.newsListState,
-                        appBackStack = appUiState.appBackStack,
                         externalPadding = padding
                     )
                 }
@@ -464,8 +468,9 @@ fun PageHost(
                     SettingsScreen(
                         appUiState = appUiState,
                         appSettings = appSettings,
-                        settingsState = settingsState,
-                        settingsViewModel = settingsViewModel,
+                        appState = appState,
+                        preferencesViewModel = preferencesViewModel,
+                        mainViewModel = mainViewModel,
                         externalPadding = padding
                     )
                 }
