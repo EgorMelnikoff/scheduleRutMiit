@@ -22,7 +22,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class PreferencesDataSourceImpl @Inject constructor(
     private val context: Context,
     private val json: Json
-): PreferencesDataSource {
+) : PreferencesDataSource {
     override suspend fun setLatestRelease(latestRelease: LatestRelease) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.LATEST_RELEASE] = json.encodeToString(latestRelease)
@@ -32,6 +32,12 @@ class PreferencesDataSourceImpl @Inject constructor(
     override suspend fun setTheme(theme: Theme) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.THEME] = theme.name
+        }
+    }
+
+    override suspend fun setUsedImageInReview(usedImage: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USED_IMAGE_IN_REVIEW] = usedImage
         }
     }
 
@@ -120,6 +126,10 @@ class PreferencesDataSourceImpl @Inject constructor(
         Theme.entries.find { it.name == theme?.uppercase() } ?: Theme.SYSTEM
     }
 
+    override val usedImageInReviewFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.USED_IMAGE_IN_REVIEW] ?: true
+    }
+
     override val usedAmoledFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.USED_AMOLED] ?: false
     }
@@ -141,18 +151,18 @@ class PreferencesDataSourceImpl @Inject constructor(
         preferences[PreferencesKeys.SCHEDULES_DELETABLE] ?: true
     }
 
-    override val eventExtraPolicyFlow: Flow<EventExtraPolicy> = context.dataStore.data.map { preferences ->
-        val name = preferences[PreferencesKeys.EVENT_EXTRA_POLICY]
-        EventExtraPolicy.entries.find { it.name == name } ?: EventExtraPolicy.DEFAULT
-    }
+    override val eventExtraPolicyFlow: Flow<EventExtraPolicy> =
+        context.dataStore.data.map { preferences ->
+            val name = preferences[PreferencesKeys.EVENT_EXTRA_POLICY]
+            EventExtraPolicy.entries.find { it.name == name } ?: EventExtraPolicy.DEFAULT
+        }
 
 
-
-
-    override val eventCountViewFlow: Flow<EventsCountView> = context.dataStore.data.map { preferences ->
-        val name = preferences[PreferencesKeys.COUNT_CLASSES_VIEW]
-        EventsCountView.entries.find { it.name == name } ?: EventsCountView.DETAILS
-    }
+    override val eventCountViewFlow: Flow<EventsCountView> =
+        context.dataStore.data.map { preferences ->
+            val name = preferences[PreferencesKeys.COUNT_CLASSES_VIEW]
+            EventsCountView.entries.find { it.name == name } ?: EventsCountView.DETAILS
+        }
 
     override val groupsVisibilityFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.EVENT_GROUPS_VISIBILITY] ?: true
@@ -161,9 +171,10 @@ class PreferencesDataSourceImpl @Inject constructor(
     override val roomsVisibilityFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.EVENT_ROOMS_VISIBILITY] ?: true
     }
-    override val lecturersVisibilityFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
-        preferences[PreferencesKeys.EVENT_LECTURERS_VISIBILITY] ?: true
-    }
+    override val lecturersVisibilityFlow: Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.EVENT_LECTURERS_VISIBILITY] ?: true
+        }
     override val tagVisibilityFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.EVENT_TAG_VISIBILITY] ?: true
     }

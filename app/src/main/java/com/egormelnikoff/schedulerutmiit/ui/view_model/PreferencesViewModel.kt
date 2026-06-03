@@ -62,13 +62,20 @@ class PreferencesViewModel @Inject constructor(
                 Triple(scheduleView, schedulesDeletable, eventCountView)
             }
 
+            val uiFlow = combine(
+                preferencesDataSource.skipWelcomeFlow,
+                preferencesDataSource.usedImageInReviewFlow
+            ) { skipWelcome, usedImage ->
+                Pair(skipWelcome, usedImage)
+            }
+
             combine(
                 decorFlow,
                 eventFlow,
                 scheduleFlow,
-                preferencesDataSource.eventExtraPolicyFlow,
-                preferencesDataSource.skipWelcomeFlow
-            ) { decor, eventView, scheduleSettings, eventExtraPolicy, skipWelcome ->
+                uiFlow,
+                preferencesDataSource.eventExtraPolicyFlow
+            ) { decor, eventView, scheduleSettings, uiFlow, eventExtraPolicy ->
                 AppSettings(
                     decorPreferences = decor,
                     scheduleView = scheduleSettings.first,
@@ -76,7 +83,8 @@ class PreferencesViewModel @Inject constructor(
                     schedulesDeletable = scheduleSettings.second,
                     eventsCountView = scheduleSettings.third,
                     eventExtraPolicy = eventExtraPolicy,
-                    skipWelcomePage = skipWelcome
+                    usedImageInReview = uiFlow.second,
+                    skipWelcomePage = uiFlow.first
                 )
             }.collect { settings ->
                 _appSettings.value = settings
@@ -133,6 +141,14 @@ class PreferencesViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             preferencesDataSource.setTheme(theme)
+        }
+    }
+
+    fun onSetUsedImageInReview(
+        usedImage: Boolean
+    ) {
+        viewModelScope.launch {
+            preferencesDataSource.setUsedImageInReview(usedImage)
         }
     }
 

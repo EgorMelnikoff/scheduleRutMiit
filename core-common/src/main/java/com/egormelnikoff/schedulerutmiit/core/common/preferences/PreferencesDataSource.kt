@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface PreferencesDataSource {
     suspend fun setLatestRelease(latestRelease: LatestRelease)
     suspend fun setTheme(theme: Theme)
+    suspend fun setUsedImageInReview(usedImage: Boolean)
     suspend fun setUsedAmoled(usedAmoled: Boolean)
     suspend fun setDecorColor(color: Int)
     suspend fun setScheduleView(scheduleView: ScheduleView)
@@ -25,6 +26,7 @@ interface PreferencesDataSource {
 
     val latestReleaseFlow: Flow<LatestRelease?>
     val themeFlow: Flow<Theme>
+    val usedImageInReviewFlow: Flow<Boolean>
     val usedAmoledFlow: Flow<Boolean>
     val decorColorFlow: Flow<Int>
     val skipWelcomeFlow: Flow<Boolean>

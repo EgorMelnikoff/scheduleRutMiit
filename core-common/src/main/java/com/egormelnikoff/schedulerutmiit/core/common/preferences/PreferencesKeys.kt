@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 
 object PreferencesKeys {
     val THEME = stringPreferencesKey(name = "theme")
+    val USED_IMAGE_IN_REVIEW = booleanPreferencesKey(name = "used_image_in_review")
     val USED_AMOLED = booleanPreferencesKey(name = "used_amoled")
     val DECOR_COLOR = intPreferencesKey(name = "decor_color")
     val SCHEDULE_VIEW = stringPreferencesKey(name = "view_schedule")
