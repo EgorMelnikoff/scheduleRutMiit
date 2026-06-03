@@ -19,9 +19,9 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findEventExtra
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.event.Event
@@ -50,22 +50,18 @@ fun ScheduleListView(
             modifier = Modifier.fillMaxSize(),
         ) {
             scheduleUiDto.fullEventList.forEach { events ->
-                val eventsForDay = events.second.getGroupedEvents().toList()
                 stickyHeader {
                     DateHeader(
-                        date = events.first,
+                        date = events.key,
                         formatter = dayMonthNameFormatter
                     )
                 }
-
                 items(
-                    items = eventsForDay,
+                    items = events.value.entries.toTypedArray(),
                     key = if (isSavedSchedule) {
                         {
-                            Pair(
-                                it.second.first().id,
-                                it.second.first().startDatetime
-                            )
+                            val firstEvent = it.value.first()
+                            firstEvent.id to firstEvent.startDatetime
                         }
                     } else null
                 ) { eventsGrouped ->
@@ -73,24 +69,11 @@ fun ScheduleListView(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
                         Event(
-                            navigateToEvent = { schedule, isSavedSchedule, event, eventExtraData ->
-                                appBackStack.openDialog(
-                                    Route.Dialog.EventDialog(
-                                        namedSchedule = namedSchedule,
-                                        schedule = schedule,
-                                        isSavedSchedule = isSavedSchedule,
-                                        dateTime = event.startDatetime,
-                                        event = event,
-                                        eventExtraData = eventExtraData
-                                    )
-                                )
+                            navigateToEvent = { eventDialog ->
+                                appBackStack.openDialog(eventDialog)
                             },
-                            navigateToEditEvent = { schedule, event ->
-                                appBackStack.openDialog(
-                                    Route.Dialog.AddEventDialog(
-                                        namedSchedule, schedule, event
-                                    )
-                                )
+                            navigateToEditEvent = { editEventDialog ->
+                                appBackStack.openDialog(editEventDialog)
                             },
                             onDeleteEvent = { schedule, eventId ->
                                 scheduleViewModel.eventAction(
@@ -106,13 +89,12 @@ fun ScheduleListView(
                                     EventAction.UpdateHidden(true)
                                 )
                             },
-                            eventsWithExtra = eventsGrouped.second.map { event ->
-                                event to scheduleUiDto.eventsExtraData.findEventExtra(
-                                    eventExtraPolicy = appSettings.eventExtraPolicy,
-                                    event = event,
-                                    dateTime = event.startDatetime.replaceDate(events.first)
-                                )
-                            },
+                            eventsWithExtra = eventsGrouped.getEnrichedEvents(
+                                eventsExtraData = scheduleUiDto.eventsExtraData,
+                                eventExtraPolicy = appSettings.eventExtraPolicy,
+                                date = events.key
+                            ),
+                            namedScheduleId = namedSchedule.id,
                             schedule = scheduleUiDto.schedule,
                             isSavedSchedule = isSavedSchedule,
                             eventView = appSettings.eventView

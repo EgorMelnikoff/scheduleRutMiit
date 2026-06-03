@@ -17,7 +17,7 @@ data class WidgetData(
     val namedSchedule: NamedSchedule? = null,
     val settledSchedule: Schedule? = null,
     val reviewUiDto: ReviewUiDto? = null,
-    val eventsExtraData: List<EventExtraData> = listOf(),
+    val eventsExtraData: Map<Long, EventExtraData> = mapOf(),
     val eventExtraPolicy: EventExtraPolicy = EventExtraPolicy.DEFAULT
 ) {
     companion object {
@@ -44,7 +44,7 @@ data class WidgetData(
                 WidgetData(
                     namedSchedule = namedSchedule,
                     settledSchedule = scheduleWithEvents.schedule,
-                    eventsExtraData = scheduleWithEvents.eventsExtraData,
+                    eventsExtraData = scheduleWithEvents.eventsExtraData.associateBy { it.eventId },
                     reviewUiDto = ReviewUiDto.Companion(
                         schedule = scheduleWithEvents.schedule,
                         periodicEvents = periodicEvents,

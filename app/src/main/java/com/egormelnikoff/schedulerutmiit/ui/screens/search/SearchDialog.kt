@@ -38,6 +38,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
@@ -48,22 +50,21 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.search.ui.FilterRow
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.SearchViewModel
-import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchParams
-import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchState
 
 @Composable
 fun SearchDialog(
-    scheduleViewModel: ScheduleViewModel,
-    searchViewModel: SearchViewModel,
-    appBackStack: AppBackStack,
-    searchParams: SearchParams,
-    searchState: SearchState
+    fetchNamedSchedule: (String, Int, NamedScheduleType) -> Unit
 ) {
+    val searchViewModel = hiltViewModel<SearchViewModel>()
+
+    val searchParams =
+        searchViewModel.searchParams.collectAsStateWithLifecycle().value
+    val searchState =
+        searchViewModel.searchState.collectAsStateWithLifecycle().value
+
+
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
@@ -198,14 +199,11 @@ fun SearchDialog(
                                         titleMaxLines = 2,
                                         showClickLabel = false
                                     ) {
-                                        scheduleViewModel.fetchNamedSchedule(
+                                        fetchNamedSchedule(
                                             query.name,
                                             query.apiId,
                                             query.namedScheduleType
                                         )
-                                        appBackStack.openPage(Route.Page.Schedule)
-                                        appBackStack.onBack()
-                                        searchViewModel.setDefaultSearchState()
                                     }
                                 }
                             }
@@ -242,7 +240,7 @@ fun SearchDialog(
                                             horizontalPadding = 8.dp,
                                             title = group.name
                                         ) {
-                                            scheduleViewModel.fetchNamedSchedule(
+                                            fetchNamedSchedule(
                                                 group.name,
                                                 group.id,
                                                 NamedScheduleType.GROUP
@@ -254,9 +252,6 @@ fun SearchDialog(
                                                     namedScheduleType = NamedScheduleType.GROUP
                                                 )
                                             )
-                                            appBackStack.openPage(Route.Page.Schedule)
-                                            appBackStack.onBack()
-                                            searchViewModel.setDefaultSearchState()
                                         }
                                     }
                                 }
@@ -293,7 +288,7 @@ fun SearchDialog(
                                                 )
                                             }
                                         ) {
-                                            scheduleViewModel.fetchNamedSchedule(
+                                            fetchNamedSchedule(
                                                 person.name,
                                                 person.id,
                                                 NamedScheduleType.PERSON
@@ -305,9 +300,6 @@ fun SearchDialog(
                                                     namedScheduleType = NamedScheduleType.PERSON
                                                 )
                                             )
-                                            appBackStack.openPage(Route.Page.Schedule)
-                                            appBackStack.onBack()
-                                            searchViewModel.setDefaultSearchState()
                                         }
                                     }
                                 }

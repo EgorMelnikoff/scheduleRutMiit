@@ -122,10 +122,12 @@ fun ScreenSchedule(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
                     ScheduleTopAppBar(
-                        navigateToHiddenEvents = { namedSchedule ->
+                        navigateToHiddenEvents = { namedScheduleId, shortName ->
                             appUiState.appBackStack.openDialog(
                                 Route.Dialog.HiddenEventsDialog(
-                                    namedSchedule
+                                    namedScheduleId = namedScheduleId,
+                                    namedScheduleShortName = shortName,
+                                    scheduleState.scheduleUiDto?.schedule?.timetableType
                                 )
                             )
                         },
@@ -182,30 +184,33 @@ fun ScreenSchedule(
                                             )
                                         },
                                         trailingIcon = {
-                                                OutlinedButton(
-                                                    colors = ButtonDefaults.outlinedButtonColors()
-                                                        .copy(
-                                                            containerColor = MaterialTheme.colorScheme.error,
-                                                            contentColor = MaterialTheme.colorScheme.onPrimary
-                                                        ),
-                                                    onClick = {
-                                                        scheduleViewModel.saveCurrentNamedSchedule()
-                                                    },
-                                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
-                                                    border = BorderStroke(
-                                                        width = 0.5.dp,
-                                                        MaterialTheme.colorScheme.onPrimary
-                                                    )
+                                            OutlinedButton(
+                                                colors = ButtonDefaults.outlinedButtonColors()
+                                                    .copy(
+                                                        containerColor = MaterialTheme.colorScheme.error,
+                                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                                    ),
+                                                onClick = {
+                                                    scheduleViewModel.saveCurrentNamedSchedule()
+                                                },
+                                                contentPadding = PaddingValues(
+                                                    horizontal = 8.dp,
+                                                    vertical = 2.dp
+                                                ),
+                                                border = BorderStroke(
+                                                    width = 0.5.dp,
+                                                    MaterialTheme.colorScheme.onPrimary
+                                                )
+                                            ) {
+                                                CompositionLocalProvider(
+                                                    LocalMinimumInteractiveComponentSize provides 0.dp
                                                 ) {
-                                                    CompositionLocalProvider(
-                                                        LocalMinimumInteractiveComponentSize provides 0.dp
-                                                    ) {
-                                                        Text(
-                                                            text = stringResource(R.string.save),
-                                                            style = MaterialTheme.typography.titleSmall
-                                                        )
-                                                    }
+                                                    Text(
+                                                        text = stringResource(R.string.save),
+                                                        style = MaterialTheme.typography.titleSmall
+                                                    )
                                                 }
+                                            }
 
                                         }
                                     )
@@ -325,7 +330,7 @@ fun ScreenSchedule(
         ModalDialogNamedSchedule(
             namedSchedule = namedScheduleState.namedScheduleWithSchedules?.namedSchedule ?: it,
             currentSchedule = scheduleState.scheduleUiDto?.schedule,
-            scheduleWithEvents = namedScheduleState.namedScheduleWithSchedules?.scheduleWithEvents,
+            schedulesWithEvents = namedScheduleState.namedScheduleWithSchedules?.scheduleWithEvents,
             today = currentDateTime.toLocalDate(),
             scheduleViewModel = scheduleViewModel,
             appBackStack = appUiState.appBackStack,

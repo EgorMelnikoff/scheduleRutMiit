@@ -6,7 +6,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
@@ -361,7 +360,7 @@ class ScheduleViewModel @Inject constructor(
 
 
     fun updateEventComment(
-        schedule: Schedule,
+        scheduleId: Long,
         event: Event,
         dateTime: LocalDateTime,
         comment: String
@@ -370,7 +369,7 @@ class ScheduleViewModel @Inject constructor(
             updateEventCommentJob?.cancelAndJoin()
             delay(300)
             updateEventCommentUseCase(
-                dateTime, schedule, event, comment
+                dateTime, scheduleId, event, comment
             ).let { eventsExtraData ->
                 _scheduleState.update { state ->
                     state.copy(
@@ -385,14 +384,14 @@ class ScheduleViewModel @Inject constructor(
     }
 
     fun updateEventTag(
-        schedule: Schedule,
+        scheduleId: Long,
         event: Event,
         dateTime: LocalDateTime,
         tag: Int
     ) {
         viewModelScope.launch {
             updateEventTagUseCase(
-                dateTime, schedule, event, tag
+                dateTime, scheduleId, event, tag
             ).let { eventsExtraData ->
                 _scheduleState.update { state ->
                     state.copy(
@@ -406,12 +405,12 @@ class ScheduleViewModel @Inject constructor(
     }
 
     fun eventAction(
-        schedule: Schedule,
+        namedScheduleId: Long,
         event: Event,
         eventAction: EventAction
     ) {
         viewModelScope.launch {
-            eventActionUseCase(schedule, event, eventAction).let { result ->
+            eventActionUseCase(namedScheduleId, event, eventAction).let { result ->
                 updateScheduleState(
                     namedScheduleWithSchedules = result,
                     updateReview = result.namedSchedule.isDefault
@@ -455,7 +454,7 @@ class ScheduleViewModel @Inject constructor(
         updateReview: Boolean = false
     ) {
         namedScheduleWithSchedules?.scheduleWithEvents?.findDefaultSchedule()?.let { schedule ->
-            val scheduleUiDto = ScheduleUiDto.Companion(schedule)
+            val scheduleUiDto = ScheduleUiDto(schedule)
             _scheduleState.update { state ->
                 state.copy(
                     scheduleUiDto = scheduleUiDto,

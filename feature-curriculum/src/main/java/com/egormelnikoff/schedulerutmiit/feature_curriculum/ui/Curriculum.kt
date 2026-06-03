@@ -37,6 +37,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.AdviceDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
@@ -44,14 +46,16 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.CurriculumViewModel
-import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.state.CurriculumState
 
 @Composable
-fun CurriculumDialog(
-    searchQuery: String,
-    curriculumViewModel: CurriculumViewModel,
-    curriculumState: CurriculumState
-) {
+fun CurriculumDialog() {
+    val curriculumViewModel = hiltViewModel<CurriculumViewModel>()
+    val searchQuery =
+        curriculumViewModel.searchQuery.collectAsStateWithLifecycle().value
+    val curriculumState =
+        curriculumViewModel.curriculumState.collectAsStateWithLifecycle().value
+
+
     var showAdviceDialog by remember { mutableStateOf(false) }
 
     if (showAdviceDialog) {

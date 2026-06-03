@@ -269,7 +269,7 @@ fun HorizontalCalendarItem(
     eventsCountView: EventsCountView,
     isToday: Boolean,
     events: Map<String, List<Event>>,
-    eventsExtraData: List<EventExtraData>,
+    eventsExtraData: Map<Long, EventExtraData>,
     eventExtraPolicy: EventExtraPolicy,
 ) {
     val backgroundColor = when {
@@ -342,7 +342,7 @@ fun HorizontalCalendarItem(
 fun EventsDetailSummary(
     currentDate: LocalDate,
     events: Map<String, List<Event>>,
-    eventsExtraData: List<EventExtraData>,
+    eventsExtraData: Map<Long, EventExtraData>,
     eventExtraPolicy: EventExtraPolicy
 ) {
     FlowRow(
@@ -363,7 +363,7 @@ fun EventsDetailSummary(
                     groupedEvents.value.forEach { event ->
                         val eventExtraData = eventsExtraData.findEventExtra(
                             eventExtraPolicy = eventExtraPolicy,
-                            event = event,
+                            eventId = event.id,
                             dateTime = event.startDatetime.replaceDate(currentDate)
                         )
                         val color = eventExtraData?.tag.getColorByIndex(

@@ -15,19 +15,18 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
 fun DaySelector(
-    currentDateTime: LocalDateTime,
+    currentDate: LocalDate,
     dateEvent: LocalDate?,
     onSelectDateEvent: (LocalDate) -> Unit,
     focusManager: FocusManager
 ) {
     val firstDayOfWeek = remember {
-        currentDateTime.toLocalDate().getFirstDayOfWeek()
+        currentDate.getFirstDayOfWeek()
     }
     
     ColumnGroup(

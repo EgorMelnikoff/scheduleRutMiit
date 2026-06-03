@@ -6,20 +6,22 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getPeriodicEvents
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlin.collections.map
 
 data class ScheduleUiDto(
     val schedule: Schedule,
 
     val periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null,
     val nonPeriodicEvents: Map<LocalDate, List<Event>>? = null,
-    val fullEventList: List<Pair<LocalDate, List<Event>>> = listOf(),
+    val fullEventList: Map<LocalDate, Map<String, List<Event>>> = mapOf(),
 
     val hiddenEvents: List<Event> = listOf(),
-    val eventsExtraData: List<EventExtraData> = listOf(),
+    val eventsExtraData: Map<Long, EventExtraData> = mapOf(),
     val schedulePagerUiDto: SchedulePagerUiDto
 ) {
     companion object {
@@ -59,11 +61,10 @@ data class ScheduleUiDto(
                 schedule = scheduleWithEvents.schedule,
 
                 periodicEvents = periodicEventsForCalendar,
-                schedulePagerUiDto = schedulePagerUiDto,
                 nonPeriodicEvents = nonPeriodicEventsForCalendar,
+                schedulePagerUiDto = schedulePagerUiDto,
                 fullEventList = fullEventList,
-
-                eventsExtraData = scheduleWithEvents.eventsExtraData,
+                eventsExtraData = scheduleWithEvents.eventsExtraData.associateBy { it.eventId },
                 hiddenEvents = splitEvents.first
             )
         }
@@ -73,7 +74,7 @@ data class ScheduleUiDto(
             schedule: Schedule,
             periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
             nonPeriodicEventsList: List<Event>?
-        ): List<Pair<LocalDate, List<Event>>> {
+        ): Map<LocalDate, Map<String, List<Event>>> {
             val fullEventsList = when {
                 periodicEvents == null && nonPeriodicEventsList == null -> emptyList()
 
@@ -119,11 +120,12 @@ data class ScheduleUiDto(
             }
 
             return fullEventsList
-                .asSequence()
                 .filter { it.startDatetime.toLocalDate()?.isAfter(today.minusDays(1)) == true }
                 .sortedBy { it.startDatetime }
                 .groupBy { it.startDatetime.toLocalDate() }
-                .toList()
+                .mapValues {
+                    it.value.getGroupedEvents()
+                }
         }
 
         private fun getWeekNumbers(

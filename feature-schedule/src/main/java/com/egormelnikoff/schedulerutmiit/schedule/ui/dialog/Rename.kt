@@ -31,24 +31,22 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RenameDialog(
-    namedSchedule: NamedSchedule,
-    scheduleViewModel: ScheduleViewModel,
-    appBackStack: AppBackStack,
+    renameDialog: Route.Dialog.RenameNamedScheduleDialog,
+    renameSchedule: (String) -> Unit,
+    onBack: () -> Unit
 ) {
-    var newName by remember { mutableStateOf(namedSchedule.fullName) }
+    var newName by remember { mutableStateOf(renameDialog.namedScheduleFullName) }
     val renameEnabled by remember {
         derivedStateOf {
-            newName.isNotBlank() && newName.trim() != namedSchedule.fullName
+            newName.isNotBlank() && newName.trim() != renameDialog.namedScheduleFullName
         }
     }
 
@@ -57,9 +55,7 @@ fun RenameDialog(
             CustomTopAppBar(
                 shadowElevation = 4.dp,
                 titleText = stringResource(R.string.renaming),
-                navAction = {
-                    appBackStack.onBack()
-                }
+                navAction = onBack
             )
         }
     ) { innerPadding ->
@@ -111,12 +107,7 @@ fun RenameDialog(
                 buttonTitle = stringResource(R.string.save),
                 enabled = renameEnabled,
                 onClick = {
-                    scheduleViewModel.renameNamedSchedule(
-                        namedScheduleId = namedSchedule.id,
-                        currentName = namedSchedule.fullName,
-                        newName = newName.trim()
-                    )
-                    appBackStack.onBack()
+                    renameSchedule(newName)
                 }
             )
         }

@@ -28,7 +28,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.Sch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleTopAppBar(
-    navigateToHiddenEvents: (NamedSchedule) -> Unit,
+    navigateToHiddenEvents: (Long, String) -> Unit,
     onSetScheduleView: (ScheduleView) -> Unit,
     onShowNamedScheduleDialog: (NamedSchedule) -> Unit,
 
@@ -51,7 +51,10 @@ fun ScheduleTopAppBar(
             ) {
                 IconButton(
                     onClick = {
-                        navigateToHiddenEvents(namedScheduleWithSchedules.namedSchedule)
+                        navigateToHiddenEvents(
+                            namedScheduleWithSchedules.namedSchedule.id,
+                            namedScheduleWithSchedules.namedSchedule.shortName
+                        )
                     }
                 ) {
                     Icon(

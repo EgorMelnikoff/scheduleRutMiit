@@ -34,6 +34,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.core.common.R
@@ -41,14 +43,22 @@ import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
-import com.egormelnikoff.schedulerutmiit.news.view_model.state.NewsState
+import com.egormelnikoff.schedulerutmiit.news.view_model.NewsViewModel
 
 @Composable
 fun NewsDialog(
-    newsState: NewsState,
+    newsDialog: Route.Dialog.NewsDialog,
     onBack: () -> Unit
 ) {
+    val newsViewModel =
+        hiltViewModel<NewsViewModel, NewsViewModel.Factory> { factory ->
+            factory.create(newsDialog.newsId)
+        }
+    val newsState = newsViewModel.newsState.collectAsStateWithLifecycle().value
+
+
     when {
         newsState.isLoading -> LoadingScreen()
 

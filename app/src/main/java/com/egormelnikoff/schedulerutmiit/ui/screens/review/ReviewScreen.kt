@@ -42,6 +42,9 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -80,10 +83,13 @@ fun ReviewScreen(
     currentDateTime: LocalDateTime,
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
+    usedPhoto: Boolean,
     isDarkTheme: Boolean,
     externalPadding: PaddingValues
 ) {
-    val usedPhoto = remember { true }
+    val topBarHeightPx = with(LocalDensity.current) {
+        60.dp.toPx()
+    }
 
     val currentDate by remember(currentDateTime) {
         mutableStateOf(
@@ -122,6 +128,10 @@ fun ReviewScreen(
         targetValue = if (!usedPhoto || overlappedFraction > 0.1f) 8.dp else 0.dp,
         label = "TopAppBarElevation"
     )
+
+    var showTopBarActions by remember {
+        mutableStateOf(false)
+    }
 
     if (usedPhoto) {
         val view = LocalView.current
@@ -187,7 +197,7 @@ fun ReviewScreen(
                 AnimatedVisibility(
                     enter = fadeIn(),
                     exit = fadeOut(),
-                    visible = overlappedFraction > 0.1f
+                    visible = !usedPhoto || showTopBarActions
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -264,49 +274,60 @@ fun ReviewScreen(
                         )
                     }
                 }
-            }
-            item {
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                ) {
-                    RowGroup(
-                        items = listOf(
-                            {
-                                ClickableItem(
-                                    defaultMinHeight = 32.dp,
-                                    showClickLabel = false,
-                                    title = "${stringResource(R.string.find)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
-                                    titleTypography = MaterialTheme.typography.titleSmall,
-                                    leadingIcon = {
-                                        LeadingIcon(
-                                            imageVector = ImageVector.vectorResource(R.drawable.search),
-                                            iconSize = 20.dp,
-                                            color = MaterialTheme.colorScheme.onBackground
-                                        )
-                                    }
-                                ) {
-                                    appBackStack.openDialog(Route.Dialog.SearchDialog)
-                                }
-                            }, {
-                                ClickableItem(
-                                    defaultMinHeight = 32.dp,
-                                    showClickLabel = false,
-                                    title = "${stringResource(R.string.create)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
-                                    titleTypography = MaterialTheme.typography.titleSmall,
-                                    leadingIcon = {
-                                        LeadingIcon(
-                                            imageVector = ImageVector.vectorResource(R.drawable.add),
-                                            iconSize = 20.dp,
-                                            color = MaterialTheme.colorScheme.onBackground
-                                        )
-                                    }
-                                ) {
-                                    appBackStack.openDialog(Route.Dialog.AddScheduleDialog)
-                                }
+
+                item {
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .onGloballyPositioned { coordinates ->
+                                val y = coordinates.positionInWindow().y
+
+                                showTopBarActions = y <= topBarHeightPx
                             }
+                    ) {
+                        RowGroup(
+                            items = listOf(
+                                {
+                                    ClickableItem(
+                                        defaultMinHeight = 32.dp,
+                                        showClickLabel = false,
+                                        title = "${stringResource(R.string.find)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
+                                        titleTypography = MaterialTheme.typography.titleSmall,
+                                        leadingIcon = {
+                                            LeadingIcon(
+                                                imageVector = ImageVector.vectorResource(R.drawable.search),
+                                                iconSize = 20.dp,
+                                                color = MaterialTheme.colorScheme.onBackground
+                                            )
+                                        }
+                                    ) {
+                                        appBackStack.openDialog(Route.Dialog.SearchDialog)
+                                    }
+                                }, {
+                                    ClickableItem(
+                                        defaultMinHeight = 32.dp,
+                                        showClickLabel = false,
+                                        title = "${stringResource(R.string.create)} ${
+                                            stringResource(
+                                                R.string.schedule
+                                            ).replaceFirstChar { it.lowercase() }
+                                        }",
+                                        titleTypography = MaterialTheme.typography.titleSmall,
+                                        leadingIcon = {
+                                            LeadingIcon(
+                                                imageVector = ImageVector.vectorResource(R.drawable.add),
+                                                iconSize = 20.dp,
+                                                color = MaterialTheme.colorScheme.onBackground
+                                            )
+                                        }
+                                    ) {
+                                        appBackStack.openDialog(Route.Dialog.AddScheduleDialog)
+                                    }
+                                }
+                            )
                         )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
                 }
             }
             if (currentState.namedSchedules.isNotEmpty()) {
@@ -400,6 +421,9 @@ fun ReviewScreen(
                         )
                     }
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.height(600.dp))
             }
         }
     }

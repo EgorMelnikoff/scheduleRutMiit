@@ -39,9 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
-import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.RecurrenceEvent
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetDatePicker
@@ -60,23 +58,21 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.ListParam
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.PagerScreenContainer
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoomInput
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.TimeSelector
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.schedule.data.validator.isValidEvent
-import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
-import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
-import java.time.LocalDateTime
+import kotlinx.coroutines.CoroutineScope
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditEventDialog(
-    namedSchedule: NamedSchedule,
-    schedule: Schedule,
-    updatableEvent: Event? = null,
-    appUiState: AppUiState,
-    currentDateTime: LocalDateTime,
-
-    scheduleViewModel: ScheduleViewModel
+    addEditEventDialog: Route.Dialog.AddEditEventDialog,
+    addEvent: (Long, Event) -> Unit,
+    editEvent: (Long, Event) -> Unit,
+    currentDate: LocalDate,
+    scope: CoroutineScope,
+    onBack: () -> Unit
 ) {
     var showBackDialog by remember { mutableStateOf(false) }
 
@@ -89,27 +85,43 @@ fun AddEditEventDialog(
 
     var currentInterval by remember {
         mutableIntStateOf(
-            updatableEvent?.recurrenceRule?.interval ?: -1
+            addEditEventDialog.updatableEvent?.recurrenceRule?.interval ?: -1
         )
     }
-    var currentPeriod by remember { mutableIntStateOf(updatableEvent?.periodNumber ?: 1) }
+    var currentPeriod by remember {
+        mutableIntStateOf(
+            addEditEventDialog.updatableEvent?.periodNumber ?: 1
+        )
+    }
     var showDialogDate by remember { mutableStateOf(false) }
     var showDialogStart by remember { mutableStateOf(false) }
     var showDialogEnd by remember { mutableStateOf(false) }
 
-    var nameEvent by remember { mutableStateOf(updatableEvent?.name ?: "") }
+    var nameEvent by remember { mutableStateOf(addEditEventDialog.updatableEvent?.name ?: "") }
     var typeEvent by remember {
         mutableStateOf(
-            updatableEvent?.typeName ?: DefaultEventParams.types.first()
+            addEditEventDialog.updatableEvent?.typeName ?: DefaultEventParams.types.first()
         )
     }
-    var dateEvent by remember { mutableStateOf(updatableEvent?.startDatetime?.toLocalDate()) }
-    var startTime by remember { mutableStateOf(updatableEvent?.startDatetime?.toLocalTimeWithTimeZone()) }
-    var endTime by remember { mutableStateOf(updatableEvent?.endDatetime?.toLocalTimeWithTimeZone()) }
+    var dateEvent by remember { mutableStateOf(addEditEventDialog.updatableEvent?.startDatetime?.toLocalDate()) }
+    var startTime by remember { mutableStateOf(addEditEventDialog.updatableEvent?.startDatetime?.toLocalTimeWithTimeZone()) }
+    var endTime by remember { mutableStateOf(addEditEventDialog.updatableEvent?.endDatetime?.toLocalTimeWithTimeZone()) }
 
-    var roomsList by remember { mutableStateOf(updatableEvent?.rooms ?: listOf()) }
-    var lecturersList by remember { mutableStateOf(updatableEvent?.lecturers ?: listOf()) }
-    var groupsList by remember { mutableStateOf(updatableEvent?.groups ?: listOf()) }
+    var roomsList by remember {
+        mutableStateOf(
+            addEditEventDialog.updatableEvent?.rooms ?: listOf()
+        )
+    }
+    var lecturersList by remember {
+        mutableStateOf(
+            addEditEventDialog.updatableEvent?.lecturers ?: listOf()
+        )
+    }
+    var groupsList by remember {
+        mutableStateOf(
+            addEditEventDialog.updatableEvent?.groups ?: listOf()
+        )
+    }
 
     val buttonEnabled by remember {
         derivedStateOf {
@@ -129,13 +141,10 @@ fun AddEditEventDialog(
         topBar = {
             CustomTopAppBar(
                 shadowElevation = 4.dp,
-                titleText = updatableEvent?.let {
+                titleText = addEditEventDialog.updatableEvent?.let {
                     stringResource(R.string.editing)
                 } ?: stringResource(R.string.create_class),
-                subtitleText = "${namedSchedule.shortName} (${schedule.timetableType.typeName})",
-                navAction = {
-                    appUiState.appBackStack.onBack()
-                }
+                navAction = onBack
             )
         }
     ) { innerPadding ->
@@ -145,11 +154,11 @@ fun AddEditEventDialog(
 
         PagerScreenContainer(
             pagerState = pagerState,
-            scope = appUiState.scope,
+            scope = scope,
             isNextEnabled = { page ->
                 when (page) {
                     0 -> nameEvent.isNotBlank()
-                    1 -> dateEvent != null && startTime != null && endTime != null && (schedule.recurrence != null && currentInterval != -1 || schedule.recurrence == null)
+                    1 -> dateEvent != null && startTime != null && endTime != null && (addEditEventDialog.recurrence != null && currentInterval != -1 || addEditEventDialog.recurrence == null)
                     2 -> buttonEnabled
                     else -> true
                 }
@@ -160,8 +169,8 @@ fun AddEditEventDialog(
                     val endDateTime = endTime?.toUtcDateTime(it)
                     if (startDateTime != null && endDateTime != null) {
                         val event = Event(
-                            id = updatableEvent?.id ?: 0,
-                            scheduleId = schedule.id,
+                            id = addEditEventDialog.updatableEvent?.id ?: 0,
+                            scheduleId = addEditEventDialog.scheduleId,
                             name = nameEvent.trim(),
                             typeName = typeEvent,
 
@@ -175,7 +184,7 @@ fun AddEditEventDialog(
                                 startDateTime = startDateTime,
                                 endDateTime = endDateTime
                             ),
-                            recurrenceRule = schedule.recurrence?.let {
+                            recurrenceRule = addEditEventDialog.recurrence?.let {
                                 RecurrenceEvent(
                                     frequency = "WEEKLY",
                                     interval = currentInterval
@@ -183,28 +192,30 @@ fun AddEditEventDialog(
                             },
                             periodNumber = if (currentInterval > 1) currentPeriod else 1
                         )
-                        if (updatableEvent != null) {
-                            scheduleViewModel.eventAction(
-                                schedule,
-                                event,
-                                EventAction.Update(updatableEvent)
+                        if (addEditEventDialog.updatableEvent != null) {
+                            editEvent(
+                                addEditEventDialog.namedScheduleId,
+                                event
                             )
                         } else {
-                            scheduleViewModel.eventAction(
-                                schedule, event, EventAction.Add
+                            addEvent(
+                                addEditEventDialog.namedScheduleId, event
                             )
                         }
                     }
                 }
-
-                appUiState.appBackStack.onBack()
+                onBack()
             },
             paddingValues = PaddingValues(
                 start = 16.dp, end = 16.dp,
                 top = innerPadding.calculateTopPadding() + 12.dp,
                 bottom = innerPadding.calculateBottomPadding()
             ),
-            finishTitle = stringResource(R.string.create)
+            finishTitle = if (addEditEventDialog.updatableEvent != null) {
+                stringResource(R.string.edit)
+            } else {
+                stringResource(R.string.create)
+            }
         ) { page ->
             when (page) {
                 0 -> {
@@ -261,9 +272,9 @@ fun AddEditEventDialog(
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top)
                     ) {
-                        if (schedule.recurrence != null) {
+                        if (addEditEventDialog.recurrence != null) {
                             DaySelector(
-                                currentDateTime = currentDateTime,
+                                currentDate = currentDate,
                                 dateEvent = dateEvent,
                                 onSelectDateEvent = { value ->
                                     dateEvent = value
@@ -282,7 +293,7 @@ fun AddEditEventDialog(
                                 }
                             )
                             RecurrenceField(
-                                maxInterval = requireNotNull(schedule.recurrence).interval,
+                                maxInterval = requireNotNull(addEditEventDialog.recurrence).interval,
                                 currentInterval = currentInterval,
                                 currentPeriod = currentPeriod,
                                 onSelectInterval = { value ->
@@ -396,8 +407,8 @@ fun AddEditEventDialog(
                 selectedDate = dateEvent,
                 onDateSelect = { newValue -> dateEvent = newValue },
                 onShowDialog = { newValue -> showDialogDate = newValue },
-                startDate = schedule.startDate,
-                endDate = schedule.endDate
+                startDate = addEditEventDialog.scheduleStartDate,
+                endDate = addEditEventDialog.scheduleEndDate
             )
         }
         if (showDialogStart) {
@@ -431,9 +442,7 @@ fun AddEditEventDialog(
                 onDismissRequest = {
                     showBackDialog = false
                 },
-                onConfirmation = {
-                    appUiState.appBackStack.onBack()
-                }
+                onConfirmation = onBack
             )
         }
     }

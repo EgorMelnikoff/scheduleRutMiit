@@ -57,7 +57,7 @@ fun <T> CustomButtonRow(
                     },
                     selected = element == selectedElement,
                     label = {
-                        label(Pair(index, element))
+                        label(index to element)
                     }
                 )
                 if (index != elements.lastIndex) {

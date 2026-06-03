@@ -5,6 +5,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -16,10 +17,7 @@ fun List<Event>.getGroupedEvents(): Map<String, List<Event>> {
         .sortedBy { event ->
             event.startDatetime.toLocalTime()
         }.groupBy { event ->
-            Pair(
-                event.startDatetime.toLocalTime(),
-                event.endDatetime.toLocalTime()
-            ).toString()
+            (event.startDatetime.toLocalTime() to event.endDatetime.toLocalTime()).toString()
         }
 }
 
@@ -41,35 +39,45 @@ fun List<Event>.getPeriodicEvents(
     }
 }
 
-fun List<EventExtraData>.findEventExtra(
+fun Map<Long, EventExtraData>.findEventExtra(
     eventExtraPolicy: EventExtraPolicy,
-    event: Event,
+    eventId: Long,
     dateTime: LocalDateTime
 ): EventExtraData? {
     return if (eventExtraPolicy == EventExtraPolicy.BY_DATES) {
-        this.find { it.eventId == event.id && it.dateTime == dateTime }
+        this.values.find { it.eventId == eventId && it.dateTime == dateTime }
     } else {
-        this.find { it.eventId == event.id }
+        this[eventId]
     }
 }
 
-fun List<Pair<String, List<Event>>>?.getEnrichedEvents(
+fun Map.Entry<String, List<Event>>.getEnrichedEvents(
+    eventsExtraData: Map<Long, EventExtraData>,
+    eventExtraPolicy: EventExtraPolicy,
+    date: LocalDate
+): List<Pair<Event, EventExtraData?>> {
+    return this.value.map { event ->
+        event to eventsExtraData.findEventExtra(
+            eventExtraPolicy = eventExtraPolicy,
+            eventId = event.id,
+            dateTime = event.startDatetime.replaceDate(date)
+        )
+    }
+}
+
+fun Map<String, List<Event>>?.getEnrichedEvents(
     date: LocalDate,
     eventExtraPolicy: EventExtraPolicy,
-    eventsExtraData: List<EventExtraData>
+    eventsExtraData: Map<Long, EventExtraData>
 ): List<Pair<String, List<Pair<Event, EventExtraData?>>>> {
-    return this?.map { (title, events) ->
-        val enriched = events.map { event ->
-            val extra = eventsExtraData.findEventExtra(
-                eventExtraPolicy,
-                event,
-                LocalDateTime.of(date, event.startDatetime.toLocalTime())
-            )
-            event to extra
-        }
-        title to enriched
-    } ?: emptyList()
+    if (this == null) return emptyList()
+
+    return this.map { entry ->
+        val enriched = entry.getEnrichedEvents(eventsExtraData, eventExtraPolicy, date)
+        entry.key to enriched
+    }
 }
+
 
 fun Event.customToString(context: Context): String {
     return StringBuilder().apply {

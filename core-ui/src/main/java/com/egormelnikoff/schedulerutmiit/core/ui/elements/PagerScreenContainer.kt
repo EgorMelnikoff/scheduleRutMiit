@@ -173,10 +173,10 @@ fun PagerScreenContainer(
     }
 }
 
-fun PagerState.isLastPage(): Boolean {
+private fun PagerState.isLastPage(): Boolean {
     return this.currentPage == this.pageCount.minus(1)
 }
 
-fun PagerState.isFirstPage(): Boolean {
+private fun PagerState.isFirstPage(): Boolean {
     return this.currentPage == 0
 }

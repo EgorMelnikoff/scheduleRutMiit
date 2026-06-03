@@ -25,35 +25,28 @@ import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonth
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
-import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
-import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HiddenEventsDialog(
-    namedSchedule: NamedSchedule,
-    schedule: Schedule?,
+    hiddenEventsDialog: Route.Dialog.HiddenEventsDialog,
     hiddenEvents: List<Event>,
-    scheduleViewModel: ScheduleViewModel,
-    appBackStack: AppBackStack
+    onShowEvent: (Event) -> Unit,
+    onBack: () -> Unit
 ) {
     Scaffold(
         topBar = {
             CustomTopAppBar(
                 shadowElevation = 4.dp,
                 titleText = stringResource(R.string.hidden_events),
-                subtitleText = "${namedSchedule.shortName} (${schedule?.timetableType?.typeName})",
-                navAction = {
-                    appBackStack.onBack()
-                }
+                subtitleText = "${hiddenEventsDialog.namedScheduleShortName} (${hiddenEventsDialog.timetableType?.typeName})",
+                navAction = onBack
             )
         }
     ) { innerPadding ->
@@ -97,13 +90,7 @@ fun HiddenEventsDialog(
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
-                                        schedule?.let {
-                                            scheduleViewModel.eventAction(
-                                                schedule,
-                                                event,
-                                                EventAction.UpdateHidden(false)
-                                            )
-                                        }
+                                        onShowEvent(event)
                                     },
                                     colors = IconButtonDefaults.iconButtonColors()
                                         .copy(

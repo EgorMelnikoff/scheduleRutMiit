@@ -16,18 +16,20 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.EventView
 
 @Composable
 fun Event(
     eventsWithExtra: List<Pair<Event, EventExtraData?>>,
+    namedScheduleId: Long,
     schedule: Schedule,
     isSavedSchedule: Boolean,
     eventView: EventView,
-    navigateToEvent: (Schedule, Boolean, Event, EventExtraData?) -> Unit,
-    navigateToEditEvent: (Schedule, Event) -> Unit,
-    onDeleteEvent: (Schedule, Event) -> Unit,
-    onUpdateHiddenEvent: (Schedule, Event) -> Unit
+    navigateToEvent: (Route.Dialog.EventDialog) -> Unit,
+    navigateToEditEvent: (Route.Dialog.AddEditEventDialog) -> Unit,
+    onDeleteEvent: (Long, Event) -> Unit,
+    onUpdateHiddenEvent: (Long, Event) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -65,10 +67,25 @@ fun Event(
                         navigateToEditEvent = navigateToEditEvent,
                         onDeleteEvent = onDeleteEvent,
                         onUpdateHiddenEvent = onUpdateHiddenEvent,
-                        event = event.first,
-                        schedule = schedule,
-                        eventExtraData = event.second,
+                        namedScheduleId = namedScheduleId,
                         isSavedSchedule = isSavedSchedule,
+                        event = event.first,
+                        eventExtraData = event.second,
+                        eventDialog = Route.Dialog.EventDialog(
+                            namedScheduleId = namedScheduleId,
+                            event = event.first,
+                            eventExtraData = event.second,
+                            schedule = schedule,
+                            isSavedSchedule = isSavedSchedule
+                        ),
+                        editEventDialog = Route.Dialog.AddEditEventDialog(
+                            namedScheduleId = namedScheduleId,
+                            scheduleId = schedule.id,
+                            recurrence = schedule.recurrence,
+                            scheduleStartDate = schedule.startDate,
+                            scheduleEndDate = schedule.endDate,
+                            updatableEvent = event.first
+                        ),
                         eventView = eventView
                     )
                 }

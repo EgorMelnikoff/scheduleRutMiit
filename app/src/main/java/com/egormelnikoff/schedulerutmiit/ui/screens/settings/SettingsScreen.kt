@@ -246,6 +246,30 @@ fun SettingsScreen(
                         ) {
                             preferencesViewModel.onSetSchedulesDeletable(!appSettings.schedulesDeletable)
                         }
+                    }, {
+                        ClickableItem(
+                            title = "Использовать изображение",
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = ImageVector.vectorResource(R.drawable.sun),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            },
+                            defaultMinHeight = 36.dp,
+                            trailingIcon = {
+                                CustomSwitch(
+                                    checked = appSettings.usedImageInReview
+                                ) {
+                                    preferencesViewModel.onSetUsedImageInReview(it)
+                                }
+                            },
+                            showClickLabel = false,
+                            enableToolTip = true
+                        ) {
+                            preferencesViewModel.onSetUsedImageInReview(!appSettings.usedImageInReview)
+                        }
                     }
                 )
             )

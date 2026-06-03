@@ -10,6 +10,7 @@ data class AppSettings(
     val eventView: EventView,
     val eventsCountView: EventsCountView,
     val schedulesDeletable: Boolean,
+    val usedImageInReview: Boolean,
     val skipWelcomePage: Boolean,
     val eventExtraPolicy: EventExtraPolicy
 )

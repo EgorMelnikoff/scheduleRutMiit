@@ -36,16 +36,14 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.schedule.data.validator.isValidSchedule
-import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun AddScheduleDialog(
-    appUiState: AppUiState,
-    scheduleViewModel: ScheduleViewModel
+    addSchedule: (String, LocalDate, LocalDate) -> Unit,
+    onBack: () -> Unit
 ) {
     var showBackDialog by remember { mutableStateOf(false) }
 
@@ -77,7 +75,7 @@ fun AddScheduleDialog(
             CustomTopAppBar(
                 shadowElevation = 4.dp,
                 titleText = stringResource(R.string.create_schedule),
-                navAction = { appUiState.appBackStack.onBack() }
+                navAction = onBack
             )
         }
     ) { innerPadding ->
@@ -158,13 +156,7 @@ fun AddScheduleDialog(
                 onClick = {
                     startDate?.let { startDate ->
                         endDate?.let { endDate ->
-                            scheduleViewModel.addCustomNamedSchedule(
-                                nameSchedule.trim(),
-                                startDate,
-                                endDate
-                            )
-                            appUiState.appBackStack.navigateToStartRage()
-                            appUiState.appBackStack.onBack()
+                            addSchedule(nameSchedule.trim(), startDate, endDate)
                         }
                     }
                 }
@@ -203,9 +195,7 @@ fun AddScheduleDialog(
                 onDismissRequest = {
                     showBackDialog = false
                 },
-                onConfirmation = {
-                    appUiState.appBackStack.onBack()
-                }
+                onConfirmation = onBack
             )
         }
     }

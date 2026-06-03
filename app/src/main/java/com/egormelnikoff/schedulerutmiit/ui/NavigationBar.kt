@@ -64,8 +64,7 @@ data class BarItem(
     val iconRes: Int,
     @param:DrawableRes
     val selectedIconRes: Int? = null,
-    val page: Route.Page,
-    val onClick: (() -> Unit)? = null
+    val page: Route.Page
 )
 
 @Composable
@@ -163,7 +162,8 @@ fun CustomNavigationBarItem(
     barItem: BarItem,
     selectedPage: Route.Page,
     showBadge: Boolean = false,
-    navigate: (Route.Page) -> Unit
+    navigate: (Route.Page) -> Unit,
+    onClick: (() -> Unit)?,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -182,7 +182,7 @@ fun CustomNavigationBarItem(
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = if (isSelected) {
-                    { barItem.onClick?.invoke() }
+                    { onClick?.invoke() }
                 } else {
                     { navigate(barItem.page) }
                 }

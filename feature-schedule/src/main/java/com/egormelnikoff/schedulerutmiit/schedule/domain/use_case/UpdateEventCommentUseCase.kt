@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -11,13 +10,13 @@ class UpdateEventCommentUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         dateTime: LocalDateTime,
-        schedule: Schedule,
+        scheduleId: Long,
         event: Event,
         comment: String
-    ): List<EventExtraData> {
+    ): Map<Long, EventExtraData> {
         return core(
             dateTime = dateTime,
-            schedule = schedule,
+            scheduleId = scheduleId,
             event = event,
 
             shouldDelete = { data ->

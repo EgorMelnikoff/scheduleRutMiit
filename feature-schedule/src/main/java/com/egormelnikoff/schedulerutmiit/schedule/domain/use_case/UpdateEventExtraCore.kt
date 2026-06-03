@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
@@ -18,12 +17,12 @@ class UpdateEventExtraCore @Inject constructor(
 ) {
     suspend operator fun invoke(
         dateTime: LocalDateTime,
-        schedule: Schedule,
+        scheduleId: Long,
         event: Event,
         shouldDelete: (EventExtraData?) -> Boolean,
         onUpdate: suspend (Event, LocalDateTime?) -> Unit,
         onCreate: suspend (Event, LocalDateTime?) -> Unit
-    ): List<EventExtraData> {
+    ): Map<Long, EventExtraData> {
 
         val policy = preferencesDataSource.eventExtraPolicyFlow.first()
 
@@ -36,7 +35,7 @@ class UpdateEventExtraCore @Inject constructor(
             eventExtraAction(policy, event, dateTime) { e, dt ->
                 eventExtraRepos.delete(e.id, dt)
             }
-            return eventExtraRepos.getByScheduleId(schedule.id)
+            return eventExtraRepos.getByScheduleId(scheduleId).associateBy { it.eventId }
         }
 
         if (eventExtraData != null) {
@@ -45,7 +44,7 @@ class UpdateEventExtraCore @Inject constructor(
             eventExtraAction(policy, event, dateTime, onCreate)
         }
 
-        return eventExtraRepos.getByScheduleId(schedule.id)
+        return eventExtraRepos.getByScheduleId(scheduleId).associateBy { it.eventId }
     }
 
     private suspend fun eventExtraAction(

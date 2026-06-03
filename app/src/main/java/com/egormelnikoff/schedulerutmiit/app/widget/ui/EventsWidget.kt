@@ -242,7 +242,7 @@ class EventsWidget : GlanceAppWidget() {
     @Composable
     private fun Event(
         events: List<Event>,
-        eventsExtraData: List<EventExtraData>,
+        eventsExtraData: Map<Long, EventExtraData>,
         date: LocalDate,
         eventExtraPolicy: EventExtraPolicy
     ) {
@@ -287,7 +287,7 @@ class EventsWidget : GlanceAppWidget() {
                         event = event,
                         eventExtraData = eventsExtraData.findEventExtra(
                             eventExtraPolicy = eventExtraPolicy,
-                            event = event,
+                            eventId = event.id,
                             dateTime = event.startDatetime.replaceDate(date)
                         )
                     )

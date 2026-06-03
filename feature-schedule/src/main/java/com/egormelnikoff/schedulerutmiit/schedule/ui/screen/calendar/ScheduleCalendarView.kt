@@ -20,11 +20,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
-import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEventsForDate
@@ -110,7 +108,7 @@ fun PagedDays(
         val currentDate = scheduleUiDto.schedule.startDate.plusDays(index.toLong())
 
         val enrichedEvents by remember(
-            namedScheduleWithSchedules,
+            namedScheduleWithSchedules.namedSchedule.id,
             scheduleUiDto.schedule,
             scheduleUiDto.fullEventList
         ) {
@@ -121,11 +119,10 @@ fun PagedDays(
                         periodicEvents = scheduleUiDto.periodicEvents,
                         nonPeriodicEvents = scheduleUiDto.nonPeriodicEvents
                     )
-                    .toList()
                     .getEnrichedEvents(
-                        date = currentDate,
                         eventsExtraData = scheduleUiDto.eventsExtraData,
-                        eventExtraPolicy = appSettings.eventExtraPolicy
+                        eventExtraPolicy = appSettings.eventExtraPolicy,
+                        date = currentDate,
                     )
             )
         }
@@ -146,35 +143,24 @@ fun PagedDays(
                     } else null
                 ) { events ->
                     Event(
-                        navigateToEvent = { schedule, isSavedSchedule, event, eventExtraData ->
+                        navigateToEvent = { eventDialog ->
                             appBackStack.openDialog(
-                                Route.Dialog.EventDialog(
-                                    namedSchedule = namedScheduleWithSchedules.namedSchedule,
-                                    schedule = schedule,
-                                    isSavedSchedule = isSavedSchedule,
-                                    event = event,
-                                    dateTime = event.startDatetime.replaceDate(currentDate),
-                                    eventExtraData = eventExtraData
-                                )
+                                eventDialog
                             )
                         },
-                        navigateToEditEvent = { schedule, event ->
-                            appBackStack.openDialog(
-                                Route.Dialog.AddEventDialog(
-                                    namedScheduleWithSchedules.namedSchedule, schedule, event
-                                )
-                            )
+                        navigateToEditEvent = { editEventDialog ->
+                            appBackStack.openDialog(editEventDialog)
                         },
-                        onDeleteEvent = { schedule, eventId ->
+                        onDeleteEvent = { namedScheduleId, eventId ->
                             scheduleViewModel.eventAction(
-                                schedule,
+                                namedScheduleId,
                                 eventId,
                                 EventAction.Delete
                             )
                         },
-                        onUpdateHiddenEvent = { schedule, event ->
+                        onUpdateHiddenEvent = { namedScheduleId, event ->
                             scheduleViewModel.eventAction(
-                                schedule,
+                                namedScheduleId,
                                 event,
                                 EventAction.UpdateHidden(true)
                             )
@@ -182,6 +168,7 @@ fun PagedDays(
 
                         eventsWithExtra = events.second,
                         schedule = scheduleUiDto.schedule,
+                        namedScheduleId = namedScheduleWithSchedules.namedSchedule.id,
                         isSavedSchedule = isSavedSchedule,
                         eventView = appSettings.eventView
                     )

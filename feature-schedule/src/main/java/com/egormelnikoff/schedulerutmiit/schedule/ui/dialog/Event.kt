@@ -14,17 +14,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -55,9 +55,6 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
-import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
@@ -70,26 +67,25 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingAsyncImage
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.customToString
-import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.event.ModalDialogEvent
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.LocalDateTime
 import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDialog(
-    event: Event,
-    eventExtraData: EventExtraData?,
-    namedSchedule: NamedSchedule,
-    schedule: Schedule,
-    isSavedSchedule: Boolean,
-    dateTime: LocalDateTime,
-    scheduleViewModel: ScheduleViewModel,
-    appBackStack: AppBackStack
+    eventDialog: Route.Dialog.EventDialog,
+    currentDateTime: LocalDateTime,
+    fetchNamedSchedule: (String, Int, NamedScheduleType) -> Unit,
+    updateEventComment: (Long, Event, LocalDateTime, String) -> Unit,
+    updateEventTag: (Long, Event, LocalDateTime, Int) -> Unit,
+    deleteEvent: (Long, Event) -> Unit,
+    hideEvent: (Long, Event) -> Unit,
+
+    navigateToEditEventDialog: (Route.Dialog.AddEditEventDialog) -> Unit,
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
     val clipboard = LocalClipboard.current
@@ -98,15 +94,13 @@ fun EventDialog(
     var showEventDeleteDialog by remember { mutableStateOf(false) }
     var showEventHideDialog by remember { mutableStateOf(false) }
 
-    var tag by remember { mutableIntStateOf(eventExtraData?.tag ?: 0) }
-    var comment by remember { mutableStateOf(eventExtraData?.comment ?: "") }
+    var tag by remember { mutableIntStateOf(eventDialog.eventExtraData?.tag ?: 0) }
+    var comment by remember { mutableStateOf(eventDialog.eventExtraData?.comment ?: "") }
 
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                navAction = {
-                    appBackStack.onBack()
-                },
+                navAction = onBack,
                 actions = {
                     IconButton(
                         onClick = {
@@ -114,7 +108,7 @@ fun EventDialog(
                                 action = Intent.ACTION_SEND
                                 putExtra(
                                     Intent.EXTRA_TEXT,
-                                    event.customToString(context)
+                                    eventDialog.event.customToString(context)
                                 )
                                 type = "text/plain"
                             }
@@ -129,7 +123,7 @@ fun EventDialog(
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
-                    if (isSavedSchedule) {
+                    if (eventDialog.isSavedSchedule) {
                         IconButton(
                             onClick = {
                                 showEventActionsDialog = true
@@ -147,97 +141,101 @@ fun EventDialog(
             )
         }
     ) { innerPadding ->
-        Column(
+        val groups = eventDialog.event.groups
+        val rooms = eventDialog.event.rooms
+        val lecturers = eventDialog.event.lecturers
+
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    top = innerPadding.calculateTopPadding(),
-                    bottom = innerPadding.calculateBottomPadding()
-                )
-                .background(MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState()),
+                .background(MaterialTheme.colorScheme.background),
+            contentPadding = PaddingValues(
+                top = innerPadding.calculateTopPadding(),
+                bottom = innerPadding.calculateBottomPadding()
+            ),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            EventHeader(
-                schedule, event, 16.dp
-            )
-            Spacer(modifier = Modifier.height(0.dp))
-            Column(
-                modifier = Modifier.padding(
-                    horizontal = 16.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                val groups = event.groups
-
-                if (!groups.isNullOrEmpty()) {
-                    ColumnGroup(
-                        title = stringResource(R.string.groups),
-                        titleColor = MaterialTheme.colorScheme.primary,
-                        withBackground = false,
-                        items = listOf {
-                            FlowRow(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                groups.forEach { group ->
-                                    Box(
-                                        contentAlignment = Alignment.Center,
-                                        modifier = Modifier
-                                            .clip(MaterialTheme.shapes.extraSmall)
-                                            .background(MaterialTheme.colorScheme.secondaryContainer)
-                                            .defaultMinSize(minWidth = 80.dp)
-                                            .let {
-                                                if (!event.isCustomEvent) {
-                                                    it.combinedClickable(
-                                                        onClick = {
-                                                            appBackStack.navigateToStartRage()
-                                                            appBackStack.onBack()
-                                                            scheduleViewModel.fetchNamedSchedule(
-                                                                group.name,
-                                                                group.id,
-                                                                NamedScheduleType.GROUP
-                                                            )
-                                                        },
-                                                        onLongClick = {
-                                                            clipboard.nativeClipboard.setPrimaryClip(
-                                                                ClipData.newPlainText(
-                                                                    null,
-                                                                    group.name
+            item {
+                EventHeader(
+                    eventDialog.schedule.timetableType, eventDialog.event, 16.dp
+                )
+            }
+            if (!groups.isNullOrEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        ColumnGroup(
+                            title = stringResource(R.string.groups),
+                            titleColor = MaterialTheme.colorScheme.primary,
+                            withBackground = false,
+                            items = listOf {
+                                FlowRow(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    groups.forEach { group ->
+                                        Box(
+                                            contentAlignment = Alignment.Center,
+                                            modifier = Modifier
+                                                .clip(MaterialTheme.shapes.extraSmall)
+                                                .background(MaterialTheme.colorScheme.secondaryContainer)
+                                                .defaultMinSize(minWidth = 80.dp)
+                                                .let {
+                                                    if (!eventDialog.event.isCustomEvent) {
+                                                        it.combinedClickable(
+                                                            onClick = {
+                                                                fetchNamedSchedule(
+                                                                    group.name,
+                                                                    group.id,
+                                                                    NamedScheduleType.GROUP
                                                                 )
-                                                            )
-                                                        }
-                                                    )
-                                                } else it
-                                            }
-                                            .padding(8.dp)
-                                    ) {
-                                        Text(
-                                            text = group.name,
-                                            style = MaterialTheme.typography.titleSmall,
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            overflow = TextOverflow.Ellipsis,
-                                            maxLines = 2
-                                        )
+                                                            },
+                                                            onLongClick = {
+                                                                clipboard.nativeClipboard.setPrimaryClip(
+                                                                    ClipData.newPlainText(
+                                                                        null,
+                                                                        group.name
+                                                                    )
+                                                                )
+                                                            }
+                                                        )
+                                                    } else it
+                                                }
+                                                .padding(8.dp)
+                                        ) {
+                                            Text(
+                                                text = group.name,
+                                                style = MaterialTheme.typography.titleSmall,
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                overflow = TextOverflow.Ellipsis,
+                                                maxLines = 2
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
-                val rooms = event.rooms
-                if (!rooms.isNullOrEmpty()) {
-                    ColumnGroup(
-                        title = stringResource(R.string.room),
-                        titleColor = MaterialTheme.colorScheme.primary,
-                        items = rooms.map { room ->
-                            {
-                                ClickableItem(
-                                    title = room.hint,
-                                    titleMaxLines = 2,
-                                    defaultMinHeight = 32.dp
+            }
+
+            if (!rooms.isNullOrEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        ColumnGroup(
+                            title = stringResource(R.string.room),
+                            titleColor = MaterialTheme.colorScheme.primary,
+                            items = rooms.map { room ->
+                                {
+                                    ClickableItem(
+                                        title = room.hint,
+                                        titleMaxLines = 2,
+                                        defaultMinHeight = 32.dp
 //                                onClick = if (!event.isCustomEvent) {
 //                                    {
 //                                        navigationActions.navigateToSchedule()
@@ -256,149 +254,172 @@ fun EventDialog(
 //                                        )
 //                                    }
 //                                } else null
-                                )
-                            }
-                        }
-
-                    )
-                }
-                val lecturers = event.lecturers
-                if (!lecturers.isNullOrEmpty()) {
-                    ColumnGroup(
-                        title = stringResource(R.string.lecturers),
-                        titleColor = MaterialTheme.colorScheme.primary,
-                        items = lecturers.map { lecturer ->
-                            {
-                                ClickableItem(
-                                    title = lecturer.fullFio,
-                                    titleMaxLines = 2,
-                                    defaultMinHeight = 32.dp,
-                                    onLongClick = {
-                                        clipboard.nativeClipboard.setPrimaryClip(
-                                            ClipData.newPlainText(null, lecturer.fullFio)
-                                        )
-                                    },
-                                    onClick = if (!event.isCustomEvent) {
-                                        {
-                                            appBackStack.navigateToStartRage()
-                                            appBackStack.onBack()
-                                            scheduleViewModel.fetchNamedSchedule(
-                                                lecturer.fullFio,
-                                                lecturer.id,
-                                                NamedScheduleType.PERSON
-                                            )
-                                        }
-                                    } else null,
-                                    leadingIcon = {
-                                        LeadingAsyncImage(
-                                            title = lecturer.fullFio,
-                                            imageUrl = personImageUrl(personId = lecturer.id)
-                                        )
-                                    }
-                                )
-                            }
-                        }
-                    )
-                }
-                if (isSavedSchedule) {
-                    ColumnGroup(
-                        title = stringResource(R.string.comment),
-                        titleColor = MaterialTheme.colorScheme.primary,
-                        withBackground = false,
-                        items = listOf {
-                            CustomTextField(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp),
-                                value = comment,
-                                keyboardOptions = KeyboardOptions(
-                                    autoCorrectEnabled = false,
-                                    imeAction = ImeAction.Default
-                                ),
-                                maxSymbols = 100,
-                                placeholderText = stringResource(R.string.enter_comment),
-                                trailingIcon = {
-                                    AnimatedVisibility(
-                                        visible = comment.isNotEmpty(),
-                                        enter = scaleIn(animationSpec = tween(300)),
-                                        exit = fadeOut(animationSpec = tween(500))
-                                    ) {
-                                        IconButton(
-                                            onClick = {
-                                                comment = ""
-                                                scheduleViewModel.updateEventComment(
-                                                    schedule,
-                                                    event,
-                                                    dateTime,
-                                                    comment
-                                                )
-                                            }
-                                        ) {
-                                            Icon(
-                                                imageVector = ImageVector.vectorResource(R.drawable.clear),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    }
-                                }
-                            ) { newValue ->
-                                comment = newValue
-                                scheduleViewModel.updateEventComment(
-                                    schedule,
-                                    event,
-                                    dateTime,
-                                    newValue
-                                )
-                            }
-                        }
-                    )
-                    ColumnGroup(
-                        title = stringResource(R.string.tag),
-                        titleColor = MaterialTheme.colorScheme.primary,
-                        withBackground = false,
-                        items = listOf {
-                            ColorSelector(
-                                currentSelected = tag,
-                                onColorSelect = { newTag ->
-                                    tag = newTag
-                                    scheduleViewModel.updateEventTag(
-                                        schedule,
-                                        event,
-                                        dateTime,
-                                        newTag
                                     )
                                 }
-                            )
-                        }
-                    )
+                            }
+
+                        )
+                    }
                 }
             }
 
+            if (!lecturers.isNullOrEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        ColumnGroup(
+                            title = stringResource(R.string.lecturers),
+                            titleColor = MaterialTheme.colorScheme.primary,
+                            items = lecturers.map { lecturer ->
+                                {
+                                    ClickableItem(
+                                        title = lecturer.fullFio,
+                                        titleMaxLines = 2,
+                                        defaultMinHeight = 32.dp,
+                                        onLongClick = {
+                                            clipboard.nativeClipboard.setPrimaryClip(
+                                                ClipData.newPlainText(null, lecturer.fullFio)
+                                            )
+                                        },
+                                        onClick = if (!eventDialog.event.isCustomEvent) {
+                                            {
+                                                fetchNamedSchedule(
+                                                    lecturer.fullFio,
+                                                    lecturer.id,
+                                                    NamedScheduleType.PERSON
+                                                )
+                                            }
+                                        } else null,
+                                        leadingIcon = {
+                                            LeadingAsyncImage(
+                                                title = lecturer.fullFio,
+                                                imageUrl = personImageUrl(personId = lecturer.id)
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+
+            if (eventDialog.isSavedSchedule) {
+                item {
+                    Box(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        ColumnGroup(
+                            title = stringResource(R.string.comment),
+                            titleColor = MaterialTheme.colorScheme.primary,
+                            withBackground = false,
+                            items = listOf {
+                                CustomTextField(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(100.dp),
+                                    value = comment,
+                                    keyboardOptions = KeyboardOptions(
+                                        autoCorrectEnabled = false,
+                                        imeAction = ImeAction.Default
+                                    ),
+                                    maxSymbols = 100,
+                                    placeholderText = stringResource(R.string.enter_comment),
+                                    trailingIcon = {
+                                        AnimatedVisibility(
+                                            visible = comment.isNotEmpty(),
+                                            enter = scaleIn(animationSpec = tween(300)),
+                                            exit = fadeOut(animationSpec = tween(500))
+                                        ) {
+                                            IconButton(
+                                                onClick = {
+                                                    comment = ""
+                                                    updateEventComment(
+                                                        eventDialog.schedule.id,
+                                                        eventDialog.event,
+                                                        currentDateTime,
+                                                        comment
+                                                    )
+                                                }
+                                            ) {
+                                                Icon(
+                                                    imageVector = ImageVector.vectorResource(R.drawable.clear),
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        }
+                                    }
+                                ) { newValue ->
+                                    comment = newValue
+                                    updateEventComment(
+                                        eventDialog.schedule.id,
+                                        eventDialog.event,
+                                        currentDateTime,
+                                        newValue
+                                    )
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+
+            if (eventDialog.isSavedSchedule) {
+                item {
+                    Box(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        ColumnGroup(
+                            title = stringResource(R.string.tag),
+                            titleColor = MaterialTheme.colorScheme.primary,
+                            withBackground = false,
+                            items = listOf {
+                                ColorSelector(
+                                    currentSelected = tag,
+                                    onColorSelect = { newTag ->
+                                        tag = newTag
+                                        updateEventTag(
+                                            eventDialog.schedule.id,
+                                            eventDialog.event,
+                                            currentDateTime,
+                                            newTag
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
     if (showEventActionsDialog) {
         ModalDialogEvent(
-            schedule = schedule,
-            event = event,
-            onEditEvent = if (event.isCustomEvent) {
+            timetableType = eventDialog.schedule.timetableType,
+            event = eventDialog.event,
+            onEditEvent = if (eventDialog.event.isCustomEvent) {
                 {
-                    appBackStack.onBack()
-                    appBackStack.openDialog(
-                        Route.Dialog.AddEventDialog(
-                            namedSchedule,
-                            schedule,
-                            event
+                    onBack()
+                    navigateToEditEventDialog(
+                        Route.Dialog.AddEditEventDialog(
+                            eventDialog.namedScheduleId,
+                            eventDialog.schedule.id,
+                            eventDialog.schedule.recurrence,
+                            eventDialog.schedule.startDate,
+                            eventDialog.schedule.endDate,
+                            eventDialog.event
                         )
                     )
                 }
             } else null,
-            onDeleteEvent = if (event.isCustomEvent) {
+            onDeleteEvent = if (eventDialog.event.isCustomEvent) {
                 {
                     showEventDeleteDialog = true
                 }
             } else null,
-            onHideEvent = if (!event.isHidden) {
+            onHideEvent = if (!eventDialog.event.isHidden) {
                 {
                     showEventHideDialog = true
                 }
@@ -416,8 +437,9 @@ fun EventDialog(
                 showEventDeleteDialog = false
             },
             onConfirmation = {
-                scheduleViewModel.eventAction(schedule, event, EventAction.Delete)
-                appBackStack.onBack()
+                deleteEvent(
+                    eventDialog.namedScheduleId, eventDialog.event
+                )
             }
         )
     }
@@ -430,8 +452,7 @@ fun EventDialog(
                 showEventHideDialog = false
             },
             onConfirmation = {
-                scheduleViewModel.eventAction(schedule, event, EventAction.UpdateHidden(true))
-                appBackStack.onBack()
+                hideEvent(eventDialog.namedScheduleId, eventDialog.event)
             }
         )
     }
@@ -439,7 +460,7 @@ fun EventDialog(
 
 @Composable
 fun EventHeader(
-    schedule: Schedule,
+    timetableType: TimetableType,
     event: Event,
     horizontalPadding: Dp
 ) {
@@ -476,7 +497,7 @@ fun EventHeader(
                     width = 0.5.dp,
                     color = MaterialTheme.colorScheme.outline
                 ),
-                title = if (schedule.timetableType == TimetableType.PERIODIC) {
+                title = if (timetableType == TimetableType.PERIODIC) {
                     val dayName = event.startDatetime.dayOfWeek.getDisplayName(
                         TextStyle.FULL,
                         LocalLocale.current.platformLocale

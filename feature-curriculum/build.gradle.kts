@@ -38,6 +38,9 @@ dependencies {
     implementation(project(":core-common"))
 
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+
     ksp(libs.hilt.android.compiler)
 
     implementation(libs.retrofit)
