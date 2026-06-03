@@ -9,6 +9,7 @@ object Endpoints {
 
     //API MIIT
     const val BASE_RUT_MIIT_URL = "https://rut-miit.ru"
+    const val BASE_MIIT_URL = "https://www.miit.ru"
     const val GROUPS = "/data-service/data/timetable/groups-catalog"
     const val TIMETABLE = "/data-service/data/timetable/v2/{type}/{apiId}"
     //const val SCHEDULE = "/data-service/data/timetable/v2/{type}/{apiId}/{timetableId}"
@@ -44,7 +45,7 @@ object Endpoints {
         "${BASE_RUT_MIIT_URL}/edu/curriculum/$id/professors?page=$page"
 
     fun personImageUrl(personId: Int?, width: Int = 100) =
-        "${BASE_RUT_MIIT_URL}/content/e$personId.jpg?id_fe=$personId&SWidth=$width"
+        "${BASE_MIIT_URL}/content/e$personId.jpg?id_fe=$personId&SWidth=$width"
 
     //LINKS
     const val TG_APP_CHANNEL_URL = "https://t.me/schedule_rut_miit"

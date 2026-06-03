@@ -28,14 +28,14 @@ object NewsParser {
                     "p" -> {
                         val annotatedString = htmlToAnnotatedString(element.html())
                         if (annotatedString.isNotEmpty()) {
-                            parsedElements.add(Pair("p", annotatedString))
+                            parsedElements.add("p" to annotatedString)
                         }
                     }
 
                     "li" -> {
                         val annotatedString = htmlToAnnotatedString("• ${element.html()}")
                         if (annotatedString.isNotEmpty()) {
-                            parsedElements.add(Pair("li", annotatedString))
+                            parsedElements.add("li" to annotatedString)
                         }
                     }
 
@@ -48,13 +48,13 @@ object NewsParser {
                                 tableRowItems.add(text)
                             }
                         }
-                        parsedElements.add(Pair("tr", tableRowItems))
+                        parsedElements.add("tr" to tableRowItems)
                     }
 
                     "img" -> {
                         val imageUrl = element.attr("src")
                         if (imageUrl.isNotEmpty()) {
-                            parsedImages.add("${Endpoints.BASE_RUT_MIIT_URL}$imageUrl")
+                            parsedImages.add("${Endpoints.BASE_MIIT_URL}$imageUrl")
                         }
                     }
                 }

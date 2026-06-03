@@ -34,29 +34,30 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
-import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.BASE_RUT_MIIT_URL
+import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.BASE_MIIT_URL
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.NewsLoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
-import kotlinx.coroutines.flow.Flow
+import com.egormelnikoff.schedulerutmiit.news.view_model.NewsListViewModel
 
 @Composable
 fun NewsScreen(
-    newsListFlow: Flow<PagingData<NewsShortDto>>,
     onGetNewsById: (Long) -> Unit,
     newsGridListState: LazyStaggeredGridState,
     externalPadding: PaddingValues
 ) {
-    val newsList = newsListFlow.collectAsLazyPagingItems()
+    val newsListViewModel = hiltViewModel<NewsListViewModel>()
+    val newsList = newsListViewModel.newsListFlow.collectAsLazyPagingItems()
+
     when (newsList.loadState.refresh) {
         is LoadState.Loading -> {
             NewsLoadingScreen()
@@ -135,7 +136,7 @@ fun NewsShort(
     newsShortDto: NewsShortDto,
     onClick: () -> Unit
 ) {
-    val model = rememberAsyncImagePainter("$BASE_RUT_MIIT_URL${newsShortDto.picUrl}")
+    val model = rememberAsyncImagePainter("$BASE_MIIT_URL${newsShortDto.picUrl}")
     val transition by animateFloatAsState(
         targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
     )
