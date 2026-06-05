@@ -11,10 +11,7 @@ class LatestReleaseDataSourceImpl @Inject constructor(
     private val githubApi: GithubApi,
     private val networkHelper: NetworkHelper
 ) : LatestReleaseDataSource {
-    override suspend fun fetchLatestRelease(): Result<LatestRelease> = networkHelper.callApi(
-        requestType = "Latest Release",
-        timeoutMs = 2000
-    ) {
+    override suspend fun fetchLatestRelease(): Result<LatestRelease> = networkHelper.callApi {
         githubApi.getLatestRelease()
     }
 }

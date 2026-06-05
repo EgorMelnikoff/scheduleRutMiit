@@ -14,17 +14,12 @@ class SearchRemoteDataSourceImpl @Inject constructor(
     private val searchParser: SearchParser,
     private val networkHelper: NetworkHelper
 ) : SearchRemoteDataSource {
-    override suspend fun fetchInstitutes() = networkHelper.callApi(
-        requestType = "Institutes",
-        timeoutMs = 5000
-    ) {
+    override suspend fun fetchInstitutes() = networkHelper.callApi {
         miitApi.getInstitutes()
     }
 
     override suspend fun fetchPeopleByQuery(query: String): Result<List<PersonDto>> {
-        networkHelper.callJsoup(
-            requestType = "Person",
-            requestParams = "Query: $query",
+        networkHelper.callHtml(
             url = Endpoints.peopleUrl(query)
         ).let {
             return when (it) {

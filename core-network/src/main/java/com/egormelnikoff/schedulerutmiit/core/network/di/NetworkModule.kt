@@ -21,19 +21,30 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    private const val USER_AGENT =
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
+
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(logger: Logger): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(5, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .writeTimeout(20, TimeUnit.SECONDS)
             .addInterceptor { chain ->
                 val newRequest = chain.request().newBuilder()
-                    .addHeader(
-                        "User-Agent",
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
-                    )
+                    .addHeader("User-Agent", USER_AGENT)
                     .build()
-                chain.proceed(newRequest)
+
+                chain.proceed(newRequest).let { response ->
+                    if (!response.isSuccessful) {
+                        logger.e(
+                            "NetworkInterceptor",
+                            "Server error (${response.code}): ${newRequest.url}"
+                        )
+                    }
+                    response
+                }
             }
             .build()
     }
@@ -43,7 +54,6 @@ object NetworkModule {
     fun provideLogger(
         @ApplicationContext context: Context
     ): Logger = Logger(context)
-
 }
 
 @Module

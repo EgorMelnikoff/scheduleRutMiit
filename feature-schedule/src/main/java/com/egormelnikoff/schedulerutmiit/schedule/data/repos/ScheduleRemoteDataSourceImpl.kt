@@ -20,11 +20,7 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
     override suspend fun fetchTimetables(
         apiId: Int,
         type: NamedScheduleType
-    ) = networkHelper.callApi(
-        requestType = "Timetables",
-        requestParams = "Type: $type; ApiId: $apiId",
-        timeoutMs = 5000
-    ) {
+    ) = networkHelper.callApi {
         miitApi.getTimetables(type.typeName, apiId)
     }
 
@@ -35,9 +31,7 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
         timetable: TimetableDto,
         currentGroup: Group?
     ): Result<ScheduleDto> {
-        networkHelper.callJsoup(
-            requestType = "ScheduleParser",
-            requestParams = "Id: $apiId; Type: $namedScheduleType; Start date: ${timetable.startDate}",
+        networkHelper.callHtml(
             url = Endpoints.scheduleUrl(
                 namedScheduleType,
                 apiId,
@@ -65,10 +59,7 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
         startDate: String,
         type: String
     ): Int {
-        networkHelper.callJsoup(
-            requestType = "CurrentWeek",
-            requestParams = "id: $apiId",
-            timeoutMs = 5000,
+        networkHelper.callHtml(
             url = Endpoints.scheduleUrl(
                 namedScheduleType, apiId, startDate, type
             )

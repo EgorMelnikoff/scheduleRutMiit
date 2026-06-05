@@ -12,10 +12,7 @@ class CurriculumRemoteDataSourceImpl @Inject constructor(
 ) : CurriculumRemoteDataSource {
 
     override suspend fun fetchSubjects(id: String, page: Int): Result<Document> {
-        return networkHelper.callJsoup(
-            requestType = "Subjects",
-            requestParams = "Id: $id; Page: $page",
-            timeoutMs = 10000,
+        return networkHelper.callHtml(
             url = Endpoints.curriculumProfessorsUrl(id, page)
         )
     }
