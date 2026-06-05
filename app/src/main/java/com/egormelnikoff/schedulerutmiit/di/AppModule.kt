@@ -7,6 +7,8 @@ import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
 import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
+import com.egormelnikoff.schedulerutmiit.export.data.exporter.FileExporter
+import com.egormelnikoff.schedulerutmiit.export.data.importer.FileImporter
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.parser.SubjectsListParser
 import com.egormelnikoff.schedulerutmiit.latest_release.data.repos.AppInfoProviderImpl
 import com.egormelnikoff.schedulerutmiit.news.data.parser.NewsParser
@@ -34,7 +36,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePreferencesRepos(@ApplicationContext context: Context, json: Json): PreferencesDataSourceImpl =
+    fun providePreferencesRepos(
+        @ApplicationContext context: Context,
+        json: Json
+    ): PreferencesDataSourceImpl =
         PreferencesDataSourceImpl(context, json)
 
     @Provides
@@ -87,4 +92,10 @@ object AppModule {
 
     @Provides
     fun provideSubjectsListParser(): SubjectsListParser = SubjectsListParser
+
+    @Provides
+    fun provideFileExporter(@ApplicationContext context: Context) = FileExporter(context)
+
+    @Provides
+    fun provideFileImporter(@ApplicationContext context: Context) = FileImporter(context)
 }

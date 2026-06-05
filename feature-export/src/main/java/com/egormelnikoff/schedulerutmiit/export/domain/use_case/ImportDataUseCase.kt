@@ -1,33 +1,28 @@
 package com.egormelnikoff.schedulerutmiit.export.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.core.common.domain.ExportData
+import android.net.Uri
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
-import com.egormelnikoff.schedulerutmiit.export.data.repos.DataRepos
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
+import com.egormelnikoff.schedulerutmiit.export.data.importer.FileImporter
+import javax.inject.Inject
 
-class ImportDataUseCase(
-    private val dataRepos: DataRepos,
-    private val json: Json
+class ImportDataUseCase @Inject constructor(
+    private val deserializeUseCase: DeserializeUseCase,
+    private val fileImporter: FileImporter
 ) {
-    suspend operator fun invoke(jsonString: String): Result<String> {
+    suspend operator fun invoke(uri: Uri): Result<Unit> {
         return try {
-            val data = json.decodeFromString<ExportData>(jsonString)
-            validate(data)
-            dataRepos.importData(data)
-            Result.Success("")
-        } catch (e: SerializationException) {
-            Result.Error(TypedError.SerializationError(e))
-        } catch (e: IllegalArgumentException) {
-            Result.Error(TypedError.IllegalArgumentError(e))
+            val jsonString = fileImporter.import(uri) ?: return Result.Error(
+                TypedError.UnexpectedError(Exception("Cannot open file"))
+            )
+
+            when (val result = deserializeUseCase(jsonString)) {
+                is Result.Error -> Result.Error(result.typedError)
+                is Result.Success -> Result.Success(Unit)
+            }
+
         } catch (e: Exception) {
             Result.Error(TypedError.UnexpectedError(e))
         }
-    }
-
-    fun validate(data: ExportData) {
-        require(data.version > 0) { "Invalid version" }
-        require(data.namedSchedules.isNotEmpty()) { "Invalid data" }
     }
 }

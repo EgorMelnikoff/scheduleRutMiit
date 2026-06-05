@@ -3,6 +3,8 @@ package com.egormelnikoff.schedulerutmiit.di
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
+import com.egormelnikoff.schedulerutmiit.export.data.repos.DataRepos
+import com.egormelnikoff.schedulerutmiit.export.domain.repos.DataReposImpl
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.repos.CurriculumRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.repos.CurriculumRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.latest_release.data.repos.AppInfoProviderImpl
@@ -50,6 +52,10 @@ abstract class BindModule {
     @Binds
     @Singleton
     abstract fun bindCurriculumRemoteDataSource(curriculumRemoteDataSourceImpl: CurriculumRemoteDataSourceImpl): CurriculumRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindDataRepos(dataReposImpl: DataReposImpl): DataRepos
 
 
     @Binds

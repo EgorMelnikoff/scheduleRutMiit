@@ -1,5 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.settings
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -31,7 +33,9 @@ import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSwitch
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
@@ -62,9 +66,11 @@ fun SettingsScreen(
     appState: AppState,
     preferencesViewModel: PreferencesViewModel,
     mainViewModel: MainViewModel,
+    onSuccessImport: () -> Unit,
     externalPadding: PaddingValues
 ) {
     var activeDialog by remember { mutableStateOf<SettingsDialog?>(null) }
+    var showImportDialog by remember { mutableStateOf(false) }
 
     val visibleSettingsIds by remember(appSettings.eventView) {
         derivedStateOf {
@@ -79,6 +85,28 @@ fun SettingsScreen(
     }
 
     val visibleSettings = visibleSettingsIds.map { stringResource(it) }
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let {
+            mainViewModel.exportData(uri)
+        }
+    }
+
+    val importLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let {
+            mainViewModel.importData(
+                uri = uri,
+                onSuccess = {
+                    onSuccessImport()
+                    appUiState.appBackStack.navigateToStartRage()
+                }
+            )
+        }
+    }
 
     LazyVerticalStaggeredGrid(
         modifier = Modifier
@@ -97,7 +125,7 @@ fun SettingsScreen(
     ) {
         item {
             ColumnGroup(
-                title = stringResource(R.string.schedule),
+                title = stringResource(R.string._interface),
                 items = listOf(
                     {
                         ClickableItem(
@@ -184,6 +212,66 @@ fun SettingsScreen(
                         }
                     }, {
                         ClickableItem(
+                            title = stringResource(R.string.use_image),
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = ImageVector.vectorResource(R.drawable.sun),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            },
+                            defaultMinHeight = 36.dp,
+                            trailingIcon = {
+                                CustomSwitch(
+                                    checked = appSettings.usedImageInReview
+                                ) {
+                                    preferencesViewModel.onSetUsedImageInReview(it)
+                                }
+                            },
+                            showClickLabel = false,
+                            enableToolTip = true
+                        ) {
+                            preferencesViewModel.onSetUsedImageInReview(!appSettings.usedImageInReview)
+                        }
+                    }
+                )
+            )
+        }
+
+        item {
+            GridGroup(
+                title = stringResource(R.string.schedule),
+                items = listOf(
+                    listOf {
+                        ClickableItem(
+                            title = stringResource(R.string.not_delete_schedules),
+                            subtitle = stringResource(R.string.not_delete_schedules_message),
+                            subtitleMaxLines = 3,
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = ImageVector.vectorResource(R.drawable.undelete),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            },
+                            defaultMinHeight = 36.dp,
+                            trailingIcon = {
+                                CustomSwitch(
+                                    checked = !appSettings.schedulesDeletable
+                                ) {
+                                    preferencesViewModel.onSetSchedulesDeletable(!it)
+                                }
+                            },
+                            showClickLabel = false,
+                            enableToolTip = true
+                        ) {
+                            preferencesViewModel.onSetSchedulesDeletable(!appSettings.schedulesDeletable)
+                        }
+                    },
+                    listOf {
+                        ClickableItem(
                             title = stringResource(R.string.comments_and_tags),
                             subtitle = when (appSettings.eventExtraPolicy) {
                                 EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
@@ -220,57 +308,44 @@ fun SettingsScreen(
                         ) {
                             activeDialog = SettingsDialog.EventExtraPolicy
                         }
-                    }, {
-                        ClickableItem(
-                            title = stringResource(R.string.not_delete_schedules),
-                            subtitle = stringResource(R.string.not_delete_schedules_message),
-                            subtitleMaxLines = 3,
-                            leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.size(20.dp),
-                                    imageVector = ImageVector.vectorResource(R.drawable.undelete),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                            },
-                            defaultMinHeight = 36.dp,
-                            trailingIcon = {
-                                CustomSwitch(
-                                    checked = !appSettings.schedulesDeletable
-                                ) {
-                                    preferencesViewModel.onSetSchedulesDeletable(!it)
-                                }
-                            },
-                            showClickLabel = false,
-                            enableToolTip = true
-                        ) {
-                            preferencesViewModel.onSetSchedulesDeletable(!appSettings.schedulesDeletable)
+                    },
+                    listOf(
+                        {
+                            ClickableItem(
+                                title = stringResource(R.string.export),
+                                leadingIcon = {
+                                    Icon(
+                                        modifier = Modifier.size(20.dp),
+                                        imageVector = ImageVector.vectorResource(R.drawable.export),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                },
+                                defaultMinHeight = 36.dp,
+                                enableToolTip = true
+                            ) {
+                                exportLauncher.launch("backup")
+                            }
+                        },
+                        {
+                            ClickableItem(
+                                title = stringResource(R.string._import),
+                                leadingIcon = {
+                                    Icon(
+                                        modifier = Modifier.size(20.dp),
+                                        imageVector = ImageVector.vectorResource(R.drawable.resource_import),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                },
+                                defaultMinHeight = 36.dp,
+                                enableToolTip = true
+                            ) {
+                                showImportDialog = true
+                            }
                         }
-                    }, {
-                        ClickableItem(
-                            title = "Использовать изображение",
-                            leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.size(20.dp),
-                                    imageVector = ImageVector.vectorResource(R.drawable.sun),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                            },
-                            defaultMinHeight = 36.dp,
-                            trailingIcon = {
-                                CustomSwitch(
-                                    checked = appSettings.usedImageInReview
-                                ) {
-                                    preferencesViewModel.onSetUsedImageInReview(it)
-                                }
-                            },
-                            showClickLabel = false,
-                            enableToolTip = true
-                        ) {
-                            preferencesViewModel.onSetUsedImageInReview(!appSettings.usedImageInReview)
-                        }
-                    }
+
+                    )
                 )
             )
         }
@@ -394,5 +469,18 @@ fun SettingsScreen(
         }
 
         else -> {}
+    }
+
+    if (showImportDialog) {
+        CustomAlertDialog(
+            onDismissRequest = { showImportDialog = false },
+            onConfirmation = {
+                importLauncher.launch(arrayOf("application/json"))
+            },
+            dialogIcon = ImageVector.vectorResource(R.drawable.resource_import),
+            dialogTitle = stringResource(R.string._import) + "?",
+            dialogText = stringResource(R.string.import_message)
+        )
+
     }
 }

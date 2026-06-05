@@ -10,7 +10,7 @@ class FileExporter @Inject constructor(
     private val context: Context
 ) {
     suspend fun export(uri: Uri, data: String) = withContext(Dispatchers.IO) {
-        context.contentResolver.openOutputStream(uri)?.use {
+        return@withContext context.contentResolver.openOutputStream(uri)?.use {
             it.write(data.toByteArray())
         }
     }

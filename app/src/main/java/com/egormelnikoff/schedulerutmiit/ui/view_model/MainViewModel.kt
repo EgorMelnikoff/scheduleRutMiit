@@ -1,9 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_model
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
+import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.export.domain.use_case.ExportDataUseCase
+import com.egormelnikoff.schedulerutmiit.export.domain.use_case.ImportDataUseCase
 import com.egormelnikoff.schedulerutmiit.latest_release.domain.use_case.CheckLatestReleaseUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.event.UiEvent
 import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState
@@ -30,6 +35,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val checkLatestReleaseUseCase: CheckLatestReleaseUseCase,
+    private val importDataUseCase: ImportDataUseCase,
+    private val exportDataUseCase: ExportDataUseCase,
     private val resourcesManager: ResourcesManager
 ) : ViewModel() {
     private val _appState = MutableStateFlow(AppState())
@@ -76,7 +83,8 @@ class MainViewModel @Inject constructor(
                 checkLatestReleaseUseCase(fetchForce).let { result ->
                     if (!result && fetchForce) _uiEventChannel.emit(
                         UiEvent.ErrorMessage(
-                            resourcesManager.getString(R.string.no_updates)
+                            resourcesManager.getString(R.string.no_updates),
+                            false
                         )
                     )
                     _appState.update {
@@ -85,6 +93,43 @@ class MainViewModel @Inject constructor(
                             isUpdating = false
                         )
                     }
+                }
+            }
+        }
+    }
+
+    fun exportData(uri: Uri) {
+        viewModelScope.launch {
+            when (val result = exportDataUseCase(uri)) {
+                is Result.Error -> {
+                    _uiEventChannel.emit(
+                        UiEvent.ErrorMessage(getErrorMessage(resourcesManager, result.typedError))
+                    )
+                }
+
+                is Result.Success -> {
+                    _uiEventChannel.emit(
+                        UiEvent.InfoMessage(resourcesManager.getString(R.string.success) + "!")
+                    )
+                }
+            }
+        }
+    }
+
+    fun importData(uri: Uri, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            when (val result = importDataUseCase(uri)) {
+                is Result.Error -> {
+                    _uiEventChannel.emit(
+                        UiEvent.ErrorMessage(getErrorMessage(resourcesManager, result.typedError))
+                    )
+                }
+
+                is Result.Success -> {
+                    onSuccess()
+                    _uiEventChannel.emit(
+                        UiEvent.InfoMessage(resourcesManager.getString(R.string.success) + "!")
+                    )
                 }
             }
         }

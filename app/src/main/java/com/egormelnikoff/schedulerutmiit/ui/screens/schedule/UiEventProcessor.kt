@@ -22,13 +22,13 @@ fun UiEventProcessor(
 
     LaunchedEffect(Unit) {
         mainViewModel.uiEvent.collect {
-            handleUiEvent(it, context, snackBarHostState, useSnackbar = false)
+            handleUiEvent(it, context, snackBarHostState)
         }
     }
 
     LaunchedEffect(Unit) {
         scheduleViewModel.uiEvent.collect {
-            handleUiEvent(it, context, snackBarHostState, useSnackbar = true)
+            handleUiEvent(it, context, snackBarHostState)
         }
     }
 }
@@ -36,12 +36,11 @@ fun UiEventProcessor(
 suspend fun handleUiEvent(
     event: UiEvent,
     context: Context,
-    snackBarHostState: SnackbarHostState,
-    useSnackbar: Boolean
+    snackBarHostState: SnackbarHostState
 ) {
     when (event) {
         is UiEvent.ErrorMessage -> {
-            if (useSnackbar) {
+            if (event.useSnackBar) {
                 snackBarHostState.showSnackbar(
                     AppSnackbarVisuals(
                         message = event.message,
@@ -55,7 +54,7 @@ suspend fun handleUiEvent(
         }
 
         is UiEvent.InfoMessage -> {
-            if (useSnackbar) {
+            if (event.useSnackBar) {
                 snackBarHostState.showSnackbar(
                     AppSnackbarVisuals(
                         message = event.message,

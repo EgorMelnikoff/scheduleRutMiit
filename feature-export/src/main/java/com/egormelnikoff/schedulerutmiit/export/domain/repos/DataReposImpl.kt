@@ -29,7 +29,7 @@ class DataReposImpl @Inject constructor(
         )
     }
 
-    override suspend fun importData(data: ExportData) = db.withTransaction {
+    override suspend fun importData(data: ExportData) {
         when (data.version) {
             1 -> importV1(data)
             else -> throw IllegalArgumentException("Unsupported version: ${data.version}")

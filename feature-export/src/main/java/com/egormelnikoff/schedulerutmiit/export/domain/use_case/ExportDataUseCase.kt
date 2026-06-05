@@ -1,14 +1,28 @@
 package com.egormelnikoff.schedulerutmiit.export.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.export.data.repos.DataRepos
-import kotlinx.serialization.json.Json
+import android.net.Uri
+import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import com.egormelnikoff.schedulerutmiit.export.data.exporter.FileExporter
+import javax.inject.Inject
 
-class ExportDataUseCase(
-    private val dataRepos: DataRepos,
-    private val json: Json
+class ExportDataUseCase @Inject constructor(
+    private val serializeUseCase: SerializeUseCase,
+    private val fileExporter: FileExporter
 ) {
-    suspend operator fun invoke(): String {
-        val data = dataRepos.getExportData()
-        return json.encodeToString(data)
+    suspend operator fun invoke(uri: Uri): Result<Unit> {
+        return when (val json = serializeUseCase()) {
+            is Result.Error -> Result.Error(json.typedError)
+            is Result.Success -> {
+                try {
+                    fileExporter.export(uri, json.data)
+                        ?: return Result.Error(TypedError.UnexpectedError(Exception("Cannot export file")))
+
+                    Result.Success(Unit)
+                } catch (e: Exception) {
+                    Result.Error(TypedError.UnexpectedError(e))
+                }
+            }
+        }
     }
 }

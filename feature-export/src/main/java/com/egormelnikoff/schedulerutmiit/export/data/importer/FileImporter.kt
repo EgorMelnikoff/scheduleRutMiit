@@ -9,9 +9,9 @@ import javax.inject.Inject
 class FileImporter @Inject constructor(
     private val context: Context
 ) {
-    suspend fun import(uri: Uri): String = withContext(Dispatchers.IO) {
-        context.contentResolver.openInputStream(uri)?.use { input ->
+    suspend fun import(uri: Uri): String? = withContext(Dispatchers.IO) {
+        return@withContext context.contentResolver.openInputStream(uri)?.use { input ->
             input.bufferedReader(Charsets.UTF_8).readText()
-        } ?: error("Cannot open input stream")
+        }
     }
 }

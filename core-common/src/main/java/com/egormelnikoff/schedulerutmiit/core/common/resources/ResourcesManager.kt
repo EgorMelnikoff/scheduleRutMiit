@@ -23,7 +23,7 @@ class ResourcesManager @Inject constructor(
 fun getErrorMessage(
     resourcesManager: ResourcesManager,
     typedError: TypedError
-): String? {
+): String {
     return when (typedError) {
         is NetworkError -> {
             resourcesManager.getString(

@@ -119,7 +119,13 @@
     <string name="no_events">Пар нет</string>
     <string name="no_start_date_specified">Не указана дата начала</string>
     <string name="no_start_time_specified">Не указано время начала</string>
-    <string name="not_delete_schedules">Не удалять расписания</string>
+    <string name="not_delete_schedules">Не удалять</string>
+    <string name="_interface">Интерфейс</string>
+    <string name="export">Экспорт</string>
+    <string name="_import">Импорт</string>
+    <string name="success">Успешно</string>
+    <string name="use_image">Использовать изображение</string>
+    <string name="import_message">Будьте внимательны, это очистит текущее состояние</string>
     <string name="not_delete_schedules_message">После окончания расписания останутся в памяти и не будут удалены</string>
     <string name="not_specified">Не указан</string>
     <string name="nothing_found">Ничего не найдено</string>

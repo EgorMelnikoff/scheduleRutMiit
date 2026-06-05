@@ -124,7 +124,13 @@
     <string name="no_events">No classes</string>
     <string name="no_start_date_specified">No start date specified</string>
     <string name="no_start_time_specified">No start time specified</string>
-    <string name="not_delete_schedules">Do not delete schedules</string>
+    <string name="not_delete_schedules">Do not delete</string>
+    <string name="_interface">Interface</string>
+    <string name="export">Export</string>
+    <string name="_import">Import</string>
+    <string name="success">Success</string>
+    <string name="use_image">Use image</string>
+    <string name="import_message">Be careful, this will clear the current state</string>
     <string name="not_delete_schedules_message">After the expiration date, the schedules will remain in memory and will not be deleted</string>
     <string name="not_specified">Not specified</string>
     <string name="nothing_found">Nothing found</string>
