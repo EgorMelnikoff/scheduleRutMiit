@@ -28,7 +28,6 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.Sch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleTopAppBar(
-    navigateToHiddenEvents: (Long, String) -> Unit,
     onSetScheduleView: (ScheduleView) -> Unit,
     onShowNamedScheduleDialog: (NamedSchedule) -> Unit,
 
@@ -44,28 +43,6 @@ fun ScheduleTopAppBar(
             scheduleUiDto.schedule.timetableType.typeName
         } else null,
         actions = {
-            AnimatedVisibility(
-                visible = !scheduleUiDto?.hiddenEvents.isNullOrEmpty(),
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                IconButton(
-                    onClick = {
-                        navigateToHiddenEvents(
-                            namedScheduleWithSchedules.namedSchedule.id,
-                            namedScheduleWithSchedules.namedSchedule.shortName
-                        )
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
-
             IconButton(
                 onClick = {
                     onSetScheduleView(

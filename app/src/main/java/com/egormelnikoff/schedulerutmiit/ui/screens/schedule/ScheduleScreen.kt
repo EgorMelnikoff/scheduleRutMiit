@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -122,15 +123,6 @@ fun ScreenSchedule(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
                     ScheduleTopAppBar(
-                        navigateToHiddenEvents = { namedScheduleId, shortName ->
-                            appUiState.appBackStack.openDialog(
-                                Route.Dialog.HiddenEventsDialog(
-                                    namedScheduleId = namedScheduleId,
-                                    namedScheduleShortName = shortName,
-                                    scheduleState.scheduleUiDto?.schedule?.timetableType
-                                )
-                            )
-                        },
                         onSetScheduleView = { value ->
                             preferencesViewModel.onSetScheduleView(value)
                         },
@@ -184,8 +176,8 @@ fun ScreenSchedule(
                                             )
                                         },
                                         trailingIcon = {
-                                            OutlinedButton(
-                                                colors = ButtonDefaults.outlinedButtonColors()
+                                            Button(
+                                                colors = ButtonDefaults.buttonColors()
                                                     .copy(
                                                         containerColor = MaterialTheme.colorScheme.error,
                                                         contentColor = MaterialTheme.colorScheme.onPrimary
@@ -196,10 +188,6 @@ fun ScreenSchedule(
                                                 contentPadding = PaddingValues(
                                                     horizontal = 8.dp,
                                                     vertical = 2.dp
-                                                ),
-                                                border = BorderStroke(
-                                                    width = 0.5.dp,
-                                                    MaterialTheme.colorScheme.onPrimary
                                                 )
                                             ) {
                                                 CompositionLocalProvider(
@@ -337,7 +325,7 @@ fun ScreenSchedule(
 
             isSavedNamedSchedule = currentState.isSaved,
             isDefaultNamedSchedule = it.isDefault,
-
+            haveHiddenEvents = !scheduleState.scheduleUiDto?.hiddenEvents.isNullOrEmpty(),
             haveNotEmptySchedules = namedScheduleState.namedScheduleWithSchedules?.scheduleWithEvents?.isNotEmpty() == true && scheduleState.scheduleUiDto?.schedule != null
         ) {
             showNamedScheduleDialog = null

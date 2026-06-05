@@ -132,9 +132,19 @@ fun HorizontalCalendar(
                 modifier = Modifier
                     .weight(1f)
                     .clip(CircleShape)
-                    .clickable {
-                        onShowCalendarDialog(!showCalendarDialog)
-                    }
+                    .combinedClickable(
+                        onClick = {
+                            scope.launch {
+                                scheduleUiState.pagerWeeksState.animateScrollToPage(
+                                    scheduleUiDto.schedulePagerUiDto.weeksStartIndex
+                                )
+                            }
+                            scheduleUiState.onSelectDate(scheduleUiDto.schedulePagerUiDto.defaultDate)
+                        },
+                        onLongClick = {
+                            onShowCalendarDialog(!showCalendarDialog)
+                        }
+                    )
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .height(32.dp),
                 verticalAlignment = Alignment.CenterVertically,

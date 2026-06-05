@@ -236,7 +236,7 @@ fun ReviewScreen(
                 top = if (usedPhoto) 0.dp else internalPadding.calculateTopPadding() + 12.dp,
                 bottom = externalPadding.calculateBottomPadding()
             ),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (usedPhoto) {
                 item {
@@ -276,9 +276,11 @@ fun ReviewScreen(
                 }
 
                 item {
-                    Column(
+                    Box(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
+                            .padding(
+                                vertical = 8.dp, horizontal = 16.dp
+                            )
                             .onGloballyPositioned { coordinates ->
                                 val y = coordinates.positionInWindow().y
 
@@ -326,7 +328,6 @@ fun ReviewScreen(
                                 }
                             )
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
                     }
                 }
             }
@@ -421,9 +422,6 @@ fun ReviewScreen(
                         )
                     }
                 }
-            }
-            item {
-                Spacer(modifier = Modifier.height(600.dp))
             }
         }
     }

@@ -40,6 +40,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
@@ -72,6 +73,7 @@ fun ModalDialogNamedSchedule(
     appBackStack: AppBackStack,
     isSavedNamedSchedule: Boolean,
     isDefaultNamedSchedule: Boolean,
+    haveHiddenEvents: Boolean = false,
     haveNotEmptySchedules: Boolean = false,
 
     onOpenNamedSchedule: (() -> Unit)? = null,
@@ -91,7 +93,9 @@ fun ModalDialogNamedSchedule(
             appBackStack = appBackStack,
             scheduleViewModel = scheduleViewModel,
             namedSchedule = namedSchedule,
+            currentScheduleTimetableType = currentSchedule?.timetableType,
             isSavedNamedSchedule = isSavedNamedSchedule,
+            haveHiddenEvents = haveHiddenEvents,
             isDefaultNamedSchedule = isDefaultNamedSchedule,
             onDismiss = onDismiss
         )
@@ -340,8 +344,10 @@ fun ModalDialogNamedScheduleHeader(
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
     namedSchedule: NamedSchedule,
+    currentScheduleTimetableType: TimetableType?,
     isSavedNamedSchedule: Boolean,
     isDefaultNamedSchedule: Boolean,
+    haveHiddenEvents: Boolean,
     onDismiss: (NamedSchedule?) -> Unit
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -379,16 +385,36 @@ fun ModalDialogNamedScheduleHeader(
 
             }
         }
+        if (haveHiddenEvents) {
+            LargeIconButton(
+                onClick = {
+                    onDismiss(null)
+                    appBackStack.openDialog(
+                        Route.Dialog.HiddenEventsDialog(
+                            namedScheduleId = namedSchedule.id,
+                            namedScheduleShortName = namedSchedule.shortName,
+                            currentScheduleTimetableType
+                        )
+                    )
+                },
+                colors = IconButtonDefaults.iconButtonColors().copy(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onBackground
+                ),
+                icon = ImageVector.vectorResource(R.drawable.visibility_off),
+                contentDescription = stringResource(R.string.hidden_events)
+            )
+        }
         if (isSavedNamedSchedule) {
             LargeIconButton(
                 onClick = {
+                    onDismiss(null)
                     appBackStack.openDialog(
                         Route.Dialog.RenameNamedScheduleDialog(
                             namedSchedule.id,
                             namedSchedule.fullName
                         )
                     )
-                    onDismiss(null)
                 },
                 colors = IconButtonDefaults.iconButtonColors().copy(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
