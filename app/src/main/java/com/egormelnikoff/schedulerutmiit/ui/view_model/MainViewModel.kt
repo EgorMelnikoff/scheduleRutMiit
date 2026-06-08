@@ -31,6 +31,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -64,7 +65,7 @@ class MainViewModel @Inject constructor(
             val now = LocalDateTime.now()
             emit(now.truncatedTo(ChronoUnit.MINUTES))
 
-            delay(Duration.between(now, now.plusHours(1)).toMillis())
+            delay(Duration.between(now, now.plusHours(1)).toMillis().milliseconds)
         }
     }.distinctUntilChanged()
 

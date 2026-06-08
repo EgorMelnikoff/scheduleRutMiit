@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
@@ -367,7 +368,7 @@ class ScheduleViewModel @Inject constructor(
     ) {
         val newUpdateJob = viewModelScope.launch {
             updateEventCommentJob?.cancelAndJoin()
-            delay(300)
+            delay(300.milliseconds)
             updateEventCommentUseCase(
                 dateTime, scheduleId, event, comment
             ).let { eventsExtraData ->

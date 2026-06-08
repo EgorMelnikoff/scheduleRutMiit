@@ -2,13 +2,14 @@ package com.egormelnikoff.schedulerutmiit.core.network.fetcher
 
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
-import com.egormelnikoff.schedulerutmiit.core.common.result.isClientError
+import com.egormelnikoff.schedulerutmiit.core.common.result.isRetryable
 import com.egormelnikoff.schedulerutmiit.core.network.logger.Logger
 import kotlinx.coroutines.delay
 import okio.IOException
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.math.pow
+import kotlin.time.Duration.Companion.milliseconds
 
 class RetryExecutor @Inject constructor(
     private val logger: Logger
@@ -27,7 +28,7 @@ class RetryExecutor @Inject constructor(
                             return result
                         }
 
-                        if (result.typedError.isClientError()) {
+                        if (result.typedError.isRetryable()) {
                             return result
                         }
                     }
@@ -46,7 +47,7 @@ class RetryExecutor @Inject constructor(
                 }
             }
 
-            delay(backoff(attempt))
+            delay(backoff(attempt).milliseconds)
         }
 
         return Result.Error(
@@ -56,7 +57,7 @@ class RetryExecutor @Inject constructor(
         )
     }
 
-    fun backoff(attempt: Int): Long {
+    private fun backoff(attempt: Int): Long {
         return (500L * (2.0.pow(attempt.toDouble()))).toLong()
     }
 }
