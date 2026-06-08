@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetableDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
-import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
+import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkExecutor
 import com.egormelnikoff.schedulerutmiit.schedule.data.parser.ScheduleParser
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRemoteDataSource
 import javax.inject.Inject
@@ -15,12 +15,12 @@ import javax.inject.Inject
 class ScheduleRemoteDataSourceImpl @Inject constructor(
     private val miitApi: MiitApi,
     private val scheduleParser: ScheduleParser,
-    private val networkHelper: NetworkHelper
+    private val networkExecutor: NetworkExecutor
 ) : ScheduleRemoteDataSource {
     override suspend fun fetchTimetables(
         apiId: Int,
         type: NamedScheduleType
-    ) = networkHelper.callApi {
+    ) = networkExecutor.callApi {
         miitApi.getTimetables(type.typeName, apiId)
     }
 
@@ -31,7 +31,7 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
         timetable: TimetableDto,
         currentGroup: Group?
     ): Result<ScheduleDto> {
-        networkHelper.callHtml(
+        networkExecutor.callHtml(
             url = Endpoints.scheduleUrl(
                 namedScheduleType,
                 apiId,
@@ -59,7 +59,7 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
         startDate: String,
         type: String
     ): Int {
-        networkHelper.callHtml(
+        networkExecutor.callHtml(
             url = Endpoints.scheduleUrl(
                 namedScheduleType, apiId, startDate, type
             )

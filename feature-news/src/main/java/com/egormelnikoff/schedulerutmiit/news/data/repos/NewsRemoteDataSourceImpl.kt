@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.news.data.repos
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
-import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkHelper
+import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkExecutor
 import com.egormelnikoff.schedulerutmiit.news.data.parser.NewsParser
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
 import javax.inject.Inject
@@ -11,15 +11,15 @@ import javax.inject.Inject
 class NewsRemoteDataSourceImpl @Inject constructor(
     private val miitApi: MiitApi,
     private val newsParser: NewsParser,
-    private val networkHelper: NetworkHelper
+    private val networkExecutor: NetworkExecutor
 ) : NewsRemoteDataSource {
 
-    override suspend fun getNewsList(pageSize: Int, page: Int) = networkHelper.callApi {
+    override suspend fun getNewsList(pageSize: Int, page: Int) = networkExecutor.callApi {
         miitApi.getNewsList(pageSize, page, page)
     }
 
     override suspend fun getNewsById(id: Long): Result<NewsParsedDto> {
-        networkHelper.callApi {
+        networkExecutor.callApi {
             miitApi.getNewsById(id)
         }.let {
             return when (it) {

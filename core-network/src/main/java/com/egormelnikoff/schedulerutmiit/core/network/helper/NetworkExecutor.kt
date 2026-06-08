@@ -8,22 +8,20 @@ import com.egormelnikoff.schedulerutmiit.core.network.logger.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import retrofit2.Response
 import javax.inject.Inject
 
-class NetworkHelper @Inject constructor(
+class NetworkExecutor @Inject constructor(
     private val logger: Logger,
     private val apiFetcher: ApiFetcher,
     private val htmlFetcher: HtmlFetcher
 ) {
-    suspend fun <T : Any> callApi(
-        retries: Int = 3,
-        call: suspend () -> Response<T>
+    private suspend fun <T> execute(
+        block: suspend () -> Result<T>
     ): Result<T> = withContext(Dispatchers.IO) {
-        return@withContext try {
-            apiFetcher(retries, call)
+        try {
+            block()
         } catch (e: SerializationException) {
             logger.e("NetworkHelper", "Serialization error", e)
             Result.Error(TypedError.SerializationError(e))
@@ -33,20 +31,16 @@ class NetworkHelper @Inject constructor(
         }
     }
 
-    suspend fun callHtml(
+    suspend fun <T : Any> callApi(
         retries: Int = 3,
-        url: String
-    ): Result<Document> = withContext(Dispatchers.IO) {
-        return@withContext try {
-            htmlFetcher(retries, url).let {
-                when (it) {
-                    is Result.Success -> Result.Success(Jsoup.parse(it.data))
-                    is Result.Error -> it
-                }
-            }
-        } catch (e: IllegalArgumentException) {
-            logger.e("NetworkHelper", "Illegal argument", e)
-            Result.Error(TypedError.IllegalArgumentError(e))
-        }
+        call: suspend () -> Response<T>
+    ): Result<T> = execute {
+        apiFetcher(retries, call)
+    }
+
+    suspend fun callHtml(
+        retries: Int = 3, url: String
+    ): Result<Document> = execute {
+        htmlFetcher(retries, url)
     }
 }
