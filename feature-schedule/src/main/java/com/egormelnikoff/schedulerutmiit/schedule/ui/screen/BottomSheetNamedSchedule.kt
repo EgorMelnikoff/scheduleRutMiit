@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -78,7 +79,7 @@ fun ModalDialogNamedSchedule(
     onOpenNamedSchedule: (() -> Unit)? = null,
     onDismiss: (NamedSchedule?) -> Unit
 ) {
-    val limitActions = remember { 1 }
+    val limitActions = remember { 2 }
     val uriHandler = LocalUriHandler.current
     var showDeleteDialog by remember { mutableStateOf<ScheduleWithEvents?>(null) }
 
@@ -157,20 +158,24 @@ fun ModalDialogNamedSchedule(
                         val angle by animateFloatAsState(
                             targetValue = if (showScheduleDialog) 0f else 180f
                         )
-                        val isDefaultSchedule =
-                            (scheduleWithEvents.schedule.id == currentSchedule?.id && isSavedNamedSchedule)
-                                    || scheduleWithEvents.schedule.isDefault
+
                         val actions = buildList {
-                            if (!isDefaultSchedule) {
+                            if (isSavedNamedSchedule && haveNotEmptySchedules) {
                                 add(
                                     ActionItem(
-                                        title = stringResource(R.string.make_default),
-                                        imageVector = ImageVector.vectorResource(R.drawable.check),
+                                        title = stringResource(R.string.add_class),
+                                        imageVector = ImageVector.vectorResource(R.drawable.add),
                                         onClick = {
-                                            scheduleViewModel.setDefaultSchedule(
-                                                scheduleWithEvents.schedule.id,
-                                                scheduleWithEvents.schedule.timetableId
+                                            appBackStack.openDialog(
+                                                Route.Dialog.AddEditEventDialog(
+                                                    namedScheduleId = namedSchedule.id,
+                                                    scheduleId = scheduleWithEvents.schedule.id,
+                                                    recurrence = scheduleWithEvents.schedule.recurrence,
+                                                    scheduleStartDate = scheduleWithEvents.schedule.startDate,
+                                                    scheduleEndDate = scheduleWithEvents.schedule.endDate
+                                                )
                                             )
+                                            onDismiss(null)
                                         }
                                     )
                                 )
@@ -193,27 +198,6 @@ fun ModalDialogNamedSchedule(
                                     )
                                 )
                             }
-
-                            if (isSavedNamedSchedule && haveNotEmptySchedules) {
-                                add(
-                                    ActionItem(
-                                        title = stringResource(R.string.add_class),
-                                        imageVector = ImageVector.vectorResource(R.drawable.add),
-                                        onClick = {
-                                            appBackStack.openDialog(
-                                                Route.Dialog.AddEditEventDialog(
-                                                    namedScheduleId = namedSchedule.id,
-                                                    scheduleId = scheduleWithEvents.schedule.id,
-                                                    recurrence = scheduleWithEvents.schedule.recurrence,
-                                                    scheduleStartDate = scheduleWithEvents.schedule.startDate,
-                                                    scheduleEndDate = scheduleWithEvents.schedule.endDate
-                                                )
-                                            )
-                                            onDismiss(null)
-                                        }
-                                    )
-                                )
-                            }
                             if (today > scheduleWithEvents.schedule.endDate && namedSchedule.type != NamedScheduleType.MY && isSavedNamedSchedule) {
                                 add(
                                     ActionItem(
@@ -231,20 +215,11 @@ fun ModalDialogNamedSchedule(
                                 )
                             }
                         }
+
                         Column {
                             ClickableItem(
                                 defaultMinHeight = 40.dp,
                                 title = scheduleWithEvents.schedule.timetableType.typeName,
-                                titleLabel = if (isDefaultSchedule) {
-                                    {
-                                        Icon(
-                                            modifier = Modifier.size(16.dp),
-                                            imageVector = ImageVector.vectorResource(R.drawable.check),
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            contentDescription = null
-                                        )
-                                    }
-                                } else null,
                                 subtitle = "${
                                     scheduleWithEvents.schedule.startDate.format(
                                         dayMonthYearFormatter
@@ -255,8 +230,27 @@ fun ModalDialogNamedSchedule(
                                                 dayMonthYearFormatter
                                             )
                                         }",
-                                onClick = if (actions.size > limitActions || showScheduleDialog) {
-                                    { showScheduleDialog = !showScheduleDialog }
+                                onClick = {
+                                    if (schedulesWithEvents.size > 1) {
+                                        scheduleViewModel.setDefaultSchedule(
+                                            scheduleWithEvents.schedule.id,
+                                            scheduleWithEvents.schedule.timetableId
+                                        )
+                                    }
+                                },
+                                leadingIcon = if (schedulesWithEvents.size > 1) {
+                                    {
+                                        RadioButton(
+                                            selected = (scheduleWithEvents.schedule.id == currentSchedule?.id && isSavedNamedSchedule)
+                                                    || scheduleWithEvents.schedule.isDefault,
+                                            onClick = {
+                                                scheduleViewModel.setDefaultSchedule(
+                                                    scheduleWithEvents.schedule.id,
+                                                    scheduleWithEvents.schedule.timetableId
+                                                )
+                                            }
+                                        )
+                                    }
                                 } else null,
                                 trailingIcon = {
                                     Row(
@@ -264,16 +258,27 @@ fun ModalDialogNamedSchedule(
                                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
                                         if (actions.size > limitActions) {
-                                            Icon(
-                                                modifier = Modifier
-                                                    .size(20.dp)
-                                                    .graphicsLayer(
-                                                        rotationZ = angle
+                                            IconButton(
+                                                colors = IconButtonDefaults.iconButtonColors()
+                                                    .copy(
+                                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                                        contentColor = MaterialTheme.colorScheme.onBackground
                                                     ),
-                                                imageVector = ImageVector.vectorResource(R.drawable.up),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                            )
+                                                onClick = {
+                                                    showScheduleDialog = !showScheduleDialog
+                                                }
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier
+                                                        .size(20.dp)
+                                                        .graphicsLayer(
+                                                            rotationZ = angle
+                                                        ),
+                                                    imageVector = ImageVector.vectorResource(R.drawable.up),
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                                )
+                                            }
                                         } else {
                                             actions.forEach { item ->
                                                 IconButton(
@@ -453,9 +458,9 @@ fun ScheduleActionsDialog(
     AnimatedVisibility(
         visible = showExpandedMenu
     ) {
-        Column (
+        Column(
             modifier = Modifier.animateContentSize()
-        ){
+        ) {
             HorizontalDivider(
                 thickness = 0.5.dp,
                 color = MaterialTheme.colorScheme.outline
