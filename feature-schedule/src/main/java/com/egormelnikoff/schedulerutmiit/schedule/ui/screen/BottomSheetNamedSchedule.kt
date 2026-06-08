@@ -450,12 +450,12 @@ fun ScheduleActionsDialog(
     showExpandedMenu: Boolean,
     actions: List<ActionItem>
 ) {
-
     AnimatedVisibility(
-        modifier = Modifier.animateContentSize(),
         visible = showExpandedMenu
     ) {
-        Column {
+        Column (
+            modifier = Modifier.animateContentSize()
+        ){
             HorizontalDivider(
                 thickness = 0.5.dp,
                 color = MaterialTheme.colorScheme.outline
