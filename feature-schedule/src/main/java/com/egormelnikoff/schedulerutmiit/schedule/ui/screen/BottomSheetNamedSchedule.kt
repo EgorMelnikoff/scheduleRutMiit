@@ -1,9 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -162,6 +161,20 @@ fun ModalDialogNamedSchedule(
                             (scheduleWithEvents.schedule.id == currentSchedule?.id && isSavedNamedSchedule)
                                     || scheduleWithEvents.schedule.isDefault
                         val actions = buildList {
+                            if (!isDefaultSchedule) {
+                                add(
+                                    ActionItem(
+                                        title = stringResource(R.string.make_default),
+                                        imageVector = ImageVector.vectorResource(R.drawable.check),
+                                        onClick = {
+                                            scheduleViewModel.setDefaultSchedule(
+                                                scheduleWithEvents.schedule.id,
+                                                scheduleWithEvents.schedule.timetableId
+                                            )
+                                        }
+                                    )
+                                )
+                            }
                             if (scheduleWithEvents.schedule.downloadUrl != null) {
                                 add(
                                     ActionItem(
@@ -250,32 +263,6 @@ fun ModalDialogNamedSchedule(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
-                                        AnimatedVisibility(
-                                            visible = !isDefaultSchedule,
-                                            enter = fadeIn(),
-                                            exit = fadeOut()
-                                        ) {
-                                            IconButton(
-                                                colors = IconButtonDefaults.iconButtonColors()
-                                                    .copy(
-                                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                                        contentColor = MaterialTheme.colorScheme.onBackground
-                                                    ),
-                                                onClick = {
-                                                    scheduleViewModel.setDefaultSchedule(
-                                                        scheduleWithEvents.schedule.id,
-                                                        scheduleWithEvents.schedule.timetableId
-                                                    )
-                                                }
-                                            ) {
-                                                Icon(
-                                                    modifier = Modifier.size(20.dp),
-                                                    imageVector = ImageVector.vectorResource(R.drawable.check),
-                                                    contentDescription = null
-                                                )
-                                            }
-                                        }
-
                                         if (actions.size > limitActions) {
                                             Icon(
                                                 modifier = Modifier
@@ -465,6 +452,7 @@ fun ScheduleActionsDialog(
 ) {
 
     AnimatedVisibility(
+        modifier = Modifier.animateContentSize(),
         visible = showExpandedMenu
     ) {
         Column {
