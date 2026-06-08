@@ -14,5 +14,10 @@ sealed class TypedError {
     data object EmptyBodyError : TypedError()
 }
 
-fun TypedError.isClientError(): Boolean =
-    this is TypedError.HttpError && code in 400..499
+fun TypedError.isRetryable(): Boolean =
+    when (this) {
+        is TypedError.NetworkError -> true
+        is TypedError.TimeoutError -> true
+        is TypedError.HttpError -> code >= 500
+        else -> false
+    }
