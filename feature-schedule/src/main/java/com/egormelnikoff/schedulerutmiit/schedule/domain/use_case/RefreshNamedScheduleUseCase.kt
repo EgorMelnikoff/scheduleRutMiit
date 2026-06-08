@@ -5,7 +5,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
@@ -124,14 +123,10 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             .associateBy { it.schedule.getKey() }
 
 
-        for (updatedSchedule in newNamedScheduleWithSchedules.scheduleWithEvents) {
+        newNamedScheduleWithSchedules.scheduleWithEvents.forEach { updatedSchedule ->
             val oldSchedule = oldSchedulesMap[updatedSchedule.schedule.getKey()]
 
             if (oldSchedule != null) {
-                val isLastWeek = oldSchedule.schedule.endDate.getFirstDayOfWeek() == LocalDate.now()
-                    .getFirstDayOfWeek()
-                if (isLastWeek) continue
-
                 val updatedEvents = mutableListOf<Event>()
                 val customEvents = oldSchedule.events.filter { it.isCustomEvent }
                 val defaultEvents = updatedSchedule.events.map { event ->

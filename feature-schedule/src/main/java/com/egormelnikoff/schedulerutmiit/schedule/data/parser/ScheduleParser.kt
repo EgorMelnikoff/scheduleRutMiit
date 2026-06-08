@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.parser
 
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.parserFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.Locale.ruLocale
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
@@ -19,12 +20,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.nodes.TextNode
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.Year
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalAdjusters
 import kotlin.math.abs
 
 object ScheduleParser {
@@ -82,7 +87,7 @@ object ScheduleParser {
         startDate: LocalDate,
         currentGroup: Group?,
         formatter: DateTimeFormatter,
-    ): PeriodicContentDto = withContext(Dispatchers.Default) {
+    ): PeriodicContentDto {
         val weekNumbers = this@parsePeriodicSchedule
             .select(".nav-link[aria-controls]")
             .map {
@@ -109,7 +114,7 @@ object ScheduleParser {
                 }.orEmpty()
         }
 
-        return@withContext PeriodicContentDto(
+        return PeriodicContentDto(
             events = events.normalizePeriodicEvents(),
             recurrence = getRecurrence(
                 startDate = startDate,
@@ -123,7 +128,7 @@ object ScheduleParser {
         isPeriodic: Boolean = false,
         currentGroup: Group?,
         formatter: DateTimeFormatter,
-    ): NonPeriodicContentDto = withContext(Dispatchers.Default) {
+    ): NonPeriodicContentDto {
         val eventsByDates = this@parseNonPeriodicSchedule
             .select("div.info-block.info-block_collapse.show")
 
@@ -135,7 +140,7 @@ object ScheduleParser {
                 )
             }.orEmpty()
         }
-        return@withContext if (isPeriodic) {
+        return if (isPeriodic) {
             NonPeriodicContentDto(
                 events = events.map {
                     it.copy(
@@ -152,29 +157,43 @@ object ScheduleParser {
         )
     }
 
-    private suspend fun Element.parseDate(
+    private fun Element.parseDate(
         isPeriodic: Boolean,
         formatter: DateTimeFormatter
-    ): LocalDate? = withContext(Dispatchers.Default) {
+    ): LocalDate? {
         val header = this@parseDate.selectFirst(".info-block__header-text")
-
-        val dateText = if (isPeriodic) {
-            header
-                ?.select(".text-secondary.small")
-                ?.first()
-                ?.text()
-                ?.trim() ?: return@withContext null
-        } else {
-            header
-                ?.ownText()
-                ?.trim() ?: return@withContext null
-        }
-
-        if (dateText.isEmpty()) return@withContext null
+            ?: return null
 
         val year = Year.now().value
 
-        return@withContext LocalDate.parse("$dateText $year", formatter)
+        val dateText = if (isPeriodic) {
+            header
+                .select(".text-secondary.small")
+                .firstOrNull()
+                ?.text()
+                ?.trim()
+                .orEmpty()
+        } else {
+            header.ownText().trim()
+        }
+
+        if (dateText.isNotBlank()) {
+            return LocalDate.parse("$dateText $year", formatter)
+        }
+
+        if (isPeriodic) {
+            val dayOfWeek = DayOfWeek.entries.firstOrNull {
+                it.getDisplayName(TextStyle.FULL, ruLocale)
+                    .equals(header.ownText().trim(), ignoreCase = true)
+            } ?: return null
+
+            return LocalDate.now().with(
+                TemporalAdjusters.nextOrSame(dayOfWeek)
+            )
+        } else {
+            return null
+        }
+
     }
 
     private suspend fun Element.parseEvents(
@@ -182,11 +201,11 @@ object ScheduleParser {
         periodNumber: Int? = null,
         recurrenceRule: RecurrenceEventDto? = null,
         currentGroup: Group?
-    ): List<EventDto> = withContext(Dispatchers.Default) {
-        return@withContext this@parseEvents
+    ): List<EventDto> {
+        return this@parseEvents
             .select(".timetable__list-timeslot")
-            .map { element ->
-                val headerText = element
+            .flatMap { timeslot ->
+                val headerText = timeslot
                     .selectFirst(".mb-1")
                     ?.text()
                     ?.trim()
@@ -212,82 +231,106 @@ object ScheduleParser {
                     ?.let { LocalTime.parse(it) }
                     ?.toUtcTime(date)
 
-                val typeName = element
-                    .selectFirst(".timetable__grid-text_gray")
-                    ?.text()
-                    ?.trim()
+                val subjectContainer = timeslot.selectFirst(".pl-4")
+                val eventBlocks =
+                    subjectContainer?.select("div.timetable__grid-about") ?: emptyList()
 
-                val subjectContainer = element.selectFirst(".pl-4")
+                if (eventBlocks.isEmpty()) {
+                    val typeName = timeslot
+                        .selectFirst(".timetable__grid-text_gray")
+                        ?.text()
+                        ?.trim()
+                    val name = subjectContainer?.ownText()?.trim()
 
-                val name = subjectContainer
-                    ?.ownText()
-                    ?.trim()
+                    listOf(
+                        EventDto(
+                            startDatetime = LocalDateTime.of(date, startTime),
+                            endDatetime = LocalDateTime.of(date, endTime),
+                            name = name,
+                            typeName = typeName,
+                            timeSlotName = timeSlotName,
+                            lecturers = timeslot.parseLecturers(),
+                            rooms = timeslot.parseRooms(),
+                            groups = timeslot.parseGroups(currentGroup),
+                            periodNumber = periodNumber,
+                            recurrence = recurrenceRule
+                        )
+                    )
+                } else {
+                    eventBlocks.map { aboutDiv ->
+                        val previousTextNode = aboutDiv.previousSibling()
+                        val name = (previousTextNode as? TextNode)?.text()?.trim()
+                            ?: subjectContainer?.ownText()?.trim() ?: ""
 
-                EventDto(
-                    startDatetime = LocalDateTime.of(date, startTime),
-                    endDatetime = LocalDateTime.of(date, endTime),
-                    name = name,
-                    typeName = typeName,
-                    timeSlotName = timeSlotName,
-                    lecturers = element.parseLecturers(),
-                    rooms = element.parseRooms(),
-                    groups = element.parseGroups(currentGroup),
-                    periodNumber = periodNumber,
-                    recurrence = recurrenceRule
-                )
+                        val typeSpan = aboutDiv.previousElementSibling()
+                        val typeName = typeSpan?.text()?.trim()
+                            ?: timeslot.selectFirst(".timetable__grid-text_gray")?.text()?.trim()
+
+                        EventDto(
+                            startDatetime = LocalDateTime.of(date, startTime),
+                            endDatetime = LocalDateTime.of(date, endTime),
+                            name = name,
+                            typeName = typeName,
+                            timeSlotName = timeSlotName,
+                            lecturers = aboutDiv.parseLecturers(),
+                            rooms = aboutDiv.parseRooms(),
+                            groups = aboutDiv.parseGroups(currentGroup),
+                            periodNumber = periodNumber,
+                            recurrence = recurrenceRule
+                        )
+                    }
+                }
             }
     }
 
-    private suspend fun Element.parseLecturers(): MutableList<LecturerDto> =
-        withContext(Dispatchers.Default) {
-            return@withContext this@parseLecturers
-                .select(".icon-academic-cap")
-                .mapNotNull { a ->
+    private fun Element.parseLecturers(): MutableList<LecturerDto> {
+        return this@parseLecturers
+            .select(".icon-academic-cap")
+            .mapNotNull { a ->
 
-                    val href = a.attr("href")
-                    val id = href
-                        .substringAfter("/people/")
-                        .substringBefore("/")
-                        .toIntOrNull() ?: return@mapNotNull null
+                val href = a.attr("href")
+                val id = href
+                    .substringAfter("/people/")
+                    .substringBefore("/")
+                    .toIntOrNull() ?: return@mapNotNull null
 
-                    val title = a.attr("title")
+                val title = a.attr("title")
 
-                    LecturerDto(
-                        id = id,
-                        shortFio = a.text().trim(),
-                        fullFio = title.substringBefore(",").trim(),
-                        hint = title.substringAfter(",").trim()
-                    )
-                }.toMutableList()
-        }
+                LecturerDto(
+                    id = id,
+                    shortFio = a.text().trim(),
+                    fullFio = title.substringBefore(",").trim(),
+                    hint = title.substringAfter(",").trim()
+                )
+            }.toMutableList()
+    }
 
-    private suspend fun Element.parseRooms(): MutableList<RoomDto> =
-        withContext(Dispatchers.Default) {
-            return@withContext this@parseRooms
-                .select(".icon-location")
-                .mapNotNull { a ->
+    private fun Element.parseRooms(): MutableList<RoomDto> {
+        return this@parseRooms
+            .select(".icon-location")
+            .mapNotNull { a ->
 
-                    val href = a.attr("href")
+                val href = a.attr("href")
 
-                    val id = href
-                        .substringAfter("room=")
-                        .substringBefore("&")
-                        .toIntOrNull() ?: return@mapNotNull null
+                val id = href
+                    .substringAfter("room=")
+                    .substringBefore("&")
+                    .toIntOrNull() ?: return@mapNotNull null
 
-                    val title = a.attr("title")
+                val title = a.attr("title")
 
-                    RoomDto(
-                        id = id,
-                        name = a.text().trim(),
-                        hint = title.trim()
-                    )
-                }.toMutableList()
-        }
+                RoomDto(
+                    id = id,
+                    name = a.text().trim(),
+                    hint = title.trim()
+                )
+            }.toMutableList()
+    }
 
-    private suspend fun Element.parseGroups(
+    private fun Element.parseGroups(
         currentGroup: Group?
-    ): MutableList<GroupDto> = withContext(Dispatchers.Default) {
-        return@withContext this@parseGroups
+    ): MutableList<GroupDto> {
+        return this@parseGroups
             .select(".icon-community")
             .mapNotNull {
                 val id = it.attr("href")
@@ -301,14 +344,14 @@ object ScheduleParser {
             }.toMutableList()
     }
 
-    suspend fun parseCurrentWeek(element: Element): Int = withContext(Dispatchers.Default) {
+    fun parseCurrentWeek(element: Element): Int {
         val activeLink = element.select(".nav-link[aria-controls].active").first()
 
         val weekNumber = activeLink?.attr("aria-controls")
             ?.removePrefix("week-")
             ?.toIntOrNull()
 
-        return@withContext weekNumber ?: 1
+        return weekNumber ?: 1
     }
 
     private fun List<EventDto>.normalizePeriodicEvents(): List<EventDto> {
