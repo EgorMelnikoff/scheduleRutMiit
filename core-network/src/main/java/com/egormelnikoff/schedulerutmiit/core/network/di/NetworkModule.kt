@@ -33,7 +33,7 @@ object NetworkModule {
     ): OkHttpClient {
         val cache = Cache(
             directory = File(context.cacheDir, "http_cache"),
-            maxSize = 20L * 1024 * 1024
+            maxSize = 100L * 1024 * 1024
         )
 
         return OkHttpClient.Builder()
