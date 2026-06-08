@@ -12,9 +12,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import okhttp3.Cache
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -26,25 +28,31 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(logger: Logger): OkHttpClient {
+    fun provideOkHttpClient(
+        @ApplicationContext context: Context
+    ): OkHttpClient {
+        val cache = Cache(
+            directory = File(context.cacheDir, "http_cache"),
+            maxSize = 20L * 1024 * 1024
+        )
+
         return OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
+            .cache(cache)
             .addInterceptor { chain ->
-                val newRequest = chain.request().newBuilder()
+                val request = chain.request().newBuilder()
                     .addHeader("User-Agent", USER_AGENT)
                     .build()
 
-                chain.proceed(newRequest).let { response ->
-                    if (!response.isSuccessful) {
-                        logger.e(
-                            "NetworkInterceptor",
-                            "Server error (${response.code}): ${newRequest.url}"
-                        )
-                    }
-                    response
-                }
+                chain.proceed(request)
+            }
+            .addNetworkInterceptor { chain ->
+                val response = chain.proceed(chain.request())
+                response.newBuilder()
+                    .header("Cache-Control", "public, max-age=3600")
+                    .build()
             }
             .build()
     }
@@ -54,38 +62,33 @@ object NetworkModule {
     fun provideLogger(
         @ApplicationContext context: Context
     ): Logger = Logger(context)
-}
 
-@Module
-@InstallIn(SingletonComponent::class)
-object MiitModule {
     @Provides
     @Singleton
-    fun provideMiitApi(okHttpClient: OkHttpClient, json: Json): MiitApi {
+    fun provideRetrofitBuilder(
+        okHttpClient: OkHttpClient, json: Json
+    ): Retrofit.Builder {
         val contentType = "application/json".toMediaType()
 
         return Retrofit.Builder()
-            .baseUrl(Endpoints.BASE_RUT_MIIT_URL)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
+    }
+
+    @Provides
+    @Singleton
+    fun provideMiitApi(retrofitBuilder: Retrofit.Builder): MiitApi =
+        retrofitBuilder
+            .baseUrl(Endpoints.BASE_RUT_MIIT_URL)
             .build()
             .create(MiitApi::class.java)
-    }
-}
 
-@Module
-@InstallIn(SingletonComponent::class)
-object GithubModule {
     @Provides
     @Singleton
-    fun provideGithubApi(okHttpClient: OkHttpClient, json: Json): GithubApi {
-        val contentType = "application/json".toMediaType()
-
-        return Retrofit.Builder()
+    fun provideGithubApi(retrofitBuilder: Retrofit.Builder): GithubApi =
+        retrofitBuilder
             .baseUrl(Endpoints.API_GITHUB)
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
             .build()
             .create(GithubApi::class.java)
-    }
+
 }
