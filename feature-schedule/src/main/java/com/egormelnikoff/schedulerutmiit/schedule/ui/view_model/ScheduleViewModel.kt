@@ -86,22 +86,25 @@ class ScheduleViewModel @Inject constructor(
     }
 
     fun cancelLoading() {
-        fetchScheduleJob?.cancel()
-        updateCurrentState(
-            isLoading = false,
-            isRefreshing = false,
-            isError = false
-        )
-
+        viewModelScope.launch {
+            fetchScheduleJob?.cancelAndJoin()
+            updateCurrentState(
+                isLoading = false,
+                isRefreshing = false,
+                isError = false
+            )
+        }
     }
 
     fun cancelRefresh() {
-        updateScheduleJob?.cancel()
-        updateCurrentState(
-            isLoading = false,
-            isRefreshing = false,
-            isError = false
-        )
+        viewModelScope.launch {
+            updateScheduleJob?.cancelAndJoin()
+            updateCurrentState(
+                isLoading = false,
+                isRefreshing = false,
+                isError = false
+            )
+        }
     }
 
     fun refreshScheduleState(
@@ -138,7 +141,6 @@ class ScheduleViewModel @Inject constructor(
         }
         updateScheduleJob = newUpdateScheduleJob
     }
-
 
     fun fetchNamedSchedule(
         name: String,
