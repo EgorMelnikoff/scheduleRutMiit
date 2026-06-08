@@ -51,6 +51,11 @@ class Logger @Inject constructor(
         logToFile(tag, message, "I")
     }
 
+    fun w(tag: String, message: String) {
+        Log.w(tag, message)
+        logToFile(tag, message, "W")
+    }
+
     fun e(tag: String, message: String, tr: Throwable? = null) {
         val fullMessage = if (tr != null) {
             Log.e(tag, message, tr)
