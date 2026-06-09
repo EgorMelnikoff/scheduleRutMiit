@@ -28,7 +28,7 @@ fun FilterRow(
             title = stringResource(R.string.all),
             imageVector = null,
             selected = selectedOption == SearchType.ALL,
-            onSelect = {
+            onClick = {
                 onSelectOption(SearchType.ALL)
             }
         )
@@ -36,7 +36,7 @@ fun FilterRow(
             title = stringResource(R.string.groups),
             imageVector = ImageVector.vectorResource(R.drawable.group),
             selected = selectedOption == SearchType.GROUPS,
-            onSelect = {
+            onClick = {
                 onSelectOption(SearchType.GROUPS)
             }
         )
@@ -44,7 +44,7 @@ fun FilterRow(
             title = stringResource(R.string.people),
             imageVector = ImageVector.vectorResource(R.drawable.person),
             selected = selectedOption == SearchType.PEOPLE,
-            onSelect = {
+            onClick = {
                 onSelectOption(SearchType.PEOPLE)
             }
         )

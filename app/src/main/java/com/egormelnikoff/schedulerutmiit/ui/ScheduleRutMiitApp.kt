@@ -487,7 +487,6 @@ fun PageHost(
 
                         scheduleUiState = scheduleUiState,
                         appSettings = appSettings,
-                        currentDateTime = currentDateTime,
                         scheduleViewModel = scheduleViewModel,
                         preferencesViewModel = preferencesViewModel,
                         externalPadding = padding

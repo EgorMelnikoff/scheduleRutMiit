@@ -429,7 +429,6 @@ fun ReviewScreen(
             namedSchedule = it,
             scheduleViewModel = scheduleViewModel,
             appBackStack = appBackStack,
-            today = currentDateTime.toLocalDate(),
             isSavedNamedSchedule = true,
             isDefaultNamedSchedule = it.isDefault,
 

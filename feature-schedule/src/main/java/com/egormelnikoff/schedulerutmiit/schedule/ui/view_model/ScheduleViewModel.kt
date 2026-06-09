@@ -13,7 +13,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefaultSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.AddCustomNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.DeleteNamedScheduleUseCase
-import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.DeleteScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventActionUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.FetchNamedScheduleUseCase
@@ -59,7 +58,6 @@ class ScheduleViewModel @Inject constructor(
     private val renameNamedScheduleUseCase: RenameNamedScheduleUseCase,
 
     private val setDefaultScheduleUseCase: SetDefaultScheduleUseCase,
-    private val deleteScheduleUseCase: DeleteScheduleUseCase,
 
     private val eventActionUseCase: EventActionUseCase,
     private val updateEventCommentUseCase: UpdateEventCommentUseCase,
@@ -263,27 +261,6 @@ class ScheduleViewModel @Inject constructor(
                         namedScheduleWithSchedules = result.namedScheduleWithSchedules
                     )
                 }
-            }
-        }
-    }
-
-    fun deleteSchedule(
-        namedScheduleId: Long,
-        scheduleId: Long,
-    ) {
-        viewModelScope.launch {
-            deleteScheduleUseCase(
-                namedScheduleId = namedScheduleId,
-                currentNamedScheduleId = currentNamedSchedule().namedSchedule.id,
-                scheduleId = scheduleId
-            ).let { result ->
-                updateNamedScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules
-                )
-                updateScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules,
-                    updateReview = result.namedScheduleWithSchedules?.namedSchedule?.isDefault == true
-                )
             }
         }
     }
