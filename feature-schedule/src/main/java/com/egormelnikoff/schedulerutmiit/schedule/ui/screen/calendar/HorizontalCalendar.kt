@@ -108,6 +108,7 @@ fun HorizontalCalendar(
                 modifier = Modifier
                     .clip(CircleShape)
                     .combinedClickable(
+                        enabled = enabledLeftButton,
                         onClick = {
                             scope.launch {
                                 scheduleUiState.pagerWeeksState.animateScrollToPage(scheduleUiState.pagerWeeksState.currentPage - 1)
@@ -200,6 +201,7 @@ fun HorizontalCalendar(
                 modifier = Modifier
                     .clip(CircleShape)
                     .combinedClickable(
+                        enabled = enabledRightButton,
                         onClick = {
                             scope.launch {
                                 scheduleUiState.pagerWeeksState.animateScrollToPage(scheduleUiState.pagerWeeksState.currentPage + 1)
