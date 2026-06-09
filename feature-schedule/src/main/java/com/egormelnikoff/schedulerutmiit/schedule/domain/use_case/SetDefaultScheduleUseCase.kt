@@ -1,13 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdater
 import javax.inject.Inject
 
-
 class SetDefaultScheduleUseCase @Inject constructor(
     private val scheduleRepos: ScheduleRepos,
+    private val eventExtraRepos: EventExtraRepos,
     private val widgetDataUpdater: WidgetDataUpdater,
 ) {
     suspend operator fun invoke(
@@ -29,7 +30,8 @@ class SetDefaultScheduleUseCase @Inject constructor(
                 schedule.copy(
                     schedule = schedule.schedule.copy(
                         isDefault = schedule.schedule.timetableId == timetableId
-                    )
+                    ),
+                    eventsExtraData = eventExtraRepos.getByScheduleId(schedule.schedule.id)
                 )
             }
 
