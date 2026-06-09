@@ -43,7 +43,6 @@ fun HiddenEventsDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                shadowElevation = 4.dp,
                 titleText = stringResource(R.string.hidden_events),
                 subtitleText = "${hiddenEventsDialog.namedScheduleShortName} (${hiddenEventsDialog.timetableType?.typeName})",
                 navAction = onBack

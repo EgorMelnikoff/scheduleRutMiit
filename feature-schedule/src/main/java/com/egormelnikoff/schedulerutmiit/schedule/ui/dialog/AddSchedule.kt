@@ -73,7 +73,6 @@ fun AddScheduleDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                shadowElevation = 4.dp,
                 titleText = stringResource(R.string.create_schedule),
                 navAction = onBack
             )

@@ -53,7 +53,6 @@ fun RenameDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                shadowElevation = 4.dp,
                 titleText = stringResource(R.string.renaming),
                 navAction = onBack
             )

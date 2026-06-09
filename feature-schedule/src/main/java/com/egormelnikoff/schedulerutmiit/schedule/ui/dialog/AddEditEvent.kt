@@ -140,7 +140,6 @@ fun AddEditEventDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                shadowElevation = 4.dp,
                 titleText = addEditEventDialog.updatableEvent?.let {
                     stringResource(R.string.editing)
                 } ?: stringResource(R.string.create_class),
@@ -253,7 +252,7 @@ fun AddEditEventDialog(
                                                 ?: stringResource(R.string.not_specified),
                                             imageVector = null,
                                             selected = type == typeEvent,
-                                            onSelect = {
+                                            onClick = {
                                                 typeEvent = type
                                                 focusManager.clearFocus()
                                             }
