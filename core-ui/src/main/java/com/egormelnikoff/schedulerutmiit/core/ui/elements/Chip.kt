@@ -22,7 +22,7 @@ fun CustomFilterChip(
     selected: Boolean = false,
     border: BorderStroke? = null,
     colors: SelectableChipColors? = null,
-    onSelect:((Boolean) -> Unit)? = null
+    onClick:((Boolean) -> Unit)? = null
 ) {
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
         FilterChip(
@@ -36,8 +36,8 @@ fun CustomFilterChip(
                 selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
                 selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
             ),
-            onClick = onSelect?.let {
-                { onSelect(!selected) }
+            onClick = onClick?.let {
+                { onClick(!selected) }
             } ?: {},
             leadingIcon = if (imageVector != null) {
                 {
@@ -54,7 +54,7 @@ fun CustomFilterChip(
                     style = MaterialTheme.typography.titleSmall
                 )
             },
-            enabled = onSelect != null,
+            enabled = onClick != null,
             selected = selected
         )
     }

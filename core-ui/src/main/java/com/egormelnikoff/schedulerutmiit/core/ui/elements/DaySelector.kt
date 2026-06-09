@@ -48,7 +48,7 @@ fun DaySelector(
                         ) ?: stringResource(R.string.not_specified),
                         imageVector = null,
                         selected = currentDate.dayOfWeek == dateEvent?.dayOfWeek,
-                        onSelect = {
+                        onClick = {
                             onSelectDateEvent(currentDate)
                             focusManager.clearFocus()
                         }
