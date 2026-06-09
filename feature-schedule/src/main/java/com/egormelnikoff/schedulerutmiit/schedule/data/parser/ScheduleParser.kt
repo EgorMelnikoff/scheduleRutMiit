@@ -196,7 +196,7 @@ object ScheduleParser {
 
     }
 
-    private suspend fun Element.parseEvents(
+    private fun Element.parseEvents(
         date: LocalDate,
         periodNumber: Int? = null,
         recurrenceRule: RecurrenceEventDto? = null,
