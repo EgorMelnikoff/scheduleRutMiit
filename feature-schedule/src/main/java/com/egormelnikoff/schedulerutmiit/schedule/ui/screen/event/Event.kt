@@ -28,8 +28,8 @@ fun Event(
     eventView: EventView,
     navigateToEvent: (Route.Dialog.EventDialog) -> Unit,
     navigateToEditEvent: (Route.Dialog.AddEditEventDialog) -> Unit,
-    onDeleteEvent: (Long, Event) -> Unit,
-    onUpdateHiddenEvent: (Long, Event) -> Unit
+    onDeleteEvent: (Long, Long) -> Unit,
+    onUpdateHiddenEvent: (Long, Long) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),

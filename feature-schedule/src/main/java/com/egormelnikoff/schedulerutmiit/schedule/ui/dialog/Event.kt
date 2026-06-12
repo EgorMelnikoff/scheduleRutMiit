@@ -81,8 +81,8 @@ fun EventDialog(
     fetchNamedSchedule: (String, Int, NamedScheduleType) -> Unit,
     updateEventComment: (Long, Event, LocalDateTime, String) -> Unit,
     updateEventTag: (Long, Event, LocalDateTime, Int) -> Unit,
-    deleteEvent: (Long, Event) -> Unit,
-    hideEvent: (Long, Event) -> Unit,
+    deleteEvent: (Long, Long) -> Unit,
+    hideEvent: (Long, Long) -> Unit,
 
     navigateToEditEventDialog: (Route.Dialog.AddEditEventDialog) -> Unit,
     onBack: () -> Unit
@@ -90,9 +90,9 @@ fun EventDialog(
     val context = LocalContext.current
     val clipboard = LocalClipboard.current
 
-    var showEventActionsDialog by remember { mutableStateOf(false) }
-    var showEventDeleteDialog by remember { mutableStateOf(false) }
-    var showEventHideDialog by remember { mutableStateOf(false) }
+    var eventActionsDialog by remember { mutableStateOf(false) }
+    var eventDeleteDialog by remember { mutableStateOf(false) }
+    var eventHideDialog by remember { mutableStateOf(false) }
 
     var tag by remember { mutableIntStateOf(eventDialog.eventExtraData?.tag ?: 0) }
     var comment by remember { mutableStateOf(eventDialog.eventExtraData?.comment ?: "") }
@@ -126,7 +126,7 @@ fun EventDialog(
                     if (eventDialog.isSavedSchedule) {
                         IconButton(
                             onClick = {
-                                showEventActionsDialog = true
+                                eventActionsDialog = true
                             }
                         ) {
                             Icon(
@@ -395,7 +395,7 @@ fun EventDialog(
             }
         }
     }
-    if (showEventActionsDialog) {
+    if (eventActionsDialog) {
         ModalDialogEvent(
             timetableType = eventDialog.schedule.timetableType,
             event = eventDialog.event,
@@ -416,43 +416,43 @@ fun EventDialog(
             } else null,
             onDeleteEvent = if (eventDialog.event.isCustomEvent) {
                 {
-                    showEventDeleteDialog = true
+                    eventDeleteDialog = true
                 }
             } else null,
             onHideEvent = if (!eventDialog.event.isHidden) {
                 {
-                    showEventHideDialog = true
+                    eventHideDialog = true
                 }
             } else null
         ) {
-            showEventActionsDialog = false
+            eventActionsDialog = false
         }
     }
-    if (showEventDeleteDialog) {
+    if (eventDeleteDialog) {
         CustomAlertDialog(
             dialogIcon = ImageVector.vectorResource(R.drawable.delete),
             dialogTitle = "${stringResource(R.string.delete_event)}?",
             dialogText = stringResource(R.string.event_deleting_alert),
             onDismissRequest = {
-                showEventDeleteDialog = false
+                eventDeleteDialog = false
             },
             onConfirmation = {
                 deleteEvent(
-                    eventDialog.namedScheduleId, eventDialog.event
+                    eventDialog.namedScheduleId, eventDialog.event.id
                 )
             }
         )
     }
-    if (showEventHideDialog) {
+    if (eventHideDialog) {
         CustomAlertDialog(
             dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),
             dialogTitle = "${stringResource(R.string.hide_event)}?",
             dialogText = stringResource(R.string.event_visibility_alert),
             onDismissRequest = {
-                showEventHideDialog = false
+                eventHideDialog = false
             },
             onConfirmation = {
-                hideEvent(eventDialog.namedScheduleId, eventDialog.event)
+                hideEvent(eventDialog.namedScheduleId, eventDialog.event.id)
             }
         )
     }

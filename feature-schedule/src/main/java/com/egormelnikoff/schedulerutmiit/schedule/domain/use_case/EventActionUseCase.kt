@@ -8,13 +8,21 @@ import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdate
 import javax.inject.Inject
 
 sealed class EventAction {
-    data object Add : EventAction()
+    data class Add(
+        val event: Event
+    ) : EventAction()
+
     data class Update(
+        val updatedEvent: Event,
         val updatableEvent: Event?
     ) : EventAction()
 
-    data object Delete : EventAction()
+    data class Delete(
+        val eventId: Long
+    ) : EventAction()
+
     data class UpdateHidden(
+        val eventId: Long,
         val isHidden: Boolean
     ) : EventAction()
 }
@@ -26,17 +34,19 @@ class EventActionUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         namedScheduleId: Long,
-        event: Event,
-        eventAction: EventAction,
+        eventAction: EventAction
     ): NamedScheduleWithSchedules {
         when (eventAction) {
-            is EventAction.Add -> eventRepos.save(event)
-            is EventAction.Delete -> eventRepos.deleteById(event.id)
-            is EventAction.Update -> if (event != eventAction.updatableEvent) eventRepos.update(
-                event
+            is EventAction.Add -> eventRepos.save(eventAction.event)
+            is EventAction.Delete -> eventRepos.deleteById(eventAction.eventId)
+            is EventAction.Update -> if (eventAction.updatedEvent != eventAction.updatableEvent) eventRepos.update(
+                eventAction.updatedEvent
             )
 
-            is EventAction.UpdateHidden -> eventRepos.updateIsHidden(event.id, eventAction.isHidden)
+            is EventAction.UpdateHidden -> eventRepos.updateIsHidden(
+                eventAction.eventId,
+                eventAction.isHidden
+            )
         }
 
         namedScheduleRepos.getById(namedScheduleId).let {

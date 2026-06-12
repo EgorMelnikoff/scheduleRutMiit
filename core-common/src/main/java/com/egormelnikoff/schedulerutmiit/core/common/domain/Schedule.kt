@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.core.common.domain
 
-import androidx.room.Embedded
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
 import kotlinx.serialization.Serializable
@@ -17,7 +16,6 @@ data class Schedule(
     val startDate: LocalDate,
     @Serializable(with = LocalDateSerializer::class)
     val endDate: LocalDate,
-    @Embedded
     val recurrence: Recurrence?,
     val isDefault: Boolean = false,
 ) {

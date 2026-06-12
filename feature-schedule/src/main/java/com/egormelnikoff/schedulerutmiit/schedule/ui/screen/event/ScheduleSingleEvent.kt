@@ -41,8 +41,8 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 fun ScheduleSingleEvent(
     navigateToEvent: (Route.Dialog.EventDialog) -> Unit,
     navigateToEditEvent: (Route.Dialog.AddEditEventDialog) -> Unit,
-    onDeleteEvent: (Long, Event) -> Unit,
-    onUpdateHiddenEvent: (Long, Event) -> Unit,
+    onDeleteEvent: (Long, Long) -> Unit,
+    onUpdateHiddenEvent: (Long, Long) -> Unit,
     namedScheduleId: Long,
     eventDialog: Route.Dialog.EventDialog,
     editEventDialog: Route.Dialog.AddEditEventDialog,
@@ -295,7 +295,7 @@ fun ScheduleSingleEvent(
             CustomAlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 onConfirmation = {
-                    onDeleteEvent(namedScheduleId, event)
+                    onDeleteEvent(namedScheduleId, event.id)
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                 dialogTitle = "${stringResource(R.string.delete_event)}?",
@@ -306,7 +306,7 @@ fun ScheduleSingleEvent(
             CustomAlertDialog(
                 onDismissRequest = { showHideDialog = false },
                 onConfirmation = {
-                    onUpdateHiddenEvent(namedScheduleId, event)
+                    onUpdateHiddenEvent(namedScheduleId, event.id)
                     showHideDialog = false
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),

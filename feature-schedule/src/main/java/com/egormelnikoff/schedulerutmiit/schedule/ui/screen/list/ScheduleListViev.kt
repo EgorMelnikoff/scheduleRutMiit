@@ -16,13 +16,10 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findEventExtra
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEnrichedEvents
-import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.event.Event
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ScheduleUiState
@@ -78,15 +75,13 @@ fun ScheduleListView(
                             onDeleteEvent = { schedule, eventId ->
                                 scheduleViewModel.eventAction(
                                     schedule,
-                                    eventId,
-                                    EventAction.Delete
+                                    EventAction.Delete(eventId)
                                 )
                             },
-                            onUpdateHiddenEvent = { schedule, event ->
+                            onUpdateHiddenEvent = { schedule, eventId ->
                                 scheduleViewModel.eventAction(
                                     schedule,
-                                    event,
-                                    EventAction.UpdateHidden(true)
+                                    EventAction.UpdateHidden(eventId, true)
                                 )
                             },
                             eventsWithExtra = eventsGrouped.getEnrichedEvents(

@@ -37,7 +37,7 @@ import java.time.format.TextStyle
 fun HiddenEventsDialog(
     hiddenEventsDialog: Route.Dialog.HiddenEventsDialog,
     hiddenEvents: List<Event>,
-    onShowEvent: (Event) -> Unit,
+    onShowEvent: (Long) -> Unit,
     onBack: () -> Unit
 ) {
     Scaffold(
@@ -89,7 +89,7 @@ fun HiddenEventsDialog(
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
-                                        onShowEvent(event)
+                                        onShowEvent(event.id)
                                     },
                                     colors = IconButtonDefaults.iconButtonColors()
                                         .copy(
