@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog
+package com.egormelnikoff.schedulerutmiit.ui.screen.settings.modal_dialog
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
@@ -22,7 +22,7 @@ import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CountEventsModalDialog(
+fun ScheduleViewModalDialog(
     onDismiss: () -> Unit,
     appSettings: AppSettings,
     preferencesViewModel: PreferencesViewModel
@@ -32,27 +32,25 @@ fun CountEventsModalDialog(
         onDismiss = onDismiss
     ) {
         ColumnGroup(
-            title = stringResource(R.string.show_count_classes),
-            items = EventsCountView.entries.map {
+            title = stringResource(R.string.schedule_view),
+            items = ScheduleView.entries.map {
                 {
                     ClickableItem(
                         title = when (it) {
-                            EventsCountView.DETAILS -> stringResource(R.string.details)
-                            EventsCountView.BRIEFLY -> stringResource(R.string.briefly)
-                            EventsCountView.OFF -> stringResource(R.string.dont_show)
+                            ScheduleView.CALENDAR -> stringResource(R.string.calendar)
+                            ScheduleView.LIST -> stringResource(R.string.full_list)
                         },
-                        subtitle =  when (it) {
-                            EventsCountView.DETAILS -> stringResource(R.string.display_each_lesson)
-                            EventsCountView.BRIEFLY -> stringResource(R.string.display_number_lessons)
-                            EventsCountView.OFF -> null
+                        subtitle = when (it) {
+                            ScheduleView.CALENDAR -> stringResource(R.string.calendar_message)
+                            ScheduleView.LIST -> stringResource(R.string.full_list_message)
                         },
+                        subtitleMaxLines = 2,
                         leadingIcon = {
                             Icon(
                                 modifier = Modifier.size(20.dp),
                                 imageVector = when (it) {
-                                    EventsCountView.DETAILS -> ImageVector.vectorResource(R.drawable.points)
-                                    EventsCountView.BRIEFLY -> ImageVector.vectorResource(R.drawable.one)
-                                    EventsCountView.OFF -> ImageVector.vectorResource(R.drawable.visibility_off)
+                                    ScheduleView.CALENDAR -> ImageVector.vectorResource(R.drawable.calendar)
+                                    ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
                                 },
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer
@@ -60,15 +58,15 @@ fun CountEventsModalDialog(
                         },
                         trailingIcon = {
                             RadioButton(
-                                selected = (it == appSettings.eventsCountView),
+                                selected = (it == appSettings.scheduleView),
                                 onClick = {
-                                    preferencesViewModel.onSetEventsCountView(it)
+                                    preferencesViewModel.onSetScheduleView(it)
                                 }
                             )
                         },
                         showClickLabel = false
                     ) {
-                        preferencesViewModel.onSetEventsCountView(it)
+                        preferencesViewModel.onSetScheduleView(it)
                     }
                 }
 

@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog
+package com.egormelnikoff.schedulerutmiit.ui.screen.settings.modal_dialog
 
 import android.content.ActivityNotFoundException
 import android.content.ClipData

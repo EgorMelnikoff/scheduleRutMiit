@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
+package com.egormelnikoff.schedulerutmiit.ui.screen.schedule
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -52,10 +53,10 @@ import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ScheduleTopAppBar
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.calendar.ScheduleCalendarView
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.calendar.ScheduleCalendar
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.list.ScheduleListView
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.CurrentState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
@@ -66,12 +67,15 @@ import java.time.LocalDateTime
 @Composable
 fun ScreenSchedule(
     appUiState: AppUiState,
+    scheduleCalendarState: CalendarState?,
+    scheduleListState: LazyListState,
+
     currentState: CurrentState,
     namedScheduleState: NamedScheduleState,
     scheduleState: ScheduleState,
     hourlyDateTime: LocalDateTime,
-    scheduleUiState: ScheduleUiState?,
     appSettings: AppSettings,
+
     scheduleViewModel: ScheduleViewModel,
     preferencesViewModel: PreferencesViewModel,
     importLauncher: ManagedActivityResultLauncher<Array<String>, Uri?>,
@@ -135,7 +139,7 @@ fun ScreenSchedule(
                     )
                 }
             ) { padding ->
-                if (scheduleUiState != null && scheduleState.scheduleUiDto?.schedule != null) {
+                if (scheduleCalendarState != null && scheduleState.scheduleUiDto?.schedule != null) {
                     CustomPullToRefreshBox(
                         modifier = Modifier
                             .fillMaxSize()
@@ -217,7 +221,7 @@ fun ScreenSchedule(
                             ) { targetState ->
                                 when (targetState) {
                                     ScheduleView.CALENDAR -> {
-                                        ScheduleCalendarView(
+                                        ScheduleCalendar(
                                             scheduleViewModel = scheduleViewModel,
 
                                             appUiState = appUiState,
@@ -229,7 +233,7 @@ fun ScreenSchedule(
                                             scheduleUiDto = requireNotNull(scheduleState.scheduleUiDto),
                                             isSavedSchedule = currentState.isSaved,
 
-                                            scheduleUiState = scheduleUiState,
+                                            scheduleCalendarState = scheduleCalendarState,
                                             appSettings = appSettings,
                                             paddingBottom = externalPadding.calculateBottomPadding()
                                         )
@@ -240,7 +244,7 @@ fun ScreenSchedule(
                                             scheduleViewModel = scheduleViewModel,
                                             appBackStack = appUiState.appBackStack,
 
-                                            scheduleUiState = scheduleUiState,
+                                            scheduleListState = scheduleListState,
 
                                             isSavedSchedule = currentState.isSaved,
                                             namedSchedule = requireNotNull(namedScheduleState.namedScheduleWithSchedules).namedSchedule,

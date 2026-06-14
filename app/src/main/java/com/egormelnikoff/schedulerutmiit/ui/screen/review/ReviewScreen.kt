@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.review
+package com.egormelnikoff.schedulerutmiit.ui.screen.review
 
 import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
@@ -402,21 +402,37 @@ fun ReviewScreen(
                         onChangeVisibility = reviewUiState.onChangeVisibilityServices
                     ) {
                         ColumnGroup(
-                            items = listOf {
-                                ClickableItem(
-                                    title = stringResource(R.string.list_teachers),
-                                    leadingIcon = {
-                                        Icon(
-                                            modifier = Modifier.size(16.dp),
-                                            imageVector = ImageVector.vectorResource(R.drawable.person),
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                        )
-                                    },
-                                ) {
-                                    appBackStack.openDialog(Route.Dialog.CurriculumDialog)
+                            items = listOf (
+                                {
+                                    ClickableItem(
+                                        title = stringResource(R.string.news),
+                                        leadingIcon = {
+                                            Icon(
+                                                modifier = Modifier.size(16.dp),
+                                                imageVector = ImageVector.vectorResource(R.drawable.news),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                            )
+                                        },
+                                    ) {
+                                        appBackStack.openDialog(Route.Dialog.NewsList)
+                                    }
+                                }, {
+                                    ClickableItem(
+                                        title = stringResource(R.string.curriculum),
+                                        leadingIcon = {
+                                            Icon(
+                                                modifier = Modifier.size(16.dp),
+                                                imageVector = ImageVector.vectorResource(R.drawable.person),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                            )
+                                        },
+                                    ) {
+                                        appBackStack.openDialog(Route.Dialog.CurriculumDialog)
+                                    }
                                 }
-                            }
+                            )
                         )
                     }
                 }

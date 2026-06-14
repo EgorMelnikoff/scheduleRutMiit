@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.search
+package com.egormelnikoff.schedulerutmiit.ui.dialog.search
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility

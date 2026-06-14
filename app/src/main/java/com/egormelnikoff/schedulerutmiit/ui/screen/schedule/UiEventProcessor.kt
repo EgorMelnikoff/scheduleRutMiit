@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
+package com.egormelnikoff.schedulerutmiit.ui.screen.schedule
 
 import android.content.Context
 import android.widget.Toast

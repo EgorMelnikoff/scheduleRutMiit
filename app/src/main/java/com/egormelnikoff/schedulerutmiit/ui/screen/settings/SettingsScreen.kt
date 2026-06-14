@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.settings
+package com.egormelnikoff.schedulerutmiit.ui.screen.settings
 
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -42,12 +42,12 @@ import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.CountEventsModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.EventExtraPolicyModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.EventViewModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.InfoModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.ScheduleViewModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog.ThemeModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screen.settings.modal_dialog.CountEventsModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screen.settings.modal_dialog.EventExtraPolicyModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screen.settings.modal_dialog.EventViewModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screen.settings.modal_dialog.InfoModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screen.settings.modal_dialog.ScheduleViewModalDialog
+import com.egormelnikoff.schedulerutmiit.ui.screen.settings.modal_dialog.ThemeModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState

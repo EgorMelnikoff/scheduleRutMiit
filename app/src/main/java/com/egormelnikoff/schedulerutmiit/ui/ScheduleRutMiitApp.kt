@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -42,16 +44,18 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.RenameDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ScheduleUiStateSynchronizer
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ReviewUiState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ScheduleUiState
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.calendar.scheduleCalendarState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.CurrentState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
-import com.egormelnikoff.schedulerutmiit.ui.screens.review.ReviewScreen
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.ScreenSchedule
-import com.egormelnikoff.schedulerutmiit.ui.screens.schedule.UiEventProcessor
-import com.egormelnikoff.schedulerutmiit.ui.screens.search.SearchDialog
-import com.egormelnikoff.schedulerutmiit.ui.screens.settings.SettingsScreen
+import com.egormelnikoff.schedulerutmiit.ui.screen.review.ReviewScreen
+import com.egormelnikoff.schedulerutmiit.ui.screen.schedule.ScreenSchedule
+import com.egormelnikoff.schedulerutmiit.ui.screen.schedule.UiEventProcessor
+import com.egormelnikoff.schedulerutmiit.ui.dialog.search.SearchDialog
+import com.egormelnikoff.schedulerutmiit.ui.screen.settings.SettingsScreen
+import com.egormelnikoff.schedulerutmiit.ui.screen.tasks.TasksScreen
 import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState
@@ -67,14 +71,16 @@ fun ScheduleRutMiitApp(
     val mainViewModel = hiltViewModel<MainViewModel>()
 
     val currentState = scheduleViewModel.currentState.collectAsStateWithLifecycle().value
-    val namedScheduleState = scheduleViewModel.namedScheduleState.collectAsStateWithLifecycle().value
+    val namedScheduleState =
+        scheduleViewModel.namedScheduleState.collectAsStateWithLifecycle().value
     val scheduleState = scheduleViewModel.scheduleState.collectAsStateWithLifecycle().value
 
     val hourlyDateTime = mainViewModel.hourlyDateTime.collectAsStateWithLifecycle().value
     val appState = mainViewModel.appState.collectAsStateWithLifecycle().value
 
     val appUiState = AppUiState()
-    val scheduleUiState = ScheduleUiState(namedScheduleState, scheduleState)
+    val scheduleCalendarState = scheduleCalendarState(namedScheduleState, scheduleState)
+    val scheduleListState = rememberLazyListState()
     val reviewUiState = ReviewUiState()
 
     UiEventProcessor(
@@ -84,7 +90,8 @@ fun ScheduleRutMiitApp(
     )
 
     ScheduleUiStateSynchronizer(
-        scheduleUiState = scheduleUiState,
+        scheduleCalendarState = scheduleCalendarState,
+        scheduleListState = scheduleListState,
         scheduleState = scheduleState,
         namedScheduleState = namedScheduleState,
         scheduleViewModel = scheduleViewModel,
@@ -96,7 +103,8 @@ fun ScheduleRutMiitApp(
             pageHost = {
                 PageHost(
                     appUiState = appUiState,
-                    scheduleUiState = scheduleUiState,
+                    scheduleCalendarState = scheduleCalendarState,
+                    scheduleListState = scheduleListState,
                     reviewUiState = reviewUiState,
 
                     mainViewModel = mainViewModel,
@@ -135,7 +143,8 @@ fun PageHost(
     hourlyDateTime: LocalDateTime,
 
     appUiState: AppUiState,
-    scheduleUiState: ScheduleUiState?,
+    scheduleCalendarState: CalendarState?,
+    scheduleListState: LazyListState,
     reviewUiState: ReviewUiState,
 
     appSettings: AppSettings
@@ -199,21 +208,21 @@ fun PageHost(
                         },
                         selectedPage = selectedPage,
                         navigate = navigate,
-                        onClick = scheduleUiState?.let {
+                        onClick = scheduleCalendarState?.let {
                             {
                                 appUiState.scope.launch {
                                     when {
-                                        scheduleState.scheduleUiDto?.schedulePagerUiDto != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
-                                            scheduleUiState.onSelectDate(
-                                                requireNotNull(scheduleState.scheduleUiDto).schedulePagerUiDto.defaultDate
+                                        scheduleState.scheduleUiDto?.calendarData != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
+                                            scheduleCalendarState.onSelectDate(
+                                                requireNotNull(scheduleState.scheduleUiDto).calendarData.defaultDate
                                             )
-                                            scheduleUiState.pagerWeeksState.animateScrollToPage(
-                                                requireNotNull(scheduleState.scheduleUiDto).schedulePagerUiDto.weeksStartIndex
+                                            scheduleCalendarState.pagerWeeksState.animateScrollToPage(
+                                                requireNotNull(scheduleState.scheduleUiDto).calendarData.weeksPagerDefaultIndex
                                             )
                                         }
 
                                         appSettings.scheduleView == ScheduleView.LIST -> {
-                                            scheduleUiState.scheduleListState.animateScrollToItem(
+                                            scheduleListState.animateScrollToItem(
                                                 0
                                             )
                                         }
@@ -225,17 +234,16 @@ fun PageHost(
                     CustomNavigationBarItem(
                         barItem = remember {
                             BarItem(
-                                title = R.string.news,
-                                iconRes = R.drawable.news,
-                                page = Route.Page.NewsList
+                                title = R.string.tasks,
+                                iconRes = R.drawable.tasks,
+                                selectedIconRes = R.drawable.tasks_fill,
+                                page = Route.Page.Tasks
                             )
                         },
                         selectedPage = selectedPage,
                         navigate = navigate
                     ) {
-                        appUiState.scope.launch {
-                            appUiState.newsListState.animateScrollToItem(0)
-                        }
+
                     }
                     CustomNavigationBarItem(
                         barItem = remember {
@@ -305,7 +313,8 @@ fun PageHost(
                         scheduleState = scheduleState,
                         hourlyDateTime = hourlyDateTime,
 
-                        scheduleUiState = scheduleUiState,
+                        scheduleCalendarState = scheduleCalendarState,
+                        scheduleListState = scheduleListState,
                         appSettings = appSettings,
                         scheduleViewModel = scheduleViewModel,
                         preferencesViewModel = preferencesViewModel,
@@ -313,14 +322,8 @@ fun PageHost(
                     )
                 }
 
-                entry<Route.Page.NewsList> {
-                    NewsScreen(
-                        onGetNewsById = { id ->
-                            appUiState.appBackStack.openDialog(
-                                Route.Dialog.NewsDialog(id)
-                            )
-                        },
-                        newsGridListState = appUiState.newsListState,
+                entry<Route.Page.Tasks> {
+                    TasksScreen(
                         externalPadding = padding
                     )
                 }
@@ -447,6 +450,17 @@ fun RootHost(
                     ) {
                         appUiState.appBackStack.onBack()
                     }
+                }
+
+                entry<Route.Dialog.NewsList> {
+                    NewsScreen(
+                        onGetNewsById = { id ->
+                            appUiState.appBackStack.openDialog(
+                                Route.Dialog.NewsDialog(id)
+                            )
+                        },
+                        newsGridListState = appUiState.newsListState
+                    )
                 }
 
                 entry<Route.Dialog.NewsDialog> { dialog ->

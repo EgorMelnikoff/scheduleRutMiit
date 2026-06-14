@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.ui.screens.settings.modal_dialog
+package com.egormelnikoff.schedulerutmiit.ui.screen.settings.modal_dialog
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
@@ -22,7 +22,7 @@ import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventExtraPolicyModalDialog(
+fun CountEventsModalDialog(
     onDismiss: () -> Unit,
     appSettings: AppSettings,
     preferencesViewModel: PreferencesViewModel
@@ -32,28 +32,27 @@ fun EventExtraPolicyModalDialog(
         onDismiss = onDismiss
     ) {
         ColumnGroup(
-            title = stringResource(R.string.comments_and_tags),
-            items = EventExtraPolicy.entries.map {
+            title = stringResource(R.string.show_count_classes),
+            items = EventsCountView.entries.map {
                 {
                     ClickableItem(
                         title = when (it) {
-                            EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
-                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string._synchronized)
-                            EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates)
+                            EventsCountView.DETAILS -> stringResource(R.string.details)
+                            EventsCountView.BRIEFLY -> stringResource(R.string.briefly)
+                            EventsCountView.OFF -> stringResource(R.string.dont_show)
                         },
                         subtitle =  when (it) {
-                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string.sync_tag_comments_message)
-                            EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates_message)
-                            EventExtraPolicy.DEFAULT -> null
+                            EventsCountView.DETAILS -> stringResource(R.string.display_each_lesson)
+                            EventsCountView.BRIEFLY -> stringResource(R.string.display_number_lessons)
+                            EventsCountView.OFF -> null
                         },
-                        subtitleMaxLines = 2,
                         leadingIcon = {
                             Icon(
                                 modifier = Modifier.size(20.dp),
                                 imageVector = when (it) {
-                                    EventExtraPolicy.SYNCHRONIZED -> ImageVector.vectorResource(R.drawable.sync)
-                                    EventExtraPolicy.BY_DATES -> ImageVector.vectorResource(R.drawable.calendar)
-                                    EventExtraPolicy.DEFAULT -> ImageVector.vectorResource(R.drawable.split)
+                                    EventsCountView.DETAILS -> ImageVector.vectorResource(R.drawable.points)
+                                    EventsCountView.BRIEFLY -> ImageVector.vectorResource(R.drawable.one)
+                                    EventsCountView.OFF -> ImageVector.vectorResource(R.drawable.visibility_off)
                                 },
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer
@@ -61,15 +60,15 @@ fun EventExtraPolicyModalDialog(
                         },
                         trailingIcon = {
                             RadioButton(
-                                selected = (it == appSettings.eventExtraPolicy),
+                                selected = (it == appSettings.eventsCountView),
                                 onClick = {
-                                    preferencesViewModel.onSetEventExtraPolicy(it)
+                                    preferencesViewModel.onSetEventsCountView(it)
                                 }
                             )
                         },
                         showClickLabel = false
                     ) {
-                        preferencesViewModel.onSetEventExtraPolicy(it)
+                        preferencesViewModel.onSetEventsCountView(it)
                     }
                 }
 
