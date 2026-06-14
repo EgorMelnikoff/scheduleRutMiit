@@ -1,6 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.ui.screens.schedule
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -8,7 +10,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -44,6 +44,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomPullToRefreshBox
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ScheduleLoadingScreen
@@ -60,6 +61,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.CurrentSta
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
+import java.time.LocalDateTime
 
 @Composable
 fun ScreenSchedule(
@@ -67,15 +69,17 @@ fun ScreenSchedule(
     currentState: CurrentState,
     namedScheduleState: NamedScheduleState,
     scheduleState: ScheduleState,
+    hourlyDateTime: LocalDateTime,
     scheduleUiState: ScheduleUiState?,
     appSettings: AppSettings,
     scheduleViewModel: ScheduleViewModel,
     preferencesViewModel: PreferencesViewModel,
+    importLauncher: ManagedActivityResultLauncher<Array<String>, Uri?>,
     externalPadding: PaddingValues
 ) {
-    var showBackDialog by remember { mutableStateOf(false) }
-    var showNamedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
-    var showDeleteNamedScheduleDialog by remember { mutableStateOf(false) }
+    var backDialog by remember { mutableStateOf(false) }
+    var namedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
+    var deleteNamedScheduleDialog by remember { mutableStateOf(false) }
 
     when {
         currentState.isLoading -> {
@@ -106,7 +110,7 @@ fun ScreenSchedule(
             BackHandler(
                 currentState.namedSchedules.isNotEmpty() && !requireNotNull(namedScheduleState.namedScheduleWithSchedules).namedSchedule.isDefault
             ) {
-                showBackDialog = true
+                backDialog = true
             }
 
             BackHandler(
@@ -123,7 +127,7 @@ fun ScreenSchedule(
                             preferencesViewModel.onSetScheduleView(value)
                         },
                         onShowNamedScheduleDialog = { newValue ->
-                            showNamedScheduleDialog = newValue
+                            namedScheduleDialog = newValue
                         },
                         namedScheduleWithSchedules = requireNotNull(namedScheduleState.namedScheduleWithSchedules),
                         scheduleUiDto = scheduleState.scheduleUiDto,
@@ -155,7 +159,7 @@ fun ScreenSchedule(
                                     modifier = Modifier
                                         .clip(MaterialTheme.shapes.medium)
                                         .background(
-                                            MaterialTheme.colorScheme.error
+                                            MaterialTheme.colorScheme.primary
                                         )
                                 ) {
                                     ClickableItem(
@@ -175,7 +179,7 @@ fun ScreenSchedule(
                                             Button(
                                                 colors = ButtonDefaults.buttonColors()
                                                     .copy(
-                                                        containerColor = MaterialTheme.colorScheme.error,
+                                                        containerColor = MaterialTheme.colorScheme.primary,
                                                         contentColor = MaterialTheme.colorScheme.onPrimary
                                                     ),
                                                 onClick = {
@@ -221,6 +225,7 @@ fun ScreenSchedule(
                                             namedScheduleWithSchedules = requireNotNull(
                                                 namedScheduleState.namedScheduleWithSchedules
                                             ),
+                                            hourlyDateTime = hourlyDateTime,
                                             scheduleUiDto = requireNotNull(scheduleState.scheduleUiDto),
                                             isSavedSchedule = currentState.isSaved,
 
@@ -249,13 +254,13 @@ fun ScreenSchedule(
                             }
                         }
                     }
-                    if (showDeleteNamedScheduleDialog) {
+                    if (deleteNamedScheduleDialog) {
                         CustomAlertDialog(
                             dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                             dialogTitle = "${stringResource(R.string.delete_schedule)}?",
                             dialogText = stringResource(R.string.impossible_restore_eventextra),
                             onDismissRequest = {
-                                showDeleteNamedScheduleDialog = false
+                                deleteNamedScheduleDialog = false
                             },
                             onConfirmation = {
                                 scheduleViewModel.deleteNamedSchedule(
@@ -281,25 +286,41 @@ fun ScreenSchedule(
                 title = stringResource(R.string.no_saved_schedule),
                 subtitle = stringResource(R.string.empty_base),
                 button = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        CustomButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            buttonTitle = stringResource(R.string.find),
-                            imageVector = ImageVector.vectorResource(R.drawable.search),
-                            onClick = { appUiState.appBackStack.openDialog(Route.Dialog.SearchDialog) },
+                    GridGroup(
+                        items = listOf(
+                            listOf(
+                                { shape ->
+                                    CustomButton(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        buttonTitle = stringResource(R.string.find),
+                                        imageVector = ImageVector.vectorResource(R.drawable.search),
+                                        shape = shape,
+                                        onClick = { appUiState.appBackStack.openDialog(Route.Dialog.SearchDialog) },
+                                    )
+                                },
+                                { shape ->
+                                    CustomButton(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        buttonTitle = stringResource(R.string.create),
+                                        imageVector = ImageVector.vectorResource(R.drawable.add),
+                                        shape = shape,
+                                        onClick = { appUiState.appBackStack.openDialog(Route.Dialog.AddScheduleDialog) },
+                                    )
+                                }
+                            ),
+                            listOf { shape ->
+                                CustomButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    buttonTitle = stringResource(R.string._import),
+                                    imageVector = ImageVector.vectorResource(R.drawable.resource_import),
+                                    shape = shape,
+                                    onClick = { importLauncher.launch(arrayOf("application/json")) },
+                                )
+                            }
                         )
-                        CustomButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            buttonTitle = stringResource(R.string.create),
-                            imageVector = ImageVector.vectorResource(R.drawable.add),
-                            onClick = { appUiState.appBackStack.openDialog(Route.Dialog.AddScheduleDialog) },
-                        )
-                    }
+                    )
                 },
-                paddingBottom = externalPadding.calculateBottomPadding()
+                paddingBottom = externalPadding.calculateBottomPadding() - 16.dp
             )
         }
 
@@ -310,7 +331,7 @@ fun ScreenSchedule(
             )
         }
     }
-    showNamedScheduleDialog?.let {
+    namedScheduleDialog?.let {
         ModalDialogNamedSchedule(
             namedSchedule = namedScheduleState.namedScheduleWithSchedules?.namedSchedule ?: it,
             currentSchedule = scheduleState.scheduleUiDto?.schedule,
@@ -323,16 +344,16 @@ fun ScreenSchedule(
             haveHiddenEvents = !scheduleState.scheduleUiDto?.hiddenEvents.isNullOrEmpty(),
             haveNotEmptySchedules = namedScheduleState.namedScheduleWithSchedules?.scheduleWithEvents?.isNotEmpty() == true && scheduleState.scheduleUiDto?.schedule != null
         ) {
-            showNamedScheduleDialog = null
+            namedScheduleDialog = null
         }
     }
 
-    if (showBackDialog) {
+    if (backDialog) {
         CustomAlertDialog(
             dialogTitle = stringResource(R.string.return_default_schedule),
             dialogText = stringResource(R.string.do_you_want_continue),
             onDismissRequest = {
-                showBackDialog = false
+                backDialog = false
             },
             onConfirmation = {
                 scheduleViewModel.refreshScheduleState(showLoading = false)
