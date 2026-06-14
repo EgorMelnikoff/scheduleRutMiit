@@ -11,7 +11,6 @@ import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getPeriodicEven
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import kotlin.collections.map
 
 data class ScheduleUiDto(
     val schedule: Schedule,
@@ -28,7 +27,6 @@ data class ScheduleUiDto(
         operator fun invoke(
             scheduleWithEvents: ScheduleWithEvents
         ): ScheduleUiDto {
-            val today = LocalDate.now()
             val splitEvents = scheduleWithEvents.events.partition { it.isHidden }
 
             var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
@@ -45,14 +43,12 @@ data class ScheduleUiDto(
             }
 
             val fullEventList = getFullEventsList(
-                today = today,
                 periodicEvents = periodicEventsForCalendar,
                 nonPeriodicEventsList = splitEvents.second,
                 schedule = scheduleWithEvents.schedule,
             )
 
             val schedulePagerUiDto = SchedulePagerUiDto(
-                today = today,
                 startDate = scheduleWithEvents.schedule.startDate,
                 endDate = scheduleWithEvents.schedule.endDate
             )
@@ -70,11 +66,12 @@ data class ScheduleUiDto(
         }
 
         private fun getFullEventsList(
-            today: LocalDate,
             schedule: Schedule,
             periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
             nonPeriodicEventsList: List<Event>?
         ): Map<LocalDate, Map<String, List<Event>>> {
+            val today = LocalDate.now()
+
             val fullEventsList = when {
                 periodicEvents == null && nonPeriodicEventsList == null -> emptyList()
 

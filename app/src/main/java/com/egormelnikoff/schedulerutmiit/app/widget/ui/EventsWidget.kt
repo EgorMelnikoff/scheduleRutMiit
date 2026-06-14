@@ -124,19 +124,19 @@ class EventsWidget : GlanceAppWidget() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (widgetData?.settledSchedule != null && widgetData.reviewUiDto != null) {
-                val header = when (widgetData.reviewUiDto.displayedDate) {
+                val header = when (widgetData.reviewUiDto.date) {
                     today -> {
                         "${glanceStringResource(R.string.today)}, " +
-                                "${widgetData.reviewUiDto.displayedDate.format(dayMonthNameFormatter)}"
+                                "${widgetData.reviewUiDto.date.format(dayMonthNameFormatter)}"
                     }
 
                     today.plusDays(1) -> {
                         "${glanceStringResource(R.string.tomorrow)}, " +
-                                "${widgetData.reviewUiDto.displayedDate.format(dayMonthNameFormatter)}"
+                                "${widgetData.reviewUiDto.date.format(dayMonthNameFormatter)}"
                     }
 
                     else -> {
-                        widgetData.reviewUiDto.displayedDate.format(dayMonthNameFormatter)
+                        widgetData.reviewUiDto.date.format(dayMonthNameFormatter)
                     }
                 }
 
@@ -213,7 +213,7 @@ class EventsWidget : GlanceAppWidget() {
                                 Event(
                                     events = events.second,
                                     eventsExtraData = widgetData.eventsExtraData,
-                                    date = widgetData.reviewUiDto.displayedDate,
+                                    date = widgetData.reviewUiDto.date,
                                     eventExtraPolicy = widgetData.eventExtraPolicy
                                 )
                                 if (index != displayedEvents.lastIndex) {

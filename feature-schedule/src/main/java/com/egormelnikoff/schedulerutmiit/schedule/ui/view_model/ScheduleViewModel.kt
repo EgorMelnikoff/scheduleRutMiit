@@ -66,13 +66,11 @@ class ScheduleViewModel @Inject constructor(
     private val _currentState = MutableStateFlow(CurrentState())
     private val _namedScheduleState = MutableStateFlow(NamedScheduleState())
     private val _scheduleState = MutableStateFlow(ScheduleState())
-    private val _isDataLoading = MutableStateFlow(true)
     private val _uiEventChannel = MutableSharedFlow<UiEvent>()
 
     val currentState = _currentState.asStateFlow()
     val namedScheduleState = _namedScheduleState.asStateFlow()
     val scheduleState = _scheduleState.asStateFlow()
-    val isDataLoading = _isDataLoading.asStateFlow()
     val uiEvent = _uiEventChannel.asSharedFlow()
 
     private var fetchScheduleJob: Job? = null
@@ -102,6 +100,24 @@ class ScheduleViewModel @Inject constructor(
                 isRefreshing = false,
                 isError = false
             )
+        }
+    }
+
+    fun refreshReview() {
+        viewModelScope.launch {
+            if (_currentState.value.isSaved) {
+                _scheduleState.value.scheduleUiDto?.let { scheduleUiDto ->
+                    _scheduleState.update { state ->
+                        state.copy(
+                            reviewUiDto = ReviewUiDto(
+                                scheduleUiDto.schedule,
+                                scheduleUiDto.periodicEvents,
+                                scheduleUiDto.nonPeriodicEvents
+                            )
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -135,7 +151,6 @@ class ScheduleViewModel @Inject constructor(
                     isSaved = result.namedScheduleWithSchedules != null
                 )
             }
-            if (isDataLoading.value) _isDataLoading.value = false
         }
         updateScheduleJob = newUpdateScheduleJob
     }
@@ -386,11 +401,10 @@ class ScheduleViewModel @Inject constructor(
 
     fun eventAction(
         namedScheduleId: Long,
-        event: Event,
         eventAction: EventAction
     ) {
         viewModelScope.launch {
-            eventActionUseCase(namedScheduleId, event, eventAction).let { result ->
+            eventActionUseCase(namedScheduleId, eventAction).let { result ->
                 updateScheduleState(
                     namedScheduleWithSchedules = result,
                     updateReview = result.namedSchedule.isDefault
@@ -439,7 +453,7 @@ class ScheduleViewModel @Inject constructor(
                 state.copy(
                     scheduleUiDto = scheduleUiDto,
                     reviewUiDto = if (updateReview) {
-                        ReviewUiDto.Companion(
+                        ReviewUiDto(
                             scheduleUiDto.schedule,
                             scheduleUiDto.periodicEvents,
                             scheduleUiDto.nonPeriodicEvents

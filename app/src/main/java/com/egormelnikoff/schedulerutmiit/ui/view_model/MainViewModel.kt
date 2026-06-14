@@ -22,12 +22,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.time.Duration
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -52,23 +52,28 @@ class MainViewModel @Inject constructor(
         checkUpdates(fetchForce = false)
     }
 
-    val currentDate: StateFlow<LocalDateTime> =
-        hourlyTicker()
+    private fun tickerFlow(intervalMillis: Long = 5 * 60_000L): Flow<Unit> = flow {
+        while (true) {
+            emit(Unit)
+            delay(intervalMillis.milliseconds)
+        }
+    }
+
+    private val timeFlow: Flow<LocalDateTime> =
+        tickerFlow()
+            .map { LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES) }
+            .distinctUntilChanged()
+
+
+    val hourlyDateTime: StateFlow<LocalDateTime> =
+        timeFlow
+            .map { it.truncatedTo(ChronoUnit.HOURS) }
+            .distinctUntilChanged()
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
-                initialValue = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)
+                initialValue = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS)
             )
-
-    fun hourlyTicker(): Flow<LocalDateTime> = flow {
-        while (true) {
-            val now = LocalDateTime.now()
-            emit(now.truncatedTo(ChronoUnit.MINUTES))
-
-            delay(Duration.between(now, now.plusHours(1)).toMillis().milliseconds)
-        }
-    }.distinctUntilChanged()
-
 
     fun checkUpdates(
         fetchForce: Boolean = true

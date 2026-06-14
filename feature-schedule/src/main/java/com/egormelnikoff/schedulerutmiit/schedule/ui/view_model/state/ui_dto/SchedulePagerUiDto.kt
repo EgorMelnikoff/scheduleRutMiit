@@ -6,7 +6,6 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
 data class SchedulePagerUiDto(
-    val today: LocalDate,
     val defaultDate: LocalDate,
     val weeksCount: Int,
     val weeksStartIndex: Int,
@@ -15,10 +14,11 @@ data class SchedulePagerUiDto(
 ) {
     companion object {
         operator fun invoke(
-            today: LocalDate,
             startDate: LocalDate,
             endDate: LocalDate
         ): SchedulePagerUiDto {
+            val today = LocalDate.now()
+
             val weeksCount = ChronoUnit.WEEKS.between(
                 startDate.getFirstDayOfWeek(),
                 endDate.getFirstDayOfWeek()
@@ -57,7 +57,6 @@ data class SchedulePagerUiDto(
                 defaultDate = endDate
             }
             return SchedulePagerUiDto(
-                today = today,
                 defaultDate = defaultDate,
                 weeksCount = weeksCount,
                 weeksStartIndex = weeksStartIndex,

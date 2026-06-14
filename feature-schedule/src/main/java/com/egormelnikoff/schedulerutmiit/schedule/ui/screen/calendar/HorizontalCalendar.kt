@@ -53,12 +53,14 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.Sch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.TextStyle
 
 @Composable
 fun HorizontalCalendar(
     eventsCountView: EventsCountView,
     eventExtraPolicy: EventExtraPolicy,
+    today: LocalDateTime,
     scheduleUiDto: ScheduleUiDto,
     scheduleUiState: ScheduleUiState,
     showCalendarDialog: Boolean,
@@ -262,7 +264,7 @@ fun HorizontalCalendar(
                         eventsCountView = eventsCountView,
                         isDisabled = currentDate !in scheduleUiDto.schedule.startDate..scheduleUiDto.schedule.endDate,
                         isSelected = currentDate == scheduleUiState.selectedDate,
-                        isToday = (currentDate == scheduleUiDto.schedulePagerUiDto.today),
+                        isToday = (currentDate == today),
                         eventExtraPolicy = eventExtraPolicy
                     )
                 }
@@ -290,7 +292,7 @@ fun HorizontalCalendarItem(
         else -> Color.Unspecified
     }
     val textColor = when {
-        isDisabled -> MaterialTheme.colorScheme.secondaryContainer
+        isDisabled -> MaterialTheme.colorScheme.outline
         isSelected -> MaterialTheme.colorScheme.onPrimary
         (currentDate.dayOfWeek.value == 7) -> MaterialTheme.colorScheme.error
         else -> MaterialTheme.colorScheme.onSecondaryContainer

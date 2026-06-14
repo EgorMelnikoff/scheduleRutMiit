@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.CurrentState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
 import java.time.LocalDateTime
@@ -14,10 +13,9 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun ScheduleUiStateSynchronizer(
     scheduleUiState: ScheduleUiState?,
-    currentState: CurrentState,
     scheduleState: ScheduleState,
     namedScheduleState: NamedScheduleState,
-    currentDateTime: LocalDateTime,
+    hourlyDateTime: LocalDateTime,
     scheduleViewModel: ScheduleViewModel,
 ) {
     if (scheduleState.scheduleUiDto?.schedule != null && scheduleUiState != null) {
@@ -59,13 +57,8 @@ fun ScheduleUiStateSynchronizer(
             }
         }
 
-        LaunchedEffect(currentDateTime) {
-            if (currentState.isSaved) {
-                scheduleViewModel.refreshScheduleState(
-                    namedScheduleId = namedScheduleState.namedScheduleWithSchedules?.namedSchedule?.id,
-                    showLoading = false
-                )
-            }
+        LaunchedEffect(hourlyDateTime) {
+            scheduleViewModel.refreshReview()
         }
     }
 }

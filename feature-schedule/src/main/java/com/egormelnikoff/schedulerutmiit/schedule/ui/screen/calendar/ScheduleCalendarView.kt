@@ -32,6 +32,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ScheduleUiDto
+import java.time.LocalDateTime
 
 @Composable
 fun ScheduleCalendarView(
@@ -39,6 +40,7 @@ fun ScheduleCalendarView(
     appUiState: AppUiState,
     namedScheduleWithSchedules: NamedScheduleWithSchedules,
     scheduleUiDto: ScheduleUiDto,
+    hourlyDateTime: LocalDateTime,
     isSavedSchedule: Boolean,
     scheduleUiState: ScheduleUiState,
     appSettings: AppSettings,
@@ -49,6 +51,7 @@ fun ScheduleCalendarView(
     Column {
         HorizontalCalendar(
             scheduleUiDto = scheduleUiDto,
+            today = hourlyDateTime,
             scope = appUiState.scope,
             scheduleUiState = scheduleUiState,
             eventsCountView = appSettings.eventsCountView,
@@ -110,7 +113,7 @@ fun PagedDays(
         val enrichedEvents by remember(
             namedScheduleWithSchedules.namedSchedule.id,
             scheduleUiDto.schedule,
-            scheduleUiDto.fullEventList
+            scheduleUiDto.hiddenEvents.size
         ) {
             mutableStateOf(
                 scheduleUiDto.schedule
@@ -154,15 +157,13 @@ fun PagedDays(
                         onDeleteEvent = { namedScheduleId, eventId ->
                             scheduleViewModel.eventAction(
                                 namedScheduleId,
-                                eventId,
-                                EventAction.Delete
+                                EventAction.Delete(eventId)
                             )
                         },
-                        onUpdateHiddenEvent = { namedScheduleId, event ->
+                        onUpdateHiddenEvent = { namedScheduleId, eventId ->
                             scheduleViewModel.eventAction(
                                 namedScheduleId,
-                                event,
-                                EventAction.UpdateHidden(true)
+                                EventAction.UpdateHidden(eventId, true)
                             )
                         },
 

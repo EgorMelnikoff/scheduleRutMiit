@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition {
-            scheduleViewModel.isDataLoading.value || preferencesViewModel.appSettings.value == null
+            scheduleViewModel.currentState.value.isLoading || preferencesViewModel.appSettings.value == null
         }
 
         setContent {
