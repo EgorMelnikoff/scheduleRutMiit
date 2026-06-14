@@ -9,7 +9,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
-import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
@@ -54,7 +53,7 @@ object NewsParser {
                     "img" -> {
                         val imageUrl = element.attr("src")
                         if (imageUrl.isNotEmpty()) {
-                            parsedImages.add("${Endpoints.BASE_MIIT_URL}$imageUrl")
+                            parsedImages.add(imageUrl)
                         }
                     }
                 }

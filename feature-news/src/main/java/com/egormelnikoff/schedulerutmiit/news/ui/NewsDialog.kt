@@ -40,6 +40,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
+import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.newsImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
@@ -99,7 +100,8 @@ fun NewsDialogContent(
             } else paddingValues.calculateTopPadding()
 
             if (news.images.isNotEmpty()) {
-                val model = rememberAsyncImagePainter(news.images.first())
+                val model =
+                    rememberAsyncImagePainter(newsImageUrl(url = news.images.first(), width = 500))
                 val transition by animateFloatAsState(
                     targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
                 )
@@ -201,7 +203,12 @@ fun NewsDialogContent(
                                             .width(300.dp)
                                             .clip(MaterialTheme.shapes.extraLarge)
                                             .background(MaterialTheme.colorScheme.secondaryContainer),
-                                        painter = rememberAsyncImagePainter(link),
+                                        painter = rememberAsyncImagePainter(
+                                            newsImageUrl(
+                                                url = link,
+                                                width = 500
+                                            )
+                                        ),
                                         contentDescription = null,
                                         contentScale = ContentScale.Crop
                                     )

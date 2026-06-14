@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.core.network.endpoins
 
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import androidx.core.net.toUri
 
 object Endpoints {
     //API GITHUB
@@ -12,6 +13,7 @@ object Endpoints {
     const val BASE_MIIT_URL = "https://www.miit.ru"
     const val GROUPS = "/data-service/data/timetable/groups-catalog"
     const val TIMETABLE = "/data-service/data/timetable/v2/{type}/{apiId}"
+
     //const val SCHEDULE = "/data-service/data/timetable/v2/{type}/{apiId}/{timetableId}"
     const val NEWS_CATALOG = "/data-service/data/news"
     const val NEWS = "/data-service/data/news/{newsId}"
@@ -26,6 +28,7 @@ object Endpoints {
         val base = when (namedScheduleType) {
             NamedScheduleType.PERSON ->
                 "$BASE_RUT_MIIT_URL/people/$apiId/timetable"
+
             else ->
                 "$BASE_RUT_MIIT_URL/timetable/$apiId"
         }
@@ -46,6 +49,11 @@ object Endpoints {
 
     fun personImageUrl(personId: Int?, width: Int = 100) =
         "${BASE_MIIT_URL}/content/e$personId.jpg?id_fe=$personId&SWidth=$width"
+
+    fun newsImageUrl(url: String, width: Int = 360): String {
+        val uri = url.toUri()
+        return "$BASE_MIIT_URL/content/photo.jpg?id_wm=${uri.getQueryParameter("id_wm")}&SWidth=$width"
+    }
 
     //LINKS
     const val TG_APP_CHANNEL_URL = "https://t.me/schedule_rut_miit"
