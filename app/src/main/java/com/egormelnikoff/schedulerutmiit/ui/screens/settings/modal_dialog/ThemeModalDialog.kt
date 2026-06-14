@@ -28,6 +28,7 @@ fun ThemeModalDialog(
     preferencesViewModel: PreferencesViewModel
 ) {
     CustomModalBottomSheet(
+        isDarkTheme = appSettings.decorPreferences.theme.isDarkTheme(),
         modifier = Modifier.padding(horizontal = 16.dp),
         onDismiss = onDismiss
     ) {

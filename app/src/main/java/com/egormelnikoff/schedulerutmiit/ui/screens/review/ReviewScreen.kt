@@ -101,8 +101,8 @@ fun ReviewScreen(
         )
     }
 
-    var showNamedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
-    var showDeleteNamedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
+    var namedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
+    var deleteNamedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -167,10 +167,10 @@ fun ReviewScreen(
                 } + "!",
                 subtitleText = scheduleState.reviewUiDto?.let { reviewData ->
                     StringBuilder().apply {
-                        when (reviewData.displayedDate) {
+                        when (reviewData.date) {
                             currentDate -> append(stringResource(R.string.today))
                             currentDate.plusDays(1) -> append(stringResource(R.string.tomorrow))
-                            else -> reviewData.displayedDate.format(
+                            else -> reviewData.date.format(
                                 dayMonthYearFormatter
                             )
                         }
@@ -383,7 +383,7 @@ fun ReviewScreen(
                                                 }
                                             } else null
                                         ) {
-                                            showNamedScheduleDialog = namedSchedule
+                                            namedScheduleDialog = namedSchedule
                                         }
                                     }
                                 }
@@ -424,14 +424,14 @@ fun ReviewScreen(
         }
     }
 
-    showNamedScheduleDialog?.let {
+    namedScheduleDialog?.let {
         ModalDialogNamedSchedule(
             namedSchedule = it,
             scheduleViewModel = scheduleViewModel,
             appBackStack = appBackStack,
             isSavedNamedSchedule = true,
             isDefaultNamedSchedule = it.isDefault,
-
+            isDarkTheme = true,
             onOpenNamedSchedule = {
                 scheduleViewModel.setNamedSchedule(
                     namedScheduleId = it.id
@@ -439,17 +439,17 @@ fun ReviewScreen(
                 appBackStack.navigateToStartRage()
             }
         ) {
-            showNamedScheduleDialog = null
+            namedScheduleDialog = null
         }
     }
 
-    showDeleteNamedScheduleDialog?.let {
+    deleteNamedScheduleDialog?.let {
         CustomAlertDialog(
             dialogIcon = ImageVector.vectorResource(R.drawable.delete),
             dialogTitle = "${stringResource(R.string.delete_schedule)}?",
             dialogText = stringResource(R.string.impossible_restore_eventextra),
             onDismissRequest = {
-                showDeleteNamedScheduleDialog = null
+                deleteNamedScheduleDialog = null
             },
             onConfirmation = {
                 scheduleViewModel.deleteNamedSchedule(

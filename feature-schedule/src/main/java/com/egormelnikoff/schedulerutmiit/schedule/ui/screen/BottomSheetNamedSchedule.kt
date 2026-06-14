@@ -58,6 +58,7 @@ fun ModalDialogNamedSchedule(
 
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
+    isDarkTheme: Boolean? = null,
     isSavedNamedSchedule: Boolean,
     isDefaultNamedSchedule: Boolean,
     haveHiddenEvents: Boolean = false,
@@ -69,6 +70,7 @@ fun ModalDialogNamedSchedule(
     val uriHandler = LocalUriHandler.current
 
     CustomModalBottomSheet(
+        isDarkTheme = isDarkTheme,
         verticalArrangement = Arrangement.spacedBy(16.dp),
         onDismiss = {
             onDismiss(null)

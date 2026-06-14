@@ -14,14 +14,19 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomModalBottomSheet(
     modifier: Modifier = Modifier,
+    isDarkTheme: Boolean? = null,
     sheetState: SheetState? = null,
     showDragHandle: Boolean = true,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
@@ -51,6 +56,18 @@ fun CustomModalBottomSheet(
         containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = onDismiss
     ) {
+        isDarkTheme?.let {
+            val view = LocalView.current
+            val dialogWindow = (view.parent as? DialogWindowProvider)?.window
+
+            SideEffect {
+                dialogWindow?.let {
+                    val insetsController = WindowCompat.getInsetsController(dialogWindow, view)
+                    insetsController.isAppearanceLightStatusBars = !isDarkTheme
+                }
+            }
+        }
+
         Column(
             modifier = modifier
                 .fillMaxWidth()
