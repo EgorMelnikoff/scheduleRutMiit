@@ -1,22 +1,26 @@
-package com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto
+package com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state
 
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
-data class SchedulePagerUiDto(
+data class CalendarData(
+    val startDate: LocalDate,
+    val endDate: LocalDate,
     val defaultDate: LocalDate,
-    val weeksCount: Int,
-    val weeksStartIndex: Int,
+
     val daysCount: Int,
-    val daysStartIndex: Int,
+    val weeksCount: Int,
+
+    val weeksPagerDefaultIndex: Int,
+    val daysPagerDefaultIndex: Int,
 ) {
     companion object {
         operator fun invoke(
             startDate: LocalDate,
             endDate: LocalDate
-        ): SchedulePagerUiDto {
+        ): CalendarData {
             val today = LocalDate.now()
 
             val weeksCount = ChronoUnit.WEEKS.between(
@@ -56,12 +60,14 @@ data class SchedulePagerUiDto(
                 daysStartIndex = weeksCount * 7
                 defaultDate = endDate
             }
-            return SchedulePagerUiDto(
+            return CalendarData(
+                startDate = startDate,
+                endDate = endDate,
                 defaultDate = defaultDate,
                 weeksCount = weeksCount,
-                weeksStartIndex = weeksStartIndex,
+                weeksPagerDefaultIndex = weeksStartIndex,
                 daysCount = daysCount,
-                daysStartIndex = daysStartIndex
+                daysPagerDefaultIndex = daysStartIndex
             )
         }
     }

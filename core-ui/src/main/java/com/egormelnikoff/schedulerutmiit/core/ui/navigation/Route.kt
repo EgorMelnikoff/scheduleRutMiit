@@ -16,12 +16,14 @@ sealed class Route : NavKey {
     ) : Route() {
         data object Review : Page(0)
         data object Schedule : Page(1)
-        data object NewsList : Page(2)
+        data object Tasks : Page(2)
         data object Settings : Page(3)
     }
 
     sealed class Dialog : Route() {
         data object Empty : Dialog()
+
+        data object NewsList : Dialog()
 
         data class EventDialog(
             val namedScheduleId: Long,

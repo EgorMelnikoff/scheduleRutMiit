@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +23,6 @@ import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.event.Event
-import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ScheduleUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ScheduleUiDto
 
@@ -31,8 +31,7 @@ fun ScheduleListView(
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
 
-    scheduleUiState: ScheduleUiState,
-
+    scheduleListState: LazyListState,
     isSavedSchedule: Boolean,
     namedSchedule: NamedSchedule,
     scheduleUiDto: ScheduleUiDto,
@@ -42,7 +41,7 @@ fun ScheduleListView(
 ) {
     if (scheduleUiDto.fullEventList.isNotEmpty()) {
         LazyColumn(
-            state = scheduleUiState.scheduleListState,
+            state = scheduleListState,
             contentPadding = PaddingValues(bottom = paddingBottom),
             modifier = Modifier.fillMaxSize(),
         ) {

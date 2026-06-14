@@ -8,6 +8,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getPeriodicEvents
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -21,7 +22,7 @@ data class ScheduleUiDto(
 
     val hiddenEvents: List<Event> = listOf(),
     val eventsExtraData: Map<Long, EventExtraData> = mapOf(),
-    val schedulePagerUiDto: SchedulePagerUiDto
+    val calendarData: CalendarData
 ) {
     companion object {
         operator fun invoke(
@@ -48,7 +49,7 @@ data class ScheduleUiDto(
                 schedule = scheduleWithEvents.schedule,
             )
 
-            val schedulePagerUiDto = SchedulePagerUiDto(
+            val calendarData = CalendarData(
                 startDate = scheduleWithEvents.schedule.startDate,
                 endDate = scheduleWithEvents.schedule.endDate
             )
@@ -58,7 +59,7 @@ data class ScheduleUiDto(
 
                 periodicEvents = periodicEventsForCalendar,
                 nonPeriodicEvents = nonPeriodicEventsForCalendar,
-                schedulePagerUiDto = schedulePagerUiDto,
+                calendarData = calendarData,
                 fullEventList = fullEventList,
                 eventsExtraData = scheduleWithEvents.eventsExtraData.associateBy { it.eventId },
                 hiddenEvents = splitEvents.first

@@ -16,7 +16,7 @@ data class ReviewUiState(
         @Composable
         operator fun invoke(): ReviewUiState {
             var visibleSavedSchedules by remember { mutableStateOf(true) }
-            var visibleServices by remember { mutableStateOf(false) }
+            var visibleServices by remember { mutableStateOf(true) }
 
             return ReviewUiState(
                 visibleSavedSchedules = visibleSavedSchedules,
