@@ -98,11 +98,12 @@
     <string name="impossible_restore_eventextra">Восстановить комментари и теги к парам будет невозможно</string>
     <string name="lecturers">Преподаватели</string>
     <string name="light">Светлая</string>
-    <string name="list_teachers">Список преподавателей для уч. плана</string>
+    <string name="curriculum">Учебный план</string>
     <string name="logs_not_found">Журнал не найден</string>
     <string name="make_default">Сделать основным</string>
     <string name="my">Мои</string>
     <string name="name">Имя</string>
+    <string name="tasks">Задания</string>
     <string name="network_error">Ошибка сети</string>
     <string name="new_version_available">Доступна новая версия</string>
     <string name="no_updates">Обновлений нет</string>

@@ -103,11 +103,12 @@
     <string name="impossible_restore_eventextra">It will be impossible to restore comments and tags for pairs</string>
     <string name="lecturers">Lecturers</string>
     <string name="light">Light</string>
-    <string name="list_teachers">List of teachers for the curriculum</string>
+    <string name="curriculum">Curriculum</string>
     <string name="logs_not_found">Logs not found</string>
     <string name="make_default">Make default</string>
     <string name="my">My</string>
     <string name="name">Name</string>
+    <string name="tasks">Tasks</string>
     <string name="network_error">Network error</string>
     <string name="new_version_available">New version available</string>
     <string name="no_updates">No updates</string>
