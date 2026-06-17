@@ -10,11 +10,15 @@ import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.NamedScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.ScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.SearchQueryDao
+import com.egormelnikoff.schedulerutmiit.core.database.dao.TaskCompletionDao
+import com.egormelnikoff.schedulerutmiit.core.database.dao.TaskDao
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraDataEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskCompletionEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskEntity
 
 @Database(
     entities = [
@@ -22,9 +26,11 @@ import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
         ScheduleEntity::class,
         EventEntity::class,
         EventExtraDataEntity::class,
-        SearchQuery::class
+        SearchQuery::class,
+        TaskEntity::class,
+        TaskCompletionEntity::class
     ],
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -34,6 +40,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao
     abstract fun eventExtraDao(): EventExtraDao
     abstract fun searchQueryDao(): SearchQueryDao
+    abstract fun taskDao(): TaskDao
+    abstract fun taskCompletionDao(): TaskCompletionDao
 
     companion object {
         @Volatile
@@ -55,6 +63,7 @@ abstract class AppDatabase : RoomDatabase() {
                     .addMigrations(MIGRATION_6_7)
                     .addMigrations(MIGRATION_7_8)
                     .addMigrations(MIGRATION_8_9)
+                    .addMigrations(MIGRATION_9_10)
                     .build()
                 INSTANCE = instance
                 instance

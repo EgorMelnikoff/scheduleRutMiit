@@ -6,6 +6,8 @@ import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.NamedScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.ScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.SearchQueryDao
+import com.egormelnikoff.schedulerutmiit.core.database.dao.TaskCompletionDao
+import com.egormelnikoff.schedulerutmiit.core.database.dao.TaskDao
 import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
 import com.egormelnikoff.schedulerutmiit.core.database.db.Converters
 import dagger.Module
@@ -21,7 +23,10 @@ import javax.inject.Singleton
 object DatabaseModule {
     @Provides
     @Singleton
-    fun provideAppDatabase(@ApplicationContext context: Context, converters: Converters): AppDatabase =
+    fun provideAppDatabase(
+        @ApplicationContext context: Context,
+        converters: Converters
+    ): AppDatabase =
         AppDatabase.getDatabase(context, converters)
 
     @Provides
@@ -43,6 +48,16 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideSearchQueryDao(database: AppDatabase): EventExtraDao = database.eventExtraDao()
+
+    @Provides
+    @Singleton
+    fun provideTaskDao(database: AppDatabase): TaskDao = database.taskDao()
+
+    @Provides
+    @Singleton
+    fun provideTaskCompletionDao(database: AppDatabase): TaskCompletionDao =
+        database.taskCompletionDao()
+
 
     @Provides
     @Singleton

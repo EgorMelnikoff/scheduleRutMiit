@@ -5,7 +5,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("""
+        db.execSQL(
+            """
             CREATE TABLE NamedSchedules_new (
                 NamedScheduleId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 fullName TEXT NOT NULL,
@@ -15,16 +16,20 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
                 isDefaultNamedSchedule INTEGER NOT NULL,
                 lastTimeUpdate INTEGER NOT NULL
             )
-        """)
-        db.execSQL("""
+        """
+        )
+        db.execSQL(
+            """
             INSERT INTO NamedSchedules_new (NamedScheduleId, fullName, shortName, apiId, type, isDefaultNamedSchedule, lastTimeUpdate)
             SELECT NamedScheduleId, fullName, shortName, apiId, type, isDefaultNamedSchedule, lastTimeUpdate FROM NamedSchedules
-        """)
+        """
+        )
         db.execSQL("DROP TABLE NamedSchedules")
         db.execSQL("ALTER TABLE NamedSchedules_new RENAME TO NamedSchedules")
 
 
-        db.execSQL("""
+        db.execSQL(
+            """
             CREATE TABLE Schedules_new (
                 ScheduleId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 namedScheduleId INTEGER NOT NULL,
@@ -40,12 +45,15 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
                 firstWeekNumber INTEGER,
                 isDefaultSchedule INTEGER NOT NULL DEFAULT 0
             )
-        """)
-        db.execSQL("""
+        """
+        )
+        db.execSQL(
+            """
             INSERT INTO Schedules_new (ScheduleId, namedScheduleId, timetableId, typeName, startName, downloadUrl, startDate, endDate, frequency, interval, currentNumber, firstWeekNumber, isDefaultSchedule)
             SELECT ScheduleId, namedScheduleId, timetableId, typeName, startName, downloadUrl, startDate, endDate, frequency, interval, currentNumber, firstWeekNumber, isDefaultSchedule
             FROM Schedules
-        """)
+        """
+        )
         db.execSQL("DROP TABLE Schedules")
         db.execSQL("ALTER TABLE Schedules_new RENAME TO Schedules")
     }
@@ -102,7 +110,8 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
 
 val MIGRATION_5_6 = object : Migration(5, 6) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("""
+        db.execSQL(
+            """
             CREATE TABLE Schedules_new (
                 ScheduleId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 namedScheduleId INTEGER NOT NULL,
@@ -116,9 +125,11 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
                 firstWeekNumber INTEGER,
                 isDefaultSchedule INTEGER NOT NULL
             )
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        db.execSQL("""
+        db.execSQL(
+            """
             INSERT INTO Schedules_new (
                 ScheduleId, namedScheduleId, timetableId, timetableType, 
                 downloadUrl, startDate, endDate, interval, 
@@ -135,7 +146,8 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
                 downloadUrl, startDate, endDate, interval, 
                 currentNumber, firstWeekNumber, isDefaultSchedule 
             FROM Schedules
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         db.execSQL("DROP TABLE Schedules")
         db.execSQL("ALTER TABLE Schedules_new RENAME TO Schedules")
@@ -159,7 +171,8 @@ val MIGRATION_6_7 = object : Migration(6, 7) {
 
 val MIGRATION_7_8 = object : Migration(7, 8) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("""
+        db.execSQL(
+            """
             CREATE TABLE Events_new (
                 EventId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 eventScheduleId INTEGER NOT NULL,
@@ -177,9 +190,11 @@ val MIGRATION_7_8 = object : Migration(7, 8) {
                 rooms TEXT,
                 groups TEXT
             )
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        db.execSQL("""
+        db.execSQL(
+            """
             INSERT INTO Events_new (
                 EventId,
                 eventScheduleId,
@@ -214,7 +229,8 @@ val MIGRATION_7_8 = object : Migration(7, 8) {
                 rooms,
                 groups
             FROM Events
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         db.execSQL("DROP TABLE Events")
         db.execSQL("ALTER TABLE Events_new RENAME TO Events")
@@ -223,7 +239,8 @@ val MIGRATION_7_8 = object : Migration(7, 8) {
 
 val MIGRATION_8_9 = object : Migration(8, 9) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("""
+        db.execSQL(
+            """
             CREATE TABLE IF NOT EXISTS EventsExtraData_new (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 eventId INTEGER NOT NULL,
@@ -233,9 +250,11 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
                 comment TEXT NOT NULL,
                 tag INTEGER NOT NULL
             )
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        db.execSQL("""
+        db.execSQL(
+            """
             INSERT INTO EventsExtraData_new (
                 eventId,
                 eventExtraScheduleId,
@@ -252,10 +271,39 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
                 comment,
                 tag
             FROM EventsExtraData
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         db.execSQL("DROP TABLE EventsExtraData")
-
         db.execSQL("ALTER TABLE EventsExtraData_new RENAME TO EventsExtraData")
     }
 }
+
+
+val MIGRATION_9_10 = object : Migration(9, 10) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `Tasks` (
+                `TaskId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                `text` TEXT NOT NULL
+            )
+            """.trimIndent()
+        )
+
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS TaskCompletions (
+                taskId INTEGER NOT NULL,
+                date TEXT NOT NULL,
+                time TEXT NOT NULL,
+                tag INTEGER NOT NULL,
+                isCompleted INTEGER NOT NULL,
+                PRIMARY KEY(taskId, date),
+                FOREIGN KEY(taskId) REFERENCES Tasks(TaskId) ON DELETE CASCADE
+            )
+            """.trimIndent()
+        )
+    }
+}
+

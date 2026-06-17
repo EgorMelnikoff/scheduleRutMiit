@@ -2,12 +2,9 @@ package com.egormelnikoff.schedulerutmiit.core.database.entity.relation
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraDataEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.database.mapper.toDomain
-import com.egormelnikoff.schedulerutmiit.core.database.mapper.toEntity
 
 data class ScheduleWithEventsRelation(
     @Embedded
@@ -24,16 +21,4 @@ data class ScheduleWithEventsRelation(
         entityColumn = "eventExtraScheduleId"
     )
     val eventsExtraData: List<EventExtraDataEntity> = listOf()
-)
-
-fun ScheduleWithEventsRelation.toDomain() = ScheduleWithEvents(
-    scheduleEntity.toDomain(),
-    events.map { it.toDomain() },
-    eventsExtraData.map { it.toDomain() }
-)
-
-fun ScheduleWithEvents.toRelation() = ScheduleWithEventsRelation(
-    schedule.toEntity(),
-    events.map { it.toEntity() },
-    eventsExtraData.map { it.toEntity() }
 )

@@ -10,6 +10,7 @@ import com.egormelnikoff.schedulerutmiit.core.database.entity.RoomEntity
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import javax.inject.Inject
 
 @ProvidedTypeConverter
@@ -74,4 +75,13 @@ class Converters @Inject constructor(
 
     @TypeConverter
     fun toTimetableType(value: Int): TimetableType = TimetableType.entries[value]
+
+
+    @TypeConverter
+    fun fromLocalTime(value: LocalTime?): String? =
+        value?.toString()
+
+    @TypeConverter
+    fun toLocalTime(value: String?): LocalTime? =
+        value?.let(LocalTime::parse)
 }

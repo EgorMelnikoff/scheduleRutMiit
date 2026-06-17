@@ -6,7 +6,9 @@ import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
 import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedScheduleWithSchedulesRelation
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NamedScheduleDao {
@@ -21,6 +23,10 @@ interface NamedScheduleDao {
 
     @Query("DELETE FROM NamedSchedules")
     suspend fun deleteAll()
+
+
+    @Query("SELECT * FROM NamedSchedules")
+    fun observeAll(): Flow<List<NamedScheduleEntity>>
 
     @Query("SELECT * FROM NamedSchedules")
     suspend fun getAll(): List<NamedScheduleEntity>
