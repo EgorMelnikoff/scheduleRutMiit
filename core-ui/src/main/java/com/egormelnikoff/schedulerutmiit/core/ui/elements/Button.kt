@@ -42,7 +42,7 @@ fun CustomButton(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
             disabledContainerColor = MaterialTheme.colorScheme.background,
-            disabledContentColor = MaterialTheme.colorScheme.secondaryContainer
+            disabledContentColor = MaterialTheme.colorScheme.outline
         )
     ) {
         Row (
