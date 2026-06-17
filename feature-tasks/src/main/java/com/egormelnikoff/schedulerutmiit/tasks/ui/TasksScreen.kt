@@ -206,8 +206,8 @@ fun TasksScreen(
                     item {
                         Empty(
                             modifier = Modifier.fillParentMaxSize(),
-                            title = "Заданий нет",
-                            subtitle = "На этот день нет заданий"
+                            title = stringResource(R.string.no_tasks),
+                            subtitle = stringResource(R.string.no_tasks_at_day)
                         )
                     }
                 }
@@ -298,7 +298,7 @@ fun SingleTask(
                 },
                 text = {
                     Text(
-                        text = "Удалить все"
+                        text = stringResource(R.string.delete_all)
                     )
                 },
                 onClick = {

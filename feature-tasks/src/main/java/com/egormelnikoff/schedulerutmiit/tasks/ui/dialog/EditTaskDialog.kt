@@ -72,7 +72,7 @@ fun EditTaskDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                titleText = "Задание", navAction = onBack
+                titleText = stringResource(R.string.task), navAction = onBack
             )
         }
     ) { innerPadding ->

@@ -109,6 +109,11 @@
     <string name="make_default">Make default</string>
     <string name="my">My</string>
     <string name="name">Name</string>
+    <string name="delete_all">Удалить всё</string>
+    <string name="no_tasks_at_day">There are no tasks for this day</string>
+    <string name="no_tasks">No tasks</string>
+    <string name="create_task">Create task</string>
+    <string name="task">Task</string>
     <string name="tasks">Tasks</string>
     <string name="network_error">Network error</string>
     <string name="new_version_available">New version available</string>

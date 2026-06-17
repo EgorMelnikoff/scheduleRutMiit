@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.tasks.ui.dialog
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,13 +49,8 @@ fun AddTaskDialog(
     calendarData: CalendarData,
     onBack: () -> Unit
 ) {
-    var showBackDialog by remember { mutableStateOf(false) }
     var showDialogDate by remember { mutableStateOf(false) }
     var showDialogTime by remember { mutableStateOf(false) }
-
-    BackHandler {
-        showBackDialog = true
-    }
 
     var taskText by remember { mutableStateOf("") }
     var tag by remember { mutableIntStateOf(0) }
@@ -75,7 +69,7 @@ fun AddTaskDialog(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                titleText = "Создать задание", navAction = onBack
+                titleText = stringResource(R.string.create_task), navAction = onBack
             )
         }
     ) { innerPadding ->

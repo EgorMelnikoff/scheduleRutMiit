@@ -104,6 +104,11 @@
     <string name="make_default">Сделать основным</string>
     <string name="my">Мои</string>
     <string name="name">Имя</string>
+    <string name="delete_all">Delete all</string>
+    <string name="create_task">Создать задание</string>
+    <string name="no_tasks">Заданий нет</string>
+    <string name="no_tasks_at_day">На этот день нет заданий</string>
+    <string name="task">Задание</string>
     <string name="tasks">Задания</string>
     <string name="network_error">Ошибка сети</string>
     <string name="new_version_available">Доступна новая версия</string>

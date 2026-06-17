@@ -48,7 +48,7 @@ class TaskReposImpl @Inject constructor(
         taskDao.deleteById(id)
     }
 
-    override suspend fun deleteByDateAndId(id: Long, date: LocalDate) {
+    override suspend fun deleteByDateAndId(id: Long, date: LocalDate) = db.withTransaction {
         taskCompletionDao.deleteByTaskIdAndDate(id, date)
         if (taskCompletionDao.countById(id) == 0) {
             taskDao.deleteById(id)
