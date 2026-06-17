@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
-import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.result.ScheduleUseCaseResult
 import javax.inject.Inject
 
 class RenameNamedScheduleUseCase @Inject constructor(
@@ -11,17 +11,14 @@ class RenameNamedScheduleUseCase @Inject constructor(
         namedScheduleId: Long,
         currentNamedScheduleId: Long?,
         newName: String
-    ): ScheduleUseCaseResult {
+    ): NamedScheduleWithSchedules? {
         namedScheduleRepos.updateName(
             namedScheduleId = namedScheduleId,
             newName = newName
         )
 
-        return ScheduleUseCaseResult(
-            savedNamedSchedules = namedScheduleRepos.getAll(),
-            namedScheduleWithSchedules = if (namedScheduleId == currentNamedScheduleId) {
-                namedScheduleRepos.getById(namedScheduleId)
-            } else null
-        )
+        return if (namedScheduleId == currentNamedScheduleId) {
+            namedScheduleRepos.getById(namedScheduleId)
+        } else null
     }
 }

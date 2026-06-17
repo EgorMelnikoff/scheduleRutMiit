@@ -15,7 +15,7 @@ import java.time.LocalTime
 val eveningTime: LocalTime = LocalTime.of(18, 0)
 
 @Serializable
-data class ReviewUiDto(
+data class ReviewState(
     @Serializable(with = LocalDateSerializer::class)
     val date: LocalDate,
     val events: Map<String, List<Event>> = mapOf(),
@@ -26,7 +26,7 @@ data class ReviewUiDto(
             schedule: Schedule,
             periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
             nonPeriodicEvents: Map<LocalDate, List<Event>>?
-        ): ReviewUiDto {
+        ): ReviewState {
             val dateTime = LocalDateTime.now()
             var date = dateTime.toLocalDate()
             var events = schedule.getEventsForDate(
@@ -58,7 +58,7 @@ data class ReviewUiDto(
                 )
             }
 
-            return ReviewUiDto(
+            return ReviewState(
                 date = date,
                 currentWeek = currentWeek,
                 events = events

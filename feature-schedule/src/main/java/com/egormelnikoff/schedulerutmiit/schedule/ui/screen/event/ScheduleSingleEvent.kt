@@ -90,7 +90,7 @@ fun ScheduleSingleEvent(
         ) {
             event.typeName?.let {
                 Text(
-                    text = requireNotNull(event.typeName),
+                    text = event.typeName.toString(),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )

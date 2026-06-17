@@ -42,7 +42,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.RecurrenceEvent
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetDatePicker
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.bottom_sheet.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
@@ -79,7 +79,6 @@ fun AddEditEventDialog(
     BackHandler {
         showBackDialog = true
     }
-
 
     val focusManager = LocalFocusManager.current
 
@@ -292,7 +291,7 @@ fun AddEditEventDialog(
                                 }
                             )
                             RecurrenceField(
-                                maxInterval = requireNotNull(addEditEventDialog.recurrence).interval,
+                                maxInterval = addEditEventDialog.recurrence!!.interval,
                                 currentInterval = currentInterval,
                                 currentPeriod = currentPeriod,
                                 onSelectInterval = { value ->
@@ -511,4 +510,3 @@ fun RecurrenceField(
         }
     }
 }
-

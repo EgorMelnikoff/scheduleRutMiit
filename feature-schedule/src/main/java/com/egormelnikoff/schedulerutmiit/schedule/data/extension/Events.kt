@@ -80,7 +80,7 @@ fun Map<String, List<Event>>?.getEnrichedEvents(
 
 
 fun Event.customToString(context: Context): String {
-    return StringBuilder().apply {
+    return buildString {
         append("${context.getString(R.string._class)}: ${this@customToString.name}")
         this@customToString.typeName?.let {
             append("\n${context.getString(R.string.class_type)}: $it")
@@ -102,5 +102,5 @@ fun Event.customToString(context: Context): String {
         if (!this@customToString.groups.isNullOrEmpty()) {
             append("\n${context.getString(R.string.groups)}: ${this@customToString.groups?.joinToString { it.name }}")
         }
-    }.toString()
+    }
 }

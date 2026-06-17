@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
-import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.result.ScheduleUseCaseResult
 import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdater
 import javax.inject.Inject
 
@@ -12,15 +12,12 @@ class DeleteNamedScheduleUseCase @Inject constructor(
     suspend operator fun invoke(
         namedScheduleId: Long,
         isDefault: Boolean
-    ): ScheduleUseCaseResult {
+    ): NamedScheduleWithSchedules? {
         namedScheduleRepos.deleteById(namedScheduleId)
         val savedNamedSchedules = namedScheduleRepos.getAll()
         if (savedNamedSchedules.isEmpty()) {
             widgetDataUpdater.updateAll()
-            return ScheduleUseCaseResult(
-                savedNamedSchedules = listOf(),
-                namedScheduleWithSchedules = null
-            )
+            return null
         }
 
         if (isDefault) {
@@ -32,13 +29,9 @@ class DeleteNamedScheduleUseCase @Inject constructor(
             val defaultNamedSchedule = namedSchedules.find { it.isDefault }
                 ?: namedSchedules.firstOrNull()
 
-
-            return ScheduleUseCaseResult(
-                savedNamedSchedules = namedSchedules,
-                namedScheduleWithSchedules = defaultNamedSchedule?.let {
-                    namedScheduleRepos.getById(defaultNamedSchedule.id)
-                }
-            )
+            return defaultNamedSchedule?.let {
+                namedScheduleRepos.getById(defaultNamedSchedule.id)
+            }
         }
     }
 }

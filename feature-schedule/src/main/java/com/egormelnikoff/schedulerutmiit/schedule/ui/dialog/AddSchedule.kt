@@ -25,16 +25,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.bottom_sheet.BottomSheetDateRangePicker
 import com.egormelnikoff.schedulerutmiit.schedule.data.validator.isValidSchedule
 import java.time.LocalDate
 
@@ -52,9 +54,7 @@ fun AddScheduleDialog(
     var startDate by remember { mutableStateOf<LocalDate?>(null) }
     var endDate by remember { mutableStateOf<LocalDate?>(null) }
 
-    var showDialogStartDate by remember { mutableStateOf(false) }
-    var showDialogEndDate by remember { mutableStateOf(false) }
-
+    var showDialogDate by remember { mutableStateOf(false) }
 
     val buttonEnabled by remember {
         derivedStateOf {
@@ -89,10 +89,10 @@ fun AddScheduleDialog(
                     bottom = innerPadding.calculateBottomPadding() + 8.dp
                 )
         ) {
-            GridGroup(
+            ColumnGroup(
                 modifier = Modifier.align(Alignment.TopCenter),
                 items = listOf(
-                    listOf {
+                    {
                         CustomTextField(
                             modifier = Modifier.fillMaxWidth(),
                             value = nameSchedule,
@@ -104,46 +104,33 @@ fun AddScheduleDialog(
                         ) { newValue ->
                             nameSchedule = newValue
                         }
-                    },
-                    listOf(
-                        {
-                            ClickableItem(
-                                defaultMinHeight = 32.dp,
-                                showClickLabel = false,
-                                title = startDate?.format(dayMonthYearFormatter)
-                                    ?: stringResource(R.string.start_date),
-                                titleTypography = MaterialTheme.typography.titleSmall,
-                                leadingIcon = {
-                                    LeadingIcon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.calendar),
-                                        iconSize = 20.dp,
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
-                                }
-                            ) {
-                                focusManager.clearFocus()
-                                showDialogStartDate = true
+                    }, {
+                        ClickableItem(
+                            defaultMinHeight = 32.dp,
+                            showClickLabel = false,
+                            title = when {
+                                startDate != null && startDate == endDate ->
+                                    "${startDate?.format(dayMonthYearFormatter)}"
+
+                                startDate != null && endDate != null ->
+                                    "${startDate?.format(dayMonthYearFormatter)}" +
+                                            " - ${endDate?.format(dayMonthYearFormatter)}"
+
+                                else -> stringResource(R.string.dates)
+                            },
+                            titleTypography = MaterialTheme.typography.titleSmall,
+                            leadingIcon = {
+                                LeadingIcon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                                    iconSize = 20.dp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             }
-                        }, {
-                            ClickableItem(
-                                defaultMinHeight = 32.dp,
-                                showClickLabel = false,
-                                title = endDate?.format(dayMonthYearFormatter)
-                                    ?: stringResource(R.string.end_date),
-                                titleTypography = MaterialTheme.typography.titleSmall,
-                                leadingIcon = {
-                                    LeadingIcon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.calendar),
-                                        iconSize = 20.dp,
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
-                                }
-                            ) {
-                                focusManager.clearFocus()
-                                showDialogEndDate = true
-                            }
+                        ) {
+                            focusManager.clearFocus()
+                            showDialogDate = true
                         }
-                    )
+                    }
                 )
             )
             CustomButton(
@@ -162,28 +149,17 @@ fun AddScheduleDialog(
             )
         }
 
-        if (showDialogStartDate) {
-            BottomSheetDatePicker(
-                selectedDate = startDate,
-                onDateSelect = { newValue ->
-                    startDate = newValue
+        if (showDialogDate) {
+            BottomSheetDateRangePicker(
+                selectedStartDate = startDate,
+                selectedEndDate = endDate,
+                onDateSelect = { start, end ->
+                    startDate = start
+                    endDate = end
                 },
-                onShowDialog = { newValue ->
-                    showDialogStartDate = newValue
-                },
-                endDate = endDate
-            )
-        }
-        if (showDialogEndDate) {
-            BottomSheetDatePicker(
-                selectedDate = endDate,
-                onDateSelect = { newValue ->
-                    endDate = newValue
-                },
-                onShowDialog = { newValue ->
-                    showDialogEndDate = newValue
-                },
-                startDate = startDate
+                onShowDialog = {
+                    showDialogDate = it
+                }
             )
         }
 

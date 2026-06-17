@@ -13,7 +13,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-data class ScheduleUiDto(
+data class ScheduleState(
     val schedule: Schedule,
 
     val periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null,
@@ -27,7 +27,7 @@ data class ScheduleUiDto(
     companion object {
         operator fun invoke(
             scheduleWithEvents: ScheduleWithEvents
-        ): ScheduleUiDto {
+        ): ScheduleState {
             val splitEvents = scheduleWithEvents.events.partition { it.isHidden }
 
             var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
@@ -35,7 +35,7 @@ data class ScheduleUiDto(
 
             if (scheduleWithEvents.schedule.recurrence != null) {
                 periodicEventsForCalendar = splitEvents.second.getPeriodicEvents(
-                    requireNotNull(scheduleWithEvents.schedule.recurrence).interval
+                    scheduleWithEvents.schedule.recurrence!!.interval
                 )
             } else {
                 nonPeriodicEventsForCalendar = splitEvents.second.groupBy {
@@ -54,7 +54,7 @@ data class ScheduleUiDto(
                 endDate = scheduleWithEvents.schedule.endDate
             )
 
-            return ScheduleUiDto(
+            return ScheduleState(
                 schedule = scheduleWithEvents.schedule,
 
                 periodicEvents = periodicEventsForCalendar,
@@ -83,7 +83,7 @@ data class ScheduleUiDto(
                         currentStartDate = currentStartDate,
                         startDate = schedule.startDate,
                         endDate = schedule.endDate,
-                        recurrence = requireNotNull(schedule.recurrence)
+                        recurrence = schedule.recurrence!!
                     )
 
                     buildList {

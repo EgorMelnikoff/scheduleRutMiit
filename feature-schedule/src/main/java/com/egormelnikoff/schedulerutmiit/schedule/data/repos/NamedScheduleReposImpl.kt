@@ -7,10 +7,11 @@ import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.NamedScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.ScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
-import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.toDomain
 import com.egormelnikoff.schedulerutmiit.core.database.mapper.toDomain
 import com.egormelnikoff.schedulerutmiit.core.database.mapper.toEntity
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class NamedScheduleReposImpl @Inject constructor(
@@ -25,6 +26,13 @@ class NamedScheduleReposImpl @Inject constructor(
     ) = namedScheduleDao.insert(namedSchedule.toEntity())
 
     override suspend fun getCount(): Int = namedScheduleDao.getCount()
+
+
+    override fun observeAll(): Flow<List<NamedSchedule>> {
+        return namedScheduleDao.observeAll().map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
 
     override suspend fun getAll() = namedScheduleDao.getAll().map { it.toDomain() }
 

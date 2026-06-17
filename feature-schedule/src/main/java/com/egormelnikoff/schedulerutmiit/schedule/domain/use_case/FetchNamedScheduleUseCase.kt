@@ -109,7 +109,7 @@ class FetchNamedScheduleUseCase @Inject constructor(
                         Result.Success(
                             NamedScheduleWithSchedules(
                                 namedSchedule = namedSchedule,
-                                scheduleWithEvents = schedules
+                                schedulesWithEvents = schedules
                             )
                         ), false
                     )

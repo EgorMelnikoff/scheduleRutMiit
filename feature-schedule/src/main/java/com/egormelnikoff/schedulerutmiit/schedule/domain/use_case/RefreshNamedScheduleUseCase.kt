@@ -9,11 +9,12 @@ import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesData
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRepos
-import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.result.ScheduleUseCaseResult
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 class RefreshNamedScheduleUseCase @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
@@ -28,7 +29,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
     suspend operator fun invoke(
         namedScheduleId: Long? = null,
         updating: Boolean = false
-    ): ScheduleUseCaseResult {
+    ): NamedScheduleWithSchedules? {
         val namedSchedule = namedScheduleId?.let {
             namedScheduleRepos.getById(namedScheduleId).namedSchedule
         }
@@ -42,16 +43,13 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             )
         }
 
-        return ScheduleUseCaseResult(
-            savedNamedSchedules = namedScheduleRepos.getAll(),
-            namedScheduleWithSchedules = namedSchedule?.let {
-                namedScheduleRepos.getById(
-                    namedScheduleId = it.id
-                )
-            }
-        )
-    }
 
+        return namedSchedule?.let {
+            namedScheduleRepos.getById(
+                namedScheduleId = it.id
+            )
+        }
+    }
 
     suspend fun update(
         namedSchedule: NamedSchedule,
@@ -114,7 +112,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
         oldNamedScheduleWithSchedules: NamedScheduleWithSchedules,
         newNamedScheduleWithSchedules: NamedScheduleWithSchedules
     ) {
-        val oldSchedulesMap = oldNamedScheduleWithSchedules.scheduleWithEvents
+        val oldSchedulesMap = oldNamedScheduleWithSchedules.schedulesWithEvents
             .filter { schedule ->
                 val isEmpty = schedule.events.isEmpty()
                 if (isEmpty) scheduleRepos.deleteById(schedule.schedule.id)
@@ -123,7 +121,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             .associateBy { it.schedule.getKey() }
 
 
-        newNamedScheduleWithSchedules.scheduleWithEvents.forEach { updatedSchedule ->
+        newNamedScheduleWithSchedules.schedulesWithEvents.forEach { updatedSchedule ->
             val oldSchedule = oldSchedulesMap[updatedSchedule.schedule.getKey()]
 
             if (oldSchedule != null) {
@@ -160,8 +158,8 @@ class RefreshNamedScheduleUseCase @Inject constructor(
         newNamedScheduleWithSchedules: NamedScheduleWithSchedules,
         oldNamedScheduleWithSchedules: NamedScheduleWithSchedules
     ) {
-        oldNamedScheduleWithSchedules.scheduleWithEvents.forEach { oldSchedule ->
-            val stillExists = newNamedScheduleWithSchedules.scheduleWithEvents.any {
+        oldNamedScheduleWithSchedules.schedulesWithEvents.forEach { oldSchedule ->
+            val stillExists = newNamedScheduleWithSchedules.schedulesWithEvents.any {
                 it.schedule.getKey() == oldSchedule.schedule.getKey()
             }
             val isOutdated = LocalDate.now() > oldSchedule.schedule.endDate

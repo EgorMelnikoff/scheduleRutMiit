@@ -26,7 +26,7 @@ class SetDefaultScheduleUseCase @Inject constructor(
         }
 
         val updatedSchedules =
-            currentNamedScheduleWithSchedules.scheduleWithEvents.map { schedule ->
+            currentNamedScheduleWithSchedules.schedulesWithEvents.map { schedule ->
                 schedule.copy(
                     schedule = schedule.schedule.copy(
                         isDefault = schedule.schedule.timetableId == timetableId
@@ -35,6 +35,6 @@ class SetDefaultScheduleUseCase @Inject constructor(
                 )
             }
 
-        return currentNamedScheduleWithSchedules.copy(scheduleWithEvents = updatedSchedules)
+        return currentNamedScheduleWithSchedules.copy(schedulesWithEvents = updatedSchedules)
     }
 }

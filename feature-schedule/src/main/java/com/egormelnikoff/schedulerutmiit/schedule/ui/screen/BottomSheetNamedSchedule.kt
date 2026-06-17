@@ -64,7 +64,7 @@ fun ModalDialogNamedSchedule(
     haveHiddenEvents: Boolean = false,
     haveNotEmptySchedules: Boolean = false,
 
-    onOpenNamedSchedule: (() -> Unit)? = null,
+    onOpenNamedSchedule: ((Long, Boolean, Boolean) -> Unit)? = null,
     onDismiss: (NamedSchedule?) -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
@@ -88,7 +88,7 @@ fun ModalDialogNamedSchedule(
             ColumnGroup(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 items = buildList {
-                    if (isSavedNamedSchedule && !isDefaultNamedSchedule) {
+                    if (isSavedNamedSchedule && !isDefaultNamedSchedule && onOpenNamedSchedule != null) {
                         add {
                             ClickableItem(
                                 title = stringResource(R.string.make_default),
@@ -103,10 +103,7 @@ fun ModalDialogNamedSchedule(
                                 defaultMinHeight = 24.dp,
                                 showClickLabel = false
                             ) {
-                                scheduleViewModel.setNamedSchedule(
-                                    namedScheduleId = namedSchedule.id,
-                                    setDefault = true
-                                )
+                                onOpenNamedSchedule(namedSchedule.id, true, false)
                                 onDismiss(null)
                             }
 
@@ -126,7 +123,7 @@ fun ModalDialogNamedSchedule(
                                 },
                                 defaultMinHeight = 24.dp
                             ) {
-                                onOpenNamedSchedule()
+                                onOpenNamedSchedule(namedSchedule.id, false, true)
                                 onDismiss(null)
                             }
                         }
@@ -154,7 +151,7 @@ fun ModalDialogNamedSchedule(
                         ),
                         title = stringResource(R.string.download),
                         onClick = {
-                            val url = requireNotNull(schedule.downloadUrl)
+                            val url = schedule.downloadUrl!!
                             uriHandler.openUri(url)
                         }
                     )
@@ -267,6 +264,7 @@ fun ModalDialogNamedScheduleHeader(
     isDefaultNamedSchedule: Boolean,
     onDismiss: (NamedSchedule?) -> Unit
 ) {
+    val locale = LocalLocale.current.platformLocale
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Row(
@@ -287,10 +285,15 @@ fun ModalDialogNamedScheduleHeader(
             )
 
             if (namedSchedule.type != NamedScheduleType.MY && isSavedNamedSchedule) {
-                val lastTimeUpdate = LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(namedSchedule.lastTimeUpdate),
-                    ZoneId.systemDefault()
-                ).format(dayMonthNameFormatter.withLocale(LocalLocale.current.platformLocale))
+                val lastTimeUpdate = remember(
+                    namedSchedule.lastTimeUpdate
+                ) {
+                    LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(namedSchedule.lastTimeUpdate),
+                        ZoneId.systemDefault()
+                    ).format(dayMonthNameFormatter.withLocale(locale))
+
+                }
 
                 Text(
                     text = "${stringResource(R.string.current_on)} $lastTimeUpdate",

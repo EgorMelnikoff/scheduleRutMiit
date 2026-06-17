@@ -16,6 +16,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.DeleteNamedSch
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventActionUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.FetchNamedScheduleUseCase
+import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.ObserveNamedSchedulesUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.OpenNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.RefreshNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.RenameNamedScheduleUseCase
@@ -24,11 +25,10 @@ import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.SetDefaultSche
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.UpdateEventCommentUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.UpdateEventTagUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.event.UiEvent
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.CurrentState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ReviewUiDto
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.core.common.domain.ScreenState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ReviewState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ScheduleState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -36,8 +36,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -49,6 +52,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class ScheduleViewModel @Inject constructor(
     private val resourcesManager: ResourcesManager,
 
+    observeNamedSchedulesUseCase: ObserveNamedSchedulesUseCase,
     private val refreshNamedScheduleUseCase: RefreshNamedScheduleUseCase,
     private val fetchNamedScheduleUseCase: FetchNamedScheduleUseCase,
     private val openNamedScheduleUseCase: OpenNamedScheduleUseCase,
@@ -63,19 +67,23 @@ class ScheduleViewModel @Inject constructor(
     private val updateEventCommentUseCase: UpdateEventCommentUseCase,
     private val updateEventTagUseCase: UpdateEventTagUseCase
 ) : ViewModel() {
-    private val _currentState = MutableStateFlow(CurrentState())
     private val _namedScheduleState = MutableStateFlow(NamedScheduleState())
-    private val _scheduleState = MutableStateFlow(ScheduleState())
+    private val _screenState = MutableStateFlow(ScreenState())
     private val _uiEventChannel = MutableSharedFlow<UiEvent>()
 
-    val currentState = _currentState.asStateFlow()
-    val namedScheduleState = _namedScheduleState.asStateFlow()
-    val scheduleState = _scheduleState.asStateFlow()
+    val namedSchedules: StateFlow<List<NamedSchedule>> = observeNamedSchedulesUseCase().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        listOf()
+    )
+    val scheduleState = _namedScheduleState.asStateFlow()
+    val screenState = _screenState.asStateFlow()
     val uiEvent = _uiEventChannel.asSharedFlow()
 
     private var fetchScheduleJob: Job? = null
     private var updateScheduleJob: Job? = null
     private var updateEventCommentJob: Job? = null
+
 
     init {
         refreshScheduleState()
@@ -84,7 +92,7 @@ class ScheduleViewModel @Inject constructor(
     fun cancelLoading() {
         viewModelScope.launch {
             fetchScheduleJob?.cancelAndJoin()
-            updateCurrentState(
+            updateScreenState(
                 isLoading = false,
                 isRefreshing = false,
                 isError = false
@@ -95,7 +103,7 @@ class ScheduleViewModel @Inject constructor(
     fun cancelRefresh() {
         viewModelScope.launch {
             updateScheduleJob?.cancelAndJoin()
-            updateCurrentState(
+            updateScreenState(
                 isLoading = false,
                 isRefreshing = false,
                 isError = false
@@ -105,11 +113,11 @@ class ScheduleViewModel @Inject constructor(
 
     fun refreshReview() {
         viewModelScope.launch {
-            if (_currentState.value.isSaved) {
-                _scheduleState.value.scheduleUiDto?.let { scheduleUiDto ->
-                    _scheduleState.update { state ->
+            if (_screenState.value.isSaved) {
+                _namedScheduleState.value.scheduleState?.let { scheduleUiDto ->
+                    _namedScheduleState.update { state ->
                         state.copy(
-                            reviewUiDto = ReviewUiDto(
+                            reviewState = ReviewState(
                                 scheduleUiDto.schedule,
                                 scheduleUiDto.periodicEvents,
                                 scheduleUiDto.nonPeriodicEvents
@@ -128,27 +136,22 @@ class ScheduleViewModel @Inject constructor(
     ) {
         val newUpdateScheduleJob = viewModelScope.launch {
             updateScheduleJob?.cancelAndJoin()
-            updateCurrentState(
+            updateScreenState(
                 isLoading = showLoading,
                 isRefreshing = updating,
                 isError = false
             )
-
             refreshNamedScheduleUseCase(
                 namedScheduleId, updating
             ).let { result ->
-                updateNamedScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules
-                )
                 updateScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules,
-                    updateReview = _namedScheduleState.value.namedScheduleWithSchedules?.namedSchedule?.isDefault == true
+                    namedScheduleWithSchedules = result,
+                    updateReview = result?.namedSchedule?.isDefault == true
                 )
-                updateCurrentState(
-                    namedSchedules = result.savedNamedSchedules,
+                updateScreenState(
                     isLoading = false,
                     isRefreshing = false,
-                    isSaved = result.namedScheduleWithSchedules != null
+                    isSaved = result != null
                 )
             }
         }
@@ -164,7 +167,7 @@ class ScheduleViewModel @Inject constructor(
             fetchScheduleJob?.cancelAndJoin()
             ensureActive()
 
-            updateCurrentState(
+            updateScreenState(
                 isLoading = true
             )
             val result = fetchNamedScheduleUseCase(
@@ -175,13 +178,10 @@ class ScheduleViewModel @Inject constructor(
 
             when (val newNamedSchedule = result.namedScheduleWithSchedules) {
                 is Result.Success -> {
-                    updateNamedScheduleState(
-                        namedScheduleWithSchedules = newNamedSchedule.data
-                    )
                     updateScheduleState(
                         namedScheduleWithSchedules = result.namedScheduleWithSchedules.data
                     )
-                    updateCurrentState(
+                    updateScreenState(
                         isSaved = result.isSaved,
                         isError = false,
                         isLoading = false
@@ -190,7 +190,7 @@ class ScheduleViewModel @Inject constructor(
                 }
 
                 is Result.Error -> {
-                    updateCurrentState(
+                    updateScreenState(
                         isError = true,
                         isLoading = false
                     )
@@ -220,15 +220,11 @@ class ScheduleViewModel @Inject constructor(
             openNamedScheduleUseCase(
                 namedScheduleId, setDefault
             ).let { result ->
-                updateCurrentState(
-                    namedSchedules = if (setDefault) result.savedNamedSchedules else null,
+                updateScreenState(
                     isSaved = true
                 )
-                updateNamedScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules
-                )
                 updateScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules,
+                    namedScheduleWithSchedules = result,
                     updateReview = setDefault
                 )
             }
@@ -240,16 +236,12 @@ class ScheduleViewModel @Inject constructor(
             saveNamedScheduleUseCase(
                 currentNamedScheduleWithSchedules = currentNamedSchedule()
             ).let { result ->
-                updateCurrentState(
-                    namedSchedules = result.savedNamedSchedules,
+                updateScreenState(
                     isSaved = true
                 )
-                updateNamedScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules
-                )
                 updateScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules,
-                    updateReview = result.namedScheduleWithSchedules?.namedSchedule?.isDefault == true
+                    namedScheduleWithSchedules = result,
+                    updateReview = result.namedSchedule.isDefault
                 )
             }
         }
@@ -263,19 +255,10 @@ class ScheduleViewModel @Inject constructor(
             deleteNamedScheduleUseCase(
                 namedScheduleId, isDefault
             ).let { result ->
-                updateCurrentState(
-                    namedSchedules = result.savedNamedSchedules
-                )
-
                 updateScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules,
+                    namedScheduleWithSchedules = result,
                     updateReview = isDefault
                 )
-                if (currentNamedSchedule().namedSchedule.id == namedScheduleId) {
-                    updateNamedScheduleState(
-                        namedScheduleWithSchedules = result.namedScheduleWithSchedules
-                    )
-                }
             }
         }
     }
@@ -295,15 +278,9 @@ class ScheduleViewModel @Inject constructor(
                 currentNamedScheduleId = currentNamedSchedule().namedSchedule.id,
                 newName = newName
             ).let { result ->
-                updateCurrentState(
-                    namedSchedules = result.savedNamedSchedules
+                _namedScheduleState.value = _namedScheduleState.value.copy(
+                    namedScheduleWithSchedules = result
                 )
-
-                result.namedScheduleWithSchedules?.let {
-                    updateNamedScheduleState(
-                        namedScheduleWithSchedules = it
-                    )
-                }
             }
         }
     }
@@ -317,16 +294,12 @@ class ScheduleViewModel @Inject constructor(
             addCustomNamedScheduleUseCase(
                 name, startDate, endDate
             ).let { result ->
-                updateCurrentState(
-                    namedSchedules = result.savedNamedSchedules,
+                updateScreenState(
                     isSaved = true
                 )
-                updateNamedScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules
-                )
                 updateScheduleState(
-                    namedScheduleWithSchedules = result.namedScheduleWithSchedules,
-                    updateReview = result.namedScheduleWithSchedules?.namedSchedule?.isDefault == true
+                    namedScheduleWithSchedules = result,
+                    updateReview = result.namedSchedule.isDefault
                 )
             }
         }
@@ -341,10 +314,9 @@ class ScheduleViewModel @Inject constructor(
             setDefaultScheduleUseCase(
                 currentNamedScheduleWithSchedules = currentNamedSchedule(),
                 scheduleId = scheduleId,
-                isSaved = _currentState.value.isSaved,
+                isSaved = _screenState.value.isSaved,
                 timetableId = timetableId
             ).let { namedSchedule ->
-                updateNamedScheduleState(namedSchedule)
                 updateScheduleState(
                     namedScheduleWithSchedules = namedSchedule,
                     updateReview = namedSchedule.namedSchedule.isDefault
@@ -366,9 +338,9 @@ class ScheduleViewModel @Inject constructor(
             updateEventCommentUseCase(
                 dateTime, scheduleId, event, comment
             ).let { eventsExtraData ->
-                _scheduleState.update { state ->
+                _namedScheduleState.update { state ->
                     state.copy(
-                        scheduleUiDto = state.scheduleUiDto?.copy(
+                        scheduleState = state.scheduleState?.copy(
                             eventsExtraData = eventsExtraData
                         )
                     )
@@ -388,9 +360,9 @@ class ScheduleViewModel @Inject constructor(
             updateEventTagUseCase(
                 dateTime, scheduleId, event, tag
             ).let { eventsExtraData ->
-                _scheduleState.update { state ->
+                _namedScheduleState.update { state ->
                     state.copy(
-                        scheduleUiDto = state.scheduleUiDto?.copy(
+                        scheduleState = state.scheduleState?.copy(
                             eventsExtraData = eventsExtraData
                         )
                     )
@@ -417,16 +389,14 @@ class ScheduleViewModel @Inject constructor(
         return requireNotNull(_namedScheduleState.value.namedScheduleWithSchedules)
     }
 
-    private fun updateCurrentState(
-        namedSchedules: List<NamedSchedule>? = null,
+    private fun updateScreenState(
         isError: Boolean? = null,
         isRefreshing: Boolean? = null,
         isLoading: Boolean? = null,
         isSaved: Boolean? = null
     ) {
-        _currentState.update { state ->
+        _screenState.update { state ->
             state.copy(
-                namedSchedules = namedSchedules ?: state.namedSchedules,
                 isError = isError ?: state.isError,
                 isRefreshing = isRefreshing ?: state.isRefreshing,
                 isLoading = isLoading ?: state.isLoading,
@@ -435,39 +405,29 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    private fun updateNamedScheduleState(namedScheduleWithSchedules: NamedScheduleWithSchedules?) {
-        _namedScheduleState.update { state ->
-            state.copy(
-                namedScheduleWithSchedules = namedScheduleWithSchedules
-            )
-        }
-    }
-
     private fun updateScheduleState(
         namedScheduleWithSchedules: NamedScheduleWithSchedules?,
         updateReview: Boolean = false
     ) {
-        namedScheduleWithSchedules?.scheduleWithEvents?.findDefaultSchedule()?.let { schedule ->
-            val scheduleUiDto = ScheduleUiDto(schedule)
-            _scheduleState.update { state ->
-                state.copy(
-                    scheduleUiDto = scheduleUiDto,
-                    reviewUiDto = if (updateReview) {
-                        ReviewUiDto(
-                            scheduleUiDto.schedule,
-                            scheduleUiDto.periodicEvents,
-                            scheduleUiDto.nonPeriodicEvents
-                        )
-                    } else state.reviewUiDto
-                )
-            }
-            return
-        }
+        _namedScheduleState.update { state ->
+            val schedule = namedScheduleWithSchedules
+                ?.schedulesWithEvents
+                ?.findDefaultSchedule()
 
-        _scheduleState.update { state ->
+            val scheduleState = schedule?.let { ScheduleState(it) }
+
+            val reviewState = if (updateReview && scheduleState != null) {
+                ReviewState(
+                    scheduleState.schedule,
+                    scheduleState.periodicEvents,
+                    scheduleState.nonPeriodicEvents
+                )
+            } else state.reviewState
+
             state.copy(
-                scheduleUiDto = null,
-                reviewUiDto = null
+                namedScheduleWithSchedules = namedScheduleWithSchedules,
+                scheduleState = scheduleState,
+                reviewState = reviewState
             )
         }
     }

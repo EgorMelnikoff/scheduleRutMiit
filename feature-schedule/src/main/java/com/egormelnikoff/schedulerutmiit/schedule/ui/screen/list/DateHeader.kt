@@ -19,7 +19,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
-import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 @Composable
 fun DateHeader(
@@ -45,7 +45,7 @@ fun DateHeader(
             text = "${
                 date.dayOfWeek.getDisplayName(
                     TextStyle.SHORT_STANDALONE,
-                    Locale.getDefault()
+                    LocalLocale.current.platformLocale
                 ).replaceFirstChar { it.uppercase() }
             }, ${date.format(formatter)}",
             style = MaterialTheme.typography.titleMedium,

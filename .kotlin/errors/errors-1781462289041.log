@@ -1,0 +1,369 @@
+kotlin version: 2.3.0
+error message: org.jetbrains.kotlin.fir.pipeline.IrGenerationExtensionException: Back-end: Please report this problem https://kotl.in/issue
+/Users/egor/AndroidStudioProjects/scheduleRutMiit/core-common/src/main/java/com/egormelnikoff/schedulerutmiit/core/common/domain/Task.kt:11:1
+Problem with `@Serializable
+data class Task {
+  constructor(id: Long = 0L, datesIsCompleted: Map<LocalDate, Boolean>, time: LocalTime, text: String, tag: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val id: Long
+    field = id
+    get
+
+  @Contextual
+  val datesIsCompleted: Map<LocalDate, Boolean>
+    field = datesIsCompleted
+    get
+
+  val time: LocalTime
+    field = time
+    get
+
+  val text: String
+    field = text
+    get
+
+  val tag: Int
+    field = tag
+    get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun serializer(): KSerializer<Task>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+  }
+
+  @Deprecated(message = "This synthesized declaration should not be used directly", level = DeprecationLevel.HIDDEN)
+  object $serializer : GeneratedSerializer<Task> {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    override fun serialize(encoder: Encoder, value: Task)
+
+    override fun deserialize(decoder: Decoder): Task
+
+    override val descriptor: SerialDescriptor
+      override get
+
+    override fun childSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override fun typeParametersSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+  }
+
+  operator fun component1(): Long {
+    return <this>.#id
+  }
+
+  operator fun component2(): Map<LocalDate, Boolean> {
+    return <this>.#datesIsCompleted
+  }
+
+  operator fun component3(): LocalTime {
+    return <this>.#time
+  }
+
+  operator fun component4(): String {
+    return <this>.#text
+  }
+
+  operator fun component5(): Int {
+    return <this>.#tag
+  }
+
+  fun copy(id: Long = <this>.#id, datesIsCompleted: Map<LocalDate, Boolean> = <this>.#datesIsCompleted, time: LocalTime = <this>.#time, text: String = <this>.#text, tag: Int = <this>.#tag): Task {
+    return Task(id = id, datesIsCompleted = datesIsCompleted, time = time, text = text, tag = tag)
+  }
+
+  override fun toString(): String {
+    return "Task(" + "id=" + <this>.#id + ", " + "datesIsCompleted=" + <this>.#datesIsCompleted + ", " + "time=" + <this>.#time + ", " + "text=" + <this>.#text + ", " + "tag=" + <this>.#tag + ")"
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#id.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#datesIsCompleted.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#time.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#text.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#tag.hashCode())
+    return result
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Task -> return false
+    }
+    val tmp0_other_with_cast: Task = other /*as Task */
+    when {
+      EQEQ(arg0 = <this>.#id, arg1 = tmp0_other_with_cast.#id).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#datesIsCompleted, arg1 = tmp0_other_with_cast.#datesIsCompleted).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#time, arg1 = tmp0_other_with_cast.#time).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#text, arg1 = tmp0_other_with_cast.#text).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#tag, arg1 = tmp0_other_with_cast.#tag).not() -> return false
+    }
+    return true
+  }
+
+  @JvmStatic
+  internal /* static */ fun write$Self(self: Task, output: CompositeEncoder, serialDesc: SerialDescriptor)
+
+  internal constructor(seen0: Int, id: Long, datesIsCompleted: Map<LocalDate, Boolean>?, time: LocalTime?, text: String?, tag: Int, serializationConstructorMarker: SerializationConstructorMarker?)
+
+}
+
+`
+Details: kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.applyIrGenerationExtensions(convertToIr.kt:577)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.runActualizationPipeline(convertToIr.kt:279)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.convertToIrAndActualize(convertToIr.kt:150)
+	at org.jetbrains.kotlin.fir.pipeline.ConvertToIrKt.convertToIrAndActualize(convertToIr.kt:115)
+	at org.jetbrains.kotlin.fir.pipeline.ConvertToIrKt.convertToIrAndActualize$default(convertToIr.kt:88)
+	at org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.JvmCompilerPipelineKt.convertToIrAndActualizeForJvm(jvmCompilerPipeline.kt:100)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:30)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:25)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:19)
+	at org.jetbrains.kotlin.cli.pipeline.PipelinePhase.phaseBody(PipelinePhase.kt:68)
+	at org.jetbrains.kotlin.cli.pipeline.PipelinePhase.phaseBody(PipelinePhase.kt:58)
+	at org.jetbrains.kotlin.config.phaser.NamedCompilerPhase.invoke(CompilerPhase.kt:102)
+	at org.jetbrains.kotlin.backend.common.phaser.CompositePhase.invoke(PhaseBuilders.kt:22)
+	at org.jetbrains.kotlin.config.phaser.CompilerPhaseKt.invokeToplevel(CompilerPhase.kt:53)
+	at org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline.runPhasedPipeline(AbstractCliPipeline.kt:109)
+	at org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline.execute(AbstractCliPipeline.kt:68)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecutePhased(K2JVMCompiler.kt:51)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecutePhased(K2JVMCompiler.kt:42)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.execImpl(CLICompiler.kt:89)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.exec(CLICompiler.kt:359)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase.runCompiler(IncrementalJvmCompilerRunnerBase.kt:178)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase.runCompiler(IncrementalJvmCompilerRunnerBase.kt:40)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.doCompile(IncrementalCompilerRunner.kt:504)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileImpl(IncrementalCompilerRunner.kt:418)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.tryCompileIncrementally$lambda$0$compile(IncrementalCompilerRunner.kt:249)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.tryCompileIncrementally(IncrementalCompilerRunner.kt:267)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compile(IncrementalCompilerRunner.kt:119)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.execIncrementalCompiler(CompileServiceImpl.kt:684)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.access$execIncrementalCompiler(CompileServiceImpl.kt:94)
+	at org.jetbrains.kotlin.daemon.CompileServiceImpl.compile(CompileServiceImpl.kt:1810)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: org.jetbrains.kotlin.backend.common.CompilationException: Back-end: Please report this problem https://kotl.in/issue
+/Users/egor/AndroidStudioProjects/scheduleRutMiit/core-common/src/main/java/com/egormelnikoff/schedulerutmiit/core/common/domain/Task.kt:11:1
+Problem with `@Serializable
+data class Task {
+  constructor(id: Long = 0L, datesIsCompleted: Map<LocalDate, Boolean>, time: LocalTime, text: String, tag: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val id: Long
+    field = id
+    get
+
+  @Contextual
+  val datesIsCompleted: Map<LocalDate, Boolean>
+    field = datesIsCompleted
+    get
+
+  val time: LocalTime
+    field = time
+    get
+
+  val text: String
+    field = text
+    get
+
+  val tag: Int
+    field = tag
+    get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun serializer(): KSerializer<Task>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+  }
+
+  @Deprecated(message = "This synthesized declaration should not be used directly", level = DeprecationLevel.HIDDEN)
+  object $serializer : GeneratedSerializer<Task> {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    override fun serialize(encoder: Encoder, value: Task)
+
+    override fun deserialize(decoder: Decoder): Task
+
+    override val descriptor: SerialDescriptor
+      override get
+
+    override fun childSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override fun typeParametersSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+  }
+
+  operator fun component1(): Long {
+    return <this>.#id
+  }
+
+  operator fun component2(): Map<LocalDate, Boolean> {
+    return <this>.#datesIsCompleted
+  }
+
+  operator fun component3(): LocalTime {
+    return <this>.#time
+  }
+
+  operator fun component4(): String {
+    return <this>.#text
+  }
+
+  operator fun component5(): Int {
+    return <this>.#tag
+  }
+
+  fun copy(id: Long = <this>.#id, datesIsCompleted: Map<LocalDate, Boolean> = <this>.#datesIsCompleted, time: LocalTime = <this>.#time, text: String = <this>.#text, tag: Int = <this>.#tag): Task {
+    return Task(id = id, datesIsCompleted = datesIsCompleted, time = time, text = text, tag = tag)
+  }
+
+  override fun toString(): String {
+    return "Task(" + "id=" + <this>.#id + ", " + "datesIsCompleted=" + <this>.#datesIsCompleted + ", " + "time=" + <this>.#time + ", " + "text=" + <this>.#text + ", " + "tag=" + <this>.#tag + ")"
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#id.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#datesIsCompleted.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#time.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#text.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#tag.hashCode())
+    return result
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Task -> return false
+    }
+    val tmp0_other_with_cast: Task = other /*as Task */
+    when {
+      EQEQ(arg0 = <this>.#id, arg1 = tmp0_other_with_cast.#id).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#datesIsCompleted, arg1 = tmp0_other_with_cast.#datesIsCompleted).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#time, arg1 = tmp0_other_with_cast.#time).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#text, arg1 = tmp0_other_with_cast.#text).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#tag, arg1 = tmp0_other_with_cast.#tag).not() -> return false
+    }
+    return true
+  }
+
+  @JvmStatic
+  internal /* static */ fun write$Self(self: Task, output: CompositeEncoder, serialDesc: SerialDescriptor)
+
+  internal constructor(seen0: Int, id: Long, datesIsCompleted: Map<LocalDate, Boolean>?, time: LocalTime?, text: String?, tag: Int, serializationConstructorMarker: SerializationConstructorMarker?)
+
+}
+
+`
+Details: kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassLowering.lower(SerializationLoweringExtension.kt:233)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt$runOnFileInOrder$1.visitClass(SerializationLoweringExtension.kt:46)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitClass(IrVisitorVoid.kt:44)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitClass(IrVisitorVoid.kt:18)
+	at org.jetbrains.kotlin.ir.declarations.IrClass.accept(IrClass.kt:72)
+	at org.jetbrains.kotlin.ir.declarations.IrPackageFragment.acceptChildren(IrPackageFragment.kt:27)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorsKt.acceptChildrenVoid(IrVisitors.kt:23)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt$runOnFileInOrder$1.visitElement(SerializationLoweringExtension.kt:42)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitPackageFragment(IrVisitorVoid.kt:168)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:184)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:180)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:18)
+	at org.jetbrains.kotlin.ir.declarations.IrFile.accept(IrFile.kt:27)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorsKt.acceptVoid(IrVisitors.kt:11)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt.runOnFileInOrder(SerializationLoweringExtension.kt:40)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension.generate(SerializationLoweringExtension.kt:197)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.applyIrGenerationExtensions(convertToIr.kt:571)
+	... 44 more
+Caused by: java.lang.IllegalStateException: Serializer for element of type java.time.LocalDate has not been found
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerSearchUtilKt.findTypeSerializerOrContext(SerializerSearchUtil.kt:85)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.createSerializerOnlyForClasses(BaseIrGenerator.kt:511)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.cacheableChildSerializerInstance(BaseIrGenerator.kt:479)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.createCachedChildSerializers(BaseIrGenerator.kt:465)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator.<init>(SerializableIrGenerator.kt:62)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator$Companion.generate(SerializableIrGenerator.kt:407)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassLowering.lower(SerializationLoweringExtension.kt:149)
+	... 60 more
+
+

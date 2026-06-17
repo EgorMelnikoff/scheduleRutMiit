@@ -6,7 +6,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.result.ScheduleUseCaseResult
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -17,7 +16,7 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
         name: String,
         startDate: LocalDate,
         endDate: LocalDate
-    ): ScheduleUseCaseResult {
+    ): NamedScheduleWithSchedules {
         return saveNamedScheduleUseCase(
             currentNamedScheduleWithSchedules = NamedScheduleWithSchedules(
                 namedSchedule = NamedSchedule(
@@ -29,7 +28,7 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
                     isDefault = false,
                     lastTimeUpdate = 0L
                 ),
-                scheduleWithEvents = listOf(
+                schedulesWithEvents = listOf(
                     ScheduleWithEvents(
                         schedule = Schedule(
                             id = 0,

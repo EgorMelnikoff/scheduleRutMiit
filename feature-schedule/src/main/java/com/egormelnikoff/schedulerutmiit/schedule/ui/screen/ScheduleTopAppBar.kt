@@ -20,7 +20,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSch
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ScheduleUiDto
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ScheduleState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,15 +29,15 @@ fun ScheduleTopAppBar(
     onShowNamedScheduleDialog: (NamedSchedule) -> Unit,
 
     namedScheduleWithSchedules: NamedScheduleWithSchedules,
-    scheduleUiDto: ScheduleUiDto?,
+    scheduleState: ScheduleState?,
     scheduleView: ScheduleView
 ) {
     val isCustomSchedule = namedScheduleWithSchedules.namedSchedule.type == NamedScheduleType.MY
 
     CustomTopAppBar(
         titleText = namedScheduleWithSchedules.namedSchedule.shortName,
-        subtitleText = if (scheduleUiDto?.schedule != null && !isCustomSchedule) {
-            scheduleUiDto.schedule.timetableType.typeName
+        subtitleText = if (scheduleState?.schedule != null && !isCustomSchedule) {
+            scheduleState.schedule.timetableType.typeName
         } else null,
         actions = {
             IconButton(
