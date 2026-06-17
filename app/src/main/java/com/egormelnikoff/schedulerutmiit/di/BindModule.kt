@@ -28,6 +28,8 @@ import com.egormelnikoff.schedulerutmiit.search.data.repos.SearchQueryReposImpl
 import com.egormelnikoff.schedulerutmiit.search.data.repos.SearchRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchQueryRepos
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.tasks.data.repos.TaskRepos
+import com.egormelnikoff.schedulerutmiit.tasks.domain.repos.TaskReposImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -52,6 +54,11 @@ abstract class BindModule {
     @Binds
     @Singleton
     abstract fun bindCurriculumRemoteDataSource(curriculumRemoteDataSourceImpl: CurriculumRemoteDataSourceImpl): CurriculumRemoteDataSource
+
+
+    @Binds
+    @Singleton
+    abstract fun bindTaskRepos(taskReposImpl: TaskReposImpl): TaskRepos
 
     @Binds
     @Singleton

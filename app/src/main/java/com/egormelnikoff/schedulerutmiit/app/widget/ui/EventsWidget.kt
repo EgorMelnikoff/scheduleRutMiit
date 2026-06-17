@@ -3,6 +3,7 @@ package com.egormelnikoff.schedulerutmiit.app.widget.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -106,14 +107,16 @@ class EventsWidget : GlanceAppWidget() {
     ) {
         val today = LocalDate.now()
 
-        val subHeader = StringBuilder().apply {
-            if (widgetData?.namedSchedule != null) {
-                append(widgetData.namedSchedule.shortName)
+        val subHeader = remember(widgetData) {
+            buildString {
+                if (widgetData?.namedSchedule != null) {
+                    append(widgetData.namedSchedule.shortName)
+                }
+                if (widgetData?.settledSchedule != null) {
+                    append(" (${widgetData.settledSchedule.timetableType.typeName})")
+                }
             }
-            if (widgetData?.settledSchedule != null) {
-                append(" (${widgetData.settledSchedule.timetableType.typeName})")
-            }
-        }.toString()
+        }
 
         Column(
             modifier = GlanceModifier
@@ -123,20 +126,20 @@ class EventsWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (widgetData?.settledSchedule != null && widgetData.reviewUiDto != null) {
-                val header = when (widgetData.reviewUiDto.date) {
+            if (widgetData?.settledSchedule != null && widgetData.reviewState != null) {
+                val header = when (widgetData.reviewState.date) {
                     today -> {
                         "${glanceStringResource(R.string.today)}, " +
-                                "${widgetData.reviewUiDto.date.format(dayMonthNameFormatter)}"
+                                "${widgetData.reviewState.date.format(dayMonthNameFormatter)}"
                     }
 
                     today.plusDays(1) -> {
                         "${glanceStringResource(R.string.tomorrow)}, " +
-                                "${widgetData.reviewUiDto.date.format(dayMonthNameFormatter)}"
+                                "${widgetData.reviewState.date.format(dayMonthNameFormatter)}"
                     }
 
                     else -> {
-                        widgetData.reviewUiDto.date.format(dayMonthNameFormatter)
+                        widgetData.reviewState.date.format(dayMonthNameFormatter)
                     }
                 }
 
@@ -161,11 +164,11 @@ class EventsWidget : GlanceAppWidget() {
                                 maxLines = 1
                             )
 
-                            if (widgetData.reviewUiDto.currentWeek != -1) {
+                            if (widgetData.reviewState.currentWeek != -1) {
                                 Spacer(modifier = GlanceModifier.width(4.dp))
                                 Image(
                                     modifier = GlanceModifier.size(16.dp),
-                                    provider = when (widgetData.reviewUiDto.currentWeek) {
+                                    provider = when (widgetData.reviewState.currentWeek) {
                                         1 -> ImageProvider(R.drawable.one)
                                         2 -> ImageProvider(R.drawable.two)
                                         else -> ImageProvider(R.drawable.resource_null)
@@ -203,7 +206,7 @@ class EventsWidget : GlanceAppWidget() {
                         )
                     )
                 }
-                val displayedEvents = widgetData.reviewUiDto.events.toList()
+                val displayedEvents = widgetData.reviewState.events.toList()
 
                 if (displayedEvents.isNotEmpty()) {
                     Spacer(modifier = GlanceModifier.height(12.dp))
@@ -213,7 +216,7 @@ class EventsWidget : GlanceAppWidget() {
                                 Event(
                                     events = events.second,
                                     eventsExtraData = widgetData.eventsExtraData,
-                                    date = widgetData.reviewUiDto.date,
+                                    date = widgetData.reviewState.date,
                                     eventExtraPolicy = widgetData.eventExtraPolicy
                                 )
                                 if (index != displayedEvents.lastIndex) {

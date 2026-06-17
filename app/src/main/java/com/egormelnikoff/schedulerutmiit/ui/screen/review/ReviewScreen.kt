@@ -68,15 +68,14 @@ import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ModalDialogNamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.CurrentState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewScreen(
-    currentState: CurrentState,
-    scheduleState: ScheduleState,
+    namedSchedules: List<NamedSchedule>,
+    namedScheduleState: NamedScheduleState,
     reviewUiState: ReviewUiState,
     currentDateTime: LocalDateTime,
     scheduleViewModel: ScheduleViewModel,
@@ -89,17 +88,8 @@ fun ReviewScreen(
         60.dp.toPx()
     }
 
-    val currentDate by remember(currentDateTime) {
-        mutableStateOf(
-            currentDateTime.toLocalDate()
-        )
-    }
-
-    val dayPeriod by remember(currentDateTime) {
-        mutableStateOf(
-            currentDateTime.dayPeriod()
-        )
-    }
+    val currentDate = remember(currentDateTime) { currentDateTime.toLocalDate() }
+    val dayPeriod = remember(currentDateTime) { currentDateTime.dayPeriod() }
 
     var namedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
     var deleteNamedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
@@ -165,8 +155,8 @@ fun ReviewScreen(
                     DayPeriod.EVENING -> stringResource(R.string.good_evening)
                     DayPeriod.NIGHT -> stringResource(R.string.good_night)
                 } + "!",
-                subtitleText = scheduleState.reviewUiDto?.let { reviewData ->
-                    StringBuilder().apply {
+                subtitleText = namedScheduleState.reviewState?.let { reviewData ->
+                    buildString {
                         when (reviewData.date) {
                             currentDate -> append(stringResource(R.string.today))
                             currentDate.plusDays(1) -> append(stringResource(R.string.tomorrow))
@@ -187,7 +177,7 @@ fun ReviewScreen(
                                 )
                             )
                         }
-                    }.toString()
+                    }
                 },
                 scrollBehavior = if (usedPhoto) scrollBehavior else null,
                 contentColor = contentColor
@@ -329,7 +319,7 @@ fun ReviewScreen(
                     }
                 }
             }
-            if (currentState.namedSchedules.isNotEmpty()) {
+            if (namedSchedules.isNotEmpty()) {
                 item {
                     Box(
                         modifier = Modifier.padding(horizontal = 16.dp)
@@ -340,7 +330,7 @@ fun ReviewScreen(
                             onChangeVisibility = reviewUiState.onChangeVisibilitySavedSchedules
                         ) {
                             ColumnGroup(
-                                items = currentState.namedSchedules.map { namedSchedule ->
+                                items = namedSchedules.map { namedSchedule ->
                                     {
                                         ClickableItem(
                                             title = namedSchedule.shortName,
@@ -402,7 +392,7 @@ fun ReviewScreen(
                         onChangeVisibility = reviewUiState.onChangeVisibilityServices
                     ) {
                         ColumnGroup(
-                            items = listOf (
+                            items = listOf(
                                 {
                                     ClickableItem(
                                         title = stringResource(R.string.news),
@@ -448,11 +438,12 @@ fun ReviewScreen(
             isSavedNamedSchedule = true,
             isDefaultNamedSchedule = it.isDefault,
             isDarkTheme = true,
-            onOpenNamedSchedule = {
+            onOpenNamedSchedule = { namedScheduleId, setDefault, navigateToStart ->
                 scheduleViewModel.setNamedSchedule(
-                    namedScheduleId = it.id
+                    namedScheduleId = namedScheduleId,
+                    setDefault = setDefault
                 )
-                appBackStack.navigateToStartRage()
+                if (navigateToStart) appBackStack.navigateToStartRage()
             }
         ) {
             namedScheduleDialog = null

@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getPeriodicEvents
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ReviewUiDto
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ReviewState
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -16,7 +16,7 @@ import java.time.LocalDate
 data class WidgetData(
     val namedSchedule: NamedSchedule? = null,
     val settledSchedule: Schedule? = null,
-    val reviewUiDto: ReviewUiDto? = null,
+    val reviewState: ReviewState? = null,
     val eventsExtraData: Map<Long, EventExtraData> = mapOf(),
     val eventExtraPolicy: EventExtraPolicy = EventExtraPolicy.DEFAULT
 ) {
@@ -34,7 +34,7 @@ data class WidgetData(
 
                 if (scheduleWithEvents.schedule.recurrence != null) {
                     periodicEvents = splitEvents.second.getPeriodicEvents(
-                        requireNotNull(scheduleWithEvents.schedule.recurrence).interval,
+                       scheduleWithEvents.schedule.recurrence!!.interval,
                     )
                 } else {
                     nonPeriodicEvents = splitEvents.second.groupBy {
@@ -45,7 +45,7 @@ data class WidgetData(
                     namedSchedule = namedSchedule,
                     settledSchedule = scheduleWithEvents.schedule,
                     eventsExtraData = scheduleWithEvents.eventsExtraData.associateBy { it.eventId },
-                    reviewUiDto = ReviewUiDto.Companion(
+                    reviewState = ReviewState.Companion(
                         schedule = scheduleWithEvents.schedule,
                         periodicEvents = periodicEvents,
                         nonPeriodicEvents = nonPeriodicEvents

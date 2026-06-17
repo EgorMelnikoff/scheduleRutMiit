@@ -28,7 +28,7 @@ class WidgetDataUpdaterImpl @Inject constructor(
             if (glanceIds.isNotEmpty()) {
                 val widgetData = WidgetData(
                     namedSchedule = namedSchedule,
-                    scheduleWithEvents = namedScheduleRepos.getById(namedSchedule.id).scheduleWithEvents.findDefaultSchedule(),
+                    scheduleWithEvents = namedScheduleRepos.getById(namedSchedule.id).schedulesWithEvents.findDefaultSchedule(),
                     eventExtraPolicy = preferencesDataSource.eventExtraPolicyFlow.first()
                 )
                 widgetData?.let {
