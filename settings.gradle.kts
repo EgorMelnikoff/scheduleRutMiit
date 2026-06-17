@@ -11,6 +11,8 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -31,3 +33,4 @@ include(":feature-search")
 include(":feature-curriculum")
 include(":feature-latest-release")
 include(":feature-export")
+include(":feature-tasks")

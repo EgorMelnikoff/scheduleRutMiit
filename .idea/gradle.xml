@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/feature-news" />
             <option value="$PROJECT_DIR$/feature-schedule" />
             <option value="$PROJECT_DIR$/feature-search" />
+            <option value="$PROJECT_DIR$/feature-tasks" />
           </set>
         </option>
       </GradleProjectSettings>

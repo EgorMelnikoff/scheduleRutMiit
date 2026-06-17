@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":feature-latest-release"))
     implementation(project(":feature-news"))
     implementation(project(":feature-export"))
+    implementation(project(":feature-tasks"))
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
