@@ -3,71 +3,62 @@ package com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import kotlin.math.abs
 
 data class CalendarData(
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val defaultDate: LocalDate,
+    val initialDate: LocalDate,
 
     val daysCount: Int,
     val weeksCount: Int,
 
-    val weeksPagerDefaultIndex: Int,
-    val daysPagerDefaultIndex: Int,
+    val weeksPagerInitialIndex: Int,
+    val daysPagerInitialIndex: Int,
 ) {
     companion object {
         operator fun invoke(
-            startDate: LocalDate,
-            endDate: LocalDate
+            startDate: LocalDate? = null,
+            endDate: LocalDate? = null
         ): CalendarData {
             val today = LocalDate.now()
 
+            val newStartDate = startDate ?: today.minusYears(5)
+            val newEndDate = endDate ?: today.plusYears(5)
+
             val weeksCount = ChronoUnit.WEEKS.between(
-                startDate.getFirstDayOfWeek(),
-                endDate.getFirstDayOfWeek()
+                newStartDate.getFirstDayOfWeek(),
+                newEndDate.getFirstDayOfWeek()
             ).plus(1).toInt()
 
             val daysCount = ChronoUnit.DAYS.between(
-                startDate,
-                endDate
+                newStartDate,
+                newEndDate
             ).plus(1).toInt()
 
-            val defaultDate: LocalDate
-            val weeksStartIndex: Int
-            val daysStartIndex: Int
-
-            if (today in startDate..endDate) {
-                weeksStartIndex = abs(
-                    ChronoUnit.WEEKS.between(
-                        startDate.getFirstDayOfWeek(),
-                        today.getFirstDayOfWeek()
-                    ).toInt()
-                )
-                daysStartIndex = abs(
-                    ChronoUnit.DAYS.between(
-                        startDate,
-                        today
-                    ).toInt()
-                )
-                defaultDate = today
-            } else if (today < startDate) {
-                weeksStartIndex = 0
-                daysStartIndex = 0
-                defaultDate = startDate
-            } else {
-                weeksStartIndex = weeksCount
-                daysStartIndex = weeksCount * 7
-                defaultDate = endDate
+            val defaultDate = when {
+                today < newStartDate -> newStartDate
+                today > newEndDate -> newEndDate
+                else -> today
             }
+
+            val weeksPagerDefaultIndex = ChronoUnit.WEEKS.between(
+                newStartDate.getFirstDayOfWeek(),
+                defaultDate.getFirstDayOfWeek()
+            ).toInt()
+
+            val daysPagerDefaultIndex = ChronoUnit.DAYS.between(
+                newStartDate,
+                defaultDate
+            ).toInt()
+
             return CalendarData(
-                startDate = startDate,
-                endDate = endDate,
-                defaultDate = defaultDate,
+                startDate = newStartDate,
+                endDate = newEndDate,
+                initialDate = defaultDate,
                 weeksCount = weeksCount,
-                weeksPagerDefaultIndex = weeksStartIndex,
+                weeksPagerInitialIndex = weeksPagerDefaultIndex,
                 daysCount = daysCount,
-                daysPagerDefaultIndex = daysStartIndex
+                daysPagerInitialIndex = daysPagerDefaultIndex
             )
         }
     }

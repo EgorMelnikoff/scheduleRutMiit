@@ -1,11 +1,14 @@
-package com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.top_bar
+package com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,10 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.vectorResource
@@ -29,22 +32,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
 
 @Composable
-fun CalendarTopBar(
-    calendarData: CalendarData,
+fun CalendarBar(
     calendarState: CalendarState,
     showCalendarDialog: Boolean,
     showMonth: Boolean = false,
+    showYear: Boolean = true,
 
     onShowCalendarDialog: (Boolean) -> Unit,
-    monthBadge: (@Composable (LocalDate) -> Unit)? = null,
-    calendarItem: @Composable (Int, LocalDate) -> Unit
+    monthBadge: (@Composable (LocalDate) -> Unit) = { },
+    calendarItem: @Composable RowScope.(Int, LocalDate) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -53,13 +54,11 @@ fun CalendarTopBar(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         if (showMonth) {
-            val scope = rememberCoroutineScope()
-
             val firstDayOfCurrentWeek = remember(
-                calendarState.pagerWeeksState.currentPage
+                calendarState.currentWeekPage
             ) {
-                calendarData.startDate
-                    .plusWeeks(calendarState.pagerWeeksState.currentPage.toLong())
+                calendarState.calendarData.startDate
+                    .plusWeeks(calendarState.currentWeekPage.toLong())
                     .getFirstDayOfWeek()
             }
 
@@ -70,12 +69,12 @@ fun CalendarTopBar(
 
             val enabledLeftButton by remember {
                 derivedStateOf {
-                    calendarState.pagerWeeksState.currentPage != 0
+                    calendarState.currentWeekPage != 0
                 }
             }
             val enabledRightButton by remember {
                 derivedStateOf {
-                    calendarState.pagerWeeksState.currentPage != calendarData.weeksCount - 1
+                    calendarState.currentWeekPage != calendarState.calendarData.weeksCount - 1
                 }
             }
 
@@ -92,24 +91,17 @@ fun CalendarTopBar(
                         .combinedClickable(
                             enabled = enabledLeftButton,
                             onClick = {
-                                scope.launch {
-                                    calendarState.pagerWeeksState.animateScrollToPage(
-                                        calendarState.pagerWeeksState.currentPage - 1
-                                    )
-                                }
+                                calendarState.scrollWeekBackward()
                             },
                             onLongClick = {
-                                scope.launch {
-                                    calendarState.pagerWeeksState.animateScrollToPage(0)
-                                    calendarState.pagerDaysState.scrollToPage(0)
-                                }
+                                calendarState.selectDate(calendarState.calendarData.startDate)
                             }
                         )
                         .padding(8.dp),
                     imageVector = ImageVector.vectorResource(R.drawable.left),
                     tint = if (enabledLeftButton)
                         MaterialTheme.colorScheme.onBackground
-                    else MaterialTheme.colorScheme.secondaryContainer,
+                    else MaterialTheme.colorScheme.outline,
                     contentDescription = null
                 )
 
@@ -119,12 +111,7 @@ fun CalendarTopBar(
                         .clip(CircleShape)
                         .combinedClickable(
                             onClick = {
-                                scope.launch {
-                                    calendarState.pagerWeeksState.animateScrollToPage(
-                                        calendarData.weeksPagerDefaultIndex
-                                    )
-                                }
-                                calendarState.onSelectDate(calendarData.defaultDate)
+                                calendarState.selectDate(calendarState.calendarData.initialDate)
                             },
                             onLongClick = {
                                 onShowCalendarDialog(!showCalendarDialog)
@@ -136,15 +123,22 @@ fun CalendarTopBar(
                     horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)
                 ) {
                     Text(
-                        text = displayDate.month.getDisplayName(
-                            TextStyle.FULL_STANDALONE,
-                            LocalLocale.current.platformLocale
-                        ).replaceFirstChar { it.uppercase() },
+                        text = buildString {
+                            append(
+                                displayDate.month.getDisplayName(
+                                    TextStyle.FULL_STANDALONE,
+                                    LocalLocale.current.platformLocale
+                                ).replaceFirstChar { it.uppercase() }
+                            )
+                            if (displayDate.year != calendarState.calendarData.initialDate.year && showYear) {
+                                append(" ${displayDate.year}")
+                            }
+                        },
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center
                     )
-                    monthBadge?.invoke(firstDayOfCurrentWeek)
+                    monthBadge.invoke(firstDayOfCurrentWeek)
                 }
                 Icon(
                     modifier = Modifier
@@ -152,35 +146,24 @@ fun CalendarTopBar(
                         .combinedClickable(
                             enabled = enabledRightButton,
                             onClick = {
-                                scope.launch {
-                                    calendarState.pagerWeeksState.animateScrollToPage(
-                                        calendarState.pagerWeeksState.currentPage + 1
-                                    )
-                                }
+                                calendarState.scrollWeekForward()
                             },
                             onLongClick = {
-                                scope.launch {
-                                    calendarState.pagerWeeksState.animateScrollToPage(
-                                        calendarData.weeksCount - 1
-                                    )
-                                    calendarState.pagerDaysState.scrollToPage(
-                                        calendarData.daysCount - 1
-                                    )
-                                }
+                                calendarState.selectDate(calendarState.calendarData.endDate)
                             }
                         )
                         .padding(8.dp),
                     imageVector = ImageVector.vectorResource(R.drawable.right),
                     tint = if (enabledRightButton)
                         MaterialTheme.colorScheme.onBackground
-                    else MaterialTheme.colorScheme.secondaryContainer,
+                    else MaterialTheme.colorScheme.outline,
                     contentDescription = null
                 )
             }
         }
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
-            state = calendarState.pagerWeeksState,
+            state = calendarState.getPagerWeeks(),
             verticalAlignment = Alignment.Top,
             pageSpacing = 16.dp,
             contentPadding = PaddingValues(
@@ -192,7 +175,7 @@ fun CalendarTopBar(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val firstDayOfWeek = calendarData.startDate
+                val firstDayOfWeek = calendarState.calendarData.startDate
                     .plusWeeks(index.toLong())
                     .getFirstDayOfWeek()
 
@@ -201,5 +184,69 @@ fun CalendarTopBar(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun CalendarBarItem(
+    currentDate: LocalDate,
+
+    isSelected: Boolean,
+    isToday: Boolean,
+    isDisabled: Boolean,
+    selectDate: (LocalDate) -> Unit,
+    badge: @Composable () -> Unit = {}
+) {
+    val backgroundColor = when {
+        isSelected -> MaterialTheme.colorScheme.primary
+        isToday -> MaterialTheme.colorScheme.secondaryContainer
+        else -> Color.Unspecified
+    }
+    val textColor = when {
+        isDisabled -> MaterialTheme.colorScheme.outline
+        isSelected -> MaterialTheme.colorScheme.onPrimary
+        (currentDate.dayOfWeek.value == 7) -> MaterialTheme.colorScheme.error
+        else -> MaterialTheme.colorScheme.onSecondaryContainer
+    }
+
+    Column(
+        modifier = Modifier.defaultMinSize(
+            minWidth = 40.dp
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(
+                    color = backgroundColor
+                )
+                .let {
+                    if (!isDisabled) {
+                        it.clickable {
+                            selectDate(currentDate)
+                        }
+                    } else it
+                }
+                .padding(vertical = 10.dp, horizontal = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+        ) {
+            Text(
+                text = currentDate.dayOfWeek.getDisplayName(
+                    TextStyle.SHORT_STANDALONE,
+                    LocalLocale.current.platformLocale
+                ).lowercase(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = textColor
+            )
+            Text(
+                text = currentDate.dayOfMonth.toString(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = textColor
+            )
+        }
+        badge.invoke()
     }
 }

@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -63,6 +64,7 @@ fun ClickableItem(
 
     showBadge: Boolean = false,
     title: String? = null,
+    titleDecoration: TextDecoration? = null,
     titleTypography: TextStyle = MaterialTheme.typography.titleMedium,
     titleMaxLines: Int = 1,
     titleColor: Color = MaterialTheme.colorScheme.onBackground,
@@ -148,6 +150,7 @@ fun ClickableItem(
                     ) {
                         Text(
                             text = title,
+                            textDecoration = titleDecoration,
                             style = titleTypography,
                             color = titleColor,
                             overflow = TextOverflow.Ellipsis,

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -16,7 +17,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import java.time.LocalDate
 import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
 fun DaySelector(
@@ -44,7 +44,7 @@ fun DaySelector(
                     CustomFilterChip(
                         title = currentDate.dayOfWeek.getDisplayName(
                             TextStyle.SHORT,
-                            Locale.getDefault()
+                            LocalLocale.current.platformLocale
                         ) ?: stringResource(R.string.not_specified),
                         imageVector = null,
                         selected = currentDate.dayOfWeek == dateEvent?.dayOfWeek,

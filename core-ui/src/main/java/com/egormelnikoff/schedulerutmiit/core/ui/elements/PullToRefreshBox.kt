@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 fun CustomPullToRefreshBox(
     modifier: Modifier,
     isRefreshing: Boolean,
+    enabled: Boolean = true,
     onRefresh: () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -20,16 +21,22 @@ fun CustomPullToRefreshBox(
     PullToRefreshBox(
         modifier = modifier,
         isRefreshing = isRefreshing,
-        onRefresh = onRefresh,
+        onRefresh = {
+            if (enabled) {
+                onRefresh()
+            }
+        },
         state = state,
         indicator = {
-            Indicator(
-                modifier = Modifier.align(Alignment.TopCenter),
-                isRefreshing = isRefreshing,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                color = MaterialTheme.colorScheme.primary,
-                state = state
-            )
+            if (enabled) {
+                Indicator(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    isRefreshing = isRefreshing,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    color = MaterialTheme.colorScheme.primary,
+                    state = state
+                )
+            }
         },
     ) {
         content.invoke()
