@@ -5,6 +5,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Task
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
@@ -31,6 +32,12 @@ sealed class Route : NavKey {
             val isSavedSchedule: Boolean,
             val event: Event,
             val eventExtraData: EventExtraData?
+        ) : Dialog()
+
+        data object AddTaskDialog : Dialog()
+
+        data class EditTaskDialog (
+            val task: Task
         ) : Dialog()
 
         data class AddEditEventDialog(
