@@ -38,12 +38,17 @@ class CalendarState(
     private val scrollMutex = Mutex()
 
     fun selectDate(date: LocalDate, animate: Boolean = true) {
-        selectedDate = date
+        val targetWeekPage = getTargetWeekIndex(calendarData.startDate, date)
+
+        if (selectedDate != date) {
+            selectedDate = date
+        } else if (targetWeekPage == pagerWeeksState.currentPage) {
+            return
+        }
 
         scope.launch {
             synchronizedScroll {
                 val targetDayPage = ChronoUnit.DAYS.between(calendarData.startDate, date).toInt()
-                val targetWeekPage = getTargetWeekIndex(calendarData.startDate, date)
 
                 if (animate) {
                     coroutineScope {

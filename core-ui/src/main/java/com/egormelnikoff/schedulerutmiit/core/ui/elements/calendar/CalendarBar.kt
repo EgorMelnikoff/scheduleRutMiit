@@ -55,24 +55,27 @@ fun CalendarBar(
     ) {
         if (showMonth) {
             val firstDayOfCurrentWeek = remember(
-                calendarState.currentWeekPage
+                calendarState.currentWeekPage,
+                calendarState.calendarData
             ) {
                 calendarState.calendarData.startDate
                     .plusWeeks(calendarState.currentWeekPage.toLong())
                     .getFirstDayOfWeek()
             }
 
-            val displayDate =
+            val displayDate = remember(firstDayOfCurrentWeek) {
                 if (firstDayOfCurrentWeek == calendarState.selectedDate.getFirstDayOfWeek()) {
                     calendarState.selectedDate
                 } else firstDayOfCurrentWeek.plusDays(3L)
+            }
 
-            val enabledLeftButton by remember {
+
+            val enabledLeftButton by remember(calendarState.calendarData) {
                 derivedStateOf {
                     calendarState.currentWeekPage != 0
                 }
             }
-            val enabledRightButton by remember {
+            val enabledRightButton by remember(calendarState.calendarData) {
                 derivedStateOf {
                     calendarState.currentWeekPage != calendarState.calendarData.weeksCount - 1
                 }
