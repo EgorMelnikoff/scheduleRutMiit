@@ -340,6 +340,7 @@ fun ScreenSchedule(
             scheduleViewModel = scheduleViewModel,
             appBackStack = appUiState.appBackStack,
 
+            today = hourlyDateTime.toLocalDate(),
             isSavedNamedSchedule = screenState.isSaved,
             isDefaultNamedSchedule = it.isDefault,
             haveHiddenEvents = !namedScheduleState.scheduleState?.hiddenEvents.isNullOrEmpty(),

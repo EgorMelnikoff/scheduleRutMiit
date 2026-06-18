@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -58,6 +60,7 @@ fun ModalDialogNamedSchedule(
 
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
+    today: LocalDate? = null,
     isDarkTheme: Boolean? = null,
     isSavedNamedSchedule: Boolean,
     isDefaultNamedSchedule: Boolean,
@@ -145,9 +148,13 @@ fun ModalDialogNamedSchedule(
                     CustomFilterChip(
                         imageVector = ImageVector.vectorResource(R.drawable.download),
                         colors = FilterChipDefaults.filterChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            containerColor = MaterialTheme.colorScheme.background,
                             labelColor = MaterialTheme.colorScheme.onBackground,
                             iconColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ),
+                        border = BorderStroke(
+                            color = MaterialTheme.colorScheme.outline,
+                            width = 0.5.dp
                         ),
                         title = stringResource(R.string.download),
                         onClick = {
@@ -160,9 +167,13 @@ fun ModalDialogNamedSchedule(
                     CustomFilterChip(
                         imageVector = ImageVector.vectorResource(R.drawable.add),
                         colors = FilterChipDefaults.filterChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            containerColor = MaterialTheme.colorScheme.background,
                             labelColor = MaterialTheme.colorScheme.onBackground,
                             iconColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ),
+                        border = BorderStroke(
+                            color = MaterialTheme.colorScheme.outline,
+                            width = 0.5.dp
                         ),
                         title = stringResource(R.string.add_class),
                         onClick = {
@@ -183,9 +194,13 @@ fun ModalDialogNamedSchedule(
                     CustomFilterChip(
                         imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
                         colors = FilterChipDefaults.filterChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            containerColor = MaterialTheme.colorScheme.background,
                             labelColor = MaterialTheme.colorScheme.onBackground,
                             iconColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ),
+                        border = BorderStroke(
+                            color = MaterialTheme.colorScheme.outline,
+                            width = 0.5.dp
                         ),
                         title = stringResource(R.string.hidden_events),
                         onClick = {
@@ -197,6 +212,30 @@ fun ModalDialogNamedSchedule(
                                     timetableType = schedule.timetableType
                                 )
                             )
+                        }
+                    )
+                }
+
+                if (isSavedNamedSchedule && schedule.endDate < today) {
+                    CustomFilterChip(
+                        imageVector = ImageVector.vectorResource(R.drawable.delete),
+                        colors = FilterChipDefaults.filterChipColors(
+                            containerColor = MaterialTheme.colorScheme.background,
+                            labelColor = MaterialTheme.colorScheme.error,
+                            iconColor = MaterialTheme.colorScheme.error
+                        ),
+                        border = BorderStroke(
+                            color = MaterialTheme.colorScheme.outline,
+                            width = 0.5.dp
+                        ),
+                        title = stringResource(R.string.delete_schedule),
+                        onClick = {
+                            scheduleViewModel.deleteSchedule(
+                                schedule.namedScheduleId,
+                                schedule.id
+                            )
+
+                            onDismiss(null)
                         }
                     )
                 }

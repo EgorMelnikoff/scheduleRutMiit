@@ -27,6 +27,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.UpdateEventTag
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.event.UiEvent
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScreenState
+import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.DeleteScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ReviewState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ScheduleState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +59,7 @@ class ScheduleViewModel @Inject constructor(
     private val openNamedScheduleUseCase: OpenNamedScheduleUseCase,
     private val saveNamedScheduleUseCase: SaveNamedScheduleUseCase,
     private val deleteNamedScheduleUseCase: DeleteNamedScheduleUseCase,
+    private val deleteScheduleUseCase: DeleteScheduleUseCase,
     private val addCustomNamedScheduleUseCase: AddCustomNamedScheduleUseCase,
     private val renameNamedScheduleUseCase: RenameNamedScheduleUseCase,
 
@@ -258,6 +260,24 @@ class ScheduleViewModel @Inject constructor(
                 updateScheduleState(
                     namedScheduleWithSchedules = result,
                     updateReview = isDefault
+                )
+            }
+        }
+    }
+
+    fun deleteSchedule(
+        namedScheduleId: Long,
+        scheduleId: Long,
+    ) {
+        viewModelScope.launch {
+            deleteScheduleUseCase(
+                namedScheduleId = namedScheduleId,
+                currentNamedScheduleId = currentNamedSchedule().namedSchedule.id,
+                scheduleId = scheduleId
+            ).let { result ->
+                updateScheduleState(
+                    namedScheduleWithSchedules = result,
+                    updateReview = result?.namedSchedule?.isDefault == true
                 )
             }
         }
