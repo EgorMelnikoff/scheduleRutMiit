@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.core.network.fetcher
 
+import com.egormelnikoff.schedulerutmiit.core.common.logger.Logger
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.common.result.isRetryable
-import com.egormelnikoff.schedulerutmiit.core.network.logger.Logger
 import kotlinx.coroutines.delay
 import okio.IOException
 import java.net.SocketTimeoutException
@@ -24,13 +24,8 @@ class RetryExecutor @Inject constructor(
                 when (val result = block()) {
                     is Result.Success -> return result
                     is Result.Error -> {
-                        if (attempt == retries - 1) {
-                            return result
-                        }
-
-                        if (result.typedError.isRetryable()) {
-                            return result
-                        }
+                        if (attempt == retries - 1) return result
+                        if (!result.typedError.isRetryable()) return result
                     }
                 }
             } catch (e: SocketTimeoutException) {
