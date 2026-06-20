@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
@@ -15,7 +16,8 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
     suspend operator fun invoke(
         name: String,
         startDate: LocalDate,
-        endDate: LocalDate
+        endDate: LocalDate,
+        timetableType: TimetableType
     ): NamedScheduleWithSchedules {
         return saveNamedScheduleUseCase(
             currentNamedScheduleWithSchedules = NamedScheduleWithSchedules(
@@ -35,11 +37,15 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
                             isDefault = true,
                             namedScheduleId = 0,
                             timetableId = "d=${startDate};t=2",
-                            timetableType = TimetableType.NON_PERIODIC,
+                            timetableType = timetableType,
                             downloadUrl = null,
                             startDate = startDate,
                             endDate = endDate,
-                            recurrence = null
+                            recurrence = if (timetableType.isPeriodic()) {
+                                Recurrence(
+                                    interval = 2
+                                )
+                            } else null
                         ),
                         events = listOf(),
                         eventsExtraData = listOf()
