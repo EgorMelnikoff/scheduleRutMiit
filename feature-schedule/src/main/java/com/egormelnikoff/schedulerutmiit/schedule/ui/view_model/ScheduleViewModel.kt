@@ -44,7 +44,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -344,7 +343,7 @@ class ScheduleViewModel @Inject constructor(
     fun updateEventComment(
         scheduleId: Long,
         event: Event,
-        dateTime: LocalDateTime,
+        dateTime: LocalDate,
         comment: String
     ) {
         val newUpdateJob = viewModelScope.launch {
@@ -368,7 +367,7 @@ class ScheduleViewModel @Inject constructor(
     fun updateEventTag(
         scheduleId: Long,
         event: Event,
-        dateTime: LocalDateTime,
+        dateTime: LocalDate,
         tag: Int
     ) {
         viewModelScope.launch {

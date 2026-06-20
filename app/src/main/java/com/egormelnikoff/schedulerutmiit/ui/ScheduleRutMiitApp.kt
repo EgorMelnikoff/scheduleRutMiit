@@ -445,7 +445,6 @@ fun RootHost(
                 entry<Route.Dialog.EventDialog> { dialog ->
                     EventDialog(
                         eventDialog = dialog,
-                        currentDateTime = hourlyDateTime,
                         fetchNamedSchedule = { name, apiId, type ->
                             appUiState.appBackStack.navigateToStartRage()
                             appUiState.appBackStack.onBack()
@@ -453,19 +452,19 @@ fun RootHost(
                                 name, apiId, type
                             )
                         },
-                        updateEventComment = { scheduleId, event, dateTime, comment ->
+                        updateEventComment = { scheduleId, event, date, comment ->
                             scheduleViewModel.updateEventComment(
                                 scheduleId,
                                 event,
-                                dateTime,
+                                date,
                                 comment
                             )
                         },
-                        updateEventTag = { scheduleId, event, dateTime, tag ->
+                        updateEventTag = { scheduleId, event, date, tag ->
                             scheduleViewModel.updateEventTag(
                                 scheduleId,
                                 event,
-                                dateTime,
+                                date,
                                 tag
                             )
                         },

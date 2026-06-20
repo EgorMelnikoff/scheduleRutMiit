@@ -31,6 +31,7 @@ sealed class Route : NavKey {
             val schedule: Schedule,
             val isSavedSchedule: Boolean,
             val event: Event,
+            val date: LocalDate,
             val eventExtraData: EventExtraData?
         ) : Dialog()
 

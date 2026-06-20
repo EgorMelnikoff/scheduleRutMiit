@@ -5,11 +5,9 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 fun List<Event>.getGroupedEvents(): Map<String, List<Event>> {
     if (this.isEmpty()) return mapOf()
@@ -42,10 +40,10 @@ fun List<Event>.getPeriodicEvents(
 fun Map<Long, EventExtraData>.findEventExtra(
     eventExtraPolicy: EventExtraPolicy,
     eventId: Long,
-    dateTime: LocalDateTime
+    date: LocalDate
 ): EventExtraData? {
     return if (eventExtraPolicy == EventExtraPolicy.BY_DATES) {
-        this.values.find { it.eventId == eventId && it.dateTime == dateTime }
+        this.values.find { it.eventId == eventId && it.dateTime?.toLocalDate() == date }
     } else {
         this[eventId]
     }
@@ -60,7 +58,7 @@ fun Map.Entry<String, List<Event>>.getEnrichedEvents(
         event to eventsExtraData.findEventExtra(
             eventExtraPolicy = eventExtraPolicy,
             eventId = event.id,
-            dateTime = event.startDatetime.replaceDate(date)
+            date = date
         )
     }
 }

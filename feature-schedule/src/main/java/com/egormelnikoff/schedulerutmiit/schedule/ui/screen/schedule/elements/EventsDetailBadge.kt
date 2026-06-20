@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findEventExtra
 import java.time.LocalDate
@@ -36,7 +35,7 @@ fun EventsDetailBadge(
                 val extra = eventsExtraData.findEventExtra(
                     eventExtraPolicy = eventExtraPolicy,
                     eventId = event.id,
-                    dateTime = event.startDatetime.replaceDate(currentDate)
+                    date = currentDate
                 )
                 extra?.tag.getColorByIndex(defaultColor = onBackground)
             }

@@ -127,6 +127,8 @@ fun ScheduleList(
                                             EventAction.UpdateHidden(eventId, true)
                                         )
                                     },
+
+                                    date = item.date,
                                     eventsWithExtra = item.enrichedEvents,
                                     namedScheduleId = namedSchedule.id,
                                     schedule = scheduleState.schedule,

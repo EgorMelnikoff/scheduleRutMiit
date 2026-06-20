@@ -46,7 +46,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.extension.replaceDate
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.di.ProviderEntryPoint
@@ -291,7 +290,7 @@ class EventsWidget : GlanceAppWidget() {
                         eventExtraData = eventsExtraData.findEventExtra(
                             eventExtraPolicy = eventExtraPolicy,
                             eventId = event.id,
-                            dateTime = event.startDatetime.replaceDate(date)
+                            date = date
                         )
                     )
                     if (index != events.lastIndex) {

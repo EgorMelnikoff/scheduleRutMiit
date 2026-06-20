@@ -18,6 +18,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTi
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.EventView
+import java.time.LocalDate
 
 @Composable
 fun Event(
@@ -26,6 +27,7 @@ fun Event(
     schedule: Schedule,
     isSavedSchedule: Boolean,
     eventView: EventView,
+    date: LocalDate,
     navigateToEvent: (Route.Dialog.EventDialog) -> Unit,
     navigateToEditEvent: (Route.Dialog.AddEditEventDialog) -> Unit,
     onDeleteEvent: (Long, Long) -> Unit,
@@ -76,6 +78,7 @@ fun Event(
                             event = event.first,
                             eventExtraData = event.second,
                             schedule = schedule,
+                            date = date,
                             isSavedSchedule = isSavedSchedule
                         ),
                         editEventDialog = Route.Dialog.AddEditEventDialog(

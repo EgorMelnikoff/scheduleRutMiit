@@ -77,12 +77,11 @@ fun ScheduleCalendar(
                     startDate = scheduleState.schedule.startDate,
                     recurrence = scheduleState.schedule.recurrence
                 )
-                val color = MaterialTheme.colorScheme.onSecondaryContainer
                 Icon(
                     modifier = Modifier.size(3.dp),
                     imageVector = ImageVector.vectorResource(R.drawable.circle),
                     contentDescription = null,
-                    tint = color
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
                 )
                 Text(
                     text = stringResource(
@@ -213,6 +212,7 @@ fun ScheduleCalendar(
 
                         eventsWithExtra = events.second,
                         schedule = scheduleState.schedule,
+                        date = currentDate,
                         namedScheduleId = namedScheduleWithSchedules.namedSchedule.id,
                         isSavedSchedule = isSavedSchedule,
                         eventView = appSettings.eventView

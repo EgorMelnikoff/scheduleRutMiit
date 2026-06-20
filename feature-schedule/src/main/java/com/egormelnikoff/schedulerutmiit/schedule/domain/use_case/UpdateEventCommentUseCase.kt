@@ -2,20 +2,20 @@ package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
-import java.time.LocalDateTime
+import java.time.LocalDate
 import javax.inject.Inject
 
 class UpdateEventCommentUseCase @Inject constructor(
     private val core: UpdateEventExtraCore
 ) {
     suspend operator fun invoke(
-        dateTime: LocalDateTime,
+        dateTime: LocalDate,
         scheduleId: Long,
         event: Event,
         comment: String
     ): Map<Long, EventExtraData> {
         return core(
-            dateTime = dateTime,
+            dateTime = dateTime.atTime(event.startDatetime.toLocalTime()),
             scheduleId = scheduleId,
             event = event,
 

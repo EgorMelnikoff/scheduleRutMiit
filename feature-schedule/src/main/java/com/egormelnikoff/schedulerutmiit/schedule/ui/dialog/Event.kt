@@ -70,17 +70,16 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.customToString
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements.ModalDialogEvent
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDialog(
     eventDialog: Route.Dialog.EventDialog,
-    currentDateTime: LocalDateTime,
     fetchNamedSchedule: (String, Int, NamedScheduleType) -> Unit,
-    updateEventComment: (Long, Event, LocalDateTime, String) -> Unit,
-    updateEventTag: (Long, Event, LocalDateTime, Int) -> Unit,
+    updateEventComment: (Long, Event, LocalDate, String) -> Unit,
+    updateEventTag: (Long, Event, LocalDate, Int) -> Unit,
     deleteEvent: (Long, Long) -> Unit,
     hideEvent: (Long, Long) -> Unit,
 
@@ -320,7 +319,7 @@ fun EventDialog(
                                                     updateEventComment(
                                                         eventDialog.schedule.id,
                                                         eventDialog.event,
-                                                        currentDateTime,
+                                                        eventDialog.date,
                                                         comment
                                                     )
                                                 }
@@ -338,7 +337,7 @@ fun EventDialog(
                                     updateEventComment(
                                         eventDialog.schedule.id,
                                         eventDialog.event,
-                                        currentDateTime,
+                                        eventDialog.date,
                                         newValue
                                     )
                                 }
@@ -365,7 +364,7 @@ fun EventDialog(
                                         updateEventTag(
                                             eventDialog.schedule.id,
                                             eventDialog.event,
-                                            currentDateTime,
+                                            eventDialog.date,
                                             newTag
                                         )
                                     }
