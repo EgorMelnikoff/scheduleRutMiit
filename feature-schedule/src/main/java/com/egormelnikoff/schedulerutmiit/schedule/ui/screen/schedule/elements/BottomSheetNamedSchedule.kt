@@ -1,5 +1,6 @@
-package com.egormelnikoff.schedulerutmiit.schedule.ui.screen
+package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +46,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefaultSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import java.time.Instant
 import java.time.LocalDate
@@ -85,6 +87,7 @@ fun ModalDialogNamedSchedule(
             namedSchedule = namedSchedule,
             isSavedNamedSchedule = isSavedNamedSchedule,
             isDefaultNamedSchedule = isDefaultNamedSchedule,
+            schedule = schedulesWithEvents?.findDefaultSchedule()?.schedule,
             onDismiss = onDismiss
         )
         if (schedulesWithEvents == null) {
@@ -144,7 +147,9 @@ fun ModalDialogNamedSchedule(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                if (schedule.downloadUrl != null) {
+                AnimatedVisibility(
+                    visible = schedule.downloadUrl != null,
+                ) {
                     CustomFilterChip(
                         imageVector = ImageVector.vectorResource(R.drawable.download),
                         colors = FilterChipDefaults.filterChipColors(
@@ -163,7 +168,9 @@ fun ModalDialogNamedSchedule(
                         }
                     )
                 }
-                if (isSavedNamedSchedule && haveNotEmptySchedules) {
+                AnimatedVisibility(
+                    visible = isSavedNamedSchedule && haveNotEmptySchedules
+                ) {
                     CustomFilterChip(
                         imageVector = ImageVector.vectorResource(R.drawable.add),
                         colors = FilterChipDefaults.filterChipColors(
@@ -190,7 +197,9 @@ fun ModalDialogNamedSchedule(
                         }
                     )
                 }
-                if (haveHiddenEvents) {
+                AnimatedVisibility(
+                    visible = haveHiddenEvents
+                ) {
                     CustomFilterChip(
                         imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
                         colors = FilterChipDefaults.filterChipColors(
@@ -215,8 +224,9 @@ fun ModalDialogNamedSchedule(
                         }
                     )
                 }
-
-                if (isSavedNamedSchedule && schedule.endDate < today) {
+                AnimatedVisibility(
+                    visible = isSavedNamedSchedule && schedule.endDate < today
+                ) {
                     CustomFilterChip(
                         imageVector = ImageVector.vectorResource(R.drawable.delete),
                         colors = FilterChipDefaults.filterChipColors(
@@ -242,7 +252,7 @@ fun ModalDialogNamedSchedule(
             }
         }
 
-        schedulesWithEvents?.let {
+        if (schedulesWithEvents != null && namedSchedule.type != NamedScheduleType.MY) {
             ColumnGroup(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 items = schedulesWithEvents.map { scheduleWithEvents ->
@@ -299,6 +309,7 @@ fun ModalDialogNamedScheduleHeader(
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
     namedSchedule: NamedSchedule,
+    schedule: Schedule?,
     isSavedNamedSchedule: Boolean,
     isDefaultNamedSchedule: Boolean,
     onDismiss: (NamedSchedule?) -> Unit
@@ -323,25 +334,36 @@ fun ModalDialogNamedScheduleHeader(
                 maxLines = 1
             )
 
-            if (namedSchedule.type != NamedScheduleType.MY && isSavedNamedSchedule) {
-                val lastTimeUpdate = remember(
-                    namedSchedule.lastTimeUpdate
-                ) {
-                    LocalDateTime.ofInstant(
-                        Instant.ofEpochMilli(namedSchedule.lastTimeUpdate),
-                        ZoneId.systemDefault()
-                    ).format(dayMonthNameFormatter.withLocale(locale))
+            when {
+                isSavedNamedSchedule && namedSchedule.type != NamedScheduleType.MY -> {
+                    val lastTimeUpdate = remember(
+                        namedSchedule.lastTimeUpdate
+                    ) {
+                        LocalDateTime.ofInstant(
+                            Instant.ofEpochMilli(namedSchedule.lastTimeUpdate),
+                            ZoneId.systemDefault()
+                        ).format(dayMonthNameFormatter.withLocale(locale))
 
+                    }
+
+                    Text(
+                        text = "${stringResource(R.string.current_on)} $lastTimeUpdate",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
                 }
 
-                Text(
-                    text = "${stringResource(R.string.current_on)} $lastTimeUpdate",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-
+                isSavedNamedSchedule && schedule != null -> {
+                    Text(
+                        text = schedule.timetableType.typeName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2
+                    )
+                }
             }
         }
         if (isSavedNamedSchedule) {
