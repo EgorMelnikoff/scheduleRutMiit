@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -45,6 +46,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.core.ui.event.getMessage
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.CurriculumViewModel
 
 @Composable
@@ -147,7 +149,7 @@ fun CurriculumDialog() {
 
                     curriculumState.error != null -> {
                         Empty(
-                            subtitle = curriculumState.error
+                            subtitle = curriculumState.error.getMessage(LocalContext.current)
                         )
                     }
 

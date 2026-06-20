@@ -4,13 +4,13 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import com.egormelnikoff.schedulerutmiit.core.ui.event.UiEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.event.UiText
 import com.egormelnikoff.schedulerutmiit.export.domain.use_case.ExportDataUseCase
 import com.egormelnikoff.schedulerutmiit.export.domain.use_case.ImportDataUseCase
 import com.egormelnikoff.schedulerutmiit.latest_release.domain.use_case.CheckLatestReleaseUseCase
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.event.UiEvent
 import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -37,8 +37,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class MainViewModel @Inject constructor(
     private val checkLatestReleaseUseCase: CheckLatestReleaseUseCase,
     private val importDataUseCase: ImportDataUseCase,
-    private val exportDataUseCase: ExportDataUseCase,
-    private val resourcesManager: ResourcesManager
+    private val exportDataUseCase: ExportDataUseCase
 ) : ViewModel() {
     private val _appState = MutableStateFlow(AppState())
     val appState: StateFlow<AppState> = _appState
@@ -88,8 +87,8 @@ class MainViewModel @Inject constructor(
                 }
                 checkLatestReleaseUseCase(fetchForce).let { result ->
                     if (!result && fetchForce) _uiEventChannel.emit(
-                        UiEvent.ErrorMessage(
-                            resourcesManager.getString(R.string.no_updates),
+                        UiEvent.InfoMessage(
+                            UiText.StringResource(R.string.no_updates),
                             false
                         )
                     )
@@ -109,32 +108,42 @@ class MainViewModel @Inject constructor(
             when (val result = exportDataUseCase(uri)) {
                 is Result.Error -> {
                     _uiEventChannel.emit(
-                        UiEvent.ErrorMessage(getErrorMessage(resourcesManager, result.typedError))
+                        UiEvent.ErrorMessage(result.typedError)
                     )
                 }
 
                 is Result.Success -> {
                     _uiEventChannel.emit(
-                        UiEvent.InfoMessage(resourcesManager.getString(R.string.success) + "!")
+                        UiEvent.InfoMessage(
+                            UiText.StringResource(R.string.success)
+                        )
                     )
                 }
             }
         }
     }
 
-    fun importData(uri: Uri, onSuccess: () -> Unit) {
+    fun importData(uri: Uri?, onSuccess: () -> Unit) {
         viewModelScope.launch {
+            if (uri == null) {
+                _uiEventChannel.emit(
+                    UiEvent.ErrorMessage(TypedError.EmptyBodyError)
+                )
+                return@launch
+            }
             when (val result = importDataUseCase(uri)) {
                 is Result.Error -> {
                     _uiEventChannel.emit(
-                        UiEvent.ErrorMessage(getErrorMessage(resourcesManager, result.typedError))
+                        UiEvent.ErrorMessage(result.typedError)
                     )
                 }
 
                 is Result.Success -> {
                     onSuccess()
                     _uiEventChannel.emit(
-                        UiEvent.InfoMessage(resourcesManager.getString(R.string.success) + "!")
+                        UiEvent.InfoMessage(
+                            UiText.StringResource(R.string.success)
+                        )
                     )
                 }
             }

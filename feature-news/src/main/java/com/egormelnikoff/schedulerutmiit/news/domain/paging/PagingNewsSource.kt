@@ -2,15 +2,13 @@ package com.egormelnikoff.schedulerutmiit.news.domain.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.result.TypedErrorException
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
 
 class PagingNewsSource(
-    private val newsRemoteDataSource: NewsRemoteDataSource,
-    private val resourcesManager: ResourcesManager
+    private val newsRemoteDataSource: NewsRemoteDataSource
 ) : PagingSource<Int, NewsShortDto>() {
     override fun getRefreshKey(state: PagingState<Int, NewsShortDto>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -29,12 +27,7 @@ class PagingNewsSource(
         return when (val response = newsRemoteDataSource.getNewsList(pageSize, currentPage)) {
             is Result.Error -> {
                 LoadResult.Error(
-                    Exception(
-                        getErrorMessage(
-                            resourcesManager,
-                            response.typedError
-                        )
-                    )
+                    TypedErrorException(response.typedError)
                 )
             }
 

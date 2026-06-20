@@ -2,8 +2,6 @@ package com.egormelnikoff.schedulerutmiit.news.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.news.view_model.state.NewsState
@@ -21,7 +19,6 @@ import kotlinx.coroutines.launch
 )
 class NewsViewModel @AssistedInject constructor(
     private val newsRemoteDataSource: NewsRemoteDataSource,
-    private val resourcesManager: ResourcesManager,
     @Assisted
     private val newsId: Long
 ) : ViewModel() {
@@ -40,10 +37,7 @@ class NewsViewModel @AssistedInject constructor(
                 is Result.Error -> _newsState.update {
                     it.copy(
                         isLoading = false,
-                        error = getErrorMessage(
-                            resourcesManager = resourcesManager,
-                            typedError = news.typedError
-                        )
+                        error = news.typedError
                     )
                 }
 

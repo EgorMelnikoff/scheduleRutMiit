@@ -2,17 +2,19 @@ package com.egormelnikoff.schedulerutmiit.schedule.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.core.common.domain.ScreenState
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
+import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import com.egormelnikoff.schedulerutmiit.core.ui.event.UiEvent
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefaultSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.AddCustomNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.DeleteNamedScheduleUseCase
+import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.DeleteScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventActionUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.FetchNamedScheduleUseCase
@@ -24,12 +26,9 @@ import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.SaveNamedSched
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.SetDefaultScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.UpdateEventCommentUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.UpdateEventTagUseCase
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.event.UiEvent
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
-import com.egormelnikoff.schedulerutmiit.core.common.domain.ScreenState
-import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.DeleteScheduleUseCase
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ReviewState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ScheduleState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ReviewState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -51,8 +50,6 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
-    private val resourcesManager: ResourcesManager,
-
     observeNamedSchedulesUseCase: ObserveNamedSchedulesUseCase,
     private val refreshNamedScheduleUseCase: RefreshNamedScheduleUseCase,
     private val fetchNamedScheduleUseCase: FetchNamedScheduleUseCase,
@@ -198,10 +195,7 @@ class ScheduleViewModel @Inject constructor(
                     )
 
                     sendErrorUiEvent(
-                        message = getErrorMessage(
-                            resourcesManager = resourcesManager,
-                            typedError = newNamedSchedule.typedError
-                        )
+                        typedError = newNamedSchedule.typedError
                     )
                 }
             }
@@ -308,11 +302,12 @@ class ScheduleViewModel @Inject constructor(
     fun addCustomNamedSchedule(
         name: String,
         startDate: LocalDate,
-        endDate: LocalDate
+        endDate: LocalDate,
+        timetableType: TimetableType,
     ) {
         viewModelScope.launch {
             addCustomNamedScheduleUseCase(
-                name, startDate, endDate
+                name, startDate, endDate, timetableType
             ).let { result ->
                 updateScreenState(
                     isSaved = true
@@ -452,11 +447,9 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    private suspend fun sendErrorUiEvent(message: String?) {
+    private suspend fun sendErrorUiEvent(typedError: TypedError?) {
         _uiEventChannel.emit(
-            UiEvent.ErrorMessage(
-                message ?: resourcesManager.getString(R.string.unknown_error)
-            )
+            UiEvent.ErrorMessage(typedError ?: TypedError.UnexpectedError(Exception()))
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.search.ui.view_model.state
 
+import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstitutesDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
@@ -10,7 +11,7 @@ data class SearchState(
     val institutesDto: InstitutesDto? = null,
     val groups: List<GroupDto> = listOf(),
     val people: List<PersonDto> = listOf(),
-    val error: String? = null,
+    val error: TypedError? = null,
     val isEmptyQuery: Boolean = true,
     val isLoading: Boolean = false
 )

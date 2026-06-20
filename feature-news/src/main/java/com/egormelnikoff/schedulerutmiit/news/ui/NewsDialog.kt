@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
@@ -44,6 +45,7 @@ import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.newsIma
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.core.ui.event.getMessage
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.news.view_model.NewsViewModel
@@ -65,7 +67,7 @@ fun NewsDialog(
 
         newsState.error != null -> ErrorScreen(
             title = stringResource(R.string.error),
-            subtitle = newsState.error,
+            subtitle = newsState.error.getMessage(LocalContext.current),
             button = {
                 CustomButton(
                     modifier = Modifier.fillMaxWidth(),

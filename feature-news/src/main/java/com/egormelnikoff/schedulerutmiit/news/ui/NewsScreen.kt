@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,11 +43,13 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.result.TypedErrorException
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.newsImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.NewsLoadingScreen
+import com.egormelnikoff.schedulerutmiit.core.ui.event.getMessage
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.news.view_model.NewsListViewModel
 
@@ -65,10 +68,11 @@ fun NewsScreen(
 
         is LoadState.Error -> {
             val error = newsList.loadState.refresh as LoadState.Error
+            val typedError = (error.error as? TypedErrorException)?.typedError
 
             ErrorScreen(
                 title = stringResource(R.string.error),
-                subtitle = error.error.localizedMessage,
+                subtitle = typedError?.getMessage(LocalContext.current),
                 button = {
                     CustomButton(
                         modifier = Modifier.fillMaxWidth(),

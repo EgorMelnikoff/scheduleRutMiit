@@ -3,8 +3,6 @@ package com.egormelnikoff.schedulerutmiit.search.ui.view_model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
@@ -29,14 +27,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRemoteDataSource: SearchRemoteDataSource,
     private val searchQueryRepos: SearchQueryRepos,
-    private val searchUseCase: SearchUseCase,
-    private val resourcesManager: ResourcesManager
+    private val searchUseCase: SearchUseCase
 ) : ViewModel() {
     private val institutesMutex = Mutex()
 
@@ -53,7 +51,7 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch {
             _searchParams
-                .debounce(300L)
+                .debounce(300L.milliseconds)
                 .distinctUntilChangedBy { it.query }
                 .mapLatest { searchParams ->
                     _searchState.update { it.copy(isLoading = true) }
@@ -192,10 +190,7 @@ class SearchViewModel @Inject constructor(
     ) {
         _searchState.update {
             it.copy(
-                error = getErrorMessage(
-                    resourcesManager = resourcesManager,
-                    typedError = typedError
-                ),
+                error = typedError,
                 isEmptyQuery = false,
                 isLoading = false
             )
