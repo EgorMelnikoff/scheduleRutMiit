@@ -112,6 +112,7 @@ fun ScheduleCalendar(
         calendarBarItem = { _, currentDate ->
             val eventsForDate = remember(
                 scheduleState.schedule,
+                scheduleState.fullEventList.size,
                 scheduleState.hiddenEvents.size,
                 currentDate
             ) {
@@ -151,6 +152,7 @@ fun ScheduleCalendar(
     ) { _, currentDate ->
         val enrichedEvents = remember(
             scheduleState.schedule,
+            scheduleState.fullEventList.size,
             scheduleState.hiddenEvents.size,
             currentDate
         ) {
