@@ -83,7 +83,13 @@ fun HiddenEventsDialog(
                         ClickableItem(
                             title = event.name,
                             titleMaxLines = 1,
-                            subtitle = "${event.typeName} ($day, $startTime - $endTime)",
+                            subtitle = buildString {
+                                event.typeName?.let {
+                                    append(it)
+                                }
+
+                                append(" ($day, $startTime - $endTime)")
+                            }.trim(),
                             subtitleMaxLines = 2,
                             showClickLabel = false,
                             trailingIcon = {
