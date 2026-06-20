@@ -72,8 +72,7 @@ class ScheduleApiNormalizer @Inject constructor(
                             events = checkedEvents,
                             recurrence = RecurrenceDto(
                                 currentNumber = currentPeriodNumber,
-                                interval = 2,
-                                firstWeekNumber = currentPeriodNumber
+                                interval = 2
                             )
                         )
                     }

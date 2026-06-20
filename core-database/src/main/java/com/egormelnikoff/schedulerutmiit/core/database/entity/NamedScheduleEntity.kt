@@ -16,5 +16,6 @@ data class NamedScheduleEntity(
     val type: NamedScheduleType,
     @ColumnInfo(name = "isDefaultNamedSchedule")
     val isDefault: Boolean,
-    val lastTimeUpdate: Long
+    val lastTimeUpdate: Long,
+    val comment: String = ""
 )

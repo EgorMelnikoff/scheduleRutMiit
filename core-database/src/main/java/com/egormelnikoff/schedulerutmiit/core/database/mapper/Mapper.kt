@@ -7,25 +7,19 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Lecturer
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
-import com.egormelnikoff.schedulerutmiit.core.common.domain.RecurrenceEvent
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Room
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Task
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraDataEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.GroupEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.LecturerEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.RecurrenceEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.RecurrenceEventEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.RoomEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskCompletionEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedScheduleWithSchedulesRelation
 import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.ScheduleWithEventsRelation
-import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.TaskWithCompletionsRelation
 
 fun NamedScheduleWithSchedulesRelation.toDomain() = NamedScheduleWithSchedules(
     namedScheduleEntity.toDomain(), scheduleWithEvents.map { it.toDomain() }
@@ -81,7 +75,7 @@ fun EventEntity.toDomain() = Event(
     isCustomEvent,
     startDatetime,
     endDatetime,
-    recurrenceRule?.toDomain(),
+    interval,
     periodNumber,
     name,
     typeName,
@@ -100,7 +94,7 @@ fun Event.toEntity(
     isCustomEvent,
     startDatetime,
     endDatetime,
-    recurrenceRule?.toEntity(),
+    interval,
     periodNumber,
     name,
     typeName,
@@ -135,11 +129,5 @@ fun RoomEntity.toDomain() = Room(id, name, hint)
 fun Room.toEntity() = RoomEntity(id, name, hint)
 
 //Recurrence
-fun RecurrenceEntity.toDomain() = Recurrence(interval, currentNumber, firstWeekNumber)
-fun Recurrence.toEntity() = RecurrenceEntity(interval, currentNumber, firstWeekNumber)
-
-//RecurrenceEvent
-fun RecurrenceEventEntity.toDomain() = RecurrenceEvent(frequency, interval)
-fun RecurrenceEvent.toEntity() = RecurrenceEventEntity(frequency, interval)
-
-//Task
+fun RecurrenceEntity.toDomain() = Recurrence(interval, firstWeekNumber)
+fun Recurrence.toEntity() = RecurrenceEntity(interval, firstWeekNumber)

@@ -72,7 +72,7 @@ fun HiddenEventsDialog(
                             .toLocalTimeWithTimeZone()
                             .format(hourMinuteFormatter)
 
-                        val day = if (event.recurrenceRule != null) {
+                        val day = if (event.interval != null) {
                             event.startDatetime.dayOfWeek.getDisplayName(
                                 TextStyle.FULL,
                                 LocalLocale.current.platformLocale

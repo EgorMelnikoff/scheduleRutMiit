@@ -27,8 +27,8 @@ fun List<Event>.getPeriodicEvents(
     return buildMap {
         for (week in 1..interval) {
             val eventsForWeek = this@getPeriodicEvents.filter { event ->
-                val rule = event.recurrenceRule ?: return@filter false
-                (rule.interval == 1 || event.periodNumber == week)
+                event.interval ?: return@filter false
+                (event.interval == 1 || event.periodNumber == week)
             }
             if (eventsForWeek.isNotEmpty()) {
                 this[week] = eventsForWeek.groupBy { it.startDatetime.dayOfWeek }

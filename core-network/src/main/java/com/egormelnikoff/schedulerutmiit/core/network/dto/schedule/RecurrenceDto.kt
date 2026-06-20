@@ -8,7 +8,6 @@ data class RecurrenceDto(
     @SerialName("interval")
     val interval: Int,
     @SerialName("currentNumber")
-    val currentNumber: Int,
-    val firstWeekNumber: Int
+    val currentNumber: Int
 )
 

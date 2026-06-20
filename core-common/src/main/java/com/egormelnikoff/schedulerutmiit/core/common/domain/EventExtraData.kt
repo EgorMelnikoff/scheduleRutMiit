@@ -14,5 +14,4 @@ data class EventExtraData(
     val dateTime: LocalDateTime?,
     val comment: String = "",
     val tag: Int = 0
-) {
-}
+)

@@ -306,4 +306,125 @@ val MIGRATION_9_10 = object : Migration(9, 10) {
         )
     }
 }
+val MIGRATION_10_11 = object : Migration(10, 11) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `Schedules_new` (
+                `ScheduleId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `namedScheduleId` INTEGER NOT NULL,
+                `timetableId` TEXT NOT NULL,
+                `timetableType` INTEGER NOT NULL,
+                `downloadUrl` TEXT,
+                `startDate` TEXT NOT NULL,
+                `endDate` TEXT NOT NULL,
+                `isDefaultSchedule` INTEGER NOT NULL,
+                `interval` INTEGER,
+                `firstWeekNumber` INTEGER
+            )
+            """.trimIndent()
+        )
 
+        db.execSQL(
+            """
+            INSERT INTO `Schedules_new` (
+                `ScheduleId`,
+                `namedScheduleId`,
+                `timetableId`,
+                `timetableType`,
+                `downloadUrl`,
+                `startDate`,
+                `endDate`,
+                `isDefaultSchedule`,
+                `interval`,
+                `firstWeekNumber`
+            )
+            SELECT
+                `ScheduleId`,
+                `namedScheduleId`,
+                `timetableId`,
+                `timetableType`,
+                `downloadUrl`,
+                `startDate`,
+                `endDate`,
+                `isDefaultSchedule`,
+                `interval`,
+                `firstWeekNumber`
+            FROM `Schedules`
+            """.trimIndent()
+        )
+
+        db.execSQL("DROP TABLE `Schedules`")
+        db.execSQL("ALTER TABLE `Schedules_new` RENAME TO `Schedules`")
+
+
+
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `Events_new` (
+                `EventId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `eventScheduleId` INTEGER NOT NULL,
+                `isHidden` INTEGER NOT NULL,
+                `isCustomEvent` INTEGER NOT NULL,
+                `startDatetime` TEXT NOT NULL,
+                `endDatetime` TEXT NOT NULL,
+                `interval` INTEGER,
+                `periodNumber` INTEGER,
+                `name` TEXT NOT NULL,
+                `typeName` TEXT,
+                `timeSlotName` TEXT,
+                `lecturers` TEXT,
+                `rooms` TEXT,
+                `groups` TEXT
+            )
+            """.trimIndent()
+        )
+
+        db.execSQL(
+            """
+            INSERT INTO `Events_new` (
+                `EventId`,
+                `eventScheduleId`,
+                `isHidden`,
+                `isCustomEvent`,
+                `startDatetime`,
+                `endDatetime`,
+                `interval`,
+                `periodNumber`,
+                `name`,
+                `typeName`,
+                `timeSlotName`,
+                `lecturers`,
+                `rooms`,
+                `groups`
+            )
+            SELECT
+                `EventId`,
+                `eventScheduleId`,
+                `isHidden`,
+                `isCustomEvent`,
+                `startDatetime`,
+                `endDatetime`,
+                `interval`,
+                `periodNumber`,
+                `name`,
+                `typeName`,
+                `timeSlotName`,
+                `lecturers`,
+                `rooms`,
+                `groups`
+            FROM `Events`
+            """.trimIndent()
+        )
+
+        db.execSQL("DROP TABLE `Events`")
+        db.execSQL("ALTER TABLE `Events_new` RENAME TO `Events`")
+
+        db.execSQL(
+            """
+            ALTER TABLE `NamedSchedules`
+            ADD COLUMN `comment` TEXT NOT NULL DEFAULT ''
+            """.trimIndent()
+        )
+    }
+}

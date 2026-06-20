@@ -26,7 +26,7 @@ class ScheduleMapper @Inject constructor() {
             namedScheduleId = namedScheduleId,
             startDate = scheduleDto.timetable.startDate,
             endDate = scheduleDto.timetable.endDate,
-            recurrence = scheduleDto.periodic?.recurrence?.toDomain(),
+            recurrence = scheduleDto.periodic?.recurrence?.toDomain(scheduleDto.timetable.startDate),
             timetableType = scheduleDto.timetable.type,
             downloadUrl = scheduleDto.timetable.downloadUrl,
             timetableId = scheduleDto.timetable.id,

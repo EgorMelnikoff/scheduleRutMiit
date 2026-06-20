@@ -3,8 +3,6 @@ package com.egormelnikoff.schedulerutmiit.schedule.data.parser
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.parserFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.Locale.ruLocale
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
-import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcTime
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.EventDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.GroupDto
@@ -28,9 +26,7 @@ import java.time.LocalTime
 import java.time.Year
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
-import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
-import kotlin.math.abs
 
 object ScheduleParser {
     suspend operator fun invoke(
@@ -38,9 +34,8 @@ object ScheduleParser {
         timetable: TimetableDto,
         currentGroup: Group?
     ): ScheduleDto = withContext(Dispatchers.Default) {
-        return@withContext if (timetable.type == TimetableType.PERIODIC) {
+        return@withContext if (timetable.type.isPeriodic()) {
             val periodicContent = document.parsePeriodicSchedule(
-                timetable.startDate,
                 currentGroup,
                 parserFormatter
             )
@@ -56,8 +51,7 @@ object ScheduleParser {
                         events = nonPeriodicContent.events,
                         recurrence = RecurrenceDto(
                             interval = 1,
-                            currentNumber = 1,
-                            firstWeekNumber = 1
+                            currentNumber = 1
                         )
                     ),
                     nonPeriodic = null
@@ -83,8 +77,7 @@ object ScheduleParser {
         }
     }
 
-    private suspend fun Document.parsePeriodicSchedule(
-        startDate: LocalDate,
+    private fun Document.parsePeriodicSchedule(
         currentGroup: Group?,
         formatter: DateTimeFormatter,
     ): PeriodicContentDto {
@@ -116,10 +109,9 @@ object ScheduleParser {
 
         return PeriodicContentDto(
             events = events.normalizePeriodicEvents(),
-            recurrence = getRecurrence(
-                startDate = startDate,
+            recurrence = RecurrenceDto(
                 interval = weekNumbers.size,
-                currentNumber = parseCurrentWeek(this@parsePeriodicSchedule),
+                currentNumber = parseCurrentWeek(this@parsePeriodicSchedule)
             )
         )
     }
@@ -365,35 +357,5 @@ object ScheduleParser {
                     else event
                 }
             }
-    }
-
-    private fun getRecurrence(
-        interval: Int,
-        currentNumber: Int,
-        startDate: LocalDate
-    ): RecurrenceDto {
-        val today = LocalDate.now()
-        return if (today > startDate && interval > 1) {
-            val currentWeekIndex = abs(
-                ChronoUnit.WEEKS.between(
-                    startDate.getFirstDayOfWeek(),
-                    today.getFirstDayOfWeek()
-                )
-            ).plus(1)
-
-            val firstWeekNumber =
-                ((currentWeekIndex + currentNumber) % interval)
-                    .plus(1)
-
-            RecurrenceDto(
-                interval, currentNumber,
-                firstWeekNumber = firstWeekNumber.toInt()
-            )
-        } else {
-            RecurrenceDto(
-                interval, currentNumber,
-                firstWeekNumber = currentNumber
-            )
-        }
     }
 }

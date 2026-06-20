@@ -39,10 +39,8 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
-import com.egormelnikoff.schedulerutmiit.core.common.domain.RecurrenceEvent
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.bottom_sheet.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
@@ -58,6 +56,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.ListParam
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.PagerScreenContainer
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoomInput
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.TimeSelector
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.bottom_sheet.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.schedule.data.validator.isValidEvent
@@ -84,7 +83,7 @@ fun AddEditEventDialog(
 
     var currentInterval by remember {
         mutableIntStateOf(
-            addEditEventDialog.updatableEvent?.recurrenceRule?.interval ?: -1
+            addEditEventDialog.updatableEvent?.interval ?: -1
         )
     }
     var currentPeriod by remember {
@@ -182,12 +181,7 @@ fun AddEditEventDialog(
                                 startDateTime = startDateTime,
                                 endDateTime = endDateTime
                             ),
-                            recurrenceRule = addEditEventDialog.recurrence?.let {
-                                RecurrenceEvent(
-                                    frequency = "WEEKLY",
-                                    interval = currentInterval
-                                )
-                            },
+                            interval = currentInterval,
                             periodNumber = if (currentInterval > 1) currentPeriod else 1
                         )
                         if (addEditEventDialog.updatableEvent != null) {
