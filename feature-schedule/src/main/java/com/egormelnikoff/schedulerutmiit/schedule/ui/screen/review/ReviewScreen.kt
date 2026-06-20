@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review
 import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
@@ -112,10 +111,6 @@ fun ReviewScreen(
         } else MaterialTheme.colorScheme.onBackground,
         label = "TopAppBarContentColor"
     )
-    val appBarElevation by animateDpAsState(
-        targetValue = if (!usedPhoto || overlappedFraction > 0.1f) 8.dp else 0.dp,
-        label = "TopAppBarElevation"
-    )
 
     var showTopBarActions by remember {
         mutableStateOf(false)
@@ -148,7 +143,6 @@ fun ReviewScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                shadowElevation = appBarElevation,
                 titleText = when (dayPeriod) {
                     DayPeriod.MORNING -> stringResource(R.string.good_morning)
                     DayPeriod.DAY -> stringResource(R.string.good_afternoon)
