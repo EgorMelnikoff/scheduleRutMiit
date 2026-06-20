@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.export.domain.use_case
 
 import android.net.Uri
+import com.egormelnikoff.schedulerutmiit.core.common.logger.Logger
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.export.data.importer.FileImporter
@@ -8,7 +9,8 @@ import javax.inject.Inject
 
 class ImportDataUseCase @Inject constructor(
     private val deserializeUseCase: DeserializeUseCase,
-    private val fileImporter: FileImporter
+    private val fileImporter: FileImporter,
+    private val  logger: Logger
 ) {
     suspend operator fun invoke(uri: Uri): Result<Unit> {
         return try {
@@ -22,6 +24,7 @@ class ImportDataUseCase @Inject constructor(
             }
 
         } catch (e: Exception) {
+            logger.e("ImportDataUseCase", "Unexpected error", e)
             Result.Error(TypedError.UnexpectedError(e))
         }
     }
