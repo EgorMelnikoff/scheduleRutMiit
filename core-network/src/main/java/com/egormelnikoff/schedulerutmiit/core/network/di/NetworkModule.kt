@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.core.network.di
 
 import android.content.Context
+import com.egormelnikoff.schedulerutmiit.core.common.logger.Logger
 import com.egormelnikoff.schedulerutmiit.core.network.api.GithubApi
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
-import com.egormelnikoff.schedulerutmiit.core.network.logger.Logger
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides

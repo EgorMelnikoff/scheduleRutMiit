@@ -69,7 +69,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.customToString
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.event.ModalDialogEvent
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements.ModalDialogEvent
 import java.time.LocalDateTime
 import java.time.format.TextStyle
 
@@ -236,24 +236,6 @@ fun EventDialog(
                                         title = room.hint,
                                         titleMaxLines = 2,
                                         defaultMinHeight = 32.dp
-//                                onClick = if (!event.isCustomEvent) {
-//                                    {
-//                                        navigationActions.navigateToSchedule()
-//                                        navigationActions.onBack()
-//                                        scheduleActions.onGetNamedSchedule(
-//                                            room.name,
-//                                            room.id,
-//                                            NamedScheduleType.ROOM
-//                                        )
-//                                        searchViewModel.saveQueryToHistory(
-//                                            SearchQuery(
-//                                                name = room.name,
-//                                                apiId = room.id,
-//                                                namedScheduleType = NamedScheduleType.ROOM
-//                                            )
-//                                        )
-//                                    }
-//                                } else null
                                     )
                                 }
                             }
@@ -497,12 +479,12 @@ fun EventHeader(
                     width = 0.5.dp,
                     color = MaterialTheme.colorScheme.outline
                 ),
-                title = if (timetableType == TimetableType.PERIODIC) {
+                title = if (timetableType.isPeriodic()) {
                     val dayName = event.startDatetime.dayOfWeek.getDisplayName(
                         TextStyle.FULL,
                         LocalLocale.current.platformLocale
                     ).toString().replaceFirstChar { it.uppercase() }
-                    if (event.recurrenceRule?.interval == 1) {
+                    if (event.interval == 1) {
                         dayName
                     } else {
                         "$dayName, ${

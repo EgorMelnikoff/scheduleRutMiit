@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalTime
 
 @Entity(tableName = "Tasks")
 data class TaskEntity(

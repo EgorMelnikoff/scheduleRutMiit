@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.egormelnikoff.schedulerutmiit.core.common.logger.Logger
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
-import com.egormelnikoff.schedulerutmiit.core.network.logger.Logger
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.RefreshNamedScheduleUseCase
 import dagger.assisted.Assisted

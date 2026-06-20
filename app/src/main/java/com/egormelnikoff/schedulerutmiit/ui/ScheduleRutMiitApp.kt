@@ -31,6 +31,9 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScreenState
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Task
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.BarItem
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomNavigationBar
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomNavigationBarItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.rememberCalendarState
@@ -46,21 +49,20 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.AddScheduleDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.EventDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.HiddenEventsDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.RenameDialog
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.ReviewStateSynchronizer
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.ReviewScreen
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.ReviewStateSynchronizer
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.ScreenSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
+import com.egormelnikoff.schedulerutmiit.search.ui.dialog.SearchDialog
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.TaskAction
 import com.egormelnikoff.schedulerutmiit.tasks.ui.TasksScreen
 import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.AddTaskDialog
 import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.EditTaskDialog
 import com.egormelnikoff.schedulerutmiit.tasks.ui.view_model.TaskViewModel
-import com.egormelnikoff.schedulerutmiit.ui.dialog.search.SearchDialog
-import com.egormelnikoff.schedulerutmiit.ui.screen.review.ReviewScreen
-import com.egormelnikoff.schedulerutmiit.ui.screen.schedule.ScreenSchedule
-import com.egormelnikoff.schedulerutmiit.ui.screen.schedule.UiEventProcessor
-import com.egormelnikoff.schedulerutmiit.ui.screen.settings.SettingsScreen
+import com.egormelnikoff.schedulerutmiit.ui.setting_screen.SettingsScreen
 import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState
@@ -179,15 +181,13 @@ fun PageHost(
     val importLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri ->
-        uri?.let {
-            mainViewModel.importData(
-                uri = uri,
-                onSuccess = {
-                    scheduleViewModel.refreshScheduleState()
-                    appUiState.appBackStack.navigateToStartRage()
-                }
-            )
-        }
+        mainViewModel.importData(
+            uri = uri,
+            onSuccess = {
+                scheduleViewModel.refreshScheduleState()
+                appUiState.appBackStack.navigateToStartRage()
+            }
+        )
     }
 
     Scaffold(
@@ -346,7 +346,9 @@ fun PageHost(
                         scheduleListState = scheduleListState,
                         appSettings = appSettings,
                         scheduleViewModel = scheduleViewModel,
-                        preferencesViewModel = preferencesViewModel,
+                        onSetScheduleView = { value ->
+                            preferencesViewModel.onSetScheduleView(value)
+                        },
                         externalPadding = padding
                     )
                 }
@@ -587,13 +589,14 @@ fun RootHost(
                 }
                 entry<Route.Dialog.AddScheduleDialog> {
                     AddScheduleDialog(
-                        addSchedule = { name, startDate, endDate ->
+                        addSchedule = { name, startDate, endDate, timetableType ->
                             appUiState.appBackStack.navigateToStartRage()
                             appUiState.appBackStack.onBack()
                             scheduleViewModel.addCustomNamedSchedule(
                                 name.trim(),
                                 startDate,
-                                endDate
+                                endDate,
+                                timetableType
                             )
                         }
                     ) {

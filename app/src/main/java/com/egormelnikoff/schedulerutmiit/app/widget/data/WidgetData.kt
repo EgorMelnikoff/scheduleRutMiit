@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getPeriodicEvents
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ui_dto.ReviewState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ReviewState
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate

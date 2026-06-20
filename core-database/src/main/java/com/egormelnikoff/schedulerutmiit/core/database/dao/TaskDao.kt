@@ -6,9 +6,6 @@ import androidx.room.Query
 import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.TaskWithCompletionsRelation
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Dao
 interface TaskDao {

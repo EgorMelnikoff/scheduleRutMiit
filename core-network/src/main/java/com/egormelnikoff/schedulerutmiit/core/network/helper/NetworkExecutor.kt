@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.core.network.helper
 
+import com.egormelnikoff.schedulerutmiit.core.common.logger.Logger
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.network.fetcher.ApiFetcher
 import com.egormelnikoff.schedulerutmiit.core.network.fetcher.HtmlFetcher
-import com.egormelnikoff.schedulerutmiit.core.network.logger.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException

@@ -2,8 +2,6 @@ package com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
-import com.egormelnikoff.schedulerutmiit.core.common.resources.getErrorMessage
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.network.dto.subjects.SubjectDto
@@ -20,12 +18,12 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class CurriculumViewModel @Inject constructor(
-    private val fetchSubjectsUseCase: FetchSubjectsUseCase,
-    private val resourcesManager: ResourcesManager
+    private val fetchSubjectsUseCase: FetchSubjectsUseCase
 ) : ViewModel() {
     private val _curriculumState = MutableStateFlow(CurriculumState())
     val curriculumState = _curriculumState.asStateFlow()
@@ -36,7 +34,7 @@ class CurriculumViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _searchQuery
-                .debounce(300L)
+                .debounce(300L.milliseconds)
                 .distinctUntilChanged()
                 .mapLatest { id ->
                     _curriculumState.update { it.copy(isLoading = true) }
@@ -93,10 +91,7 @@ class CurriculumViewModel @Inject constructor(
     ) {
         _curriculumState.update {
             it.copy(
-                error = getErrorMessage(
-                    resourcesManager = resourcesManager,
-                    typedError = data
-                ),
+                error = data,
                 isEmptyQuery = false,
                 isLoading = false
             )

@@ -11,13 +11,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 class CalendarState(
     val calendarData: CalendarData,

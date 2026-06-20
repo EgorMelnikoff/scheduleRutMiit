@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
-import com.egormelnikoff.schedulerutmiit.core.common.resources.ResourcesManager
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
 import com.egormelnikoff.schedulerutmiit.export.data.exporter.FileExporter
@@ -41,12 +40,6 @@ object AppModule {
         json: Json
     ): PreferencesDataSourceImpl =
         PreferencesDataSourceImpl(context, json)
-
-    @Provides
-    @Singleton
-    fun provideResourcesManager(@ApplicationContext context: Context): ResourcesManager =
-        ResourcesManager(context)
-
 
     @Provides
     @Singleton
