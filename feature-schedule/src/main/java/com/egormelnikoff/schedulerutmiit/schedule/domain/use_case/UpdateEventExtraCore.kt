@@ -22,7 +22,7 @@ class UpdateEventExtraCore @Inject constructor(
         shouldDelete: (EventExtraData?) -> Boolean,
         onUpdate: suspend (Event, LocalDateTime?) -> Unit,
         onCreate: suspend (Event, LocalDateTime?) -> Unit
-    ): Map<Long, EventExtraData> {
+    ): Map<Long, List<EventExtraData>> {
 
         val policy = preferencesDataSource.eventExtraPolicyFlow.first()
 
@@ -35,7 +35,7 @@ class UpdateEventExtraCore @Inject constructor(
             eventExtraAction(policy, event, dateTime) { e, dt ->
                 eventExtraRepos.delete(e.id, dt)
             }
-            return eventExtraRepos.getByScheduleId(scheduleId).associateBy { it.eventId }
+            return eventExtraRepos.getByScheduleId(scheduleId).groupBy { it.eventId }
         }
 
         if (eventExtraData != null) {
@@ -44,7 +44,7 @@ class UpdateEventExtraCore @Inject constructor(
             eventExtraAction(policy, event, dateTime, onCreate)
         }
 
-        return eventExtraRepos.getByScheduleId(scheduleId).associateBy { it.eventId }
+        return eventExtraRepos.getByScheduleId(scheduleId).groupBy { it.eventId }
     }
 
     private suspend fun eventExtraAction(

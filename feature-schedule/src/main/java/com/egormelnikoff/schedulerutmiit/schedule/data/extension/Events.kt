@@ -37,20 +37,20 @@ fun List<Event>.getPeriodicEvents(
     }
 }
 
-fun Map<Long, EventExtraData>.findEventExtra(
+fun Map<Long, List<EventExtraData>>.findEventExtra(
     eventExtraPolicy: EventExtraPolicy,
     eventId: Long,
     date: LocalDate
 ): EventExtraData? {
     return if (eventExtraPolicy == EventExtraPolicy.BY_DATES) {
-        this.values.find { it.eventId == eventId && it.dateTime?.toLocalDate() == date }
+        this[eventId]?.find { it.dateTime?.toLocalDate() == date }
     } else {
-        this[eventId]
+        this[eventId]?.first()
     }
 }
 
 fun Map.Entry<String, List<Event>>.getEnrichedEvents(
-    eventsExtraData: Map<Long, EventExtraData>,
+    eventsExtraData: Map<Long, List<EventExtraData>>,
     eventExtraPolicy: EventExtraPolicy,
     date: LocalDate
 ): List<Pair<Event, EventExtraData?>> {
@@ -66,7 +66,7 @@ fun Map.Entry<String, List<Event>>.getEnrichedEvents(
 fun Map<String, List<Event>>?.getEnrichedEvents(
     date: LocalDate,
     eventExtraPolicy: EventExtraPolicy,
-    eventsExtraData: Map<Long, EventExtraData>
+    eventsExtraData: Map<Long, List<EventExtraData>>
 ): List<Pair<String, List<Pair<Event, EventExtraData?>>>> {
     if (this == null) return emptyList()
 

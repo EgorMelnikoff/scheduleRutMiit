@@ -24,7 +24,7 @@ import java.time.LocalDate
 fun EventsDetailBadge(
     currentDate: LocalDate,
     events: Map<String, List<Event>>,
-    eventsExtraData: Map<Long, EventExtraData>,
+    eventsExtraData: Map<Long, List<EventExtraData>>,
     eventExtraPolicy: EventExtraPolicy
 ) {
     val onBackground = MaterialTheme.colorScheme.onBackground

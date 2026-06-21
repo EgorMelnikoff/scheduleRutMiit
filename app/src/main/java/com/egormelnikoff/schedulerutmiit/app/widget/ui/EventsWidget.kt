@@ -244,7 +244,7 @@ class EventsWidget : GlanceAppWidget() {
     @Composable
     private fun Event(
         events: List<Event>,
-        eventsExtraData: Map<Long, EventExtraData>,
+        eventsExtraData: Map<Long, List<EventExtraData>>,
         date: LocalDate,
         eventExtraPolicy: EventExtraPolicy
     ) {

@@ -13,7 +13,7 @@ class UpdateEventTagUseCase @Inject constructor(
         scheduleId: Long,
         event: Event,
         tag: Int
-    ): Map<Long, EventExtraData> {
+    ): Map<Long, List<EventExtraData>> {
         return core(
             dateTime = dateTime.atTime(event.startDatetime.toLocalTime()),
             scheduleId = scheduleId,

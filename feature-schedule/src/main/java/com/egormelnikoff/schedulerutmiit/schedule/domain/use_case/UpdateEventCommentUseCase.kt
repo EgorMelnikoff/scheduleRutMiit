@@ -13,7 +13,7 @@ class UpdateEventCommentUseCase @Inject constructor(
         scheduleId: Long,
         event: Event,
         comment: String
-    ): Map<Long, EventExtraData> {
+    ): Map<Long, List<EventExtraData>> {
         return core(
             dateTime = dateTime.atTime(event.startDatetime.toLocalTime()),
             scheduleId = scheduleId,

@@ -21,7 +21,7 @@ data class ScheduleState(
     val fullEventList: Map<LocalDate, Map<String, List<Event>>> = mapOf(),
 
     val hiddenEvents: List<Event> = listOf(),
-    val eventsExtraData: Map<Long, EventExtraData> = mapOf(),
+    val eventsExtraData: Map<Long, List<EventExtraData>> = mapOf(),
     val calendarData: CalendarData
 ) {
     companion object {
@@ -61,7 +61,7 @@ data class ScheduleState(
                 nonPeriodicEvents = nonPeriodicEventsForCalendar,
                 calendarData = calendarData,
                 fullEventList = fullEventList,
-                eventsExtraData = scheduleWithEvents.eventsExtraData.associateBy { it.eventId },
+                eventsExtraData = scheduleWithEvents.eventsExtraData.groupBy { it.eventId },
                 hiddenEvents = splitEvents.first
             )
         }
