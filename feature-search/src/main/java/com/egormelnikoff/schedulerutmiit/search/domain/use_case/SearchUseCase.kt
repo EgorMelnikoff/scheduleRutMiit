@@ -1,11 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.search.domain.use_case
 
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstituteDto
-import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstitutesDto
-import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.network.mapper.toDomain
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchParams
 import javax.inject.Inject
@@ -13,15 +14,28 @@ import javax.inject.Inject
 class SearchUseCase @Inject constructor(
     private val searchRemoteDataSource: SearchRemoteDataSource
 ) {
-    suspend operator fun invoke(
-        searchParams: SearchParams,
-        institutesDto: InstitutesDto?
-    ): SearchResult {
-        var groups: Result<List<GroupDto>>? = null
-        var people: Result<List<PersonDto>>? = null
+    private var loadedGroups: List<GroupDto>? = null
 
-        if ((searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.GROUPS) && institutesDto != null) {
-            groups = Result.Success(getGroupsByQuery(institutesDto, searchParams.query))
+    suspend operator fun invoke(
+        searchParams: SearchParams
+    ): SearchResult {
+        if (loadedGroups == null) {
+            val institutesDto = searchRemoteDataSource.fetchInstitutes()
+            println("Groups null")
+            if (institutesDto is Result.Success) {
+                loadedGroups = getGroups(institutesDto.data.institutes)
+            }
+        }
+
+        var groups: Result<List<Group>>? = null
+        var people: Result<List<Person>>? = null
+
+        if ((searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.GROUPS) && loadedGroups != null) {
+            groups = Result.Success(
+                getGroupsByQuery(
+                    loadedGroups!!,
+                    searchParams.query
+                ).map { it.toDomain() })
         }
 
         if (searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.PEOPLE) {
@@ -36,15 +50,12 @@ class SearchUseCase @Inject constructor(
 
 
     fun getGroupsByQuery(
-        institutesDto: InstitutesDto,
+        groups: List<GroupDto>,
         query: String
-    ): List<GroupDto> {
-        val groups = getGroups(institutesDto.institutes)
-
-        return groups.filter {
-            compareValues(it.name, query)
-        }
+    ): List<GroupDto> = groups.filter {
+        compareValues(it.name, query)
     }
+
 
     private fun compareValues(comparableValue: String, query: String): Boolean {
         val cleanValue = comparableValue.filter { !it.isWhitespace() }

@@ -2,14 +2,15 @@ package com.egormelnikoff.schedulerutmiit.search.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
+import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
-import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
-import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
-import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.GroupDto
+import com.egormelnikoff.schedulerutmiit.core.ui.event.UiEvent
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchQueryRepos
-import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.search.domain.use_case.ObserveSearchHistoryUseCase
 import com.egormelnikoff.schedulerutmiit.search.domain.use_case.SearchResult
 import com.egormelnikoff.schedulerutmiit.search.domain.use_case.SearchUseCase
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchParams
@@ -17,52 +18,55 @@ import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchRemoteDataSource: SearchRemoteDataSource,
     private val searchQueryRepos: SearchQueryRepos,
-    private val searchUseCase: SearchUseCase
+    private val searchUseCase: SearchUseCase,
+    observeSearchHistoryUseCase: ObserveSearchHistoryUseCase
 ) : ViewModel() {
-    private val institutesMutex = Mutex()
-
     private val _searchParams = MutableStateFlow(SearchParams())
     val searchParams = _searchParams.asStateFlow()
 
     private val _searchState = MutableStateFlow(SearchState())
     val searchState = _searchState.asStateFlow()
 
+    val history = observeSearchHistoryUseCase()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            listOf()
+        )
+
+    private val _uiEventChannel = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEventChannel.asSharedFlow()
+
     init {
         viewModelScope.launch {
-            updateSearchQueryHistory()
-        }
-
-        viewModelScope.launch {
-            _searchParams
-                .debounce(300L.milliseconds)
-                .distinctUntilChangedBy { it.query }
+            _searchParams.debounce(300.milliseconds)
+                .distinctUntilChanged()
                 .mapLatest { searchParams ->
                     _searchState.update { it.copy(isLoading = true) }
                     if (searchParams.query.isBlank()) {
                         setDefaultSearchState()
                         return@mapLatest null
                     }
-                    loadInstitutesOnce()
                     searchUseCase(
-                        searchParams,
-                        _searchState.value.institutesDto
+                        searchParams
                     )
                 }.collect { result ->
                     result?.let { handleSearchResult(it) }
@@ -70,16 +74,20 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun handleSearchResult(
+    suspend fun handleSearchResult(
         result: SearchResult
     ) {
-        var groupsList = listOf<GroupDto>()
-        var peopleList = listOf<PersonDto>()
+        var groupsList = listOf<Group>()
+        var peopleList = listOf<Person>()
 
         if (result.groups != null) {
             when (result.groups) {
                 is Result.Error -> {
-                    setErrorSearchState(result.groups.typedError)
+                    _uiEventChannel.emit(
+                        UiEvent.ErrorMessage(result.groups.typedError)
+                    )
+                    setDefaultSearchState()
+                    sendErrorUiEvent(result.groups.typedError)
                     return
                 }
 
@@ -92,7 +100,11 @@ class SearchViewModel @Inject constructor(
         if (result.people != null) {
             when (result.people) {
                 is Result.Error -> {
-                    setErrorSearchState(result.people.typedError)
+                    _uiEventChannel.emit(
+                        UiEvent.ErrorMessage(result.people.typedError)
+                    )
+                    setDefaultSearchState()
+                    sendErrorUiEvent(result.people.typedError)
                     return
                 }
 
@@ -106,7 +118,7 @@ class SearchViewModel @Inject constructor(
             it.copy(
                 groups = groupsList,
                 people = peopleList,
-                error = null,
+                typedError = null,
                 isEmptyQuery = false,
                 isLoading = false
             )
@@ -118,7 +130,6 @@ class SearchViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             searchQueryRepos.insert(searchQuery)
-            updateSearchQueryHistory()
         }
     }
 
@@ -127,17 +138,9 @@ class SearchViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             searchQueryRepos.deleteById(queryId)
-            updateSearchQueryHistory()
         }
     }
 
-    suspend fun updateSearchQueryHistory() {
-        _searchState.update {
-            it.copy(
-                history = searchQueryRepos.getAll()
-            )
-        }
-    }
 
     fun changeSearchParams(query: String? = null, searchType: SearchType? = null) {
         _searchParams.update {
@@ -148,52 +151,25 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadInstitutesOnce() {
-        institutesMutex.withLock {
-            if (_searchState.value.institutesDto == null) {
-                loadInstitutes()
-            }
-        }
-    }
-
-    private suspend fun loadInstitutes() {
-        when (val institutes = searchRemoteDataSource.fetchInstitutes()) {
-            is Result.Error -> {
-                setErrorSearchState(institutes.typedError)
-            }
-
-            is Result.Success -> {
-                _searchState.update {
-                    it.copy(
-                        institutesDto = institutes.data
-                    )
-                }
-            }
-        }
-    }
-
     fun setDefaultSearchState() {
         _searchState.update {
             it.copy(
                 isEmptyQuery = true,
                 isLoading = false,
-                error = null,
+                typedError = null,
                 groups = listOf(),
                 people = listOf()
             )
         }
+    }
+
+    fun setDefaultParams() {
         _searchParams.value = SearchParams()
     }
 
-    private fun setErrorSearchState(
-        typedError: TypedError
-    ) {
-        _searchState.update {
-            it.copy(
-                error = typedError,
-                isEmptyQuery = false,
-                isLoading = false
-            )
-        }
+    private suspend fun sendErrorUiEvent(typedError: TypedError?) {
+        _uiEventChannel.emit(
+            UiEvent.ErrorMessage(typedError ?: TypedError.UnexpectedError())
+        )
     }
 }

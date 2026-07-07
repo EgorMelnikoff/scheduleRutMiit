@@ -1,17 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.search.ui.view_model.state
 
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
+import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
-import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
-import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstitutesDto
-import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
-import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.GroupDto
 
 data class SearchState(
-    val history: List<SearchQuery> = listOf(),
-    val institutesDto: InstitutesDto? = null,
-    val groups: List<GroupDto> = listOf(),
-    val people: List<PersonDto> = listOf(),
-    val error: TypedError? = null,
+    val groups: List<Group> = listOf(),
+    val people: List<Person> = listOf(),
+    val typedError: TypedError? = null,
     val isEmptyQuery: Boolean = true,
     val isLoading: Boolean = false
 )

@@ -4,8 +4,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 
-@Entity(tableName = "SearchHistory")
-data class SearchQuery(
+@Entity(
+    tableName = "SearchHistory"
+)
+data class SearchQueryEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,

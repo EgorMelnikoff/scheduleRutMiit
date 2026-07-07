@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.search.ui.dialog
+package com.egormelnikoff.schedulerutmiit.search.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,8 +28,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,17 +45,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingAsyncImage
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.event.getMessage
-import com.egormelnikoff.schedulerutmiit.search.ui.FilterRow
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.SearchViewModel
 
 @Composable
@@ -65,9 +69,23 @@ fun SearchDialog(
         searchViewModel.searchParams.collectAsStateWithLifecycle().value
     val searchState =
         searchViewModel.searchState.collectAsStateWithLifecycle().value
+    val history = searchViewModel.history.collectAsStateWithLifecycle().value
+    val snackBarHostState = remember { SnackbarHostState() }
 
+    UiEventProcessor(
+        searchViewModel.uiEvent, snackBarHostState
+    )
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
+        snackbarHost = {
+            CustomSnackbarHost(
+                snackBarHostState = snackBarHostState
+            )
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -75,13 +93,14 @@ fun SearchDialog(
                 .padding(
                     start = 8.dp,
                     end = 8.dp,
-                    top = innerPadding.calculateTopPadding() + 16.dp
+                    top = innerPadding.calculateTopPadding() + 16.dp,
+                    bottom = innerPadding.calculateBottomPadding()
                 ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Column(
                 modifier = Modifier.padding(horizontal = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 CustomTextField(
                     modifier = Modifier.fillMaxWidth(),
@@ -114,6 +133,7 @@ fun SearchDialog(
                             IconButton(
                                 onClick = {
                                     searchViewModel.setDefaultSearchState()
+                                    searchViewModel.setDefaultParams()
                                 }
                             ) {
                                 Icon(
@@ -149,13 +169,13 @@ fun SearchDialog(
                 when {
                     searchState.isLoading -> LoadingScreen()
 
-                    searchState.error != null -> {
+                    searchState.typedError != null -> {
                         Empty(
-                            subtitle = searchState.error.getMessage(LocalContext.current)
+                            subtitle = searchState.typedError.getMessage(LocalContext.current)
                         )
                     }
 
-                    searchState.isEmptyQuery && searchState.history.isEmpty() -> {
+                    searchState.isEmptyQuery && history.isEmpty() -> {
                         Empty(
                             imageVector = ImageVector.vectorResource(R.drawable.search),
                             subtitle = stringResource(R.string.enter_your_query)
@@ -166,7 +186,7 @@ fun SearchDialog(
                         Column(
                             modifier = Modifier.verticalScroll(rememberScrollState())
                         ) {
-                            searchState.history.forEach { query ->
+                            history.forEach { query ->
                                 Box(
                                     modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                 ) {
