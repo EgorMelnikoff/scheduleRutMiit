@@ -10,16 +10,18 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Room
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
+import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraDataEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.GroupEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.LecturerEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.RecurrenceEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.RoomEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQueryEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.embedded.RecurrenceEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.NamedScheduleWithSchedulesRelation
 import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.ScheduleWithEventsRelation
+import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.GroupEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.LecturerEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.RoomEntity
 
 fun NamedScheduleWithSchedulesRelation.toDomain() = NamedScheduleWithSchedules(
     namedScheduleEntity.toDomain(), scheduleWithEvents.map { it.toDomain() }
@@ -106,13 +108,13 @@ fun Event.toEntity(
 
 //EventExtra
 fun EventExtraDataEntity.toDomain() = EventExtraData(
-    id, eventId, scheduleId, eventName, dateTime, comment, tag
+    id, eventId, scheduleId, eventName, date, comment, tag
 )
 
 fun EventExtraData.toEntity(
     newScheduleId: Long? = null
 ) = EventExtraDataEntity(
-    id, eventId, newScheduleId ?: scheduleId, eventName, dateTime, comment, tag
+    id, eventId, newScheduleId ?: scheduleId, eventName, date, comment, tag
 )
 
 
@@ -131,3 +133,7 @@ fun Room.toEntity() = RoomEntity(id, name, hint)
 //Recurrence
 fun RecurrenceEntity.toDomain() = Recurrence(interval, firstWeekNumber)
 fun Recurrence.toEntity() = RecurrenceEntity(interval, firstWeekNumber)
+
+//SearchQuery
+fun SearchQueryEntity.toDomain() = SearchQuery(id, name, apiId, namedScheduleType)
+fun SearchQuery.toEntity() = SearchQueryEntity(id, name, apiId, namedScheduleType)

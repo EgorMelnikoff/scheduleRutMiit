@@ -107,6 +107,7 @@ fun CurriculumDialog() {
                             IconButton(
                                 onClick = {
                                     curriculumViewModel.setDefaultSubjectsState()
+                                    curriculumViewModel.setEmptyQuery()
                                 }
                             ) {
                                 Icon(

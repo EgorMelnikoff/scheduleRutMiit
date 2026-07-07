@@ -6,6 +6,7 @@ import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataSourceIm
 import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.time.TimeProvider
 import com.egormelnikoff.schedulerutmiit.export.data.exporter.FileExporter
 import com.egormelnikoff.schedulerutmiit.export.data.importer.FileImporter
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.parser.SubjectsListParser
@@ -73,6 +74,9 @@ object AppModule {
             }
         }
     }
+
+    @Provides
+    fun timeProvider(): TimeProvider = TimeProvider()
 
     @Provides
     fun provideNewsParser(): NewsParser = NewsParser

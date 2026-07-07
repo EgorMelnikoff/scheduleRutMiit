@@ -51,7 +51,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.NewsLoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.event.getMessage
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
-import com.egormelnikoff.schedulerutmiit.news.view_model.NewsListViewModel
+import com.egormelnikoff.schedulerutmiit.news.ui.view_model.NewsListViewModel
 
 @Composable
 fun NewsScreen(

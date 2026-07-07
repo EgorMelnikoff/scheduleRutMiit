@@ -428,3 +428,46 @@ val MIGRATION_10_11 = object : Migration(10, 11) {
         )
     }
 }
+
+val MIGRATION_11_12 = object : Migration(11, 12) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("""
+            CREATE TABLE EventsExtraData_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                eventId INTEGER NOT NULL,
+                eventExtraScheduleId INTEGER NOT NULL,
+                eventName TEXT,
+                date TEXT,
+                comment TEXT NOT NULL,
+                tag INTEGER NOT NULL
+            )
+        """.trimIndent())
+
+        db.execSQL("""
+            INSERT INTO EventsExtraData_new (
+                id,
+                eventId,
+                eventExtraScheduleId,
+                eventName,
+                date,
+                comment,
+                tag
+            )
+            SELECT
+                id,
+                eventId,
+                eventExtraScheduleId,
+                eventName,
+                CASE
+                    WHEN dateTime IS NULL THEN NULL
+                    ELSE substr(dateTime, 1, 10)
+                END,
+                comment,
+                tag
+            FROM EventsExtraData
+        """.trimIndent())
+
+        db.execSQL("DROP TABLE EventsExtraData")
+        db.execSQL("ALTER TABLE EventsExtraData_new RENAME TO EventsExtraData")
+    }
+}

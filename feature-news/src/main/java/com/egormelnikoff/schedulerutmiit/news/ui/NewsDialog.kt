@@ -48,7 +48,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScre
 import com.egormelnikoff.schedulerutmiit.core.ui.event.getMessage
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
-import com.egormelnikoff.schedulerutmiit.news.view_model.NewsViewModel
+import com.egormelnikoff.schedulerutmiit.news.ui.view_model.NewsViewModel
 
 @Composable
 fun NewsDialog(

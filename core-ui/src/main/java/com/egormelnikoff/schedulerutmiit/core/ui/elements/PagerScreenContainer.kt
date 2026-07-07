@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,9 +42,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun PagerScreenContainer(
-    pagerState: PagerState,
-    scope: CoroutineScope,
     modifier: Modifier = Modifier,
+    scope: CoroutineScope = rememberCoroutineScope(),
+    pagerState: PagerState,
     isNextEnabled: (Int) -> Boolean,
     onFinish: () -> Unit,
     showIndicator: Boolean = true,

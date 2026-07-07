@@ -20,6 +20,7 @@
         tools:targetApi="36">
         <activity
             android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:configChanges="uiMode|orientation|screenSize"
             android:exported="true"
             android:launchMode="singleTask"

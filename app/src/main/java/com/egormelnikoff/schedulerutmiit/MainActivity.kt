@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.ScheduleRutMiitTheme
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
 import com.egormelnikoff.schedulerutmiit.ui.WelcomePage
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
@@ -17,7 +16,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val scheduleViewModel: ScheduleViewModel by viewModels()
     private val preferencesViewModel: PreferencesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +23,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition {
-            scheduleViewModel.screenState.value.isLoading || preferencesViewModel.appSettings.value == null
+           preferencesViewModel.appSettings.value == null
         }
 
         setContent {
@@ -37,7 +35,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     if (settings.skipWelcomePage) {
                         ScheduleRutMiitApp(
-                            scheduleViewModel = scheduleViewModel,
                             preferencesViewModel = preferencesViewModel,
                             appSettings = settings
                         )

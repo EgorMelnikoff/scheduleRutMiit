@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,7 +23,7 @@ fun Calendar(
     onShowCalendarDialog: (Boolean) -> Unit,
     monthBadge: @Composable ((LocalDate) -> Unit) = { },
     calendarBarItem: @Composable (RowScope.(Int, LocalDate) -> Unit),
-    calendarPagerItem: @Composable (Int, LocalDate) -> Unit
+    calendarPagerItem: @Composable PagerScope.(Int, LocalDate) -> Unit
 ) {
     Column(
         modifier = modifier

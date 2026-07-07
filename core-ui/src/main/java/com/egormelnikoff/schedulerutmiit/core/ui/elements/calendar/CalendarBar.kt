@@ -114,7 +114,7 @@ fun CalendarBar(
                         .clip(CircleShape)
                         .combinedClickable(
                             onClick = {
-                                calendarState.selectDate(calendarState.calendarData.initialDate)
+                                calendarState.selectInitialDate()
                             },
                             onLongClick = {
                                 onShowCalendarDialog(!showCalendarDialog)

@@ -34,7 +34,7 @@ class CurriculumViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _searchQuery
-                .debounce(300L.milliseconds)
+                .debounce(300.milliseconds)
                 .distinctUntilChanged()
                 .mapLatest { id ->
                     _curriculumState.update { it.copy(isLoading = true) }
@@ -79,6 +79,9 @@ class CurriculumViewModel @Inject constructor(
                 error = null
             )
         }
+    }
+
+    fun setEmptyQuery() {
         _searchQuery.value = ""
     }
 

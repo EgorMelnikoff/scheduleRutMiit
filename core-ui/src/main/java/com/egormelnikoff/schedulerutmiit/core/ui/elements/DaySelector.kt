@@ -20,13 +20,12 @@ import java.time.format.TextStyle
 
 @Composable
 fun DaySelector(
-    currentDate: LocalDate,
     dateEvent: LocalDate?,
     onSelectDateEvent: (LocalDate) -> Unit,
     focusManager: FocusManager
 ) {
     val firstDayOfWeek = remember {
-        currentDate.getFirstDayOfWeek()
+        LocalDate.now().getFirstDayOfWeek()
     }
     
     ColumnGroup(

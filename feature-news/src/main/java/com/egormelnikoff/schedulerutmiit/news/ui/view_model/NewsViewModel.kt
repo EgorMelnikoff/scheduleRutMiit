@@ -1,10 +1,10 @@
-package com.egormelnikoff.schedulerutmiit.news.view_model
+package com.egormelnikoff.schedulerutmiit.news.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
-import com.egormelnikoff.schedulerutmiit.news.view_model.state.NewsState
+import com.egormelnikoff.schedulerutmiit.news.ui.view_model.state.NewsState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

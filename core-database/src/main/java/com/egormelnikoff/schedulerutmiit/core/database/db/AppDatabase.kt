@@ -16,7 +16,7 @@ import com.egormelnikoff.schedulerutmiit.core.database.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraDataEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.NamedScheduleEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.ScheduleEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQuery
+import com.egormelnikoff.schedulerutmiit.core.database.entity.SearchQueryEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskCompletionEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskEntity
 
@@ -26,11 +26,11 @@ import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskEntity
         ScheduleEntity::class,
         EventEntity::class,
         EventExtraDataEntity::class,
-        SearchQuery::class,
+        SearchQueryEntity::class,
         TaskEntity::class,
         TaskCompletionEntity::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -65,6 +65,7 @@ abstract class AppDatabase : RoomDatabase() {
                     .addMigrations(MIGRATION_8_9)
                     .addMigrations(MIGRATION_9_10)
                     .addMigrations(MIGRATION_10_11)
+                    .addMigrations(MIGRATION_11_12)
                     .build()
                 INSTANCE = instance
                 instance

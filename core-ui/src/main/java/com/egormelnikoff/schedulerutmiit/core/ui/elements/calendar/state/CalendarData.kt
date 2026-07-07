@@ -10,55 +10,47 @@ data class CalendarData(
     val initialDate: LocalDate,
 
     val daysCount: Int,
-    val weeksCount: Int,
-
-    val weeksPagerInitialIndex: Int,
-    val daysPagerInitialIndex: Int,
+    val weeksCount: Int
 ) {
+    fun getInitialDayIndex(today: LocalDate = LocalDate.now()) = ChronoUnit.DAYS.between(
+        startDate,
+        today
+    ).toInt()
+
+    fun getInitialWeekIndex(today: LocalDate = LocalDate.now()) = ChronoUnit.WEEKS.between(
+        startDate.getFirstDayOfWeek(),
+        today.getFirstDayOfWeek()
+    ).toInt()
+
     companion object {
         operator fun invoke(
-            startDate: LocalDate? = null,
-            endDate: LocalDate? = null
+            startDate: LocalDate,
+            endDate: LocalDate
         ): CalendarData {
-            val today = LocalDate.now()
-
-            val newStartDate = startDate ?: today.minusYears(5)
-            val newEndDate = endDate ?: today.plusYears(5)
-
             val weeksCount = ChronoUnit.WEEKS.between(
-                newStartDate.getFirstDayOfWeek(),
-                newEndDate.getFirstDayOfWeek()
+                startDate.getFirstDayOfWeek(),
+                endDate.getFirstDayOfWeek()
             ).plus(1).toInt()
 
             val daysCount = ChronoUnit.DAYS.between(
-                newStartDate,
-                newEndDate
+                startDate,
+                endDate
             ).plus(1).toInt()
 
-            val defaultDate = when {
-                today < newStartDate -> newStartDate
-                today > newEndDate -> newEndDate
+            val today = LocalDate.now()
+
+            val initialDate = when {
+                today < startDate -> startDate
+                today > endDate -> endDate
                 else -> today
             }
 
-            val weeksPagerDefaultIndex = ChronoUnit.WEEKS.between(
-                newStartDate.getFirstDayOfWeek(),
-                defaultDate.getFirstDayOfWeek()
-            ).toInt()
-
-            val daysPagerDefaultIndex = ChronoUnit.DAYS.between(
-                newStartDate,
-                defaultDate
-            ).toInt()
-
             return CalendarData(
-                startDate = newStartDate,
-                endDate = newEndDate,
-                initialDate = defaultDate,
+                startDate = startDate,
+                endDate = endDate,
+                initialDate = initialDate,
                 weeksCount = weeksCount,
-                weeksPagerInitialIndex = weeksPagerDefaultIndex,
-                daysCount = daysCount,
-                daysPagerInitialIndex = daysPagerDefaultIndex
+                daysCount = daysCount
             )
         }
     }

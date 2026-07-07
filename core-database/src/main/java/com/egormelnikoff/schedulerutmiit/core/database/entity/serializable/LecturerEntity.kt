@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.core.database.entity
+package com.egormelnikoff.schedulerutmiit.core.database.entity.serializable
 
 import kotlinx.serialization.Serializable
 

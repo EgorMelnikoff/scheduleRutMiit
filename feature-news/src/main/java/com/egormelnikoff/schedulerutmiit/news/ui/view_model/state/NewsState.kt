@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.news.view_model.state
+package com.egormelnikoff.schedulerutmiit.news.ui.view_model.state
 
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto

@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements
+package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -15,7 +15,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ActionDialogButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.EventHeader
+import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventHeader
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,11 +25,11 @@ fun ModalDialogEvent(
     onHideEvent: (() -> Unit)? = null,
     onDeleteEvent: (() -> Unit)? = null,
     onEditEvent: (() -> Unit)? = null,
-    onDismiss: (Event?) -> Unit
+    onDismiss: () -> Unit
 ) {
     CustomModalBottomSheet(
         onDismiss = {
-            onDismiss(null)
+            onDismiss()
         }
     ) {
         EventHeader(
@@ -43,7 +43,7 @@ fun ModalDialogEvent(
                 contentColor = MaterialTheme.colorScheme.onBackground
             ) {
                 onHideEvent()
-                onDismiss(null)
+                onDismiss()
             }
         }
         onEditEvent?.let {
@@ -53,7 +53,7 @@ fun ModalDialogEvent(
                 contentColor = MaterialTheme.colorScheme.onBackground
             ) {
                 onEditEvent()
-                onDismiss(null)
+                onDismiss()
             }
         }
         onDeleteEvent?.let {
@@ -63,7 +63,7 @@ fun ModalDialogEvent(
                 contentColor = MaterialTheme.colorScheme.error
             ) {
                 onDeleteEvent()
-                onDismiss(null)
+                onDismiss()
             }
         }
     }

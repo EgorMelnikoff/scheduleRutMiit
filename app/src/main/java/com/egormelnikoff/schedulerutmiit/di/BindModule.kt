@@ -13,11 +13,13 @@ import com.egormelnikoff.schedulerutmiit.latest_release.domain.repos.AppInfoProv
 import com.egormelnikoff.schedulerutmiit.latest_release.domain.repos.LatestReleaseDataSource
 import com.egormelnikoff.schedulerutmiit.news.data.repos.NewsRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.schedule.data.manager.ScheduleManagerImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.EventExtraReposImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.EventReposImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.NamedScheduleReposImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.ScheduleRemoteDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.schedule.data.repos.ScheduleReposImpl
+import com.egormelnikoff.schedulerutmiit.schedule.domain.manager.ScheduleManager
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
@@ -84,6 +86,11 @@ abstract class BindModule {
     @Binds
     @Singleton
     abstract fun bindEventExtraRepos(eventExtraReposImpl: EventExtraReposImpl): EventExtraRepos
+
+
+    @Binds
+    @Singleton
+    abstract fun bindScheduleManager(scheduleManagerImpl: ScheduleManagerImpl): ScheduleManager
 
 
     @Binds

@@ -4,9 +4,9 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.core.database.entity.GroupEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.LecturerEntity
-import com.egormelnikoff.schedulerutmiit.core.database.entity.RoomEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.GroupEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.LecturerEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.RoomEntity
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -18,50 +18,52 @@ class Converters @Inject constructor(
     private val json: Json
 ) {
     @TypeConverter
-    fun fromListLecturer(lecturers: List<LecturerEntity>?): String? {
-        return lecturers?.let { json.encodeToString(it) }
-    }
+    fun fromListLecturer(lecturers: List<LecturerEntity>?): String? =
+        lecturers?.let { json.encodeToString(it) }
 
     @TypeConverter
-    fun toListLecturer(lecturersString: String?): List<LecturerEntity>? {
-        return lecturersString?.let { json.decodeFromString(it) }
-    }
-
+    fun fromListRoom(rooms: List<RoomEntity>?): String? =
+        rooms?.let { json.encodeToString(it) }
 
     @TypeConverter
-    fun fromListRoom(rooms: List<RoomEntity>?): String? {
-        return rooms?.let { json.encodeToString(it) }
-    }
+    fun fromListGroup(groups: List<GroupEntity>?): String? =
+        groups?.let { json.encodeToString(it) }
 
-    @TypeConverter
-    fun toListRoom(roomsString: String?): List<RoomEntity>? {
-        return roomsString?.let { json.decodeFromString(it) }
-    }
-
-    @TypeConverter
-    fun fromListGroup(groups: List<GroupEntity>?): String? {
-        return groups?.let { json.encodeToString(it) }
-    }
-
-    @TypeConverter
-    fun toListGroup(groupsString: String?): List<GroupEntity>? {
-        return groupsString?.let { json.decodeFromString(it) }
-    }
 
 
     @TypeConverter
-    fun toLocalDateString(localDate: LocalDate?): String? = localDate?.toString()
+    fun toListLecturer(lecturersString: String?): List<LecturerEntity>? =
+        lecturersString?.let { json.decodeFromString(it) }
 
     @TypeConverter
-    fun toLocalDate(localDateString: String?): LocalDate? =
-        localDateString?.let { LocalDate.parse(it) }
+    fun toListRoom(roomsString: String?): List<RoomEntity>? =
+        roomsString?.let { json.decodeFromString(it) }
 
     @TypeConverter
-    fun toLocalDateTimeString(localDateTime: LocalDateTime?): String? = localDateTime?.toString()
+    fun toListGroup(groupsString: String?): List<GroupEntity>? =
+        groupsString?.let { json.decodeFromString(it) }
+
+
 
     @TypeConverter
-    fun toLocalDateTime(localDateTimeString: String?): LocalDateTime? =
-        localDateTimeString?.let { LocalDateTime.parse(it) }
+    fun fromLocalDate(value: LocalDate?): String? = value?.toString()
+
+    @TypeConverter
+    fun fromLocalTime(value: LocalTime?): String? = value?.toString()
+
+    @TypeConverter
+    fun fromLocalDateTime(value: LocalDateTime?): String? = value?.toString()
+
+
+    @TypeConverter
+    fun toLocalDate(value: String?): LocalDate? = value?.let(LocalDate::parse)
+
+    @TypeConverter
+    fun toLocalTime(value: String?): LocalTime? = value?.let(LocalTime::parse)
+
+    @TypeConverter
+    fun toLocalDateTime(value: String?): LocalDateTime? = value?.let(LocalDateTime::parse)
+
 
 
     @TypeConverter
@@ -75,13 +77,4 @@ class Converters @Inject constructor(
 
     @TypeConverter
     fun toTimetableType(value: Int): TimetableType = TimetableType.entries[value]
-
-
-    @TypeConverter
-    fun fromLocalTime(value: LocalTime?): String? =
-        value?.toString()
-
-    @TypeConverter
-    fun toLocalTime(value: String?): LocalTime? =
-        value?.let(LocalTime::parse)
 }

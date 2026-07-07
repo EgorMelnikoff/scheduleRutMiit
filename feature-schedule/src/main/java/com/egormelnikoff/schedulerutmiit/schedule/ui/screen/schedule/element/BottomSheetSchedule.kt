@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements
+package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -46,36 +46,32 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefaultSchedule
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefault
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
 import java.time.Instant
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ModalDialogNamedSchedule(
+fun ModalDialogSchedule(
     namedSchedule: NamedSchedule,
     currentSchedule: Schedule? = null,
-    schedulesWithEvents: List<ScheduleWithEvents>? = null,
+    schedulesWithEvents: List<ScheduleWithEvents>,
 
     scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
-    today: LocalDate? = null,
-    isDarkTheme: Boolean? = null,
     isSavedNamedSchedule: Boolean,
     isDefaultNamedSchedule: Boolean,
     haveHiddenEvents: Boolean = false,
     haveNotEmptySchedules: Boolean = false,
 
-    onOpenNamedSchedule: ((Long, Boolean, Boolean) -> Unit)? = null,
+    onDeleteNamedSchedule: (Long, Boolean) -> Unit,
     onDismiss: (NamedSchedule?) -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
 
     CustomModalBottomSheet(
-        isDarkTheme = isDarkTheme,
         verticalArrangement = Arrangement.spacedBy(16.dp),
         onDismiss = {
             onDismiss(null)
@@ -83,60 +79,13 @@ fun ModalDialogNamedSchedule(
     ) {
         ModalDialogNamedScheduleHeader(
             appBackStack = appBackStack,
-            scheduleViewModel = scheduleViewModel,
+            onDeleteNamedSchedule = onDeleteNamedSchedule,
             namedSchedule = namedSchedule,
             isSavedNamedSchedule = isSavedNamedSchedule,
             isDefaultNamedSchedule = isDefaultNamedSchedule,
-            schedule = schedulesWithEvents?.findDefaultSchedule()?.schedule,
+            schedule = schedulesWithEvents.findDefault()?.schedule,
             onDismiss = onDismiss
         )
-        if (schedulesWithEvents == null) {
-            ColumnGroup(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                items = buildList {
-                    if (isSavedNamedSchedule && !isDefaultNamedSchedule && onOpenNamedSchedule != null) {
-                        add {
-                            ClickableItem(
-                                title = stringResource(R.string.make_default),
-                                leadingIcon = {
-                                    Icon(
-                                        modifier = Modifier.size(20.dp),
-                                        imageVector = ImageVector.vectorResource(R.drawable.check),
-                                        tint = MaterialTheme.colorScheme.onBackground,
-                                        contentDescription = null
-                                    )
-                                },
-                                defaultMinHeight = 24.dp,
-                                showClickLabel = false
-                            ) {
-                                onOpenNamedSchedule(namedSchedule.id, true, false)
-                                onDismiss(null)
-                            }
-
-                        }
-                    }
-                    onOpenNamedSchedule?.let {
-                        add {
-                            ClickableItem(
-                                title = stringResource(R.string.open),
-                                leadingIcon = {
-                                    Icon(
-                                        modifier = Modifier.size(20.dp),
-                                        imageVector = ImageVector.vectorResource(R.drawable.open_panel),
-                                        tint = MaterialTheme.colorScheme.onBackground,
-                                        contentDescription = null
-                                    )
-                                },
-                                defaultMinHeight = 24.dp
-                            ) {
-                                onOpenNamedSchedule(namedSchedule.id, false, true)
-                                onDismiss(null)
-                            }
-                        }
-                    }
-                }
-            )
-        }
         currentSchedule?.let { schedule ->
             Row(
                 modifier = Modifier
@@ -186,12 +135,9 @@ fun ModalDialogNamedSchedule(
                         onClick = {
                             onDismiss(null)
                             appBackStack.openDialog(
-                                Route.Dialog.AddEditEventDialog(
-                                    namedScheduleId = namedSchedule.id,
-                                    scheduleId = schedule.id,
-                                    recurrence = schedule.recurrence,
-                                    scheduleStartDate = schedule.startDate,
-                                    scheduleEndDate = schedule.endDate
+                                Route.Dialog.EditEventDialog(
+                                    eventId = null,
+                                    scheduleId = schedule.id
                                 )
                             )
                         }
@@ -216,43 +162,16 @@ fun ModalDialogNamedSchedule(
                             onDismiss(null)
                             appBackStack.openDialog(
                                 Route.Dialog.HiddenEventsDialog(
-                                    namedScheduleId = namedSchedule.id,
-                                    namedScheduleShortName = namedSchedule.shortName,
-                                    timetableType = schedule.timetableType
+                                    scheduleId = schedule.id
                                 )
                             )
-                        }
-                    )
-                }
-                AnimatedVisibility(
-                    visible = isSavedNamedSchedule && schedule.endDate < today
-                ) {
-                    CustomFilterChip(
-                        imageVector = ImageVector.vectorResource(R.drawable.delete),
-                        colors = FilterChipDefaults.filterChipColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                            labelColor = MaterialTheme.colorScheme.error,
-                            iconColor = MaterialTheme.colorScheme.error
-                        ),
-                        border = BorderStroke(
-                            color = MaterialTheme.colorScheme.outline,
-                            width = 0.5.dp
-                        ),
-                        title = stringResource(R.string.delete_schedule),
-                        onClick = {
-                            scheduleViewModel.deleteSchedule(
-                                schedule.namedScheduleId,
-                                schedule.id
-                            )
-
-                            onDismiss(null)
                         }
                     )
                 }
             }
         }
 
-        if (schedulesWithEvents != null && namedSchedule.type != NamedScheduleType.MY) {
+        if (namedSchedule.type != NamedScheduleType.MY) {
             ColumnGroup(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 items = schedulesWithEvents.map { scheduleWithEvents ->
@@ -306,7 +225,7 @@ fun ModalDialogNamedSchedule(
 
 @Composable
 fun ModalDialogNamedScheduleHeader(
-    scheduleViewModel: ScheduleViewModel,
+    onDeleteNamedSchedule: (Long, Boolean) -> Unit,
     appBackStack: AppBackStack,
     namedSchedule: NamedSchedule,
     schedule: Schedule?,
@@ -372,8 +291,7 @@ fun ModalDialogNamedScheduleHeader(
                     onDismiss(null)
                     appBackStack.openDialog(
                         Route.Dialog.RenameNamedScheduleDialog(
-                            namedSchedule.id,
-                            namedSchedule.fullName
+                            namedSchedule.id
                         )
                     )
                 },
@@ -408,10 +326,7 @@ fun ModalDialogNamedScheduleHeader(
                 showDeleteDialog = false
             },
             onConfirmation = {
-                scheduleViewModel.deleteNamedSchedule(
-                    namedSchedule.id,
-                    isDefaultNamedSchedule
-                )
+                onDeleteNamedSchedule(namedSchedule.id, isDefaultNamedSchedule)
                 onDismiss(null)
             }
         )

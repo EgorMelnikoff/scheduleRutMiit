@@ -43,13 +43,8 @@ class ScheduleWorker @AssistedInject constructor(
         }
 
         return when {
-            results.all { it is CustomResult.Success } -> {
-                Result.success()
-            }
-
-            else -> {
-                Result.retry()
-            }
+            results.all { it is CustomResult.Success } -> Result.success()
+            else -> Result.retry()
         }
     }
 }

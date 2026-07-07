@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.news.view_model
+package com.egormelnikoff.schedulerutmiit.news.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

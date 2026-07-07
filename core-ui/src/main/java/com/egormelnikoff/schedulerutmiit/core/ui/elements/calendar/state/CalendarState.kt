@@ -37,7 +37,7 @@ class CalendarState(
 
     private val scrollMutex = Mutex()
 
-    fun selectDate(date: LocalDate, animate: Boolean = true) {
+    fun selectDate(date: LocalDate = calendarData.initialDate, animate: Boolean = true) {
         val targetWeekPage = getTargetWeekIndex(calendarData.startDate, date)
 
         if (selectedDate != date) {
@@ -80,6 +80,14 @@ class CalendarState(
         }
     }
 
+    fun selectInitialDate(animate: Boolean = true) {
+        val today = LocalDate.now()
+
+        if (today != calendarData.initialDate) selectDate(today, animate)
+        else selectDate(animate = animate)
+    }
+
+
     fun scrollWeek(index: Int, animate: Boolean = true) {
         scope.launch {
             if (animate) pagerWeeksState.animateScrollToPage(index)
@@ -118,17 +126,17 @@ class CalendarState(
 
 @Composable
 fun rememberCalendarState(
-    calendarData: CalendarData = remember { CalendarData() },
+    calendarData: CalendarData,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ): CalendarState {
     val (pagerDaysState, pagerWeeksState) = key(calendarData) {
         val daysState = rememberPagerState(
             pageCount = { calendarData.daysCount },
-            initialPage = calendarData.daysPagerInitialIndex
+            initialPage = calendarData.getInitialDayIndex()
         )
         val weeksState = rememberPagerState(
             pageCount = { calendarData.weeksCount },
-            initialPage = calendarData.weeksPagerInitialIndex
+            initialPage = calendarData.getInitialWeekIndex()
         )
         Pair(daysState, weeksState)
     }

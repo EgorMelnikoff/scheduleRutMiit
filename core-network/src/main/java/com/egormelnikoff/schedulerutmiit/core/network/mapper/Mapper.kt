@@ -4,10 +4,12 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.domain.LatestRelease
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Lecturer
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Room
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.network.dto.latest_release.LatestReleaseFetchDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.EventDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.GroupDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.LecturerDto
@@ -71,3 +73,5 @@ fun RecurrenceDto.toDomain(
         )
     }
 }
+
+fun PersonDto.toDomain() = Person(name, id, position)

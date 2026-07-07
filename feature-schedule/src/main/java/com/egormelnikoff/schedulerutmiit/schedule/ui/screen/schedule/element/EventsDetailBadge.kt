@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements
+package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement

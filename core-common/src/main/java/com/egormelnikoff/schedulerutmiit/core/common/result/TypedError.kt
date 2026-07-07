@@ -10,7 +10,7 @@ sealed interface TypedError {
     data class HttpError(val code: Int, val message: String? = null) : TypedError
     data class SerializationError(val exception: SerializationException) : TypedError
     data class IllegalArgumentError(val exception: IllegalArgumentException) : TypedError
-    data class UnexpectedError(val exception: Throwable) : TypedError
+    data class UnexpectedError(val exception: Throwable = Exception()) : TypedError
     data object EmptyBodyError : TypedError
 }
 
