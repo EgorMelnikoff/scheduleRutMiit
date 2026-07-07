@@ -6,13 +6,12 @@ import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRepos
 import javax.inject.Inject
 
 class SaveNamedScheduleUseCase @Inject constructor(
-    private val openNamedScheduleUseCase: OpenNamedScheduleUseCase,
     private val namedScheduleRepos: NamedScheduleRepos,
     private val scheduleRepos: ScheduleRepos
 ) {
     suspend operator fun invoke(
         currentNamedScheduleWithSchedules: NamedScheduleWithSchedules
-    ): NamedScheduleWithSchedules {
+    ): Pair<Long, Boolean> {
         val namedScheduleId = namedScheduleRepos.save(
             currentNamedScheduleWithSchedules.namedSchedule
         )
@@ -21,9 +20,10 @@ class SaveNamedScheduleUseCase @Inject constructor(
         )
 
         if (namedScheduleRepos.getCount() == 1) {
-            return openNamedScheduleUseCase(namedScheduleId, true)
+            namedScheduleRepos.setDefaultNamedSchedule(namedScheduleId)
+            return namedScheduleId to true
         }
 
-        return openNamedScheduleUseCase(namedScheduleId)
+        return namedScheduleId to false
     }
 }

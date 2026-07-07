@@ -18,19 +18,17 @@ import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonth
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements.DateHeader
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.DateHeader
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.event.Event
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.ScheduleState
 import java.time.LocalDate
-
 
 private sealed interface ListEntry {
     data class Header(val date: LocalDate) : ListEntry
@@ -48,7 +46,6 @@ fun ScheduleList(
 
     scheduleListState: LazyListState,
     isSavedSchedule: Boolean,
-    namedSchedule: NamedSchedule,
     scheduleState: ScheduleState,
 
     appSettings: AppSettings,
@@ -89,7 +86,7 @@ fun ScheduleList(
             }
         }
         val navigateToEditEvent = remember {
-            { dialog: Route.Dialog.AddEditEventDialog ->
+            { dialog: Route.Dialog.EditEventDialog ->
                 appBackStack.openDialog(dialog)
             }
         }
@@ -115,22 +112,19 @@ fun ScheduleList(
                                 Event(
                                     navigateToEvent = navigateToEvent,
                                     navigateToEditEvent = navigateToEditEvent,
-                                    onDeleteEvent = { schedule, eventId ->
+                                    onDeleteEvent = { eventId ->
                                         scheduleViewModel.eventAction(
-                                            schedule,
                                             EventAction.Delete(eventId)
                                         )
                                     },
-                                    onUpdateHiddenEvent = { schedule, eventId ->
+                                    onUpdateHiddenEvent = { eventId ->
                                         scheduleViewModel.eventAction(
-                                            schedule,
                                             EventAction.UpdateHidden(eventId, true)
                                         )
                                     },
 
                                     date = item.date,
                                     eventsWithExtra = item.enrichedEvents,
-                                    namedScheduleId = namedSchedule.id,
                                     schedule = scheduleState.schedule,
                                     isSavedSchedule = isSavedSchedule,
                                     eventView = appSettings.eventView

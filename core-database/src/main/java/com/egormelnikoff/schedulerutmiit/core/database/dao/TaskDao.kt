@@ -18,9 +18,8 @@ interface TaskDao {
     @Query("DELETE FROM Tasks WHERE TaskId = :id")
     suspend fun deleteById(id: Long)
 
-
     @Query("SELECT * FROM Tasks Where TaskId = :id")
-    suspend fun getById(id: Long): TaskEntity?
+    suspend fun getById(id: Long): TaskEntity
 
     @Query("UPDATE TaskCompletions SET isCompleted = :isCompleted WHERE TaskId = :id")
     suspend fun updateIsCompleted(

@@ -10,6 +10,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.mapper.ScheduleMapper
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.result.FetchNamedScheduleResult
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -111,7 +112,8 @@ class FetchNamedScheduleUseCase @Inject constructor(
                                 namedSchedule = namedSchedule,
                                 schedulesWithEvents = schedules
                             )
-                        ), false
+                        ),
+                        false
                     )
                 } catch (e: ScheduleLoadException) {
                     FetchNamedScheduleResult(

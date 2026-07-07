@@ -11,11 +11,15 @@ interface NamedScheduleRepos {
     )
 
     suspend fun getCount(): Int
-    fun observeAll(): Flow<List<NamedSchedule>>
+
     suspend fun getAll(): List<NamedSchedule>
     suspend fun getDefault(): NamedSchedule?
     suspend fun getByApiId(apiId: Int): NamedScheduleWithSchedules?
     suspend fun getById(namedScheduleId: Long): NamedScheduleWithSchedules
+
+    fun observeAll(): Flow<List<NamedSchedule>>
+    fun observeById(namedScheduleId: Long): Flow<NamedScheduleWithSchedules?>
+    fun observeDefault(): Flow<NamedScheduleWithSchedules?>
 
     suspend fun setDefaultNamedSchedule(namedScheduleId: Long)
     suspend fun updateName(

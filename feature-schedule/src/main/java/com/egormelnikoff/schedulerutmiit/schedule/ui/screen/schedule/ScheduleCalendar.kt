@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomBadge
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.Calendar
@@ -41,18 +40,17 @@ import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEventsForDate
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements.EventsDetailBadge
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.EventsDetailBadge
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.event.Event
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ScheduleState
 import java.time.LocalDateTime
 
 @Composable
 fun ScheduleCalendar(
     scheduleViewModel: ScheduleViewModel,
     appUiState: AppUiState,
-    namedScheduleWithSchedules: NamedScheduleWithSchedules,
     scheduleState: ScheduleState,
     hourlyDateTime: LocalDateTime,
     isSavedSchedule: Boolean,
@@ -111,9 +109,9 @@ fun ScheduleCalendar(
         calendarBarItem = { _, currentDate ->
             val eventsForDate = remember(
                 scheduleState.schedule,
-                scheduleState.fullEventList.size,
-                scheduleState.hiddenEvents.size,
-                currentDate
+                scheduleState.periodicEvents,
+                scheduleState.nonPeriodicEvents,
+                scheduleState.haveHiddenEvents
             ) {
                 scheduleState.schedule.getEventsForDate(
                     date = currentDate,
@@ -127,7 +125,7 @@ fun ScheduleCalendar(
 
                 isSelected = scheduleCalendarState.selectedDate == currentDate,
                 isDisabled = currentDate !in scheduleState.schedule.startDate..scheduleState.schedule.endDate,
-                isToday = (currentDate == hourlyDateTime.toLocalDate()),
+                isToday = currentDate == hourlyDateTime.toLocalDate(),
 
                 selectDate = { date ->
                     scheduleCalendarState.selectDate(date, eventsForDate.isEmpty())
@@ -151,9 +149,9 @@ fun ScheduleCalendar(
     ) { _, currentDate ->
         val enrichedEvents = remember(
             scheduleState.schedule,
-            scheduleState.fullEventList.size,
-            scheduleState.hiddenEvents.size,
-            currentDate
+            scheduleState.periodicEvents,
+            scheduleState.nonPeriodicEvents,
+            scheduleState.haveHiddenEvents
         ) {
             scheduleState.schedule
                 .getEventsForDate(
@@ -189,7 +187,7 @@ fun ScheduleCalendar(
                         }
                     }
                     val navigateToEditEvent = remember {
-                        { dialog: Route.Dialog.AddEditEventDialog ->
+                        { dialog: Route.Dialog.EditEventDialog ->
                             appUiState.appBackStack.openDialog(dialog)
                         }
                     }
@@ -197,15 +195,13 @@ fun ScheduleCalendar(
                     Event(
                         navigateToEvent = navigateToEvent,
                         navigateToEditEvent = navigateToEditEvent,
-                        onDeleteEvent = { namedScheduleId, eventId ->
+                        onDeleteEvent = { eventId ->
                             scheduleViewModel.eventAction(
-                                namedScheduleId,
                                 EventAction.Delete(eventId)
                             )
                         },
-                        onUpdateHiddenEvent = { namedScheduleId, eventId ->
+                        onUpdateHiddenEvent = { eventId ->
                             scheduleViewModel.eventAction(
-                                namedScheduleId,
                                 EventAction.UpdateHidden(eventId, true)
                             )
                         },
@@ -213,7 +209,6 @@ fun ScheduleCalendar(
                         eventsWithExtra = events.second,
                         schedule = scheduleState.schedule,
                         date = currentDate,
-                        namedScheduleId = namedScheduleWithSchedules.namedSchedule.id,
                         isSavedSchedule = isSavedSchedule,
                         eventView = appSettings.eventView
                     )

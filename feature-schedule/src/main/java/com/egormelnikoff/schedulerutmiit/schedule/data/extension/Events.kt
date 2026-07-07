@@ -43,7 +43,7 @@ fun Map<Long, List<EventExtraData>>.findEventExtra(
     date: LocalDate
 ): EventExtraData? {
     return if (eventExtraPolicy == EventExtraPolicy.BY_DATES) {
-        this[eventId]?.find { it.dateTime?.toLocalDate() == date }
+        this[eventId]?.find { it.date == date }
     } else {
         this[eventId]?.first()
     }

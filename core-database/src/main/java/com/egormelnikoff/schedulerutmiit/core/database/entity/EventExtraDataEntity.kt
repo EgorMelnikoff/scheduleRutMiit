@@ -3,9 +3,19 @@ package com.egormelnikoff.schedulerutmiit.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDateTime
+import java.time.LocalDate
 
-@Entity(tableName = "EventsExtraData")
+@Entity(
+    tableName = "EventsExtraData",
+    foreignKeys = [
+//        ForeignKey(
+//            entity = EventEntity::class,
+//            parentColumns = ["EventId"],
+//            childColumns = ["eventId"],
+//            onDelete = ForeignKey.CASCADE
+//        )
+    ]
+)
 data class EventExtraDataEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -15,7 +25,7 @@ data class EventExtraDataEntity(
     @ColumnInfo(name = "eventExtraScheduleId")
     val scheduleId: Long = 0,
     val eventName: String?,
-    val dateTime: LocalDateTime?,
+    val date: LocalDate?,
     val comment: String = "",
     val tag: Int = 0
 )

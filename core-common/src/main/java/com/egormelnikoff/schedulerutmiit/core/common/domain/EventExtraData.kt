@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.core.common.domain
 
-import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Serializable
 data class EventExtraData(
@@ -10,8 +10,8 @@ data class EventExtraData(
     val eventId: Long,
     val scheduleId: Long = 0,
     val eventName: String?,
-    @Serializable(with = LocalDateTimeSerializer::class)
-    val dateTime: LocalDateTime?,
+    @Serializable(with = LocalDateSerializer::class)
+    val date: LocalDate?,
     val comment: String = "",
     val tag: Int = 0
 )

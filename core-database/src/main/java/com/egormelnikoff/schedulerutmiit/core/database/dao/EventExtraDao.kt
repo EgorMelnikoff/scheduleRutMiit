@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventExtraDataEntity
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Dao
 interface EventExtraDao {
@@ -21,8 +21,8 @@ interface EventExtraDao {
     @Query("DELETE FROM EventsExtraData WHERE eventId = :eventId")
     suspend fun deleteByEventId(eventId: Long)
 
-    @Query("DELETE FROM EventsExtraData WHERE eventId = :eventId AND dateTime =:dateTime")
-    suspend fun deleteByEventIdAndDateTime(eventId: Long, dateTime: LocalDateTime)
+    @Query("DELETE FROM EventsExtraData WHERE eventId = :eventId AND date =:eventDate")
+    suspend fun deleteByEventIdAndDate(eventId: Long, eventDate: LocalDate)
 
     @Query("DELETE FROM EventsExtraData")
     suspend fun deleteAll()
@@ -33,8 +33,8 @@ interface EventExtraDao {
     @Query("SELECT * FROM EventsExtraData WHERE eventId = :eventId")
     suspend fun getByEventId(eventId: Long): EventExtraDataEntity?
 
-    @Query("SELECT * FROM EventsExtraData WHERE eventId = :eventId AND dateTime = :dateTime")
-    suspend fun getByEventIdAndDateTime(eventId: Long, dateTime: LocalDateTime): EventExtraDataEntity?
+    @Query("SELECT * FROM EventsExtraData WHERE eventId = :eventId AND date = :eventDate")
+    suspend fun getByEventIdAndDate(eventId: Long, eventDate: LocalDate): EventExtraDataEntity?
 
     @Query("SELECT * FROM EventsExtraData")
     suspend fun getAll(): List<EventExtraDataEntity>
@@ -44,10 +44,10 @@ interface EventExtraDao {
         eventId: Long,
         tag: Int
     )
-    @Query("UPDATE eventsextradata SET tag = :tag WHERE eventId = :eventId AND dateTime = :dateTime")
-    suspend fun updateTagByEventIdAndDateTime(
+    @Query("UPDATE eventsextradata SET tag = :tag WHERE eventId = :eventId AND date = :eventDate")
+    suspend fun updateTagByEventIdAndDate(
         eventId: Long,
-        dateTime: LocalDateTime,
+        eventDate: LocalDate,
         tag: Int
     )
 
@@ -56,10 +56,10 @@ interface EventExtraDao {
         eventId: Long,
         comment: String
     )
-    @Query("UPDATE eventsextradata SET comment = :comment WHERE eventId = :eventId AND dateTime = :dateTime")
+    @Query("UPDATE eventsextradata SET comment = :comment WHERE eventId = :eventId AND date = :eventDate")
     suspend fun updateCommentByEventIdAndDateTime(
         eventId: Long,
-        dateTime: LocalDateTime,
+        eventDate: LocalDate,
         comment: String
     )
 }

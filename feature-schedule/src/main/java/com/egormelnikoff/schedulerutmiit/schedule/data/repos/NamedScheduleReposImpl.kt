@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.schedule.data.repos
 
 import androidx.room.withTransaction
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.NamedScheduleDao
@@ -25,7 +26,19 @@ class NamedScheduleReposImpl @Inject constructor(
         namedSchedule: NamedSchedule
     ) = namedScheduleDao.insert(namedSchedule.toEntity())
 
-    override suspend fun getCount(): Int = namedScheduleDao.getCount()
+    override suspend fun getCount(): Int = namedScheduleDao.count()
+
+    override suspend fun getAll() = namedScheduleDao.getAll().map { it.toDomain() }
+
+    override suspend fun getById(
+        namedScheduleId: Long
+    ) = namedScheduleDao.getById(namedScheduleId).toDomain()
+
+    override suspend fun getByApiId(
+        apiId: Int
+    ) = namedScheduleDao.getByApiId(apiId)?.toDomain()
+
+    override suspend fun getDefault() = namedScheduleDao.getDefault()?.toDomain()
 
 
     override fun observeAll(): Flow<List<NamedSchedule>> {
@@ -34,20 +47,11 @@ class NamedScheduleReposImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAll() = namedScheduleDao.getAll().map { it.toDomain() }
+    override fun observeById(namedScheduleId: Long) =
+        namedScheduleDao.observeById(namedScheduleId).map { it?.toDomain() }
 
-    override suspend fun getById(
-        namedScheduleId: Long
-    ) = namedScheduleDao.getById(namedScheduleId).toDomain()
-
-
-    override suspend fun getByApiId(
-        apiId: Int
-    ) = namedScheduleDao.getByApiId(apiId)?.toDomain()
-
-
-    override suspend fun getDefault(
-    ) = namedScheduleDao.getDefault()?.toDomain()
+    override fun observeDefault(): Flow<NamedScheduleWithSchedules?> =
+        namedScheduleDao.observeDefault().map { it?.toDomain() }
 
 
     override suspend fun setDefaultNamedSchedule(
@@ -56,7 +60,6 @@ class NamedScheduleReposImpl @Inject constructor(
         namedScheduleDao.setDefault(namedScheduleId)
         namedScheduleDao.setNonDefault(namedScheduleId)
     }
-
 
     override suspend fun updateName(
         namedScheduleId: Long,
@@ -69,6 +72,7 @@ class NamedScheduleReposImpl @Inject constructor(
 
     override suspend fun updateLastTimeUpdate(namedScheduleId: Long) =
         namedScheduleDao.updateLastTimeUpdate(namedScheduleId)
+
 
     override suspend fun deleteById(
         namedScheduleId: Long

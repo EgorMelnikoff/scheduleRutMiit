@@ -24,8 +24,15 @@ interface NamedScheduleDao {
     suspend fun deleteAll()
 
 
-    @Query("SELECT * FROM NamedSchedules")
+    @Query("SELECT * FROM NamedSchedules ORDER BY isDefaultNamedSchedule DESC")
     fun observeAll(): Flow<List<NamedScheduleEntity>>
+
+    @Query("SELECT * FROM NamedSchedules WHERE NamedScheduleId = :namedScheduleId")
+    fun observeById(namedScheduleId: Long): Flow<NamedScheduleWithSchedulesRelation?>
+
+    @Transaction
+    @Query("SELECT * FROM NamedSchedules ORDER BY isDefaultNamedSchedule DESC, NamedScheduleId ASC LIMIT 1")
+    fun observeDefault(): Flow<NamedScheduleWithSchedulesRelation?>
 
     @Query("SELECT * FROM NamedSchedules")
     suspend fun getAll(): List<NamedScheduleEntity>
@@ -39,10 +46,11 @@ interface NamedScheduleDao {
     suspend fun getById(namedScheduleId: Long): NamedScheduleWithSchedulesRelation
 
     @Query("SELECT COUNT(*) FROM NamedSchedules")
-    suspend fun getCount(): Int
+    suspend fun count(): Int
 
     @Query("SELECT * FROM NamedSchedules WHERE isDefaultNamedSchedule = 1")
     suspend fun getDefault(): NamedScheduleEntity?
+
 
     @Query("UPDATE namedschedules SET lastTimeUpdate = :lastTimeUpdate WHERE NamedScheduleId = :namedScheduleId")
     suspend fun updateLastTimeUpdate(

@@ -1,12 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.tasks.data.repos
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Task
+import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.add_task.view_model.state.AddTaskForm
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
-import java.time.LocalTime
 
 interface TaskRepos {
-    suspend fun save(createTask: CreateTask)
+    suspend fun save(addTaskForm: AddTaskForm)
+
+    suspend fun getByIdAndDate(taskId: Long, date: LocalDate): Task
 
     suspend fun deleteById(id: Long)
 
@@ -20,19 +22,7 @@ interface TaskRepos {
         isCompleted: Boolean
     )
 
-    suspend fun updateText(
-        id: Long,
-        text: String
-    )
-
-    suspend fun updateTime(
-        id: Long,
-        time: LocalTime
-    )
-
-    suspend fun updateTag(
-        id: Long,
-        date: LocalDate,
-        tag: Int
+    suspend fun updateTask(
+        task: Task
     )
 }

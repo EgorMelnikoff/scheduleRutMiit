@@ -9,6 +9,7 @@ import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
 import com.egormelnikoff.schedulerutmiit.core.database.mapper.toDomain
 import com.egormelnikoff.schedulerutmiit.core.database.mapper.toEntity
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class EventReposImpl @Inject constructor(
@@ -46,6 +47,9 @@ class EventReposImpl @Inject constructor(
         eventExtraDao.deleteByEventId(eventId)
     }
 
+    override fun observeHiddenEvents(scheduleId: Long) = eventDao.observeHiddenEvents(scheduleId).map { it.map { e -> e.toDomain() } }
+
+    override suspend fun getById(id: Long) = eventDao.getById(id).toDomain()
 
     override suspend fun getCountPerDate(
         date: String,

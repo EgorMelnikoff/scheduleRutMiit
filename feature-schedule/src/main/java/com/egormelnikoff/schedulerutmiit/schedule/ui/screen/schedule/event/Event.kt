@@ -23,15 +23,14 @@ import java.time.LocalDate
 @Composable
 fun Event(
     eventsWithExtra: List<Pair<Event, EventExtraData?>>,
-    namedScheduleId: Long,
     schedule: Schedule,
     isSavedSchedule: Boolean,
     eventView: EventView,
     date: LocalDate,
     navigateToEvent: (Route.Dialog.EventDialog) -> Unit,
-    navigateToEditEvent: (Route.Dialog.AddEditEventDialog) -> Unit,
-    onDeleteEvent: (Long, Long) -> Unit,
-    onUpdateHiddenEvent: (Long, Long) -> Unit
+    navigateToEditEvent: (Route.Dialog.EditEventDialog) -> Unit,
+    onDeleteEvent: (Long) -> Unit,
+    onUpdateHiddenEvent: (Long) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -69,25 +68,16 @@ fun Event(
                         navigateToEditEvent = navigateToEditEvent,
                         onDeleteEvent = onDeleteEvent,
                         onUpdateHiddenEvent = onUpdateHiddenEvent,
-                        namedScheduleId = namedScheduleId,
                         isSavedSchedule = isSavedSchedule,
                         event = event.first,
                         eventExtraData = event.second,
                         eventDialog = Route.Dialog.EventDialog(
-                            namedScheduleId = namedScheduleId,
-                            event = event.first,
-                            eventExtraData = event.second,
-                            schedule = schedule,
-                            date = date,
-                            isSavedSchedule = isSavedSchedule
+                            eventId = event.first.id,
+                            date = date
                         ),
-                        editEventDialog = Route.Dialog.AddEditEventDialog(
-                            namedScheduleId = namedScheduleId,
-                            scheduleId = schedule.id,
-                            recurrence = schedule.recurrence,
-                            scheduleStartDate = schedule.startDate,
-                            scheduleEndDate = schedule.endDate,
-                            updatableEvent = event.first
+                        editEventDialog = Route.Dialog.EditEventDialog(
+                            eventId = event.first.id,
+                            scheduleId = schedule.id
                         ),
                         eventView = eventView
                     )

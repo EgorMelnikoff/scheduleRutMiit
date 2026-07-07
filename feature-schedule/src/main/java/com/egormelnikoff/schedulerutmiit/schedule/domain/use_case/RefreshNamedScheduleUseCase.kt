@@ -27,7 +27,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
     suspend operator fun invoke(
         namedScheduleId: Long? = null,
         updating: Boolean = false
-    ): NamedScheduleWithSchedules? {
+    ) {
         val namedSchedule = namedScheduleId?.let {
             namedScheduleRepos.getById(namedScheduleId).namedSchedule
         }
@@ -38,13 +38,6 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             update(
                 namedSchedule = namedSchedule,
                 deletableOldSchedules = preferencesDataSource.schedulesDeletableFlow.first()
-            )
-        }
-
-
-        return namedSchedule?.let {
-            namedScheduleRepos.getById(
-                namedScheduleId = it.id
             )
         }
     }

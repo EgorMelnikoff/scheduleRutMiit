@@ -6,6 +6,7 @@ import com.egormelnikoff.schedulerutmiit.core.database.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.dao.ScheduleDao
 import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
+import com.egormelnikoff.schedulerutmiit.core.database.mapper.toDomain
 import com.egormelnikoff.schedulerutmiit.core.database.mapper.toEntity
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRepos
@@ -56,6 +57,10 @@ class ScheduleReposImpl @Inject constructor(
 
         return@withTransaction scheduleId
     }
+
+
+    override suspend fun getById(id: Long) = scheduleDao.getById(id).toDomain()
+
 
     override suspend fun deleteById(
         scheduleId: Long

@@ -9,13 +9,13 @@ class UpdateEventCommentUseCase @Inject constructor(
     private val core: UpdateEventExtraCore
 ) {
     suspend operator fun invoke(
-        dateTime: LocalDate,
+        date: LocalDate,
         scheduleId: Long,
         event: Event,
         comment: String
     ): Map<Long, List<EventExtraData>> {
         return core(
-            dateTime = dateTime.atTime(event.startDatetime.toLocalTime()),
+            date = date,
             scheduleId = scheduleId,
             event = event,
 
@@ -23,17 +23,17 @@ class UpdateEventCommentUseCase @Inject constructor(
                 comment == "" && data?.tag == 0
             },
 
-            onUpdate = { e, dt ->
-                core.eventExtraRepos.updateComment(e, dt, comment)
+            onUpdate = { e, d ->
+                core.eventExtraRepos.updateComment(e, d, comment)
             },
 
-            onCreate = { e, dt ->
+            onCreate = { e, d ->
                 core.eventExtraRepos.save(
                     EventExtraData(
                         scheduleId = e.scheduleId,
                         eventId = e.id,
                         eventName = e.name,
-                        dateTime = dt ?: e.startDatetime,
+                        date = d ?: e.startDatetime.toLocalDate(),
                         comment = comment
                     )
                 )

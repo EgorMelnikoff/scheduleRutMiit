@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
-fun List<ScheduleWithEvents>.findDefaultSchedule(): ScheduleWithEvents? {
+fun List<ScheduleWithEvents>.findDefault(): ScheduleWithEvents? {
     return this.find { it.schedule.isDefault } ?: this.firstOrNull()
 }
 

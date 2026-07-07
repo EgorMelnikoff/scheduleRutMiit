@@ -3,9 +3,22 @@ package com.egormelnikoff.schedulerutmiit.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.GroupEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.LecturerEntity
+import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.RoomEntity
 import java.time.LocalDateTime
 
-@Entity(tableName = "Events")
+@Entity(
+    tableName = "Events",
+    foreignKeys = [
+//        ForeignKey(
+//            entity = ScheduleEntity::class,
+//            parentColumns = ["ScheduleId"],
+//            childColumns = ["scheduleId"],
+//            onDelete = ForeignKey.CASCADE
+//        )
+    ]
+)
 data class EventEntity(
     @ColumnInfo(name = "EventId")
     @PrimaryKey(autoGenerate = true)

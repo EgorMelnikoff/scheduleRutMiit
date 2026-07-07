@@ -7,12 +7,11 @@ import com.egormelnikoff.schedulerutmiit.core.database.dao.TaskDao
 import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
 import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskCompletionEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskEntity
-import com.egormelnikoff.schedulerutmiit.tasks.data.repos.CreateTask
 import com.egormelnikoff.schedulerutmiit.tasks.data.repos.TaskRepos
+import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.add_task.view_model.state.AddTaskForm
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
-import java.time.LocalTime
 import javax.inject.Inject
 
 class TaskReposImpl @Inject constructor(
@@ -20,28 +19,45 @@ class TaskReposImpl @Inject constructor(
     val taskDao: TaskDao,
     val taskCompletionDao: TaskCompletionDao
 ) : TaskRepos {
-    override suspend fun save(createTask: CreateTask) = db.withTransaction {
+    override suspend fun save(addTaskForm: AddTaskForm) = db.withTransaction {
         val taskId = taskDao.insert(
             TaskEntity(
-                text = createTask.text
+                text = addTaskForm.text
             )
         )
 
-        val dates = generateSequence(createTask.startDate) { date ->
-            date.plusDays(1).takeIf { it <= createTask.endDate }
+        val dates = generateSequence(addTaskForm.startDate) { date ->
+            date.plusDays(1).takeIf { it <= addTaskForm.endDate }
         }.toList()
 
-        val completions = dates.map { date ->
-            TaskCompletionEntity(
-                taskId = taskId,
-                date = date,
-                time = createTask.time,
-                tag = createTask.tag,
-                isCompleted = false
-            )
+        addTaskForm.time?.let {
+            val completions = dates.map { date ->
+                TaskCompletionEntity(
+                    taskId = taskId,
+                    date = date,
+                    time = addTaskForm.time,
+                    tag = addTaskForm.tag,
+                    isCompleted = false
+                )
+            }
+
+            taskCompletionDao.insertAll(completions)
         }
 
-        taskCompletionDao.insertAll(completions)
+        return@withTransaction
+    }
+
+    override suspend fun getByIdAndDate(taskId: Long, date: LocalDate): Task {
+        val taskEntity = taskDao.getById(taskId)
+        val taskCompletionEntity = taskCompletionDao.getByTaskIdAndDate(taskId, date)
+        return Task(
+            id = taskEntity.id,
+            text = taskEntity.text,
+            date = taskCompletionEntity.date,
+            time = taskCompletionEntity.time,
+            tag = taskCompletionEntity.tag,
+            isCompleted = taskCompletionEntity.isCompleted
+        )
     }
 
     override suspend fun deleteById(id: Long) {
@@ -77,19 +93,22 @@ class TaskReposImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateText(id: Long, text: String) {
-        taskDao.updateText(id, text)
-    }
 
-    override suspend fun updateTag(id: Long, date: LocalDate, tag: Int) {
-        taskCompletionDao.updateTag(id, date, tag)
+    override suspend fun updateTask(task: Task) = db.withTransaction {
+        taskDao.updateText(task.id, task.text)
+        taskCompletionDao.deleteByTaskIdAndDate(task.id, task.date)
+        taskCompletionDao.insert(
+            TaskCompletionEntity(
+                taskId = task.id,
+                date = task.date,
+                time = task.time,
+                tag = task.tag,
+                isCompleted = task.isCompleted
+            )
+        )
     }
 
     override suspend fun updateIsCompleted(id: Long, date: LocalDate, isCompleted: Boolean) {
         taskCompletionDao.updateIsCompleted(id, date, isCompleted)
-    }
-
-    override suspend fun updateTime(id: Long, time: LocalTime) {
-        taskCompletionDao.updateTime(id, time)
     }
 }

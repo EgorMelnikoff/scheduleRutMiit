@@ -7,7 +7,7 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.work.ListenableWorker
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
-import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefaultSchedule
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.widget.WidgetDataUpdater
 import kotlinx.coroutines.flow.first
@@ -28,7 +28,7 @@ class WidgetDataUpdaterImpl @Inject constructor(
             if (glanceIds.isNotEmpty()) {
                 val widgetData = WidgetData(
                     namedSchedule = namedSchedule,
-                    scheduleWithEvents = namedScheduleRepos.getById(namedSchedule.id).schedulesWithEvents.findDefaultSchedule(),
+                    scheduleWithEvents = namedScheduleRepos.getById(namedSchedule.id).schedulesWithEvents.findDefault(),
                     eventExtraPolicy = preferencesDataSource.eventExtraPolicyFlow.first()
                 )
                 widgetData?.let {

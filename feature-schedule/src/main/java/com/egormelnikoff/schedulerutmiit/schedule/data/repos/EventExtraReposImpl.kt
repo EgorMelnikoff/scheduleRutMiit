@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.core.database.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.core.database.mapper.toDomain
 import com.egormelnikoff.schedulerutmiit.core.database.mapper.toEntity
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
-import java.time.LocalDateTime
+import java.time.LocalDate
 import javax.inject.Inject
 
 class EventExtraReposImpl @Inject constructor(
@@ -17,9 +17,9 @@ class EventExtraReposImpl @Inject constructor(
     ) = eventExtraDao.insert(eventExtraData.toEntity())
 
 
-    override suspend fun delete(eventId: Long, dateTime: LocalDateTime?) {
-        if (dateTime != null) {
-            eventExtraDao.deleteByEventIdAndDateTime(eventId, dateTime)
+    override suspend fun delete(eventId: Long, date: LocalDate?) {
+        if (date != null) {
+            eventExtraDao.deleteByEventIdAndDate(eventId, date)
         } else {
             eventExtraDao.deleteByEventId(eventId)
         }
@@ -31,21 +31,21 @@ class EventExtraReposImpl @Inject constructor(
 
     override suspend fun get(
         eventId: Long,
-        dateTime: LocalDateTime?
+        date: LocalDate?
     ): EventExtraData? {
-        if (dateTime != null) {
-            return eventExtraDao.getByEventIdAndDateTime(eventId, dateTime)?.toDomain()
+        if (date != null) {
+            return eventExtraDao.getByEventIdAndDate(eventId, date)?.toDomain()
         }
         return eventExtraDao.getByEventId(eventId)?.toDomain()
     }
 
     override suspend fun updateComment(
         event: Event,
-        dateTime: LocalDateTime?,
+        date: LocalDate?,
         newComment: String
     ) {
-        if (dateTime != null) {
-            eventExtraDao.updateCommentByEventIdAndDateTime(event.id, dateTime, newComment)
+        if (date != null) {
+            eventExtraDao.updateCommentByEventIdAndDateTime(event.id, date, newComment)
         } else {
             eventExtraDao.updateCommentByEventId(event.id, newComment)
         }
@@ -53,11 +53,11 @@ class EventExtraReposImpl @Inject constructor(
 
     override suspend fun updateTag(
         event: Event,
-        dateTime: LocalDateTime?,
+        date: LocalDate?,
         newTag: Int
     ) {
-        if (dateTime != null) {
-            eventExtraDao.updateTagByEventIdAndDateTime(event.id, dateTime, newTag)
+        if (date != null) {
+            eventExtraDao.updateTagByEventIdAndDate(event.id, date, newTag)
         } else {
             eventExtraDao.updateTagByEventId(event.id, newTag)
         }

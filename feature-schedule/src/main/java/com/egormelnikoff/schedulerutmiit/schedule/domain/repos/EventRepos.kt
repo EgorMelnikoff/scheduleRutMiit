@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.schedule.domain.repos
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
+import kotlinx.coroutines.flow.Flow
 
 interface EventRepos {
     suspend fun save(event: Event)
@@ -12,6 +13,12 @@ interface EventRepos {
     )
 
     suspend fun deleteById(eventId: Long)
+
+    fun observeHiddenEvents(scheduleId: Long): Flow<List<Event>>
+
+    suspend fun getById(
+        id: Long
+    ): Event
 
     suspend fun getCountPerDate(
         date: String,

@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import com.egormelnikoff.schedulerutmiit.core.database.entity.EventEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EventDao {
@@ -22,6 +23,12 @@ interface EventDao {
 
     @Query("DELETE FROM Events")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM Events WHERE eventScheduleId = :scheduleId AND isHidden = 1")
+    fun observeHiddenEvents(scheduleId: Long): Flow<List<EventEntity>>
+
+    @Query("SELECT * FROM Events WHERE EventId = :id")
+    suspend fun getById(id: Long): EventEntity
 
     @Query("SELECT COUNT(*) FROM Events WHERE eventScheduleId = :scheduleId AND SUBSTRING(startDatetime, 1, 10) = :date")
     suspend fun getCountPerDate(date: String, scheduleId: Long): Int

@@ -18,7 +18,7 @@ class AddCustomNamedScheduleUseCase @Inject constructor(
         startDate: LocalDate,
         endDate: LocalDate,
         timetableType: TimetableType
-    ): NamedScheduleWithSchedules {
+    ): Pair<Long, Boolean> {
         return saveNamedScheduleUseCase(
             currentNamedScheduleWithSchedules = NamedScheduleWithSchedules(
                 namedSchedule = NamedSchedule(

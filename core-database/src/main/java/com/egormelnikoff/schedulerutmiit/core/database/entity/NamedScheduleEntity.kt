@@ -5,7 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 
-@Entity(tableName = "NamedSchedules")
+@Entity(
+    tableName = "NamedSchedules"
+)
 data class NamedScheduleEntity(
     @ColumnInfo(name = "NamedScheduleId")
     @PrimaryKey(autoGenerate = true)

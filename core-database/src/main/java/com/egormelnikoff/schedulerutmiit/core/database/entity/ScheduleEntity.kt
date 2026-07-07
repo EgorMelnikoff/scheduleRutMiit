@@ -5,9 +5,20 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.database.entity.embedded.RecurrenceEntity
 import java.time.LocalDate
 
-@Entity(tableName = "Schedules")
+@Entity(
+    tableName = "Schedules",
+    foreignKeys = [
+//        ForeignKey(
+//            entity = NamedScheduleEntity::class,
+//            parentColumns = ["NamedScheduleId"],
+//            childColumns = ["namedScheduleId"],
+//            onDelete = ForeignKey.CASCADE
+//        )
+    ]
+)
 data class ScheduleEntity(
     @ColumnInfo(name = "ScheduleId")
     @PrimaryKey(autoGenerate = true)

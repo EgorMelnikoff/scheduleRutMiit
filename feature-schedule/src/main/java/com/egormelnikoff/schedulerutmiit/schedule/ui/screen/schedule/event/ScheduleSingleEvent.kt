@@ -40,12 +40,11 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 @Composable
 fun ScheduleSingleEvent(
     navigateToEvent: (Route.Dialog.EventDialog) -> Unit,
-    navigateToEditEvent: (Route.Dialog.AddEditEventDialog) -> Unit,
-    onDeleteEvent: (Long, Long) -> Unit,
-    onUpdateHiddenEvent: (Long, Long) -> Unit,
-    namedScheduleId: Long,
+    navigateToEditEvent: (Route.Dialog.EditEventDialog) -> Unit,
+    onDeleteEvent: (Long) -> Unit,
+    onUpdateHiddenEvent: (Long) -> Unit,
     eventDialog: Route.Dialog.EventDialog,
-    editEventDialog: Route.Dialog.AddEditEventDialog,
+    editEventDialog: Route.Dialog.EditEventDialog,
     isSavedSchedule: Boolean,
     eventView: EventView,
     event: Event,
@@ -59,6 +58,7 @@ fun ScheduleSingleEvent(
         modifier = Modifier
             .fillMaxWidth()
             .combinedClickable(
+                enabled = isSavedSchedule,
                 onClick = {
                     navigateToEvent(eventDialog)
                 },
@@ -207,44 +207,22 @@ fun ScheduleSingleEvent(
                 ),
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.open_panel),
+                        imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
                         contentDescription = null
                     )
                 },
                 text = {
                     Text(
-                        text = stringResource(R.string.open)
+                        text = stringResource(R.string.hide)
                     )
                 },
                 onClick = {
+                    showHideDialog = true
                     showExpandedMenu = false
-                    navigateToEvent(eventDialog)
                 }
             )
-            if (isSavedSchedule) {
-                DropdownMenuItem(
-                    colors = MenuDefaults.itemColors().copy(
-                        textColor = MaterialTheme.colorScheme.onBackground,
-                        leadingIconColor = MaterialTheme.colorScheme.onBackground
-                    ),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
-                            contentDescription = null
-                        )
-                    },
-                    text = {
-                        Text(
-                            text = stringResource(R.string.hide)
-                        )
-                    },
-                    onClick = {
-                        showHideDialog = true
-                        showExpandedMenu = false
-                    }
-                )
-            }
-            if (event.isCustomEvent && isSavedSchedule) {
+
+            if (event.isCustomEvent) {
                 DropdownMenuItem(
                     colors = MenuDefaults.itemColors().copy(
                         textColor = MaterialTheme.colorScheme.onBackground,
@@ -266,8 +244,6 @@ fun ScheduleSingleEvent(
                         showExpandedMenu = false
                     }
                 )
-            }
-            if (event.isCustomEvent && isSavedSchedule) {
                 DropdownMenuItem(
                     colors = MenuDefaults.itemColors().copy(
                         textColor = MaterialTheme.colorScheme.error,
@@ -295,7 +271,7 @@ fun ScheduleSingleEvent(
             CustomAlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 onConfirmation = {
-                    onDeleteEvent(namedScheduleId, event.id)
+                    onDeleteEvent(event.id)
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                 dialogTitle = "${stringResource(R.string.delete_event)}?",
@@ -306,7 +282,7 @@ fun ScheduleSingleEvent(
             CustomAlertDialog(
                 onDismissRequest = { showHideDialog = false },
                 onConfirmation = {
-                    onUpdateHiddenEvent(namedScheduleId, event.id)
+                    onUpdateHiddenEvent(event.id)
                     showHideDialog = false
                 },
                 dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),

@@ -15,7 +15,7 @@ class UpdateEventTagUseCase @Inject constructor(
         tag: Int
     ): Map<Long, List<EventExtraData>> {
         return core(
-            dateTime = dateTime.atTime(event.startDatetime.toLocalTime()),
+            date = dateTime,
             scheduleId = scheduleId,
             event = event,
 
@@ -23,17 +23,17 @@ class UpdateEventTagUseCase @Inject constructor(
                 tag == 0 && data?.comment == ""
             },
 
-            onUpdate = { e, dt ->
-                core.eventExtraRepos.updateTag(e, dt, tag)
+            onUpdate = { e, d ->
+                core.eventExtraRepos.updateTag(e, d, tag)
             },
 
-            onCreate = { e, dt ->
+            onCreate = { e, d ->
                 core.eventExtraRepos.save(
                     EventExtraData(
                         scheduleId = e.scheduleId,
                         eventId = e.id,
                         eventName = e.name,
-                        dateTime = dt ?: e.startDatetime,
+                        date = d ?: e.startDatetime.toLocalDate(),
                         tag = tag
                     )
                 )

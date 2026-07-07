@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule.domain.repos
 
+import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 
 interface ScheduleRepos {
@@ -12,6 +13,10 @@ interface ScheduleRepos {
         namedScheduleId: Long,
         scheduleWithEvents: List<ScheduleWithEvents>
     )
+
+    suspend fun getById(
+        id: Long
+    ): Schedule
 
     suspend fun deleteById(scheduleId: Long)
 

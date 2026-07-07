@@ -49,6 +49,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
@@ -64,25 +66,24 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements.ModalDialogNamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.element.ModalDialogReview
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.view_model.ReviewViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ReviewUiState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
-import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewScreen(
-    namedSchedules: List<NamedSchedule>,
-    namedScheduleState: NamedScheduleState,
     reviewUiState: ReviewUiState,
-    currentDateTime: LocalDateTime,
-    scheduleViewModel: ScheduleViewModel,
     appBackStack: AppBackStack,
     usedPhoto: Boolean,
     isDarkTheme: Boolean,
     externalPadding: PaddingValues
 ) {
+    val reviewViewModel = hiltViewModel<ReviewViewModel>()
+    val namedSchedules = reviewViewModel.namedSchedules.collectAsStateWithLifecycle().value
+    val summaryState = reviewViewModel.summaryState.collectAsStateWithLifecycle().value
+    val currentDateTime = reviewViewModel.currentDateTime.collectAsStateWithLifecycle().value
+
     val topBarHeightPx = with(LocalDensity.current) {
         60.dp.toPx()
     }
@@ -149,7 +150,7 @@ fun ReviewScreen(
                     DayPeriod.EVENING -> stringResource(R.string.good_evening)
                     DayPeriod.NIGHT -> stringResource(R.string.good_night)
                 } + "!",
-                subtitleText = namedScheduleState.reviewState?.let { reviewData ->
+                subtitleText = summaryState?.let { reviewData ->
                     buildString {
                         when (reviewData.date) {
                             currentDate -> append(stringResource(R.string.today))
@@ -425,19 +426,19 @@ fun ReviewScreen(
     }
 
     namedScheduleDialog?.let {
-        ModalDialogNamedSchedule(
+        ModalDialogReview(
             namedSchedule = it,
-            scheduleViewModel = scheduleViewModel,
             appBackStack = appBackStack,
-            isSavedNamedSchedule = true,
             isDefaultNamedSchedule = it.isDefault,
-            isDarkTheme = true,
             onOpenNamedSchedule = { namedScheduleId, setDefault, navigateToStart ->
-                scheduleViewModel.setNamedSchedule(
+                reviewViewModel.setNamedSchedule(
                     namedScheduleId = namedScheduleId,
                     setDefault = setDefault
                 )
                 if (navigateToStart) appBackStack.navigateToStartRage()
+            },
+            onDeleteNamedSchedule = { namedScheduleId, isDefault ->
+                reviewViewModel.deleteNamedSchedule(namedScheduleId, isDefault)
             }
         ) {
             namedScheduleDialog = null
@@ -453,7 +454,7 @@ fun ReviewScreen(
                 deleteNamedScheduleDialog = null
             },
             onConfirmation = {
-                scheduleViewModel.deleteNamedSchedule(
+                reviewViewModel.deleteNamedSchedule(
                     namedScheduleId = it.id,
                     isDefault = it.isDefault
                 )

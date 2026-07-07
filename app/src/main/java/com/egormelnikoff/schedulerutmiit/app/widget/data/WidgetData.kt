@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getPeriodicEvents
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.ReviewState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.view_model.state.SummaryState
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -16,7 +16,7 @@ import java.time.LocalDate
 data class WidgetData(
     val namedSchedule: NamedSchedule? = null,
     val settledSchedule: Schedule? = null,
-    val reviewState: ReviewState? = null,
+    val summaryState: SummaryState? = null,
     val eventsExtraData: Map<Long, List<EventExtraData>> = mapOf(),
     val eventExtraPolicy: EventExtraPolicy = EventExtraPolicy.DEFAULT
 ) {
@@ -26,33 +26,35 @@ data class WidgetData(
             scheduleWithEvents: ScheduleWithEvents?,
             eventExtraPolicy: EventExtraPolicy
         ): WidgetData? {
-            return if (scheduleWithEvents != null) {
-                val splitEvents = scheduleWithEvents.events.partition { it.isHidden }
+            return scheduleWithEvents?.let { s ->
+                val splitEvents = s.events.partition { it.isHidden }
 
                 var periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>? = null
                 var nonPeriodicEvents: Map<LocalDate, List<Event>>? = null
 
-                if (scheduleWithEvents.schedule.recurrence != null) {
+                if (s.schedule.recurrence != null) {
                     periodicEvents = splitEvents.second.getPeriodicEvents(
-                       scheduleWithEvents.schedule.recurrence!!.interval,
+                        s.schedule.recurrence!!.interval,
                     )
                 } else {
                     nonPeriodicEvents = splitEvents.second.groupBy {
                         it.startDatetime.toLocalDate()
                     }
                 }
+
                 WidgetData(
                     namedSchedule = namedSchedule,
-                    settledSchedule = scheduleWithEvents.schedule,
-                    eventsExtraData = scheduleWithEvents.eventsExtraData.groupBy { it.eventId },
-                    reviewState = ReviewState.Companion(
-                        schedule = scheduleWithEvents.schedule,
+                    settledSchedule = s.schedule,
+                    eventsExtraData = s.eventsExtraData.groupBy { it.eventId },
+                    summaryState = SummaryState.Companion(
+                        schedule = s.schedule,
                         periodicEvents = periodicEvents,
                         nonPeriodicEvents = nonPeriodicEvents
                     ),
                     eventExtraPolicy = eventExtraPolicy
                 )
-            } else null
+            }
         }
+
     }
 }

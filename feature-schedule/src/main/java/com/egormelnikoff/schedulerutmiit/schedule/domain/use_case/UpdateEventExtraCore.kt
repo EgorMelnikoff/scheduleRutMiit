@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesData
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import kotlinx.coroutines.flow.first
-import java.time.LocalDateTime
+import java.time.LocalDate
 import javax.inject.Inject
 
 class UpdateEventExtraCore @Inject constructor(
@@ -16,32 +16,32 @@ class UpdateEventExtraCore @Inject constructor(
     val eventExtraRepos: EventExtraRepos
 ) {
     suspend operator fun invoke(
-        dateTime: LocalDateTime,
+        date: LocalDate,
         scheduleId: Long,
         event: Event,
         shouldDelete: (EventExtraData?) -> Boolean,
-        onUpdate: suspend (Event, LocalDateTime?) -> Unit,
-        onCreate: suspend (Event, LocalDateTime?) -> Unit
+        onUpdate: suspend (Event, LocalDate?) -> Unit,
+        onCreate: suspend (Event, LocalDate?) -> Unit
     ): Map<Long, List<EventExtraData>> {
 
         val policy = preferencesDataSource.eventExtraPolicyFlow.first()
 
         val eventExtraData = eventExtraRepos.get(
             event.id,
-            if (policy == EventExtraPolicy.BY_DATES) dateTime else null
+            if (policy == EventExtraPolicy.BY_DATES) date else null
         )
 
         if (shouldDelete(eventExtraData)) {
-            eventExtraAction(policy, event, dateTime) { e, dt ->
+            eventExtraAction(policy, event, date) { e, dt ->
                 eventExtraRepos.delete(e.id, dt)
             }
             return eventExtraRepos.getByScheduleId(scheduleId).groupBy { it.eventId }
         }
 
         if (eventExtraData != null) {
-            eventExtraAction(policy, event, dateTime, onUpdate)
+            eventExtraAction(policy, event, date, onUpdate)
         } else {
-            eventExtraAction(policy, event, dateTime, onCreate)
+            eventExtraAction(policy, event, date, onCreate)
         }
 
         return eventExtraRepos.getByScheduleId(scheduleId).groupBy { it.eventId }
@@ -50,12 +50,12 @@ class UpdateEventExtraCore @Inject constructor(
     private suspend fun eventExtraAction(
         policy: EventExtraPolicy,
         event: Event,
-        dateTime: LocalDateTime,
-        action: suspend (Event, LocalDateTime?) -> Unit
+        date: LocalDate,
+        action: suspend (Event, LocalDate?) -> Unit
     ) {
         when (policy) {
             EventExtraPolicy.DEFAULT -> action(event, null)
-            EventExtraPolicy.BY_DATES -> action(event, dateTime)
+            EventExtraPolicy.BY_DATES -> action(event, date)
             EventExtraPolicy.SYNCHRONIZED -> {
                 eventRepos.getByNameAndType(
                     event.name,

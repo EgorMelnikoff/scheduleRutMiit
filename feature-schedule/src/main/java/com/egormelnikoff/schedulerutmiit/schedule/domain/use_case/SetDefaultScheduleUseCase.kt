@@ -16,13 +16,15 @@ class SetDefaultScheduleUseCase @Inject constructor(
         scheduleId: Long,
         timetableId: String,
         isSaved: Boolean
-    ): NamedScheduleWithSchedules {
+    ): NamedScheduleWithSchedules? {
         if (isSaved) {
             scheduleRepos.setDefault(
                 namedScheduleId = currentNamedScheduleWithSchedules.namedSchedule.id,
                 scheduleId = scheduleId
             )
             widgetDataUpdater.updateAll()
+
+            return null
         }
 
         val updatedSchedules =

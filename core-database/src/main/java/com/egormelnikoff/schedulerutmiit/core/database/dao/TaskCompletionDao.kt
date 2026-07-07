@@ -14,6 +14,14 @@ interface TaskCompletionDao {
         completions: List<TaskCompletionEntity>
     )
 
+    @Insert
+    suspend fun insert(
+        completion: TaskCompletionEntity
+    )
+
+    @Query("SELECT * FROM TaskCompletions WHERE taskId = :taskId AND date = :date")
+    suspend fun getByTaskIdAndDate(taskId: Long, date: LocalDate): TaskCompletionEntity
+
     @Query(" SELECT COUNT(*) FROM TaskCompletions WHERE taskId = :taskId ")
     suspend fun countById(taskId: Long): Int
 

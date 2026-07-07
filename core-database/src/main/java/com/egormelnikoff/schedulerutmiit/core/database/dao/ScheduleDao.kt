@@ -29,6 +29,9 @@ interface ScheduleDao {
     @Query("SELECT * FROM Schedules")
     suspend fun getAll(): List<ScheduleEntity>
 
+    @Query("SELECT * FROM Schedules WHERE ScheduleId = :id")
+    suspend fun getById(id: Long): ScheduleEntity
+
     @Query("UPDATE Schedules SET isDefaultSchedule = 1 WHERE ScheduleId = :scheduleId")
     suspend fun setDefault(scheduleId: Long)
 

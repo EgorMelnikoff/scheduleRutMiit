@@ -53,11 +53,11 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ScheduleLoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements.ModalDialogNamedSchedule
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.elements.ScheduleTopAppBar
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ModalDialogSchedule
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ScheduleTopAppBar
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.NamedScheduleState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.state.NamedScheduleState
 import java.time.LocalDateTime
 
 @Composable
@@ -66,7 +66,6 @@ fun ScreenSchedule(
     scheduleCalendarState: CalendarState?,
     scheduleListState: LazyListState,
 
-    namedSchedules: List<NamedSchedule>,
     namedScheduleState: NamedScheduleState,
     screenState: ScreenState,
 
@@ -83,6 +82,51 @@ fun ScreenSchedule(
     var deleteNamedScheduleDialog by remember { mutableStateOf(false) }
 
     when {
+        namedScheduleState is NamedScheduleState.Loading -> ScheduleLoadingScreen()
+
+        namedScheduleState is NamedScheduleState.Empty -> {
+            ErrorScreen(
+                title = stringResource(R.string.no_saved_schedule),
+                subtitle = stringResource(R.string.empty_base),
+                button = {
+                    GridGroup(
+                        items = listOf(
+                            listOf(
+                                { shape ->
+                                    CustomButton(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        buttonTitle = stringResource(R.string.find),
+                                        imageVector = ImageVector.vectorResource(R.drawable.search),
+                                        shape = shape,
+                                        onClick = { appUiState.appBackStack.openDialog(Route.Dialog.SearchDialog) },
+                                    )
+                                },
+                                { shape ->
+                                    CustomButton(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        buttonTitle = stringResource(R.string.create),
+                                        imageVector = ImageVector.vectorResource(R.drawable.add),
+                                        shape = shape,
+                                        onClick = { appUiState.appBackStack.openDialog(Route.Dialog.AddScheduleDialog) },
+                                    )
+                                }
+                            ),
+                            listOf { shape ->
+                                CustomButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    buttonTitle = stringResource(R.string._import),
+                                    imageVector = ImageVector.vectorResource(R.drawable.resource_import),
+                                    shape = shape,
+                                    onClick = { importLauncher.launch(arrayOf("application/json")) },
+                                )
+                            }
+                        )
+                    )
+                },
+                paddingBottom = externalPadding.calculateBottomPadding() - 16.dp
+            )
+        }
+
         screenState.isLoading -> {
             BackHandler {
                 scheduleViewModel.cancelLoading()
@@ -107,9 +151,9 @@ fun ScreenSchedule(
             )
         }
 
-        namedScheduleState.namedScheduleWithSchedules != null -> {
+        namedScheduleState is NamedScheduleState.Loaded -> {
             BackHandler(
-                namedSchedules.isNotEmpty() && !namedScheduleState.namedScheduleWithSchedules.namedSchedule.isDefault
+                !namedScheduleState.namedScheduleWithSchedules.namedSchedule.isDefault
             ) {
                 backDialog = true
             }
@@ -220,7 +264,6 @@ fun ScreenSchedule(
 
                                             appUiState = appUiState,
 
-                                            namedScheduleWithSchedules = namedScheduleState.namedScheduleWithSchedules,
                                             hourlyDateTime = hourlyDateTime,
                                             scheduleState = namedScheduleState.scheduleState,
                                             isSavedSchedule = screenState.isSaved,
@@ -239,7 +282,6 @@ fun ScreenSchedule(
                                             scheduleListState = scheduleListState,
 
                                             isSavedSchedule = screenState.isSaved,
-                                            namedSchedule = namedScheduleState.namedScheduleWithSchedules.namedSchedule,
                                             scheduleState = namedScheduleState.scheduleState,
 
                                             appSettings = appSettings,
@@ -275,73 +317,35 @@ fun ScreenSchedule(
                     )
                 }
             }
+
+            namedScheduleDialog?.let {
+                ModalDialogSchedule(
+                    namedSchedule = namedScheduleState.namedScheduleWithSchedules.namedSchedule,
+                    currentSchedule = namedScheduleState.scheduleState?.schedule,
+                    schedulesWithEvents = namedScheduleState.namedScheduleWithSchedules.schedulesWithEvents,
+                    scheduleViewModel = scheduleViewModel,
+                    appBackStack = appUiState.appBackStack,
+
+                    isSavedNamedSchedule = screenState.isSaved,
+                    isDefaultNamedSchedule = it.isDefault,
+                    haveHiddenEvents = namedScheduleState.scheduleState?.haveHiddenEvents ?: false,
+                    haveNotEmptySchedules = namedScheduleState.namedScheduleWithSchedules.schedulesWithEvents.isNotEmpty() && namedScheduleState.scheduleState?.schedule != null,
+                    onDeleteNamedSchedule = { namedScheduleId, isDefault ->
+                        scheduleViewModel.deleteNamedSchedule(namedScheduleId, isDefault)
+                    }
+                ) {
+                    namedScheduleDialog = null
+                }
+            }
         }
 
-        namedSchedules.isEmpty() -> {
-            ErrorScreen(
-                title = stringResource(R.string.no_saved_schedule),
-                subtitle = stringResource(R.string.empty_base),
-                button = {
-                    GridGroup(
-                        items = listOf(
-                            listOf(
-                                { shape ->
-                                    CustomButton(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        buttonTitle = stringResource(R.string.find),
-                                        imageVector = ImageVector.vectorResource(R.drawable.search),
-                                        shape = shape,
-                                        onClick = { appUiState.appBackStack.openDialog(Route.Dialog.SearchDialog) },
-                                    )
-                                },
-                                { shape ->
-                                    CustomButton(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        buttonTitle = stringResource(R.string.create),
-                                        imageVector = ImageVector.vectorResource(R.drawable.add),
-                                        shape = shape,
-                                        onClick = { appUiState.appBackStack.openDialog(Route.Dialog.AddScheduleDialog) },
-                                    )
-                                }
-                            ),
-                            listOf { shape ->
-                                CustomButton(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    buttonTitle = stringResource(R.string._import),
-                                    imageVector = ImageVector.vectorResource(R.drawable.resource_import),
-                                    shape = shape,
-                                    onClick = { importLauncher.launch(arrayOf("application/json")) },
-                                )
-                            }
-                        )
-                    )
-                },
-                paddingBottom = externalPadding.calculateBottomPadding() - 16.dp
-            )
-        }
+
 
         else -> {
             ErrorScreen(
                 title = stringResource(R.string.error),
                 paddingBottom = externalPadding.calculateBottomPadding()
             )
-        }
-    }
-    namedScheduleDialog?.let {
-        ModalDialogNamedSchedule(
-            namedSchedule = namedScheduleState.namedScheduleWithSchedules?.namedSchedule ?: it,
-            currentSchedule = namedScheduleState.scheduleState?.schedule,
-            schedulesWithEvents = namedScheduleState.namedScheduleWithSchedules?.schedulesWithEvents,
-            scheduleViewModel = scheduleViewModel,
-            appBackStack = appUiState.appBackStack,
-
-            today = hourlyDateTime.toLocalDate(),
-            isSavedNamedSchedule = screenState.isSaved,
-            isDefaultNamedSchedule = it.isDefault,
-            haveHiddenEvents = !namedScheduleState.scheduleState?.hiddenEvents.isNullOrEmpty(),
-            haveNotEmptySchedules = namedScheduleState.namedScheduleWithSchedules?.schedulesWithEvents?.isNotEmpty() == true && namedScheduleState.scheduleState?.schedule != null
-        ) {
-            namedScheduleDialog = null
         }
     }
 

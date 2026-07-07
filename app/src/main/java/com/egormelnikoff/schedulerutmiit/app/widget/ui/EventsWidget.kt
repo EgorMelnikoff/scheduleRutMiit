@@ -125,20 +125,20 @@ class EventsWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (widgetData?.settledSchedule != null && widgetData.reviewState != null) {
-                val header = when (widgetData.reviewState.date) {
+            if (widgetData?.settledSchedule != null && widgetData.summaryState != null) {
+                val header = when (widgetData.summaryState.date) {
                     today -> {
                         "${glanceStringResource(R.string.today)}, " +
-                                "${widgetData.reviewState.date.format(dayMonthNameFormatter)}"
+                                "${widgetData.summaryState.date.format(dayMonthNameFormatter)}"
                     }
 
                     today.plusDays(1) -> {
                         "${glanceStringResource(R.string.tomorrow)}, " +
-                                "${widgetData.reviewState.date.format(dayMonthNameFormatter)}"
+                                "${widgetData.summaryState.date.format(dayMonthNameFormatter)}"
                     }
 
                     else -> {
-                        widgetData.reviewState.date.format(dayMonthNameFormatter)
+                        widgetData.summaryState.date.format(dayMonthNameFormatter)
                     }
                 }
 
@@ -163,11 +163,11 @@ class EventsWidget : GlanceAppWidget() {
                                 maxLines = 1
                             )
 
-                            if (widgetData.reviewState.currentWeek != -1) {
+                            if (widgetData.summaryState.currentWeek != -1) {
                                 Spacer(modifier = GlanceModifier.width(4.dp))
                                 Image(
                                     modifier = GlanceModifier.size(16.dp),
-                                    provider = when (widgetData.reviewState.currentWeek) {
+                                    provider = when (widgetData.summaryState.currentWeek) {
                                         1 -> ImageProvider(R.drawable.one)
                                         2 -> ImageProvider(R.drawable.two)
                                         else -> ImageProvider(R.drawable.resource_null)
@@ -205,7 +205,7 @@ class EventsWidget : GlanceAppWidget() {
                         )
                     )
                 }
-                val displayedEvents = widgetData.reviewState.events.toList()
+                val displayedEvents = widgetData.summaryState.events.toList()
 
                 if (displayedEvents.isNotEmpty()) {
                     Spacer(modifier = GlanceModifier.height(12.dp))
@@ -215,7 +215,7 @@ class EventsWidget : GlanceAppWidget() {
                                 Event(
                                     events = events.second,
                                     eventsExtraData = widgetData.eventsExtraData,
-                                    date = widgetData.reviewState.date,
+                                    date = widgetData.summaryState.date,
                                     eventExtraPolicy = widgetData.eventExtraPolicy
                                 )
                                 if (index != displayedEvents.lastIndex) {
