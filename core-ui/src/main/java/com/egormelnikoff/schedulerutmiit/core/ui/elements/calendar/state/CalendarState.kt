@@ -83,8 +83,12 @@ class CalendarState(
     fun selectInitialDate(animate: Boolean = true) {
         val today = LocalDate.now()
 
-        if (today != calendarData.initialDate) selectDate(today, animate)
-        else selectDate(animate = animate)
+        val initialDate = when {
+            today < calendarData.startDate -> calendarData.startDate
+            today > calendarData.endDate -> calendarData.endDate
+            else -> today
+        }
+        selectDate(initialDate, animate)
     }
 
 

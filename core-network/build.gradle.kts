@@ -32,21 +32,16 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-common"))
+    api(projects.coreCommon)
 
     implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-
-    implementation(libs.retrofit)
-    implementation(libs.jsoup)
-
-    implementation(libs.kotlinx.serialization.json)
+    api(libs.retrofit)
+    api(libs.jsoup)
+    api(libs.kotlinx.serialization.json)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.bundles.test)
+
+    ksp(libs.androidx.hilt.compiler)
+    ksp(libs.hilt.android.compiler)
 }

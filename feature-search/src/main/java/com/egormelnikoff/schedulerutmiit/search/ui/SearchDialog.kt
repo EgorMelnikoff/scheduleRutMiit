@@ -48,7 +48,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.personImageUrl
+import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
@@ -93,8 +93,7 @@ fun SearchDialog(
                 .padding(
                     start = 8.dp,
                     end = 8.dp,
-                    top = innerPadding.calculateTopPadding() + 16.dp,
-                    bottom = innerPadding.calculateBottomPadding()
+                    top = innerPadding.calculateTopPadding() + 16.dp
                 ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {

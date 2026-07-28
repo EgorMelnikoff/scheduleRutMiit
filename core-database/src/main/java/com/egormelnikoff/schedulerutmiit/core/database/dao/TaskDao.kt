@@ -3,6 +3,7 @@ package com.egormelnikoff.schedulerutmiit.core.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import com.egormelnikoff.schedulerutmiit.core.database.entity.TaskEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.relation.TaskWithCompletionsRelation
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +13,7 @@ interface TaskDao {
     @Insert
     suspend fun insert(task: TaskEntity): Long
 
+    @Transaction
     @Query("SELECT * FROM tasks")
     fun observeAll(): Flow<List<TaskWithCompletionsRelation>>
 

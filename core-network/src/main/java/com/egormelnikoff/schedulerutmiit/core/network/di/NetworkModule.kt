@@ -2,9 +2,11 @@ package com.egormelnikoff.schedulerutmiit.core.network.di
 
 import android.content.Context
 import com.egormelnikoff.schedulerutmiit.core.common.logger.Logger
+import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
 import com.egormelnikoff.schedulerutmiit.core.network.api.GithubApi
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
+import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -12,11 +14,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import okhttp3.Cache
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.io.File
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -92,5 +97,19 @@ object NetworkModule {
             .baseUrl(Endpoints.API_GITHUB)
             .build()
             .create(GithubApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+            encodeDefaults = true
+            serializersModule = SerializersModule {
+                contextual(LocalDate::class, LocalDateSerializer)
+                contextual(LocalDateTime::class, LocalDateTimeSerializer)
+            }
+        }
+    }
 
 }

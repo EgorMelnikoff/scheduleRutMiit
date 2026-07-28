@@ -45,7 +45,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonth
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedErrorException
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
-import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints.newsImageUrl
+import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.newsImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.NewsLoadingScreen

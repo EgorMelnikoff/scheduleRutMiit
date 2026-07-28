@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_curriculum.data.repos
 
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
+import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkExecutor
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.repos.CurriculumRemoteDataSource
 import org.jsoup.nodes.Document

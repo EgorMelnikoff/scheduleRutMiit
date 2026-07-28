@@ -27,6 +27,7 @@ interface NamedScheduleDao {
     @Query("SELECT * FROM NamedSchedules ORDER BY isDefaultNamedSchedule DESC")
     fun observeAll(): Flow<List<NamedScheduleEntity>>
 
+    @Transaction
     @Query("SELECT * FROM NamedSchedules WHERE NamedScheduleId = :namedScheduleId")
     fun observeById(namedScheduleId: Long): Flow<NamedScheduleWithSchedulesRelation?>
 

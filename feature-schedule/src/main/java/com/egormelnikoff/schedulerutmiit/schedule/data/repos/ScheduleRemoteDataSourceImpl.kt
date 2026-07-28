@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetableDto
-import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
+import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkExecutor
 import com.egormelnikoff.schedulerutmiit.schedule.data.parser.ScheduleParser
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRemoteDataSource

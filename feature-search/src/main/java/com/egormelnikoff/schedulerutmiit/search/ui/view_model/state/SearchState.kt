@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.search.ui.view_model.state
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
-import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 
 data class SearchState(

@@ -29,19 +29,15 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-common"))
+    api(projects.coreCommon)
+
     implementation(libs.hilt.android)
+    api(libs.androidx.room.ktx)
+    api(libs.kotlinx.serialization.json)
+
+    testImplementation(libs.bundles.test)
+
+    ksp(libs.androidx.room.compiler)
+    ksp(libs.androidx.hilt.compiler)
     ksp(libs.hilt.android.compiler)
-
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.room.compiler)
-
-    implementation(libs.kotlinx.serialization.json)
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }

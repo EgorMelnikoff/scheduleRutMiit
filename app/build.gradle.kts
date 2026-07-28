@@ -49,51 +49,35 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-common"))
-    implementation(project(":core-ui"))
-    implementation(project(":core-network"))
-    implementation(project(":core-database"))
-    implementation(project(":feature-schedule"))
-    implementation(project(":feature-search"))
-    implementation(project(":feature-curriculum"))
-    implementation(project(":feature-latest-release"))
-    implementation(project(":feature-news"))
-    implementation(project(":feature-export"))
-    implementation(project(":feature-tasks"))
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
+    implementation(projects.coreUi)
+    implementation(projects.coreNetwork)
+    implementation(projects.featureSchedule)
+    implementation(projects.featureSearch)
+    implementation(projects.featureCurriculum)
+    implementation(projects.featureLatestRelease)
+    implementation(projects.featureNews)
+    implementation(projects.featureExport)
+    implementation(projects.featureTasks)
 
+    implementation(platform(libs.firebase.bom))
+    implementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+
+    implementation(libs.bundles.android.core)
+    implementation(libs.bundles.work)
+    implementation(libs.bundles.compose)
+    implementation(libs.bundles.navigation)
+    implementation(libs.bundles.glance)
+    implementation(libs.firebase.analytics)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.kotlinx.serialization.json)
+
+    testImplementation(libs.bundles.test)
+    androidTestImplementation(libs.bundles.androidx.ui.test)
+    debugImplementation(libs.bundles.androidx.ui.debug)
 
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.hilt.compiler)
-
-    implementation(libs.retrofit)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.jsoup)
-
-    implementation(libs.androidx.hilt.work)
-    implementation(libs.androidx.work.runtime.ktx)
-
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.navigation3.ui)
-    implementation(libs.androidx.paging.compose)
-
-    implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.glance.material3)
-
-    implementation(libs.androidx.datastore.preferences)
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
 }

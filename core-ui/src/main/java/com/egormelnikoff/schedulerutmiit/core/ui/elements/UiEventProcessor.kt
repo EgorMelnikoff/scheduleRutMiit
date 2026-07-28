@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import com.egormelnikoff.schedulerutmiit.core.ui.event.UiEvent
-import com.egormelnikoff.schedulerutmiit.core.ui.event.handleUiEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.event.handle
 import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
@@ -17,7 +17,7 @@ fun UiEventProcessor(
 
     LaunchedEffect(Unit) {
         uiEvent.collect { event ->
-            event.handleUiEvent(context, snackBarHostState)
+            event.handle(context, snackBarHostState)
         }
     }
 }

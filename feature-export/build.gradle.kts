@@ -29,20 +29,11 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-database"))
-    implementation(project(":core-common"))
+    implementation(projects.coreDatabase)
 
     implementation(libs.hilt.android)
+
+    testImplementation(libs.bundles.test)
+
     ksp(libs.hilt.android.compiler)
-
-    implementation(libs.kotlinx.serialization.json)
-
-    implementation(libs.androidx.room.ktx)
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }

@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstitutesD
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsListDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetablesDto
-import com.egormelnikoff.schedulerutmiit.core.network.endpoins.Endpoints
+import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

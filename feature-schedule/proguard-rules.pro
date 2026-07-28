@@ -1,0 +1,2 @@
+-keep class com.egormelnikoff.schedulerutmiit.schedule.ui.view_model.schedule.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.** { *; }

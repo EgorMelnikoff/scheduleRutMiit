@@ -1,0 +1,1 @@
+-keep class com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.state.** { *; }

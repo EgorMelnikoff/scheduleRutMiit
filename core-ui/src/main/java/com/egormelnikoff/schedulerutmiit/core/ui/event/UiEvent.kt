@@ -19,7 +19,7 @@ sealed interface UiEvent {
     ) : UiEvent
 }
 
-suspend fun UiEvent.handleUiEvent(
+suspend fun UiEvent.handle(
     context: Context,
     snackBarHostState: SnackbarHostState
 ) {

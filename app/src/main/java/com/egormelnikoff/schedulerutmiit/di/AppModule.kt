@@ -62,20 +62,6 @@ object AppModule {
     )
 
     @Provides
-    @Singleton
-    fun provideJson(): Json {
-        return Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-            encodeDefaults = true
-            serializersModule = SerializersModule {
-                contextual(LocalDate::class, LocalDateSerializer)
-                contextual(LocalDateTime::class, LocalDateTimeSerializer)
-            }
-        }
-    }
-
-    @Provides
     fun timeProvider(): TimeProvider = TimeProvider()
 
     @Provides

@@ -1,0 +1,1 @@
+-keep class com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.** { *; }
