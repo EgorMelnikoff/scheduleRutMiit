@@ -21,7 +21,6 @@ class SearchUseCase @Inject constructor(
     ): SearchResult {
         if (loadedGroups == null) {
             val institutesDto = searchRemoteDataSource.fetchInstitutes()
-            println("Groups null")
             if (institutesDto is Result.Success) {
                 loadedGroups = getGroups(institutesDto.data.institutes)
             }

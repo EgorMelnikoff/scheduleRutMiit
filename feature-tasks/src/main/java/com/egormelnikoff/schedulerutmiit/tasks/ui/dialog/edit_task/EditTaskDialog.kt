@@ -90,7 +90,6 @@ fun EditTaskDialog(
                                 autoCorrectEnabled = false, imeAction = ImeAction.Done
                             )
                         ) { newValue ->
-                            println(newValue)
                             editTaskViewModel.updateText(newValue)
                         }
 
