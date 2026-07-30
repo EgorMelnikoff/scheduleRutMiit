@@ -9,7 +9,7 @@ class UpdateEventCommentUseCase @Inject constructor(
     private val core: UpdateEventExtraCore
 ) {
     suspend operator fun invoke(
-        date: LocalDate,
+        date: LocalDate?,
         scheduleId: Long,
         event: Event,
         comment: String

@@ -9,13 +9,13 @@ class UpdateEventTagUseCase @Inject constructor(
     private val core: UpdateEventExtraCore
 ) {
     suspend operator fun invoke(
-        dateTime: LocalDate,
+        date: LocalDate?,
         scheduleId: Long,
         event: Event,
         tag: Int
     ): Map<Long, List<EventExtraData>> {
         return core(
-            date = dateTime,
+            date = date,
             scheduleId = scheduleId,
             event = event,
 

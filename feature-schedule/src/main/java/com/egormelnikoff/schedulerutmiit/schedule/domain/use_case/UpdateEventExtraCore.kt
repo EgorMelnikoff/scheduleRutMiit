@@ -16,7 +16,7 @@ class UpdateEventExtraCore @Inject constructor(
     val eventExtraRepos: EventExtraRepos
 ) {
     suspend operator fun invoke(
-        date: LocalDate,
+        date: LocalDate?,
         scheduleId: Long,
         event: Event,
         shouldDelete: (EventExtraData?) -> Boolean,
@@ -50,7 +50,7 @@ class UpdateEventExtraCore @Inject constructor(
     private suspend fun eventExtraAction(
         policy: EventExtraPolicy,
         event: Event,
-        date: LocalDate,
+        date: LocalDate?,
         action: suspend (Event, LocalDate?) -> Unit
     ) {
         when (policy) {

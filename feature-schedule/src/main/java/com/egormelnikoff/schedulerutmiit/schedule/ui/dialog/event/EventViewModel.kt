@@ -33,7 +33,7 @@ class EventViewModel @AssistedInject constructor(
     @Assisted
     private val eventId: Long,
     @Assisted
-    private val date: LocalDate
+    private val date: LocalDate?
 ) : ViewModel() {
     private val _eventState = MutableStateFlow<EventState>(EventState.Loading)
     val eventState = _eventState.asStateFlow()
@@ -115,6 +115,6 @@ class EventViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(eventId: Long, date: LocalDate): EventViewModel
+        fun create(eventId: Long, date: LocalDate?): EventViewModel
     }
 }

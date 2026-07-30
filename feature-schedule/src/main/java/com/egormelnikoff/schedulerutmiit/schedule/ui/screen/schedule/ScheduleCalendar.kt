@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomBadge
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.Calendar
@@ -208,7 +209,9 @@ fun ScheduleCalendar(
 
                         eventsWithExtra = events.second,
                         schedule = scheduleState.schedule,
-                        date = currentDate,
+                        date = if (appSettings.eventExtraPolicy == EventExtraPolicy.BY_DATES) {
+                            currentDate
+                        } else null,
                         isSavedSchedule = isSavedSchedule,
                         eventView = appSettings.eventView
                     )

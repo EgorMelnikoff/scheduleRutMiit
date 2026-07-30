@@ -18,6 +18,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonth
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
+import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
@@ -123,7 +124,9 @@ fun ScheduleList(
                                         )
                                     },
 
-                                    date = item.date,
+                                    date = if (appSettings.eventExtraPolicy == EventExtraPolicy.BY_DATES) {
+                                        item.date
+                                    } else null,
                                     eventsWithExtra = item.enrichedEvents,
                                     schedule = scheduleState.schedule,
                                     isSavedSchedule = isSavedSchedule,

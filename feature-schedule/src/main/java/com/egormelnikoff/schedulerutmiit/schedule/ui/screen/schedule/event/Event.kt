@@ -26,7 +26,7 @@ fun Event(
     schedule: Schedule,
     isSavedSchedule: Boolean,
     eventView: EventView,
-    date: LocalDate,
+    date: LocalDate?,
     navigateToEvent: (Route.Dialog.EventDialog) -> Unit,
     navigateToEditEvent: (Route.Dialog.EditEventDialog) -> Unit,
     onDeleteEvent: (Long) -> Unit,

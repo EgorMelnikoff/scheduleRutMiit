@@ -22,7 +22,7 @@ sealed class Route : NavKey {
 
         data class EventDialog(
             val eventId: Long,
-            val date: LocalDate
+            val date: LocalDate?
         ) : Dialog()
 
         data class EditTaskDialog (
