@@ -162,7 +162,7 @@ fun CustomNavigationBarItem(
     barItem: BarItem,
     showBadge: Boolean = false,
     navigate: (Route.Page) -> Unit,
-    isSelected: (Route.Page) -> Boolean,
+    isSelected: Boolean,
     onClick: (() -> Unit)?,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -173,10 +173,6 @@ fun CustomNavigationBarItem(
         targetValue = if (isPressed) 0.9f else 1.0f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
     )
-
-    val isSelected = remember(barItem.page) {
-        isSelected(barItem.page)
-    }
 
     Column(
         modifier = Modifier

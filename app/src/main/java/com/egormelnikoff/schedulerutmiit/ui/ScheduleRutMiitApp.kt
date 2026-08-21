@@ -183,11 +183,7 @@ fun PageHost(
         )
     }
 
-    val isSelected: (Route.Page) -> Boolean = remember(appBackStack) {
-        { page ->
-            appBackStack.lastPage() == page
-        }
-    }
+    val currentPage = appBackStack.lastPage()
 
     val navigate: (Route.Page) -> Unit = remember(appBackStack) {
         { page ->
@@ -219,7 +215,7 @@ fun PageHost(
                                 page = Route.Page.Review
                             )
                         },
-                        isSelected = isSelected,
+                        isSelected = currentPage == Route.Page.Review,
                         navigate = navigate,
                         onClick = null
                     )
@@ -233,7 +229,7 @@ fun PageHost(
                             )
                         },
                         navigate = navigate,
-                        isSelected = isSelected,
+                        isSelected = currentPage == Route.Page.Schedule,
                         onClick = scheduleCalendarState?.let {
                             {
                                 scope.launch {
@@ -260,7 +256,7 @@ fun PageHost(
                                 page = Route.Page.Tasks
                             )
                         },
-                        isSelected = isSelected,
+                        isSelected = currentPage == Route.Page.Tasks,
                         navigate = navigate
                     ) {
                         scope.launch {
@@ -277,7 +273,7 @@ fun PageHost(
                             )
                         },
                         showBadge = appState.updatesAvailable,
-                        isSelected = isSelected,
+                        isSelected = currentPage == Route.Page.Settings,
                         navigate = navigate
                     ) {
                         scope.launch {
