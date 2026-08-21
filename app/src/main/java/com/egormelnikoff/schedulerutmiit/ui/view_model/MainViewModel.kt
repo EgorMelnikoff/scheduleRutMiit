@@ -38,8 +38,8 @@ class MainViewModel @Inject constructor(
     private val _appState = MutableStateFlow(AppState())
     val appState: StateFlow<AppState> = _appState
 
-    private val _uiEventChannel = MutableSharedFlow<UiEvent>()
-    val uiEvent = _uiEventChannel.asSharedFlow()
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     private val checkUpdatesMutex = Mutex()
 
@@ -66,7 +66,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
                 checkLatestReleaseUseCase(fetchForce).let { result ->
-                    if (!result && fetchForce) _uiEventChannel.emit(
+                    if (!result && fetchForce) _uiEvent.emit(
                         UiEvent.InfoMessage(
                             UiText.StringResource(R.string.no_updates),
                             false
@@ -87,13 +87,13 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = exportDataUseCase(uri)) {
                 is Result.Error -> {
-                    _uiEventChannel.emit(
+                    _uiEvent.emit(
                         UiEvent.ErrorMessage(result.typedError)
                     )
                 }
 
                 is Result.Success -> {
-                    _uiEventChannel.emit(
+                    _uiEvent.emit(
                         UiEvent.InfoMessage(
                             UiText.StringResource(R.string.success)
                         )
@@ -106,21 +106,21 @@ class MainViewModel @Inject constructor(
     fun importData(uri: Uri?, onSuccess: () -> Unit) {
         viewModelScope.launch {
             if (uri == null) {
-                _uiEventChannel.emit(
+                _uiEvent.emit(
                     UiEvent.ErrorMessage(TypedError.EmptyBodyError)
                 )
                 return@launch
             }
             when (val result = importDataUseCase(uri)) {
                 is Result.Error -> {
-                    _uiEventChannel.emit(
+                    _uiEvent.emit(
                         UiEvent.ErrorMessage(result.typedError)
                     )
                 }
 
                 is Result.Success -> {
                     onSuccess()
-                    _uiEventChannel.emit(
+                    _uiEvent.emit(
                         UiEvent.InfoMessage(
                             UiText.StringResource(R.string.success)
                         )

@@ -52,8 +52,8 @@ class SearchViewModel @Inject constructor(
             listOf()
         )
 
-    private val _uiEventChannel = MutableSharedFlow<UiEvent>()
-    val uiEvent = _uiEventChannel.asSharedFlow()
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -83,7 +83,7 @@ class SearchViewModel @Inject constructor(
         if (result.groups != null) {
             when (result.groups) {
                 is Result.Error -> {
-                    _uiEventChannel.emit(
+                    _uiEvent.emit(
                         UiEvent.ErrorMessage(result.groups.typedError)
                     )
                     setDefaultSearchState()
@@ -100,7 +100,7 @@ class SearchViewModel @Inject constructor(
         if (result.people != null) {
             when (result.people) {
                 is Result.Error -> {
-                    _uiEventChannel.emit(
+                    _uiEvent.emit(
                         UiEvent.ErrorMessage(result.people.typedError)
                     )
                     setDefaultSearchState()
@@ -168,7 +168,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private suspend fun sendErrorUiEvent(typedError: TypedError?) {
-        _uiEventChannel.emit(
+        _uiEvent.emit(
             UiEvent.ErrorMessage(typedError ?: TypedError.UnexpectedError())
         )
     }
