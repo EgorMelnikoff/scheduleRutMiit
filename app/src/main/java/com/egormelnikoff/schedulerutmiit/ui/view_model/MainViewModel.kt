@@ -61,8 +61,7 @@ class MainViewModel @Inject constructor(
             checkUpdatesMutex.withLock {
                 _appState.update {
                     it.copy(
-                        updatesAvailable = false,
-                        isUpdating = true
+                        updatesAvailable = false
                     )
                 }
                 checkLatestReleaseUseCase(fetchForce).let { result ->
@@ -74,8 +73,7 @@ class MainViewModel @Inject constructor(
                     )
                     _appState.update {
                         it.copy(
-                            updatesAvailable = result,
-                            isUpdating = false
+                            updatesAvailable = result
                         )
                     }
                 }
