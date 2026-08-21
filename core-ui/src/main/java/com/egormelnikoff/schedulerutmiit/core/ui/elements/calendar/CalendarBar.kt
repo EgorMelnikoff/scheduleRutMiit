@@ -63,7 +63,7 @@ fun CalendarBar(
                     .getFirstDayOfWeek()
             }
 
-            val displayDate = remember(firstDayOfCurrentWeek) {
+            val displayDate = remember(firstDayOfCurrentWeek, calendarState.selectedDate) {
                 if (firstDayOfCurrentWeek == calendarState.selectedDate.getFirstDayOfWeek()) {
                     calendarState.selectedDate
                 } else firstDayOfCurrentWeek.plusDays(3L)
