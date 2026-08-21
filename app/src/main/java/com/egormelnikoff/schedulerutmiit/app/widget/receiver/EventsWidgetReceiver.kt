@@ -8,9 +8,6 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.EventsWidget
 import com.egormelnikoff.schedulerutmiit.di.ProviderEntryPoint
 import dagger.hilt.EntryPoints
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class EventsWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = EventsWidget()
@@ -34,9 +31,7 @@ class EventsWidgetReceiver : GlanceAppWidgetReceiver() {
         val workScheduler = entryPoint.workScheduler()
         val logger = entryPoint.logger()
         logger.i("EventsWidgetReceiver", "Start widget updating")
-        CoroutineScope(Dispatchers.Default).launch {
-            workScheduler.startPeriodicWidgetUpdating()
-        }
+        workScheduler.startPeriodicWidgetUpdating()
     }
 
     private fun cancelWidgetUpdatingWork(context: Context) {
@@ -44,8 +39,6 @@ class EventsWidgetReceiver : GlanceAppWidgetReceiver() {
         val workScheduler = entryPoint.workScheduler()
         val logger = entryPoint.logger()
         logger.i("EventsWidgetReceiver", "Cancel widget updating")
-        CoroutineScope(Dispatchers.Default).launch {
-            workScheduler.cancelPeriodicWidgetUpdating()
-        }
+        workScheduler.cancelPeriodicWidgetUpdating()
     }
 }

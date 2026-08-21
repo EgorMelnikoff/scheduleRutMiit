@@ -46,7 +46,7 @@ data class WidgetData(
                     namedSchedule = namedSchedule,
                     settledSchedule = s.schedule,
                     eventsExtraData = s.eventsExtraData.groupBy { it.eventId },
-                    summaryState = SummaryState.Companion(
+                    summaryState = SummaryState(
                         schedule = s.schedule,
                         periodicEvents = periodicEvents,
                         nonPeriodicEvents = nonPeriodicEvents
