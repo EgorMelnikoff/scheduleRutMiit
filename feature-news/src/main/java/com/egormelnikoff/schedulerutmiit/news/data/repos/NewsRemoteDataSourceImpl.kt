@@ -10,7 +10,6 @@ import javax.inject.Inject
 
 class NewsRemoteDataSourceImpl @Inject constructor(
     private val miitApi: MiitApi,
-    private val newsParser: NewsParser,
     private val networkExecutor: NetworkExecutor
 ) : NewsRemoteDataSource {
 
@@ -25,7 +24,7 @@ class NewsRemoteDataSourceImpl @Inject constructor(
             return when (it) {
                 is Result.Error -> it
                 is Result.Success -> Result.Success(
-                    newsParser(it.data)
+                    NewsParser(it.data)
                 )
             }
         }

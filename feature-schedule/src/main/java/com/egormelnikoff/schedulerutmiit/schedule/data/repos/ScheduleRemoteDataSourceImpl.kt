@@ -14,7 +14,6 @@ import javax.inject.Inject
 
 class ScheduleRemoteDataSourceImpl @Inject constructor(
     private val miitApi: MiitApi,
-    private val scheduleParser: ScheduleParser,
     private val networkExecutor: NetworkExecutor
 ) : ScheduleRemoteDataSource {
     override suspend fun fetchTimetables(
@@ -43,7 +42,7 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
                 is Result.Error -> document
 
                 is Result.Success -> Result.Success(
-                    scheduleParser(
+                    ScheduleParser(
                         document.data,
                         timetable,
                         currentGroup
@@ -68,7 +67,7 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
                 is Result.Error -> 1
 
                 is Result.Success -> {
-                    scheduleParser.parseCurrentWeek(document.data)
+                    ScheduleParser.parseCurrentWeek(document.data)
                 }
             }
         }

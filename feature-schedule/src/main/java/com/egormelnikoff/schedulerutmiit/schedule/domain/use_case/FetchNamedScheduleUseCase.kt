@@ -39,10 +39,12 @@ class FetchNamedScheduleUseCase @Inject constructor(
             }
         }
 
-        when (val timetables = scheduleRemoteDataSource.fetchTimetables(
-            apiId = apiId,
-            type = namedScheduleType
-        )) {
+        when (
+            val timetables = scheduleRemoteDataSource.fetchTimetables(
+                apiId = apiId,
+                type = namedScheduleType
+            )
+        ) {
             is Result.Error -> {
                 return@supervisorScope FetchNamedScheduleResult(
                     Result.Error(timetables.typedError),

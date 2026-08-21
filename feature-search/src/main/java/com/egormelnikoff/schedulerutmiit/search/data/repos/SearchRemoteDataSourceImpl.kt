@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.search.data.repos
 
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
+import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstituteDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkExecutor
 import com.egormelnikoff.schedulerutmiit.core.network.mapper.toDomain
@@ -12,29 +12,38 @@ import javax.inject.Inject
 
 class SearchRemoteDataSourceImpl @Inject constructor(
     private val miitApi: MiitApi,
-    private val searchParser: SearchParser,
     private val networkExecutor: NetworkExecutor
 ) : SearchRemoteDataSource {
-    override suspend fun fetchInstitutes() = networkExecutor.callApi {
+    override suspend fun fetchAllGroups() = networkExecutor.callApi {
         miitApi.getInstitutes()
+    }.let {
+        return@let when (it) {
+            is Result.Error -> it
+            is Result.Success -> Result.Success(it.data.institutes.getGroups())
+        }
     }
 
-    override suspend fun fetchPeopleByQuery(query: String): Result<List<Person>> {
-        networkExecutor.callHtml(
-            url = Endpoints.peopleUrl(query)
-        ).let {
-            return when (it) {
-                is Result.Error -> it
 
-                is Result.Success -> {
-                    Result.Success(
-                        searchParser.parsePeople(
-                            it.data
-                        ).map { p ->
-                            p.toDomain()
-                        }
-                    )
-                }
+    override suspend fun fetchPeopleByQuery(query: String) = networkExecutor.callHtml(
+        url = Endpoints.peopleUrl(query)
+    ).let {
+        return@let when (it) {
+            is Result.Error -> it
+
+            is Result.Success -> {
+                Result.Success(
+                    SearchParser.parsePeople(it.data).map { p ->
+                        p.toDomain()
+                    }
+                )
+            }
+        }
+    }
+
+    private fun List<InstituteDto>.getGroups() = this.flatMap { institute ->
+        institute.courses.flatMap { course ->
+            course.specialties.flatMap { specialty ->
+                specialty.groups.map { it.toDomain() }
             }
         }
     }

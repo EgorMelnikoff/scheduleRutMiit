@@ -11,7 +11,6 @@ import javax.inject.Inject
 
 class FetchSubjectsUseCase @Inject constructor(
     private val curriculumRemoteDataSource: CurriculumRemoteDataSource,
-    private val subjectsListParser: SubjectsListParser
 ) {
     suspend operator fun invoke(
         id: String
@@ -24,11 +23,11 @@ class FetchSubjectsUseCase @Inject constructor(
 
                 is Result.Success -> {
                     val subjectDtos = mutableListOf<SubjectDto>()
-                    subjectDtos += subjectsListParser
+                    subjectDtos += SubjectsListParser
                         .parseListSubjectsByPage(firstPage.data)
                         .toSubjects()
 
-                    val pages = subjectsListParser.parsePagesCount(firstPage.data)
+                    val pages = SubjectsListParser.parsePagesCount(firstPage.data)
                     if (pages > 1) {
                         val deferredPages = (2..pages).map { currentPage ->
                             async {
@@ -43,7 +42,7 @@ class FetchSubjectsUseCase @Inject constructor(
                                 }
 
                                 is Result.Success -> {
-                                    subjectDtos += subjectsListParser
+                                    subjectDtos += SubjectsListParser
                                         .parseListSubjectsByPage(result.data)
                                         .toSubjects()
                                 }
