@@ -5,6 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,13 +37,20 @@ class MainActivity : ComponentActivity() {
                 ScheduleRutMiitTheme(
                     decorPreferences = settings.decorPreferences
                 ) {
-                    if (settings.skipWelcomePage) {
-                        ScheduleRutMiitApp(
-                            preferencesViewModel = preferencesViewModel,
-                            appSettings = settings
-                        )
-                    } else {
-                        WelcomePage(preferencesViewModel)
+                    AnimatedContent(
+                        targetState = settings.skipWelcomePage,
+                        transitionSpec = {
+                            fadeIn() togetherWith fadeOut()
+                        }
+                    ) { skipWelcomePage ->
+                        if (skipWelcomePage) {
+                            ScheduleRutMiitApp(
+                                preferencesViewModel = preferencesViewModel,
+                                appSettings = settings
+                            )
+                        } else {
+                            WelcomePage(preferencesViewModel)
+                        }
                     }
                 }
             }
