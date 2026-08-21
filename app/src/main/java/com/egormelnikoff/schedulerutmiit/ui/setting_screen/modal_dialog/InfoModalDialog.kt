@@ -164,7 +164,7 @@ fun InfoModalDialog(
                 )
             }
 
-            RowGroup(
+            ColumnGroup(
                 title = stringResource(R.string.download_latest_release),
                 items = listOf(
                     {
@@ -186,6 +186,24 @@ fun InfoModalDialog(
                             uriHandler.openUri(Endpoints.GITHUB_APP_LATEST_RELEASE_DOWNLOAD)
                         }
                     }, {
+                        ClickableItem(
+                            title = stringResource(R.string.google_play),
+                            leadingIcon = {
+                                LeadingIcon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.logo_google_play)
+                                )
+                            },
+                            showClickLabel = false,
+                            onLongClick = {
+                                clipboard.nativeClipboard.setPrimaryClip(
+                                    ClipData.newPlainText(null, Endpoints.GOOGLE_PLAY)
+                                )
+                            }
+                        ) {
+                            uriHandler.openUri(Endpoints.GOOGLE_PLAY)
+                        }
+                    },
+                    {
                         ClickableItem(
                             title = stringResource(R.string.rustore),
                             leadingIcon = {

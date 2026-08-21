@@ -62,4 +62,5 @@ object Endpoints {
     const val GITHUB_APP_LATEST_RELEASE_DOWNLOAD =
         "${GITHUB_APP_REPOS}/releases/latest/download/app-release.apk"
     const val RU_STORE = "https://www.rustore.ru/catalog/app/com.egormelnikoff.schedulerutmiit"
+    const val GOOGLE_PLAY = "https://play.google.com/store/apps/details?id=com.egormelnikoff.schedulerutmiit"
 }

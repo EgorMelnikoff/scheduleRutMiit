@@ -91,6 +91,7 @@
     <string name="full_name_of_lecturer">Full name of lecturer</string>
     <string name="general">General</string>
     <string name="github" translatable="false">GitHub</string>
+    <string name="google_play" translatable="false">Google Play</string>
     <string name="good_morning">Good morning</string>
     <string name="good_afternoon">Good afternoon</string>
     <string name="good_evening">Good evening</string>
