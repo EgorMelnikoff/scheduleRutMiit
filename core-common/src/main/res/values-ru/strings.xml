@@ -57,7 +57,7 @@
     <string name="display_number_lessons">Отображать количество пар на день</string>
     <string name="do_you_want_continue">Вы действительно хотите продолжить?</string>
     <string name="dont_show">Не показывать</string>
-    <string name="download">Скачать pdf</string>
+    <string name="download_pdf">Скачать pdf</string>
     <string name="download_latest_release">Скачать последнюю версию</string>
     <string name="edit">Редактировать</string>
     <string name="editing">Редактирование</string>
@@ -99,6 +99,7 @@
     <string name="impossible_restore_eventextra">Восстановить комментари и теги к парам будет невозможно</string>
     <string name="lecturers">Преподаватели</string>
     <string name="light">Светлая</string>
+    <string name="contacts">Контакты</string>
     <string name="curriculum">Учебный план</string>
     <string name="logs_not_found">Журнал не найден</string>
     <string name="make_default">Сделать основным</string>
@@ -107,6 +108,7 @@
     <string name="delete_all">Delete all</string>
     <string name="create_task">Создать задание</string>
     <string name="no_tasks">Заданий нет</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
     <string name="no_tasks_at_day">На этот день нет заданий</string>
     <string name="task">Задание</string>
     <string name="tasks">Задания</string>

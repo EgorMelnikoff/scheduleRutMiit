@@ -1,7 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.ui.setting_screen
 
 import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material3.Icon
@@ -41,16 +41,13 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
-import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
 import com.egormelnikoff.schedulerutmiit.ui.setting_screen.modal_dialog.CountEventsModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.setting_screen.modal_dialog.EventExtraPolicyModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.setting_screen.modal_dialog.EventViewModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.setting_screen.modal_dialog.InfoModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.setting_screen.modal_dialog.ScheduleViewModalDialog
 import com.egormelnikoff.schedulerutmiit.ui.setting_screen.modal_dialog.ThemeModalDialog
-import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState
 
 sealed interface SettingsDialog {
     object ScheduleView : SettingsDialog
@@ -63,13 +60,16 @@ sealed interface SettingsDialog {
 
 @Composable
 fun SettingsScreen(
-    appUiState: AppUiState,
+    settingsListState: LazyStaggeredGridState,
+    updatesAvailable: Boolean,
+
     appSettings: AppSettings,
-    appState: AppState,
+
     preferencesViewModel: PreferencesViewModel,
-    mainViewModel: MainViewModel,
-    importLauncher: ManagedActivityResultLauncher<Array<String>, Uri?>,
-    externalPadding: PaddingValues
+   // importLauncher: ManagedActivityResultLauncher<Array<String>, Uri?>,
+    contentPadding: PaddingValues,
+    launch: (Array<String>) -> Unit,
+    exportData: (Uri) -> Unit
 ) {
     var activeDialog by remember { mutableStateOf<SettingsDialog?>(null) }
     var importDialog by remember { mutableStateOf(false) }
@@ -92,7 +92,7 @@ fun SettingsScreen(
         ActivityResultContracts.CreateDocument("application/json")
     ) { uri ->
         uri?.let {
-            mainViewModel.exportData(uri)
+            exportData(uri)
         }
     }
 
@@ -106,10 +106,10 @@ fun SettingsScreen(
         contentPadding = PaddingValues(
             start = 16.dp,
             end = 16.dp,
-            top = externalPadding.calculateTopPadding() + 16.dp,
-            bottom = externalPadding.calculateBottomPadding()
+            top = contentPadding.calculateTopPadding() + 16.dp,
+            bottom = contentPadding.calculateBottomPadding()
         ),
-        state = appUiState.settingsListState
+        state = settingsListState
     ) {
         item {
             ColumnGroup(
@@ -375,7 +375,7 @@ fun SettingsScreen(
                     }, {
                         ClickableItem(
                             title = stringResource(R.string.about_app),
-                            showBadge = appState.updatesAvailable,
+                            showBadge = updatesAvailable,
                             leadingIcon = {
                                 Icon(
                                     modifier = Modifier.size(20.dp),
@@ -419,8 +419,7 @@ fun SettingsScreen(
 
         is SettingsDialog.Info -> {
             InfoModalDialog(
-                appState = appState,
-                mainViewModel = mainViewModel
+                updatesAvailable = updatesAvailable
             ) {
                 activeDialog = null
             }
@@ -461,7 +460,7 @@ fun SettingsScreen(
         CustomAlertDialog(
             onDismissRequest = { importDialog = false },
             onConfirmation = {
-                importLauncher.launch(arrayOf("application/json"))
+                launch(arrayOf("application/json"))
             },
             dialogIcon = ImageVector.vectorResource(R.drawable.resource_import),
             dialogTitle = stringResource(R.string._import) + "?",

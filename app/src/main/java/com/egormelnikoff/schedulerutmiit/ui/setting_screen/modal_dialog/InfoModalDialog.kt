@@ -4,18 +4,22 @@ import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.Intent
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,18 +44,14 @@ import com.egormelnikoff.schedulerutmiit.core.common.AppConst.DEVELOPER_EMAIL
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.RowGroup
-import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoundedBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfoModalDialog(
-    appState: AppState,
-    mainViewModel: MainViewModel,
+    updatesAvailable: Boolean,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -67,8 +67,7 @@ fun InfoModalDialog(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState()),
+                .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Row(
@@ -93,226 +92,211 @@ fun InfoModalDialog(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
-                    Text(
-                        modifier = Modifier
-                            .background(
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = MaterialTheme.shapes.small
+
+                    Row(
+                        modifier = Modifier.height(IntrinsicSize.Min),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .background(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "${packageInfo.versionName} (${getLongVersionCode(packageInfo)})",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                overflow = TextOverflow.Ellipsis
                             )
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                        text = "${packageInfo.versionName} (${getLongVersionCode(packageInfo)})",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                        }
+                        if (updatesAvailable) {
+                            Icon(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .aspectRatio(1f)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.error,
+                                        shape = MaterialTheme.shapes.small
+                                    )
+                                    .padding(4.dp),
+                                imageVector = ImageVector.vectorResource(R.drawable.alert),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onError
+                            )
+                        }
+                    }
                 }
             }
 
-
-            Box(
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(
-                        if (appState.updatesAvailable) {
-                            MaterialTheme.colorScheme.error
-                        } else
-                            MaterialTheme.colorScheme.secondaryContainer
-                    )
-            ) {
-                ClickableItem(
-                    title = when {
-                        appState.isUpdating -> stringResource(R.string.checking_for_updates) + "..."
-                        appState.updatesAvailable -> stringResource(R.string.new_version_available)
-                        else ->stringResource(R.string.check_for_updates)
-                    },
-                    titleColor = if (appState.updatesAvailable) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
-                    leadingIcon = {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.info),
-                            contentDescription = null,
-                            tint = if (appState.updatesAvailable) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    trailingIcon = when {
-                        appState.isUpdating -> {
-                            {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-
-                        !appState.updatesAvailable -> {
-                            {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    imageVector = ImageVector.vectorResource(R.drawable.right),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                            }
-                        }
-
-                        else -> null
-                    },
-                    showClickLabel = false,
-                    onClick = if (!appState.updatesAvailable && !appState.isUpdating) {
-                        { mainViewModel.checkUpdates() }
-                    } else null
-                )
-            }
-
-            ColumnGroup(
+            RoundedBox(
                 title = stringResource(R.string.download_latest_release),
-                items = listOf(
-                    {
-                        ClickableItem(
+                shape = null,
+                backgroundColor = Color.Unspecified
+            ) {
+                LazyRow(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    item {
+                        CustomAssistChip(
+                            imageVector = ImageVector.vectorResource(R.drawable.logo_github),
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                labelColor = MaterialTheme.colorScheme.onBackground,
+                                leadingIconContentColor = Color.Unspecified
+                            ),
+                            isUnspecifiedIconColor = true,
+                            border = BorderStroke(
+                                color = MaterialTheme.colorScheme.outline,
+                                width = 0.5.dp
+                            ),
                             title = stringResource(R.string.github),
-                            leadingIcon = {
-                                LeadingIcon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.logo_github),
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                            showClickLabel = false,
-                            onLongClick = {
-                                clipboard.nativeClipboard.setPrimaryClip(
-                                    ClipData.newPlainText(null, Endpoints.GITHUB_APP_LATEST_RELEASE_DOWNLOAD)
-                                )
+                            onClick = {
+                                uriHandler.openUri(Endpoints.GITHUB_APP_LATEST_RELEASE)
                             }
-                        ) {
-                            uriHandler.openUri(Endpoints.GITHUB_APP_LATEST_RELEASE_DOWNLOAD)
-                        }
-                    }, {
-                        ClickableItem(
+                        )
+                    }
+
+                    item {
+                        CustomAssistChip(
+                            imageVector = ImageVector.vectorResource(R.drawable.logo_google_play),
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                labelColor = MaterialTheme.colorScheme.onBackground,
+                                leadingIconContentColor = Color.Unspecified
+                            ),
+                            isUnspecifiedIconColor = true,
+                            border = BorderStroke(
+                                color = MaterialTheme.colorScheme.outline,
+                                width = 0.5.dp
+                            ),
                             title = stringResource(R.string.google_play),
-                            leadingIcon = {
-                                LeadingIcon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.logo_google_play)
-                                )
-                            },
-                            showClickLabel = false,
-                            onLongClick = {
-                                clipboard.nativeClipboard.setPrimaryClip(
-                                    ClipData.newPlainText(null, Endpoints.GOOGLE_PLAY)
-                                )
+                            onClick = {
+                                uriHandler.openUri(Endpoints.GOOGLE_PLAY)
                             }
-                        ) {
-                            uriHandler.openUri(Endpoints.GOOGLE_PLAY)
-                        }
-                    },
-                    {
-                        ClickableItem(
+                        )
+                    }
+
+                    item {
+                        CustomAssistChip(
+                            imageVector = ImageVector.vectorResource(R.drawable.logo_rustore),
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                labelColor = MaterialTheme.colorScheme.onBackground,
+                                leadingIconContentColor = Color.Unspecified
+                            ),
+                            isUnspecifiedIconColor = true,
+                            border = BorderStroke(
+                                color = MaterialTheme.colorScheme.outline,
+                                width = 0.5.dp
+                            ),
                             title = stringResource(R.string.rustore),
-                            leadingIcon = {
-                                LeadingIcon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.logo_rustore)
-                                )
-                            },
-                            showClickLabel = false,
-                            onLongClick = {
-                                clipboard.nativeClipboard.setPrimaryClip(
-                                    ClipData.newPlainText(null, Endpoints.RU_STORE)
-                                )
+                            onClick = {
+                                uriHandler.openUri(Endpoints.RU_STORE)
                             }
-                        ) {
-                            uriHandler.openUri(Endpoints.RU_STORE)
-                        }
+                        )
                     }
-                )
-            )
+                }
+            }
 
-            RowGroup(
-                title = stringResource(R.string.report_a_problem),
-                items = listOf(
-                    {
-                        ClickableItem(
+            RoundedBox(
+                title = stringResource(R.string.contacts),
+                shape = null,
+                backgroundColor = Color.Unspecified
+            ) {
+                LazyRow(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    item {
+                        CustomAssistChip(
+                            imageVector = ImageVector.vectorResource(R.drawable.logo_telegram),
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                labelColor = MaterialTheme.colorScheme.onBackground,
+                                leadingIconContentColor = Color.Unspecified
+                            ),
+                            isUnspecifiedIconColor = true,
+                            border = BorderStroke(
+                                color = MaterialTheme.colorScheme.outline,
+                                width = 0.5.dp
+                            ),
                             title = stringResource(R.string.telegram),
-                            leadingIcon = {
-                                LeadingIcon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.logo_telegram)
-                                )
-                            },
-                            showClickLabel = false,
-                            onLongClick = {
-                                clipboard.nativeClipboard.setPrimaryClip(
-                                    ClipData.newPlainText(null, Endpoints.TG_APP_CHANNEL_URL)
-                                )
+                            onClick = {
+                                uriHandler.openUri(Endpoints.TG_APP_CHANNEL_URL)
                             }
-                        ) {
-                            uriHandler.openUri(Endpoints.TG_APP_CHANNEL_URL)
-                        }
-                    }, {
-                        ClickableItem(
+                        )
+                    }
+
+                    item {
+                        CustomAssistChip(
+                            imageVector = ImageVector.vectorResource(R.drawable.email),
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                labelColor = MaterialTheme.colorScheme.onBackground,
+                                leadingIconContentColor = Color.Unspecified
+                            ),
+                            isUnspecifiedIconColor = true,
+                            border = BorderStroke(
+                                color = MaterialTheme.colorScheme.outline,
+                                width = 0.5.dp
+                            ),
                             title = stringResource(R.string.email),
-                            leadingIcon = {
-                                LeadingIcon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.email),
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                            showClickLabel = false,
-                            onLongClick = {
-                                clipboard.nativeClipboard.setPrimaryClip(
-                                    ClipData.newPlainText(null, DEVELOPER_EMAIL)
-                                )
-                            }
-                        ) {
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = "mailto:".toUri()
-                                putExtra(Intent.EXTRA_EMAIL, arrayOf(DEVELOPER_EMAIL))
-                                putExtra(Intent.EXTRA_SUBJECT, "Сообщение о проблеме")
-                            }
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = "mailto:".toUri()
+                                    putExtra(Intent.EXTRA_EMAIL, arrayOf(DEVELOPER_EMAIL))
+                                    putExtra(Intent.EXTRA_SUBJECT, "Сообщение о проблеме")
+                                }
 
-                            try {
-                                context.startActivity(intent)
-                            } catch (e: ActivityNotFoundException) {
-                                Toast.makeText(
-                                    context,
-                                    "Приложение почты не найдено" + e.message,
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                try {
+                                    context.startActivity(intent)
+                                } catch (e: ActivityNotFoundException) {
+                                    Toast.makeText(
+                                        context,
+                                        "Приложение почты не найдено" + e.message,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
-                        }
-                    }
-                )
-            )
-
-
-            ColumnGroup(
-                items = listOf {
-                    ClickableItem(
-                        title = stringResource(R.string.github),
-                        subtitle = stringResource(R.string.source_code),
-                        onLongClick = {
-                            clipboard.nativeClipboard.setPrimaryClip(
-                                ClipData.newPlainText(null, Endpoints.GITHUB_APP_REPOS)
-                            )
-                        }
-                    ) {
-                        uriHandler.openUri(Endpoints.GITHUB_APP_REPOS)
+                        )
                     }
                 }
-            )
+            }
 
-            ColumnGroup(
-                items = listOf {
-                    ClickableItem(
-                        title = DEVELOPER,
-                        subtitle = stringResource(R.string.developer),
-                        onLongClick = {
-                            clipboard.nativeClipboard.setPrimaryClip(
-                                ClipData.newPlainText(null, Endpoints.TG_AUTHOR_CHANNEL_URL)
-                            )
-                        }
-                    ) {
-                        uriHandler.openUri(Endpoints.TG_AUTHOR_CHANNEL_URL)
+
+            RoundedBox {
+                ClickableItem(
+                    title = DEVELOPER,
+                    subtitle = stringResource(R.string.developer),
+                    onLongClick = {
+                        clipboard.nativeClipboard.setPrimaryClip(
+                            ClipData.newPlainText(null, Endpoints.TG_AUTHOR_CHANNEL_URL)
+                        )
                     }
+                ) {
+                    uriHandler.openUri(Endpoints.TG_AUTHOR_CHANNEL_URL)
                 }
+            }
 
-            )
+            RoundedBox {
+                ClickableItem(
+                    title = stringResource(R.string.privacy_policy),
+                    onLongClick = {
+                        clipboard.nativeClipboard.setPrimaryClip(
+                            ClipData.newPlainText(null, Endpoints.PRIVACY_POLICY)
+                        )
+                    }
+                ) {
+                    uriHandler.openUri(Endpoints.PRIVACY_POLICY)
+                }
+            }
         }
     }
 }

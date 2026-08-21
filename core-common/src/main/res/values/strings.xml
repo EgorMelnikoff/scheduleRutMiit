@@ -59,7 +59,8 @@
     <string name="display_number_lessons">Display the number of classes per day</string>
     <string name="do_you_want_continue">Do you really want to continue?</string>
     <string name="dont_show">Don`t show</string>
-    <string name="download">Download pdf</string>
+    <string name="download_pdf">Download pdf</string>
+    <string name="privacy_policy">Privacy policy</string>
     <string name="download_latest_release">Download latest release</string>
     <string name="edit">Edit</string>
     <string name="editing">Editing</string>
@@ -105,6 +106,7 @@
     <string name="impossible_restore_eventextra">It will be impossible to restore comments and tags for pairs</string>
     <string name="lecturers">Lecturers</string>
     <string name="light">Light</string>
+    <string name="contacts">Contacts</string>
     <string name="curriculum">Curriculum</string>
     <string name="logs_not_found">Logs not found</string>
     <string name="make_default">Make default</string>
