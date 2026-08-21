@@ -20,14 +20,12 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.DateHeader
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.event.Event
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.ScheduleState
 import java.time.LocalDate
 
@@ -42,15 +40,14 @@ private sealed interface ListEntry {
 
 @Composable
 fun ScheduleList(
-    scheduleViewModel: ScheduleViewModel,
-    appBackStack: AppBackStack,
-
     scheduleListState: LazyListState,
     isSavedSchedule: Boolean,
     scheduleState: ScheduleState,
 
     appSettings: AppSettings,
-    paddingBottom: Dp
+    paddingBottom: Dp,
+    onOpenDialog: (Route.Dialog) -> Unit,
+    onEventAction: (EventAction) -> Unit
 ) {
     val listItems = remember(
         scheduleState.fullEventList,
@@ -83,12 +80,12 @@ fun ScheduleList(
     if (listItems.isNotEmpty()) {
         val navigateToEvent = remember {
             { dialog: Route.Dialog.EventDialog ->
-                appBackStack.openDialog(dialog)
+                onOpenDialog(dialog)
             }
         }
         val navigateToEditEvent = remember {
             { dialog: Route.Dialog.EditEventDialog ->
-                appBackStack.openDialog(dialog)
+                onOpenDialog(dialog)
             }
         }
         LazyColumn(
@@ -114,12 +111,12 @@ fun ScheduleList(
                                     navigateToEvent = navigateToEvent,
                                     navigateToEditEvent = navigateToEditEvent,
                                     onDeleteEvent = { eventId ->
-                                        scheduleViewModel.eventAction(
+                                        onEventAction(
                                             EventAction.Delete(eventId)
                                         )
                                     },
                                     onUpdateHiddenEvent = { eventId ->
-                                        scheduleViewModel.eventAction(
+                                        onEventAction(
                                             EventAction.UpdateHidden(eventId, true)
                                         )
                                     },

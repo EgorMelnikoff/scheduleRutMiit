@@ -64,7 +64,6 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RowGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.element.ModalDialogReview
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.view_model.ReviewViewModel
@@ -74,10 +73,12 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ReviewUiState
 @Composable
 fun ReviewScreen(
     reviewUiState: ReviewUiState,
-    appBackStack: AppBackStack,
+    //appBackStack: AppBackStack,
     usedPhoto: Boolean,
     isDarkTheme: Boolean,
-    externalPadding: PaddingValues
+    contentPadding: PaddingValues,
+    onNavigateToStartPage: () -> Unit,
+    onOpenDialog: (Route.Dialog) -> Unit
 ) {
     val reviewViewModel = hiltViewModel<ReviewViewModel>()
     val namedSchedules = reviewViewModel.namedSchedules.collectAsStateWithLifecycle().value
@@ -188,7 +189,7 @@ fun ReviewScreen(
                     ) {
                         IconButton(
                             onClick = {
-                                appBackStack.openDialog(Route.Dialog.SearchDialog)
+                                onOpenDialog(Route.Dialog.SearchDialog)
                             }
                         ) {
                             Icon(
@@ -198,7 +199,7 @@ fun ReviewScreen(
                         }
                         IconButton(
                             onClick = {
-                                appBackStack.openDialog(Route.Dialog.AddScheduleDialog)
+                                onOpenDialog(Route.Dialog.AddScheduleDialog)
                             }
                         ) {
                             Icon(
@@ -217,7 +218,7 @@ fun ReviewScreen(
                 .background(MaterialTheme.colorScheme.background),
             contentPadding = PaddingValues(
                 top = if (usedPhoto) 0.dp else internalPadding.calculateTopPadding() + 12.dp,
-                bottom = externalPadding.calculateBottomPadding()
+                bottom = contentPadding.calculateBottomPadding()
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -286,7 +287,7 @@ fun ReviewScreen(
                                             )
                                         }
                                     ) {
-                                        appBackStack.openDialog(Route.Dialog.SearchDialog)
+                                        onOpenDialog(Route.Dialog.SearchDialog)
                                     }
                                 }, {
                                     ClickableItem(
@@ -306,7 +307,7 @@ fun ReviewScreen(
                                             )
                                         }
                                     ) {
-                                        appBackStack.openDialog(Route.Dialog.AddScheduleDialog)
+                                        onOpenDialog(Route.Dialog.AddScheduleDialog)
                                     }
                                 }
                             )
@@ -400,7 +401,7 @@ fun ReviewScreen(
                                             )
                                         },
                                     ) {
-                                        appBackStack.openDialog(Route.Dialog.NewsList)
+                                        onOpenDialog(Route.Dialog.NewsList)
                                     }
                                 }, {
                                     ClickableItem(
@@ -414,7 +415,7 @@ fun ReviewScreen(
                                             )
                                         },
                                     ) {
-                                        appBackStack.openDialog(Route.Dialog.CurriculumDialog)
+                                        onOpenDialog(Route.Dialog.CurriculumDialog)
                                     }
                                 }
                             )
@@ -428,14 +429,17 @@ fun ReviewScreen(
     namedScheduleDialog?.let {
         ModalDialogReview(
             namedSchedule = it,
-            appBackStack = appBackStack,
             isDefaultNamedSchedule = it.isDefault,
+
+            onOpenDialog = onOpenDialog,
             onOpenNamedSchedule = { namedScheduleId, setDefault, navigateToStart ->
                 reviewViewModel.setNamedSchedule(
                     namedScheduleId = namedScheduleId,
                     setDefault = setDefault
                 )
-                if (navigateToStart) appBackStack.navigateToStartRage()
+                if (navigateToStart) {
+                    onNavigateToStartPage()
+                }
             },
             onDeleteNamedSchedule = { namedScheduleId, isDefault ->
                 reviewViewModel.deleteNamedSchedule(namedScheduleId, isDefault)

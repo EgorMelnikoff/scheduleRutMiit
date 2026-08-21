@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -55,10 +55,10 @@ import com.egormelnikoff.schedulerutmiit.news.ui.view_model.NewsListViewModel
 
 @Composable
 fun NewsScreen(
-    onGetNewsById: (Long) -> Unit,
-    newsGridListState: LazyStaggeredGridState
+    onGetNewsById: (Long) -> Unit
 ) {
     val newsListViewModel = hiltViewModel<NewsListViewModel>()
+    val newsListState = rememberLazyStaggeredGridState()
     val newsList = newsListViewModel.newsListFlow.collectAsLazyPagingItems()
 
     when (newsList.loadState.refresh) {
@@ -99,7 +99,7 @@ fun NewsScreen(
                         top = internalPadding.calculateTopPadding() + 16.dp,
                         bottom = internalPadding.calculateBottomPadding()
                     ),
-                    state = newsGridListState
+                    state = newsListState
                 ) {
                     items(newsList.itemCount) { index ->
                         val newsShort = newsList[index]

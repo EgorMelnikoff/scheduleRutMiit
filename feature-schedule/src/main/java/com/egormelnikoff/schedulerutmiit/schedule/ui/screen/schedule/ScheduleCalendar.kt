@@ -43,21 +43,19 @@ import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEventsForDat
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.EventsDetailBadge
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.event.Event
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.ScheduleState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Composable
 fun ScheduleCalendar(
-    scheduleViewModel: ScheduleViewModel,
-    appUiState: AppUiState,
     scheduleState: ScheduleState,
-    hourlyDateTime: LocalDateTime,
     isSavedSchedule: Boolean,
     scheduleCalendarState: CalendarState,
     appSettings: AppSettings,
-    paddingBottom: Dp
+    paddingBottom: Dp,
+    isToday: (LocalDate) -> Boolean,
+    onOpenDialog: (Route.Dialog) -> Unit,
+    onEventAction: (EventAction) -> Unit
 ) {
     var showCalendarDialog by remember { mutableStateOf(false) }
 
@@ -109,6 +107,7 @@ fun ScheduleCalendar(
         },
         calendarBarItem = { _, currentDate ->
             val eventsForDate = remember(
+                currentDate,
                 scheduleState.schedule,
                 scheduleState.periodicEvents,
                 scheduleState.nonPeriodicEvents,
@@ -126,7 +125,7 @@ fun ScheduleCalendar(
 
                 isSelected = scheduleCalendarState.selectedDate == currentDate,
                 isDisabled = currentDate !in scheduleState.schedule.startDate..scheduleState.schedule.endDate,
-                isToday = currentDate == hourlyDateTime.toLocalDate(),
+                isToday = isToday(currentDate),
 
                 selectDate = { date ->
                     scheduleCalendarState.selectDate(date, eventsForDate.isEmpty())
@@ -149,6 +148,7 @@ fun ScheduleCalendar(
 
     ) { _, currentDate ->
         val enrichedEvents = remember(
+            currentDate,
             scheduleState.schedule,
             scheduleState.periodicEvents,
             scheduleState.nonPeriodicEvents,
@@ -184,12 +184,12 @@ fun ScheduleCalendar(
                 ) { events ->
                     val navigateToEvent = remember {
                         { dialog: Route.Dialog.EventDialog ->
-                            appUiState.appBackStack.openDialog(dialog)
+                            onOpenDialog(dialog)
                         }
                     }
                     val navigateToEditEvent = remember {
                         { dialog: Route.Dialog.EditEventDialog ->
-                            appUiState.appBackStack.openDialog(dialog)
+                            onOpenDialog(dialog)
                         }
                     }
 
@@ -197,12 +197,12 @@ fun ScheduleCalendar(
                         navigateToEvent = navigateToEvent,
                         navigateToEditEvent = navigateToEditEvent,
                         onDeleteEvent = { eventId ->
-                            scheduleViewModel.eventAction(
+                            onEventAction(
                                 EventAction.Delete(eventId)
                             )
                         },
                         onUpdateHiddenEvent = { eventId ->
-                            scheduleViewModel.eventAction(
+                            onEventAction(
                                 EventAction.UpdateHidden(eventId, true)
                             )
                         },

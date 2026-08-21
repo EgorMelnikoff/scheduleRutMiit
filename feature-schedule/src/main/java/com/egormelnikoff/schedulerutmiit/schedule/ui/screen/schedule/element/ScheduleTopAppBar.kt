@@ -17,30 +17,28 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.ScheduleState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleTopAppBar(
     onSetScheduleView: (ScheduleView) -> Unit,
-    onShowNamedScheduleDialog: (NamedSchedule) -> Unit,
+    onShowNamedScheduleDialog: (Boolean) -> Unit,
 
-    namedScheduleWithSchedules: NamedScheduleWithSchedules,
-    scheduleState: ScheduleState?,
+    namedSchedule: NamedSchedule,
+    scheduleTypeName: String?,
     scheduleView: ScheduleView
 ) {
-    val isCustomSchedule = remember(namedScheduleWithSchedules.namedSchedule.type) {
-        namedScheduleWithSchedules.namedSchedule.type == NamedScheduleType.MY
+    val isCustomSchedule = remember(namedSchedule.type) {
+        namedSchedule.type == NamedScheduleType.MY
     }
 
     CustomTopAppBar(
-        titleText = namedScheduleWithSchedules.namedSchedule.shortName,
-        subtitleText = if (scheduleState?.schedule != null && !isCustomSchedule) {
-            scheduleState.schedule.timetableType.typeName
+        titleText = namedSchedule.shortName,
+        subtitleText = if (scheduleTypeName != null && !isCustomSchedule) {
+            scheduleTypeName
         } else null,
         actions = {
             IconButton(
@@ -74,9 +72,7 @@ fun ScheduleTopAppBar(
             }
             IconButton(
                 onClick = {
-                    onShowNamedScheduleDialog(
-                        namedScheduleWithSchedules.namedSchedule
-                    )
+                    onShowNamedScheduleDialog(namedSchedule.isDefault)
                 }
             ) {
                 Icon(

@@ -18,7 +18,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ModalDialogNamedScheduleHeader
 
@@ -28,9 +28,9 @@ fun ModalDialogReview(
     namedSchedule: NamedSchedule,
     schedulesWithEvents: List<ScheduleWithEvents>? = null,
 
-    appBackStack: AppBackStack,
     isDefaultNamedSchedule: Boolean,
 
+    onOpenDialog: (Route.Dialog) -> Unit,
     onOpenNamedSchedule: ((Long, Boolean, Boolean) -> Unit)? = null,
     onDeleteNamedSchedule: (Long, Boolean) -> Unit,
     onDismiss: (NamedSchedule?) -> Unit
@@ -43,12 +43,12 @@ fun ModalDialogReview(
         }
     ) {
         ModalDialogNamedScheduleHeader(
-            appBackStack = appBackStack,
             onDeleteNamedSchedule = onDeleteNamedSchedule,
             namedSchedule = namedSchedule,
             isSavedNamedSchedule = true,
             isDefaultNamedSchedule = isDefaultNamedSchedule,
             schedule = schedulesWithEvents?.findDefault()?.schedule,
+            onOpenDialog = onOpenDialog,
             onDismiss = onDismiss
         )
         if (schedulesWithEvents == null) {

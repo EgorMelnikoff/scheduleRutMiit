@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -42,9 +42,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomFilterChip
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
@@ -60,12 +59,12 @@ fun ModalDialogSchedule(
     schedulesWithEvents: List<ScheduleWithEvents>,
 
     scheduleViewModel: ScheduleViewModel,
-    appBackStack: AppBackStack,
     isSavedNamedSchedule: Boolean,
     isDefaultNamedSchedule: Boolean,
     haveHiddenEvents: Boolean = false,
     haveNotEmptySchedules: Boolean = false,
 
+    onOpenDialog: (Route.Dialog) -> Unit,
     onDeleteNamedSchedule: (Long, Boolean) -> Unit,
     onDismiss: (NamedSchedule?) -> Unit
 ) {
@@ -78,12 +77,12 @@ fun ModalDialogSchedule(
         }
     ) {
         ModalDialogNamedScheduleHeader(
-            appBackStack = appBackStack,
             onDeleteNamedSchedule = onDeleteNamedSchedule,
             namedSchedule = namedSchedule,
             isSavedNamedSchedule = isSavedNamedSchedule,
             isDefaultNamedSchedule = isDefaultNamedSchedule,
             schedule = schedulesWithEvents.findDefault()?.schedule,
+            onOpenDialog = onOpenDialog,
             onDismiss = onDismiss
         )
         currentSchedule?.let { schedule ->
@@ -99,18 +98,18 @@ fun ModalDialogSchedule(
                 AnimatedVisibility(
                     visible = schedule.downloadUrl != null,
                 ) {
-                    CustomFilterChip(
+                    CustomAssistChip(
                         imageVector = ImageVector.vectorResource(R.drawable.download),
-                        colors = FilterChipDefaults.filterChipColors(
+                        colors = AssistChipDefaults.assistChipColors(
                             containerColor = MaterialTheme.colorScheme.background,
                             labelColor = MaterialTheme.colorScheme.onBackground,
-                            iconColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         ),
                         border = BorderStroke(
                             color = MaterialTheme.colorScheme.outline,
                             width = 0.5.dp
                         ),
-                        title = stringResource(R.string.download),
+                        title = stringResource(R.string.download_pdf),
                         onClick = {
                             val url = schedule.downloadUrl!!
                             uriHandler.openUri(url)
@@ -120,12 +119,12 @@ fun ModalDialogSchedule(
                 AnimatedVisibility(
                     visible = isSavedNamedSchedule && haveNotEmptySchedules
                 ) {
-                    CustomFilterChip(
+                    CustomAssistChip(
                         imageVector = ImageVector.vectorResource(R.drawable.add),
-                        colors = FilterChipDefaults.filterChipColors(
+                        colors = AssistChipDefaults.assistChipColors(
                             containerColor = MaterialTheme.colorScheme.background,
                             labelColor = MaterialTheme.colorScheme.onBackground,
-                            iconColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         ),
                         border = BorderStroke(
                             color = MaterialTheme.colorScheme.outline,
@@ -134,7 +133,7 @@ fun ModalDialogSchedule(
                         title = stringResource(R.string.add_class),
                         onClick = {
                             onDismiss(null)
-                            appBackStack.openDialog(
+                            onOpenDialog(
                                 Route.Dialog.EditEventDialog(
                                     eventId = null,
                                     scheduleId = schedule.id
@@ -146,12 +145,12 @@ fun ModalDialogSchedule(
                 AnimatedVisibility(
                     visible = haveHiddenEvents
                 ) {
-                    CustomFilterChip(
+                    CustomAssistChip(
                         imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
-                        colors = FilterChipDefaults.filterChipColors(
+                        colors = AssistChipDefaults.assistChipColors(
                             containerColor = MaterialTheme.colorScheme.background,
                             labelColor = MaterialTheme.colorScheme.onBackground,
-                            iconColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         ),
                         border = BorderStroke(
                             color = MaterialTheme.colorScheme.outline,
@@ -160,7 +159,7 @@ fun ModalDialogSchedule(
                         title = stringResource(R.string.hidden_events),
                         onClick = {
                             onDismiss(null)
-                            appBackStack.openDialog(
+                            onOpenDialog(
                                 Route.Dialog.HiddenEventsDialog(
                                     scheduleId = schedule.id
                                 )
@@ -226,11 +225,11 @@ fun ModalDialogSchedule(
 @Composable
 fun ModalDialogNamedScheduleHeader(
     onDeleteNamedSchedule: (Long, Boolean) -> Unit,
-    appBackStack: AppBackStack,
     namedSchedule: NamedSchedule,
     schedule: Schedule?,
     isSavedNamedSchedule: Boolean,
     isDefaultNamedSchedule: Boolean,
+    onOpenDialog: (Route.Dialog) -> Unit,
     onDismiss: (NamedSchedule?) -> Unit
 ) {
     val locale = LocalLocale.current.platformLocale
@@ -289,7 +288,7 @@ fun ModalDialogNamedScheduleHeader(
             LargeIconButton(
                 onClick = {
                     onDismiss(null)
-                    appBackStack.openDialog(
+                    onOpenDialog(
                         Route.Dialog.RenameNamedScheduleDialog(
                             namedSchedule.id
                         )

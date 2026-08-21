@@ -1,8 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule
 
-import android.net.Uri
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -38,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScreenState
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.AnimatedAlert
@@ -57,28 +54,27 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.Mod
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ScheduleTopAppBar
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.NamedScheduleState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.AppUiState
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Composable
 fun ScreenSchedule(
-    appUiState: AppUiState,
     scheduleCalendarState: CalendarState?,
     scheduleListState: LazyListState,
 
     namedScheduleState: NamedScheduleState,
     screenState: ScreenState,
-
-    hourlyDateTime: LocalDateTime,
     appSettings: AppSettings,
 
+    contentPadding: PaddingValues,
+
     scheduleViewModel: ScheduleViewModel,
+    launch: (Array<String>) -> Unit,
+    isToday: (LocalDate) -> Boolean,
+    onOpenDialog: (Route.Dialog) -> Unit,
     onSetScheduleView: (ScheduleView) -> Unit,
-    importLauncher: ManagedActivityResultLauncher<Array<String>, Uri?>,
-    externalPadding: PaddingValues
 ) {
     var backDialog by remember { mutableStateOf(false) }
-    var namedScheduleDialog by remember { mutableStateOf<NamedSchedule?>(null) }
+    var namedScheduleDialog by remember { mutableStateOf<Boolean?>(null) }
     var deleteNamedScheduleDialog by remember { mutableStateOf(false) }
 
     when {
@@ -98,7 +94,7 @@ fun ScreenSchedule(
                                         buttonTitle = stringResource(R.string.find),
                                         imageVector = ImageVector.vectorResource(R.drawable.search),
                                         shape = shape,
-                                        onClick = { appUiState.appBackStack.openDialog(Route.Dialog.SearchDialog) },
+                                        onClick = { onOpenDialog(Route.Dialog.SearchDialog) },
                                     )
                                 },
                                 { shape ->
@@ -107,7 +103,7 @@ fun ScreenSchedule(
                                         buttonTitle = stringResource(R.string.create),
                                         imageVector = ImageVector.vectorResource(R.drawable.add),
                                         shape = shape,
-                                        onClick = { appUiState.appBackStack.openDialog(Route.Dialog.AddScheduleDialog) },
+                                        onClick = { onOpenDialog(Route.Dialog.AddScheduleDialog) },
                                     )
                                 }
                             ),
@@ -117,13 +113,13 @@ fun ScreenSchedule(
                                     buttonTitle = stringResource(R.string._import),
                                     imageVector = ImageVector.vectorResource(R.drawable.resource_import),
                                     shape = shape,
-                                    onClick = { importLauncher.launch(arrayOf("application/json")) },
+                                    onClick = { launch(arrayOf("application/json")) },
                                 )
                             }
                         )
                     )
                 },
-                paddingBottom = externalPadding.calculateBottomPadding() - 16.dp
+                paddingBottom = contentPadding.calculateBottomPadding() - 16.dp
             )
         }
 
@@ -138,7 +134,7 @@ fun ScreenSchedule(
             ErrorScreen(
                 title = stringResource(R.string.error),
                 subtitle = stringResource(R.string.error_load_schedule),
-                paddingTop = externalPadding.calculateTopPadding(),
+                paddingTop = contentPadding.calculateTopPadding(),
                 button = {
                     CustomButton(
                         modifier = Modifier.fillMaxWidth(),
@@ -147,7 +143,7 @@ fun ScreenSchedule(
                         onClick = { scheduleViewModel.refreshScheduleState(showLoading = false) },
                     )
                 },
-                paddingBottom = externalPadding.calculateBottomPadding()
+                paddingBottom = contentPadding.calculateBottomPadding()
             )
         }
 
@@ -172,8 +168,8 @@ fun ScreenSchedule(
                         onShowNamedScheduleDialog = { newValue ->
                             namedScheduleDialog = newValue
                         },
-                        namedScheduleWithSchedules = namedScheduleState.namedScheduleWithSchedules,
-                        scheduleState = namedScheduleState.scheduleState,
+                        namedSchedule = namedScheduleState.namedScheduleWithSchedules.namedSchedule,
+                        scheduleTypeName = namedScheduleState.scheduleState?.schedule?.timetableType?.typeName,
                         scheduleView = appSettings.scheduleView
                     )
                 }
@@ -260,33 +256,32 @@ fun ScreenSchedule(
                                 when (targetState) {
                                     ScheduleView.CALENDAR -> {
                                         ScheduleCalendar(
-                                            scheduleViewModel = scheduleViewModel,
-
-                                            appUiState = appUiState,
-
-                                            hourlyDateTime = hourlyDateTime,
                                             scheduleState = namedScheduleState.scheduleState,
                                             isSavedSchedule = screenState.isSaved,
 
                                             scheduleCalendarState = scheduleCalendarState,
                                             appSettings = appSettings,
-                                            paddingBottom = externalPadding.calculateBottomPadding()
-                                        )
+                                            paddingBottom = contentPadding.calculateBottomPadding(),
+                                            onOpenDialog = onOpenDialog,
+                                            isToday = isToday
+                                        ) { eventAction ->
+                                            scheduleViewModel.eventAction(eventAction)
+                                        }
                                     }
 
                                     ScheduleView.LIST -> {
                                         ScheduleList(
-                                            scheduleViewModel = scheduleViewModel,
-                                            appBackStack = appUiState.appBackStack,
-
                                             scheduleListState = scheduleListState,
 
                                             isSavedSchedule = screenState.isSaved,
                                             scheduleState = namedScheduleState.scheduleState,
 
                                             appSettings = appSettings,
-                                            paddingBottom = externalPadding.calculateBottomPadding()
-                                        )
+                                            paddingBottom = contentPadding.calculateBottomPadding(),
+                                            onOpenDialog = onOpenDialog
+                                        ) { eventAction ->
+                                            scheduleViewModel.eventAction(eventAction)
+                                        }
                                     }
                                 }
                             }
@@ -313,7 +308,7 @@ fun ScreenSchedule(
                         title = "¯\\_(ツ)_/¯",
                         subtitle = stringResource(R.string.empty_here),
                         isBoldTitle = false,
-                        paddingBottom = externalPadding.calculateBottomPadding()
+                        paddingBottom = contentPadding.calculateBottomPadding()
                     )
                 }
             }
@@ -324,12 +319,12 @@ fun ScreenSchedule(
                     currentSchedule = namedScheduleState.scheduleState?.schedule,
                     schedulesWithEvents = namedScheduleState.namedScheduleWithSchedules.schedulesWithEvents,
                     scheduleViewModel = scheduleViewModel,
-                    appBackStack = appUiState.appBackStack,
 
                     isSavedNamedSchedule = screenState.isSaved,
-                    isDefaultNamedSchedule = it.isDefault,
+                    isDefaultNamedSchedule = it,
                     haveHiddenEvents = namedScheduleState.scheduleState?.haveHiddenEvents ?: false,
                     haveNotEmptySchedules = namedScheduleState.namedScheduleWithSchedules.schedulesWithEvents.isNotEmpty() && namedScheduleState.scheduleState?.schedule != null,
+                    onOpenDialog = onOpenDialog,
                     onDeleteNamedSchedule = { namedScheduleId, isDefault ->
                         scheduleViewModel.deleteNamedSchedule(namedScheduleId, isDefault)
                     }
@@ -340,11 +335,10 @@ fun ScreenSchedule(
         }
 
 
-
         else -> {
             ErrorScreen(
                 title = stringResource(R.string.error),
-                paddingBottom = externalPadding.calculateBottomPadding()
+                paddingBottom = contentPadding.calculateBottomPadding()
             )
         }
     }

@@ -45,26 +45,23 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.Calendar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.CalendarBarItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Green
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Red
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Yellow
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.TaskAction
-import com.egormelnikoff.schedulerutmiit.tasks.ui.screen.view_model.TaskViewModel
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TasksScreen(
-    appBackStack: AppBackStack,
-    taskViewModel: TaskViewModel,
-    calendarState: CalendarState,
     tasks: Map<LocalDate, List<Task>>,
-    today: LocalDate,
-    externalPadding: PaddingValues
-
+    calendarState: CalendarState,
+    contentPadding: PaddingValues,
+    isToday: (LocalDate) -> Boolean,
+    onTaskAction: (TaskAction) -> Unit,
+    onOpenDialog: (Route.Dialog) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -73,7 +70,7 @@ fun TasksScreen(
             ) {
                 IconButton(
                     onClick = {
-                        appBackStack.openDialog(Route.Dialog.AddTaskDialog)
+                        onOpenDialog(Route.Dialog.AddTaskDialog)
                     }
                 ) {
                     Icon(
@@ -104,7 +101,7 @@ fun TasksScreen(
 
                     isSelected = calendarState.selectedDate == currentDate,
                     isDisabled = currentDate !in calendarState.calendarData.startDate..calendarState.calendarData.endDate,
-                    isToday = (currentDate == today),
+                    isToday = isToday(currentDate),
                     selectDate = { date ->
                         calendarState.selectDate(date, tasksPerDate?.isEmpty() ?: true)
                     }
@@ -157,7 +154,7 @@ fun TasksScreen(
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    bottom = externalPadding.calculateBottomPadding()
+                    bottom = contentPadding.calculateBottomPadding()
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -177,7 +174,7 @@ fun TasksScreen(
                         SingleTask(
                             task = task,
                             onComplete = { newValue ->
-                                taskViewModel.taskAction(
+                                onTaskAction(
                                     TaskAction.UpdateIsCompleted(
                                         task.id,
                                         task.date,
@@ -186,7 +183,7 @@ fun TasksScreen(
                                 )
                             },
                             onOpen = { task ->
-                                appBackStack.openDialog(
+                                onOpenDialog(
                                     Route.Dialog.EditTaskDialog(
                                         task.id,
                                         task.date
@@ -194,12 +191,12 @@ fun TasksScreen(
                                 )
                             },
                             onDelete = { id, date ->
-                                taskViewModel.taskAction(
+                                onTaskAction(
                                     TaskAction.DeleteByDateAndId(id, date)
                                 )
                             },
                             onDeleteAll = { id ->
-                                taskViewModel.taskAction(
+                                onTaskAction(
                                     TaskAction.DeleteById(id)
                                 )
                             }
