@@ -39,7 +39,7 @@ fun CustomModalBottomSheet(
         dragHandle = {
             if (showDragHandle) {
                 Surface(
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(vertical = 24.dp)
                         .clickable(
                             interactionSource = null,
@@ -74,9 +74,8 @@ fun CustomModalBottomSheet(
                 .fillMaxWidth()
                 .padding(bottom = 12.dp),
             horizontalAlignment = horizontalAlignment,
-            verticalArrangement = verticalArrangement
-        ) {
-            content()
-        }
+            verticalArrangement = verticalArrangement,
+            content = content
+        )
     }
 }
