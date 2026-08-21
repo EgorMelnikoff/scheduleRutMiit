@@ -7,7 +7,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchParams
 import javax.inject.Inject
-import kotlin.text.isWhitespace
 
 class SearchUseCase @Inject constructor(
     private val searchRemoteDataSource: SearchRemoteDataSource

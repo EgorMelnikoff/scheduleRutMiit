@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
-import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
-import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.time.TimeProvider
 import com.egormelnikoff.schedulerutmiit.export.data.exporter.FileExporter
 import com.egormelnikoff.schedulerutmiit.export.data.importer.FileImporter
@@ -21,9 +19,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import java.time.LocalDate
-import java.time.LocalDateTime
 import javax.inject.Singleton
 
 @Module
