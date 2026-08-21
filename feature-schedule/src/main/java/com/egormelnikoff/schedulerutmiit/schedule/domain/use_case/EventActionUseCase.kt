@@ -4,23 +4,23 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos
 import javax.inject.Inject
 
-sealed class EventAction {
+sealed interface EventAction {
     data class Add(
         val event: Event
-    ) : EventAction()
+    ) : EventAction
 
     data class Update(
         val event: Event
-    ) : EventAction()
+    ) : EventAction
 
     data class Delete(
         val eventId: Long
-    ) : EventAction()
+    ) : EventAction
 
     data class UpdateHidden(
         val eventId: Long,
         val isHidden: Boolean
-    ) : EventAction()
+    ) : EventAction
 }
 
 class EventActionUseCase @Inject constructor(
