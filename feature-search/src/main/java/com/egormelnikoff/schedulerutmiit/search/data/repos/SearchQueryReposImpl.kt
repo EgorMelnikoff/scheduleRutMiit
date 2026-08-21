@@ -7,7 +7,6 @@ import com.egormelnikoff.schedulerutmiit.core.database.db.AppDatabase
 import com.egormelnikoff.schedulerutmiit.core.database.mapper.toDomain
 import com.egormelnikoff.schedulerutmiit.core.database.mapper.toEntity
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchQueryRepos
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -22,15 +21,12 @@ class SearchQueryReposImpl @Inject constructor(
         searchQueryDao.insert(searchQuery.toEntity())
     }
 
-    override suspend fun getAll() = searchQueryDao.getAll().map { it.toDomain() }
-
-    override fun observeAll(): Flow<List<SearchQuery>> =
+    override fun observeAll() =
         searchQueryDao.observeAll().map { entities ->
             entities.map { it.toDomain() }
         }
 
     override suspend fun deleteAll() = searchQueryDao.deleteAll()
 
-    override suspend fun deleteById(queryId: Long) =
-        searchQueryDao.deleteById(queryId)
+    override suspend fun deleteById(queryId: Long) = searchQueryDao.deleteById(queryId)
 }

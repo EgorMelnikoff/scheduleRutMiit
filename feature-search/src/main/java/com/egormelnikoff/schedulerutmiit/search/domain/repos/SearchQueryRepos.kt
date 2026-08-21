@@ -7,6 +7,5 @@ interface SearchQueryRepos {
     suspend fun insert(searchQuery: SearchQuery)
     suspend fun deleteById(queryId: Long)
     suspend fun deleteAll()
-    suspend fun getAll(): List<SearchQuery>
     fun observeAll(): Flow<List<SearchQuery>>
 }

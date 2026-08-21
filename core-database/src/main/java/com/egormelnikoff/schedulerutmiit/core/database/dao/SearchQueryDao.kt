@@ -18,12 +18,8 @@ interface SearchQueryDao {
     @Query("DELETE FROM SearchHistory WHERE id = :queryId")
     suspend fun deleteById(queryId: Long)
 
-    @Query("SELECT * FROM SearchHistory ORDER BY id DESC")
-    suspend fun getAll(): List<SearchQueryEntity>
-
     @Query("SELECT * FROM SearchHistory")
     fun observeAll(): Flow<List<SearchQueryEntity>>
-
 
     @Query("SELECT * FROM SearchHistory WHERE apiId = :apiId")
     suspend fun getByApiId(apiId: Int): SearchQueryEntity?
