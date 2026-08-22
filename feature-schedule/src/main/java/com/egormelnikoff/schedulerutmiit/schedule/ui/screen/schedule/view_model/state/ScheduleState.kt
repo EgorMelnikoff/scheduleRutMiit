@@ -104,12 +104,14 @@ data class ScheduleState(
                                     val newDate = currentWeekStartDate
                                         .plusDays(dayShift.toLong())
 
-                                    add(
-                                        event.copy(
-                                            startDatetime = newDate.atTime(event.startDatetime.toLocalTime()),
-                                            endDatetime = newDate.atTime(event.endDatetime.toLocalTime())
+                                    if (newDate >= schedule.startDate && newDate <= schedule.endDate) {
+                                        add(
+                                            event.copy(
+                                                startDatetime = newDate.atTime(event.startDatetime.toLocalTime()),
+                                                endDatetime = newDate.atTime(event.endDatetime.toLocalTime())
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
 
