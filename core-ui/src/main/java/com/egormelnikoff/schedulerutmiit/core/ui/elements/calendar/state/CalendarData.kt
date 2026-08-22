@@ -12,15 +12,23 @@ data class CalendarData(
     val daysCount: Int,
     val weeksCount: Int
 ) {
-    fun getInitialDayIndex(today: LocalDate = LocalDate.now()) = ChronoUnit.DAYS.between(
-        startDate,
-        today
-    ).toInt()
+    fun getInitialDayIndex(today: LocalDate = LocalDate.now()): Int {
+        val interval = ChronoUnit.DAYS.between(
+            startDate,
+            today
+        ).toInt()
 
-    fun getInitialWeekIndex(today: LocalDate = LocalDate.now()) = ChronoUnit.WEEKS.between(
-        startDate.getFirstDayOfWeek(),
-        today.getFirstDayOfWeek()
-    ).toInt()
+        return if (interval > 0) interval else 0
+    }
+
+    fun getInitialWeekIndex(today: LocalDate = LocalDate.now()): Int {
+        val interval =  ChronoUnit.WEEKS.between(
+            startDate.getFirstDayOfWeek(),
+            today.getFirstDayOfWeek()
+        ).toInt()
+
+        return if (interval > 0) interval else 0
+    }
 
     companion object {
         operator fun invoke(
