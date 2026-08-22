@@ -127,7 +127,7 @@ fun InfoModalDialog(
                                     .padding(4.dp),
                                 imageVector = ImageVector.vectorResource(R.drawable.alert),
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onError
+                                tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }
@@ -149,9 +149,8 @@ fun InfoModalDialog(
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = MaterialTheme.colorScheme.background,
                                 labelColor = MaterialTheme.colorScheme.onBackground,
-                                leadingIconContentColor = Color.Unspecified
+                                leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                             ),
-                            isUnspecifiedIconColor = true,
                             border = BorderStroke(
                                 color = MaterialTheme.colorScheme.outline,
                                 width = 0.5.dp
@@ -240,9 +239,8 @@ fun InfoModalDialog(
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = MaterialTheme.colorScheme.background,
                                 labelColor = MaterialTheme.colorScheme.onBackground,
-                                leadingIconContentColor = Color.Unspecified
+                                leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                             ),
-                            isUnspecifiedIconColor = true,
                             border = BorderStroke(
                                 color = MaterialTheme.colorScheme.outline,
                                 width = 0.5.dp
