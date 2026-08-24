@@ -5,6 +5,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
@@ -86,7 +87,9 @@ fun LocalDate.getCurrentWeek(
     recurrence: Recurrence?
 ): Int {
     recurrence?.let {
-        val weeksFromStart = abs(ChronoUnit.WEEKS.between(this, startDate)).plus(1).toInt()
+        val startDateFirstDayOfWeek = startDate.getFirstDayOfWeek()
+        val weeksFromStart = abs(ChronoUnit.WEEKS.between(this, startDateFirstDayOfWeek)).plus(1).toInt()
+
         return ((weeksFromStart + recurrence.firstWeekNumber) % recurrence.interval).plus(1)
     }
     return -1
