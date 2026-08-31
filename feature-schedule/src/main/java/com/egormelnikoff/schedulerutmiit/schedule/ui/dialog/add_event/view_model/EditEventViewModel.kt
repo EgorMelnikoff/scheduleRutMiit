@@ -7,6 +7,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Lecturer
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Room
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventActionUseCase
@@ -39,7 +40,7 @@ class EditEventViewModel @AssistedInject constructor(
     private val _editEventState = MutableStateFlow<EditEventState>(EditEventState.Loading)
     val editEventState = _editEventState.asStateFlow()
 
-    private val  _form = MutableStateFlow<EditEventForm?>(null)
+    private val _form = MutableStateFlow<EditEventForm?>(null)
     val form = _form.asStateFlow()
 
     init {
@@ -57,8 +58,8 @@ class EditEventViewModel @AssistedInject constructor(
         _form.value?.let {
             viewModelScope.launch {
                 it.date?.let { date ->
-                    val startDateTime = date.atTime(it.startTime)
-                    val endDateTime = date.atTime(it.endTime)
+                    val startDateTime = (it.startTime ?: LocalTime.of(0, 0)).toUtcDateTime(date)
+                    val endDateTime = (it.endTime ?: LocalTime.of(0, 0)).toUtcDateTime(date)
 
                     val event = Event(
                         id = eventId ?: 0,
