@@ -80,56 +80,67 @@ data class ScheduleState(
             val fullEventsList = when {
                 periodicEvents == null && nonPeriodicEventsList == null -> emptyList()
 
-                periodicEvents != null && schedule.recurrence != null -> {
-                    val currentStartDate = maxOf(today, schedule.startDate)
-
-                    val weeksNumbers = getWeekNumbers(
-                        currentStartDate = currentStartDate,
-                        startDate = schedule.startDate,
-                        endDate = schedule.endDate,
-                        recurrence = schedule.recurrence!!
+                periodicEvents != null && schedule.recurrence != null ->
+                    periodicEvents.getFullPeriodicEventList(
+                        schedule,
+                        today
                     )
-
-                    buildList {
-                        var currentWeekStartDate = currentStartDate
-
-                        weeksNumbers.forEach { week ->
-                            val weekMap = periodicEvents[week] ?: emptyMap()
-
-                            weekMap.values.forEach { eventsInDay ->
-                                eventsInDay.forEach { event ->
-                                    val dayShift = event.startDatetime.dayOfWeek.value
-                                        .minus(currentStartDate.dayOfWeek.value)
-
-                                    val newDate = currentWeekStartDate
-                                        .plusDays(dayShift.toLong())
-
-                                    if (newDate >= schedule.startDate && newDate <= schedule.endDate) {
-                                        add(
-                                            event.copy(
-                                                startDatetime = newDate.atTime(event.startDatetime.toLocalTime()),
-                                                endDatetime = newDate.atTime(event.endDatetime.toLocalTime())
-                                            )
-                                        )
-                                    }
-                                }
-                            }
-
-                            currentWeekStartDate = currentWeekStartDate.plusWeeks(1)
-                        }
-                    }
-                }
 
                 else -> nonPeriodicEventsList ?: emptyList()
             }
 
             return fullEventsList
+                .asSequence()
                 .filter { it.startDatetime.toLocalDate()?.isAfter(today.minusDays(1)) == true }
                 .sortedBy { it.startDatetime }
                 .groupBy { it.startDatetime.toLocalDate() }
                 .mapValues {
                     it.value.getGroupedEvents()
                 }
+        }
+
+
+        private fun Map<Int, Map<DayOfWeek, List<Event>>>.getFullPeriodicEventList(
+            schedule: Schedule,
+            today: LocalDate
+        ): List<Event> {
+            val currentStartDate = maxOf(today, schedule.startDate)
+
+            val weeksNumbers = getWeekNumbers(
+                currentStartDate = currentStartDate,
+                startDate = schedule.startDate,
+                endDate = schedule.endDate,
+                recurrence = schedule.recurrence!!
+            )
+
+            return buildList {
+                var currentWeekStartDate = currentStartDate
+
+                weeksNumbers.forEach { week ->
+                    val weekMap = this@getFullPeriodicEventList[week] ?: emptyMap()
+
+                    weekMap.values.forEach { eventsInDay ->
+                        eventsInDay.forEach { event ->
+                            val dayShift = event.startDatetime.dayOfWeek.value
+                                .minus(currentStartDate.dayOfWeek.value)
+
+                            val newDate = currentWeekStartDate
+                                .plusDays(dayShift.toLong())
+
+                            if (newDate >= schedule.startDate && newDate <= schedule.endDate) {
+                                add(
+                                    event.copy(
+                                        startDatetime = newDate.atTime(event.startDatetime.toLocalTime()),
+                                        endDatetime = newDate.atTime(event.endDatetime.toLocalTime())
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    currentWeekStartDate = currentWeekStartDate.plusWeeks(1)
+                }
+            }
         }
 
         private fun getWeekNumbers(
