@@ -9,6 +9,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.common.time.TimeProvider
 import com.egormelnikoff.schedulerutmiit.core.ui.event.UiEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.event.UiText
+import com.egormelnikoff.schedulerutmiit.core.ui.event.sendErrorEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.event.sendInfoEvent
 import com.egormelnikoff.schedulerutmiit.export.domain.use_case.ExportDataUseCase
 import com.egormelnikoff.schedulerutmiit.export.domain.use_case.ImportDataUseCase
 import com.egormelnikoff.schedulerutmiit.latest_release.domain.use_case.CheckLatestReleaseUseCase
@@ -38,8 +40,8 @@ class MainViewModel @Inject constructor(
     private val _appState = MutableStateFlow(AppState())
     val appState: StateFlow<AppState> = _appState
 
-    private val _uiEvent = MutableSharedFlow<UiEvent>()
-    val uiEvent = _uiEvent.asSharedFlow()
+    private val _uiEventFlow = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEventFlow.asSharedFlow()
 
     private val checkUpdatesMutex = Mutex()
 
@@ -65,12 +67,14 @@ class MainViewModel @Inject constructor(
                     )
                 }
                 checkLatestReleaseUseCase(fetchForce).let { result ->
-                    if (!result && fetchForce) _uiEvent.emit(
-                        UiEvent.InfoMessage(
-                            UiText.StringResource(R.string.no_updates),
-                            false
+                    if (!result && fetchForce) {
+                        _uiEventFlow.sendInfoEvent(
+                            UiEvent.InfoMessage(
+                                UiText.StringResource(R.string.no_updates),
+                                false
+                            )
                         )
-                    )
+                    }
                     _appState.update {
                         it.copy(
                             updatesAvailable = result
@@ -85,13 +89,11 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = exportDataUseCase(uri)) {
                 is Result.Error -> {
-                    _uiEvent.emit(
-                        UiEvent.ErrorMessage(result.typedError)
-                    )
+                    _uiEventFlow.sendErrorEvent(result.typedError)
                 }
 
                 is Result.Success -> {
-                    _uiEvent.emit(
+                    _uiEventFlow.sendInfoEvent(
                         UiEvent.InfoMessage(
                             UiText.StringResource(R.string.success)
                         )
@@ -104,21 +106,17 @@ class MainViewModel @Inject constructor(
     fun importData(uri: Uri?, onSuccess: () -> Unit) {
         viewModelScope.launch {
             if (uri == null) {
-                _uiEvent.emit(
-                    UiEvent.ErrorMessage(TypedError.EmptyBodyError)
-                )
+                _uiEventFlow.sendErrorEvent(TypedError.EmptyBodyError)
                 return@launch
             }
             when (val result = importDataUseCase(uri)) {
                 is Result.Error -> {
-                    _uiEvent.emit(
-                        UiEvent.ErrorMessage(result.typedError)
-                    )
+                    _uiEventFlow.sendErrorEvent(result.typedError)
                 }
 
                 is Result.Success -> {
                     onSuccess()
-                    _uiEvent.emit(
+                    _uiEventFlow.sendInfoEvent(
                         UiEvent.InfoMessage(
                             UiText.StringResource(R.string.success)
                         )

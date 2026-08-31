@@ -6,6 +6,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppSnackbarVisuals
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 sealed interface UiEvent {
     data class ErrorMessage(
@@ -60,4 +61,15 @@ fun UiEvent.toMessage(context: Context): String {
         is UiEvent.ErrorMessage -> typedError.getMessage(context)
         is UiEvent.InfoMessage -> message.asString(context)
     }
+}
+
+
+suspend fun MutableSharedFlow<UiEvent>.sendErrorEvent(typedError: TypedError) {
+    this.emit(
+        UiEvent.ErrorMessage(typedError)
+    )
+}
+
+suspend fun MutableSharedFlow<UiEvent>.sendInfoEvent(infoMessage: UiEvent.InfoMessage) {
+    this.emit(infoMessage)
 }

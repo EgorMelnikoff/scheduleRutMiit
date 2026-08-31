@@ -6,8 +6,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSch
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScreenState
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.ui.event.UiEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.schedule.domain.manager.ScheduleManager
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.DeleteNamedScheduleUseCase
@@ -46,13 +46,13 @@ class ScheduleViewModel @Inject constructor(
     private var previousState: NamedScheduleState = NamedScheduleState.Loading
 
     private val _screenState = MutableStateFlow(ScreenState())
-    private val _uiEventChannel = MutableSharedFlow<UiEvent>()
+    private val _uiEventFlow = MutableSharedFlow<UiEvent>()
 
     private var fetchScheduleJob: Job? = null
     private var updateScheduleJob: Job? = null
 
     val screenState = _screenState.asStateFlow()
-    val uiEvent = _uiEventChannel.asSharedFlow()
+    val uiEvent = _uiEventFlow.asSharedFlow()
 
 
     val namedScheduleState = scheduleManager.currentNamedSchedule
@@ -165,9 +165,7 @@ class ScheduleViewModel @Inject constructor(
                         isLoading = false
                     )
 
-                    sendErrorUiEvent(
-                        typedError = newNamedSchedule.typedError
-                    )
+                    _uiEventFlow.sendErrorEvent(newNamedSchedule.typedError)
                 }
             }
         }
@@ -270,12 +268,6 @@ class ScheduleViewModel @Inject constructor(
         return newNamedSchedule to state.copy(
             namedScheduleWithSchedules = newNamedSchedule,
             scheduleState = scheduleState
-        )
-    }
-
-    private suspend fun sendErrorUiEvent(typedError: TypedError?) {
-        _uiEventChannel.emit(
-            UiEvent.ErrorMessage(typedError ?: TypedError.UnexpectedError())
         )
     }
 }

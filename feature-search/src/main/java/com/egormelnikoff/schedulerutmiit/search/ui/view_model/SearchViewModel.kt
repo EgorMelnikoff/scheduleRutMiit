@@ -7,8 +7,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
 import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.ui.event.UiEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchQueryRepos
 import com.egormelnikoff.schedulerutmiit.search.domain.use_case.ObserveSearchHistoryUseCase
 import com.egormelnikoff.schedulerutmiit.search.domain.use_case.SearchResult
@@ -52,12 +52,13 @@ class SearchViewModel @Inject constructor(
             listOf()
         )
 
-    private val _uiEvent = MutableSharedFlow<UiEvent>()
-    val uiEvent = _uiEvent.asSharedFlow()
+    private val _uiEventFlow = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEventFlow.asSharedFlow()
 
     init {
         viewModelScope.launch {
-            _searchParams.debounce(300.milliseconds)
+            _searchParams
+                .debounce(300.milliseconds)
                 .distinctUntilChanged()
                 .mapLatest { searchParams ->
                     _searchState.update { it.copy(isLoading = true) }
@@ -83,11 +84,8 @@ class SearchViewModel @Inject constructor(
         if (result.groups != null) {
             when (result.groups) {
                 is Result.Error -> {
-                    _uiEvent.emit(
-                        UiEvent.ErrorMessage(result.groups.typedError)
-                    )
                     setDefaultSearchState()
-                    sendErrorUiEvent(result.groups.typedError)
+                    _uiEventFlow.sendErrorEvent(result.groups.typedError)
                     return
                 }
 
@@ -100,11 +98,8 @@ class SearchViewModel @Inject constructor(
         if (result.people != null) {
             when (result.people) {
                 is Result.Error -> {
-                    _uiEvent.emit(
-                        UiEvent.ErrorMessage(result.people.typedError)
-                    )
                     setDefaultSearchState()
-                    sendErrorUiEvent(result.people.typedError)
+                    _uiEventFlow.sendErrorEvent(result.people.typedError)
                     return
                 }
 
@@ -165,11 +160,5 @@ class SearchViewModel @Inject constructor(
 
     fun setDefaultParams() {
         _searchParams.value = SearchParams()
-    }
-
-    private suspend fun sendErrorUiEvent(typedError: TypedError?) {
-        _uiEvent.emit(
-            UiEvent.ErrorMessage(typedError ?: TypedError.UnexpectedError())
-        )
     }
 }
