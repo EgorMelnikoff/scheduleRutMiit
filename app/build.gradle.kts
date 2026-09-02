@@ -50,7 +50,6 @@ android {
 
 dependencies {
     implementation(projects.coreUi)
-    implementation(projects.coreNetwork)
     implementation(projects.featureSchedule)
     implementation(projects.featureSearch)
     implementation(projects.featureCurriculum)

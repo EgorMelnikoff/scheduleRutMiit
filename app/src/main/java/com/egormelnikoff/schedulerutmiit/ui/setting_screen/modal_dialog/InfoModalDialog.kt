@@ -43,7 +43,7 @@ import androidx.core.net.toUri
 import com.egormelnikoff.schedulerutmiit.core.common.AppConst.DEVELOPER
 import com.egormelnikoff.schedulerutmiit.core.common.AppConst.DEVELOPER_EMAIL
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
+import com.egormelnikoff.schedulerutmiit.core.common.links.Links
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
@@ -158,7 +158,7 @@ fun InfoModalDialog(
                             ),
                             title = stringResource(R.string.github),
                             onClick = {
-                                uriHandler.openUri(Endpoints.GITHUB_APP_LATEST_RELEASE)
+                                uriHandler.openUri(Links.GITHUB_APP_LATEST_RELEASE)
                             }
                         )
                     }
@@ -178,7 +178,7 @@ fun InfoModalDialog(
                             ),
                             title = stringResource(R.string.google_play),
                             onClick = {
-                                uriHandler.openUri(Endpoints.GOOGLE_PLAY)
+                                uriHandler.openUri(Links.GOOGLE_PLAY)
                             }
                         )
                     }
@@ -198,7 +198,7 @@ fun InfoModalDialog(
                             ),
                             title = stringResource(R.string.rustore),
                             onClick = {
-                                uriHandler.openUri(Endpoints.RU_STORE)
+                                uriHandler.openUri(Links.RU_STORE)
                             }
                         )
                     }
@@ -229,7 +229,7 @@ fun InfoModalDialog(
                             ),
                             title = stringResource(R.string.telegram),
                             onClick = {
-                                uriHandler.openUri(Endpoints.TG_APP_CHANNEL_URL)
+                                uriHandler.openUri(Links.TG_APP_CHANNEL_URL)
                             }
                         )
                     }
@@ -276,11 +276,11 @@ fun InfoModalDialog(
                     subtitle = stringResource(R.string.developer),
                     onLongClick = {
                         clipboard.nativeClipboardManager.setPrimaryClip(
-                            ClipData.newPlainText(null, Endpoints.TG_AUTHOR_CHANNEL_URL)
+                            ClipData.newPlainText(null, Links.TG_AUTHOR_CHANNEL_URL)
                         )
                     }
                 ) {
-                    uriHandler.openUri(Endpoints.TG_AUTHOR_CHANNEL_URL)
+                    uriHandler.openUri(Links.TG_AUTHOR_CHANNEL_URL)
                 }
             }
 
@@ -289,11 +289,11 @@ fun InfoModalDialog(
                     title = stringResource(R.string.privacy_policy),
                     onLongClick = {
                         clipboard.nativeClipboardManager.setPrimaryClip(
-                            ClipData.newPlainText(null, Endpoints.PRIVACY_POLICY)
+                            ClipData.newPlainText(null, Links.PRIVACY_POLICY)
                         )
                     }
                 ) {
-                    uriHandler.openUri(Endpoints.PRIVACY_POLICY)
+                    uriHandler.openUri(Links.PRIVACY_POLICY)
                 }
             }
         }
