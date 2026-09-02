@@ -68,7 +68,7 @@ fun ScreenSchedule(
     contentPadding: PaddingValues,
 
     scheduleViewModel: ScheduleViewModel,
-    launch: (Array<String>) -> Unit,
+    launchImport: (Array<String>) -> Unit,
     isToday: (LocalDate) -> Boolean,
     onOpenDialog: (Route.Dialog) -> Unit,
     onSetScheduleView: (ScheduleView) -> Unit,
@@ -113,7 +113,7 @@ fun ScreenSchedule(
                                     buttonTitle = stringResource(R.string._import),
                                     imageVector = ImageVector.vectorResource(R.drawable.resource_import),
                                     shape = shape,
-                                    onClick = { launch(arrayOf("application/json")) },
+                                    onClick = { launchImport(arrayOf("application/json")) },
                                 )
                             }
                         )
@@ -317,7 +317,7 @@ fun ScreenSchedule(
                 ModalDialogSchedule(
                     namedSchedule = namedScheduleState.namedScheduleWithSchedules.namedSchedule,
                     currentSchedule = namedScheduleState.scheduleState?.schedule,
-                    schedulesWithEvents = namedScheduleState.namedScheduleWithSchedules.schedulesWithEvents,
+                    schedules = namedScheduleState.namedScheduleWithSchedules.schedulesWithEvents.map { s -> s.schedule },
                     scheduleViewModel = scheduleViewModel,
 
                     isSavedNamedSchedule = screenState.isSaved,

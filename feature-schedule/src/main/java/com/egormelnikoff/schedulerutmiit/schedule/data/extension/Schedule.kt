@@ -17,6 +17,10 @@ fun List<ScheduleWithEvents>.findDefault(): ScheduleWithEvents? {
     return this.find { it.schedule.isDefault } ?: this.firstOrNull()
 }
 
+fun List<Schedule>.findDefault(): Schedule? {
+    return this.find { it.isDefault } ?: this.firstOrNull()
+}
+
 fun Schedule.getEventsForDate(
     date: LocalDate,
     periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
