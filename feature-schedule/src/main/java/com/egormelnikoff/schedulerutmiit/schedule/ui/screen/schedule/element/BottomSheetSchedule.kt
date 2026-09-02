@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,8 +38,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonth
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
-import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getStartMs
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
@@ -48,6 +49,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -56,7 +58,7 @@ import java.time.ZoneId
 fun ModalDialogSchedule(
     namedSchedule: NamedSchedule,
     currentSchedule: Schedule? = null,
-    schedulesWithEvents: List<ScheduleWithEvents>,
+    schedules: List<Schedule>,
 
     scheduleViewModel: ScheduleViewModel,
     isSavedNamedSchedule: Boolean,
@@ -81,7 +83,7 @@ fun ModalDialogSchedule(
             namedSchedule = namedSchedule,
             isSavedNamedSchedule = isSavedNamedSchedule,
             isDefaultNamedSchedule = isDefaultNamedSchedule,
-            schedule = schedulesWithEvents.findDefault()?.schedule,
+            schedule = schedules.findDefault(),
             onOpenDialog = onOpenDialog,
             onDismiss = onDismiss
         )
@@ -111,8 +113,9 @@ fun ModalDialogSchedule(
                         ),
                         title = stringResource(R.string.download_pdf),
                         onClick = {
-                            val url = schedule.downloadUrl!!
-                            uriHandler.openUri(url)
+                            schedule.downloadUrl?.let { url ->
+                                uriHandler.openUri(url)
+                            }
                         }
                     )
                 }
@@ -160,9 +163,7 @@ fun ModalDialogSchedule(
                         onClick = {
                             onDismiss(null)
                             onOpenDialog(
-                                Route.Dialog.HiddenEventsDialog(
-                                    scheduleId = schedule.id
-                                )
+                                Route.Dialog.HiddenEventsDialog(schedule.id)
                             )
                         }
                     )
@@ -173,44 +174,52 @@ fun ModalDialogSchedule(
         if (namedSchedule.type != NamedScheduleType.MY) {
             ColumnGroup(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                items = schedulesWithEvents.map { scheduleWithEvents ->
+                items = schedules.map { schedule ->
                     {
                         Column {
                             ClickableItem(
                                 defaultMinHeight = 40.dp,
-                                title = scheduleWithEvents.schedule.timetableType.typeName,
-                                subtitle = "${
-                                    scheduleWithEvents.schedule.startDate.format(
-                                        dayMonthYearFormatter
-                                    )
-                                } - " +
-                                        "${
-                                            scheduleWithEvents.schedule.endDate.format(
-                                                dayMonthYearFormatter
-                                            )
-                                        }",
+                                title = schedule.timetableType.typeName,
+                                subtitle = "${schedule.startDate.format(dayMonthYearFormatter)} - " +
+                                        "${schedule.endDate.format(dayMonthYearFormatter)}",
                                 onClick = {
-                                    if (schedulesWithEvents.size > 1) {
+                                    if (schedules.size > 1) {
                                         scheduleViewModel.setDefaultSchedule(
-                                            scheduleWithEvents.schedule.id,
-                                            scheduleWithEvents.schedule.timetableId
+                                            schedule.id,
+                                            schedule.timetableId
                                         )
                                     }
                                 },
-                                trailingIcon = if (schedulesWithEvents.size > 1) {
+                                leadingIcon = if (schedules.size > 1) {
                                     {
                                         RadioButton(
-                                            selected = (scheduleWithEvents.schedule.id == currentSchedule?.id && isSavedNamedSchedule)
-                                                    || scheduleWithEvents.schedule.isDefault,
+                                            selected = (schedule.id == currentSchedule?.id && isSavedNamedSchedule)
+                                                    || schedule.isDefault,
                                             onClick = {
                                                 scheduleViewModel.setDefaultSchedule(
-                                                    scheduleWithEvents.schedule.id,
-                                                    scheduleWithEvents.schedule.timetableId
+                                                    schedule.id,
+                                                    schedule.timetableId
                                                 )
                                             }
                                         )
                                     }
                                 } else null,
+                                trailingIcon = {
+                                    val progress = remember(schedule) {
+                                        calculateProgress(
+                                            startDate = schedule.startDate,
+                                            endDate = schedule.endDate
+                                        )
+                                    }
+
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp),
+                                        progress = { progress },
+                                        color = MaterialTheme.colorScheme.primary,
+                                        trackColor = MaterialTheme.colorScheme.primaryContainer,
+                                        strokeWidth = 3.dp
+                                    )
+                                },
                                 showClickLabel = false,
                                 verticalPadding = 8.dp
                             )
@@ -350,4 +359,24 @@ fun LargeIconButton(
             contentDescription = contentDescription
         )
     }
+}
+
+fun calculateProgress(
+    startDate: LocalDate,
+    endDate: LocalDate,
+    currentDate: LocalDate = LocalDate.now()
+): Float {
+    val zone = ZoneId.systemDefault()
+
+    val startMs = startDate.getStartMs(zone)
+    val endMs = endDate.getStartMs(zone)
+    val currentMs = currentDate.getStartMs(zone)
+
+    if (currentMs <= startMs) return 0.0f
+    if (currentMs >= endMs) return 1.0f
+
+    val totalDuration = endMs - startMs
+    val elapsedDuration = currentMs - startMs
+
+    return elapsedDuration.toFloat() / totalDuration.toFloat()
 }
