@@ -347,15 +347,38 @@ object ScheduleParser {
     }
 
     private fun List<EventDto>.normalizePeriodicEvents(): List<EventDto> {
-        return this.groupBy { it.customHashCode(true) }
-            .map { (_, events) ->
-                events.first().let { event ->
-                    if (events.size > 1)
-                        event.copy(
-                            recurrence = event.recurrence?.copy(interval = 1)
-                        )
-                    else event
-                }
+        this.forEach { element ->
+            if (element.name?.startsWith("Философия", ignoreCase = true) ?: false) {
+                println(element)
             }
+        }
+        val result = this
+            .groupBy { it.customHashCode(true) }
+            .flatMap { (_, events) ->
+                events
+                    .groupBy { it.collisionKey() }
+                    .map { (_, sameEvents) ->
+                        sameEvents.first().let { event ->
+                            if (sameEvents.size > 1) {
+                                event.copy(
+                                    recurrence = event.recurrence?.copy(interval = 1)
+                                )
+                            } else {
+                                event
+                            }
+                        }
+                    }
+            }
+
+        result.forEach { element ->
+            if (element.name?.startsWith("Философия", ignoreCase = true) ?: false) {
+                println(element)
+            }
+        }
+
+        return result
     }
+
+    private fun EventDto.collisionKey() =
+        rooms to lecturers
 }
