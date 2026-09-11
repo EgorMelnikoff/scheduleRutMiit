@@ -347,12 +347,7 @@ object ScheduleParser {
     }
 
     private fun List<EventDto>.normalizePeriodicEvents(): List<EventDto> {
-        this.forEach { element ->
-            if (element.name?.startsWith("Философия", ignoreCase = true) ?: false) {
-                println(element)
-            }
-        }
-        val result = this
+        return this
             .groupBy { it.customHashCode(true) }
             .flatMap { (_, events) ->
                 events
@@ -369,14 +364,6 @@ object ScheduleParser {
                         }
                     }
             }
-
-        result.forEach { element ->
-            if (element.name?.startsWith("Философия", ignoreCase = true) ?: false) {
-                println(element)
-            }
-        }
-
-        return result
     }
 
     private fun EventDto.collisionKey() =
