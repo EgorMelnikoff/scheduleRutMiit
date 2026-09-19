@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.platform.nativeClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -275,7 +274,7 @@ fun InfoModalDialog(
                     title = DEVELOPER,
                     subtitle = stringResource(R.string.developer),
                     onLongClick = {
-                        clipboard.nativeClipboardManager.setPrimaryClip(
+                        clipboard.nativeClipboard.setPrimaryClip(
                             ClipData.newPlainText(null, Links.TG_AUTHOR_CHANNEL_URL)
                         )
                     }
@@ -288,7 +287,7 @@ fun InfoModalDialog(
                 ClickableItem(
                     title = stringResource(R.string.privacy_policy),
                     onLongClick = {
-                        clipboard.nativeClipboardManager.setPrimaryClip(
+                        clipboard.nativeClipboard.setPrimaryClip(
                             ClipData.newPlainText(null, Links.PRIVACY_POLICY)
                         )
                     }

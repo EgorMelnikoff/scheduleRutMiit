@@ -46,7 +46,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLocale
-import androidx.compose.ui.platform.nativeClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -203,7 +202,7 @@ fun EventDialog(
                                                                         onBack()
                                                                     },
                                                                     onLongClick = {
-                                                                        clipboard.nativeClipboardManager.setPrimaryClip(
+                                                                        clipboard.nativeClipboard.setPrimaryClip(
                                                                             ClipData.newPlainText(
                                                                                 null,
                                                                                 group.name
@@ -269,7 +268,7 @@ fun EventDialog(
                                                 titleMaxLines = 2,
                                                 defaultMinHeight = 32.dp,
                                                 onLongClick = {
-                                                    clipboard.nativeClipboardManager.setPrimaryClip(
+                                                    clipboard.nativeClipboard.setPrimaryClip(
                                                         ClipData.newPlainText(
                                                             null,
                                                             lecturer.fullFio

@@ -252,7 +252,10 @@ fun SearchDialog(
                                         color = MaterialTheme.colorScheme.onSecondaryContainer
                                     )
                                 }
-                                items(searchState.groups) { group ->
+                                items(
+                                    items = searchState.groups,
+                                    key = { it.id }
+                                ) { group ->
                                     Box(
                                         modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                     ) {
@@ -289,7 +292,10 @@ fun SearchDialog(
                                         color = MaterialTheme.colorScheme.onSecondaryContainer
                                     )
                                 }
-                                items(searchState.people) { person ->
+                                items(
+                                    items = searchState.people,
+                                    key = { it.id }
+                                ) { person ->
                                     Box(
                                         modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                     ) {
