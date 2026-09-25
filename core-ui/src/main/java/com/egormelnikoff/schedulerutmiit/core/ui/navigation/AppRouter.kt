@@ -1,25 +1,28 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.navigation
 
 import androidx.compose.runtime.mutableStateListOf
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NavigateSchedule
 
-class AppBackStack(
-    private val startRage: Route.Page
-) {
-    val pageBackStack = mutableStateListOf(startRage)
+class AppRouter {
+    val pageBackStack = mutableStateListOf<Route.Page>(Route.Page.Schedule())
 
     val dialogBackStack = mutableStateListOf<Route.Dialog>(Route.Dialog.Empty)
 
     fun openPage(page: Route.Page) {
         when {
             pageBackStack.size == 1 -> pageBackStack.add(page)
-            page == startRage -> pageBackStack.removeAt(pageBackStack.lastIndex)
+            page is Route.Page.Schedule -> pageBackStack.removeAt(pageBackStack.lastIndex)
             else -> pageBackStack[pageBackStack.lastIndex] = page
         }
     }
 
-    fun navigateToStartRage() {
-        if (lastPage() != startRage) {
-            openPage(startRage)
+    fun navigateToStartRage(navigateSchedule: NavigateSchedule? = null) {
+        if (lastPage() !is Route.Page.Schedule) {
+            openPage(Route.Page.Schedule(navigateSchedule))
+        } else {
+            pageBackStack[pageBackStack.lastIndex] = Route.Page.Schedule(
+                navigateSchedule
+            )
         }
     }
 

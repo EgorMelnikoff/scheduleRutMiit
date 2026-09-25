@@ -1,18 +1,21 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.navigation
 
 import androidx.navigation3.runtime.NavKey
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NavigateSchedule
+import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 @Serializable
 sealed class Route : NavKey {
-    sealed class Page(
-        val index: Int
-    ) : Route() {
-        data object Review : Page(0)
-        data object Schedule : Page(1)
-        data object Tasks : Page(2)
-        data object Settings : Page(3)
+    sealed class Page : Route() {
+        data object Review : Page()
+        data class Schedule(
+            val navigateSchedule: NavigateSchedule? = null
+        ) : Page()
+
+        data object Tasks : Page()
+        data object Settings : Page()
     }
 
     sealed class Dialog : Route() {
@@ -25,7 +28,7 @@ sealed class Route : NavKey {
             val date: LocalDate?
         ) : Dialog()
 
-        data class EditTaskDialog (
+        data class EditTaskDialog(
             val taskId: Long,
             val date: LocalDate
         ) : Dialog()

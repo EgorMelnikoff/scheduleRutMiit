@@ -5,6 +5,7 @@ import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
 import com.egormelnikoff.schedulerutmiit.core.common.time.TimeProvider
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.export.data.exporter.FileExporter
 import com.egormelnikoff.schedulerutmiit.export.data.importer.FileImporter
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.parser.SubjectsListParser
@@ -57,6 +58,11 @@ object AppModule {
     )
 
     @Provides
+    @Singleton
+    fun provideAppRouter() = AppRouter()
+
+    @Provides
+    @Singleton
     fun timeProvider(): TimeProvider = TimeProvider()
 
     @Provides
@@ -72,8 +78,10 @@ object AppModule {
     fun provideSubjectsListParser(): SubjectsListParser = SubjectsListParser
 
     @Provides
+    @Singleton
     fun provideFileExporter(@ApplicationContext context: Context) = FileExporter(context)
 
     @Provides
+    @Singleton
     fun provideFileImporter(@ApplicationContext context: Context) = FileImporter(context)
 }
