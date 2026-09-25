@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element
+package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -15,11 +15,10 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ActionDialogButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventHeader
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ModalDialogEvent(
+fun BottomSheetEventWidget(
     timetableType: TimetableType,
     event: Event,
     onHideEvent: (() -> Unit)? = null,
@@ -32,7 +31,7 @@ fun ModalDialogEvent(
             onDismiss()
         }
     ) {
-        EventHeader(
+        EventNameWidget(
             timetableType, event, 16.dp
         )
         Spacer(modifier = Modifier.height(0.dp))
