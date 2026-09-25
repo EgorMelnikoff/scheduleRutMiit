@@ -16,6 +16,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventActionUse
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.FetchNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.RefreshNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.SetDefaultScheduleUseCase
+import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.observer.ObserveNamedSchedulesUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.NamedScheduleState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.ScheduleState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.ScheduleState.Companion.withExtraData
@@ -41,6 +42,7 @@ class ScheduleViewModel @Inject constructor(
     private val deleteNamedScheduleUseCase: DeleteNamedScheduleUseCase,
     private val setDefaultScheduleUseCase: SetDefaultScheduleUseCase,
     private val eventActionUseCase: EventActionUseCase,
+    observeNamedSchedulesUseCase: ObserveNamedSchedulesUseCase,
     private val scheduleManager: ScheduleManager
 ) : ViewModel() {
     private var previousState: NamedScheduleState = NamedScheduleState.Loading
@@ -53,6 +55,13 @@ class ScheduleViewModel @Inject constructor(
 
     val screenState = _screenState.asStateFlow()
     val uiEvent = _uiEventFlow.asSharedFlow()
+
+    val namedSchedules = observeNamedSchedulesUseCase()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            listOf()
+        )
 
 
     val namedScheduleState = scheduleManager.currentNamedSchedule
@@ -127,9 +136,9 @@ class ScheduleViewModel @Inject constructor(
     }
 
     fun fetchNamedSchedule(
-        name: String,
-        apiId: Int,
-        type: NamedScheduleType
+        name: String?,
+        apiId: Int?,
+        type: NamedScheduleType?
     ) {
         val fetchJob = viewModelScope.launch {
             fetchScheduleJob?.cancelAndJoin()
@@ -139,9 +148,9 @@ class ScheduleViewModel @Inject constructor(
                 isLoading = true
             )
             val result = fetchNamedScheduleUseCase(
-                name = name,
-                apiId = apiId,
-                namedScheduleType = type
+                name = name ?: "",
+                apiId = apiId ?: 0,
+                namedScheduleType = type ?: NamedScheduleType.GROUP
             )
 
             when (val newNamedSchedule = result.namedScheduleWithSchedules) {

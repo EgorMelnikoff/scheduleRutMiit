@@ -43,7 +43,6 @@ import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.add_task.view_model.Add
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTaskDialog(
-    calendarData: CalendarData,
     onBack: () -> Unit
 ) {
     val addTaskViewModel = hiltViewModel<AddTaskViewModel>()
@@ -172,20 +171,21 @@ fun AddTaskDialog(
         }
 
         if (showDialogDate) {
-            BottomSheetDateRangePicker(
-                selectableStartDate = calendarData.startDate,
-                selectableEndDate = calendarData.endDate,
-
-                selectedStartDate = addTaskForm.startDate,
-                selectedEndDate = addTaskForm.endDate,
-
-                onShowDialog = {
-                    showDialogDate = it
-                },
-                onDateSelect = { start, end ->
-                    addTaskViewModel.onDatesChanged(start, end)
-                }
-            )
+            // TODO даты
+//            BottomSheetDateRangePicker(
+//                selectableStartDate = calendarData.startDate,
+//                selectableEndDate = calendarData.endDate,
+//
+//                selectedStartDate = addTaskForm.startDate,
+//                selectedEndDate = addTaskForm.endDate,
+//
+//                onShowDialog = {
+//                    showDialogDate = it
+//                },
+//                onDateSelect = { start, end ->
+//                    addTaskViewModel.onDatesChanged(start, end)
+//                }
+//            )
         }
         if (showDialogTime) {
             BottomSheetTimePicker(

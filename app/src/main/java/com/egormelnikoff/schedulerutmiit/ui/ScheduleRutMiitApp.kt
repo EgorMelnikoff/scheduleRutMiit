@@ -32,6 +32,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NavigateSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BarItem
@@ -42,7 +43,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.rememberCalendarState
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppBackStack
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
@@ -51,7 +52,7 @@ import com.egormelnikoff.schedulerutmiit.news.ui.NewsDialog
 import com.egormelnikoff.schedulerutmiit.news.ui.NewsScreen
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.EditEventDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleDialog
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventDialog
+import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreen
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.hidden_events.HiddenEventsDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.rename_schedule.RenameDialog
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.ReviewScreen
@@ -73,61 +74,33 @@ import java.time.LocalDate
 @Composable
 fun ScheduleRutMiitApp(
     preferencesViewModel: PreferencesViewModel,
-    appSettings: AppSettings
+    appRouter: AppRouter,
+    appSettings: AppSettings,
 ) {
-    val scheduleViewModel = hiltViewModel<ScheduleViewModel>()
     val mainViewModel = hiltViewModel<MainViewModel>()
-    val taskViewModel = hiltViewModel<TaskViewModel>()
 
     val hourlyDateTime by mainViewModel.hourlyDateTime.collectAsStateWithLifecycle()
 
-    val namedScheduleState by scheduleViewModel.namedScheduleState.collectAsStateWithLifecycle()
-    val scheduleCalendarState = rememberScheduleCalendarState(namedScheduleState)
 
-    val tasksCalendarData = remember {
-        CalendarData(
-            hourlyDateTime.toLocalDate().minusYears(5),
-            hourlyDateTime.toLocalDate().plusYears(5)
-        )
-    }
-    val tasksCalendarState = rememberCalendarState(tasksCalendarData)
-
-    val appBackStack = remember { AppBackStack(Route.Page.Schedule) }
     val snackbarHostState = remember { SnackbarHostState() }
-    val scheduleListState = rememberLazyListState()
-    val settingsListState = rememberLazyStaggeredGridState()
 
-    val reviewUiState = ReviewUiState()
 
     UiEventProcessor(
         mainViewModel.uiEvent,
         snackbarHostState
     )
 
-    UiEventProcessor(
-        scheduleViewModel.uiEvent,
-        snackbarHostState
-    )
 
     Box(Modifier.fillMaxSize()) {
         RootHost(
             pageHost = {
                 PageHost(
-                    scheduleCalendarState = scheduleCalendarState,
-                    scheduleListState = scheduleListState,
-                    reviewUiState = reviewUiState,
-                    tasksCalendarState = tasksCalendarState,
-
                     mainViewModel = mainViewModel,
-                    scheduleViewModel = scheduleViewModel,
                     preferencesViewModel = preferencesViewModel,
-                    taskViewModel = taskViewModel,
 
-                    namedScheduleState = namedScheduleState,
 
-                    appBackStack = appBackStack,
+                    appRouter = appRouter,
                     snackbarHostState = snackbarHostState,
-                    settingsListState = settingsListState,
 
                     appSettings = appSettings
                 ) { date ->
@@ -135,13 +108,8 @@ fun ScheduleRutMiitApp(
                 }
             },
             snackbarHostState = snackbarHostState,
-            appBackStack = appBackStack,
-            tasksCalendarData = tasksCalendarData
-        ) { name, apiId, type ->
-            scheduleViewModel.fetchNamedSchedule(
-                name, apiId, type
-            )
-        }
+            appRouter = appRouter,
+        )
     }
 }
 
@@ -149,28 +117,15 @@ fun ScheduleRutMiitApp(
 @Composable
 fun PageHost(
     mainViewModel: MainViewModel,
-    scheduleViewModel: ScheduleViewModel,
     preferencesViewModel: PreferencesViewModel,
-    taskViewModel: TaskViewModel,
 
-    namedScheduleState: NamedScheduleState,
-
-    appBackStack: AppBackStack,
+    appRouter: AppRouter,
     snackbarHostState: SnackbarHostState,
-    settingsListState: LazyStaggeredGridState,
-
-    scheduleCalendarState: CalendarState?,
-    tasksCalendarState: CalendarState,
-    scheduleListState: LazyListState,
-    reviewUiState: ReviewUiState,
 
     appSettings: AppSettings,
     isToday: (LocalDate) -> Boolean
 ) {
-    val scope = rememberCoroutineScope()
-
     val appState by mainViewModel.appState.collectAsStateWithLifecycle()
-
 
     val importLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
@@ -178,25 +133,17 @@ fun PageHost(
         mainViewModel.importData(
             uri = uri,
             onSuccess = {
-                appBackStack.navigateToStartRage()
+                appRouter.navigateToStartRage()
             }
         )
     }
 
-    val currentPage = appBackStack.lastPage()
-
-    val navigate: (Route.Page) -> Unit = remember(appBackStack) {
-        { page ->
-            appBackStack.openPage(page)
-        }
-    }
-
-
+    val currentPage = appRouter.lastPage()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = {
-            if (appBackStack.dialogBackStack.size <= 1) {
+            if (appRouter.dialogBackStack.size <= 1) {
                 CustomSnackbarHost(
                     snackBarHostState = snackbarHostState
                 )
@@ -204,7 +151,6 @@ fun PageHost(
         },
         bottomBar = {
             CustomNavigationBar(
-                currentPageIndex = appBackStack.lastPage().index,
                 barItems = {
                     CustomNavigationBarItem(
                         barItem = remember {
@@ -212,12 +158,12 @@ fun PageHost(
                                 title = R.string.review,
                                 iconRes = R.drawable.review,
                                 selectedIconRes = R.drawable.review_fill,
-                                page = Route.Page.Review
                             )
                         },
-                        isSelected = currentPage == Route.Page.Review,
-                        navigate = navigate,
-                        onClick = null
+                        isSelected = currentPage is Route.Page.Review,
+                        onClick = {
+                            appRouter.openPage(Route.Page.Review)
+                        }
                     )
                     CustomNavigationBarItem(
                         barItem = remember {
@@ -225,26 +171,11 @@ fun PageHost(
                                 title = R.string.schedule,
                                 iconRes = R.drawable.schedule,
                                 selectedIconRes = R.drawable.schedule_fill,
-                                page = Route.Page.Schedule
                             )
                         },
-                        navigate = navigate,
-                        isSelected = currentPage == Route.Page.Schedule,
-                        onClick = scheduleCalendarState?.let {
-                            {
-                                scope.launch {
-                                    when {
-
-                                        namedScheduleState is NamedScheduleState.Loaded && namedScheduleState.scheduleState?.calendarData != null && appSettings.scheduleView == ScheduleView.CALENDAR -> {
-                                            scheduleCalendarState.selectInitialDate()
-                                        }
-
-                                        appSettings.scheduleView == ScheduleView.LIST -> {
-                                            scheduleListState.animateScrollToItem(0)
-                                        }
-                                    }
-                                }
-                            }
+                        isSelected = currentPage is Route.Page.Schedule,
+                        onClick = {
+                            appRouter.openPage(Route.Page.Schedule())
                         }
                     )
                     CustomNavigationBarItem(
@@ -253,32 +184,25 @@ fun PageHost(
                                 title = R.string.tasks,
                                 iconRes = R.drawable.tasks,
                                 selectedIconRes = R.drawable.tasks_fill,
-                                page = Route.Page.Tasks
                             )
                         },
-                        isSelected = currentPage == Route.Page.Tasks,
-                        navigate = navigate
+                        isSelected = currentPage is Route.Page.Tasks,
                     ) {
-                        scope.launch {
-                            tasksCalendarState.selectInitialDate()
-                        }
+                        appRouter.openPage(Route.Page.Tasks)
                     }
+
                     CustomNavigationBarItem(
                         barItem = remember {
                             BarItem(
                                 title = R.string.settings,
                                 iconRes = R.drawable.settings,
                                 selectedIconRes = R.drawable.settings_fill,
-                                page = Route.Page.Settings
                             )
                         },
                         showBadge = appState.updatesAvailable,
-                        isSelected = currentPage == Route.Page.Settings,
-                        navigate = navigate
+                        isSelected = currentPage is Route.Page.Settings,
                     ) {
-                        scope.launch {
-                            settingsListState.animateScrollToItem(0)
-                        }
+                        appRouter.openPage(Route.Page.Settings)
                     }
                 },
                 isDarkTheme = appSettings.decorPreferences.theme.isDarkTheme()
@@ -293,9 +217,9 @@ fun PageHost(
                         WindowInsetsSides.Horizontal
                     )
                 ),
-            backStack = appBackStack.pageBackStack,
+            backStack = appRouter.pageBackStack,
             onBack = {
-                appBackStack.onBack()
+                appRouter.onBack()
             },
             transitionSpec = {
                 fadeIn() togetherWith fadeOut()
@@ -309,37 +233,31 @@ fun PageHost(
             entryProvider = entryProvider {
                 entry<Route.Page.Review> {
                     ReviewScreen(
-                        reviewUiState = reviewUiState,
                         isDarkTheme = appSettings.decorPreferences.theme.isDarkTheme(),
                         usedPhoto = appSettings.usedImageInReview,
                         contentPadding = padding,
                         onNavigateToStartPage = {
-                            appBackStack.navigateToStartRage()
+                            appRouter.navigateToStartRage()
                         }
                     ) { dialog ->
-                        appBackStack.openDialog(dialog)
+                        appRouter.openDialog(dialog)
                     }
                 }
 
-                entry<Route.Page.Schedule> {
-                    val screenState by scheduleViewModel.screenState.collectAsStateWithLifecycle()
+                entry<Route.Page.Schedule> { route ->
 
                     ScreenSchedule(
-                        namedScheduleState = namedScheduleState,
-                        screenState = screenState,
-
-                        scheduleCalendarState = scheduleCalendarState,
-                        scheduleListState = scheduleListState,
+                        route = route,
                         appSettings = appSettings,
-                        scheduleViewModel = scheduleViewModel,
 
                         contentPadding = padding,
                         isToday = isToday,
                         launchImport = { array ->
                             importLauncher.launch(array)
                         },
+                        snackbarHostState = snackbarHostState,
                         onOpenDialog = { dialog ->
-                            appBackStack.openDialog(dialog)
+                            appRouter.openDialog(dialog)
                         }
                     ) { value ->
                         preferencesViewModel.onSetScheduleView(value)
@@ -347,24 +265,17 @@ fun PageHost(
                 }
 
                 entry<Route.Page.Tasks> {
-                    val tasks by taskViewModel.tasks.collectAsStateWithLifecycle()
 
                     TasksScreen(
-                        calendarState = tasksCalendarState,
-                        tasks = tasks,
                         contentPadding = padding,
                         isToday = isToday,
-                        onTaskAction = { taskAction ->
-                            taskViewModel.taskAction(taskAction)
-                        },
                     ) { dialog ->
-                        appBackStack.openDialog(dialog)
+                        appRouter.openDialog(dialog)
                     }
                 }
 
                 entry<Route.Page.Settings> {
                     SettingsScreen(
-                        settingsListState = settingsListState,
                         updatesAvailable = appState.updatesAvailable,
                         appSettings = appSettings,
 
@@ -386,14 +297,12 @@ fun PageHost(
 @Composable
 fun RootHost(
     pageHost: @Composable () -> Unit,
-    appBackStack: AppBackStack,
-    snackbarHostState: SnackbarHostState,
-    tasksCalendarData: CalendarData,
-    fetchNamedSchedule: (String, Int, NamedScheduleType) -> Unit
+    appRouter: AppRouter,
+    snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
         snackbarHost = {
-            if (appBackStack.dialogBackStack.size > 1) {
+            if (appRouter.dialogBackStack.size > 1) {
                 CustomSnackbarHost(
                     snackBarHostState = snackbarHostState
                 )
@@ -412,9 +321,9 @@ fun RootHost(
                 rememberSaveableStateHolderNavEntryDecorator(),
                 rememberViewModelStoreNavEntryDecorator()
             ),
-            backStack = appBackStack.dialogBackStack,
+            backStack = appRouter.dialogBackStack,
             onBack = {
-                appBackStack.onBack()
+                appRouter.onBack()
             },
             transitionSpec = {
                 fadeIn() togetherWith fadeOut()
@@ -443,25 +352,14 @@ fun RootHost(
                 }
 
                 entry<Route.Dialog.EventDialog> { dialog ->
-                    EventDialog(
+                    EventScreen(
                         eventDialog = dialog,
-                        fetchNamedSchedule = { name, apiId, type ->
-                            fetchNamedSchedule(name, apiId, type)
-                        },
-                        navigateToStartPage = {
-                            appBackStack.navigateToStartRage()
-                        },
-                        navigateToEditEventDialog = { editDialog ->
-                            appBackStack.openDialog(editDialog)
-                        }
-                    ) {
-                        appBackStack.onBack()
-                    }
+                    )
                 }
 
                 entry<Route.Dialog.NewsList> {
                     NewsScreen { newsId ->
-                        appBackStack.openDialog(
+                        appRouter.openDialog(
                             Route.Dialog.NewsDialog(newsId)
                         )
                     }
@@ -471,15 +369,13 @@ fun RootHost(
                     NewsDialog(
                         newsDialog = dialog
                     ) {
-                        appBackStack.onBack()
+                        appRouter.onBack()
                     }
                 }
 
                 entry<Route.Dialog.AddTaskDialog> {
-                    AddTaskDialog(
-                        calendarData = tasksCalendarData,
-                    ) {
-                        appBackStack.onBack()
+                    AddTaskDialog {
+                        appRouter.onBack()
                     }
                 }
 
@@ -487,7 +383,7 @@ fun RootHost(
                     EditTaskDialog(
                         editTaskDialog = dialog
                     ) {
-                        appBackStack.onBack()
+                        appRouter.onBack()
                     }
                 }
 
@@ -495,15 +391,14 @@ fun RootHost(
                     EditEventDialog(
                         editEventDialog = dialog
                     ) {
-                        appBackStack.onBack()
+                        appRouter.onBack()
                     }
                 }
 
                 entry<Route.Dialog.SearchDialog> {
-                    SearchDialog { name, apiId, type ->
-                        fetchNamedSchedule(name, apiId, type)
-                        appBackStack.openPage(Route.Page.Schedule)
-                        appBackStack.onBack()
+                    SearchDialog { navigateSchedule ->
+                        appRouter.openPage(Route.Page.Schedule(navigateSchedule))
+                        appRouter.onBack()
                     }
                 }
                 entry<Route.Dialog.CurriculumDialog> {
@@ -511,40 +406,24 @@ fun RootHost(
                 }
                 entry<Route.Dialog.AddScheduleDialog> {
                     AddScheduleDialog {
-                        appBackStack.onBack()
+                        appRouter.onBack()
                     }
                 }
                 entry<Route.Dialog.RenameNamedScheduleDialog> { dialog ->
                     RenameDialog(
                         renameDialog = dialog,
                     ) {
-                        appBackStack.onBack()
+                        appRouter.onBack()
                     }
                 }
                 entry<Route.Dialog.HiddenEventsDialog> { dialog ->
                     HiddenEventsDialog(
                         hiddenEventsDialog = dialog
                     ) {
-                        appBackStack.onBack()
+                        appRouter.onBack()
                     }
                 }
             }
         )
-    }
-}
-
-
-@Composable
-fun rememberScheduleCalendarState(
-    namedScheduleState: NamedScheduleState
-): CalendarState? {
-    val calendarData = (namedScheduleState as? NamedScheduleState.Loaded)
-        ?.scheduleState
-        ?.calendarData
-
-    return if (calendarData != null) {
-        rememberCalendarState(calendarData)
-    } else {
-        null
     }
 }

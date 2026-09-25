@@ -26,7 +26,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 fun ScheduleTopAppBar(
     onSetScheduleView: (ScheduleView) -> Unit,
     onShowNamedScheduleDialog: (Boolean) -> Unit,
-
+    onTitleClick: (() -> Unit)? = null,
     namedSchedule: NamedSchedule,
     scheduleTypeName: String?,
     scheduleView: ScheduleView
@@ -40,6 +40,7 @@ fun ScheduleTopAppBar(
         subtitleText = if (scheduleTypeName != null && !isCustomSchedule) {
             scheduleTypeName
         } else null,
+        onTitleClick = onTitleClick,
         actions = {
             IconButton(
                 onClick = {

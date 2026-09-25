@@ -6,6 +6,7 @@ sealed interface EditEventState {
     data object Loading : EditEventState
 
     data class Loaded(
-        val schedule: Schedule
+        val schedule: Schedule,
+        //val editEventForm: EditEventForm
     ) : EditEventState
 }

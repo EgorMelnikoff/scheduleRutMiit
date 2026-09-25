@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.elements
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +14,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -32,6 +34,7 @@ fun CustomTopAppBar(
     navImageVector: ImageVector = ImageVector.vectorResource(R.drawable.back),
     scrollBehavior: TopAppBarScrollBehavior? = null,
     contentColor: Color = MaterialTheme.colorScheme.onBackground,
+    onTitleClick: (() -> Unit)? = null,
     actions: @Composable (() -> Unit)? = null
 ) {
     Surface(
@@ -47,6 +50,13 @@ fun CustomTopAppBar(
             title = {
                 titleText?.let {
                     Column(
+                        modifier = Modifier.clickable(
+                            enabled = onTitleClick != null,
+                            indication = null,
+                            interactionSource = null,
+                        ) {
+                            onTitleClick?.invoke()
+                        },
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(

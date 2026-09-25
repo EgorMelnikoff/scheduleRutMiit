@@ -63,21 +63,14 @@ data class BarItem(
     @param:DrawableRes
     val iconRes: Int,
     @param:DrawableRes
-    val selectedIconRes: Int? = null,
-    val page: Route.Page
+    val selectedIconRes: Int? = null
 )
 
 @Composable
 fun CustomNavigationBar(
     barItems: @Composable RowScope.() -> Unit,
-    currentPageIndex: Int,
     isDarkTheme: Boolean
 ) {
-    val indicatorOffset by animateDpAsState(
-        targetValue = 68.dp * currentPageIndex,
-        animationSpec = tween(200, easing = LinearOutSlowInEasing)
-    )
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -136,17 +129,6 @@ fun CustomNavigationBar(
                 .padding(4.dp),
             contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(68.dp)
-                    .align(Alignment.CenterStart)
-                    .graphicsLayer {
-                        translationX = indicatorOffset.toPx()
-                    }
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
-            )
             Row(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceAround
@@ -161,9 +143,8 @@ fun CustomNavigationBar(
 fun CustomNavigationBarItem(
     barItem: BarItem,
     showBadge: Boolean = false,
-    navigate: (Route.Page) -> Unit,
     isSelected: Boolean,
-    onClick: (() -> Unit)?,
+    onClick: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -179,11 +160,7 @@ fun CustomNavigationBarItem(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = if (isSelected) {
-                    { onClick?.invoke() }
-                } else {
-                    { navigate(barItem.page) }
-                }
+                onClick = onClick
             )
             .scale(scale)
             .padding(8.dp)

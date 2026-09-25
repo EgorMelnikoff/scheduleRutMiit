@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -60,7 +61,6 @@ sealed interface SettingsDialog {
 
 @Composable
 fun SettingsScreen(
-    settingsListState: LazyStaggeredGridState,
     updatesAvailable: Boolean,
 
     appSettings: AppSettings,
@@ -71,6 +71,9 @@ fun SettingsScreen(
     launch: (Array<String>) -> Unit,
     exportData: (Uri) -> Unit
 ) {
+
+    val settingsListState = rememberLazyStaggeredGridState()
+
     var activeDialog by remember { mutableStateOf<SettingsDialog?>(null) }
     var importDialog by remember { mutableStateOf(false) }
 

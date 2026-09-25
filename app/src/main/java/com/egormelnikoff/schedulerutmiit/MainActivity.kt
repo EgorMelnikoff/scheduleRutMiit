@@ -12,22 +12,27 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
 import com.egormelnikoff.schedulerutmiit.ui.WelcomePage
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var appRouter: AppRouter
     private val preferencesViewModel: PreferencesViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition {
-           preferencesViewModel.appSettings.value == null
+            preferencesViewModel.appSettings.value == null
         }
 
         setContent {
@@ -46,7 +51,8 @@ class MainActivity : ComponentActivity() {
                         if (skipWelcomePage) {
                             ScheduleRutMiitApp(
                                 preferencesViewModel = preferencesViewModel,
-                                appSettings = settings
+                                appSettings = settings,
+                                appRouter = appRouter
                             )
                         } else {
                             WelcomePage(preferencesViewModel)

@@ -33,6 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Task
@@ -43,7 +45,10 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.Calendar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.CalendarBarItem
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData.Companion.invoke
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.rememberCalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Green
@@ -51,18 +56,30 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Red
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Yellow
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.TaskAction
+import com.egormelnikoff.schedulerutmiit.tasks.ui.screen.view_model.TaskViewModel
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TasksScreen(
-    tasks: Map<LocalDate, List<Task>>,
-    calendarState: CalendarState,
     contentPadding: PaddingValues,
     isToday: (LocalDate) -> Boolean,
-    onTaskAction: (TaskAction) -> Unit,
     onOpenDialog: (Route.Dialog) -> Unit
 ) {
+    val taskViewModel = hiltViewModel<TaskViewModel>()
+
+    val tasks by taskViewModel.tasks.collectAsStateWithLifecycle()
+
+    val hourlyDateTime by taskViewModel.hourlyDateTime.collectAsStateWithLifecycle()
+    val tasksCalendarData = remember {
+        CalendarData(
+            hourlyDateTime.toLocalDate().minusYears(5),
+            hourlyDateTime.toLocalDate().plusYears(5)
+        )
+    }
+    val tasksCalendarState = rememberCalendarState(tasksCalendarData)
+
+
     Scaffold(
         topBar = {
             CustomTopAppBar(
@@ -87,7 +104,7 @@ fun TasksScreen(
             modifier = Modifier.padding(
                 top = internalPadding.calculateTopPadding()
             ),
-            calendarState = calendarState,
+            calendarState = tasksCalendarState,
             showCalendarDialog = false,
             onShowCalendarDialog = { },
             showMonth = true,
@@ -99,11 +116,11 @@ fun TasksScreen(
                 CalendarBarItem(
                     currentDate = currentDate,
 
-                    isSelected = calendarState.selectedDate == currentDate,
-                    isDisabled = currentDate !in calendarState.calendarData.startDate..calendarState.calendarData.endDate,
+                    isSelected = tasksCalendarState.selectedDate == currentDate,
+                    isDisabled = currentDate !in tasksCalendarState.calendarData.startDate..tasksCalendarState.calendarData.endDate,
                     isToday = isToday(currentDate),
                     selectDate = { date ->
-                        calendarState.selectDate(date, tasksPerDate?.isEmpty() ?: true)
+                        tasksCalendarState.selectDate(date, tasksPerDate?.isEmpty() ?: true)
                     }
                 ) {
                     tasksPerDate?.let {
@@ -174,7 +191,7 @@ fun TasksScreen(
                         SingleTask(
                             task = task,
                             onComplete = { newValue ->
-                                onTaskAction(
+                                taskViewModel.taskAction(
                                     TaskAction.UpdateIsCompleted(
                                         task.id,
                                         task.date,
@@ -191,12 +208,12 @@ fun TasksScreen(
                                 )
                             },
                             onDelete = { id, date ->
-                                onTaskAction(
+                                taskViewModel.taskAction(
                                     TaskAction.DeleteByDateAndId(id, date)
                                 )
                             },
                             onDeleteAll = { id ->
-                                onTaskAction(
+                                taskViewModel.taskAction(
                                     TaskAction.DeleteById(id)
                                 )
                             }

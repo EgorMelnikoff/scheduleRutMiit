@@ -15,28 +15,31 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.domain.ScreenState
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.AnimatedAlert
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
@@ -44,13 +47,17 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomPullToRefreshBox
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.GridGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.rememberCalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ScheduleLoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.element.ModalDialogReview
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ModalDialogSchedule
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ModalDialogSchedules
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ScheduleTopAppBar
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.NamedScheduleState
@@ -58,25 +65,45 @@ import java.time.LocalDate
 
 @Composable
 fun ScreenSchedule(
-    scheduleCalendarState: CalendarState?,
-    scheduleListState: LazyListState,
-
-    namedScheduleState: NamedScheduleState,
-    screenState: ScreenState,
+    route: Route.Page.Schedule,
     appSettings: AppSettings,
 
     contentPadding: PaddingValues,
-
-    scheduleViewModel: ScheduleViewModel,
+    snackbarHostState: SnackbarHostState,
     launchImport: (Array<String>) -> Unit,
     isToday: (LocalDate) -> Boolean,
     onOpenDialog: (Route.Dialog) -> Unit,
     onSetScheduleView: (ScheduleView) -> Unit,
 ) {
+    val scheduleViewModel = hiltViewModel<ScheduleViewModel>()
+
+    val namedScheduleState = scheduleViewModel.namedScheduleState.collectAsStateWithLifecycle().value
+    val scheduleCalendarState = rememberScheduleCalendarState(namedScheduleState)
+
+    UiEventProcessor(
+        scheduleViewModel.uiEvent,
+        snackbarHostState
+    )
+
+    LaunchedEffect(route.navigateSchedule) {
+        route.navigateSchedule?.let {
+            scheduleViewModel.fetchNamedSchedule(
+                it.name, it.apiId, it.namedScheduleType
+            )
+        }
+    }
+
+    val screenState by scheduleViewModel.screenState.collectAsStateWithLifecycle()
+
+
+    val namedSchedules by scheduleViewModel.namedSchedules.collectAsStateWithLifecycle()
+
     var backDialog by remember { mutableStateOf(false) }
+    var namedSchedulesDialog by remember { mutableStateOf<Boolean>(false) }
     var namedScheduleDialog by remember { mutableStateOf<Boolean?>(null) }
     var deleteNamedScheduleDialog by remember { mutableStateOf(false) }
 
+    val scheduleListState = rememberLazyListState()
     when {
         namedScheduleState is NamedScheduleState.Loading -> ScheduleLoadingScreen()
 
@@ -167,6 +194,9 @@ fun ScreenSchedule(
                         onSetScheduleView = onSetScheduleView,
                         onShowNamedScheduleDialog = { newValue ->
                             namedScheduleDialog = newValue
+                        },
+                        onTitleClick = {
+                            namedSchedulesDialog = !namedSchedulesDialog
                         },
                         namedSchedule = namedScheduleState.namedScheduleWithSchedules.namedSchedule,
                         scheduleTypeName = namedScheduleState.scheduleState?.schedule?.timetableType?.typeName,
@@ -354,5 +384,31 @@ fun ScreenSchedule(
                 scheduleViewModel.refreshScheduleState(showLoading = false)
             }
         )
+    }
+
+    if (namedSchedulesDialog) {
+        ModalDialogSchedules(
+            namedSchedules = namedSchedules,
+            onClickItem = { namedSchedule ->
+                //namedScheduleDialog = namedSchedule
+            }
+        ) {
+            namedSchedulesDialog = false
+        }
+    }
+}
+
+@Composable
+fun rememberScheduleCalendarState(
+    namedScheduleState: NamedScheduleState
+): CalendarState? {
+    val calendarData = (namedScheduleState as? NamedScheduleState.Loaded)
+        ?.scheduleState
+        ?.calendarData
+
+    return if (calendarData != null) {
+        rememberCalendarState(calendarData)
+    } else {
+        null
     }
 }

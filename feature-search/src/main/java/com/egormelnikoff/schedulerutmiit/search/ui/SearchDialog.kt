@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.domain.NavigateSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
@@ -61,7 +62,7 @@ import com.egormelnikoff.schedulerutmiit.search.ui.view_model.SearchViewModel
 
 @Composable
 fun SearchDialog(
-    fetchNamedSchedule: (String, Int, NamedScheduleType) -> Unit
+    fetchNamedSchedule: (NavigateSchedule) -> Unit
 ) {
     val searchViewModel = hiltViewModel<SearchViewModel>()
 
@@ -221,9 +222,11 @@ fun SearchDialog(
                                         showClickLabel = false
                                     ) {
                                         fetchNamedSchedule(
-                                            query.name,
-                                            query.apiId,
-                                            query.namedScheduleType
+                                            NavigateSchedule(
+                                                query.name,
+                                                query.apiId,
+                                                query.namedScheduleType
+                                            )
                                         )
                                     }
                                 }
@@ -265,9 +268,11 @@ fun SearchDialog(
                                             title = group.name
                                         ) {
                                             fetchNamedSchedule(
-                                                group.name,
-                                                group.id,
-                                                NamedScheduleType.GROUP
+                                                NavigateSchedule(
+                                                    group.name,
+                                                    group.id,
+                                                    NamedScheduleType.GROUP
+                                                )
                                             )
                                             searchViewModel.saveQueryToHistory(
                                                 SearchQuery(
@@ -316,9 +321,11 @@ fun SearchDialog(
                                             }
                                         ) {
                                             fetchNamedSchedule(
-                                                person.name,
-                                                person.id,
-                                                NamedScheduleType.PERSON
+                                                NavigateSchedule(
+                                                    person.name,
+                                                    person.id,
+                                                    NamedScheduleType.PERSON
+                                                )
                                             )
                                             searchViewModel.saveQueryToHistory(
                                                 SearchQuery(

@@ -57,6 +57,21 @@ fun ScheduleRutMiitTheme(
 }
 
 @Composable
+fun PreviewLightTheme(
+    content: @Composable () -> Unit
+) {
+    ScheduleRutMiitTheme(
+        decorPreferences = DecorPreferences(
+            Theme.LIGHT,
+            usedAmoled = false,
+            decorColorIndex = 0
+        )
+    ) {
+        content.invoke()
+    }
+}
+
+@Composable
 fun Theme.isDarkTheme() = when (this) {
     Theme.DARK -> true
     Theme.LIGHT -> false

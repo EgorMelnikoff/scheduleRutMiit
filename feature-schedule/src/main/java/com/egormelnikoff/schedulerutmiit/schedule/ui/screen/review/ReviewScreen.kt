@@ -65,6 +65,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RowGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.SchedulesWidget
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.element.ModalDialogReview
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.view_model.ReviewViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ReviewUiState
@@ -72,8 +73,6 @@ import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ReviewUiState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewScreen(
-    reviewUiState: ReviewUiState,
-    //appBackStack: AppBackStack,
     usedPhoto: Boolean,
     isDarkTheme: Boolean,
     contentPadding: PaddingValues,
@@ -81,6 +80,8 @@ fun ReviewScreen(
     onOpenDialog: (Route.Dialog) -> Unit
 ) {
     val reviewViewModel = hiltViewModel<ReviewViewModel>()
+    val reviewUiState = ReviewUiState()
+
     val namedSchedules = reviewViewModel.namedSchedules.collectAsStateWithLifecycle().value
     val summaryState = reviewViewModel.summaryState.collectAsStateWithLifecycle().value
     val currentDateTime = reviewViewModel.currentDateTime.collectAsStateWithLifecycle().value
@@ -325,55 +326,9 @@ fun ReviewScreen(
                             visible = reviewUiState.visibleSavedSchedules,
                             onChangeVisibility = reviewUiState.onChangeVisibilitySavedSchedules
                         ) {
-                            ColumnGroup(
-                                items = namedSchedules.map { namedSchedule ->
-                                    {
-                                        ClickableItem(
-                                            title = namedSchedule.shortName,
-                                            titleMaxLines = 1,
-                                            defaultMinHeight = 32.dp,
-                                            leadingIcon = {
-                                                Icon(
-                                                    modifier = Modifier.size(16.dp),
-                                                    imageVector = when (namedSchedule.type) {
-                                                        NamedScheduleType.GROUP -> ImageVector.vectorResource(
-                                                            R.drawable.group
-                                                        )
-
-                                                        NamedScheduleType.PERSON -> ImageVector.vectorResource(
-                                                            R.drawable.person
-                                                        )
-
-                                                        NamedScheduleType.ROOM -> ImageVector.vectorResource(
-                                                            R.drawable.room
-                                                        )
-
-                                                        NamedScheduleType.MY -> ImageVector.vectorResource(
-                                                            R.drawable.edit
-                                                        )
-                                                    },
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                                )
-                                            },
-                                            trailingIcon = if (namedSchedule.isDefault) {
-                                                {
-                                                    Icon(
-                                                        modifier = Modifier.size(20.dp),
-                                                        imageVector = ImageVector.vectorResource(
-                                                            R.drawable.check
-                                                        ),
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                }
-                                            } else null
-                                        ) {
-                                            namedScheduleDialog = namedSchedule
-                                        }
-                                    }
-                                }
-                            )
+                            SchedulesWidget(namedSchedules) { namedSchedule ->
+                                namedScheduleDialog = namedSchedule
+                            }
                         }
                     }
                 }
