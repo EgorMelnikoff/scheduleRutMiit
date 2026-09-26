@@ -131,7 +131,7 @@ class EventScreenViewModel @AssistedInject constructor(
 
     private fun onHideEvent(eventId: Long) {
         viewModelScope.launch {
-            eventActionUseCase(EventAction.UpdateHidden(eventId, true))
+            eventActionUseCase(EventAction.UpdateHidden(eventId, false))
         }
     }
 

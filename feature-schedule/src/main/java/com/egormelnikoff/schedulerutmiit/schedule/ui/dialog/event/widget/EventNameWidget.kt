@@ -27,7 +27,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomFilterChip
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.eventStateMock
 import java.time.format.TextStyle
@@ -60,7 +60,7 @@ fun EventNameWidget(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            CustomFilterChip(
+            AppFilterChip(
                 imageVector = ImageVector.vectorResource(R.drawable.calendar),
                 colors = FilterChipDefaults.filterChipColors(
                     disabledContainerColor = Color.Transparent,
@@ -91,7 +91,7 @@ fun EventNameWidget(
                         .format(dayMonthYearFormatter)
                 }"
             )
-            CustomFilterChip(
+            AppFilterChip(
                 imageVector = ImageVector.vectorResource(R.drawable.time),
                 colors = FilterChipDefaults.filterChipColors(
                     disabledContainerColor = Color.Transparent,
@@ -106,7 +106,7 @@ fun EventNameWidget(
             )
 
             event.typeName?.let { typeName ->
-                CustomFilterChip(
+                AppFilterChip(
                     title = typeName,
                     border = BorderStroke(
                         width = 0.5.dp,
