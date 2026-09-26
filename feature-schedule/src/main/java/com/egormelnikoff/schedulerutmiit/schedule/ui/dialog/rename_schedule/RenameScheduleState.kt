@@ -1,12 +1,12 @@
-package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.rename_schedule.view_model.state
+package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.rename_schedule
 
-sealed interface RenameState {
-    data object Loading : RenameState
+sealed interface RenameScheduleState {
+    data object Loading : RenameScheduleState
 
     data class Loaded(
         val currentName: String,
         val newName: String
-    ) : RenameState {
+    ) : RenameScheduleState {
         val renameEnabled: Boolean
             get() = newName.isNotBlank() &&
                     newName.trim() != currentName
