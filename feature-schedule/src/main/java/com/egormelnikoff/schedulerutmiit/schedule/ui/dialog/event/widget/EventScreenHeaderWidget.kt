@@ -13,16 +13,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.DecorPreferences
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.customToString
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenWidget
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.eventStateMock
+import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.eventStateMock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +69,7 @@ fun EventScreenHeaderWidget(
     )
 }
 
-@Preview
+@Preview(locale = "ru")
 @Composable
 fun EventScreenHeaderPreview() {
     PreviewLightTheme {

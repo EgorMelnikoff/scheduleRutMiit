@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event
+package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,20 +16,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.DecorPreferences
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.ScheduleRutMiitTheme
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.EventNameWidget
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.EventScreenHeaderWidget
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.eventCommentWidget
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.eventGroupsWidget
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.eventLecturersWidget
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.eventRoomsWidget
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.eventTagWidget
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.BottomSheetEventWidget
+import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenAction
+import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenState
+import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.eventStateMock
 
 @Composable
 fun EventScreenWidget(
@@ -144,7 +136,7 @@ fun EventScreenWidget(
 }
 
 
-@Preview
+@Preview(locale = "ru")
 @Composable
 fun EventScreenWidgetPreview() {
     PreviewLightTheme{

@@ -12,7 +12,7 @@ abstract class BaseViewModel<State, Action>(initialState: State) : ViewModel() {
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<State> = _state.asStateFlow()
 
-    protected val currentState: State
+    protected val screenState: State
         get() = _state.value
 
     protected fun updateState(block: State.() -> State) {

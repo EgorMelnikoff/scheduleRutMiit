@@ -6,10 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.DecorPreferences
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.ScheduleRutMiitTheme
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.EventScreenWidget
+import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.eventStateMock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,4 +30,12 @@ fun EventScreen(
             eventScreenViewModel.onAction(action)
         }
     )
+}
+
+@Preview(locale = "ru")
+@Composable
+fun EventScreenPreview() {
+    PreviewLightTheme{
+        EventScreenWidget(eventStateMock) { }
+    }
 }

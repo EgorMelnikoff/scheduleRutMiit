@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.view_model.state
+package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
@@ -9,7 +9,7 @@ import com.egormelnikoff.schedulerutmiit.schedule.data.validator.isValidEvent
 import java.time.LocalDate
 import java.time.LocalTime
 
-data class EditEventForm(
+data class EditForm(
     val isEdit: Boolean,
     val name: String = "",
     val type: String? = DefaultEventParams.types.first(),
@@ -31,7 +31,7 @@ data class EditEventForm(
 
     companion object {
         operator fun invoke(event: Event?) = event?.let {
-            EditEventForm(
+            EditForm(
                 isEdit = true,
                 name = event.name,
                 type = event.typeName,
@@ -46,6 +46,6 @@ data class EditEventForm(
                 lecturers = event.lecturers ?: emptyList(),
                 groups = event.groups ?: emptyList()
             )
-        } ?: EditEventForm(false)
+        } ?: EditForm(false)
     }
 }

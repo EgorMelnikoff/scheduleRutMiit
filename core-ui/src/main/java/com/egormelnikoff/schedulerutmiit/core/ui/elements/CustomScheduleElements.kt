@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -22,14 +23,17 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 
 @Composable
-fun <T> ListParam(
+fun <T> ListInput(
     title: String,
     onAddElement: () -> Unit,
     maxCount: Int,
     elements: List<T>,
     elementContent: @Composable (index: Int, element: T) -> Unit
 ) {
-    val enabledAdd = elements.size < maxCount
+    val enabledAdd = remember(maxCount, elements.size) {
+        elements.size < maxCount
+    }
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)

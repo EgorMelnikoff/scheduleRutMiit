@@ -25,15 +25,11 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
-import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomFilterChip
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.DecorPreferences
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.ScheduleRutMiitTheme
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenWidget
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.eventStateMock
+import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.eventStateMock
 import java.time.format.TextStyle
 
 @Composable

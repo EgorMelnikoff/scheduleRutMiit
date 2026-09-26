@@ -10,7 +10,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.utils.ClipboardHelper
 import com.egormelnikoff.schedulerutmiit.core.common.utils.ShareHelper
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.schedule.domain.manager.ScheduleManager
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventActionUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.LoadEventUseCase
@@ -164,7 +163,7 @@ class EventScreenViewModel @AssistedInject constructor(
     private fun saveComment(
         comment: String
     ) {
-        val state = currentState
+        val state = screenState
         if (state is EventScreenState.Loaded) {
             viewModelScope.launch {
                 updateEventCommentJob?.cancelAndJoin()
@@ -188,7 +187,7 @@ class EventScreenViewModel @AssistedInject constructor(
         updateLoadedState {
             copy(tag = tag)
         }
-        val state = currentState
+        val state = screenState
 
         if (state is EventScreenState.Loaded) {
             viewModelScope.launch {
