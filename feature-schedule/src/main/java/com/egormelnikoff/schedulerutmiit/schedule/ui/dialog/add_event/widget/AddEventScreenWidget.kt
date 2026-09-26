@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetTimePicker
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.PagerScreenContainer
@@ -33,27 +33,21 @@ fun AddEventScreenWidget(
     state: AddEventState,
     onAction: (AddEventAction) -> Unit
 ) {
-    when (state) {
-        is AddEventState.Loaded -> {
-            var showBackDialog by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
-            BackHandler {
-                showBackDialog = true
-            }
-
-            val focusManager = LocalFocusManager.current
-
-            Scaffold(
-                topBar = {
-                    CustomTopAppBar(
-                        titleText = if (state.editForm.isEdit) stringResource(R.string.editing)
-                        else stringResource(R.string.create_class),
-                        navAction = {
-                            onAction(AddEventAction.OnBackClicked)
-                        }
-                    )
+    Scaffold(
+        topBar = {
+            CustomTopAppBar(
+                titleText = if (state is AddEventState.Loaded && state.editForm.isEdit) stringResource(R.string.editing)
+                else stringResource(R.string.create_class),
+                navAction = {
+                    onAction(AddEventAction.OnShowBackDialog(true))
                 }
-            ) { innerPadding ->
+            )
+        }
+    ) { contentPadding ->
+        when (state) {
+            is AddEventState.Loaded -> {
                 val pagerState = rememberPagerState(
                     initialPage = 0
                 ) { 3 }
@@ -82,8 +76,8 @@ fun AddEventScreenWidget(
                     },
                     paddingValues = PaddingValues(
                         start = 16.dp, end = 16.dp,
-                        top = innerPadding.calculateTopPadding() + 12.dp,
-                        bottom = innerPadding.calculateBottomPadding()
+                        top = contentPadding.calculateTopPadding() + 12.dp,
+                        bottom = contentPadding.calculateBottomPadding()
                     ),
                     finishTitle = if (state.editForm.isEdit) {
                         stringResource(R.string.save)
@@ -111,61 +105,10 @@ fun AddEventScreenWidget(
                         )
                     }
                 }
-
-                if (state.showDialogDate) {
-                    BottomSheetDatePicker(
-                        selectedDate = state.editForm.date,
-                        onDateSelect = { date -> onAction(AddEventAction.OnDateChanged(date)) },
-                        onShowDialog = { show -> onAction(AddEventAction.OnShowDialogDate(show)) },
-                        startDate = state.schedule.startDate,
-                        endDate = state.schedule.endDate
-                    )
-                }
-                if (state.showDialogStartTime) {
-                    BottomSheetTimePicker(
-                        selectedTime = state.editForm.startTime,
-                        onTimeSelect = { time ->
-                            onAction(AddEventAction.OnStartTimeChanged(time))
-                            if (state.editForm.startTime == null) {
-                                onAction(
-                                    AddEventAction.OnEndTimeChanged(
-                                        time.plusHours(1)
-                                            .plusMinutes(20)
-                                    )
-                                )
-                            }
-                        },
-                        onShowDialog = { show -> onAction(AddEventAction.OnShowDialogStartTime(show)) },
-                    )
-                }
-                if (state.showDialogEndTime) {
-                    BottomSheetTimePicker(
-                        selectedTime = state.editForm.endTime,
-                        onTimeSelect = { time ->
-                            onAction(
-                                AddEventAction.OnEndTimeChanged(time)
-                            )
-                        },
-                        onShowDialog = { show -> onAction(AddEventAction.OnShowDialogEndTime(show)) }
-                    )
-                }
-
-                if (showBackDialog) {
-                    CustomAlertDialog(
-                        dialogTitle = stringResource(R.string.exit),
-                        dialogText = stringResource(R.string.exit_message),
-                        onDismissRequest = {
-                            showBackDialog = false
-                        },
-                        onConfirmation = {
-                            onAction(AddEventAction.OnBackClicked)
-                        }
-                    )
-                }
             }
-        }
 
-        is AddEventState.Loading -> LoadingScreen()
+            is AddEventState.Loading -> LoadingScreen()
+        }
     }
 }
 

@@ -11,6 +11,7 @@ sealed interface AddEventState {
 
         val showDialogDate: Boolean = false,
         val showDialogStartTime: Boolean = false,
-        val showDialogEndTime: Boolean = false
+        val showDialogEndTime: Boolean = false,
+        val showBackDialog: Boolean = false
     ) : AddEventState
 }

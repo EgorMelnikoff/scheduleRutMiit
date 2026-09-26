@@ -96,6 +96,10 @@ class AddEventViewModel @AssistedInject constructor(
             is AddEventAction.OnShowDialogStartTime -> updateLoadedState {
                 copy(showDialogStartTime = action.show)
             }
+
+            is AddEventAction.OnShowBackDialog -> updateLoadedState {
+                copy(showBackDialog = action.show)
+            }
         }
     }
 

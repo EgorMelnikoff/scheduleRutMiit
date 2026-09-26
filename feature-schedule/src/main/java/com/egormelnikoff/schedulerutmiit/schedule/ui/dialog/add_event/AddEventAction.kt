@@ -34,4 +34,5 @@ sealed interface AddEventAction {
     data class OnShowDialogDate(val show: Boolean) : AddEventAction
     data class OnShowDialogStartTime(val show: Boolean) : AddEventAction
     data class OnShowDialogEndTime(val show: Boolean) : AddEventAction
+    data class OnShowBackDialog(val show: Boolean) : AddEventAction
 }
