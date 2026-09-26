@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomCheckBox
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppCheckBox
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
@@ -46,7 +46,7 @@ fun EventViewModalDialog(
                             )
                         },
                         trailingIcon = {
-                            CustomCheckBox(
+                            AppCheckBox(
                                 checked = appSettings.eventView.groupsVisible,
                                 onCheckedChange = { visible ->
                                     preferencesViewModel.onSetEventGroupVisibility(visible)
@@ -69,7 +69,7 @@ fun EventViewModalDialog(
                             )
                         },
                         trailingIcon = {
-                            CustomCheckBox(
+                            AppCheckBox(
                                 checked = appSettings.eventView.roomsVisible,
                                 onCheckedChange = { visible ->
                                     preferencesViewModel.onSetEventRoomsVisibility(visible)
@@ -92,7 +92,7 @@ fun EventViewModalDialog(
                             )
                         },
                         trailingIcon = {
-                            CustomCheckBox(
+                            AppCheckBox(
                                 checked = appSettings.eventView.lecturersVisible,
                                 onCheckedChange = { visible ->
                                     preferencesViewModel.onSetEventLecturersVisibility(visible)
@@ -121,7 +121,7 @@ fun EventViewModalDialog(
                             )
                         },
                         trailingIcon = {
-                            CustomCheckBox(
+                            AppCheckBox(
                                 checked = appSettings.eventView.tagVisible,
                                 onCheckedChange = { visible ->
                                     preferencesViewModel.onSetEventTagVisibility(visible)
@@ -144,7 +144,7 @@ fun EventViewModalDialog(
                             )
                         },
                         trailingIcon = {
-                            CustomCheckBox(
+                            AppCheckBox(
                                 checked = appSettings.eventView.commentVisible,
                                 onCheckedChange = { visible ->
                                     preferencesViewModel.onSetEventCommentVisibility(visible)

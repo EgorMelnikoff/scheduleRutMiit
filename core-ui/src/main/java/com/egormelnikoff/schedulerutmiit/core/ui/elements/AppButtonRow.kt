@@ -11,18 +11,24 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.baseItemSpacing
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.mediumCornerRadius
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.superExtraSmallCornerRadius
 
 
 @Composable
-fun <T> CustomButtonRow(
+fun <T> AppButtonRow(
     colors: SegmentedButtonColors? = null,
     selectedElement: T,
     elements: List<T>,
@@ -82,4 +88,24 @@ fun Int.customRowItemShape(
         bottomStart = if (isFirst) mediumCornerRadius else superExtraSmallCornerRadius,
         bottomEnd = if (isLast) mediumCornerRadius else superExtraSmallCornerRadius
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppButtonRowPreview() {
+    PreviewLightTheme {
+        AppButtonRow(
+            selectedElement = 1,
+            elements = (1..2).toList(),
+            onClick = {},
+            label = {
+                Text(
+                    text = "Тест",
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        )
+    }
 }

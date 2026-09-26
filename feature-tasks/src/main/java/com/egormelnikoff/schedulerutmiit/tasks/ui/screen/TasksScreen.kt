@@ -39,15 +39,13 @@ import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Task
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomBadge
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomCheckBox
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppBadge
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppCheckBox
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.Calendar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.CalendarBarItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData.Companion.invoke
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.rememberCalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
@@ -124,7 +122,7 @@ fun TasksScreen(
                     }
                 ) {
                     tasksPerDate?.let {
-                        CustomBadge(
+                        AppBadge(
                             count = tasksPerDate.size
                         )
                     }
@@ -252,7 +250,7 @@ fun SingleTask(
             subtitle = task.date.format(DateTimeFormatters.dayMonthYearFormatter)
                     + ", " + task.time.format(DateTimeFormatters.hourMinuteFormatter),
             trailingIcon = {
-                CustomCheckBox(
+                AppCheckBox(
                     checked = task.isCompleted,
                     onCheckedChange = { newValue ->
                         onComplete(newValue)

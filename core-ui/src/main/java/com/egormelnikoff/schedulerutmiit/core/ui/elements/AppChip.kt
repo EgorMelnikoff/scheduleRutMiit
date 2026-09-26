@@ -1,6 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.elements
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -18,10 +20,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 
 @Composable
-fun CustomFilterChip(
+fun AppFilterChip(
     title: String,
     imageVector: ImageVector? = null,
     selected: Boolean = false,
@@ -67,7 +71,7 @@ fun CustomFilterChip(
 
 
 @Composable
-fun CustomAssistChip(
+fun AppAssistChip(
     title: String,
     imageVector: ImageVector? = null,
     border: BorderStroke? = null,
@@ -104,5 +108,35 @@ fun CustomAssistChip(
             },
             enabled = enabled
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppFilterChipPreview() {
+    PreviewLightTheme {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            AppFilterChip(
+                title = "Тест",
+                selected = true
+            ) {}
+            AppFilterChip(
+                title = "Тест",
+                selected = false
+            ) {}
+        }
+
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppAssistChipPreview() {
+    PreviewLightTheme {
+        AppAssistChip(
+            title = "Тест"
+        ) {}
     }
 }

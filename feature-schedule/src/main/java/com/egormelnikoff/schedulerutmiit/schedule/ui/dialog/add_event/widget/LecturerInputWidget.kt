@@ -16,7 +16,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Lecturer
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RemoveButton
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
-import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.groupMock
 import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.lecturerMock
 
 @Composable

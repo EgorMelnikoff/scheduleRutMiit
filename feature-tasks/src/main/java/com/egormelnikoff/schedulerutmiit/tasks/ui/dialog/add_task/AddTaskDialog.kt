@@ -28,16 +28,14 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetTimePicker
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.bottom_sheet.BottomSheetDateRangePicker
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData
 import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.add_task.view_model.AddTaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -159,7 +157,7 @@ fun AddTaskDialog(
                     }
                 )
             }
-            CustomButton(
+            AppButton(
                 modifier = Modifier.fillMaxWidth(),
                 buttonTitle = stringResource(R.string.create),
                 enabled = addTaskForm.isButtonEnabled,
@@ -188,7 +186,7 @@ fun AddTaskDialog(
 //            )
         }
         if (showDialogTime) {
-            BottomSheetTimePicker(
+            AppTimePicker(
                 selectedTime = addTaskForm.time,
                 onTimeSelect = { newValue ->
                     addTaskViewModel.onTimeChanged(newValue)

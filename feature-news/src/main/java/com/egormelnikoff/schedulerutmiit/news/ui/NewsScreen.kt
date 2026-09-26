@@ -46,7 +46,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedErrorException
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.newsImageUrl
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.NewsLoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.event.getMessage
@@ -74,7 +74,7 @@ fun NewsScreen(
                 title = stringResource(R.string.error),
                 subtitle = typedError?.getMessage(LocalContext.current),
                 button = {
-                    CustomButton(
+                    AppButton(
                         modifier = Modifier.fillMaxWidth(),
                         buttonTitle = stringResource(R.string.repeat),
                         imageVector = ImageVector.vectorResource(R.drawable.refresh),

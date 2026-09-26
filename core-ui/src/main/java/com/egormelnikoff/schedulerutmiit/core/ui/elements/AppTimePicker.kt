@@ -14,13 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetTimePicker(
+fun AppTimePicker(
     selectedTime: LocalTime?,
     onTimeSelect: (LocalTime) -> Unit,
     onShowDialog: (Boolean) -> Unit
@@ -56,13 +58,25 @@ fun BottomSheetTimePicker(
             )
         )
 
-        CustomButton(
+        AppButton(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             buttonTitle = stringResource(R.string.confirm),
             onClick = {
                 onTimeSelect(LocalTime.of(timePickerState.hour, timePickerState.minute))
                 onShowDialog(false)
             }
+        )
+    }
+}
+
+@Preview
+@Composable
+fun AppTimePickerPreview() {
+    PreviewLightTheme {
+        AppTimePicker(
+            selectedTime = LocalTime.of(9, 41),
+            onTimeSelect = {},
+            onShowDialog = {}
         )
     }
 }

@@ -14,16 +14,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,17 +27,11 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.domain.NavigateSchedule
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.BarItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomNavigationBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomNavigationBarItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.UiEventProcessor
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.rememberCalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
@@ -50,25 +39,20 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumDialog
 import com.egormelnikoff.schedulerutmiit.news.ui.NewsDialog
 import com.egormelnikoff.schedulerutmiit.news.ui.NewsScreen
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.EditEventDialog
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleDialog
+import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventScreen
+import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleScreen
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreen
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.hidden_events.HiddenEventsDialog
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.rename_schedule.RenameDialog
+import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.hidden_events.HiddenEventsScreen
+import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.rename_schedule.RenameScheduleScreen
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.ReviewScreen
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.ScreenSchedule
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.state.NamedScheduleState
-import com.egormelnikoff.schedulerutmiit.schedule.ui.ui_state.ReviewUiState
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchDialog
 import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.add_task.AddTaskDialog
 import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.edit_task.EditTaskDialog
 import com.egormelnikoff.schedulerutmiit.tasks.ui.screen.TasksScreen
-import com.egormelnikoff.schedulerutmiit.tasks.ui.screen.view_model.TaskViewModel
 import com.egormelnikoff.schedulerutmiit.ui.setting_screen.SettingsScreen
 import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
@@ -387,12 +371,10 @@ fun RootHost(
                     }
                 }
 
-                entry<Route.Dialog.EditEventDialog> { dialog ->
-                    EditEventDialog(
-                        editEventDialog = dialog
-                    ) {
-                        appRouter.onBack()
-                    }
+                entry<Route.Dialog.EditEventDialog> { editEventDialog ->
+                    AddEventScreen(
+                        editEventDialog = editEventDialog
+                    )
                 }
 
                 entry<Route.Dialog.SearchDialog> {
@@ -405,23 +387,13 @@ fun RootHost(
                     CurriculumDialog()
                 }
                 entry<Route.Dialog.AddScheduleDialog> {
-                    AddScheduleDialog {
-                        appRouter.onBack()
-                    }
+                    AddScheduleScreen()
                 }
-                entry<Route.Dialog.RenameNamedScheduleDialog> { dialog ->
-                    RenameDialog(
-                        renameDialog = dialog,
-                    ) {
-                        appRouter.onBack()
-                    }
+                entry<Route.Dialog.RenameNamedScheduleDialog> { renameDialog ->
+                    RenameScheduleScreen(renameDialog)
                 }
-                entry<Route.Dialog.HiddenEventsDialog> { dialog ->
-                    HiddenEventsDialog(
-                        hiddenEventsDialog = dialog
-                    ) {
-                        appRouter.onBack()
-                    }
+                entry<Route.Dialog.HiddenEventsDialog> { hiddenEventsDialog ->
+                    HiddenEventsScreen(hiddenEventsDialog)
                 }
             }
         )

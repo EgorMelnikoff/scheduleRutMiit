@@ -40,7 +40,7 @@ fun DaySelector(
             ) {
                 stringArrayResource(R.array.days_of_week).forEachIndexed { index, _ ->
                     val currentDate = firstDayOfWeek.plusDays(index.toLong())
-                    CustomFilterChip(
+                    AppFilterChip(
                         title = currentDate.dayOfWeek.getDisplayName(
                             TextStyle.SHORT,
                             LocalLocale.current.platformLocale

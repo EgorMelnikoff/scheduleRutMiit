@@ -8,14 +8,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 
 @Composable
-fun CustomCheckBox(
+fun AppCheckBox(
     checked: Boolean,
+    colors: CheckboxColors? = null,
     onCheckedChange: (Boolean) -> Unit,
-    colors: CheckboxColors? = null
 ) {
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
         Checkbox(
@@ -30,5 +31,25 @@ fun CustomCheckBox(
                 uncheckedCheckmarkColor = MaterialTheme.colorScheme.onSecondaryContainer,
             )
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppCheckBoxCheckedPreview() {
+    PreviewLightTheme {
+        AppCheckBox(
+            checked = true
+        ) {}
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppCheckBoxUncheckedPreview() {
+    PreviewLightTheme {
+        AppCheckBox(
+            checked = false
+        ) {}
     }
 }

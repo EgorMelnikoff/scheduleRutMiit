@@ -42,7 +42,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.newsImageUrl
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.event.getMessage
@@ -69,7 +69,7 @@ fun NewsDialog(
             title = stringResource(R.string.error),
             subtitle = newsState.error.getMessage(LocalContext.current),
             button = {
-                CustomButton(
+                AppButton(
                     modifier = Modifier.fillMaxWidth(),
                     buttonTitle = stringResource(R.string.back),
                     imageVector = ImageVector.vectorResource(R.drawable.back),

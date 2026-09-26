@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
 import java.time.Instant
 import java.time.LocalDate
@@ -85,7 +85,7 @@ fun BottomSheetDatePicker(
                 )
             )
         )
-        CustomButton(
+        AppButton(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             enabled = datePickerState.selectedDateMillis != null,
             buttonTitle = stringResource(R.string.confirm),

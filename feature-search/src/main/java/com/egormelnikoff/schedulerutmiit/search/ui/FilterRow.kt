@@ -12,7 +12,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomFilterChip
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppFilterChip
 
 
 @Composable
@@ -24,7 +24,7 @@ fun FilterRow(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        CustomFilterChip(
+        AppFilterChip(
             title = stringResource(R.string.all),
             imageVector = null,
             selected = selectedOption == SearchType.ALL,
@@ -32,7 +32,7 @@ fun FilterRow(
                 onSelectOption(SearchType.ALL)
             }
         )
-        CustomFilterChip(
+        AppFilterChip(
             title = stringResource(R.string.groups),
             imageVector = ImageVector.vectorResource(R.drawable.group),
             selected = selectedOption == SearchType.GROUPS,
@@ -40,7 +40,7 @@ fun FilterRow(
                 onSelectOption(SearchType.GROUPS)
             }
         )
-        CustomFilterChip(
+        AppFilterChip(
             title = stringResource(R.string.people),
             imageVector = ImageVector.vectorResource(R.drawable.person),
             selected = selectedOption == SearchType.PEOPLE,

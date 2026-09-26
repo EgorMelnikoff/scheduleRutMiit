@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.DefaultEventParams
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomFilterChip
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
@@ -63,7 +63,7 @@ fun FirstStepAddEventWidget(
                 )
             ) {
                 DefaultEventParams.types.forEach { type ->
-                    CustomFilterChip(
+                    AppFilterChip(
                         title = type
                             ?: stringResource(R.string.not_specified),
                         imageVector = null,

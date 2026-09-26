@@ -40,10 +40,10 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getStartMs
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefault
@@ -100,7 +100,7 @@ fun ModalDialogSchedule(
                 AnimatedVisibility(
                     visible = schedule.downloadUrl != null,
                 ) {
-                    CustomAssistChip(
+                    AppAssistChip(
                         imageVector = ImageVector.vectorResource(R.drawable.download),
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = MaterialTheme.colorScheme.background,
@@ -122,7 +122,7 @@ fun ModalDialogSchedule(
                 AnimatedVisibility(
                     visible = isSavedNamedSchedule && haveNotEmptySchedules
                 ) {
-                    CustomAssistChip(
+                    AppAssistChip(
                         imageVector = ImageVector.vectorResource(R.drawable.add),
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = MaterialTheme.colorScheme.background,
@@ -148,7 +148,7 @@ fun ModalDialogSchedule(
                 AnimatedVisibility(
                     visible = haveHiddenEvents
                 ) {
-                    CustomAssistChip(
+                    AppAssistChip(
                         imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = MaterialTheme.colorScheme.background,

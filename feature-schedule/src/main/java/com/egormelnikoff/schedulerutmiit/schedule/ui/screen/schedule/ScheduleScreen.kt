@@ -28,9 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -42,9 +42,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.AnimatedAlert
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomPullToRefreshBox
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.GridGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.UiEventProcessor
@@ -55,7 +55,6 @@ import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ScheduleLoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.element.ModalDialogReview
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ModalDialogSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ModalDialogSchedules
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ScheduleTopAppBar
@@ -116,7 +115,7 @@ fun ScreenSchedule(
                         items = listOf(
                             listOf(
                                 { shape ->
-                                    CustomButton(
+                                    AppButton(
                                         modifier = Modifier.fillMaxWidth(),
                                         buttonTitle = stringResource(R.string.find),
                                         imageVector = ImageVector.vectorResource(R.drawable.search),
@@ -125,7 +124,7 @@ fun ScreenSchedule(
                                     )
                                 },
                                 { shape ->
-                                    CustomButton(
+                                    AppButton(
                                         modifier = Modifier.fillMaxWidth(),
                                         buttonTitle = stringResource(R.string.create),
                                         imageVector = ImageVector.vectorResource(R.drawable.add),
@@ -135,7 +134,7 @@ fun ScreenSchedule(
                                 }
                             ),
                             listOf { shape ->
-                                CustomButton(
+                                AppButton(
                                     modifier = Modifier.fillMaxWidth(),
                                     buttonTitle = stringResource(R.string._import),
                                     imageVector = ImageVector.vectorResource(R.drawable.resource_import),
@@ -163,7 +162,7 @@ fun ScreenSchedule(
                 subtitle = stringResource(R.string.error_load_schedule),
                 paddingTop = contentPadding.calculateTopPadding(),
                 button = {
-                    CustomButton(
+                    AppButton(
                         modifier = Modifier.fillMaxWidth(),
                         buttonTitle = stringResource(R.string.return_default),
                         imageVector = ImageVector.vectorResource(R.drawable.back),

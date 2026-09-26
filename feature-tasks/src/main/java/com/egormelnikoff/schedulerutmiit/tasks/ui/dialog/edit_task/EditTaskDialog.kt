@@ -28,11 +28,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.BottomSheetTimePicker
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColorSelector
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButton
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
@@ -131,7 +131,7 @@ fun EditTaskDialog(
                         )
                     }
 
-                    CustomButton(
+                    AppButton(
                         modifier = Modifier
                             .fillMaxWidth(),
                         buttonTitle = stringResource(R.string.save),
@@ -144,7 +144,7 @@ fun EditTaskDialog(
             }
 
             if (showDialogTime) {
-                BottomSheetTimePicker(
+                AppTimePicker(
                     selectedTime = editTaskState.editTaskForm.time,
                     onTimeSelect = { newValue ->
                         editTaskViewModel.updateTime(newValue)

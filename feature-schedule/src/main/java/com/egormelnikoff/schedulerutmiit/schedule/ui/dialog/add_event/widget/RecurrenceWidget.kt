@@ -18,8 +18,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButtonRow
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomButtonRow
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.addEventStateMock
@@ -37,7 +37,7 @@ fun RecurrenceWidget(
             backgroundColor = Color.Unspecified,
             title = stringResource(R.string.repetition),
         ) {
-            CustomButtonRow(
+            AppButtonRow(
                 selectedElement = currentInterval,
                 elements = (1..maxInterval).toList(),
                 onClick = { element ->
@@ -68,7 +68,7 @@ fun RecurrenceWidget(
                     title = stringResource(R.string.week, ""),
                     withBackground = false,
                     items = listOf {
-                        CustomButtonRow(
+                        AppButtonRow(
                             selectedElement = currentPeriod,
                             elements = (1..maxInterval).toList(),
                             onClick = { element ->

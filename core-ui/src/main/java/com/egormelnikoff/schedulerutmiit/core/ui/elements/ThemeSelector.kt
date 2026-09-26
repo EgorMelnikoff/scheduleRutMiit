@@ -46,7 +46,7 @@ fun ThemeSelector(
         )
     )
 
-    CustomButtonRow(
+    AppButtonRow(
         selectedElement = currentTheme,
         elements = themes.entries.map { it.value.theme },
         colors = SegmentedButtonDefaults.colors().copy(

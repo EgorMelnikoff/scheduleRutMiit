@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AdviceDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppAdviceDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
@@ -61,7 +61,7 @@ fun CurriculumDialog() {
     var showAdviceDialog by remember { mutableStateOf(false) }
 
     if (showAdviceDialog) {
-        AdviceDialog(
+        AppAdviceDialog(
             dialogText = stringResource(R.string.search_curriculum_advice),
             painter = painterResource(R.drawable.advice),
             onDismissRequest = {

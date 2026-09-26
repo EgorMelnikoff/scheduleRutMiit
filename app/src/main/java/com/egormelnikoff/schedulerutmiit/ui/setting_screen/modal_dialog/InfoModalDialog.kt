@@ -44,7 +44,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.AppConst.DEVELOPER_EMAIL
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.links.Links
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAssistChip
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoundedBox
 
@@ -144,7 +144,7 @@ fun InfoModalDialog(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     item {
-                        CustomAssistChip(
+                        AppAssistChip(
                             imageVector = ImageVector.vectorResource(R.drawable.logo_github),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = MaterialTheme.colorScheme.background,
@@ -163,7 +163,7 @@ fun InfoModalDialog(
                     }
 
                     item {
-                        CustomAssistChip(
+                        AppAssistChip(
                             imageVector = ImageVector.vectorResource(R.drawable.logo_google_play),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = MaterialTheme.colorScheme.background,
@@ -183,7 +183,7 @@ fun InfoModalDialog(
                     }
 
                     item {
-                        CustomAssistChip(
+                        AppAssistChip(
                             imageVector = ImageVector.vectorResource(R.drawable.logo_rustore),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = MaterialTheme.colorScheme.background,
@@ -214,7 +214,7 @@ fun InfoModalDialog(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     item {
-                        CustomAssistChip(
+                        AppAssistChip(
                             imageVector = ImageVector.vectorResource(R.drawable.logo_telegram),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = MaterialTheme.colorScheme.background,
@@ -234,7 +234,7 @@ fun InfoModalDialog(
                     }
 
                     item {
-                        CustomAssistChip(
+                        AppAssistChip(
                             imageVector = ImageVector.vectorResource(R.drawable.email),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = MaterialTheme.colorScheme.background,

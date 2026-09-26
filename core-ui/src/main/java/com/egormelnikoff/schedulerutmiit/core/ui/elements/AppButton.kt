@@ -15,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 
 @Composable
-fun CustomButton(
+fun AppButton(
     modifier: Modifier = Modifier,
     buttonTitle: String,
     imageVector: ImageVector? = null,
@@ -62,5 +64,15 @@ fun CustomButton(
                 style = MaterialTheme.typography.titleSmall
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppButtonPreview() {
+    PreviewLightTheme {
+        AppButton(
+            buttonTitle = "Кнопка"
+        ) {}
     }
 }

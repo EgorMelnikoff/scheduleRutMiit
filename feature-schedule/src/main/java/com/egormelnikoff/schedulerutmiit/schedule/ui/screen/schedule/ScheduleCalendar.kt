@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomBadge
+import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppBadge
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.Calendar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.CalendarBarItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.bottom_sheet.BottomSheetDatePicker
@@ -139,7 +139,7 @@ fun ScheduleCalendar(
                         eventExtraPolicy = appSettings.eventExtraPolicy
                     )
                 } else if (appSettings.eventsCountView == EventsCountView.BRIEFLY && eventsForDate.isNotEmpty()) {
-                    CustomBadge(
+                    AppBadge(
                         count = eventsForDate.size
                     )
                 }
