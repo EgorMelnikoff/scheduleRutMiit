@@ -49,15 +49,15 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.NavigateSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
 import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.SearchType
+import com.egormelnikoff.schedulerutmiit.core.common.result.getMessage
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
-import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.core.common.result.getMessage
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.SearchViewModel
 
 @Composable

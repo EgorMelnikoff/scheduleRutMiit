@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.core.network.helper
 
-import com.egormelnikoff.schedulerutmiit.core.common.utils.logger.Logger
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import com.egormelnikoff.schedulerutmiit.core.common.utils.logger.Logger
 import com.egormelnikoff.schedulerutmiit.core.network.fetcher.ApiFetcher
 import com.egormelnikoff.schedulerutmiit.core.network.fetcher.HtmlFetcher
 import kotlinx.coroutines.Dispatchers

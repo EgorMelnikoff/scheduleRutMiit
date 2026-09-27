@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.core.network.fetcher
 
-import com.egormelnikoff.schedulerutmiit.core.common.utils.logger.Logger
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.core.common.result.isRetryable
+import com.egormelnikoff.schedulerutmiit.core.common.utils.logger.Logger
 import kotlinx.coroutines.delay
 import okio.IOException
 import java.net.SocketTimeoutException

@@ -2,8 +2,8 @@ package com.egormelnikoff.schedulerutmiit.news.ui.news_detail
 
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

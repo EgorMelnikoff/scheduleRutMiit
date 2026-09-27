@@ -12,10 +12,10 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.DateTimeSelectorWidget
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.DaySelector
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.TimeSelector
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventState
 import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.addEventStateMock

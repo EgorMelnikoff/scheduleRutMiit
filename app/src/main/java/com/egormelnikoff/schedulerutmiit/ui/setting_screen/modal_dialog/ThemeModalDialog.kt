@@ -10,14 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
-import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
-import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.ui.components._switch.AppSwitch
-import com.egormelnikoff.schedulerutmiit.core.ui.widget.ThemeSelectorWidget
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.ui.components._switch.AppSwitch
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.ThemeSelectorWidget
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

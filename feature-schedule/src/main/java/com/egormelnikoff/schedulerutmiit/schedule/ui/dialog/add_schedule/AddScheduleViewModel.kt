@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule
 
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
 import com.egormelnikoff.schedulerutmiit.schedule.domain.manager.ScheduleManager
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.AddCustomNamedScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

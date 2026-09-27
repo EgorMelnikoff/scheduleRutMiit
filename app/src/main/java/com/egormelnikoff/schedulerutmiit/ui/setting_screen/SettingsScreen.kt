@@ -33,12 +33,12 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventExtraPoli
 import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.Theme
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.ui.components._switch.AppSwitch
+import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.components._switch.AppSwitch
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.GridGroup
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.ui.setting_screen.modal_dialog.CountEventsModalDialog

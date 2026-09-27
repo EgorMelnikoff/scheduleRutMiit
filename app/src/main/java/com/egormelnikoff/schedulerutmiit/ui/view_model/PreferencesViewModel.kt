@@ -6,10 +6,10 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventExtraPoli
 import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.Theme
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.ThemePreferences
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.ThemePreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
