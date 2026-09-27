@@ -2,14 +2,14 @@ package com.egormelnikoff.schedulerutmiit.ui.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
-import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.DecorPreferences
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.ThemePreferences
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.EventView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,7 +51,7 @@ class PreferencesViewModel @Inject constructor(
                 preferencesDataSource.decorColorFlow,
                 preferencesDataSource.usedAmoledFlow
             ) { theme, decorColorIndex, usedAmoled ->
-                DecorPreferences(theme, usedAmoled, decorColorIndex)
+                ThemePreferences(theme, usedAmoled, decorColorIndex)
             }
 
             val scheduleFlow = combine(
@@ -77,7 +77,7 @@ class PreferencesViewModel @Inject constructor(
                 preferencesDataSource.eventExtraPolicyFlow
             ) { decor, eventView, scheduleSettings, uiFlow, eventExtraPolicy ->
                 AppSettings(
-                    decorPreferences = decor,
+                    themePreferences = decor,
                     scheduleView = scheduleSettings.first,
                     eventView = eventView,
                     schedulesDeletable = scheduleSettings.second,

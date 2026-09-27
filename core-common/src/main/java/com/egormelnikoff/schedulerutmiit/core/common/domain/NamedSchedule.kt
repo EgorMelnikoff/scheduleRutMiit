@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.core.common.domain
 
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
 import kotlinx.serialization.Serializable
 
 @Serializable

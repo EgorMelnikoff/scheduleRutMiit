@@ -51,19 +51,19 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.core.common.enums.DayPeriod
-import com.egormelnikoff.schedulerutmiit.core.common.extension.dayPeriod
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ExpandedItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.RowGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.DayPeriod
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.dayPeriod
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ExpandedItem
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingIcon
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.RowGroup
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.SchedulesWidget
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.element.ModalDialogReview
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.view_model.ReviewViewModel
@@ -144,7 +144,7 @@ fun ReviewScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CustomTopAppBar(
+            AppTopBar(
                 titleText = when (dayPeriod) {
                     DayPeriod.MORNING -> stringResource(R.string.good_morning)
                     DayPeriod.DAY -> stringResource(R.string.good_afternoon)
@@ -274,7 +274,7 @@ fun ReviewScreen(
                         RowGroup(
                             items = listOf(
                                 {
-                                    ClickableItem(
+                                    AppCell(
                                         defaultMinHeight = 32.dp,
                                         showClickLabel = false,
                                         title = "${stringResource(R.string.find)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
@@ -290,7 +290,7 @@ fun ReviewScreen(
                                         onOpenDialog(Route.Dialog.SearchDialog)
                                     }
                                 }, {
-                                    ClickableItem(
+                                    AppCell(
                                         defaultMinHeight = 32.dp,
                                         showClickLabel = false,
                                         title = "${stringResource(R.string.create)} ${
@@ -344,7 +344,7 @@ fun ReviewScreen(
                         ColumnGroup(
                             items = listOf(
                                 {
-                                    ClickableItem(
+                                    AppCell(
                                         title = stringResource(R.string.news),
                                         leadingIcon = {
                                             Icon(
@@ -358,7 +358,7 @@ fun ReviewScreen(
                                         onOpenDialog(Route.Dialog.NewsList)
                                     }
                                 }, {
-                                    ClickableItem(
+                                    AppCell(
                                         title = stringResource(R.string.curriculum),
                                         leadingIcon = {
                                             Icon(
@@ -404,7 +404,7 @@ fun ReviewScreen(
     }
 
     deleteNamedScheduleDialog?.let {
-        CustomAlertDialog(
+        AppAlertDialog(
             dialogIcon = ImageVector.vectorResource(R.drawable.delete),
             dialogTitle = "${stringResource(R.string.delete_schedule)}?",
             dialogText = stringResource(R.string.impossible_restore_eventextra),

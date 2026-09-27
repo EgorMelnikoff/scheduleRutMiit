@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.core.common.domain
 
-import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateSerializer
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 

@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.hidden_events
 
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.utils.BaseViewModel
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
+import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventAction
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.EventActionUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.observer.ObserveHiddenEventsByScheduleIdUseCase

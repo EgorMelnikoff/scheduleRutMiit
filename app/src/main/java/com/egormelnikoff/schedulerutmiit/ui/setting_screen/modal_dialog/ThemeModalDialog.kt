@@ -10,13 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColorSelector
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSwitch
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ThemeSelector
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.ui.components._switch.AppSwitch
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.ThemeSelectorWidget
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 
@@ -27,8 +27,8 @@ fun ThemeModalDialog(
     appSettings: AppSettings,
     preferencesViewModel: PreferencesViewModel
 ) {
-    CustomModalBottomSheet(
-        isDarkTheme = appSettings.decorPreferences.theme.isDarkTheme(),
+    AppBottomSheet(
+        isDarkTheme = appSettings.themePreferences.theme.isDarkTheme(),
         modifier = Modifier.padding(horizontal = 16.dp),
         onDismiss = onDismiss
     ) {
@@ -39,21 +39,21 @@ fun ThemeModalDialog(
                     Box(
                         modifier = Modifier.padding(12.dp)
                     ) {
-                        ThemeSelector(
+                        ThemeSelectorWidget(
                             setTheme = { value ->
                                 preferencesViewModel.onSetTheme(value)
                             },
-                            currentTheme = appSettings.decorPreferences.theme
+                            currentTheme = appSettings.themePreferences.theme
                         )
                     }
                 }, {
-                    ClickableItem(
+                    AppCell(
                         title = stringResource(R.string.use_amoled),
                         defaultMinHeight = 36.dp,
                         trailingIcon = {
-                            CustomSwitch(
-                                checked = appSettings.decorPreferences.usedAmoled,
-                                enabled = appSettings.decorPreferences.theme.isDarkTheme(),
+                            AppSwitch(
+                                checked = appSettings.themePreferences.usedAmoled,
+                                enabled = appSettings.themePreferences.theme.isDarkTheme(),
                             ) { used ->
                                 preferencesViewModel.onSetUsedAmoled(used)
                             }
@@ -66,8 +66,8 @@ fun ThemeModalDialog(
         ColumnGroup(
             title = stringResource(R.string.color_style),
             items = listOf {
-                ColorSelector(
-                    currentSelected = appSettings.decorPreferences.decorColorIndex
+                ColorSelectorWidget(
+                    currentSelected = appSettings.themePreferences.decorColorIndex
                 ) { value ->
                     preferencesViewModel.onSetDecorColor(value)
                 }

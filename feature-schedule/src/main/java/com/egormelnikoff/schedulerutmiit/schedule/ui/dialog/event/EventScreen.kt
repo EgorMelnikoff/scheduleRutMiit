@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -10,14 +9,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.core.ui.view_model.initialize
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.BottomSheetEventWidget
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.widget.EventScreenWidget
 import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.eventStateMock
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventScreen(
     eventDialog: Route.Dialog.EventDialog
@@ -26,7 +25,7 @@ fun EventScreen(
         hiltViewModel<EventScreenViewModel, EventScreenViewModel.Factory> { factory ->
             factory.create(eventDialog.eventId, eventDialog.date)
         }
-    viewModel.initScreen()
+    viewModel.initialize()
 
     val eventScreenState by viewModel.state.collectAsStateWithLifecycle()
 
@@ -70,7 +69,7 @@ fun EventScreen(
             }
         }
         if (state.showDeleteDialog) {
-            CustomAlertDialog(
+            AppAlertDialog(
                 dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                 dialogTitle = "${stringResource(R.string.delete_event)}?",
                 dialogText = stringResource(R.string.event_deleting_alert),
@@ -87,7 +86,7 @@ fun EventScreen(
             )
         }
         if (state.showHideDialog) {
-            CustomAlertDialog(
+            AppAlertDialog(
                 dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),
                 dialogTitle = "${stringResource(R.string.hide_event)}?",
                 dialogText = stringResource(R.string.event_visibility_alert),

@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.SchedulesWidget
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -18,7 +18,7 @@ fun ModalDialogSchedules(
     onClickItem: (NamedSchedule) -> Unit,
     onDismiss: () -> Unit
 ) {
-    CustomModalBottomSheet(
+    AppBottomSheet(
         isDarkTheme = true,
         verticalArrangement = Arrangement.spacedBy(16.dp),
         onDismiss = onDismiss

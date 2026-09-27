@@ -6,10 +6,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.egormelnikoff.schedulerutmiit.core.common.domain.LatestRelease
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
-import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesKeys
 import kotlinx.coroutines.flow.Flow

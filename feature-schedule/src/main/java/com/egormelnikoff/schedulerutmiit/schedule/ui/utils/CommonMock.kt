@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Lecturer
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Room
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
-import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.TimetableType
 import java.time.LocalDate
 import java.time.LocalDateTime
 

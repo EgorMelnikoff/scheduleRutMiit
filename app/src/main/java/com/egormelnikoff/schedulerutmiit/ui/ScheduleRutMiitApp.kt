@@ -27,18 +27,18 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.BarItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomNavigationBar
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomNavigationBarItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSnackbarHost
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.UiEventProcessor
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppRouter
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.ui.components.navigation_bar.BarItem
+import com.egormelnikoff.schedulerutmiit.core.ui.components.navigation_bar.AppNavigationBar
+import com.egormelnikoff.schedulerutmiit.core.ui.components.navigation_bar.AppNavigationBarItem
+import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEventProcessor
+import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumDialog
-import com.egormelnikoff.schedulerutmiit.news.ui.NewsDialog
-import com.egormelnikoff.schedulerutmiit.news.ui.NewsScreen
+import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsDialog
+import com.egormelnikoff.schedulerutmiit.news.ui.news_list.NewsScreen
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventScreen
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleScreen
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreen
@@ -128,15 +128,15 @@ fun PageHost(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = {
             if (appRouter.dialogBackStack.size <= 1) {
-                CustomSnackbarHost(
+                AppSnackbarHost(
                     snackBarHostState = snackbarHostState
                 )
             }
         },
         bottomBar = {
-            CustomNavigationBar(
+            AppNavigationBar(
                 barItems = {
-                    CustomNavigationBarItem(
+                    AppNavigationBarItem(
                         barItem = remember {
                             BarItem(
                                 title = R.string.review,
@@ -149,7 +149,7 @@ fun PageHost(
                             appRouter.openPage(Route.Page.Review)
                         }
                     )
-                    CustomNavigationBarItem(
+                    AppNavigationBarItem(
                         barItem = remember {
                             BarItem(
                                 title = R.string.schedule,
@@ -162,7 +162,7 @@ fun PageHost(
                             appRouter.openPage(Route.Page.Schedule())
                         }
                     )
-                    CustomNavigationBarItem(
+                    AppNavigationBarItem(
                         barItem = remember {
                             BarItem(
                                 title = R.string.tasks,
@@ -175,7 +175,7 @@ fun PageHost(
                         appRouter.openPage(Route.Page.Tasks)
                     }
 
-                    CustomNavigationBarItem(
+                    AppNavigationBarItem(
                         barItem = remember {
                             BarItem(
                                 title = R.string.settings,
@@ -189,7 +189,7 @@ fun PageHost(
                         appRouter.openPage(Route.Page.Settings)
                     }
                 },
-                isDarkTheme = appSettings.decorPreferences.theme.isDarkTheme()
+                isDarkTheme = appSettings.themePreferences.theme.isDarkTheme()
             )
         }
     ) { padding ->
@@ -217,7 +217,7 @@ fun PageHost(
             entryProvider = entryProvider {
                 entry<Route.Page.Review> {
                     ReviewScreen(
-                        isDarkTheme = appSettings.decorPreferences.theme.isDarkTheme(),
+                        isDarkTheme = appSettings.themePreferences.theme.isDarkTheme(),
                         usedPhoto = appSettings.usedImageInReview,
                         contentPadding = padding,
                         onNavigateToStartPage = {
@@ -287,7 +287,7 @@ fun RootHost(
     Scaffold(
         snackbarHost = {
             if (appRouter.dialogBackStack.size > 1) {
-                CustomSnackbarHost(
+                AppSnackbarHost(
                     snackBarHostState = snackbarHostState
                 )
             }
@@ -342,19 +342,13 @@ fun RootHost(
                 }
 
                 entry<Route.Dialog.NewsList> {
-                    NewsScreen { newsId ->
-                        appRouter.openDialog(
-                            Route.Dialog.NewsDialog(newsId)
-                        )
-                    }
+                    NewsScreen()
                 }
 
                 entry<Route.Dialog.NewsDialog> { dialog ->
                     NewsDialog(
                         newsDialog = dialog
-                    ) {
-                        appRouter.onBack()
-                    }
+                    )
                 }
 
                 entry<Route.Dialog.AddTaskDialog> {

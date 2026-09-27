@@ -7,8 +7,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.bottom_sheet.BottomSheetDateRangePicker
+import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_sheet.BottomSheetDateRangePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.widget.AddScheduleScreenWidget
 import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.addNonPeriodicScheduleStateMock
@@ -43,7 +43,7 @@ fun AddScheduleScreen() {
     }
 
     if (addScheduleState.showBackDialog) {
-        CustomAlertDialog(
+        AppAlertDialog(
             dialogTitle = stringResource(R.string.exit),
             dialogText = stringResource(R.string.exit_message),
             onDismissRequest = {

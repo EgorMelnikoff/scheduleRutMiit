@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenState
 
 fun LazyListScope.eventRoomsWidget(
@@ -27,7 +27,7 @@ fun LazyListScope.eventRoomsWidget(
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = rooms.map { room ->
                         {
-                            ClickableItem(
+                            AppCell(
                                 title = room.hint.ifBlank { room.name },
                                 titleMaxLines = 2,
                                 defaultMinHeight = 32.dp

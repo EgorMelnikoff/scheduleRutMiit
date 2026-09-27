@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.export.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.core.common.logger.Logger
+import com.egormelnikoff.schedulerutmiit.core.common.utils.logger.Logger
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
 import com.egormelnikoff.schedulerutmiit.export.data.repos.DataRepos

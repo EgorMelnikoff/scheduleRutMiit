@@ -6,11 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
-import com.egormelnikoff.schedulerutmiit.core.common.time.TimeProvider
-import com.egormelnikoff.schedulerutmiit.core.ui.event.UiEvent
-import com.egormelnikoff.schedulerutmiit.core.ui.event.UiText
-import com.egormelnikoff.schedulerutmiit.core.ui.event.sendErrorEvent
-import com.egormelnikoff.schedulerutmiit.core.ui.event.sendInfoEvent
+import com.egormelnikoff.schedulerutmiit.core.common.utils.time_provider.TimeProvider
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiText
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendInfoEvent
 import com.egormelnikoff.schedulerutmiit.export.domain.use_case.ExportDataUseCase
 import com.egormelnikoff.schedulerutmiit.export.domain.use_case.ImportDataUseCase
 import com.egormelnikoff.schedulerutmiit.latest_release.domain.use_case.CheckLatestReleaseUseCase

@@ -8,11 +8,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppTimePicker
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.bottom_sheet.BottomSheetDatePicker
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.ui.components.time_picker.AppTimePicker
+import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_sheet.BottomSheetDatePicker
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.core.ui.view_model.initialize
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.widget.AddEventScreenWidget
 import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.addEventStateMock
 
@@ -24,7 +25,7 @@ fun AddEventScreen(
         hiltViewModel<AddEventViewModel, AddEventViewModel.Factory> { factory ->
             factory.create(editEventDialog.eventId, editEventDialog.scheduleId)
         }
-    viewModel.initScreen()
+    viewModel.initialize()
     val addEventState by viewModel.state.collectAsStateWithLifecycle()
 
     BackHandler {
@@ -85,7 +86,7 @@ fun AddEventScreen(
             )
         }
         if (state.showBackDialog) {
-            CustomAlertDialog(
+            AppAlertDialog(
                 dialogTitle = stringResource(R.string.exit),
                 dialogText = stringResource(R.string.exit_message),
                 onDismissRequest = {

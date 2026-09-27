@@ -40,21 +40,21 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AnimatedAlert
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButton
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomPullToRefreshBox
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.GridGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.UiEventProcessor
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.rememberCalendarState
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ErrorScreen
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.ScheduleLoadingScreen
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.AnimatedAlert
+import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.pull_to_refresh.AppPullToRefreshBox
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.GridGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEventProcessor
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.rememberCalendarState
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.ErrorScreen
+import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ScheduleLoadingScreen
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ModalDialogSchedule
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ModalDialogSchedules
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.element.ScheduleTopAppBar
@@ -204,7 +204,7 @@ fun ScreenSchedule(
                 }
             ) { padding ->
                 if (scheduleCalendarState != null && namedScheduleState.scheduleState?.schedule != null) {
-                    CustomPullToRefreshBox(
+                    AppPullToRefreshBox(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(top = padding.calculateTopPadding()),
@@ -229,7 +229,7 @@ fun ScreenSchedule(
                                             MaterialTheme.colorScheme.primary
                                         )
                                 ) {
-                                    ClickableItem(
+                                    AppCell(
                                         verticalPadding = 4.dp,
                                         title = stringResource(R.string.schedule_is_not_saved),
                                         titleColor = MaterialTheme.colorScheme.onPrimary,
@@ -317,7 +317,7 @@ fun ScreenSchedule(
                         }
                     }
                     if (deleteNamedScheduleDialog) {
-                        CustomAlertDialog(
+                        AppAlertDialog(
                             dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                             dialogTitle = "${stringResource(R.string.delete_schedule)}?",
                             dialogText = stringResource(R.string.impossible_restore_eventextra),
@@ -333,7 +333,7 @@ fun ScreenSchedule(
                         )
                     }
                 } else {
-                    Empty(
+                    EmptyScreen(
                         title = "¯\\_(ツ)_/¯",
                         subtitle = stringResource(R.string.empty_here),
                         isBoldTitle = false,
@@ -373,7 +373,7 @@ fun ScreenSchedule(
     }
 
     if (backDialog) {
-        CustomAlertDialog(
+        AppAlertDialog(
             dialogTitle = stringResource(R.string.return_default_schedule),
             dialogText = stringResource(R.string.do_you_want_continue),
             onDismissRequest = {

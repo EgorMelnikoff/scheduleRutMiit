@@ -17,9 +17,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +35,7 @@ fun ScheduleTopAppBar(
         namedSchedule.type == NamedScheduleType.MY
     }
 
-    CustomTopAppBar(
+    AppTopBar(
         titleText = namedSchedule.shortName,
         subtitleText = if (scheduleTypeName != null && !isCustomSchedule) {
             scheduleTypeName

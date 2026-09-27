@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.rename_schedule
 
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.utils.BaseViewModel
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
+import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.RenameNamedScheduleUseCase
 import dagger.assisted.Assisted

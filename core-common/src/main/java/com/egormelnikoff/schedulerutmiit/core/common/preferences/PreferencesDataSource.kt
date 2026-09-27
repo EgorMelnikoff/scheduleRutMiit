@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.core.common.preferences
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.LatestRelease
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
-import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.Theme
 import kotlinx.coroutines.flow.Flow
 
 interface PreferencesDataSource {

@@ -13,8 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Room
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.RemoveButton
+import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.roomMock
 
@@ -29,7 +28,7 @@ fun RoomInputWidget(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        CustomTextField(
+        AppTextField(
             modifier = Modifier.weight(1f),
             value = room.name,
             keyboardOptions = KeyboardOptions(
@@ -40,7 +39,7 @@ fun RoomInputWidget(
         ) { newValue ->
             onValueChanged(room.copy(name = newValue, hint = newValue))
         }
-        RemoveButton { onRemove() }
+        RemoveButtonWidget { onRemove() }
     }
 }
 

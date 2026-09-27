@@ -13,12 +13,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleState
@@ -34,7 +34,7 @@ fun AddScheduleInfoWidget(
         modifier = Modifier,
         items = listOf(
             {
-                CustomTextField(
+                AppTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = addScheduleState.name,
                     placeholderText = stringResource(R.string.schedule_name),
@@ -46,7 +46,7 @@ fun AddScheduleInfoWidget(
                     onAction(AddScheduleAction.OnUpdateName(name))
                 }
             }, {
-                ClickableItem(
+                AppCell(
                     defaultMinHeight = 32.dp,
                     showClickLabel = false,
                     title = when {

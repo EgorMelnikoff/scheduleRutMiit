@@ -12,9 +12,9 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.DateTimeSelector
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.DaySelector
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.TimeSelector
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.DateTimeSelectorWidget
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.DaySelector
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.TimeSelector
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventState
@@ -63,7 +63,7 @@ fun SecondStepAddEventWidget(
                 },
             )
         } else {
-            DateTimeSelector(
+            DateTimeSelectorWidget(
                 focusManager = focusManager,
                 dateEvent = state.editForm.date,
                 startTime = state.editForm.startTime,

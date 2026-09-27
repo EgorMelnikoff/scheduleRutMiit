@@ -4,8 +4,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.getFirstDayOfWeek
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate

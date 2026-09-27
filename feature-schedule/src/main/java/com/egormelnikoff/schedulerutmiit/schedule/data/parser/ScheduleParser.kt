@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.parser
 
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.parserFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.Locale.ruLocale
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.parserFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.consts.Locale.ruLocale
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcTime
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toUtcTime
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.EventDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.GroupDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.LecturerDto

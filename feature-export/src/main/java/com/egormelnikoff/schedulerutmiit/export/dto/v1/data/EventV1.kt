@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Lecturer
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Room
-import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateTimeSerializer
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 

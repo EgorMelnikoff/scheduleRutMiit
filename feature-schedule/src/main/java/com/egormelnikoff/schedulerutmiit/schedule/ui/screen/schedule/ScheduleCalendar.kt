@@ -27,16 +27,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppBadge
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.Calendar
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.CalendarBarItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.bottom_sheet.BottomSheetDatePicker
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarState
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.core.ui.components.badge.AppBadge
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.Calendar
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.CalendarBarItem
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_sheet.BottomSheetDatePicker
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEventsForDate
@@ -218,7 +218,7 @@ fun ScheduleCalendar(
                 }
             } else {
                 item {
-                    Empty(
+                    EmptyScreen(
                         modifier = Modifier.fillParentMaxSize(),
                         title = stringResource(R.string.day_off),
                         subtitle = stringResource(R.string.empty_day)

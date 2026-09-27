@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.core.network.di
 
 import android.content.Context
-import com.egormelnikoff.schedulerutmiit.core.common.logger.Logger
-import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
-import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.utils.logger.Logger
+import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateTimeSerializer
 import com.egormelnikoff.schedulerutmiit.core.network.api.GithubApi
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints

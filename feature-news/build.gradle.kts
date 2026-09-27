@@ -34,6 +34,7 @@ android {
 
 dependencies {
     implementation(projects.coreUi)
+    implementation(projects.coreNavigation)
     implementation(projects.coreNetwork)
 
     implementation(platform(libs.androidx.compose.bom))

@@ -10,9 +10,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 
 @Composable
 fun SchedulesWidget(
@@ -22,7 +22,7 @@ fun SchedulesWidget(
     ColumnGroup(
         items = namedSchedules.map { namedSchedule ->
             {
-                ClickableItem(
+                AppCell(
                     title = namedSchedule.shortName,
                     titleMaxLines = 1,
                     defaultMinHeight = 32.dp,

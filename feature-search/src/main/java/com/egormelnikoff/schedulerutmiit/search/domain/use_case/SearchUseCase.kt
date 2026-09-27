@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.search.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
-import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchParams

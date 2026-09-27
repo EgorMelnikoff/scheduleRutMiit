@@ -5,7 +5,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getPeriodicEvents
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.view_model.state.SummaryState
 import kotlinx.serialization.Serializable

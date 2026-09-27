@@ -33,19 +33,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.extension.getStartMs
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppAssistChip
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.getStartMs
+import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.view_model.ScheduleViewModel
 import java.time.Instant
@@ -72,7 +72,7 @@ fun ModalDialogSchedule(
 ) {
     val uriHandler = LocalUriHandler.current
 
-    CustomModalBottomSheet(
+    AppBottomSheet(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         onDismiss = {
             onDismiss(null)
@@ -177,7 +177,7 @@ fun ModalDialogSchedule(
                 items = schedules.map { schedule ->
                     {
                         Column {
-                            ClickableItem(
+                            AppCell(
                                 defaultMinHeight = 40.dp,
                                 title = schedule.timetableType.typeName,
                                 subtitle = "${schedule.startDate.format(dayMonthYearFormatter)} - " +
@@ -327,7 +327,7 @@ fun ModalDialogNamedScheduleHeader(
     }
 
     if (showDeleteDialog) {
-        CustomAlertDialog(
+        AppAlertDialog(
             dialogTitle = stringResource(R.string.delete_schedule),
             dialogText = stringResource(R.string.do_you_want_continue),
             onDismissRequest = {

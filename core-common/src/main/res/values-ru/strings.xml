@@ -9,6 +9,7 @@
     <string name="_class">Пара</string>
     <string name="_default">Основное</string>
     <string name="about_app">О приложении</string>
+    <string name="retry">Повторить</string>
     <string name="add">Добавить</string>
     <string name="add_class">Добавить пару</string>
     <string name="create_class">Создать пару</string>

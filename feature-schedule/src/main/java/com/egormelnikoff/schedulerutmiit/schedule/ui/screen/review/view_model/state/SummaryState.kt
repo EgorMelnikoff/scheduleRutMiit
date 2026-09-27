@@ -2,8 +2,8 @@ package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.view_model.s
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getEventsForDate
 import kotlinx.serialization.Serializable

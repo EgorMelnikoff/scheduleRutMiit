@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButtonRow
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.ui.components.button_row.AppButtonRow
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleState

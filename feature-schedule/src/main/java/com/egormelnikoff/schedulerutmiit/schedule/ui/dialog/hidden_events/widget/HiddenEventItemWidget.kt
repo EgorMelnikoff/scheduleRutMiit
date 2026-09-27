@@ -13,13 +13,13 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.hourMinuteFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoundedBox
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.hidden_events.HiddenEventsAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.utils.eventMock
@@ -55,7 +55,7 @@ fun HiddenEventItemWidget(
         }
     }
     RoundedBox {
-        ClickableItem(
+        AppCell(
             title = event.name,
             titleMaxLines = 1,
             subtitle = buildString {

@@ -12,9 +12,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
-import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ActionDialogButton
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheetButton
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,7 +26,7 @@ fun BottomSheetEventWidget(
     onEditEvent: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
-    CustomModalBottomSheet(
+    AppBottomSheet(
         onDismiss = {
             onDismiss()
         }
@@ -36,7 +36,7 @@ fun BottomSheetEventWidget(
         )
         Spacer(modifier = Modifier.height(0.dp))
         onHideEvent?.let {
-            ActionDialogButton(
+            AppBottomSheetButton(
                 icon = ImageVector.vectorResource(R.drawable.visibility_off),
                 title = stringResource(R.string.hide_event),
                 contentColor = MaterialTheme.colorScheme.onBackground
@@ -46,7 +46,7 @@ fun BottomSheetEventWidget(
             }
         }
         onEditEvent?.let {
-            ActionDialogButton(
+            AppBottomSheetButton(
                 icon = ImageVector.vectorResource(R.drawable.edit),
                 title = stringResource(R.string.edit),
                 contentColor = MaterialTheme.colorScheme.onBackground
@@ -56,7 +56,7 @@ fun BottomSheetEventWidget(
             }
         }
         onDeleteEvent?.let {
-            ActionDialogButton(
+            AppBottomSheetButton(
                 icon = ImageVector.vectorResource(R.drawable.delete),
                 title = stringResource(R.string.delete_event),
                 contentColor = MaterialTheme.colorScheme.error

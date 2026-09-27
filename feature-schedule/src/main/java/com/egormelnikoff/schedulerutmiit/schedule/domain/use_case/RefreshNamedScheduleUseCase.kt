@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.NamedScheduleRepos

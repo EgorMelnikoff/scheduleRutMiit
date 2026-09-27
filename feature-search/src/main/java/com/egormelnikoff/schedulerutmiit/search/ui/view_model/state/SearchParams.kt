@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.search.ui.view_model.state
 
-import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.SearchType
 
 data class SearchParams(
     val query: String = "",

@@ -20,9 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.DefaultEventParams
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppFilterChip
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoundedBox
+import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
+import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventState
@@ -40,7 +40,7 @@ fun FirstStepAddEventWidget(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        CustomTextField(
+        AppTextField(
             modifier = Modifier.fillMaxWidth(),
             value = state.editForm.name,
             placeholderText = stringResource(R.string.class_name),

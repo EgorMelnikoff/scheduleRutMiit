@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.database.entity.embedded.RecurrenceEntity
 import java.time.LocalDate
 

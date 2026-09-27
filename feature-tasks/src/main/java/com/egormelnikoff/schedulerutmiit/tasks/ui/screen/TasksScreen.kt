@@ -35,20 +35,20 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Task
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppBadge
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppCheckBox
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoundedBox
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.Calendar
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.CalendarBarItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.rememberCalendarState
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.badge.AppBadge
+import com.egormelnikoff.schedulerutmiit.core.ui.components.check_box.AppCheckBox
+import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.Calendar
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.CalendarBarItem
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarData
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.rememberCalendarState
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Green
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Red
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Yellow
@@ -80,7 +80,7 @@ fun TasksScreen(
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(
+            AppTopBar(
                 titleText = stringResource(R.string.tasks)
             ) {
                 IconButton(
@@ -219,7 +219,7 @@ fun TasksScreen(
                     }
                 } else {
                     item {
-                        Empty(
+                        EmptyScreen(
                             modifier = Modifier.fillParentMaxSize(),
                             title = stringResource(R.string.no_tasks),
                             subtitle = stringResource(R.string.no_tasks_at_day)
@@ -242,7 +242,7 @@ fun SingleTask(
     var showExpandedMenu by remember { mutableStateOf(false) }
 
     RoundedBox {
-        ClickableItem(
+        AppCell(
             title = task.text,
             titleDecoration = if (task.isCompleted) {
                 TextDecoration.LineThrough

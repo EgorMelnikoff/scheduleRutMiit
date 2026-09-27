@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.coreNavigation)
     implementation(projects.coreUi)
     implementation(projects.featureSchedule)
     implementation(projects.featureSearch)

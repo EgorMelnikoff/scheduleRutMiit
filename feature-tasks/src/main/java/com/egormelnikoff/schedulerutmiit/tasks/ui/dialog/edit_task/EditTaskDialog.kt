@@ -26,18 +26,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppTimePicker
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColorSelector
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButton
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingIcon
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.ui.components.time_picker.AppTimePicker
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
+import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
+import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingIcon
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
 import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.edit_task.view_model.EditTaskViewModel
 import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.edit_task.view_model.state.EditTaskState
 
@@ -60,7 +60,7 @@ fun EditTaskDialog(
 
             Scaffold(
                 topBar = {
-                    CustomTopAppBar(
+                    AppTopBar(
                         titleText = stringResource(R.string.task), navAction = onBack
                     )
                 }
@@ -82,7 +82,7 @@ fun EditTaskDialog(
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        CustomTextField(
+                        AppTextField(
                             modifier = Modifier.fillMaxWidth(),
                             value = editTaskState.editTaskForm.text,
                             placeholderText = stringResource(R.string.class_name),
@@ -95,7 +95,7 @@ fun EditTaskDialog(
 
                         ColumnGroup(
                             items = listOf {
-                                ClickableItem(
+                                AppCell(
                                     defaultMinHeight = 32.dp,
                                     showClickLabel = false,
                                     title = editTaskState.editTaskForm.time.format(
@@ -121,7 +121,7 @@ fun EditTaskDialog(
                             titleColor = MaterialTheme.colorScheme.primary,
                             withBackground = false,
                             items = listOf {
-                                ColorSelector(
+                                ColorSelectorWidget(
                                     currentSelected = editTaskState.editTaskForm.tag,
                                     onColorSelect = { newTag ->
                                         editTaskViewModel.updateTag(newTag)

@@ -2,8 +2,8 @@ package com.egormelnikoff.schedulerutmiit.core.database.db
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.GroupEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.LecturerEntity
 import com.egormelnikoff.schedulerutmiit.core.database.entity.serializable.RoomEntity

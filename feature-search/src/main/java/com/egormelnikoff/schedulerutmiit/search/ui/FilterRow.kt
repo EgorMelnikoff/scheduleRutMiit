@@ -11,8 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppFilterChip
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.SearchType
+import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
 
 
 @Composable

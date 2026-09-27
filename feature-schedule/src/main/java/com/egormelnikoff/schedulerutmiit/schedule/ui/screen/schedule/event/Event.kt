@@ -14,10 +14,10 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.EventView
 import java.time.LocalDate
 
 @Composable

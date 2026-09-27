@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule
 
-import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.TimetableType
 import com.egormelnikoff.schedulerutmiit.schedule.data.validator.isValidSchedule
 import java.time.LocalDate
 

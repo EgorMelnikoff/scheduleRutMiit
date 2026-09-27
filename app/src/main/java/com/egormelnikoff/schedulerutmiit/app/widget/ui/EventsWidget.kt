@@ -41,12 +41,12 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetData
 import com.egormelnikoff.schedulerutmiit.app.widget.ui.theme.ScheduleGlanceTheme
-import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthNameFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.di.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findEventExtra

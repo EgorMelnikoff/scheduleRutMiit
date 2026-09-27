@@ -14,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ListInput
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventState
@@ -32,7 +31,7 @@ fun ThirdStepAddEventWidget(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top)
     ) {
-        ListInput(
+        ListInputWidget(
             title = stringResource(R.string.room),
             elements = state.editForm.rooms,
             onAddElement = {
@@ -51,7 +50,7 @@ fun ThirdStepAddEventWidget(
                 }
             )
         }
-        ListInput(
+        ListInputWidget(
             title = stringResource(R.string.lecturers),
             elements = state.editForm.lecturers,
             onAddElement = {
@@ -75,7 +74,7 @@ fun ThirdStepAddEventWidget(
                 }
             )
         }
-        ListInput(
+        ListInputWidget(
             title = stringResource(R.string.groups),
             elements = state.editForm.groups,
             onAddElement = {

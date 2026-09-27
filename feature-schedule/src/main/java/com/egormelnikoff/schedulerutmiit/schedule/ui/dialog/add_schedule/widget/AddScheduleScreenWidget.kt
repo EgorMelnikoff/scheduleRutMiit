@@ -10,9 +10,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppButton
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ScaffoldLazyColumn
+import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
+import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ScaffoldLazyColumn
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleState
@@ -28,7 +28,7 @@ fun AddScheduleScreenWidget(
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(
+            AppTopBar(
                 titleText = stringResource(R.string.create_schedule),
                 navAction = {
                     onAction(AddScheduleAction.OnShowBackDialog(true))

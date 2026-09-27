@@ -17,7 +17,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
+import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.rename_schedule.RenameScheduleAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.rename_schedule.RenameScheduleState
@@ -28,7 +28,7 @@ fun RenameScheduleInputWidget(
     renameScheduleState: RenameScheduleState.Loaded,
     onAction: (RenameScheduleAction) -> Unit
 ) {
-    CustomTextField(
+    AppTextField(
         modifier = Modifier.fillMaxWidth(),
         value = renameScheduleState.newName,
         maxSymbols = 50,

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
@@ -30,16 +29,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
-import com.egormelnikoff.schedulerutmiit.core.common.enums.ScheduleView
-import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSwitch
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.GridGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.Theme
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components._switch.AppSwitch
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.GridGroup
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.ui.setting_screen.modal_dialog.CountEventsModalDialog
@@ -119,7 +118,7 @@ fun SettingsScreen(
                 title = stringResource(R.string._interface),
                 items = listOf(
                     {
-                        ClickableItem(
+                        AppCell(
                             title = stringResource(R.string.schedule_view),
                             leadingIcon = {
                                 AnimatedContent(
@@ -149,7 +148,7 @@ fun SettingsScreen(
                             activeDialog = SettingsDialog.ScheduleView
                         }
                     }, {
-                        ClickableItem(
+                        AppCell(
                             title = stringResource(R.string.event_view),
                             leadingIcon = {
                                 Icon(
@@ -170,7 +169,7 @@ fun SettingsScreen(
                             activeDialog = SettingsDialog.EventView
                         }
                     }, {
-                        ClickableItem(
+                        AppCell(
                             title = stringResource(R.string.show_count_classes),
                             subtitle = when (appSettings.eventsCountView) {
                                 EventsCountView.DETAILS -> stringResource(R.string.details)
@@ -202,7 +201,7 @@ fun SettingsScreen(
                             activeDialog = SettingsDialog.CountEvents
                         }
                     }, {
-                        ClickableItem(
+                        AppCell(
                             title = stringResource(R.string.use_image),
                             leadingIcon = {
                                 Icon(
@@ -214,7 +213,7 @@ fun SettingsScreen(
                             },
                             defaultMinHeight = 36.dp,
                             trailingIcon = {
-                                CustomSwitch(
+                                AppSwitch(
                                     checked = appSettings.usedImageInReview
                                 ) {
                                     preferencesViewModel.onSetUsedImageInReview(it)
@@ -235,7 +234,7 @@ fun SettingsScreen(
                 title = stringResource(R.string.schedule),
                 items = listOf(
                     listOf {
-                        ClickableItem(
+                        AppCell(
                             title = stringResource(R.string.comments_and_tags),
                             subtitle = when (appSettings.eventExtraPolicy) {
                                 EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
@@ -273,7 +272,7 @@ fun SettingsScreen(
                             activeDialog = SettingsDialog.EventExtraPolicy
                         }
                     }, listOf {
-                        ClickableItem(
+                        AppCell(
                             title = stringResource(R.string.not_delete_schedules),
                             subtitle = stringResource(R.string.not_delete_schedules_message),
                             subtitleMaxLines = 3,
@@ -287,7 +286,7 @@ fun SettingsScreen(
                             },
                             defaultMinHeight = 36.dp,
                             trailingIcon = {
-                                CustomSwitch(
+                                AppSwitch(
                                     checked = !appSettings.schedulesDeletable
                                 ) {
                                     preferencesViewModel.onSetSchedulesDeletable(!it)
@@ -300,7 +299,7 @@ fun SettingsScreen(
                         }
                     }, listOf(
                         {
-                            ClickableItem(
+                            AppCell(
                                 title = stringResource(R.string.export),
                                 leadingIcon = {
                                     Icon(
@@ -317,7 +316,7 @@ fun SettingsScreen(
                             }
                         },
                         {
-                            ClickableItem(
+                            AppCell(
                                 title = stringResource(R.string._import),
                                 leadingIcon = {
                                     Icon(
@@ -344,16 +343,16 @@ fun SettingsScreen(
                 title = stringResource(R.string.general),
                 items = listOf(
                     {
-                        ClickableItem(
+                        AppCell(
                             title = stringResource(R.string.theme),
-                            subtitle = when (appSettings.decorPreferences.theme) {
+                            subtitle = when (appSettings.themePreferences.theme) {
                                 Theme.LIGHT -> stringResource(R.string.light)
                                 Theme.DARK -> stringResource(R.string.dark)
                                 Theme.SYSTEM -> stringResource(R.string.auto)
                             },
                             leadingIcon = {
                                 AnimatedContent(
-                                    targetState = appSettings.decorPreferences.theme.isDarkTheme(),
+                                    targetState = appSettings.themePreferences.theme.isDarkTheme(),
                                     transitionSpec = {
                                         scaleIn() togetherWith scaleOut()
                                     }
@@ -376,7 +375,7 @@ fun SettingsScreen(
                             activeDialog = SettingsDialog.Decor
                         }
                     }, {
-                        ClickableItem(
+                        AppCell(
                             title = stringResource(R.string.about_app),
                             showBadge = updatesAvailable,
                             leadingIcon = {
@@ -460,7 +459,7 @@ fun SettingsScreen(
     }
 
     if (importDialog) {
-        CustomAlertDialog(
+        AppAlertDialog(
             onDismissRequest = { importDialog = false },
             onConfirmation = {
                 launch(arrayOf("application/json"))

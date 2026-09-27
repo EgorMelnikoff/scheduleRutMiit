@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.schedule.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.common.preferences.PreferencesDataSource
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventExtraRepos
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.EventRepos

@@ -41,12 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppAdviceDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.core.ui.event.getMessage
+import com.egormelnikoff.schedulerutmiit.core.ui.components.dialog.AppDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.core.common.result.getMessage
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.CurriculumViewModel
 
 @Composable
@@ -61,7 +61,7 @@ fun CurriculumDialog() {
     var showAdviceDialog by remember { mutableStateOf(false) }
 
     if (showAdviceDialog) {
-        AppAdviceDialog(
+        AppDialog(
             dialogText = stringResource(R.string.search_curriculum_advice),
             painter = painterResource(R.drawable.advice),
             onDismissRequest = {
@@ -86,7 +86,7 @@ fun CurriculumDialog() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                CustomTextField(
+                AppTextField(
                     modifier = Modifier.weight(1f),
                     maxLines = 1,
                     value = searchQuery,
@@ -149,20 +149,20 @@ fun CurriculumDialog() {
                     curriculumState.isLoading -> LoadingScreen()
 
                     curriculumState.error != null -> {
-                        Empty(
+                        EmptyScreen(
                             subtitle = curriculumState.error.getMessage(LocalContext.current)
                         )
                     }
 
                     curriculumState.isEmptyQuery -> {
-                        Empty(
+                        EmptyScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.search),
                             subtitle = stringResource(R.string.enter_your_query)
                         )
                     }
 
                     curriculumState.subjectsList.isEmpty() ->
-                        Empty(
+                        EmptyScreen(
                             subtitle = stringResource(R.string.nothing_found)
                         )
 
@@ -181,7 +181,7 @@ fun CurriculumDialog() {
                                 Box(
                                     modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                 ) {
-                                    ClickableItem(
+                                    AppCell(
                                         verticalPadding = 8.dp,
                                         horizontalPadding = 8.dp,
                                         title = subject.title,

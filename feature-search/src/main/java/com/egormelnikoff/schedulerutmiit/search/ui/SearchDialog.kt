@@ -47,17 +47,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NavigateSchedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomSnackbarHost
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTextField
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingAsyncImage
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.UiEventProcessor
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
-import com.egormelnikoff.schedulerutmiit.core.ui.event.getMessage
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
+import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingAsyncImage
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEventProcessor
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.core.common.result.getMessage
 import com.egormelnikoff.schedulerutmiit.search.ui.view_model.SearchViewModel
 
 @Composable
@@ -82,7 +82,7 @@ fun SearchDialog(
             .fillMaxSize()
             .imePadding(),
         snackbarHost = {
-            CustomSnackbarHost(
+            AppSnackbarHost(
                 snackBarHostState = snackBarHostState
             )
         }
@@ -102,7 +102,7 @@ fun SearchDialog(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                CustomTextField(
+                AppTextField(
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
                     value = searchParams.query,
@@ -170,13 +170,13 @@ fun SearchDialog(
                     searchState.isLoading -> LoadingScreen()
 
                     searchState.typedError != null -> {
-                        Empty(
+                        EmptyScreen(
                             subtitle = searchState.typedError.getMessage(LocalContext.current)
                         )
                     }
 
                     searchState.isEmptyQuery && history.isEmpty() -> {
-                        Empty(
+                        EmptyScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.search),
                             subtitle = stringResource(R.string.enter_your_query)
                         )
@@ -190,7 +190,7 @@ fun SearchDialog(
                                 Box(
                                     modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                 ) {
-                                    ClickableItem(
+                                    AppCell(
                                         verticalPadding = 8.dp,
                                         horizontalPadding = 8.dp,
                                         title = query.name,
@@ -235,7 +235,7 @@ fun SearchDialog(
                     }
 
                     searchState.groups.isEmpty() && searchState.people.isEmpty() ->
-                        Empty(
+                        EmptyScreen(
                             subtitle = stringResource(R.string.nothing_found)
                         )
 
@@ -262,7 +262,7 @@ fun SearchDialog(
                                     Box(
                                         modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                     ) {
-                                        ClickableItem(
+                                        AppCell(
                                             verticalPadding = 8.dp,
                                             horizontalPadding = 8.dp,
                                             title = group.name
@@ -304,7 +304,7 @@ fun SearchDialog(
                                     Box(
                                         modifier = Modifier.clip(MaterialTheme.shapes.medium)
                                     ) {
-                                        ClickableItem(
+                                        AppCell(
                                             verticalPadding = 8.dp,
                                             horizontalPadding = 8.dp,
                                             title = person.name,

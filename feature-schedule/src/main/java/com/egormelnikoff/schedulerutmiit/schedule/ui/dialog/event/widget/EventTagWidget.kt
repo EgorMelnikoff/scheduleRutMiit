@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColorSelector
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenState
 
@@ -26,7 +26,7 @@ fun LazyListScope.eventTagWidget(
                 titleColor = MaterialTheme.colorScheme.primary,
                 withBackground = false,
                 items = listOf {
-                    ColorSelector(
+                    ColorSelectorWidget(
                         currentSelected = eventScreenState.tag,
                         onColorSelect = { tag ->
                             onAction(EventScreenAction.OnTagChanged(tag))

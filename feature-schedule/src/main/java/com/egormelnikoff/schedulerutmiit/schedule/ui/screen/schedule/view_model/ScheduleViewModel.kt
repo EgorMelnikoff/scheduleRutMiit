@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScreenState
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.ui.event.UiEvent
-import com.egormelnikoff.schedulerutmiit.core.ui.event.sendErrorEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.schedule.domain.manager.ScheduleManager
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.DeleteNamedScheduleUseCase

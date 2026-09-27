@@ -9,9 +9,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.LeadingAsyncImage
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingAsyncImage
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenState
 
@@ -32,7 +32,7 @@ fun LazyListScope.eventLecturersWidget(
                     titleColor = MaterialTheme.colorScheme.primary,
                     items = lecturers.map { lecturer ->
                         {
-                            ClickableItem(
+                            AppCell(
                                 title = lecturer.fullFio,
                                 titleMaxLines = 2,
                                 defaultMinHeight = 32.dp,

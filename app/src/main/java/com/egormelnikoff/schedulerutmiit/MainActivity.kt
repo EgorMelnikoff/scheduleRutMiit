@@ -12,7 +12,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
 import com.egormelnikoff.schedulerutmiit.ui.WelcomePage
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
 
             appSettings?.let { settings ->
                 ScheduleRutMiitTheme(
-                    decorPreferences = settings.decorPreferences
+                    themePreferences = settings.themePreferences
                 ) {
                     AnimatedContent(
                         targetState = settings.skipWelcomePage,

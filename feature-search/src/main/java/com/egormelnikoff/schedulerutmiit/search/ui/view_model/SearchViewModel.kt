@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
 import com.egormelnikoff.schedulerutmiit.core.common.domain.SearchQuery
-import com.egormelnikoff.schedulerutmiit.core.common.enums.SearchType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.SearchType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.ui.event.UiEvent
-import com.egormelnikoff.schedulerutmiit.core.ui.event.sendErrorEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchQueryRepos
 import com.egormelnikoff.schedulerutmiit.search.domain.use_case.ObserveSearchHistoryUseCase
 import com.egormelnikoff.schedulerutmiit.search.domain.use_case.SearchResult

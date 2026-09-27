@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.time.TimeProvider
+import com.egormelnikoff.schedulerutmiit.core.common.utils.time_provider.TimeProvider
 import com.egormelnikoff.schedulerutmiit.schedule.domain.manager.ScheduleManager
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.DeleteNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule.domain.use_case.SetDefaultNamedScheduleUseCase

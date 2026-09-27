@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.core.common.domain
 
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
 
 data class SearchQuery(
     val id: Long = 0,

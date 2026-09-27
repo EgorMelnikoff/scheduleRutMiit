@@ -13,7 +13,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
+import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.customToString
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreenAction
@@ -28,7 +28,7 @@ fun EventScreenHeaderWidget(
 ) {
     val context = LocalContext.current
 
-    CustomTopAppBar(
+    AppTopBar(
         navAction = {
             onAction(EventScreenAction.OnBackClicked)
         },

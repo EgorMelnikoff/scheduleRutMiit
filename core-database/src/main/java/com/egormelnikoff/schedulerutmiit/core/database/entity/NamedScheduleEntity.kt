@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
 
 @Entity(
     tableName = "NamedSchedules"

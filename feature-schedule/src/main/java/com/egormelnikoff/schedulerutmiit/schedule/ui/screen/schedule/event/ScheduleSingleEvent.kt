@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.EventView
+import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.EventView
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 
 @Composable
@@ -268,7 +268,7 @@ fun ScheduleSingleEvent(
             }
         }
         if (showDeleteDialog && event.isCustomEvent) {
-            CustomAlertDialog(
+            AppAlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 onConfirmation = {
                     onDeleteEvent(event.id)
@@ -279,7 +279,7 @@ fun ScheduleSingleEvent(
             )
         }
         if (showHideDialog) {
-            CustomAlertDialog(
+            AppAlertDialog(
                 onDismissRequest = { showHideDialog = false },
                 onConfirmation = {
                     onUpdateHiddenEvent(event.id)

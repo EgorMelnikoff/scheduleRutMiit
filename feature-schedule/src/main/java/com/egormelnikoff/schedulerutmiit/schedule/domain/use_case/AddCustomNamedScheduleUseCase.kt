@@ -5,8 +5,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.NamedScheduleWithSch
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.TimetableType
 import java.time.LocalDate
 import javax.inject.Inject
 

@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule
 
-import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.TimetableType
 import java.time.LocalDate
 
-interface AddScheduleAction {
+sealed interface AddScheduleAction {
     data class OnUpdateName(
         val name: String
     ) : AddScheduleAction

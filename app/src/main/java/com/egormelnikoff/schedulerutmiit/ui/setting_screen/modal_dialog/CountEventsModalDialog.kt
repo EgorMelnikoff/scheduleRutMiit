@@ -13,11 +13,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.enums.EventsCountView
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.EventsCountView
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
 import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,7 +27,7 @@ fun CountEventsModalDialog(
     appSettings: AppSettings,
     preferencesViewModel: PreferencesViewModel
 ) {
-    CustomModalBottomSheet(
+    AppBottomSheet(
         modifier = Modifier.padding(horizontal = 16.dp),
         onDismiss = onDismiss
     ) {
@@ -35,7 +35,7 @@ fun CountEventsModalDialog(
             title = stringResource(R.string.show_count_classes),
             items = EventsCountView.entries.map {
                 {
-                    ClickableItem(
+                    AppCell(
                         title = when (it) {
                             EventsCountView.DETAILS -> stringResource(R.string.details)
                             EventsCountView.BRIEFLY -> stringResource(R.string.briefly)

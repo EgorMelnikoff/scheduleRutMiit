@@ -39,14 +39,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import androidx.core.net.toUri
-import com.egormelnikoff.schedulerutmiit.core.common.AppConst.DEVELOPER
-import com.egormelnikoff.schedulerutmiit.core.common.AppConst.DEVELOPER_EMAIL
+import com.egormelnikoff.schedulerutmiit.core.common.consts.AppConst.DEVELOPER
+import com.egormelnikoff.schedulerutmiit.core.common.consts.AppConst.DEVELOPER_EMAIL
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.links.Links
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppAssistChip
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomModalBottomSheet
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.RoundedBox
+import com.egormelnikoff.schedulerutmiit.core.common.consts.Links
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +59,7 @@ fun InfoModalDialog(
     val uriHandler = LocalUriHandler.current
     val clipboard = LocalClipboard.current
 
-    CustomModalBottomSheet(
+    AppBottomSheet(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp),
         showDragHandle = false,
         onDismiss = onDismiss
@@ -270,7 +270,7 @@ fun InfoModalDialog(
 
 
             RoundedBox {
-                ClickableItem(
+                AppCell(
                     title = DEVELOPER,
                     subtitle = stringResource(R.string.developer),
                     onLongClick = {
@@ -284,7 +284,7 @@ fun InfoModalDialog(
             }
 
             RoundedBox {
-                ClickableItem(
+                AppCell(
                     title = stringResource(R.string.privacy_policy),
                     onLongClick = {
                         clipboard.nativeClipboard.setPrimaryClip(

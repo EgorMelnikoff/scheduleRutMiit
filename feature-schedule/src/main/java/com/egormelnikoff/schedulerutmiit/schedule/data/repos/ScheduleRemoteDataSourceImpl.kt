@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.schedule.data.repos
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
-import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto

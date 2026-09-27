@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.Lecturer
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Room
-import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.network.dto.latest_release.LatestReleaseFetchDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.person.PersonDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.EventDto

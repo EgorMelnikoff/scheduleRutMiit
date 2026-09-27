@@ -5,8 +5,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Recurrence
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
 import com.egormelnikoff.schedulerutmiit.core.common.domain.ScheduleWithEvents
-import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.state.CalendarData
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarData
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getPeriodicEvents
 import java.time.DayOfWeek

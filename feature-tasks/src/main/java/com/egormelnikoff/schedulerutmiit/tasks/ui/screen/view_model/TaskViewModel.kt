@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.tasks.ui.screen.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.time.TimeProvider
+import com.egormelnikoff.schedulerutmiit.core.common.utils.time_provider.TimeProvider
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.ObserveAllTasksUseCase
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.TaskAction
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.TaskActionUseCase

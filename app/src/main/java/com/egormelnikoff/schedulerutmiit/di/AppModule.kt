@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.work.WorkManager
 import com.egormelnikoff.schedulerutmiit.app.preferences.PreferencesDataSourceImpl
 import com.egormelnikoff.schedulerutmiit.app.widget.data.WidgetDataUpdaterImpl
-import com.egormelnikoff.schedulerutmiit.core.common.time.TimeProvider
-import com.egormelnikoff.schedulerutmiit.core.ui.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.common.utils.time_provider.TimeProvider
+import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.export.data.exporter.FileExporter
 import com.egormelnikoff.schedulerutmiit.export.data.importer.FileImporter
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.data.parser.SubjectsListParser

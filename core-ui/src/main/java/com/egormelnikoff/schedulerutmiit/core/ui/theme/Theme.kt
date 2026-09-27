@@ -13,8 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.egormelnikoff.schedulerutmiit.core.common.enums.Theme
-import com.egormelnikoff.schedulerutmiit.core.ui.preferences.DecorPreferences
+import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.Theme
+import com.egormelnikoff.schedulerutmiit.core.common.preferences.ThemePreferences
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.amoledColorScheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.animation
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.defaultTheme
@@ -22,11 +22,11 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.themes
 
 @Composable
 fun ScheduleRutMiitTheme(
-    decorPreferences: DecorPreferences,
+    themePreferences: ThemePreferences,
     content: @Composable () -> Unit
 ) {
-    val isDarkTheme = decorPreferences.theme.isDarkTheme()
-    val colorScheme = decorPreferences.getCurrentColorScheme(
+    val isDarkTheme = themePreferences.theme.isDarkTheme()
+    val colorScheme = themePreferences.getCurrentColorScheme(
         isDarkTheme = isDarkTheme
     )
 
@@ -61,7 +61,7 @@ fun PreviewLightTheme(
     content: @Composable () -> Unit
 ) {
     ScheduleRutMiitTheme(
-        decorPreferences = DecorPreferences(
+        themePreferences = ThemePreferences(
             Theme.LIGHT,
             usedAmoled = false,
             decorColorIndex = 0
@@ -79,7 +79,7 @@ fun Theme.isDarkTheme() = when (this) {
 }
 
 @Composable
-fun DecorPreferences.getCurrentColorScheme(
+fun ThemePreferences.getCurrentColorScheme(
     isDarkTheme: Boolean
 ): ColorScheme {
     val currentColorTheme = themes[this.decorColorIndex] ?: defaultTheme

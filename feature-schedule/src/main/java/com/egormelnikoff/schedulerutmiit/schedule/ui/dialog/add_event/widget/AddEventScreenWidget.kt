@@ -1,27 +1,19 @@
 package com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.widget
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.AppTimePicker
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomAlertDialog
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.PagerScreenContainer
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.calendar.bottom_sheet.BottomSheetDatePicker
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toUtcDateTime
+import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.PagerScreenContainer
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventAction
 import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventState
@@ -37,7 +29,7 @@ fun AddEventScreenWidget(
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(
+            AppTopBar(
                 titleText = if (state is AddEventState.Loaded && state.editForm.isEdit) stringResource(R.string.editing)
                 else stringResource(R.string.create_class),
                 navAction = {
