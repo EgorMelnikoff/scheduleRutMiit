@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.core.ui.elements.composable
+package com.egormelnikoff.schedulerutmiit.news.ui.news_list.widget
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,9 +9,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.components.shimmer.AppShimmerCard
 
 @Composable
-fun NewsLoadingScreen() {
+fun NewsListLoadingWidget() {
     Scaffold { paddingValues ->
         LazyVerticalStaggeredGrid(
             modifier = Modifier.fillMaxSize(),
@@ -27,7 +28,7 @@ fun NewsLoadingScreen() {
             )
         ) {
             items(20) {
-                LoadingCard(
+                AppShimmerCard(
                     height = 200.dp
                 )
             }
