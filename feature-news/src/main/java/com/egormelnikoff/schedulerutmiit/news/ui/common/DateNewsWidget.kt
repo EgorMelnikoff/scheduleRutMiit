@@ -18,9 +18,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 
-
 @Composable
-fun DateNewsWidget(
+internal fun DateNewsWidget(
     date: String
 ) {
     Row(

@@ -1,9 +1,0 @@
-package com.egormelnikoff.schedulerutmiit.core.common.domain
-
-import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
-
-data class NavigateSchedule(
-    val name: String,
-    val apiId: Int,
-    val namedScheduleType: NamedScheduleType
-)

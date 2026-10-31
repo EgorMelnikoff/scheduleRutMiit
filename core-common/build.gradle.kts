@@ -33,8 +33,11 @@ android {
 dependencies {
     api(libs.bundles.android.core)
     implementation(libs.hilt.android)
+    implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.bundles.work)
 
     testImplementation(libs.bundles.test)
 

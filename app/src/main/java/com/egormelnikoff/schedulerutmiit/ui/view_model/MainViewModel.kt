@@ -1,28 +1,25 @@
 package com.egormelnikoff.schedulerutmiit.ui.view_model
 
 import android.net.Uri
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import com.egormelnikoff.schedulerutmiit.core.common.utils.error.AppError
+import com.egormelnikoff.schedulerutmiit.core.common.utils.error.toAppError
 import com.egormelnikoff.schedulerutmiit.core.common.utils.time_provider.TimeProvider
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiText
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendInfoEvent
-import com.egormelnikoff.schedulerutmiit.export.domain.use_case.ExportDataUseCase
-import com.egormelnikoff.schedulerutmiit.export.domain.use_case.ImportDataUseCase
+import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
 import com.egormelnikoff.schedulerutmiit.latest_release.domain.use_case.CheckLatestReleaseUseCase
-import com.egormelnikoff.schedulerutmiit.ui.view_model.state.AppState
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.export.ExportDataUseCase
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.export.ImportDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -36,18 +33,12 @@ class MainViewModel @Inject constructor(
     private val importDataUseCase: ImportDataUseCase,
     private val exportDataUseCase: ExportDataUseCase,
     timeProvider: TimeProvider
-) : ViewModel() {
-    private val _appState = MutableStateFlow(AppState())
-    val appState: StateFlow<AppState> = _appState
+) : BaseViewModel<AppState, MainAction>(AppState()) {
 
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEventFlow.asSharedFlow()
 
     private val checkUpdatesMutex = Mutex()
-
-    init {
-        checkUpdates(fetchForce = false)
-    }
 
     val hourlyDateTime: StateFlow<LocalDateTime> = timeProvider.currentHour
         .stateIn(
@@ -56,18 +47,26 @@ class MainViewModel @Inject constructor(
             initialValue = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS)
         )
 
-    fun checkUpdates(
-        fetchForce: Boolean = true
-    ) {
+    override fun onScreenInitialized() {
+        checkUpdates()
+    }
+
+    override fun onAction(action: MainAction) {
+        when (action) {
+            is MainAction.ExportData -> exportData(action.uri)
+            is MainAction.ImportData -> importData(action.uri)
+        }
+    }
+
+    private fun checkUpdates() {
         viewModelScope.launch {
             checkUpdatesMutex.withLock {
-                _appState.update {
-                    it.copy(
-                        updatesAvailable = false
-                    )
+                updateState {
+                    copy(updatesAvailable = false)
                 }
-                checkLatestReleaseUseCase(fetchForce).let { result ->
-                    if (!result && fetchForce) {
+                try {
+                    val result = checkLatestReleaseUseCase()
+                    if (!result) {
                         _uiEventFlow.sendInfoEvent(
                             UiEvent.InfoMessage(
                                 UiText.StringResource(R.string.no_updates),
@@ -75,53 +74,51 @@ class MainViewModel @Inject constructor(
                             )
                         )
                     }
-                    _appState.update {
-                        it.copy(
-                            updatesAvailable = result
-                        )
+                    updateState {
+                        copy(updatesAvailable = result)
                     }
+                } catch (e: Exception) {
+                    _uiEventFlow.sendErrorEvent(e.toAppError())
                 }
             }
         }
     }
 
-    fun exportData(uri: Uri) {
+    private fun exportData(uri: Uri) {
         viewModelScope.launch {
-            when (val result = exportDataUseCase(uri)) {
-                is Result.Error -> {
-                    _uiEventFlow.sendErrorEvent(result.typedError)
-                }
-
-                is Result.Success -> {
-                    _uiEventFlow.sendInfoEvent(
-                        UiEvent.InfoMessage(
-                            UiText.StringResource(R.string.success)
-                        )
+            try {
+                exportDataUseCase(uri)
+                _uiEventFlow.sendInfoEvent(
+                    UiEvent.InfoMessage(
+                        UiText.StringResource(R.string.success)
                     )
-                }
+                )
+            } catch (e: Exception) {
+                _uiEventFlow.sendErrorEvent(e.toAppError())
             }
         }
     }
 
-    fun importData(uri: Uri?, onSuccess: () -> Unit) {
+    private fun importData(uri: Uri?) {
         viewModelScope.launch {
             if (uri == null) {
-                _uiEventFlow.sendErrorEvent(TypedError.EmptyBodyError)
+                _uiEventFlow.sendErrorEvent(AppError.EmptyBodyError)
                 return@launch
             }
-            when (val result = importDataUseCase(uri)) {
-                is Result.Error -> {
-                    _uiEventFlow.sendErrorEvent(result.typedError)
-                }
-
-                is Result.Success -> {
-                    onSuccess()
-                    _uiEventFlow.sendInfoEvent(
-                        UiEvent.InfoMessage(
-                            UiText.StringResource(R.string.success)
-                        )
+            try {
+                importDataUseCase(uri)
+                _uiEventFlow.emit(
+                    UiEvent.InfoMessage(
+                        UiText.StringResource(R.string.success)
                     )
-                }
+                )
+                _uiEventFlow.sendInfoEvent(
+                    UiEvent.InfoMessage(
+                        UiText.StringResource(R.string.success)
+                    )
+                )
+            } catch (e: Exception) {
+                _uiEventFlow.sendErrorEvent(e.toAppError())
             }
         }
     }

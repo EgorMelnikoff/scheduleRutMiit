@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.devtoolsKsp)
     alias(libs.plugins.kotlin.serialization)
 }
 android {
@@ -29,10 +30,13 @@ android {
 
 dependencies {
     implementation(projects.coreCommon)
+    implementation(libs.hilt.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation3.ui)
 
     api(libs.bundles.android.core)
 
     testImplementation(libs.bundles.test)
+
+    ksp(libs.hilt.android.compiler)
 }

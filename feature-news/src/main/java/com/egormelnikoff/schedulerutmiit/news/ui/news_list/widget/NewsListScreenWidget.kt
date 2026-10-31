@@ -3,12 +3,12 @@ package com.egormelnikoff.schedulerutmiit.news.ui.news_list.widget
 import androidx.compose.runtime.Composable
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
+import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.news.ui.news_list.NewsListAction
 
 @Composable
-fun NewsListScreenWidget(
-    newsList: LazyPagingItems<NewsShortDto>,
+internal fun NewsListScreenWidget(
+    newsList: LazyPagingItems<NewsShort>,
     onAction: (NewsListAction) -> Unit
 ) {
     when (newsList.loadState.refresh) {

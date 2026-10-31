@@ -1,6 +1,7 @@
 [versions]
 agp = "9.4.0"
 kotlin = "2.4.10"
+kotlinxCoroutinesCore = "1.11.0"
 kotlinxSerializationJson = "1.11.0"
 ksp = "2.3.9"
 appcompat = "1.8.0"
@@ -62,6 +63,7 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose"
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 #Network
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 #Serialization

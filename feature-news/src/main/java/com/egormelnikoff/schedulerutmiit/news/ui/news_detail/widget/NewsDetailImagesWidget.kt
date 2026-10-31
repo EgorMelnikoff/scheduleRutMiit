@@ -16,11 +16,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.newsImageUrl
+import com.egormelnikoff.schedulerutmiit.news.domain.model.News
 
-fun LazyListScope.newsDetailImagesWidget(
-    news: NewsParsedDto
+internal fun LazyListScope.newsDetailImagesWidget(
+    news: News
 ) {
     item {
         if (news.images.size > 1) {

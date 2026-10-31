@@ -8,20 +8,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.result.getMessage
+import com.egormelnikoff.schedulerutmiit.core.common.utils.error.getMessage
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsDetailAction
 import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsDetailState
 
 @Composable
-fun NewsDetailErrorWidget(
+internal fun NewsDetailErrorWidget(
     newsDetailState: NewsDetailState.Error,
     onAction: (NewsDetailAction) -> Unit
 ) {
     ErrorScreen(
         title = stringResource(R.string.error),
-        subtitle = newsDetailState.typedError.getMessage(LocalContext.current),
+        subtitle = newsDetailState.appError.getMessage(LocalContext.current),
         button = {
             AppButton(
                 modifier = Modifier.fillMaxWidth(),

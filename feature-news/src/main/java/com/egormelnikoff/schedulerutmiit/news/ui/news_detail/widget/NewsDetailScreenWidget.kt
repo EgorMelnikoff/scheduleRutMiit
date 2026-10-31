@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsDetailAction
 import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsDetailState
 
 @Composable
-fun NewsDetailScreenWidget(
+internal fun NewsDetailScreenWidget(
     newsDetailState: NewsDetailState,
     onAction: (NewsDetailAction) -> Unit
 ) {

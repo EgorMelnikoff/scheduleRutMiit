@@ -35,17 +35,21 @@ android {
 dependencies {
     implementation(projects.coreUi)
     implementation(projects.coreNavigation)
-    implementation(projects.coreDatabase)
+    
 
     implementation(platform(libs.androidx.compose.bom))
 
     implementation(libs.hilt.android)
     implementation(libs.bundles.compose)
     implementation(libs.bundles.navigation)
+    implementation(libs.androidx.room.ktx)
 
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.androidx.ui.test)
     debugImplementation(libs.bundles.androidx.ui.debug)
 
     ksp(libs.hilt.android.compiler)
+
+    ksp(libs.hilt.android.compiler)
+    ksp(libs.androidx.room.compiler)
 }

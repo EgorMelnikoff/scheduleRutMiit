@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-fun  LazyStaggeredGridScope.newsListLoadingItem() {
+internal fun LazyStaggeredGridScope.newsListLoadingItem() {
     item(
         span = StaggeredGridItemSpan.FullLine
     ) {

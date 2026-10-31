@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.PagerScreenContainer
-import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
+import com.egormelnikoff.schedulerutmiit.ui.settings.PreferencesViewModel
 
 
 @Composable

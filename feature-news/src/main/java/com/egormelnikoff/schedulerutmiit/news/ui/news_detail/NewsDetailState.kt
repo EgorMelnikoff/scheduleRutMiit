@@ -1,15 +1,15 @@
 package com.egormelnikoff.schedulerutmiit.news.ui.news_detail
 
-import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
+import com.egormelnikoff.schedulerutmiit.core.common.utils.error.AppError
+import com.egormelnikoff.schedulerutmiit.news.domain.model.News
 
-sealed interface NewsDetailState {
+internal sealed interface NewsDetailState {
     data object Loading : NewsDetailState
     data class Error(
-        val typedError: TypedError
+        val appError: AppError
     ) : NewsDetailState
 
     data class Loaded(
-        val news: NewsParsedDto
+        val news: News
     ) : NewsDetailState
 }

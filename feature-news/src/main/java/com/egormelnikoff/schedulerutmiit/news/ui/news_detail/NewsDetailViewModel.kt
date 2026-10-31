@@ -1,21 +1,20 @@
 package com.egormelnikoff.schedulerutmiit.news.ui.news_detail
 
-import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.core.common.utils.error.toAppError
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.network.handler.errorHandler
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
-import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRepos
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 
 @HiltViewModel(
     assistedFactory = NewsDetailViewModel.Factory::class
 )
-class NewsDetailViewModel @AssistedInject constructor(
-    private val newsRemoteDataSource: NewsRemoteDataSource,
+internal class NewsDetailViewModel @AssistedInject constructor(
+    private val newsRemoteDataSource: NewsRepos,
     private val appRouter: AppRouter,
     @Assisted
     private val newsId: Long
@@ -38,19 +37,19 @@ class NewsDetailViewModel @AssistedInject constructor(
     }
 
     private fun getNewsById(id: Long) {
-        viewModelScope.launch {
-            updateState {
-                NewsDetailState.Loading
+        launchToCoroutine(
+            handler = errorHandler(
+                tag = "News $id"
+            ) { throwable ->
+                updateState {
+                    NewsDetailState.Error(throwable.toAppError())
+                }
             }
+        ) {
+            val news = newsRemoteDataSource.getNewsById(id)
 
-            when (val news = newsRemoteDataSource.getNewsById(id)) {
-                is Result.Error -> updateState {
-                    NewsDetailState.Error(news.typedError)
-                }
-
-                is Result.Success -> updateState {
-                    NewsDetailState.Loaded(news.data)
-                }
+            updateState {
+                NewsDetailState.Loaded(news)
             }
         }
     }

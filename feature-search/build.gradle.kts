@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.devtoolsKsp)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -33,13 +34,15 @@ android {
 }
 
 dependencies {
+    implementation(projects.scheduleFeature.api)
     implementation(projects.coreUi)
     implementation(projects.coreNavigation)
     implementation(projects.coreNetwork)
-    implementation(projects.coreDatabase)
+    
 
     implementation(platform(libs.androidx.compose.bom))
 
+    implementation(libs.androidx.room.ktx)
     implementation(libs.hilt.android)
     implementation(libs.bundles.compose)
     implementation(libs.bundles.navigation)
@@ -49,4 +52,5 @@ dependencies {
     debugImplementation(libs.bundles.androidx.ui.debug)
 
     ksp(libs.hilt.android.compiler)
+    ksp(libs.androidx.room.compiler)
 }

@@ -33,6 +33,7 @@ android {
 
 dependencies {
     api(projects.coreCommon)
+    implementation(projects.scheduleFeature.api)
 
     implementation(libs.hilt.android)
     api(libs.retrofit)

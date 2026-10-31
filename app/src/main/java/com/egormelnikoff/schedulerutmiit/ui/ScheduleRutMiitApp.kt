@@ -27,32 +27,33 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.common.domain.model.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
-import com.egormelnikoff.schedulerutmiit.core.navigation.Route
+import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.components.navigation_bar.AppNavigationBar
 import com.egormelnikoff.schedulerutmiit.core.ui.components.navigation_bar.AppNavigationBarItem
 import com.egormelnikoff.schedulerutmiit.core.ui.components.navigation_bar.BarItem
 import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
-import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumDialog
-import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsDialog
+import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumScreen
+import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsScreen
 import com.egormelnikoff.schedulerutmiit.news.ui.news_list.NewsScreen
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_event.AddEventScreen
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.add_schedule.AddScheduleScreen
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.event.EventScreen
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.hidden_events.HiddenEventsScreen
-import com.egormelnikoff.schedulerutmiit.schedule.ui.dialog.rename_schedule.RenameScheduleScreen
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.review.ReviewScreen
-import com.egormelnikoff.schedulerutmiit.schedule.ui.screen.schedule.ScreenSchedule
-import com.egormelnikoff.schedulerutmiit.search.ui.SearchDialog
-import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.add_task.AddTaskDialog
-import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.edit_task.EditTaskDialog
-import com.egormelnikoff.schedulerutmiit.tasks.ui.screen.TasksScreen
-import com.egormelnikoff.schedulerutmiit.ui.setting_screen.SettingsScreen
+import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_event.AddEventScreen
+import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_schedule.AddScheduleScreen
+import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.event.EventScreen
+import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.hidden_events.HiddenEventsScreen
+import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.rename_schedule.RenameScheduleScreen
+import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.review.ReviewScreen
+import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.schedule.ScreenSchedule
+import com.egormelnikoff.schedulerutmiit.search.ui.SearchScreen
+import com.egormelnikoff.schedulerutmiit.tasks.ui.add_task.AddTaskDialog
+import com.egormelnikoff.schedulerutmiit.tasks.ui.edit_task.EditTaskDialog
+import com.egormelnikoff.schedulerutmiit.tasks.ui.list.TasksScreen
+import com.egormelnikoff.schedulerutmiit.ui.settings.PreferencesViewModel
+import com.egormelnikoff.schedulerutmiit.ui.settings.SettingsScreen
+import com.egormelnikoff.schedulerutmiit.ui.view_model.MainAction
 import com.egormelnikoff.schedulerutmiit.ui.view_model.MainViewModel
-import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 import java.time.LocalDate
 
 @Composable
@@ -109,16 +110,15 @@ fun PageHost(
     appSettings: AppSettings,
     isToday: (LocalDate) -> Boolean
 ) {
-    val appState by mainViewModel.appState.collectAsStateWithLifecycle()
+    val appState by mainViewModel.state.collectAsStateWithLifecycle()
 
     val importLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri ->
-        mainViewModel.importData(
-            uri = uri,
-            onSuccess = {
-                appRouter.navigateToStartRage()
-            }
+        mainViewModel.onAction(
+            MainAction.ImportData(
+                uri,
+            )
         )
     }
 
@@ -144,11 +144,11 @@ fun PageHost(
                                 selectedIconRes = R.drawable.review_fill,
                             )
                         },
-                        isSelected = currentPage is Route.Page.Review,
-                        onClick = {
-                            appRouter.openPage(Route.Page.Review)
-                        }
-                    )
+                        isSelected = currentPage is Route.Page.Review
+                    ) {
+                        appRouter.openPage(Route.Page.Review)
+                    }
+
                     AppNavigationBarItem(
                         barItem = remember {
                             BarItem(
@@ -159,7 +159,11 @@ fun PageHost(
                         },
                         isSelected = currentPage is Route.Page.Schedule,
                         onClick = {
-                            appRouter.openPage(Route.Page.Schedule())
+                            if (currentPage is Route.Page.Schedule) {
+
+                            } else {
+                                appRouter.openPage(Route.Page.Schedule)
+                            }
                         }
                     )
                     AppNavigationBarItem(
@@ -217,21 +221,12 @@ fun PageHost(
             entryProvider = entryProvider {
                 entry<Route.Page.Review> {
                     ReviewScreen(
-                        isDarkTheme = appSettings.themePreferences.theme.isDarkTheme(),
-                        usedPhoto = appSettings.usedImageInReview,
                         contentPadding = padding,
-                        onNavigateToStartPage = {
-                            appRouter.navigateToStartRage()
-                        }
-                    ) { dialog ->
-                        appRouter.openDialog(dialog)
-                    }
+                    )
                 }
 
-                entry<Route.Page.Schedule> { route ->
-
+                entry<Route.Page.Schedule> {
                     ScreenSchedule(
-                        route = route,
                         appSettings = appSettings,
 
                         contentPadding = padding,
@@ -249,7 +244,6 @@ fun PageHost(
                 }
 
                 entry<Route.Page.Tasks> {
-
                     TasksScreen(
                         contentPadding = padding,
                         isToday = isToday,
@@ -269,7 +263,9 @@ fun PageHost(
                             importLauncher.launch(array)
                         }
                     ) { uri ->
-                        mainViewModel.exportData(uri)
+                        mainViewModel.onAction(
+                            MainAction.ExportData(uri)
+                        )
                     }
                 }
             }
@@ -336,7 +332,7 @@ fun RootHost(
                 }
 
                 entry<Route.Dialog.EventDialog> { dialog ->
-                    EventScreen(
+                   EventScreen(
                         eventDialog = dialog,
                     )
                 }
@@ -346,7 +342,7 @@ fun RootHost(
                 }
 
                 entry<Route.Dialog.NewsDialog> { dialog ->
-                    NewsDialog(
+                    NewsScreen(
                         newsDialog = dialog
                     )
                 }
@@ -372,22 +368,23 @@ fun RootHost(
                 }
 
                 entry<Route.Dialog.SearchDialog> {
-                    SearchDialog { navigateSchedule ->
-                        appRouter.openPage(Route.Page.Schedule(navigateSchedule))
-                        appRouter.onBack()
-                    }
+                    SearchScreen()
                 }
                 entry<Route.Dialog.CurriculumDialog> {
-                    CurriculumDialog()
+                    CurriculumScreen()
                 }
                 entry<Route.Dialog.AddScheduleDialog> {
-                    AddScheduleScreen()
+                   AddScheduleScreen()
                 }
                 entry<Route.Dialog.RenameNamedScheduleDialog> { renameDialog ->
-                    RenameScheduleScreen(renameDialog)
+                    RenameScheduleScreen(
+                        renameDialog
+                    )
                 }
                 entry<Route.Dialog.HiddenEventsDialog> { hiddenEventsDialog ->
-                    HiddenEventsScreen(hiddenEventsDialog)
+                    HiddenEventsScreen(
+                        hiddenEventsDialog
+                    )
                 }
             }
         )

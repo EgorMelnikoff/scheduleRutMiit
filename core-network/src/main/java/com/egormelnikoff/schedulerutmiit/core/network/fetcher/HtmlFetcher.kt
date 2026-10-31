@@ -1,42 +1,41 @@
 package com.egormelnikoff.schedulerutmiit.core.network.fetcher
 
-import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.io.IOException
 import javax.inject.Inject
 
 class HtmlFetcher @Inject constructor(
-    private val retryExecutor: RetryExecutor,
     private val okHttpClient: OkHttpClient
 ) {
     suspend operator fun invoke(
-        retries: Int,
         url: String
-    ): Result<Document> {
+    ): Document = withContext(Dispatchers.IO) {
         val request = Request.Builder()
             .url(url)
             .get()
             .build()
 
-        return retryExecutor.execute("HtmlFetcher", retries) {
-            okHttpClient.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    return@execute Result.Error(
-                        TypedError.HttpError(
-                            response.code,
-                            response.message
-                        )
-                    )
-                }
+        val bodyString = okHttpClient.newCall(request).executeAndGetBody()
+        return@withContext Jsoup.parse(bodyString)
+    }
 
-                val body = response.body
-                    ?: return@execute Result.Error(TypedError.EmptyBodyError)
-
-                Result.Success(Jsoup.parse(body.string()))
+    private fun okhttp3.Call.executeAndGetBody(): String {
+        this.execute().use { response ->
+            if (!response.isSuccessful) {
+                throw HttpStatusException(
+                    "HTTP Error",
+                    response.code,
+                    response.request.url.toString()
+                )
             }
+
+            return response.body?.string() ?: throw IOException("Empty body")
         }
     }
 }

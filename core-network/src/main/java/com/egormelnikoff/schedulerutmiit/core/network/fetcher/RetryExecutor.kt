@@ -1,58 +1,56 @@
 package com.egormelnikoff.schedulerutmiit.core.network.fetcher
 
-import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
-import com.egormelnikoff.schedulerutmiit.core.common.result.isRetryable
-import com.egormelnikoff.schedulerutmiit.core.common.utils.logger.Logger
+import android.util.Log
 import kotlinx.coroutines.delay
 import okio.IOException
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.math.pow
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
-class RetryExecutor @Inject constructor(
-    private val logger: Logger
-) {
+class RetryExecutor @Inject constructor() {
     suspend fun <T> execute(
         tag: String,
-        retries: Int,
-        block: suspend () -> Result<T>
-    ): Result<T> {
-        repeat(retries) { attempt ->
+        maxAttempts: Int = 3,
+        block: suspend () -> T
+    ): T {
+        require(maxAttempts > 0) {
+            "maxAttempts must be greater than 0"
+        }
+
+        repeat(maxAttempts) { attempt ->
             try {
-                when (val result = block()) {
-                    is Result.Success -> return result
-                    is Result.Error -> {
-                        if (attempt == retries - 1) return result
-                        if (!result.typedError.isRetryable()) return result
-                    }
-                }
+                return block()
             } catch (e: SocketTimeoutException) {
-                logger.e(tag, "Timeout (${attempt + 1}/$retries)", e)
+                Log.w(tag, "Timeout (${attempt + 1}/$maxAttempts)", e)
 
-                if (attempt == retries - 1) {
-                    return Result.Error(TypedError.TimeoutError(e))
-                }
+                if (attempt == maxAttempts - 1) throw e
             } catch (e: IOException) {
-                logger.e(tag, "Network error (${attempt + 1}/$retries)", e)
+                Log.w(tag, "Network error (${attempt + 1}/$maxAttempts)", e)
 
-                if (attempt == retries - 1) {
-                    return Result.Error(TypedError.NetworkError(e))
-                }
+                if (attempt == maxAttempts - 1) throw e
             }
 
             delay(backoff(attempt).milliseconds)
         }
 
-        return Result.Error(
-            TypedError.UnexpectedError(
-                Exception("Retry failed")
-            )
-        )
+        error("Unreachable")
     }
 
     private fun backoff(attempt: Int): Long {
-        return (500L * (2.0.pow(attempt.toDouble()))).toLong()
+        val exponential = (INITIAL_BACKOFF_MS * 2.0.pow(attempt))
+            .toLong()
+            .coerceAtMost(MAX_BACKOFF_MS)
+
+        val jitter = (exponential * JITTER_FACTOR).toLong()
+        return exponential + Random.nextLong(-jitter, jitter + 1)
     }
+
+    companion object {
+        private const val INITIAL_BACKOFF_MS = 500L
+        private const val MAX_BACKOFF_MS = 8_000L
+        private const val JITTER_FACTOR = 0.2
+    }
+
 }

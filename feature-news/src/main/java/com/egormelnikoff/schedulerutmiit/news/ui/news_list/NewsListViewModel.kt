@@ -4,21 +4,21 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
-import com.egormelnikoff.schedulerutmiit.core.navigation.Route
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
+import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
+import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.news.domain.use_case.GetNewsListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class NewsListViewModel @Inject constructor(
+internal class NewsListViewModel @Inject constructor(
     getNewsListUseCase: GetNewsListUseCase,
     private val appRouter: AppRouter
 ) : BaseViewModel<Unit, NewsListAction>(Unit) {
 
-    val newsListFlow: Flow<PagingData<NewsShortDto>> =
+    val newsListFlow: Flow<PagingData<NewsShort>> =
         getNewsListUseCase().cachedIn(viewModelScope)
 
     override fun onAction(action: NewsListAction) {

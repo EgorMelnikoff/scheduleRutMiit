@@ -51,12 +51,12 @@ android {
 dependencies {
     implementation(projects.coreNavigation)
     implementation(projects.coreUi)
-    implementation(projects.featureSchedule)
+    implementation(projects.scheduleFeature.api)
+    implementation(projects.scheduleFeature.impl)
     implementation(projects.featureSearch)
     implementation(projects.featureCurriculum)
     implementation(projects.featureLatestRelease)
     implementation(projects.featureNews)
-    implementation(projects.featureExport)
     implementation(projects.featureTasks)
 
     implementation(platform(libs.firebase.bom))

@@ -29,7 +29,8 @@ android {
 
 dependencies {
     implementation(projects.coreNetwork)
-
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.bundles.work)
     implementation(libs.hilt.android)
 
     testImplementation(libs.bundles.test)

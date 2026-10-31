@@ -19,11 +19,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.newsImageUrl
+import com.egormelnikoff.schedulerutmiit.news.domain.model.News
 
-fun LazyListScope.newsDetailImageWidget(
-    news: NewsParsedDto
+internal fun LazyListScope.newsDetailImageWidget(
+    news: News
 ) {
     item {
         if (news.images.isNotEmpty()) {

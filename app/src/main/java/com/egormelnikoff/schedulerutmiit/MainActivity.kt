@@ -16,7 +16,7 @@ import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
 import com.egormelnikoff.schedulerutmiit.ui.WelcomePage
-import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
+import com.egormelnikoff.schedulerutmiit.ui.settings.PreferencesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

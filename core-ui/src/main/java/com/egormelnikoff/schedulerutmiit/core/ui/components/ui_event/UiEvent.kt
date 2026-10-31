@@ -4,14 +4,15 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import com.egormelnikoff.schedulerutmiit.core.common.result.TypedError
-import com.egormelnikoff.schedulerutmiit.core.common.result.getMessage
+import com.egormelnikoff.schedulerutmiit.core.common.utils.error.AppError
+import com.egormelnikoff.schedulerutmiit.core.common.utils.error.getMessage
+
 import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarVisuals
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 sealed interface UiEvent {
     data class ErrorMessage(
-        val typedError: TypedError,
+        val appError: AppError,
         val useSnackBar: Boolean = true
     ) : UiEvent
 
@@ -59,18 +60,17 @@ suspend fun UiEvent.handle(
 
 fun UiEvent.toMessage(context: Context): String {
     return when (this) {
-        is UiEvent.ErrorMessage -> typedError.getMessage(context)
+        is UiEvent.ErrorMessage -> appError.getMessage(context)
         is UiEvent.InfoMessage -> message.asString(context)
     }
 }
 
 
-suspend fun MutableSharedFlow<UiEvent>.sendErrorEvent(typedError: TypedError) {
+suspend fun MutableSharedFlow<UiEvent>.sendErrorEvent(appError: AppError) {
     this.emit(
-        UiEvent.ErrorMessage(typedError)
+        UiEvent.ErrorMessage(appError)
     )
 }
-
 suspend fun MutableSharedFlow<UiEvent>.sendInfoEvent(infoMessage: UiEvent.InfoMessage) {
     this.emit(infoMessage)
 }

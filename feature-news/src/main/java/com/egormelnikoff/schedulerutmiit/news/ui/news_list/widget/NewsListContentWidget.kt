@@ -12,12 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
+import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.news.ui.news_list.NewsListAction
 
 @Composable
-fun NewsListContentWidget(
-    newsList: LazyPagingItems<NewsShortDto>,
+internal fun NewsListContentWidget(
+    newsList: LazyPagingItems<NewsShort>,
     onAction: (NewsListAction) -> Unit
 ) {
     val newsListState = rememberLazyStaggeredGridState()

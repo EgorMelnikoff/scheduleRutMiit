@@ -13,8 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.Theme
-import com.egormelnikoff.schedulerutmiit.core.common.preferences.ThemePreferences
+import com.egormelnikoff.schedulerutmiit.core.common.domain.model.ThemePreferences
+import com.egormelnikoff.schedulerutmiit.core.common.domain.model.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.amoledColorScheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.animation
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.defaultTheme

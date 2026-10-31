@@ -14,7 +14,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.Theme
+import com.egormelnikoff.schedulerutmiit.core.common.domain.model.enums.Theme
 import com.egormelnikoff.schedulerutmiit.core.ui.components.button_row.AppButtonRow
 
 data class ThemeSelectorItemContent(

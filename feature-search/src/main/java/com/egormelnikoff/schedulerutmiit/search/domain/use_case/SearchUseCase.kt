@@ -1,43 +1,40 @@
 package com.egormelnikoff.schedulerutmiit.search.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
-import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.SearchType
-import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRemoteDataSource
-import com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.SearchParams
+import com.egormelnikoff.schedulerutmiit.search.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.search.domain.model.Person
+import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRepos
+import com.egormelnikoff.schedulerutmiit.search.utils.SearchType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class SearchUseCase @Inject constructor(
-    private val searchRemoteDataSource: SearchRemoteDataSource
+internal class SearchUseCase @Inject constructor(
+    private val searchRepos: SearchRepos
 ) {
     private var cachedGroups: List<Group>? = null
 
     suspend operator fun invoke(
-        searchParams: SearchParams
-    ): SearchResult {
+        searchParams: Pair<String, SearchType>
+    ): SearchResult = withContext(Dispatchers.IO) {
         if (cachedGroups == null) {
-            searchRemoteDataSource.fetchAllGroups().let { groups ->
-                if (groups is Result.Success) {
-                    cachedGroups = groups.data
-                }
+            searchRepos.fetchAllGroups().let { groups ->
+                cachedGroups = groups
             }
         }
 
-        var groups: Result<List<Group>>? = null
-        var people: Result<List<Person>>? = null
+        var groups: List<Group>? = null
+        var people: List<Person>? = null
 
-        if ((searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.GROUPS) && cachedGroups != null) {
-            groups = Result.Success(
-                cachedGroups!!.filterByQuery(searchParams.query)
-            )
+        if ((searchParams.second == SearchType.ALL || searchParams.second == SearchType.GROUPS) && cachedGroups != null) {
+            groups = cachedGroups!!.filterByQuery(searchParams.first)
+
         }
 
-        if (searchParams.searchType == SearchType.ALL || searchParams.searchType == SearchType.PEOPLE) {
-            people = searchRemoteDataSource.fetchPeopleByQuery(searchParams.query)
+        if (searchParams.second == SearchType.ALL || searchParams.second == SearchType.PEOPLE) {
+            people = searchRepos.fetchPeopleByQuery(searchParams.first)
         }
 
-        return SearchResult(
+        return@withContext SearchResult(
             groups = groups,
             people = people
         )

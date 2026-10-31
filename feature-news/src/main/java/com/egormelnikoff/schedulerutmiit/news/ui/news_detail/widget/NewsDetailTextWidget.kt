@@ -12,10 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsParsedDto
+import com.egormelnikoff.schedulerutmiit.news.domain.model.News
 
-fun LazyListScope.newsDetailTextWidget(
-    news: NewsParsedDto
+internal fun LazyListScope.newsDetailTextWidget(
+    news: News
 ) {
     items(news.paragraphs) { paragraph ->
         when (paragraph.first) {

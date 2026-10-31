@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.ui.components.shimmer.AppShimmerCard
 
 @Composable
-fun NewsListLoadingWidget() {
+internal fun NewsListLoadingWidget() {
     Scaffold { paddingValues ->
         LazyVerticalStaggeredGrid(
             modifier = Modifier.fillMaxSize(),

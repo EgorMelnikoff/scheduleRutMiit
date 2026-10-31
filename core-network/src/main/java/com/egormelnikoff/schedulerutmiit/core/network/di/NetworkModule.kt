@@ -1,12 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.core.network.di
 
 import android.content.Context
-import com.egormelnikoff.schedulerutmiit.core.common.utils.logger.Logger
 import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateTimeSerializer
-import com.egormelnikoff.schedulerutmiit.core.network.api.GithubApi
-import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
-import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -64,11 +60,6 @@ object NetworkModule {
             .build()
     }
 
-    @Provides
-    @Singleton
-    fun provideLogger(
-        @ApplicationContext context: Context
-    ): Logger = Logger(context)
 
     @Provides
     @Singleton
@@ -81,22 +72,6 @@ object NetworkModule {
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
     }
-
-    @Provides
-    @Singleton
-    fun provideMiitApi(retrofitBuilder: Retrofit.Builder): MiitApi =
-        retrofitBuilder
-            .baseUrl(Endpoints.BASE_RUT_MIIT_URL)
-            .build()
-            .create(MiitApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideGithubApi(retrofitBuilder: Retrofit.Builder): GithubApi =
-        retrofitBuilder
-            .baseUrl(Endpoints.API_GITHUB)
-            .build()
-            .create(GithubApi::class.java)
 
     @Provides
     @Singleton

@@ -1,12 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.tasks.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.tasks.data.repos.TaskRepos
-import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.edit_task.view_model.state.EditTaskForm
-import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.edit_task.view_model.state.EditTaskState
+import com.egormelnikoff.schedulerutmiit.tasks.domain.repos.TaskRepos
+import com.egormelnikoff.schedulerutmiit.tasks.ui.edit_task.EditTaskForm
+import com.egormelnikoff.schedulerutmiit.tasks.ui.edit_task.EditTaskState
 import jakarta.inject.Inject
 import java.time.LocalDate
 
-class LoadTaskUseCase @Inject constructor(
+internal class LoadTaskUseCase @Inject constructor(
     private val taskRepos: TaskRepos
 ) {
     suspend operator fun invoke(taskId: Long, date: LocalDate): EditTaskState.Loaded {

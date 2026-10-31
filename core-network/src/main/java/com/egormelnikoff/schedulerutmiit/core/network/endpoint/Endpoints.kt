@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.core.network.endpoint
 
 import androidx.core.net.toUri
-import com.egormelnikoff.schedulerutmiit.core.common.domain.enums.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
 
 object Endpoints {
     //API GITHUB
