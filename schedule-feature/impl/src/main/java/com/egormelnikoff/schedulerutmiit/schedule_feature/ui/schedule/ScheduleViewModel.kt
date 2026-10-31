@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.domain.model.ScreenState
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
+import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.FetchScheduleEvent
+import com.egormelnikoff.schedulerutmiit.schedule_feature.api.cache.FetchScheduleCache
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.EventDataSource
@@ -34,6 +36,7 @@ class ScheduleViewModel @Inject constructor(
     private val setDefaultScheduleUseCase: SetDefaultScheduleUseCase,
     private val eventDataSource: EventDataSource,
     private val namedScheduleRepos: NamedScheduleRepos,
+    private val fetchScheduleCache: FetchScheduleCache,
 ) : ViewModel() {
     private var previousState: NamedScheduleState = NamedScheduleState.Loading
 
@@ -46,6 +49,14 @@ class ScheduleViewModel @Inject constructor(
     val screenState = _screenState.asStateFlow()
     val uiEvent = _uiEventFlow.asSharedFlow()
 
+    init {
+        viewModelScope.launch {
+            fetchScheduleCache.scheduleRequests.collect { event ->
+                handleFetchEvent(event)
+            }
+        }
+    }
+
     val namedScheduleState = namedScheduleRepos.currentNamedSchedule
         .map { current ->
             val state = handleNamedSchedule(
@@ -54,7 +65,6 @@ class ScheduleViewModel @Inject constructor(
             ).second
 
             updateScreenState(
-                isLoading = namedScheduleRepos.isLoading,
                 isSaved = !namedScheduleRepos.isSaved
             )
 
@@ -118,25 +128,33 @@ class ScheduleViewModel @Inject constructor(
         updateScheduleJob = newUpdateScheduleJob
     }
 
-//    private suspend fun fetchNamedSchedule(
-//        name: String,
-//        apiId: Int,
-//        type: NamedScheduleType
-//    ) {
-//        updateScreenState(
-//            isLoading = true
-//        )
-//
-//        namedScheduleRepos.getAndOpen(
-//            namedScheduleId = 0,
-//            name, apiId, type
-//        )
-//
-//        updateScreenState(
-//            isError = false,
-//            isLoading = false
-//        )
-//    }
+    private fun handleFetchEvent(
+        fetchScheduleEvent: FetchScheduleEvent
+    ) {
+        // TODO заменить на launchToCoroutine
+
+        val fetchJob = viewModelScope.launch {
+            fetchScheduleJob?.cancelAndJoin()
+
+            updateScreenState(
+                isLoading = true
+            )
+
+            namedScheduleRepos.getAndOpen(
+                name = fetchScheduleEvent.name,
+                apiId = fetchScheduleEvent.apiId,
+                type = fetchScheduleEvent.type
+            )
+
+            updateScreenState(
+                isError = false,
+                isLoading = false
+            )
+        }
+
+        fetchScheduleJob = fetchJob
+
+    }
 
     fun saveCurrentNamedSchedule() {
         viewModelScope.launch {

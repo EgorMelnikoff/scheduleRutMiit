@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface NamedScheduleRepos {
     val currentNamedSchedule: Flow<NamedScheduleWithSchedules?>
     val isSaved: Boolean
-    val isLoading: Boolean
 
     suspend fun openTemp(namedScheduleWithSchedules: NamedScheduleWithSchedules)
     suspend fun saveOpened()

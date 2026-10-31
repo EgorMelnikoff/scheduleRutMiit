@@ -1,8 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.di
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.FetchScheduleTrigger
+import com.egormelnikoff.schedulerutmiit.schedule_feature.api.cache.FetchScheduleCache
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.repos.ExportReposImpl
+import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.cache.FetchScheduleCacheImpl
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.repos.NamedScheduleReposImpl
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.ExportRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.WidgetDataUpdater
@@ -30,6 +31,6 @@ abstract class BindScheduleModule {
 
     @Binds
     @Singleton
-    abstract fun bindFetchScheduleTrigger(namedScheduleReposImpl: NamedScheduleReposImpl): FetchScheduleTrigger
+    abstract fun bindFetchScheduleTrigger(fetchScheduleTriggerImpl: FetchScheduleCacheImpl): FetchScheduleCache
 
 }
