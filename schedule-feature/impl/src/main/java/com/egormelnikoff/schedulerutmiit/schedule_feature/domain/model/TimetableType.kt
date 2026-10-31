@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule_feature.api.model
+package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model
 
 enum class TimetableType(
     val typeName: String,

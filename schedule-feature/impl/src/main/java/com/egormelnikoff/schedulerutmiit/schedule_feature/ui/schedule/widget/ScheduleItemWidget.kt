@@ -15,9 +15,9 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
 import java.time.LocalDate
 
 @Composable

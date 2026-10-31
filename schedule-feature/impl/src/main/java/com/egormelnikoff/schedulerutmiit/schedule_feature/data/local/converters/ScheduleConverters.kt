@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.converters
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.TimetableType
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.entity.GroupEntity
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.entity.LecturerEntity
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.entity.RoomEntity

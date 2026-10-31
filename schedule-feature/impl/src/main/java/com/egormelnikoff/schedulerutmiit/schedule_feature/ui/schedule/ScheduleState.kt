@@ -2,11 +2,11 @@ package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.schedule
 
 import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarData
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Recurrence
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.ScheduleWithEvents
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Recurrence
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.getGroupedEvents
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.getPeriodicEvents
 import java.time.DayOfWeek
@@ -33,7 +33,7 @@ data class ScheduleState(
 
             if (scheduleWithEvents.schedule.recurrence != null) {
                 periodicEventsForCalendar = splitEvents.second.getPeriodicEvents(
-                    scheduleWithEvents.schedule.recurrence!!.interval
+                    scheduleWithEvents.schedule.recurrence.interval
                 )
             } else {
                 nonPeriodicEventsForCalendar = splitEvents.second.groupBy {

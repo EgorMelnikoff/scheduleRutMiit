@@ -1,13 +1,14 @@
-package com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos
+package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedScheduleWithSchedules
 import kotlinx.coroutines.flow.Flow
 
 interface NamedScheduleRepos {
     val currentNamedSchedule: Flow<NamedScheduleWithSchedules?>
     val isSaved: Boolean
+    val isLoading: Boolean
 
     suspend fun openTemp(namedScheduleWithSchedules: NamedScheduleWithSchedules)
     suspend fun saveOpened()

@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension
 
 import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Recurrence
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.ScheduleWithEvents
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Recurrence
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.ScheduleWithEvents
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate

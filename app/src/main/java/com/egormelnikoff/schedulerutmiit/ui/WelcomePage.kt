@@ -28,7 +28,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.PagerScreenContainer
 import com.egormelnikoff.schedulerutmiit.ui.settings.PreferencesViewModel
 
-
 @Composable
 fun WelcomePage(
     preferencesViewModel: PreferencesViewModel

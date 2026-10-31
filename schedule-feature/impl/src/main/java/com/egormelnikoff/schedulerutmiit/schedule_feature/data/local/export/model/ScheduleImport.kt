@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.export.model
 
 import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateSerializer
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.TimetableType
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.TimetableType
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 

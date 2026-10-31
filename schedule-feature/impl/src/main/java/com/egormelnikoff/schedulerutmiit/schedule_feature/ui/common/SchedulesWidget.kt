@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
 
 @Composable

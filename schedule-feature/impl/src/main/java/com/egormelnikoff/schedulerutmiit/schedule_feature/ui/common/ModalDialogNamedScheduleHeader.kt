@@ -23,9 +23,9 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId

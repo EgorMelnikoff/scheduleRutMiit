@@ -15,8 +15,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.domain.model.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.findEventExtra
 import java.time.LocalDate
 

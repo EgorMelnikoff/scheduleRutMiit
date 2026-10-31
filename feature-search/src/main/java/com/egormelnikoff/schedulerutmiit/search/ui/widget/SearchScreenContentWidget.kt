@@ -56,8 +56,10 @@ internal fun SearchScreenContentWidget(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SearchHeaderWidget(
-                state
-            ) { }
+                state = state,
+                onAction = onAction
+            )
+
             AnimatedContent(
                 modifier = Modifier.fillMaxSize(),
                 targetState = state,

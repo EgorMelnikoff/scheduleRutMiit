@@ -66,7 +66,7 @@ fun ScheduleCalendarWidget(
         },
         monthBadge = { firstDayOfCurrentWeek ->
             if (scheduleState.schedule.recurrence != null &&
-                scheduleState.schedule.recurrence!!.interval > 1
+                scheduleState.schedule.recurrence.interval > 1
             ) {
                 val selectedWeek = firstDayOfCurrentWeek.getCurrentWeek(
                     startDate = scheduleState.schedule.startDate,

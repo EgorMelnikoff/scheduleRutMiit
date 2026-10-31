@@ -27,10 +27,8 @@ fun LazyListScope.eventGroupsWidget(
     eventState: EventState.Loaded,
     onAction: (EventAction) -> Unit
 ) {
-    if (!eventState.event.groups.isNullOrEmpty()) {
+    eventState.event.groups?.let { groups ->
         item {
-            val groups = eventState.event.groups!!
-
             Box(
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {

@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_schedule
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.TimetableType
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.TimetableType
 import java.time.LocalDate
 
 sealed interface AddScheduleAction {

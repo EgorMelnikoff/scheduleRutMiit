@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.event
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
 
 sealed interface EventState {
     data object Loading : EventState

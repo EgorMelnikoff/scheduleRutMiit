@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_event
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.DefaultEventParams
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Group
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Lecturer
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Room
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.DefaultEventParams
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.validator.isValidEvent
 import java.time.LocalDate
 import java.time.LocalTime

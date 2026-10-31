@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_schedule
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.AddCustomNamedScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

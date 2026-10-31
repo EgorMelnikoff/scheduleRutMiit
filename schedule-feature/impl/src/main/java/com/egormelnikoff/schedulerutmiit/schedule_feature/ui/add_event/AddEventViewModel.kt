@@ -4,11 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toUtcDateTime
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.DefaultEventParams
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Group
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Lecturer
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Room
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.DefaultEventParams
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.EventDataSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.LoadEditEventUseCase

@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.EventExtraData
 import java.time.LocalDate
 import javax.inject.Inject
 

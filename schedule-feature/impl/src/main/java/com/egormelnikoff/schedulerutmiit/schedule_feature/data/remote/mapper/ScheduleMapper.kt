@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.mapper
 
 import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Group
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Lecturer
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Recurrence
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Room
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Recurrence
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.model.EventDto
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.model.GroupDto
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.model.LecturerDto

@@ -20,10 +20,8 @@ fun LazyListScope.eventLecturersWidget(
     eventState: EventState.Loaded,
     onAction: (EventAction) -> Unit
 ) {
-    if (!eventState.event.lecturers.isNullOrEmpty()) {
+    eventState.event.lecturers?.let { lecturers ->
         item {
-            val lecturers = eventState.event.lecturers!!
-
             Box(
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {

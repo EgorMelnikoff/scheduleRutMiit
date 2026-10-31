@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.model
+package com.egormelnikoff.schedulerutmiit.schedule_feature.glance.model
 
 import android.content.Context
 import androidx.glance.GlanceId
@@ -8,8 +8,8 @@ import androidx.work.ListenableWorker
 import com.egormelnikoff.schedulerutmiit.core.common.domain.repos.PreferencesRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.NamedScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.findDefault
-import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.widget.WidgetDataUpdater
-import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.ui.EventsWidget
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.WidgetDataUpdater
+import com.egormelnikoff.schedulerutmiit.schedule_feature.glance.ui.EventsWidget
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import javax.inject.Inject

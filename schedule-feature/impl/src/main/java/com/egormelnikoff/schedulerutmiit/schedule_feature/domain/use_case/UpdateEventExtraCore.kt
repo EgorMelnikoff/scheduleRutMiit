@@ -2,8 +2,8 @@ package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.model.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.common.domain.repos.PreferencesRepos
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.EventDataSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.EventExtraDataSource
 import kotlinx.coroutines.flow.first

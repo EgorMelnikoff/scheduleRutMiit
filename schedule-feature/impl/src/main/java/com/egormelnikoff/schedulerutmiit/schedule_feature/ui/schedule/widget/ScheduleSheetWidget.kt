@@ -30,9 +30,9 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBott
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.common.ModalDialogNamedScheduleHeader
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.schedule.ScheduleViewModel

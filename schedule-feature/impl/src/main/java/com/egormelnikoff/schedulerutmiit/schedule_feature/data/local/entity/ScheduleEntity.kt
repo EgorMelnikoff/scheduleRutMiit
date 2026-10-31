@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.TimetableType
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.TimetableType
 import java.time.LocalDate
 
 @Entity(

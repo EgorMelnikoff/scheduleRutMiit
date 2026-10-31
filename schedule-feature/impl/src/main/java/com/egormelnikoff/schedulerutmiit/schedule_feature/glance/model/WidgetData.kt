@@ -1,9 +1,9 @@
-package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.model
+package com.egormelnikoff.schedulerutmiit.schedule_feature.glance.model
 
 import com.egormelnikoff.schedulerutmiit.core.common.domain.model.enums.EventExtraPolicy
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.ScheduleWithEvents
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.getPeriodicEvents
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.review.SummaryState
 import kotlinx.serialization.Serializable
@@ -30,7 +30,7 @@ data class WidgetData(
 
                 if (s.schedule.recurrence != null) {
                     periodicEvents = splitEvents.second.getPeriodicEvents(
-                        s.schedule.recurrence!!.interval,
+                        s.schedule.recurrence.interval,
                     )
                 } else {
                     nonPeriodicEvents = splitEvents.second.groupBy {

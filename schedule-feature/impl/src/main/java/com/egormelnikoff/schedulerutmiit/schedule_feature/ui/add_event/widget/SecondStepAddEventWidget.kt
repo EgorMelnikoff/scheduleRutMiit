@@ -52,7 +52,7 @@ fun SecondStepAddEventWidget(
                 }
             )
             RecurrenceWidget(
-                maxInterval = state.schedule.recurrence!!.interval,
+                maxInterval = state.schedule.recurrence.interval,
                 currentInterval = state.editForm.interval,
                 currentPeriod = state.editForm.period,
                 onSelectInterval = { interval ->

@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.mapper
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.ScheduleWithEvents
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.mapper.toDomain
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.model.ScheduleDto
 import javax.inject.Inject

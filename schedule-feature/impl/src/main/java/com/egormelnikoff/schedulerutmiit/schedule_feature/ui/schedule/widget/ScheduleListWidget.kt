@@ -18,8 +18,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.model.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.common.domain.model.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.schedule.ScheduleState
 import java.time.LocalDate

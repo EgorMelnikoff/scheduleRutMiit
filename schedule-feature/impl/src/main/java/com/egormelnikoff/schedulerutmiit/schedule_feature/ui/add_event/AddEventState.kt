@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_event
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
 
 sealed interface AddEventState {
     data object Loading : AddEventState

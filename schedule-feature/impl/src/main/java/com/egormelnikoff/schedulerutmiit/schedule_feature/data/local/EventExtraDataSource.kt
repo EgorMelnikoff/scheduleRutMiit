@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.data.local
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.mapper.toDomain
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.mapper.toEntity

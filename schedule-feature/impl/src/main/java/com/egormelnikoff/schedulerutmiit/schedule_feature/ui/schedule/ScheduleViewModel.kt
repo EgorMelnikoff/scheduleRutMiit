@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.domain.model.ScreenState
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleWithSchedules
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.EventDataSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.DeleteNamedScheduleUseCase
@@ -46,7 +46,6 @@ class ScheduleViewModel @Inject constructor(
     val screenState = _screenState.asStateFlow()
     val uiEvent = _uiEventFlow.asSharedFlow()
 
-
     val namedScheduleState = namedScheduleRepos.currentNamedSchedule
         .map { current ->
             val state = handleNamedSchedule(
@@ -55,6 +54,7 @@ class ScheduleViewModel @Inject constructor(
             ).second
 
             updateScreenState(
+                isLoading = namedScheduleRepos.isLoading,
                 isSaved = !namedScheduleRepos.isSaved
             )
 

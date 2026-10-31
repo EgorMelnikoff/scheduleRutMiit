@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.utils.time_provider.TimePro
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.NamedScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.DeleteNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.SetDefaultNamedScheduleUseCase

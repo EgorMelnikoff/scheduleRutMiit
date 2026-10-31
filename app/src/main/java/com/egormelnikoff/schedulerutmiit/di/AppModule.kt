@@ -14,6 +14,8 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
-        WorkManager.getInstance(context)
+    fun provideWorkManager(
+        @ApplicationContext
+        context: Context
+    ) = WorkManager.getInstance(context)
 }

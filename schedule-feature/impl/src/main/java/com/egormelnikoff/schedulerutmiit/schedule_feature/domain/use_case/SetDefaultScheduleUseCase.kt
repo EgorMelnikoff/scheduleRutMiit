@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.EventExtraDataSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.ScheduleDataSource
-import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.widget.WidgetDataUpdater
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.WidgetDataUpdater
 import javax.inject.Inject
 
 class SetDefaultScheduleUseCase @Inject constructor(

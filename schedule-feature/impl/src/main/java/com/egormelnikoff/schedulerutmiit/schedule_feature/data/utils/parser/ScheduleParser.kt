@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.parser
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.parserFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.consts.Locale.ruLocale
 import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toUtcTime
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Group
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.model.EventDto
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.model.GroupDto
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.model.LecturerDto

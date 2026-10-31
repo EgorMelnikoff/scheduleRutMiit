@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.data.local
 
 import androidx.room.withTransaction
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.ScheduleWithEvents
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.dao.ScheduleDao

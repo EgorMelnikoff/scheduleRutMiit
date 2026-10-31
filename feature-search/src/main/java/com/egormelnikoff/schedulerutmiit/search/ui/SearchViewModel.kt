@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.core.network.handler.errorHandler
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.FetchScheduleTrigger
 import com.egormelnikoff.schedulerutmiit.search.domain.model.RefreshArgs
 import com.egormelnikoff.schedulerutmiit.search.domain.model.SearchQuery
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRepos
@@ -32,7 +32,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 internal class SearchViewModel @Inject constructor(
     private val searchRepos: SearchRepos,
-    private val namedScheduleRepos: NamedScheduleRepos,
+    private val fetchScheduleTrigger: FetchScheduleTrigger,
     private val searchUseCase: SearchUseCase,
     private val appRouter: AppRouter,
 ) : BaseViewModel<SearchState, SearchAction>(SearchState()) {
@@ -129,7 +129,7 @@ internal class SearchViewModel @Inject constructor(
                 tag = "navigateSchedule"
             )
         ) {
-            namedScheduleRepos.getAndOpen(
+            fetchScheduleTrigger.trigger(
                 apiId = refreshArgs.apiId,
                 name = refreshArgs.name,
                 type = refreshArgs.type

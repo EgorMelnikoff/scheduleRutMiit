@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.model
+package com.egormelnikoff.schedulerutmiit.schedule_feature.glance.model
 
 import kotlinx.serialization.Serializable
 

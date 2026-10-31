@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.hidden_events.widg
 
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.hidden_events.HiddenEventsAction
 
 fun LazyListScope.hiddenEventsContentWidget(

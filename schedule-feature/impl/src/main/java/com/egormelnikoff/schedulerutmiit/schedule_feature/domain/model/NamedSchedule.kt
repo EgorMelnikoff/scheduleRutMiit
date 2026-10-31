@@ -1,4 +1,6 @@
-package com.egormelnikoff.schedulerutmiit.schedule_feature.api.model
+package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model
+
+import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
 
 data class NamedSchedule(
     val id: Long,

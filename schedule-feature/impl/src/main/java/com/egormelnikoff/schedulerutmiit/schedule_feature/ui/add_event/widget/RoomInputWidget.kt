@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Room
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.utils.roomMock
 
 @Composable

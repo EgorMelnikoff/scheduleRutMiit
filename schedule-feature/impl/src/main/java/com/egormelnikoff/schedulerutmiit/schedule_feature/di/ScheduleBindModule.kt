@@ -1,11 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.di
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.FetchScheduleTrigger
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.repos.ExportReposImpl
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.repos.NamedScheduleReposImpl
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.ExportRepos
-import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.widget.WidgetDataUpdater
-import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.model.WidgetDataUpdaterImpl
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.WidgetDataUpdater
+import com.egormelnikoff.schedulerutmiit.schedule_feature.glance.model.WidgetDataUpdaterImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -26,4 +27,9 @@ abstract class BindScheduleModule {
     @Binds
     @Singleton
     abstract fun bindNamedScheduleRepos(namedScheduleReposImpl: NamedScheduleReposImpl): NamedScheduleRepos
+
+    @Binds
+    @Singleton
+    abstract fun bindFetchScheduleTrigger(namedScheduleReposImpl: NamedScheduleReposImpl): FetchScheduleTrigger
+
 }

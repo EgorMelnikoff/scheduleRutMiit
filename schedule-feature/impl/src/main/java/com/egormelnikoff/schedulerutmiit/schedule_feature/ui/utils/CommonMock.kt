@@ -1,26 +1,26 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.utils
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Group
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Lecturer
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Recurrence
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Room
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.TimetableType
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Recurrence
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Room
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.TimetableType
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 val lecturerMock = Lecturer(
-    fullFio = "Антонова Елена Вячеславовна",
-    shortFio = "Антонова Е. В.",
+    fullFio = "Иванов Иван Иванович",
+    shortFio = "Иванов И. И.",
     hint = ""
 )
 
 val groupMock = Group(
     id = 0,
-    name = "УВП-211"
+    name = "УВВ-311"
 )
 val roomMock = Room(
     name = "Аудитория 1333",

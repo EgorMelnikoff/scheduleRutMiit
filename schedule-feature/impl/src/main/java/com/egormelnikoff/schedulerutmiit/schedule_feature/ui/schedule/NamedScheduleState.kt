@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.schedule
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedScheduleWithSchedules
 
 sealed interface NamedScheduleState {
     data object Loading : NamedScheduleState

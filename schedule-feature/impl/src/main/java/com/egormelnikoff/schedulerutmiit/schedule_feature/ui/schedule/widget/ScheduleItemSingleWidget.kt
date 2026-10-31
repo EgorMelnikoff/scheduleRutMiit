@@ -34,8 +34,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.domain.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.EventExtraData
 
 @Composable
 fun ScheduleItemSingleWidget(
@@ -90,7 +90,7 @@ fun ScheduleItemSingleWidget(
         ) {
             event.typeName?.let {
                 Text(
-                    text = event.typeName.toString(),
+                    text = event.typeName,
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
@@ -116,7 +116,7 @@ fun ScheduleItemSingleWidget(
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
-                    event.groups?.forEach { group ->
+                    event.groups.forEach { group ->
                         Text(
                             text = group.name,
                             style = MaterialTheme.typography.bodyMedium,
@@ -141,7 +141,7 @@ fun ScheduleItemSingleWidget(
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
-                    event.rooms?.forEach { room ->
+                    event.rooms.forEach { room ->
                         Text(
                             text = room.name,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -166,7 +166,7 @@ fun ScheduleItemSingleWidget(
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
-                    event.lecturers?.forEach { lecturer ->
+                    event.lecturers.forEach { lecturer ->
                         Text(
                             text = lecturer.shortFio,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,

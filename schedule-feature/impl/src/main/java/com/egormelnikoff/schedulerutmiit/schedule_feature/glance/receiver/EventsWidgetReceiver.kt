@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.receiver
+package com.egormelnikoff.schedulerutmiit.schedule_feature.glance.receiver
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -7,7 +7,7 @@ import android.util.Log
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import com.egormelnikoff.schedulerutmiit.schedule_feature.di.ProviderEntryPoint
-import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.ui.EventsWidget
+import com.egormelnikoff.schedulerutmiit.schedule_feature.glance.ui.EventsWidget
 import dagger.hilt.EntryPoints
 
 class EventsWidgetReceiver : GlanceAppWidgetReceiver() {

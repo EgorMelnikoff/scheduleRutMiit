@@ -1,13 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleWithSchedules
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Recurrence
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.ScheduleWithEvents
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.TimetableType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Recurrence
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.ScheduleWithEvents
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.TimetableType
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
 import java.time.LocalDate
 import javax.inject.Inject
 

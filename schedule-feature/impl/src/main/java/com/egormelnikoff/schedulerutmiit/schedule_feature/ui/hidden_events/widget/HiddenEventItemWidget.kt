@@ -20,7 +20,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toLocalTime
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.hidden_events.HiddenEventsAction
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.utils.eventMock
 import java.time.format.TextStyle

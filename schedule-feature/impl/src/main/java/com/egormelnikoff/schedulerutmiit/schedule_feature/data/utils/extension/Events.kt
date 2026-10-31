@@ -4,8 +4,8 @@ import android.content.Context
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.model.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.EventExtraData
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -90,15 +90,15 @@ fun Event.customToString(context: Context): String {
         }
 
         if (!this@customToString.rooms.isNullOrEmpty()) {
-            append("\n${context.getString(R.string.place)}: ${this@customToString.rooms?.joinToString { it.name }}")
+            append("\n${context.getString(R.string.place)}: ${this@customToString.rooms.joinToString { it.name }}")
         }
 
         if (!this@customToString.lecturers.isNullOrEmpty()) {
-            append("\n${context.getString(R.string.lecturers)}: ${this@customToString.lecturers?.joinToString { it.shortFio }}")
+            append("\n${context.getString(R.string.lecturers)}: ${this@customToString.lecturers.joinToString { it.shortFio }}")
         }
 
         if (!this@customToString.groups.isNullOrEmpty()) {
-            append("\n${context.getString(R.string.groups)}: ${this@customToString.groups?.joinToString { it.name }}")
+            append("\n${context.getString(R.string.groups)}: ${this@customToString.groups.joinToString { it.name }}")
         }
     }
 }

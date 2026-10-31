@@ -1,10 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.data.repos
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleWithSchedules
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.NamedScheduleRepos
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.ScheduleSource
+import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.FetchScheduleTrigger
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.ScheduleSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.NamedScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.ScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.ScheduleRemoteDataSource
@@ -15,13 +16,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class NamedScheduleReposImpl @Inject constructor(
     private val namedScheduleDataSource: NamedScheduleDataSource,
     private val scheduleDataSource: ScheduleDataSource,
     private val scheduleRemoteDataSource: ScheduleRemoteDataSource
-) : NamedScheduleRepos {
+) : NamedScheduleRepos, FetchScheduleTrigger {
     private val source = MutableStateFlow<ScheduleSource>(ScheduleSource.Default)
+
+    private var _isLoading: Boolean = false
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentNamedSchedule: Flow<NamedScheduleWithSchedules?> =
@@ -37,6 +42,9 @@ class NamedScheduleReposImpl @Inject constructor(
 
     override val isSaved: Boolean
         get() = source.value is ScheduleSource.Temporary
+
+    override val isLoading: Boolean
+        get() = _isLoading
 
     override suspend fun get(
         namedScheduleId: Long,
@@ -61,13 +69,16 @@ class NamedScheduleReposImpl @Inject constructor(
         apiId: Int,
         type: NamedScheduleType
     ) {
-        if (namedScheduleId != 0L) {
-            source.value = ScheduleSource.ById(namedScheduleId)
-            return
+        try {
+            if (namedScheduleId != 0L) {
+                source.value = ScheduleSource.ById(namedScheduleId)
+                return
+            }
+            val schedule = get(namedScheduleId, name, apiId, type)
+            source.value = ScheduleSource.Temporary(schedule)
+        } finally {
+            _isLoading = false
         }
-
-        val schedule = get(namedScheduleId, name, apiId, type)
-        source.value = ScheduleSource.Temporary(schedule)
     }
 
     override suspend fun openTemp(namedScheduleWithSchedules: NamedScheduleWithSchedules) {
@@ -114,5 +125,19 @@ class NamedScheduleReposImpl @Inject constructor(
 
     override suspend fun setDefault(namedScheduleId: Long) {
         namedScheduleDataSource.setDefault(namedScheduleId)
+    }
+
+    override suspend fun trigger(
+        name: String,
+        apiId: Int,
+        type: NamedScheduleType
+    ) {
+        _isLoading = true
+
+        getAndOpen(
+            name = name,
+            apiId = apiId,
+            type = type
+        )
     }
 }

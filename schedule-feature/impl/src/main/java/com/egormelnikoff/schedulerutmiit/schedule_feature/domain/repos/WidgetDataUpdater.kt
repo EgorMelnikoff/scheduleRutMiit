@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.widget
+package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos
 
 import androidx.work.ListenableWorker
 

@@ -15,10 +15,8 @@ import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.event.EventState
 fun LazyListScope.eventRoomsWidget(
     eventState: EventState.Loaded
 ) {
-    if (!eventState.event.rooms.isNullOrEmpty()) {
+    eventState.event.rooms?.let { rooms ->
         item {
-            val rooms = eventState.event.rooms!!
-
             Box(
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {

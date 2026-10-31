@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.observer
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.NamedScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.review.SummaryState

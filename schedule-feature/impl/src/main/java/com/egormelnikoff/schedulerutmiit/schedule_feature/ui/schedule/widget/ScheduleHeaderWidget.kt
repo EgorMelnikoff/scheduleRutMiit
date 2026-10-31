@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.model.enums.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
 
 @OptIn(ExperimentalMaterial3Api::class)

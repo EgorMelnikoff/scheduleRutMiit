@@ -9,7 +9,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.egormelnikoff.schedulerutmiit.core.ui.components.button_row.AppButtonRow
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.TimetableType
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_schedule.AddScheduleAction
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_schedule.AddScheduleState
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.utils.addNonPeriodicScheduleStateMock

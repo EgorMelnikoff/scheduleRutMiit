@@ -17,7 +17,7 @@ android {
         minSdk = 29
         targetSdk = 37
         versionCode = 95
-        versionName = "2.7.9"
+        versionName = "3.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -67,7 +67,6 @@ dependencies {
     implementation(libs.bundles.work)
     implementation(libs.bundles.compose)
     implementation(libs.bundles.navigation)
-    implementation(libs.bundles.glance)
     implementation(libs.firebase.analytics)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.core.splashscreen)

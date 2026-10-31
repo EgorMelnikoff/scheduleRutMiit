@@ -6,7 +6,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.egormelnikoff.schedulerutmiit.core.common.domain.repos.PreferencesRepos
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.RefreshNamedScheduleUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

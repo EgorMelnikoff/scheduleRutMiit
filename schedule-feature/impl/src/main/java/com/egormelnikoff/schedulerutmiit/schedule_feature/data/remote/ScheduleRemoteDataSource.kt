@@ -2,10 +2,10 @@ package com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote
 
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.fetcher.HtmlFetcher
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Group
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.model.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.remote.model.TimetableDto
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.getShortName

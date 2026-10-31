@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.review
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.NamedSchedule
 
 sealed interface ReviewAction {
     data object OnFindScheduleClicked : ReviewAction

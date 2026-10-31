@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.ui
+package com.egormelnikoff.schedulerutmiit.schedule_feature.glance.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -38,13 +38,13 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.model.enums.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.findEventExtra
 import com.egormelnikoff.schedulerutmiit.schedule_feature.di.ProviderEntryPoint
-import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.widget.WidgetDataUpdater
-import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.model.WidgetData
-import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.ui.theme.ScheduleGlanceTheme
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.WidgetDataUpdater
+import com.egormelnikoff.schedulerutmiit.schedule_feature.glance.model.WidgetData
+import com.egormelnikoff.schedulerutmiit.schedule_feature.glance.ui.theme.ScheduleGlanceTheme
 import dagger.hilt.EntryPoints
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex

@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.utils
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Room
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_event.AddEventState
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_event.EditForm
 

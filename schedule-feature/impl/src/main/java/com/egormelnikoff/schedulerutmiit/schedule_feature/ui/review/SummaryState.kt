@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.review
 
 import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Schedule
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.utils.extension.getEventsForDate
 import java.time.DayOfWeek

@@ -23,7 +23,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.DefaultEventParams
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_event.AddEventAction
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.add_event.AddEventState
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.utils.addEventStateMock

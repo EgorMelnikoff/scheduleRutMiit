@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.schedule_feature.di
 import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateTimeSerializer
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.work.ScheduleWorkScheduler
-import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.widget.WidgetDataUpdater
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.WidgetDataUpdater
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

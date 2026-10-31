@@ -27,8 +27,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.d
 import com.egormelnikoff.schedulerutmiit.core.common.utils.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Event
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.TimetableType
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.schedule_feature.ui.utils.eventStateMock
 import java.time.format.TextStyle
 

@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.schedule_feature.ui.widget.ui.theme
+package com.egormelnikoff.schedulerutmiit.schedule_feature.glance.ui.theme
 
 
 import androidx.compose.material3.darkColorScheme

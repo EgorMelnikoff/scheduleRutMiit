@@ -7,10 +7,11 @@ import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.network.handler.errorHandler
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Group
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.model.Lecturer
 import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.schedule_feature.api.repos.FetchScheduleTrigger
+import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.schedule_feature.data.local.EventDataSource
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.LoadEventUseCase
 import com.egormelnikoff.schedulerutmiit.schedule_feature.domain.use_case.UpdateEventCommentUseCase
@@ -36,7 +37,7 @@ class EventViewModel @AssistedInject constructor(
     private val updateEventTagUseCase: UpdateEventTagUseCase,
 
     private val appRouter: AppRouter,
-    private val namedScheduleRepos: NamedScheduleRepos,
+    private val fetchScheduleTrigger: FetchScheduleTrigger,
     private val clipboardHelper: ClipboardHelper,
     private val shareHelper: ShareHelper,
     @Assisted
@@ -116,7 +117,7 @@ class EventViewModel @AssistedInject constructor(
                 println("BOOOOM")
             }
         ) {
-            namedScheduleRepos.getAndOpen(
+            fetchScheduleTrigger.trigger(
                 name = group.name,
                 apiId = group.id,
                 type = NamedScheduleType.GROUP
@@ -134,7 +135,7 @@ class EventViewModel @AssistedInject constructor(
                 println("BOOOOM")
             }
         ) {
-            namedScheduleRepos.getAndOpen(
+            fetchScheduleTrigger.trigger(
                 name = lecturer.shortFio,
                 apiId = lecturer.id,
                 type = NamedScheduleType.PERSON
