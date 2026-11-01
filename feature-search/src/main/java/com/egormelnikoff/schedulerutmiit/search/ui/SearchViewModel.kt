@@ -91,7 +91,12 @@ internal class SearchViewModel @Inject constructor(
             is SearchAction.OnSaveQuery -> saveQueryToHistory(action.searchQuery)
             is SearchAction.OnDeleteQuery -> deleteQueryFromHistory(action.queryId)
             is SearchAction.OnNavigateSchedule -> navigateSchedule(action.refreshArgs)
-            SearchAction.OnClearParams -> setDefaultParams()
+            is SearchAction.OnClearParams -> updateState {
+                copy(
+                    query = "",
+                    searchType = SearchType.ALL
+                )
+            }
         }
     }
 
@@ -156,15 +161,6 @@ internal class SearchViewModel @Inject constructor(
                 isLoading = false,
                 groups = listOf(),
                 people = listOf()
-            )
-        }
-    }
-
-    private fun setDefaultParams() {
-        updateState {
-            copy(
-                query = "",
-                searchType = SearchType.ALL
             )
         }
     }

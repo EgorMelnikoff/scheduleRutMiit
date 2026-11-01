@@ -70,13 +70,13 @@ internal class CurriculumViewModel @Inject constructor(
             }
             is CurriculumAction.OnHideAdviceDialog -> updateState {
                 copy(
-                    showAdviceDialog = true
+                    showAdviceDialog = false
                 )
             }
 
             is CurriculumAction.OnShowAdviceDialog -> updateState {
                 copy(
-                    showAdviceDialog = false
+                    showAdviceDialog = true
                 )
             }
         }

@@ -106,7 +106,7 @@ fun ReviewScheduleSheet(
                         onAction(
                             ReviewAction.OnSetNamedSchedule(
                                 namedScheduleId = namedSchedule.id,
-                                setDefault = true
+                                setDefault = false
                             )
                         )
                     }

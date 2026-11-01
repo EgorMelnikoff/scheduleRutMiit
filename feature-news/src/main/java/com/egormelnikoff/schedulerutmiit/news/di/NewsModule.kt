@@ -14,7 +14,7 @@ import javax.inject.Singleton
 internal object NewsModule {
     @Provides
     @Singleton
-    fun provideMiitApi(retrofitBuilder: Retrofit.Builder): NewsApi =
+    fun provideNewsApi(retrofitBuilder: Retrofit.Builder): NewsApi =
         retrofitBuilder
             .baseUrl(Endpoints.BASE_RUT_MIIT_URL)
             .build()

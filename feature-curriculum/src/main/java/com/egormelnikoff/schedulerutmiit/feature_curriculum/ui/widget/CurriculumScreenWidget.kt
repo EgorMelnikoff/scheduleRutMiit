@@ -86,7 +86,7 @@ internal fun CurriculumScreenWidget(
 
                     else -> {
                         CurriculumScreenContentWidget(
-                            contentPadding, animatedState
+                            animatedState
                         )
                     }
                 }

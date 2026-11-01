@@ -9,8 +9,9 @@ internal class NewsRemoteDataSource @Inject constructor(
     private val newsApi: NewsApi,
 ) {
     suspend fun getNewsList(pageSize: Int, page: Int): NewsList =
-        newsApi.getNewsList(pageSize, page, page).toDomain()
+        newsApi.getNewsList(pageSize, page, page, 2).toDomain()
 
 
-    suspend fun getNewsById(id: Long): News = newsApi.getNewsById(id).toDomain()
+    suspend fun getNewsById(id: Long): News =
+        newsApi.getNewsById(id).toDomain()
 }

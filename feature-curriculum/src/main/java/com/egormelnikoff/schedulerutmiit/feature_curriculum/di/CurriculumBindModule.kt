@@ -14,5 +14,4 @@ internal abstract class CurriculumBindModule {
     @Binds
     @Singleton
     abstract fun bindCurriculumRepos(curriculumReposImpl: CurriculumReposImpl): CurriculumRepos
-
 }

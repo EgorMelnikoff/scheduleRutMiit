@@ -14,27 +14,25 @@ import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumState
 
 @Composable
 internal fun CurriculumScreenContentWidget(
-    contentPadding: PaddingValues,
     state: CurriculumState,
 ) {
     ScaffoldLazyColumn(
-        contentPadding = contentPadding
+        contentPadding = PaddingValues(
+            horizontal = 16.dp
+        ),
+        itemSpacing = 16.dp
     ) {
         items(state.subjectsList) { subject ->
-            Box(
-                modifier = Modifier.clip(MaterialTheme.shapes.medium)
-            ) {
-                AppCell(
-                    verticalPadding = 8.dp,
-                    horizontalPadding = 8.dp,
-                    title = subject.title,
-                    subtitleMaxLines = Int.MAX_VALUE,
-                    subtitle = subject.teachers.joinToString(
-                        separator = ", \n"
-                    ) { it },
-                    showClickLabel = false
-                )
-            }
+            AppCell(
+                title = subject.title,
+                verticalPadding = 0.dp,
+                horizontalPadding = 0.dp,
+                subtitleMaxLines = Int.MAX_VALUE,
+                subtitle = subject.teachers.joinToString(
+                    separator = ", \n"
+                ) { it },
+                showClickLabel = false
+            )
 
         }
     }

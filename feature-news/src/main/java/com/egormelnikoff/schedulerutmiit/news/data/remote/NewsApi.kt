@@ -13,7 +13,7 @@ internal interface NewsApi {
         @Query("page_size") pageSize: Int,
         @Query("from") fromPage: Int,
         @Query("to") toPage: Int,
-        @Query("idk_information_category") idCategory: Int = 2
+        @Query("idk_information_category") idCategory: Int
     ): NewsListDto
 
     @GET(Endpoints.NEWS)

@@ -146,6 +146,7 @@ class ReviewViewModel @Inject constructor(
                 setDefaultNamedScheduleUseCase(namedScheduleId)
                 namedScheduleRepos.openDefault()
             } else {
+                println("testt")
                 namedScheduleRepos.getAndOpen(namedScheduleId)
                 appRouter.navigateToStartRage()
             }
