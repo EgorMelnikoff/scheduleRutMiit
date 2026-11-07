@@ -34,10 +34,11 @@ android {
 }
 
 dependencies {
-    implementation(projects.scheduleFeature.api)
-    implementation(projects.coreUi)
-    implementation(projects.coreNavigation)
-    implementation(projects.coreNetwork)
+    implementation(projects.core.common)
+    implementation(projects.featureSchedule.api)
+    implementation(projects.core.ui)
+    implementation(projects.core.navigation)
+    implementation(projects.core.network)
     
 
     implementation(platform(libs.androidx.compose.bom))

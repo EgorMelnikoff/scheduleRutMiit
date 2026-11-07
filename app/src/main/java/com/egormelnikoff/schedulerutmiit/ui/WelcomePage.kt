@@ -26,11 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.PagerScreenContainer
-import com.egormelnikoff.schedulerutmiit.ui.settings.PreferencesViewModel
 
 @Composable
 fun WelcomePage(
-    preferencesViewModel: PreferencesViewModel
+    onSkip: () -> Unit
 ) {
     Scaffold { padding ->
         val scope = rememberCoroutineScope()
@@ -43,12 +42,8 @@ fun WelcomePage(
             pagerState = pagerState,
             scope = scope,
             isNextEnabled = { true },
-            onFinish = {
-                preferencesViewModel.skipWelcomePage()
-            },
-            onCancel = {
-                preferencesViewModel.skipWelcomePage()
-            },
+            onFinish = onSkip,
+            onCancel = onSkip,
             cancelTitle = stringResource(R.string.skip),
             finishTitle = stringResource(R.string.start) + "!",
             paddingValues = padding

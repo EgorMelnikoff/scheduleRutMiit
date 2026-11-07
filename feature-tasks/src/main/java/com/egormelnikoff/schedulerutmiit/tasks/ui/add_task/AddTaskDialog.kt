@@ -39,9 +39,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTaskDialog(
-    onBack: () -> Unit
-) {
+fun AddTaskDialog() {
     val addTaskViewModel = hiltViewModel<AddTaskViewModel>()
     val addTaskForm = addTaskViewModel.addTaskForm.collectAsStateWithLifecycle().value
 
@@ -54,7 +52,9 @@ fun AddTaskDialog(
         topBar = {
             AppTopBar(
                 titleText = stringResource(R.string.create_task),
-                navAction = onBack
+                navAction = {
+                    addTaskViewModel.onBack()
+                }
             )
         }
     ) { innerPadding ->
@@ -162,7 +162,6 @@ fun AddTaskDialog(
                 enabled = addTaskForm.isButtonEnabled,
                 onClick = {
                     addTaskViewModel.addTask()
-                    onBack()
                 }
             )
         }

@@ -22,7 +22,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingAsyncImage
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.search.domain.model.RefreshArgs
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchAction
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchState

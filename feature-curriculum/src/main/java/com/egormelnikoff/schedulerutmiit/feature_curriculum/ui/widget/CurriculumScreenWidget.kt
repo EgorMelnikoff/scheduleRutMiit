@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.utils.error.getMessage
+import com.egormelnikoff.schedulerutmiit.core.common.error.getMessage
 import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen

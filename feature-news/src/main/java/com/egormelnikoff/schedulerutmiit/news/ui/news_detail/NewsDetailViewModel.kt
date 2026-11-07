@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.news.ui.news_detail
 
-import com.egormelnikoff.schedulerutmiit.core.common.utils.error.toAppError
+import com.egormelnikoff.schedulerutmiit.core.common.error.toAppError
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.network.handler.errorHandler
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel

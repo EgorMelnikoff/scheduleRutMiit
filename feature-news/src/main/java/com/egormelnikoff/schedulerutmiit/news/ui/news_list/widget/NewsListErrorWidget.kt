@@ -10,8 +10,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.utils.error.getMessage
-import com.egormelnikoff.schedulerutmiit.core.common.utils.error.toAppError
+import com.egormelnikoff.schedulerutmiit.core.common.error.getMessage
+import com.egormelnikoff.schedulerutmiit.core.common.error.toAppError
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsShort

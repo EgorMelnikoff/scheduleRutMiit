@@ -49,13 +49,15 @@ android {
 }
 
 dependencies {
-    implementation(projects.coreNavigation)
-    implementation(projects.coreUi)
-    implementation(projects.scheduleFeature.api)
-    implementation(projects.scheduleFeature.impl)
+    implementation(projects.core.common)
+    implementation(projects.core.settings.api)
+    implementation(projects.core.settings.impl)
+    implementation(projects.core.navigation)
+    implementation(projects.core.ui)
+    implementation(projects.featureSchedule.api)
+    implementation(projects.featureSchedule.impl)
     implementation(projects.featureSearch)
     implementation(projects.featureCurriculum)
-    implementation(projects.featureLatestRelease)
     implementation(projects.featureNews)
     implementation(projects.featureTasks)
 

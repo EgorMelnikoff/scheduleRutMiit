@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_curriculum.ui
 
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.utils.error.toAppError
+import com.egormelnikoff.schedulerutmiit.core.common.error.toAppError
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel

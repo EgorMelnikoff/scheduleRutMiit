@@ -33,9 +33,10 @@ android {
 }
 
 dependencies {
-    implementation(projects.coreUi)
-    implementation(projects.coreNavigation)
-    implementation(projects.coreNetwork)
+    implementation(projects.core.common)
+    implementation(projects.core.ui)
+    implementation(projects.core.navigation)
+    implementation(projects.core.network)
 
     implementation(platform(libs.androidx.compose.bom))
 

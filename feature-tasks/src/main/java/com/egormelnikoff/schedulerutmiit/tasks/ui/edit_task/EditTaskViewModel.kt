@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.tasks.ui.edit_task
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.LoadTaskUseCase
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.TaskAction
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.TaskActionUseCase
@@ -21,6 +22,7 @@ import java.time.LocalTime
 internal class EditTaskViewModel @AssistedInject constructor(
     private val taskActionUseCase: TaskActionUseCase,
     private val loadTaskUseCase: LoadTaskUseCase,
+    private val appRouter: AppRouter,
     @Assisted
     private val taskId: Long,
     @Assisted
@@ -33,6 +35,10 @@ internal class EditTaskViewModel @AssistedInject constructor(
         viewModelScope.launch {
             _editTaskState.value = loadTaskUseCase(taskId, date)
         }
+    }
+
+    fun onBack() {
+        appRouter.onBack()
     }
 
     fun updateText(text: String) {

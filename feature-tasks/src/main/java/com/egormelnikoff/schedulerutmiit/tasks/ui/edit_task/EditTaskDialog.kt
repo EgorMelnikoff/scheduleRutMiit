@@ -42,8 +42,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTaskDialog(
-    editTaskDialog: Route.Dialog.EditTaskDialog,
-    onBack: () -> Unit
+    editTaskDialog: Route.Dialog.EditTaskDialog
 ) {
     val editTaskViewModel = hiltViewModel<EditTaskViewModel, EditTaskViewModel.Factory> { factory ->
         factory.create(editTaskDialog.taskId, editTaskDialog.date)
@@ -59,7 +58,10 @@ fun EditTaskDialog(
             Scaffold(
                 topBar = {
                     AppTopBar(
-                        titleText = stringResource(R.string.task), navAction = onBack
+                        titleText = stringResource(R.string.task),
+                        navAction = {
+                            editTaskViewModel.onBack()
+                        }
                     )
                 }
             ) { innerPadding ->

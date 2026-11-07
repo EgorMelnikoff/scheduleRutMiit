@@ -2,9 +2,16 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="21">
+      <module name="AndroidStudioProjects.scheduleRutMiit.core.settingstest" target="25" />
+      <module name="scheduleRutMiit.core-common" target="25" />
       <module name="scheduleRutMiit.core-database" target="25" />
+      <module name="scheduleRutMiit.core-navigation" target="25" />
+      <module name="scheduleRutMiit.core-network" target="25" />
+      <module name="scheduleRutMiit.core-ui" target="25" />
+      <module name="scheduleRutMiit.core.settingstest" target="25" />
       <module name="scheduleRutMiit.feature-export" target="25" />
-      <module name="scheduleRutMiit.feature-schedule" target="25" />
+      <module name="scheduleRutMiit.feature-latest-release" target="25" />
+      <module name="scheduleRutMiit.schedule-feature.impl" target="25" />
     </bytecodeTargetLevel>
   </component>
 </project>

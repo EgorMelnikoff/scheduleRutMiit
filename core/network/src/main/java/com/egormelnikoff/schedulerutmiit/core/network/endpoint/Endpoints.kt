@@ -1,0 +1,57 @@
+package com.egormelnikoff.schedulerutmiit.core.network.endpoint
+
+import androidx.core.net.toUri
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+
+object Endpoints {
+    //API GITHUB
+    const val API_GITHUB = "https://api.github.com"
+    const val APP_GITHUB_API_LATEST_RELEASE = "/repos/EgorMelnikoff/scheduleRutMiit/releases/latest"
+
+    //API MIIT
+    const val BASE_RUT_MIIT_URL = "https://rut-miit.ru"
+    const val BASE_MIIT_URL = "https://www.miit.ru"
+    const val GROUPS = "/data-service/data/timetable/groups-catalog"
+    const val TIMETABLE = "/data-service/data/timetable/v2/{type}/{apiId}"
+
+    //const val SCHEDULE = "/data-service/data/timetable/v2/{type}/{apiId}/{timetableId}"
+    const val NEWS_CATALOG = "/data-service/data/news"
+    const val NEWS = "/data-service/data/news/{newsId}"
+
+    //WEB MIIT
+    fun scheduleUrl(
+        namedScheduleType: NamedScheduleType,
+        apiId: Int,
+        startDate: String?,
+        timetableType: String?,
+    ): String {
+        val base = when (namedScheduleType) {
+            NamedScheduleType.PERSON ->
+                "$BASE_RUT_MIIT_URL/people/$apiId/timetable"
+
+            else ->
+                "$BASE_RUT_MIIT_URL/timetable/$apiId"
+        }
+
+        val query = listOfNotNull(
+            startDate?.let { "start=$it" },
+            timetableType?.let { "type=$it" }
+        ).joinToString("&")
+
+        return if (query.isEmpty()) base else "$base?$query"
+    }
+
+    fun peopleUrl(query: String) =
+        "${BASE_RUT_MIIT_URL}/people?query=$query"
+
+    fun curriculumProfessorsUrl(id: String, page: Int) =
+        "${BASE_RUT_MIIT_URL}/edu/curriculum/$id/professors?page=$page"
+
+    fun personImageUrl(personId: Int?, width: Int = 100) =
+        "${BASE_MIIT_URL}/content/e$personId.jpg?id_fe=$personId&SWidth=$width"
+
+    fun newsImageUrl(url: String, width: Int = 360): String {
+        val uri = url.toUri()
+        return "$BASE_MIIT_URL/content/photo.jpg?id_wm=${uri.getQueryParameter("id_wm")}&SWidth=$width"
+    }
+}

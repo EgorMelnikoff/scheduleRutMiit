@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.tasks.ui.add_task
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.TaskAction
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.TaskActionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,10 +15,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class AddTaskViewModel @Inject constructor(
-    private val taskActionUseCase: TaskActionUseCase
+    private val taskActionUseCase: TaskActionUseCase,
+    private val appRouter: AppRouter
 ) : ViewModel() {
     private val _addTaskForm = MutableStateFlow(AddTaskForm())
     val addTaskForm = _addTaskForm.asStateFlow()
+
+    fun onBack() {
+        appRouter.onBack()
+    }
 
     fun onTextChanged(text: String) {
         updateForm {
@@ -55,6 +61,7 @@ internal class AddTaskViewModel @Inject constructor(
     fun addTask() {
         viewModelScope.launch {
             taskActionUseCase.invoke(TaskAction.Add(_addTaskForm.value))
+            onBack()
         }
 
     }

@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.news.data.remote.dto
 
-import com.egormelnikoff.schedulerutmiit.core.common.utils.serializers.LocalDateTimeInstantSerializer
+import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeInstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime

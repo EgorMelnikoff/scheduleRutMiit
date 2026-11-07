@@ -59,9 +59,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TasksScreen(
-    contentPadding: PaddingValues,
-    isToday: (LocalDate) -> Boolean,
-    onOpenDialog: (Route.Dialog) -> Unit
+    contentPadding: PaddingValues
 ) {
     val taskViewModel = hiltViewModel<TaskViewModel>()
 
@@ -84,7 +82,7 @@ fun TasksScreen(
             ) {
                 IconButton(
                     onClick = {
-                        onOpenDialog(Route.Dialog.AddTaskDialog)
+                        taskViewModel.onAddTaskClicked()
                     }
                 ) {
                     Icon(
@@ -115,7 +113,7 @@ fun TasksScreen(
 
                     isSelected = tasksCalendarState.selectedDate == currentDate,
                     isDisabled = currentDate !in tasksCalendarState.calendarData.startDate..tasksCalendarState.calendarData.endDate,
-                    isToday = isToday(currentDate),
+                    isToday = hourlyDateTime.toLocalDate() == currentDate,
                     selectDate = { date ->
                         tasksCalendarState.selectDate(date, tasksPerDate?.isEmpty() ?: true)
                     }
@@ -197,11 +195,9 @@ fun TasksScreen(
                                 )
                             },
                             onOpen = { task ->
-                                onOpenDialog(
-                                    Route.Dialog.EditTaskDialog(
-                                        task.id,
-                                        task.date
-                                    )
+                                taskViewModel.onEditTaskClicked(
+                                    task.id,
+                                    task.date
                                 )
                             },
                             onDelete = { id, date ->

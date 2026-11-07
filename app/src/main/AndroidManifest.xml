@@ -55,7 +55,7 @@
         </provider>
 
         <receiver
-            android:name=".schedule_feature.glance.receiver.EventsWidgetReceiver"
+            android:name=".feature_schedule.glance.receiver.EventsWidgetReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

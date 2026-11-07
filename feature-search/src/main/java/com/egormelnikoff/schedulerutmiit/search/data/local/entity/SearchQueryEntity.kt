@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.search.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 
 @Entity(
     tableName = "SearchHistory"

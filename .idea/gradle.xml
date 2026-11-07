@@ -11,18 +11,21 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/core-common" />
-            <option value="$PROJECT_DIR$/core-navigation" />
-            <option value="$PROJECT_DIR$/core-network" />
-            <option value="$PROJECT_DIR$/core-ui" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/common" />
+            <option value="$PROJECT_DIR$/core/navigation" />
+            <option value="$PROJECT_DIR$/core/network" />
+            <option value="$PROJECT_DIR$/core/settings" />
+            <option value="$PROJECT_DIR$/core/settings/api" />
+            <option value="$PROJECT_DIR$/core/settings/impl" />
+            <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/feature-curriculum" />
-            <option value="$PROJECT_DIR$/feature-latest-release" />
             <option value="$PROJECT_DIR$/feature-news" />
+            <option value="$PROJECT_DIR$/feature-schedule" />
+            <option value="$PROJECT_DIR$/feature-schedule/api" />
+            <option value="$PROJECT_DIR$/feature-schedule/impl" />
             <option value="$PROJECT_DIR$/feature-search" />
             <option value="$PROJECT_DIR$/feature-tasks" />
-            <option value="$PROJECT_DIR$/schedule-feature" />
-            <option value="$PROJECT_DIR$/schedule-feature/api" />
-            <option value="$PROJECT_DIR$/schedule-feature/impl" />
           </set>
         </option>
       </GradleProjectSettings>

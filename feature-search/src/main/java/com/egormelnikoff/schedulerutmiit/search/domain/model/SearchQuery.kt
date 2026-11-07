@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.search.domain.model
 
-import com.egormelnikoff.schedulerutmiit.schedule_feature.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 
 internal data class SearchQuery(
     val id: Long = 0,

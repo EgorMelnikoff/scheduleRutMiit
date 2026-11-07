@@ -1,0 +1,65 @@
+package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.REPLACE
+import androidx.room.Query
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.EventExtraDataEntity
+import java.time.LocalDate
+
+@Dao
+interface EventExtraDao {
+    @Insert(onConflict = REPLACE)
+    suspend fun insert(eventExtraData: EventExtraDataEntity)
+
+    @Insert(onConflict = REPLACE)
+    suspend fun insertAll(events: List<EventExtraDataEntity>)
+
+    @Query("DELETE FROM EventsExtraData WHERE eventExtraScheduleId = :scheduleId")
+    suspend fun deleteByScheduleId(scheduleId: Long)
+
+    @Query("DELETE FROM EventsExtraData WHERE eventId = :eventId")
+    suspend fun deleteByEventId(eventId: Long)
+
+    @Query("DELETE FROM EventsExtraData WHERE eventId = :eventId AND date =:eventDate")
+    suspend fun deleteByEventIdAndDate(eventId: Long, eventDate: LocalDate)
+
+    @Query("DELETE FROM EventsExtraData")
+    suspend fun deleteAll()
+
+    @Query("SELECT * FROM EventsExtraData WHERE eventExtraScheduleId = :scheduleId")
+    suspend fun getByScheduleId(scheduleId: Long): List<EventExtraDataEntity>
+
+    @Query("SELECT * FROM EventsExtraData WHERE eventId = :eventId")
+    suspend fun getByEventId(eventId: Long): EventExtraDataEntity?
+
+    @Query("SELECT * FROM EventsExtraData WHERE eventId = :eventId AND date = :eventDate")
+    suspend fun getByEventIdAndDate(eventId: Long, eventDate: LocalDate): EventExtraDataEntity?
+
+    @Query("SELECT * FROM EventsExtraData")
+    suspend fun getAll(): List<EventExtraDataEntity>
+
+    @Query("UPDATE eventsextradata SET tag = :tag WHERE eventId = :eventId")
+    suspend fun updateTagByEventId(
+        eventId: Long,
+        tag: Int
+    )
+    @Query("UPDATE eventsextradata SET tag = :tag WHERE eventId = :eventId AND date = :eventDate")
+    suspend fun updateTagByEventIdAndDate(
+        eventId: Long,
+        eventDate: LocalDate,
+        tag: Int
+    )
+
+    @Query("UPDATE eventsextradata SET comment = :comment WHERE eventId = :eventId")
+    suspend fun updateCommentByEventId(
+        eventId: Long,
+        comment: String
+    )
+    @Query("UPDATE eventsextradata SET comment = :comment WHERE eventId = :eventId AND date = :eventDate")
+    suspend fun updateCommentByEventIdAndDateTime(
+        eventId: Long,
+        eventDate: LocalDate,
+        comment: String
+    )
+}

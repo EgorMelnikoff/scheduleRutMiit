@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_curriculum.ui
 
-import com.egormelnikoff.schedulerutmiit.core.common.utils.error.AppError
-import com.egormelnikoff.schedulerutmiit.core.common.utils.error.toAppError
+import com.egormelnikoff.schedulerutmiit.core.common.error.AppError
+import com.egormelnikoff.schedulerutmiit.core.common.error.toAppError
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.model.Subject
 
 internal data class CurriculumState(

@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.utils.error.getMessage
+import com.egormelnikoff.schedulerutmiit.core.common.error.getMessage
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsDetailAction
