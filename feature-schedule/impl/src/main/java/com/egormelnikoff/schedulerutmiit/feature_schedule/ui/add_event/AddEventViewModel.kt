@@ -4,13 +4,13 @@ import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventDataSource
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventDataSource
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.LoadEditEventUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

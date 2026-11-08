@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.widget
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -13,6 +12,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.h
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.GridGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -35,12 +35,12 @@ fun DateTimeSelectorWidget(
                     showClickLabel = false,
                     title = dateEvent?.format(dayMonthYearFormatter)
                         ?: stringResource(R.string.date),
-                    titleTypography = MaterialTheme.typography.titleSmall,
+                    titleTypography = AppTheme.typography.titleSmall,
                     leadingIcon = {
                         LeadingIcon(
                             imageVector = ImageVector.vectorResource(R.drawable.calendar),
                             iconSize = 20.dp,
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = AppTheme.colors.onBackground
                         )
                     }
                 ) {
@@ -55,12 +55,12 @@ fun DateTimeSelectorWidget(
                         showClickLabel = false,
                         title = startTime?.format(hourMinuteFormatter)
                             ?: stringResource(R.string.start_time),
-                        titleTypography = MaterialTheme.typography.titleSmall,
+                        titleTypography = AppTheme.typography.titleSmall,
                         leadingIcon = {
                             LeadingIcon(
                                 imageVector = ImageVector.vectorResource(R.drawable.time),
                                 iconSize = 20.dp,
-                                color = MaterialTheme.colorScheme.onBackground
+                                color = AppTheme.colors.onBackground
                             )
                         }
                     ) {
@@ -73,12 +73,12 @@ fun DateTimeSelectorWidget(
                         showClickLabel = false,
                         title = endTime?.format(hourMinuteFormatter)
                             ?: stringResource(R.string.end_time),
-                        titleTypography = MaterialTheme.typography.titleSmall,
+                        titleTypography = AppTheme.typography.titleSmall,
                         leadingIcon = {
                             LeadingIcon(
                                 imageVector = ImageVector.vectorResource(R.drawable.time),
                                 iconSize = 20.dp,
-                                color = MaterialTheme.colorScheme.onBackground
+                                color = AppTheme.colors.onBackground
                             )
                         }
                     ) {

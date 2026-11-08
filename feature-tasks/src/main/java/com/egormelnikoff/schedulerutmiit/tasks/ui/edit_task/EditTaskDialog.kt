@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,6 +35,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextFi
 import com.egormelnikoff.schedulerutmiit.core.ui.components.time_picker.AppTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
 
@@ -68,19 +68,19 @@ fun EditTaskDialog(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
+                        .background(AppTheme.colors.background)
                         .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = innerPadding.calculateTopPadding() + 12.dp,
-                            bottom = innerPadding.calculateBottomPadding() + 8.dp
+                            start = AppTheme.paddings.padding16,
+                            end = AppTheme.paddings.padding16,
+                            top = innerPadding.calculateTopPadding() + AppTheme.paddings.padding12,
+                            bottom = innerPadding.calculateBottomPadding() + AppTheme.paddings.padding8
                         )
                 ) {
                     Column(
                         modifier = Modifier
                             .weight(1f)
                             .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
                     ) {
                         AppTextField(
                             modifier = Modifier.fillMaxWidth(),
@@ -101,12 +101,12 @@ fun EditTaskDialog(
                                     title = editTaskState.editTaskForm.time.format(
                                         DateTimeFormatters.hourMinuteFormatter
                                     ),
-                                    titleTypography = MaterialTheme.typography.titleSmall,
+                                    titleTypography = AppTheme.typography.titleSmall,
                                     leadingIcon = {
                                         LeadingIcon(
                                             imageVector = ImageVector.vectorResource(R.drawable.time),
                                             iconSize = 20.dp,
-                                            color = MaterialTheme.colorScheme.onBackground
+                                            color = AppTheme.colors.onBackground
                                         )
                                     }
                                 ) {
@@ -118,7 +118,7 @@ fun EditTaskDialog(
 
                         ColumnGroup(
                             title = stringResource(R.string.tag),
-                            titleColor = MaterialTheme.colorScheme.primary,
+                            titleColor = AppTheme.colors.primary,
                             withBackground = false,
                             items = listOf {
                                 ColorSelectorWidget(

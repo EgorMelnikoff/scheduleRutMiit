@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventExtraDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.ScheduleDataSource
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.WidgetDataUpdater
 import javax.inject.Inject
 

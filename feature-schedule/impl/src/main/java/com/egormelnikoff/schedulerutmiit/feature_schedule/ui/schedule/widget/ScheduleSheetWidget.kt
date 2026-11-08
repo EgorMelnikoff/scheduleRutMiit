@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,10 +29,11 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBott
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.findDefault
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.ModalDialogNamedScheduleHeader
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleViewModel
 import java.time.LocalDate
@@ -58,7 +58,7 @@ fun ScheduleSheetWidget(
     val uriHandler = LocalUriHandler.current
 
     AppBottomSheet(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16),
         onDismiss = {
             onDismiss(null)
         }
@@ -78,10 +78,10 @@ fun ScheduleSheetWidget(
                 modifier = Modifier
                     .horizontalScroll(rememberScrollState())
                     .padding(
-                        horizontal = 16.dp
+                        horizontal = AppTheme.paddings.padding16
                     ),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
             ) {
                 AnimatedVisibility(
                     visible = schedule.downloadUrl != null,
@@ -89,12 +89,12 @@ fun ScheduleSheetWidget(
                     AppAssistChip(
                         imageVector = ImageVector.vectorResource(R.drawable.download),
                         colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                            labelColor = MaterialTheme.colorScheme.onBackground,
-                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            containerColor = AppTheme.colors.background,
+                            labelColor = AppTheme.colors.onBackground,
+                            leadingIconContentColor = AppTheme.colors.onSecondaryContainer
                         ),
                         border = BorderStroke(
-                            color = MaterialTheme.colorScheme.outline,
+                            color = AppTheme.colors.outline,
                             width = 0.5.dp
                         ),
                         title = stringResource(R.string.download_pdf),
@@ -111,12 +111,12 @@ fun ScheduleSheetWidget(
                     AppAssistChip(
                         imageVector = ImageVector.vectorResource(R.drawable.add),
                         colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                            labelColor = MaterialTheme.colorScheme.onBackground,
-                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            containerColor = AppTheme.colors.background,
+                            labelColor = AppTheme.colors.onBackground,
+                            leadingIconContentColor = AppTheme.colors.onSecondaryContainer
                         ),
                         border = BorderStroke(
-                            color = MaterialTheme.colorScheme.outline,
+                            color = AppTheme.colors.outline,
                             width = 0.5.dp
                         ),
                         title = stringResource(R.string.add_class),
@@ -137,12 +137,12 @@ fun ScheduleSheetWidget(
                     AppAssistChip(
                         imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
                         colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                            labelColor = MaterialTheme.colorScheme.onBackground,
-                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            containerColor = AppTheme.colors.background,
+                            labelColor = AppTheme.colors.onBackground,
+                            leadingIconContentColor = AppTheme.colors.onSecondaryContainer
                         ),
                         border = BorderStroke(
-                            color = MaterialTheme.colorScheme.outline,
+                            color = AppTheme.colors.outline,
                             width = 0.5.dp
                         ),
                         title = stringResource(R.string.hidden_events),
@@ -159,7 +159,7 @@ fun ScheduleSheetWidget(
 
         if (namedSchedule.type != NamedScheduleType.MY) {
             ColumnGroup(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
                 items = schedules.map { schedule ->
                     {
                         AppCell(
@@ -200,8 +200,8 @@ fun ScheduleSheetWidget(
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(24.dp),
                                     progress = { progress },
-                                    color = MaterialTheme.colorScheme.primary,
-                                    trackColor = MaterialTheme.colorScheme.primaryContainer,
+                                    color = AppTheme.colors.primary,
+                                    trackColor = AppTheme.colors.primaryContainer,
                                     strokeWidth = 3.dp
                                 )
                             },

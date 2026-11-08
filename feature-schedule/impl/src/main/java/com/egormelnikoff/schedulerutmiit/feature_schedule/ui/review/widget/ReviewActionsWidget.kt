@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.widget
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -15,6 +14,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RowGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 
 fun LazyListScope.reviewActionsWidget(
@@ -25,7 +25,7 @@ fun LazyListScope.reviewActionsWidget(
         Box(
             modifier = Modifier
                 .padding(
-                    vertical = 8.dp, horizontal = 16.dp
+                    vertical = AppTheme.paddings.padding8, horizontal = AppTheme.paddings.padding16
                 )
                 .onGloballyPositioned { coordinates ->
                     val y = coordinates.positionInWindow().y
@@ -40,12 +40,12 @@ fun LazyListScope.reviewActionsWidget(
                             defaultMinHeight = 32.dp,
                             showClickLabel = false,
                             title = "${stringResource(R.string.find)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
-                            titleTypography = MaterialTheme.typography.titleSmall,
+                            titleTypography = AppTheme.typography.titleSmall,
                             leadingIcon = {
                                 LeadingIcon(
                                     imageVector = ImageVector.vectorResource(R.drawable.search),
                                     iconSize = 20.dp,
-                                    color = MaterialTheme.colorScheme.onBackground
+                                    color = AppTheme.colors.onBackground
                                 )
                             }
                         ) {
@@ -60,12 +60,12 @@ fun LazyListScope.reviewActionsWidget(
                                     R.string.schedule
                                 ).replaceFirstChar { it.lowercase() }
                             }",
-                            titleTypography = MaterialTheme.typography.titleSmall,
+                            titleTypography = AppTheme.typography.titleSmall,
                             leadingIcon = {
                                 LeadingIcon(
                                     imageVector = ImageVector.vectorResource(R.drawable.add),
                                     iconSize = 20.dp,
-                                    color = MaterialTheme.colorScheme.onBackground
+                                    color = AppTheme.colors.onBackground
                                 )
                             }
                         ) {

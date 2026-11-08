@@ -35,7 +35,7 @@ dependencies {
 
     implementation(libs.retrofit)
     implementation(libs.hilt.android)
-    implementation(libs.kotlinx.serialization.json)
+    api(libs.kotlinx.serialization.json)
 
     testImplementation(libs.bundles.test)
 

@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.DateTimeSelectorWidget
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.DaySelector
@@ -30,7 +30,7 @@ fun SecondStepAddEventWidget(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12, Alignment.Top)
     ) {
         if (state.schedule.recurrence != null) {
             DaySelector(

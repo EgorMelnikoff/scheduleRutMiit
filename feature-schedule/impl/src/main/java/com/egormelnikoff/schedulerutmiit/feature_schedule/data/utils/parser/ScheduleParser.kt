@@ -3,7 +3,6 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.parser
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.parserFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.consts.Locale.ruLocale
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcTime
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.EventDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.GroupDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.LecturerDto
@@ -14,6 +13,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.Recu
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.RoomDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.TimetableDto
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.nodes.Document

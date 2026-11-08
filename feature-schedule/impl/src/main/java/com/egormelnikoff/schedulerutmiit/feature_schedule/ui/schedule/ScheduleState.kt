@@ -2,13 +2,13 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule
 
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarData
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getGroupedEvents
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getPeriodicEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getGroupedEvents
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getPeriodicEvents
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit

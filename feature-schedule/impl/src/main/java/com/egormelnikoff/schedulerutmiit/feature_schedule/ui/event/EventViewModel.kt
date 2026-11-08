@@ -7,12 +7,12 @@ import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.network.handler.errorHandler
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.cache.FetchScheduleCache
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.FetchScheduleEvent
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.cache.FetchScheduleCache
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.LoadEventUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.UpdateEventCommentUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.UpdateEventTagUseCase

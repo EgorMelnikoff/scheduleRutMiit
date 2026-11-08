@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.core.ui.widget
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.Theme
 import com.egormelnikoff.schedulerutmiit.core.ui.components.button_row.AppButtonRow
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 data class ThemeSelectorItemContent(
     val theme: Theme,
@@ -50,12 +50,12 @@ fun ThemeSelectorWidget(
         selectedElement = currentTheme,
         elements = themes.entries.map { it.value.theme },
         colors = SegmentedButtonDefaults.colors().copy(
-            activeContainerColor = MaterialTheme.colorScheme.primary,
+            activeContainerColor = AppTheme.colors.primary,
             activeBorderColor = Color.Transparent,
-            activeContentColor = MaterialTheme.colorScheme.onPrimary,
-            inactiveContainerColor = MaterialTheme.colorScheme.background,
+            activeContentColor = AppTheme.colors.onPrimary,
+            inactiveContainerColor = AppTheme.colors.background,
             inactiveBorderColor = Color.Transparent,
-            inactiveContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            inactiveContentColor = AppTheme.colors.onSecondaryContainer
         ),
         onClick = { themeName ->
             setTheme(themeName)
@@ -72,7 +72,7 @@ fun ThemeSelectorWidget(
         } else {
             Text(
                 text = currentTheme?.displayedName.toString(),
-                style = MaterialTheme.typography.titleSmall,
+                style = AppTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

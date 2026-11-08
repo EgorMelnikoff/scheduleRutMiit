@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -16,6 +15,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.ModalDialogNamedScheduleHeader
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
@@ -28,7 +28,7 @@ fun ReviewScheduleSheet(
 ) {
     AppBottomSheet(
         isDarkTheme = true,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16),
         onDismiss = {
             onAction(
                 ReviewAction.OnShowScheduleSheet(null)
@@ -62,7 +62,7 @@ fun ReviewScheduleSheet(
             }
         )
         ColumnGroup(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
             items = buildList {
                 if (!namedSchedule.isDefault) {
                     add {
@@ -72,7 +72,7 @@ fun ReviewScheduleSheet(
                                 Icon(
                                     modifier = Modifier.size(20.dp),
                                     imageVector = ImageVector.vectorResource(R.drawable.check),
-                                    tint = MaterialTheme.colorScheme.onBackground,
+                                    tint = AppTheme.colors.onBackground,
                                     contentDescription = null
                                 )
                             },
@@ -97,7 +97,7 @@ fun ReviewScheduleSheet(
                             Icon(
                                 modifier = Modifier.size(20.dp),
                                 imageVector = ImageVector.vectorResource(R.drawable.open_panel),
-                                tint = MaterialTheme.colorScheme.onBackground,
+                                tint = AppTheme.colors.onBackground,
                                 contentDescription = null
                             )
                         },

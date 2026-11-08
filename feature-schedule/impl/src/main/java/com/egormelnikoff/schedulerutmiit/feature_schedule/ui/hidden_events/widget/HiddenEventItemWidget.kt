@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -19,6 +18,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.h
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.hidden_events.HiddenEventsAction
@@ -74,7 +74,7 @@ fun HiddenEventItemWidget(
                     },
                     colors = IconButtonDefaults.iconButtonColors()
                         .copy(
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            contentColor = AppTheme.colors.onSecondaryContainer
                         )
                 ) {
                     Icon(

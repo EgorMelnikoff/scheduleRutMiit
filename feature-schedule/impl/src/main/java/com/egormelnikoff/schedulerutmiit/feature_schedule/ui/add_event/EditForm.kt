@@ -1,11 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event
 
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.validator.isValidEvent
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.validator.isValidEvent
 import java.time.LocalDate
 import java.time.LocalTime
 

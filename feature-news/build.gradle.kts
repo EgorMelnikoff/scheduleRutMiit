@@ -1,5 +1,3 @@
-import com.android.tools.r8.internal.pr
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.devtoolsKsp)

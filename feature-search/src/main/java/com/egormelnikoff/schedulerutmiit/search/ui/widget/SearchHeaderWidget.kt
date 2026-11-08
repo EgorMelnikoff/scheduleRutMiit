@@ -11,16 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchAction
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchState
 import com.egormelnikoff.schedulerutmiit.search.utils.SearchType
@@ -31,8 +30,8 @@ internal fun SearchHeaderWidget(
     onAction: (SearchAction) -> Unit
 ) {
     Column(
-        modifier = Modifier.padding(horizontal = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier.padding(horizontal = AppTheme.paddings.padding8),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
     ) {
         AppTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -53,7 +52,7 @@ internal fun SearchHeaderWidget(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.search),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    tint = AppTheme.colors.onSecondaryContainer
                 )
             },
             trailingIcon = {
@@ -70,7 +69,7 @@ internal fun SearchHeaderWidget(
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.clear),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = AppTheme.colors.primary
                         )
                     }
                 }

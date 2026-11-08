@@ -8,7 +8,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 
 @Composable
@@ -32,13 +32,13 @@ fun AppFilterChip(
         FilterChip(
             border = border,
             colors = colors ?: FilterChipDefaults.filterChipColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                containerColor = AppTheme.colors.secondaryContainer,
+                labelColor = AppTheme.colors.onSecondaryContainer,
+                iconColor = AppTheme.colors.onSecondaryContainer,
 
-                selectedContainerColor = MaterialTheme.colorScheme.primary,
-                selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
+                selectedContainerColor = AppTheme.colors.primary,
+                selectedLabelColor = AppTheme.colors.onPrimary,
+                selectedLeadingIconColor = AppTheme.colors.onPrimary,
             ),
             onClick = onClick?.let {
                 { onClick(!selected) }
@@ -55,7 +55,7 @@ fun AppFilterChip(
             label = {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleSmall
+                    style = AppTheme.typography.titleSmall
                 )
             },
             enabled = onClick != null,
@@ -69,7 +69,7 @@ fun AppFilterChip(
 fun AppFilterChipPreview() {
     PreviewLightTheme {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding6)
         ) {
             AppFilterChip(
                 title = "Тест",

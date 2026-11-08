@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import java.time.LocalDate
 
 @Composable
@@ -42,7 +42,7 @@ fun Calendar(
             modifier = Modifier.fillMaxSize(),
             state = calendarState.getPagerDays(),
             verticalAlignment = Alignment.Top,
-            pageSpacing = 12.dp
+            pageSpacing = AppTheme.paddings.padding12
         ) { index ->
             val currentDate = remember(calendarState.calendarData.startDate, index) {
                 calendarState.calendarData.startDate.plusDays(index.toLong())

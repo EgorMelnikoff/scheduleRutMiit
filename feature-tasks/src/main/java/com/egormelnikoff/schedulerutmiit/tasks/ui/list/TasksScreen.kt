@@ -17,7 +17,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,7 +36,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters
-import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.components.badge.AppBadge
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.Calendar
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.CalendarBarItem
@@ -47,6 +45,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.check_box.AppCheckBox
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Green
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Red
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Yellow
@@ -89,7 +88,7 @@ fun TasksScreen(
                         modifier = Modifier.size(24.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.add),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground
+                        tint = AppTheme.colors.onBackground
                     )
                 }
             }
@@ -164,22 +163,22 @@ fun TasksScreen(
 
             LazyColumn(
                 contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
+                    start = AppTheme.paddings.padding16,
+                    end = AppTheme.paddings.padding16,
                     bottom = contentPadding.calculateBottomPadding()
                 ),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
             ) {
                 if (tasksPerDate != null) {
                     item {
                         LinearProgressIndicator(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp),
+                                .padding(vertical = AppTheme.paddings.padding4),
                             progress = { progressAnimated },
                             drawStopIndicator = {},
                             color = indicatorColorAnimated,
-                            trackColor = MaterialTheme.colorScheme.secondaryContainer
+                            trackColor = AppTheme.colors.secondaryContainer
                         )
                     }
                     items(tasksPerDate, key = { it.id }) { task ->
@@ -270,15 +269,15 @@ internal fun SingleTask(
             onOpen(task)
         }
         DropdownMenu(
-            containerColor = MaterialTheme.colorScheme.background,
+            containerColor = AppTheme.colors.background,
             expanded = showExpandedMenu,
-            shape = MaterialTheme.shapes.medium,
+            shape = AppTheme.shapes.medium,
             onDismissRequest = { showExpandedMenu = false }
         ) {
             DropdownMenuItem(
                 colors = MenuDefaults.itemColors().copy(
-                    textColor = MaterialTheme.colorScheme.error,
-                    leadingIconColor = MaterialTheme.colorScheme.error
+                    textColor = AppTheme.colors.error,
+                    leadingIconColor = AppTheme.colors.error
                 ),
                 leadingIcon = {
                     Icon(
@@ -297,8 +296,8 @@ internal fun SingleTask(
             )
             DropdownMenuItem(
                 colors = MenuDefaults.itemColors().copy(
-                    textColor = MaterialTheme.colorScheme.error,
-                    leadingIconColor = MaterialTheme.colorScheme.error
+                    textColor = AppTheme.colors.error,
+                    leadingIconColor = AppTheme.colors.error
                 ),
                 leadingIcon = {
                     Icon(

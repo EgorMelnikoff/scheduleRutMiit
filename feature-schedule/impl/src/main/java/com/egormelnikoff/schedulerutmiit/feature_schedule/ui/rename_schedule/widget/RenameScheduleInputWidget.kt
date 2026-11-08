@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -18,6 +17,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.rename_schedule.RenameScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.rename_schedule.RenameScheduleState
@@ -51,7 +51,7 @@ fun RenameScheduleInputWidget(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.clear),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = AppTheme.colors.primary
                     )
                 }
             }

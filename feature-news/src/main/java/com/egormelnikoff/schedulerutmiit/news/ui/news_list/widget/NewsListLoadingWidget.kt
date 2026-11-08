@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.ui.components.shimmer.AppShimmerCard
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 internal fun NewsListLoadingWidget() {
@@ -17,13 +18,13 @@ internal fun NewsListLoadingWidget() {
         LazyVerticalStaggeredGrid(
             modifier = Modifier.fillMaxSize(),
             columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
-            verticalItemSpacing = 12.dp,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalItemSpacing = AppTheme.paddings.padding12,
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12),
             userScrollEnabled = false,
             contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = paddingValues.calculateTopPadding() + 16.dp,
+                start = AppTheme.paddings.padding16,
+                end = AppTheme.paddings.padding16,
+                top = paddingValues.calculateTopPadding() + AppTheme.paddings.padding16,
                 bottom = paddingValues.calculateBottomPadding()
             )
         ) {

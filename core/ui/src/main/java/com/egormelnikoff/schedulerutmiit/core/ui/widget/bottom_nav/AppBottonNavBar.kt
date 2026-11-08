@@ -48,13 +48,9 @@ fun AppBottonNavBarWidget() {
                 },
                 isSelected = state.currentPage is Route.Page.Schedule,
                 onClick = {
-                    if (state.currentPage is Route.Page.Schedule) {
-
-                    } else {
-                        viewModel.onAction(
-                            AppNavBarAction.OnNavigatePage(Route.Page.Schedule)
-                        )
-                    }
+                    viewModel.onAction(
+                        AppNavBarAction.OnNavigatePage(Route.Page.Schedule)
+                    )
                 }
             )
             AppNavigationBarItem(

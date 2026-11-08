@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,6 +17,7 @@ import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,7 +27,7 @@ fun ScheduleViewModalDialog(
     onDismiss: () -> Unit,
 ) {
     AppBottomSheet(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
         onDismiss = onDismiss
     ) {
         ColumnGroup(
@@ -52,7 +52,7 @@ fun ScheduleViewModalDialog(
                                     ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
                                 },
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                tint = AppTheme.colors.onSecondaryContainer
                             )
                         },
                         trailingIcon = {

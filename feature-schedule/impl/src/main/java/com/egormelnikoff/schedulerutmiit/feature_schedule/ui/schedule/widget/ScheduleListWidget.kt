@@ -1,9 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
@@ -17,10 +15,12 @@ import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.d
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleState
 import java.time.LocalDate
 
@@ -87,7 +87,8 @@ fun ScheduleListWidget(
         LazyColumn(
             state = scheduleListState,
             contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp,
+                start = AppTheme.paddings.padding16,
+                end = AppTheme.paddings.padding16,
                 bottom = paddingBottom
             ),
             modifier = Modifier.fillMaxSize(),
@@ -116,7 +117,7 @@ fun ScheduleListWidget(
                                 isSavedSchedule = isSavedSchedule,
                                 eventView = appSettings.eventView
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
+                            SpacerHeight(AppTheme.paddings.padding8)
                         }
                     }
                 }

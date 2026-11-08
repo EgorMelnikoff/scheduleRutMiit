@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,10 +18,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.DayPeriod
@@ -39,11 +38,11 @@ fun ReviewTopBarWidget(
     val contentColor by animateColorAsState(
         targetValue = if (reviewState.usedPhoto) {
             lerp(
-                start = MaterialTheme.colorScheme.onPrimary,
-                stop = MaterialTheme.colorScheme.onBackground,
+                start = AppTheme.colors.onPrimary,
+                stop = AppTheme.colors.onBackground,
                 fraction = overlappedFraction
             )
-        } else MaterialTheme.colorScheme.onBackground,
+        } else AppTheme.colors.onBackground,
         label = "TopAppBarContentColor"
     )
 
@@ -86,7 +85,7 @@ fun ReviewTopBarWidget(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
             ) {
                 IconButton(
                     onClick = {

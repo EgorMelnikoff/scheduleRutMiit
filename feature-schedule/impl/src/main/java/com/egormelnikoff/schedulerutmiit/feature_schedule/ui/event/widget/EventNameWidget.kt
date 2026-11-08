@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +25,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
@@ -39,15 +39,15 @@ fun EventNameWidget(
     horizontalPadding: Dp
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
     ) {
         Text(
             modifier = Modifier.padding(
                 horizontal = horizontalPadding
             ),
             text = event.name,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = AppTheme.typography.titleLarge,
+            color = AppTheme.colors.onBackground,
             overflow = TextOverflow.Ellipsis,
             maxLines = 2
         )
@@ -58,18 +58,18 @@ fun EventNameWidget(
                     horizontal = horizontalPadding
                 ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
         ) {
             AppFilterChip(
                 imageVector = ImageVector.vectorResource(R.drawable.calendar),
                 colors = FilterChipDefaults.filterChipColors(
                     disabledContainerColor = Color.Transparent,
-                    disabledLabelColor = MaterialTheme.colorScheme.onBackground,
-                    disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground,
+                    disabledLabelColor = AppTheme.colors.onBackground,
+                    disabledLeadingIconColor = AppTheme.colors.onBackground,
                 ),
                 border = BorderStroke(
                     width = 0.5.dp,
-                    color = MaterialTheme.colorScheme.outline
+                    color = AppTheme.colors.outline
                 ),
                 title = if (timetableType.isPeriodic()) {
                     val dayName = event.startDatetime.dayOfWeek.getDisplayName(
@@ -95,12 +95,12 @@ fun EventNameWidget(
                 imageVector = ImageVector.vectorResource(R.drawable.time),
                 colors = FilterChipDefaults.filterChipColors(
                     disabledContainerColor = Color.Transparent,
-                    disabledLabelColor = MaterialTheme.colorScheme.onBackground,
-                    disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground,
+                    disabledLabelColor = AppTheme.colors.onBackground,
+                    disabledLeadingIconColor = AppTheme.colors.onBackground,
                 ),
                 border = BorderStroke(
                     width = 0.5.dp,
-                    color = MaterialTheme.colorScheme.outline
+                    color = AppTheme.colors.outline
                 ),
                 title = "${event.startDatetime.toLocalTimeWithTimeZone()} - ${event.endDatetime.toLocalTimeWithTimeZone()}"
             )
@@ -110,12 +110,12 @@ fun EventNameWidget(
                     title = typeName,
                     border = BorderStroke(
                         width = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outline
+                        color = AppTheme.colors.outline
                     ),
                     colors = FilterChipDefaults.filterChipColors(
                         disabledContainerColor = Color.Transparent,
-                        disabledLabelColor = MaterialTheme.colorScheme.onBackground,
-                        disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground
+                        disabledLabelColor = AppTheme.colors.onBackground,
+                        disabledLeadingIconColor = AppTheme.colors.onBackground
                     )
                 )
             }

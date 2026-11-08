@@ -10,13 +10,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +26,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun ExpandedItem(
@@ -47,25 +46,25 @@ fun ExpandedItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(MaterialTheme.shapes.small)
+                .clip(AppTheme.shapes.small)
                 .clickable { onChangeVisibility(!visible) }
-                .padding(4.dp),
+                .padding(AppTheme.paddings.padding4),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
         ) {
             if (imageVector != null) {
                 Icon(
                     modifier = Modifier.size(16.dp),
                     imageVector = imageVector,
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                    tint = AppTheme.colors.onSecondaryContainer,
                     contentDescription = null
                 )
             }
             Text(
                 modifier = Modifier.weight(1f),
                 text = title,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                style = AppTheme.typography.titleSmall,
+                color = AppTheme.colors.onSecondaryContainer,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
@@ -79,9 +78,7 @@ fun ExpandedItem(
                 contentDescription = null
             )
         }
-        Spacer(
-            modifier = Modifier.height(8.dp)
-        )
+        SpacerHeight(AppTheme.paddings.padding8)
         AnimatedVisibility(
             visible = visible,
             enter = expandVertically() + fadeIn(),
@@ -89,9 +86,7 @@ fun ExpandedItem(
         ) {
             Column {
                 content.invoke()
-                Spacer(
-                    modifier = Modifier.height(8.dp)
-                )
+                SpacerHeight(AppTheme.paddings.padding8)
             }
         }
     }

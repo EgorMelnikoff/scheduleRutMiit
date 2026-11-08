@@ -5,7 +5,7 @@ import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import javax.inject.Inject
 
-class AppRouterImpl @Inject constructor(): AppRouter {
+class AppRouterImpl @Inject constructor() : AppRouter {
     override val pageBackStack = mutableStateListOf<Route.Page>(Route.Page.Schedule)
 
     override val dialogBackStack = mutableStateListOf<Route.Dialog>(Route.Dialog.Empty)

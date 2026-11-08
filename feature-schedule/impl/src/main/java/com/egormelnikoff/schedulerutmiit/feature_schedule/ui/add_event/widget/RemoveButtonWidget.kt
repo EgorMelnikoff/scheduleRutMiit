@@ -3,13 +3,13 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.widget
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun RemoveButtonWidget(
@@ -17,9 +17,9 @@ fun RemoveButtonWidget(
 ) {
     OutlinedIconButton(
         onClick = onRemove,
-        border = BorderStroke(width = 0.5.dp, MaterialTheme.colorScheme.error),
+        border = BorderStroke(width = 0.5.dp, AppTheme.colors.error),
         colors = IconButtonDefaults.outlinedIconButtonColors().copy(
-            contentColor = MaterialTheme.colorScheme.error
+            contentColor = AppTheme.colors.error
         )
     ) {
         Icon(

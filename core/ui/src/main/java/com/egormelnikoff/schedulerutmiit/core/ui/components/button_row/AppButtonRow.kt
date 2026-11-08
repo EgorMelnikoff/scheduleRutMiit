@@ -1,12 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.components.button_row
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -19,10 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerWidth
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.baseItemSpacing
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.mediumCornerRadius
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.superExtraSmallCornerRadius
 
 
 @Composable
@@ -41,12 +37,12 @@ fun <T> AppButtonRow(
             elements.forEachIndexed { index, element ->
                 SegmentedButton(
                     colors = colors ?: SegmentedButtonDefaults.colors().copy(
-                        activeContainerColor = MaterialTheme.colorScheme.primary,
+                        activeContainerColor = AppTheme.colors.primary,
                         activeBorderColor = Color.Transparent,
-                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                        inactiveContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        activeContentColor = AppTheme.colors.onPrimary,
+                        inactiveContainerColor = AppTheme.colors.secondaryContainer,
                         inactiveBorderColor = Color.Transparent,
-                        inactiveContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        inactiveContentColor = AppTheme.colors.onSecondaryContainer
                     ),
                     border = BorderStroke(
                         width = 0.dp,
@@ -65,15 +61,14 @@ fun <T> AppButtonRow(
                     }
                 )
                 if (index != elements.lastIndex) {
-                    Spacer(
-                        modifier = Modifier.width(baseItemSpacing)
-                    )
+                    SpacerWidth(AppTheme.paddings.padding2)
                 }
             }
         }
     }
 }
 
+@Composable
 fun Int.appRowItemShape(
     lastIndex: Int
 ): RoundedCornerShape {
@@ -81,10 +76,10 @@ fun Int.appRowItemShape(
     val isLast = this == lastIndex
 
     return RoundedCornerShape(
-        topStart = if (isFirst) mediumCornerRadius else superExtraSmallCornerRadius,
-        topEnd = if (isLast) mediumCornerRadius else superExtraSmallCornerRadius,
-        bottomStart = if (isFirst) mediumCornerRadius else superExtraSmallCornerRadius,
-        bottomEnd = if (isLast) mediumCornerRadius else superExtraSmallCornerRadius
+        topStart = if (isFirst) AppTheme.radius.radius12 else AppTheme.radius.radius2,
+        topEnd = if (isLast) AppTheme.radius.radius12 else AppTheme.radius.radius2,
+        bottomStart = if (isFirst) AppTheme.radius.radius12 else AppTheme.radius.radius2,
+        bottomEnd = if (isLast) AppTheme.radius.radius12 else AppTheme.radius.radius2
     )
 }
 
@@ -99,7 +94,7 @@ fun AppButtonRowPreview() {
             label = {
                 Text(
                     text = "Тест",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = AppTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

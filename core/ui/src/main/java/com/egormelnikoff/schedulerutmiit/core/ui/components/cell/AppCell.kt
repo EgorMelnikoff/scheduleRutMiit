@@ -22,7 +22,6 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -50,30 +49,31 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Red
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppCell(
     modifier: Modifier = Modifier,
-    horizontalPadding: Dp = 12.dp,
-    verticalPadding: Dp = 12.dp,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(4.dp),
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(12.dp),
+    horizontalPadding: Dp = AppTheme.paddings.padding12,
+    verticalPadding: Dp = AppTheme.paddings.padding12,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(AppTheme.paddings.padding4),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(AppTheme.paddings.padding12),
     defaultMinHeight: Dp? = null,
 
     showBadge: Boolean = false,
     title: String? = null,
     titleDecoration: TextDecoration? = null,
-    titleTypography: TextStyle = MaterialTheme.typography.titleMedium,
+    titleTypography: TextStyle = AppTheme.typography.titleMedium,
     titleMaxLines: Int = 1,
-    titleColor: Color = MaterialTheme.colorScheme.onBackground,
+    titleColor: Color = AppTheme.colors.onBackground,
     titleLabel: (@Composable () -> Unit)? = null,
 
     subtitle: String? = null,
-    subtitleTypography: TextStyle = MaterialTheme.typography.bodyMedium,
+    subtitleTypography: TextStyle = AppTheme.typography.bodyMedium,
     subtitleMaxLines: Int = 1,
-    subtitleColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+    subtitleColor: Color = AppTheme.colors.onSecondaryContainer,
     subtitleLabel: (@Composable () -> Unit)? = null,
 
     leadingIcon: (@Composable () -> Unit)? = null,
@@ -81,7 +81,7 @@ fun AppCell(
     clickLabel: ImageVector = ImageVector.vectorResource(R.drawable.right),
     showClickLabel: Boolean = true,
     enableToolTip: Boolean = false,
-    clickLabelColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+    clickLabelColor: Color = AppTheme.colors.onSecondaryContainer,
     onLongClick: (() -> Unit)? = null,
     onDoubleCLick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
@@ -89,11 +89,11 @@ fun AppCell(
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
             positioning = TooltipAnchorPosition.Above,
-            spacingBetweenTooltipAndAnchor = 2.dp
+            spacingBetweenTooltipAndAnchor = AppTheme.paddings.padding2
         ),
         tooltip = {
             PlainTooltip(
-                modifier = Modifier.padding(horizontal = 2.dp),
+                modifier = Modifier.padding(horizontal = AppTheme.paddings.padding2),
 
                 ) { Text(title.toString()) }
         },
@@ -112,7 +112,10 @@ fun AppCell(
                         )
                     } ?: modifier
                 }
-                .padding(horizontal = horizontalPadding, vertical = verticalPadding)
+                .padding(
+                    horizontal = horizontalPadding,
+                    vertical = verticalPadding
+                )
                 .let { modifier ->
                     if (defaultMinHeight != null) {
                         modifier.defaultMinSize(
@@ -146,7 +149,7 @@ fun AppCell(
                 title?.let {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
                     ) {
                         Text(
                             text = title,
@@ -168,7 +171,7 @@ fun AppCell(
                 subtitle?.let {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
                     ) {
                         subtitleLabel?.invoke()
                         Text(
@@ -242,17 +245,17 @@ fun LeadingTitle(
             .size(imageSize)
             .border(
                 0.5.dp,
-                MaterialTheme.colorScheme.onSecondaryContainer,
+                AppTheme.colors.onSecondaryContainer,
                 CircleShape
             )
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.secondaryContainer),
+            .background(AppTheme.colors.secondaryContainer),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = title.uppercase(),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            style = AppTheme.typography.titleMedium,
+            color = AppTheme.colors.onSecondaryContainer,
             maxLines = 1,
             fontSize = titleSize
         )

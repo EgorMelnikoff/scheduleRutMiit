@@ -7,7 +7,6 @@ import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -15,10 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -64,12 +63,12 @@ fun BottomSheetDateRangePicker(
             title = null,
             headline = {
                 Box(
-                    modifier = Modifier.padding(bottom = 12.dp)
+                    modifier = Modifier.padding(bottom = AppTheme.paddings.padding12)
                 ) {
                     AppButton(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = AppTheme.paddings.padding16),
                         enabled = datePickerState.selectedStartDateMillis != null,
                         buttonTitle = stringResource(R.string.confirm),
                         onClick = {
@@ -95,25 +94,25 @@ fun BottomSheetDateRangePicker(
                 }
             },
             colors = DatePickerDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.background,
-                titleContentColor = MaterialTheme.colorScheme.onBackground,
-                dividerColor = MaterialTheme.colorScheme.outline,
+                containerColor = AppTheme.colors.background,
+                titleContentColor = AppTheme.colors.onBackground,
+                dividerColor = AppTheme.colors.outline,
                 dateTextFieldColors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.background,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                    focusedContainerColor = AppTheme.colors.background,
+                    unfocusedContainerColor = AppTheme.colors.background,
 
-                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    focusedTextColor = AppTheme.colors.onBackground,
+                    unfocusedTextColor = AppTheme.colors.onSecondaryContainer,
 
-                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
+                    focusedIndicatorColor = AppTheme.colors.primary,
+                    unfocusedIndicatorColor = AppTheme.colors.outline,
 
-                    focusedLabelColor = MaterialTheme.colorScheme.primary,
-                    unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                    focusedLabelColor = AppTheme.colors.primary,
+                    unfocusedLabelColor = AppTheme.colors.outline,
 
-                    errorLabelColor = MaterialTheme.colorScheme.error,
-                    errorContainerColor = MaterialTheme.colorScheme.background,
-                    errorIndicatorColor = MaterialTheme.colorScheme.error
+                    errorLabelColor = AppTheme.colors.error,
+                    errorContainerColor = AppTheme.colors.background,
+                    errorIndicatorColor = AppTheme.colors.error
                 )
             )
         )

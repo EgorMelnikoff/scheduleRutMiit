@@ -1,13 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -22,7 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.largeCornerRadius
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,14 +32,14 @@ fun AppTopBar(
     navAction: (() -> Unit)? = null,
     navImageVector: ImageVector = ImageVector.vectorResource(R.drawable.back),
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    contentColor: Color = MaterialTheme.colorScheme.onBackground,
+    contentColor: Color = AppTheme.colors.onBackground,
     onTitleClick: (() -> Unit)? = null,
     actions: @Composable (() -> Unit)? = null
 ) {
     Surface(
         shape = RoundedCornerShape(
-            bottomStart = largeCornerRadius,
-            bottomEnd = largeCornerRadius
+            bottomStart = AppTheme.radius.radius16,
+            bottomEnd = AppTheme.radius.radius16
         ),
         shadowElevation = shadowElevation,
         color = Color.Unspecified,
@@ -57,18 +56,18 @@ fun AppTopBar(
                         ) {
                             onTitleClick?.invoke()
                         },
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalArrangement = spacedBy(AppTheme.paddings.padding4)
                     ) {
                         Text(
                             text = titleText,
-                            style = MaterialTheme.typography.titleLarge,
+                            style = AppTheme.typography.titleLarge,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
                         subtitleText?.let {
                             Text(
                                 text = subtitleText,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = AppTheme.typography.bodyMedium,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1
                             )
@@ -92,8 +91,8 @@ fun AppTopBar(
                 actions?.invoke()
             },
             colors = TopAppBarDefaults.topAppBarColors().copy(
-                containerColor = if (scrollBehavior != null) Color.Transparent else MaterialTheme.colorScheme.background,
-                scrolledContainerColor = MaterialTheme.colorScheme.background,
+                containerColor = if (scrollBehavior != null) Color.Transparent else AppTheme.colors.background,
+                scrolledContainerColor = AppTheme.colors.background,
                 titleContentColor = contentColor,
                 navigationIconContentColor = contentColor,
                 actionIconContentColor = contentColor

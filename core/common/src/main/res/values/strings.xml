@@ -9,6 +9,7 @@
     </plurals>
     <string name="_class">Class</string>
     <string name="_default">Default</string>
+    <string name="_continue">Continue</string>
     <string name="retry">Retry</string>
     <string name="about_app">About app</string>
     <string name="add">Add</string>

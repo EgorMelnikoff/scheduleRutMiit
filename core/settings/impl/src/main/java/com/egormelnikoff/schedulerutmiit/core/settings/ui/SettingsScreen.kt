@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -37,6 +36,7 @@ import com.egormelnikoff.schedulerutmiit.core.settings.ui.widget.ThemeModalDialo
 import com.egormelnikoff.schedulerutmiit.core.ui.components._switch.AppSwitch
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
@@ -77,14 +77,14 @@ fun SettingsScreen(
         LazyVerticalStaggeredGrid(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background),
+                .background(AppTheme.colors.background),
             columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
-            verticalItemSpacing = 16.dp,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalItemSpacing = AppTheme.paddings.padding16,
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16),
             contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = contentPadding.calculateTopPadding() + 16.dp,
+                start = AppTheme.paddings.padding16,
+                end = AppTheme.paddings.padding16,
+                top = contentPadding.calculateTopPadding() + AppTheme.paddings.padding16,
                 bottom = contentPadding.calculateBottomPadding()
             ),
             state = settingsListState
@@ -113,7 +113,7 @@ fun SettingsScreen(
                                                 ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
                                             },
                                             contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                            tint = AppTheme.colors.onSecondaryContainer
                                         )
                                     }
                                 },
@@ -138,7 +138,7 @@ fun SettingsScreen(
                                         modifier = Modifier.size(20.dp),
                                         imageVector = ImageVector.vectorResource(R.drawable.event_view),
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                        tint = AppTheme.colors.onSecondaryContainer
                                     )
                                 },
                                 subtitle = visibleSettings
@@ -184,7 +184,7 @@ fun SettingsScreen(
                                                 EventsCountView.OFF -> ImageVector.vectorResource(R.drawable.visibility_off)
                                             },
                                             contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                            tint = AppTheme.colors.onSecondaryContainer
                                         )
                                     }
                                 },
@@ -205,7 +205,7 @@ fun SettingsScreen(
                                         modifier = Modifier.size(20.dp),
                                         imageVector = ImageVector.vectorResource(R.drawable.sun),
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                        tint = AppTheme.colors.onSecondaryContainer
                                     )
                                 },
                                 defaultMinHeight = 36.dp,
@@ -267,7 +267,7 @@ fun SettingsScreen(
                                                 )
                                             },
                                             contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                            tint = AppTheme.colors.onSecondaryContainer
                                         )
                                     }
                                 },
@@ -290,7 +290,7 @@ fun SettingsScreen(
                                         modifier = Modifier.size(20.dp),
                                         imageVector = ImageVector.vectorResource(R.drawable.undelete),
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                        tint = AppTheme.colors.onSecondaryContainer
                                     )
                                 },
                                 defaultMinHeight = 36.dp,
@@ -339,7 +339,7 @@ fun SettingsScreen(
                                                 ImageVector.vectorResource(R.drawable.sun)
                                             },
                                             contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                            tint = AppTheme.colors.onSecondaryContainer
                                         )
                                     }
                                 },
@@ -361,7 +361,7 @@ fun SettingsScreen(
                                         modifier = Modifier.size(20.dp),
                                         imageVector = ImageVector.vectorResource(R.drawable.info),
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                        tint = AppTheme.colors.onSecondaryContainer
                                     )
                                 },
                                 defaultMinHeight = 36.dp,

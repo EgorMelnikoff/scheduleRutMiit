@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.core.ui.components.text_field
 
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
@@ -11,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.VisualTransformation
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun AppTextField(
@@ -34,31 +34,31 @@ fun AppTextField(
         maxLines = maxLines ?: Int.MAX_VALUE,
         modifier = modifier,
         colors = colors ?: TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            focusedContainerColor = AppTheme.colors.secondaryContainer,
+            unfocusedContainerColor = AppTheme.colors.secondaryContainer,
 
-            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+            focusedTextColor = AppTheme.colors.onBackground,
+            unfocusedTextColor = AppTheme.colors.onBackground,
 
-            focusedIndicatorColor = MaterialTheme.colorScheme.secondaryContainer,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+            focusedIndicatorColor = AppTheme.colors.secondaryContainer,
+            unfocusedIndicatorColor = AppTheme.colors.secondaryContainer,
 
-            focusedLeadingIconColor = MaterialTheme.colorScheme.onBackground,
-            unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+            focusedLeadingIconColor = AppTheme.colors.onBackground,
+            unfocusedLeadingIconColor = AppTheme.colors.primary,
 
-            disabledContainerColor = MaterialTheme.colorScheme.background,
-            disabledIndicatorColor = MaterialTheme.colorScheme.outline,
-            disabledTextColor = MaterialTheme.colorScheme.outline
+            disabledContainerColor = AppTheme.colors.background,
+            disabledIndicatorColor = AppTheme.colors.outline,
+            disabledTextColor = AppTheme.colors.outline
         ),
-        textStyle = MaterialTheme.typography.bodyLarge,
+        textStyle = AppTheme.typography.bodyLarge,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         placeholder = placeholderText?.let {
             {
                 Text(
                     text = it,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    style = AppTheme.typography.titleSmall,
+                    color = AppTheme.colors.onSecondaryContainer
                 )
             }
         },
@@ -68,7 +68,7 @@ fun AppTextField(
                 onValueChanged(newQuery)
             }
         },
-        shape = MaterialTheme.shapes.medium,
+        shape = AppTheme.shapes.medium,
         keyboardOptions = keyboardOptions ?: KeyboardOptions.Default,
         keyboardActions = KeyboardActions(
             onDone = {

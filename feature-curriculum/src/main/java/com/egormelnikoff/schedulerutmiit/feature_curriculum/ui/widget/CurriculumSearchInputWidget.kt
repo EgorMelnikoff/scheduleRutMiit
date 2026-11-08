@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,9 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumAction
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumState
 
@@ -31,9 +30,9 @@ internal fun CurriculumSearchInputWidget(
     onAction: (CurriculumAction) -> Unit
 ) {
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
     ) {
         AppTextField(
             modifier = Modifier.weight(1f),
@@ -44,7 +43,7 @@ internal fun CurriculumSearchInputWidget(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.search),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    tint = AppTheme.colors.onSecondaryContainer
                 )
             },
             trailingIcon = {
@@ -61,7 +60,7 @@ internal fun CurriculumSearchInputWidget(
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.clear),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = AppTheme.colors.primary
                         )
                     }
                 }
@@ -83,7 +82,7 @@ internal fun CurriculumSearchInputWidget(
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.info),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = AppTheme.colors.onBackground
             )
         }
     }

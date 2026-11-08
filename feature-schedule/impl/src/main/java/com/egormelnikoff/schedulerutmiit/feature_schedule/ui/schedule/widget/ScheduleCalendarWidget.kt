@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,6 +35,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.Calendar
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.CalendarBarItem
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_sheet.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getEnrichedEvents
@@ -76,29 +76,29 @@ fun ScheduleCalendarWidget(
                     modifier = Modifier.size(3.dp),
                     imageVector = ImageVector.vectorResource(R.drawable.circle),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    tint = AppTheme.colors.onSecondaryContainer
                 )
                 Text(
                     text = stringResource(
                         R.string.week,
                         selectedWeek.toString()
                     ).replaceFirstChar { it.lowercase() },
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = AppTheme.typography.bodyLarge,
+                    color = AppTheme.colors.onBackground,
                     textAlign = TextAlign.Center
                 )
                 Box(
                     modifier = Modifier
                         .size(20.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.secondaryContainer),
+                        .background(AppTheme.colors.secondaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = (scheduleCalendarState.currentWeekPage + 1).toString(),
                         fontSize = 12.sp,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground
+                        style = AppTheme.typography.bodyLarge,
+                        color = AppTheme.colors.onBackground
                     )
                 }
             }
@@ -166,11 +166,11 @@ fun ScheduleCalendarWidget(
 
         LazyColumn(
             contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
+                start = AppTheme.paddings.padding16,
+                end = AppTheme.paddings.padding16,
                 bottom = paddingBottom
             ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
         ) {
             if (enrichedEvents.isNotEmpty()) {
                 items(

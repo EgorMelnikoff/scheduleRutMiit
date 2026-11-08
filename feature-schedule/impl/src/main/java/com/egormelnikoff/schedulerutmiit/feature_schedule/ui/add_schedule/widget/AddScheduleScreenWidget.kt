@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_sheet.BottomSheetDateRangePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
@@ -84,7 +84,7 @@ fun AddScheduleScreenWidget(
     }
 
     if (addScheduleState.showBackDialog) {
-        AppAlertDialog(
+        AppAlertBottomSheet(
             dialogTitle = stringResource(R.string.exit),
             dialogText = stringResource(R.string.exit_message),
             onDismissRequest = {

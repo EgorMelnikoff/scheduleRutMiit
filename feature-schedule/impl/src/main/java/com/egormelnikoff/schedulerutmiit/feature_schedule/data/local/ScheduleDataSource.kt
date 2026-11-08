@@ -1,12 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local
 
 import androidx.room.withTransaction
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.dao.EventDao
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.dao.ScheduleDao
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.mapper.toDomain
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.mapper.toEntity
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 import javax.inject.Inject
 
 class ScheduleDataSource @Inject constructor(

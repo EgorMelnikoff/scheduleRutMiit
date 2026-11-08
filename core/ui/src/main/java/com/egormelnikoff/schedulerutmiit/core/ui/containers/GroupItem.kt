@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -20,10 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.baseItemSpacing
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.extraSmallCornerRadius
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.largeCornerRadius
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun GridGroup(
@@ -34,14 +30,14 @@ fun GridGroup(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
     ) {
         title?.let {
             Text(
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier.padding(horizontal = AppTheme.paddings.padding4),
                 text = it,
-                style = MaterialTheme.typography.titleSmall,
-                color = titleColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                style = AppTheme.typography.titleSmall,
+                color = titleColor ?: AppTheme.colors.onSecondaryContainer,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -49,7 +45,7 @@ fun GridGroup(
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(baseItemSpacing)
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding2)
         ) {
             items.forEachIndexed { indexColumn, itemDataColumn ->
                 val isFirstColumn = indexColumn == 0
@@ -57,20 +53,20 @@ fun GridGroup(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(baseItemSpacing)
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding2)
                 ) {
                     itemDataColumn.forEachIndexed { indexRow, itemDataRow ->
                         val isFirstRow = indexRow == 0
                         val isLastRow = indexRow == itemDataColumn.lastIndex
 
                         val topStartRadius =
-                            if (isFirstColumn && isFirstRow) largeCornerRadius else extraSmallCornerRadius
+                            if (isFirstColumn && isFirstRow) AppTheme.radius.radius12 else AppTheme.radius.radius2
                         val topEndRadius =
-                            if (isFirstColumn && isLastRow) largeCornerRadius else extraSmallCornerRadius
+                            if (isFirstColumn && isLastRow) AppTheme.radius.radius12 else AppTheme.radius.radius2
                         val bottomStartRadius =
-                            if (isLastColumn && isFirstRow) largeCornerRadius else extraSmallCornerRadius
+                            if (isLastColumn && isFirstRow) AppTheme.radius.radius12 else AppTheme.radius.radius2
                         val bottomEndRadius =
-                            if (isLastColumn && isLastRow) largeCornerRadius else extraSmallCornerRadius
+                            if (isLastColumn && isLastRow) AppTheme.radius.radius12 else AppTheme.radius.radius2
 
                         val shape = remember(
                             topStartRadius,
@@ -90,7 +86,7 @@ fun GridGroup(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(shape)
-                                .background(MaterialTheme.colorScheme.secondaryContainer)
+                                .background(AppTheme.colors.secondaryContainer)
                         ) {
                             CompositionLocalProvider(
                                 LocalMinimumInteractiveComponentSize provides Dp.Unspecified
@@ -111,20 +107,20 @@ fun ColumnGroup(
     title: String? = null,
     titleColor: Color? = null,
     withBackground: Boolean = true,
-    backgroundColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+    backgroundColor: Color = AppTheme.colors.secondaryContainer,
     items: List<@Composable () -> Unit>
 ) {
     if (items.isNotEmpty()) {
         Column(
             modifier = modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
         ) {
             title?.let {
                 Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = AppTheme.paddings.padding4),
                     text = it,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = titleColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                    style = AppTheme.typography.titleSmall,
+                    color = titleColor ?: AppTheme.colors.onSecondaryContainer,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -132,7 +128,7 @@ fun ColumnGroup(
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(baseItemSpacing)
+                verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding2)
             ) {
                 items.forEachIndexed { index, itemData ->
                     val isFirst = index == 0
@@ -143,10 +139,10 @@ fun ColumnGroup(
                             .fillMaxWidth()
                             .let {
                                 if (withBackground) {
-                                    val topStartRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
-                                    val topEndRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
-                                    val bottomStartRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
-                                    val bottomEndRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
+                                    val topStartRadius = if (isFirst) AppTheme.radius.radius16 else AppTheme.radius.radius4
+                                    val topEndRadius = if (isFirst) AppTheme.radius.radius16 else AppTheme.radius.radius4
+                                    val bottomStartRadius = if (isLast) AppTheme.radius.radius16 else AppTheme.radius.radius4
+                                    val bottomEndRadius = if (isLast) AppTheme.radius.radius16 else AppTheme.radius.radius4
 
                                     val shape = remember(
                                         topStartRadius,
@@ -186,30 +182,30 @@ fun RowGroup(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
     ) {
         title?.let {
             Text(
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier.padding(horizontal = AppTheme.paddings.padding4),
                 text = it,
-                style = MaterialTheme.typography.titleSmall,
-                color = titleColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                style = AppTheme.typography.titleSmall,
+                color = titleColor ?: AppTheme.colors.onSecondaryContainer,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(baseItemSpacing)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding2)
         ) {
             items.forEachIndexed { index, itemData ->
                 val isFirst = index == 0
                 val isLast = index == items.lastIndex
 
-                val topStartRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
-                val bottomStartRadius = if (isFirst) largeCornerRadius else extraSmallCornerRadius
-                val topEndRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
-                val bottomEndRadius = if (isLast) largeCornerRadius else extraSmallCornerRadius
+                val topStartRadius = if (isFirst) AppTheme.radius.radius16 else AppTheme.radius.radius4
+                val bottomStartRadius = if (isFirst) AppTheme.radius.radius16 else AppTheme.radius.radius4
+                val topEndRadius = if (isLast) AppTheme.radius.radius16 else AppTheme.radius.radius4
+                val bottomEndRadius = if (isLast) AppTheme.radius.radius16 else AppTheme.radius.radius4
 
                 val shape = remember(
                     topStartRadius,
@@ -229,7 +225,7 @@ fun RowGroup(
                     modifier = Modifier
                         .weight(1f)
                         .clip(shape)
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .background(AppTheme.colors.secondaryContainer)
                 ) {
                     itemData()
                 }

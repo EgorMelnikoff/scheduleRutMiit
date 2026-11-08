@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.observer
 
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.NamedScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.findDefault
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.SummaryState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleState
 import kotlinx.coroutines.flow.map

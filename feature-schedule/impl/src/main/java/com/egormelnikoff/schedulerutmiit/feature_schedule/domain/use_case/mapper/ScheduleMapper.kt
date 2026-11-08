@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.mapper
 
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.mapper.toDomain
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.mapper.toDomain
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.ScheduleDto
 import javax.inject.Inject
 
 class ScheduleMapper @Inject constructor() {

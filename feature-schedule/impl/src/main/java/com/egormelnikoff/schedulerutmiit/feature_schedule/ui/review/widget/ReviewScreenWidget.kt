@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -16,16 +15,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.reviewStateMock
@@ -51,8 +50,9 @@ fun ReviewScreenWidget(
     }
 
     if (reviewState.usedPhoto) {
-        ReviewScreenEffect(
-            overlappedFraction, reviewState
+        ReviewScreenStatusBarEffect(
+            overlappedFraction = overlappedFraction,
+            isDarkTheme = reviewState.theme.isDarkTheme()
         )
     }
 
@@ -71,12 +71,12 @@ fun ReviewScreenWidget(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
+                .background(AppTheme.colors.background),
             contentPadding = PaddingValues(
-                top = if (reviewState.usedPhoto) 0.dp else internalPadding.calculateTopPadding() + 12.dp,
+                top = if (reviewState.usedPhoto) 0.dp else internalPadding.calculateTopPadding() + AppTheme.paddings.padding12,
                 bottom = contentPadding.calculateBottomPadding()
             ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
         ) {
             if (reviewState.usedPhoto) {
                 reviewImageWidget(reviewState)
@@ -109,8 +109,7 @@ fun ReviewScreenWidget(
     }
 
     reviewState.scheduleDeleteSheet?.let {
-        AppAlertDialog(
-            dialogIcon = ImageVector.vectorResource(R.drawable.delete),
+        AppAlertBottomSheet(
             dialogTitle = "${stringResource(R.string.delete_schedule)}?",
             dialogText = stringResource(R.string.impossible_restore_eventextra),
             onDismissRequest = {
@@ -132,10 +131,10 @@ fun ReviewScreenWidget(
 
 @Preview(locale = "ru")
 @Composable
-fun ReviewScreenWidgetWithImagePreview(){
+fun ReviewScreenWidgetWithImagePreview() {
     PreviewLightTheme {
         ReviewScreenWidget(
-            contentPadding = PaddingValues(0.dp),
+            contentPadding = PaddingValues(AppTheme.paddings.none),
             reviewState = reviewStateMock,
             onAction = {}
         )
@@ -144,10 +143,10 @@ fun ReviewScreenWidgetWithImagePreview(){
 
 @Preview(locale = "ru")
 @Composable
-fun ReviewScreenWidgetWithoutImagePreview(){
+fun ReviewScreenWidgetWithoutImagePreview() {
     PreviewLightTheme {
         ReviewScreenWidget(
-            contentPadding = PaddingValues(0.dp),
+            contentPadding = PaddingValues(AppTheme.paddings.none),
             reviewState = reviewStateMock.copy(
                 usedPhoto = false
             ),

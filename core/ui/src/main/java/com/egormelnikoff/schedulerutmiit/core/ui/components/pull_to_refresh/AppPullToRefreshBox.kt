@@ -1,12 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.components.pull_to_refresh
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun AppPullToRefreshBox(
@@ -32,8 +32,8 @@ fun AppPullToRefreshBox(
                 Indicator(
                     modifier = Modifier.align(Alignment.TopCenter),
                     isRefreshing = isRefreshing,
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    color = MaterialTheme.colorScheme.primary,
+                    containerColor = AppTheme.colors.secondaryContainer,
+                    color = AppTheme.colors.primary,
                     state = state
                 )
             }

@@ -13,11 +13,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import java.time.LocalDate
 import java.time.format.TextStyle
 
@@ -39,7 +39,7 @@ fun DaySelector(
             modifier = Modifier
                 .fillMaxWidth()
                 .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding2)
         ) {
             stringArrayResource(R.array.days_of_week).forEachIndexed { index, _ ->
                 val currentDate = firstDayOfWeek.plusDays(index.toLong())

@@ -13,7 +13,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +31,8 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
-import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
@@ -85,20 +85,20 @@ fun ScheduleItemSingleWidget(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+                .padding(AppTheme.paddings.padding12),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding6)
         ) {
             event.typeName?.let {
                 Text(
                     text = event.typeName,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    style = AppTheme.typography.titleSmall,
+                    color = AppTheme.colors.onSecondaryContainer
                 )
             }
             Text(
                 text = event.name,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = AppTheme.typography.titleMedium,
+                color = AppTheme.colors.onBackground,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2
             )
@@ -106,21 +106,21 @@ fun ScheduleItemSingleWidget(
             if (eventView.groupsVisible && !event.groups.isNullOrEmpty()) {
                 FlowRow(
                     itemVerticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding6, Alignment.Start),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
                 ) {
                     Icon(
                         modifier = Modifier
                             .size(14.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.group),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        tint = AppTheme.colors.onSecondaryContainer
                     )
                     event.groups.forEach { group ->
                         Text(
                             text = group.name,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            style = AppTheme.typography.bodyMedium,
+                            color = AppTheme.colors.onSecondaryContainer,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
@@ -131,21 +131,21 @@ fun ScheduleItemSingleWidget(
             if (eventView.roomsVisible && !event.rooms.isNullOrEmpty()) {
                 FlowRow(
                     itemVerticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding6, Alignment.Start),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
                 ) {
                     Icon(
                         modifier = Modifier
                             .size(14.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.room),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        tint = AppTheme.colors.onSecondaryContainer
                     )
                     event.rooms.forEach { room ->
                         Text(
                             text = room.name,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            style = MaterialTheme.typography.bodyMedium,
+                            color = AppTheme.colors.onSecondaryContainer,
+                            style = AppTheme.typography.bodyMedium,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
@@ -156,21 +156,21 @@ fun ScheduleItemSingleWidget(
             if (eventView.lecturersVisible && !event.lecturers.isNullOrEmpty()) {
                 FlowRow(
                     itemVerticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding6, Alignment.Start),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
                 ) {
                     Icon(
                         modifier = Modifier
                             .size(14.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.person),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        tint = AppTheme.colors.onSecondaryContainer
                     )
                     event.lecturers.forEach { lecturer ->
                         Text(
                             text = lecturer.shortFio,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            style = MaterialTheme.typography.bodyMedium,
+                            color = AppTheme.colors.onSecondaryContainer,
+                            style = AppTheme.typography.bodyMedium,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
@@ -180,14 +180,14 @@ fun ScheduleItemSingleWidget(
 
             if (eventView.commentVisible && eventExtraData != null && eventExtraData.comment.isNotBlank()) {
                 HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.padding(vertical = AppTheme.paddings.padding4),
+                    color = AppTheme.colors.outline,
                     thickness = 0.5.dp
                 )
                 Text(
                     text = eventExtraData.comment.replace(Regex("\\s+"), " "),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = AppTheme.typography.bodyMedium,
+                    color = AppTheme.colors.onBackground,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3
                 )
@@ -195,15 +195,15 @@ fun ScheduleItemSingleWidget(
         }
 
         DropdownMenu(
-            containerColor = MaterialTheme.colorScheme.background,
+            containerColor = AppTheme.colors.background,
             expanded = showExpandedMenu,
-            shape = MaterialTheme.shapes.medium,
+            shape = AppTheme.shapes.medium,
             onDismissRequest = { showExpandedMenu = false }
         ) {
             DropdownMenuItem(
                 colors = MenuDefaults.itemColors().copy(
-                    textColor = MaterialTheme.colorScheme.onBackground,
-                    leadingIconColor = MaterialTheme.colorScheme.onBackground
+                    textColor = AppTheme.colors.onBackground,
+                    leadingIconColor = AppTheme.colors.onBackground
                 ),
                 leadingIcon = {
                     Icon(
@@ -225,8 +225,8 @@ fun ScheduleItemSingleWidget(
             if (event.isCustomEvent) {
                 DropdownMenuItem(
                     colors = MenuDefaults.itemColors().copy(
-                        textColor = MaterialTheme.colorScheme.onBackground,
-                        leadingIconColor = MaterialTheme.colorScheme.onBackground
+                        textColor = AppTheme.colors.onBackground,
+                        leadingIconColor = AppTheme.colors.onBackground
                     ),
                     leadingIcon = {
                         Icon(
@@ -246,8 +246,8 @@ fun ScheduleItemSingleWidget(
                 )
                 DropdownMenuItem(
                     colors = MenuDefaults.itemColors().copy(
-                        textColor = MaterialTheme.colorScheme.error,
-                        leadingIconColor = MaterialTheme.colorScheme.error
+                        textColor = AppTheme.colors.error,
+                        leadingIconColor = AppTheme.colors.error
                     ),
                     leadingIcon = {
                         Icon(
@@ -269,25 +269,23 @@ fun ScheduleItemSingleWidget(
         }
 
         if (showDeleteDialog && event.isCustomEvent) {
-            AppAlertDialog(
+            AppAlertBottomSheet(
                 onDismissRequest = { showDeleteDialog = false },
                 onConfirmation = {
                     onDeleteEvent(event.id)
                 },
-                dialogIcon = ImageVector.vectorResource(R.drawable.delete),
                 dialogTitle = "${stringResource(R.string.delete_event)}?",
                 dialogText = stringResource(R.string.event_deleting_alert)
             )
         }
 
         if (showHideDialog) {
-            AppAlertDialog(
+            AppAlertBottomSheet(
                 onDismissRequest = { showHideDialog = false },
                 onConfirmation = {
                     onUpdateHiddenEvent(event.id)
                     showHideDialog = false
                 },
-                dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),
                 dialogTitle = "${stringResource(R.string.hide_event)}?",
                 dialogText = stringResource(R.string.event_visibility_alert)
             )

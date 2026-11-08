@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review
 
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getEventsForDate
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime

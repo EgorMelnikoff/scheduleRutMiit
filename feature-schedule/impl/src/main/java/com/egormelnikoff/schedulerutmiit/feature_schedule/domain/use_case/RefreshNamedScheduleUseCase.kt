@@ -1,14 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.settings.api.repos.SettingsRepos
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.NamedScheduleDataSource
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.ScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.NamedScheduleDataSource
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.ScheduleDataSource
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

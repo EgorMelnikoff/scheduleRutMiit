@@ -1,15 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.widget
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ScaffoldLazyColumn
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumState
 
 @Composable
@@ -18,15 +14,15 @@ internal fun CurriculumScreenContentWidget(
 ) {
     ScaffoldLazyColumn(
         contentPadding = PaddingValues(
-            horizontal = 16.dp
+            horizontal = AppTheme.paddings.padding16
         ),
-        itemSpacing = 16.dp
+        itemSpacing = AppTheme.paddings.padding16
     ) {
         items(state.subjectsList) { subject ->
             AppCell(
                 title = subject.title,
-                verticalPadding = 0.dp,
-                horizontalPadding = 0.dp,
+                verticalPadding = AppTheme.paddings.none,
+                horizontalPadding = AppTheme.paddings.none,
                 subtitleMaxLines = Int.MAX_VALUE,
                 subtitle = subject.teachers.joinToString(
                     separator = ", \n"

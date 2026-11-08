@@ -12,8 +12,8 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventState
@@ -29,7 +29,7 @@ fun ThirdStepAddEventWidget(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12, Alignment.Top)
     ) {
         ListInputWidget(
             title = stringResource(R.string.room),

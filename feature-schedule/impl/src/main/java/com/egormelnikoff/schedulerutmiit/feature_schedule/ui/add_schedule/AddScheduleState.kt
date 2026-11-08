@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule
 
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.validator.isValidSchedule
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 import java.time.LocalDate
 
 data class AddScheduleState(

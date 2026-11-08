@@ -7,8 +7,8 @@ import com.egormelnikoff.schedulerutmiit.core.network.handler.errorHandler
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.FetchScheduleEvent
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.cache.FetchScheduleCache
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.FetchScheduleEvent
 import com.egormelnikoff.schedulerutmiit.search.domain.model.RefreshArgs
 import com.egormelnikoff.schedulerutmiit.search.domain.model.SearchQuery
 import com.egormelnikoff.schedulerutmiit.search.domain.repos.SearchRepos

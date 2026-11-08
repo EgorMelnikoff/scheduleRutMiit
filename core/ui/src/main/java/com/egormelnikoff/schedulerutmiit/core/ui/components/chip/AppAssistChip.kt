@@ -8,7 +8,6 @@ import androidx.compose.material3.ChipColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -17,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 
 @Composable
@@ -33,10 +33,10 @@ fun AppAssistChip(
         AssistChip(
             border = border,
             colors = colors ?: AssistChipDefaults.assistChipColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                trailingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                containerColor = AppTheme.colors.secondaryContainer,
+                labelColor = AppTheme.colors.onSecondaryContainer,
+                leadingIconContentColor = AppTheme.colors.onSecondaryContainer,
+                trailingIconContentColor = AppTheme.colors.onSecondaryContainer
             ),
             onClick = onClick,
             leadingIcon = imageVector?.let {
@@ -52,7 +52,7 @@ fun AppAssistChip(
             label = {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleSmall
+                    style = AppTheme.typography.titleSmall
                 )
             },
             enabled = enabled

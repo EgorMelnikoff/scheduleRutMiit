@@ -1,15 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.mapper
 
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.EventExtraDataEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.GroupEntity
@@ -20,6 +10,16 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.Recu
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.RoomEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.ScheduleEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.ScheduleWithEventsRelation
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 
 fun NamedScheduleWithSchedulesRelation.toDomain() = NamedScheduleWithSchedules(
     namedScheduleEntity.toDomain(), scheduleWithEvents.map { it.toDomain() }

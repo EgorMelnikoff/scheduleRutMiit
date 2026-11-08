@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.newsImageUrl
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.news.domain.model.News
 
 internal fun LazyListScope.newsDetailImageWidget(
@@ -42,7 +42,7 @@ internal fun LazyListScope.newsDetailImageWidget(
                     modifier = Modifier
                         .fillMaxSize()
                         .height(270.dp)
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .background(AppTheme.colors.secondaryContainer)
                         .alpha(transition),
                     painter = model,
                     contentScale = ContentScale.Crop,
@@ -58,7 +58,7 @@ internal fun LazyListScope.newsDetailImageWidget(
                             Brush.verticalGradient(
                                 colors = listOf(
                                     Color.Transparent,
-                                    MaterialTheme.colorScheme.background
+                                    AppTheme.colors.background
                                 )
                             )
                         )

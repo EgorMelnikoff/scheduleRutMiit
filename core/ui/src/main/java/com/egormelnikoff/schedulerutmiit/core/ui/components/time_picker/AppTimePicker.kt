@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -15,10 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import java.time.LocalTime
 
@@ -46,22 +45,22 @@ fun AppTimePicker(
         TimePicker(
             state = timePickerState,
             colors = TimePickerDefaults.colors(
-                clockDialColor = MaterialTheme.colorScheme.secondaryContainer,
-                clockDialSelectedContentColor = MaterialTheme.colorScheme.onPrimary,
-                clockDialUnselectedContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                selectorColor = MaterialTheme.colorScheme.primary,
-                containerColor = MaterialTheme.colorScheme.background,
+                clockDialColor = AppTheme.colors.secondaryContainer,
+                clockDialSelectedContentColor = AppTheme.colors.onPrimary,
+                clockDialUnselectedContentColor = AppTheme.colors.onSecondaryContainer,
+                selectorColor = AppTheme.colors.primary,
+                containerColor = AppTheme.colors.background,
 
-                timeSelectorSelectedContainerColor = MaterialTheme.colorScheme.primary,
-                timeSelectorSelectedContentColor = MaterialTheme.colorScheme.onPrimary,
+                timeSelectorSelectedContainerColor = AppTheme.colors.primary,
+                timeSelectorSelectedContentColor = AppTheme.colors.onPrimary,
 
-                timeSelectorUnselectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                timeSelectorUnselectedContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                timeSelectorUnselectedContainerColor = AppTheme.colors.secondaryContainer,
+                timeSelectorUnselectedContentColor = AppTheme.colors.onSecondaryContainer
             )
         )
 
         AppButton(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.paddings.padding16),
             buttonTitle = stringResource(R.string.confirm),
             onClick = {
                 onTimeSelect(LocalTime.of(timePickerState.hour, timePickerState.minute))

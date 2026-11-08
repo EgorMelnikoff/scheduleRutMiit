@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,12 +18,12 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
-import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import java.time.Instant
 import java.time.LocalDateTime
@@ -44,18 +43,18 @@ fun ModalDialogNamedScheduleHeader(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
     ) {
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
         ) {
             Text(
                 text = namedSchedule.shortName,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = AppTheme.typography.titleLarge,
+                color = AppTheme.colors.onBackground,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
@@ -74,8 +73,8 @@ fun ModalDialogNamedScheduleHeader(
 
                     Text(
                         text = "${stringResource(R.string.current_on)} $lastTimeUpdate",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        style = AppTheme.typography.bodyMedium,
+                        color = AppTheme.colors.onSecondaryContainer,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
@@ -84,8 +83,8 @@ fun ModalDialogNamedScheduleHeader(
                 isSavedNamedSchedule && schedule != null -> {
                     Text(
                         text = schedule.timetableType.typeName,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        style = AppTheme.typography.bodyMedium,
+                        color = AppTheme.colors.onSecondaryContainer,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 2
                     )
@@ -99,8 +98,8 @@ fun ModalDialogNamedScheduleHeader(
                     onOpenRenameDialog()
                 },
                 colors = IconButtonDefaults.iconButtonColors().copy(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onBackground
+                    containerColor = AppTheme.colors.secondaryContainer,
+                    contentColor = AppTheme.colors.onBackground
                 ),
                 icon = ImageVector.vectorResource(R.drawable.edit),
                 contentDescription = stringResource(R.string.rename)
@@ -112,8 +111,8 @@ fun ModalDialogNamedScheduleHeader(
                     showDeleteDialog = true
                 },
                 colors = IconButtonDefaults.iconButtonColors().copy(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = AppTheme.colors.error,
+                    contentColor = AppTheme.colors.onPrimary
                 ),
                 icon = ImageVector.vectorResource(R.drawable.delete),
                 contentDescription = stringResource(R.string.delete)
@@ -122,7 +121,7 @@ fun ModalDialogNamedScheduleHeader(
     }
 
     if (showDeleteDialog) {
-        AppAlertDialog(
+        AppAlertBottomSheet(
             dialogTitle = stringResource(R.string.delete_schedule),
             dialogText = stringResource(R.string.do_you_want_continue),
             onDismissRequest = {

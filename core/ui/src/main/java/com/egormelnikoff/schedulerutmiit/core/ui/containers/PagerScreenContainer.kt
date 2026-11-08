@@ -23,7 +23,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,6 +36,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -53,21 +53,21 @@ fun PagerScreenContainer(
     nextTitle: String = stringResource(R.string.forward),
     finishTitle: String = stringResource(R.string.ready),
     cancelTitle: String = stringResource(R.string.cancel),
-    paddingValues: PaddingValues = PaddingValues(0.dp),
+    paddingValues: PaddingValues = PaddingValues(AppTheme.paddings.none),
     content: @Composable (Int) -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(bottom = paddingValues.calculateBottomPadding() + 8.dp)
+            .background(AppTheme.colors.background)
+            .padding(bottom = paddingValues.calculateBottomPadding() + AppTheme.paddings.padding8)
     ) {
         HorizontalPager(
             modifier = Modifier.weight(1f),
             state = pagerState,
             contentPadding = paddingValues,
             userScrollEnabled = isNextEnabled(pagerState.currentPage),
-            pageSpacing = 24.dp
+            pageSpacing = AppTheme.paddings.padding24
         ) { page ->
             content(page)
         }
@@ -75,7 +75,7 @@ fun PagerScreenContainer(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = AppTheme.paddings.padding20)
         ) {
             val alphaBack by animateFloatAsState(
                 targetValue = if (pagerState.isFirstPage()) (if (onCancel != null) 1f else 0f) else 1f,
@@ -93,7 +93,7 @@ fun PagerScreenContainer(
                     modifier = Modifier,
                     colors = ButtonDefaults.textButtonColors().copy(
                         containerColor = Color.Unspecified,
-                        contentColor = MaterialTheme.colorScheme.onBackground
+                        contentColor = AppTheme.colors.onBackground
                     ),
 
                     enabled = !state || onCancel != null,
@@ -125,14 +125,14 @@ fun PagerScreenContainer(
                         )
 
                         val color by animateColorAsState(
-                            targetValue = if (isSelected) MaterialTheme.colorScheme.onBackground
-                            else MaterialTheme.colorScheme.onSecondaryContainer,
+                            targetValue = if (isSelected) AppTheme.colors.onBackground
+                            else AppTheme.colors.onSecondaryContainer,
                             label = "color"
                         )
 
                         Box(
                             modifier = Modifier
-                                .padding(2.dp)
+                                .padding(AppTheme.paddings.padding2)
                                 .clip(CircleShape)
                                 .background(color)
                                 .clickable {
@@ -154,8 +154,8 @@ fun PagerScreenContainer(
                 Button(
                     enabled = isNextEnabled(pagerState.currentPage),
                     colors = ButtonDefaults.textButtonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = AppTheme.colors.primary,
+                        contentColor = AppTheme.colors.onPrimary
                     ),
                     onClick = {
                         if (state) {

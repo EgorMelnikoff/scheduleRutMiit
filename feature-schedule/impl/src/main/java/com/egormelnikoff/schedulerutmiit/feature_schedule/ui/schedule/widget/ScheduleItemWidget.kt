@@ -5,16 +5,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
@@ -34,18 +33,18 @@ fun ScheduleItemWidget(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 4.dp),
+            modifier = Modifier.padding(vertical = AppTheme.paddings.padding4),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (eventsWithExtra.first().first.timeSlotName != null) {
                 Text(
                     modifier = Modifier.weight(1f),
                     text = eventsWithExtra.first().first.timeSlotName.toString(),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary
+                    style = AppTheme.typography.titleSmall,
+                    color = AppTheme.colors.primary
                 )
             }
             Text(
@@ -55,8 +54,8 @@ fun ScheduleItemWidget(
                     } - ${
                         eventsWithExtra.first().first.endDatetime.toLocalTimeWithTimeZone()
                     }",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary
+                style = AppTheme.typography.titleSmall,
+                color = AppTheme.colors.primary
             )
         }
 

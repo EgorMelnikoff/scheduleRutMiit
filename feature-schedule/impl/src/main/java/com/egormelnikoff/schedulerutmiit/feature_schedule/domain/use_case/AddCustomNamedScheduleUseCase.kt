@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule

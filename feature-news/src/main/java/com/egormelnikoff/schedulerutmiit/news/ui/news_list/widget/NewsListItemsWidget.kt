@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,6 +23,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.newsImageUrl
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.news.ui.common.DateNewsWidget
 import com.egormelnikoff.schedulerutmiit.news.ui.news_list.NewsListAction
@@ -43,8 +43,8 @@ internal fun LazyStaggeredGridScope.newsListItemsWidget(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .clip(AppTheme.shapes.medium)
+                    .background(AppTheme.colors.secondaryContainer)
                     .clickable(
                         onClick = {
                             onAction(NewsListAction.OnNewsClick(news.id))
@@ -56,7 +56,7 @@ internal fun LazyStaggeredGridScope.newsListItemsWidget(
                         .fillMaxWidth()
                         .alpha(transition)
                         .height(150.dp)
-                        .background(MaterialTheme.colorScheme.secondaryContainer),
+                        .background(AppTheme.colors.secondaryContainer),
                     contentScale = ContentScale.Crop,
                     painter = model,
                     contentDescription = null,
@@ -64,13 +64,13 @@ internal fun LazyStaggeredGridScope.newsListItemsWidget(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(AppTheme.paddings.padding12),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
                 ) {
                     Text(
                         text = news.title.trim(),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        style = AppTheme.typography.titleMedium,
+                        color = AppTheme.colors.onBackground,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 3
                     )

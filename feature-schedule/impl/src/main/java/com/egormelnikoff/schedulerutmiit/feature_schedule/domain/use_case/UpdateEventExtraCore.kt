@@ -2,10 +2,10 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.settings.api.repos.SettingsRepos
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventExtraDataSource
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
 import java.time.LocalDate
 import javax.inject.Inject
 

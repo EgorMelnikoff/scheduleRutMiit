@@ -22,6 +22,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventAction
@@ -38,7 +39,7 @@ fun FirstStepAddEventWidget(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
     ) {
         AppTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -56,7 +57,7 @@ fun FirstStepAddEventWidget(
             title = stringResource(R.string.class_type),
         ) {
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8),
                 verticalArrangement = Arrangement.spacedBy(
                     8.dp,
                     Alignment.CenterVertically

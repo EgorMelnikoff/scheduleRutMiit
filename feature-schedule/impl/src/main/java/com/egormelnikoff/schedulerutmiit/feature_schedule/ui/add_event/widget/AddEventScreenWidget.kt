@@ -8,14 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
-import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_sheet.BottomSheetDatePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.components.time_picker.AppTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.PagerScreenContainer
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventAction
@@ -72,8 +72,9 @@ fun AddEventScreenWidget(
                         onAction(AddEventAction.OnBackClicked)
                     },
                     paddingValues = PaddingValues(
-                        start = 16.dp, end = 16.dp,
-                        top = contentPadding.calculateTopPadding() + 12.dp,
+                        start = AppTheme.paddings.padding16,
+                        end = AppTheme.paddings.padding16,
+                        top = contentPadding.calculateTopPadding() + AppTheme.paddings.padding12,
                         bottom = contentPadding.calculateBottomPadding()
                     ),
                     finishTitle = if (state.editForm.isEdit) {
@@ -166,7 +167,7 @@ fun AddEventScreenWidget(
                     )
                 }
                 if (state.showBackDialog) {
-                    AppAlertDialog(
+                    AppAlertBottomSheet(
                         dialogTitle = stringResource(R.string.exit),
                         dialogText = stringResource(R.string.exit_message),
                         onDismissRequest = {

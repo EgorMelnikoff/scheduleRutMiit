@@ -3,13 +3,10 @@ package com.egormelnikoff.schedulerutmiit.search.ui.widget
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,8 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingAsyncImage
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.search.domain.model.RefreshArgs
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchAction
@@ -37,16 +36,16 @@ internal fun SearchContentWidget(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8),
         horizontalAlignment = Alignment.Start
     ) {
         if (state.groups.isNotEmpty() && (state.searchType == SearchType.ALL || state.searchType == SearchType.GROUPS)) {
             item {
                 Text(
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier.padding(horizontal = AppTheme.paddings.padding8),
                     text = stringResource(R.string.groups),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    style = AppTheme.typography.titleSmall,
+                    color = AppTheme.colors.onSecondaryContainer
                 )
             }
             items(
@@ -54,7 +53,7 @@ internal fun SearchContentWidget(
                 key = { it.id }
             ) { group ->
                 Box(
-                    modifier = Modifier.clip(MaterialTheme.shapes.medium)
+                    modifier = Modifier.clip(AppTheme.shapes.medium)
                 ) {
                     AppCell(
                         verticalPadding = 8.dp,
@@ -74,16 +73,16 @@ internal fun SearchContentWidget(
                 }
             }
             item {
-                Spacer(modifier = Modifier.height(2.dp))
+                SpacerHeight(AppTheme.paddings.padding2)
             }
         }
         if (state.people.isNotEmpty() && (state.searchType == SearchType.ALL || state.searchType == SearchType.PEOPLE)) {
             item {
                 Text(
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier.padding(horizontal = AppTheme.paddings.padding8),
                     text = stringResource(R.string.people),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    style = AppTheme.typography.titleSmall,
+                    color = AppTheme.colors.onSecondaryContainer
                 )
             }
             items(
@@ -91,7 +90,7 @@ internal fun SearchContentWidget(
                 key = { it.id }
             ) { person ->
                 Box(
-                    modifier = Modifier.clip(MaterialTheme.shapes.medium)
+                    modifier = Modifier.clip(AppTheme.shapes.medium)
                 ) {
                     AppCell(
                         verticalPadding = 8.dp,

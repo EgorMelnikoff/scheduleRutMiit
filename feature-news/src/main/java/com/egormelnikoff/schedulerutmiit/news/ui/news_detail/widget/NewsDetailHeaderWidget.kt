@@ -4,11 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.news.domain.model.News
 import com.egormelnikoff.schedulerutmiit.news.ui.common.DateNewsWidget
 
@@ -17,13 +16,13 @@ internal fun LazyListScope.newsDetailHeaderWidget(
 ) {
     item {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
         ) {
             Text(
                 text = news.title.trim(),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = AppTheme.typography.titleLarge,
+                color = AppTheme.colors.onBackground,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 4
             )

@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -11,8 +10,9 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 
 @Composable
 fun SchedulesWidget(
@@ -47,7 +47,7 @@ fun SchedulesWidget(
                                 )
                             },
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                            tint = AppTheme.colors.onSecondaryContainer
                         )
                     },
                     trailingIcon = if (namedSchedule.isDefault) {
@@ -58,7 +58,7 @@ fun SchedulesWidget(
                                     R.drawable.check
                                 ),
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = AppTheme.colors.primary
                             )
                         }
                     } else null,

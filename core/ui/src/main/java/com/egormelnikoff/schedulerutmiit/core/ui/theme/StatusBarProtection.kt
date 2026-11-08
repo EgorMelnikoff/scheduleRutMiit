@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -14,7 +13,7 @@ import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 fun StatusBarProtection(
-    color: Color = MaterialTheme.colorScheme.background,
+    color: Color = AppTheme.colors.background,
     heightProvider: () -> Float = calculateGradientHeight(),
 ) {
 

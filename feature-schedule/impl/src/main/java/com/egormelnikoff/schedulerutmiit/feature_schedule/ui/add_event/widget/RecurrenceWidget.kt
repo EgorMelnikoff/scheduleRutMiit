@@ -6,21 +6,19 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.button_row.AppButtonRow
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addEventStateMock
 
@@ -50,14 +48,14 @@ fun RecurrenceWidget(
                         } else {
                             stringResource(R.string.once_week, element.second)
                         },
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = AppTheme.typography.bodyMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
             )
         }
-        Spacer(modifier = Modifier.height(12.dp))
+        SpacerHeight(AppTheme.paddings.padding12)
         AnimatedVisibility(
             visible = currentInterval > 1,
             enter = expandVertically() + fadeIn(),
@@ -77,7 +75,7 @@ fun RecurrenceWidget(
                             label = { element ->
                                 Text(
                                     text = element.second.toString(),
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = AppTheme.typography.bodyMedium
                                 )
                             }
                         )

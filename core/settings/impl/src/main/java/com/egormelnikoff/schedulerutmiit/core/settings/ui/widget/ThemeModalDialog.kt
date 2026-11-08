@@ -1,8 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.core.settings.ui.widget
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -12,10 +10,12 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ThemePreferences
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components._switch.AppSwitch
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ThemeSelectorWidget
@@ -29,7 +29,7 @@ internal fun ThemeModalDialog(
 ) {
     AppBottomSheet(
         isDarkTheme = themePreferences.theme.isDarkTheme(),
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
         onDismiss = onDismiss
     ) {
         ColumnGroup(
@@ -37,7 +37,7 @@ internal fun ThemeModalDialog(
             items = listOf(
                 {
                     Box(
-                        modifier = Modifier.padding(12.dp)
+                        modifier = Modifier.padding(AppTheme.paddings.padding12)
                     ) {
                         ThemeSelectorWidget(
                             setTheme = { value ->
@@ -62,7 +62,7 @@ internal fun ThemeModalDialog(
                 }
             )
         )
-        Spacer(modifier = Modifier.height(0.dp))
+        SpacerHeight(0.dp)
 
         ColumnGroup(
             title = stringResource(R.string.color_style),

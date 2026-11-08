@@ -3,6 +3,7 @@ package com.egormelnikoff.schedulerutmiit.core.ui.widget.bottom_nav
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.repos.SettingsRepos
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,8 +43,16 @@ class AppNavBarViewModel @Inject constructor(
     override fun onAction(action: AppNavBarAction) {
         when (action) {
             is AppNavBarAction.OnNavigatePage -> {
-                appRouter.openPage(action.page)
+               onNavigatePage(action.page)
             }
+        }
+    }
+
+    private fun onNavigatePage(page: Route.Page) {
+        if (page == screenState.currentPage) {
+
+        } else {
+            appRouter.openPage(page)
         }
     }
 }

@@ -1,18 +1,18 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.components.badge
 
 import androidx.compose.material3.Badge
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 
 @Composable
 fun AppBadge(
     count: Int,
-    containerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
-    contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer
+    containerColor: Color = AppTheme.colors.secondaryContainer,
+    contentColor: Color = AppTheme.colors.onSecondaryContainer
 ) {
     Badge(
         containerColor = containerColor,

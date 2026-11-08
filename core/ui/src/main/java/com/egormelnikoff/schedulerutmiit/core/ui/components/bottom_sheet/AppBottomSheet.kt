@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowCompat
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,32 +30,35 @@ fun AppBottomSheet(
     modifier: Modifier = Modifier,
     isDarkTheme: Boolean? = null,
     sheetState: SheetState? = null,
-    showDragHandle: Boolean = true,
+    showHandle: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(
+        bottom = AppTheme.paddings.padding12
+    ),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(AppTheme.paddings.padding8),
     onDismiss: () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(
         dragHandle = {
-            if (showDragHandle) {
+            if (showHandle) {
                 Surface(
                     modifier = Modifier
-                        .padding(vertical = 24.dp)
+                        .padding(vertical = AppTheme.paddings.padding24)
                         .clickable(
                             interactionSource = null,
                             enabled = false,
                             onClick = {}
                         ),
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = MaterialTheme.shapes.extraSmall,
+                    color = AppTheme.colors.outline,
+                    shape = AppTheme.shapes.extraSmall,
                 ) {
                     Box(Modifier.size(width = 36.dp, height = 4.dp))
                 }
             }
         },
         sheetState = sheetState ?: rememberModalBottomSheetState(),
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = AppTheme.colors.background,
         onDismissRequest = onDismiss
     ) {
         isDarkTheme?.let {
@@ -72,7 +76,7 @@ fun AppBottomSheet(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(bottom = 12.dp),
+                .padding(contentPadding),
             horizontalAlignment = horizontalAlignment,
             verticalArrangement = verticalArrangement,
             content = content

@@ -1,8 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension
 
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents

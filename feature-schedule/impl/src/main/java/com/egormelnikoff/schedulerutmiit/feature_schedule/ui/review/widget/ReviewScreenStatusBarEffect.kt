@@ -7,13 +7,11 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
-import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
 
 @Composable
-fun ReviewScreenEffect(
+fun ReviewScreenStatusBarEffect(
     overlappedFraction: Float,
-    reviewState: ReviewState,
+    isDarkTheme: Boolean
 ) {
     val view = LocalView.current
 
@@ -27,13 +25,11 @@ fun ReviewScreenEffect(
         }
     }
 
-    val isDarkTheme = reviewState.theme.isDarkTheme()
-
     SideEffect {
-        insetsController?.isAppearanceLightStatusBars = overlappedFraction > 0.01f
+        insetsController?.isAppearanceLightStatusBars = !isDarkTheme && overlappedFraction > 0.01f
     }
 
-    DisposableEffect(Unit) {
+    DisposableEffect(isDarkTheme) {
         onDispose {
             insetsController?.isAppearanceLightStatusBars = !isDarkTheme
         }

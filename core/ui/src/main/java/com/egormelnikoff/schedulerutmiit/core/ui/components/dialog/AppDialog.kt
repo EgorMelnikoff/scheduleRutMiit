@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -23,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 
 @Composable
@@ -37,11 +37,11 @@ fun AppDialog(
         Column(
             modifier = Modifier
                 .background(
-                    MaterialTheme.colorScheme.background,
-                    MaterialTheme.shapes.large
+                    AppTheme.colors.background,
+                    AppTheme.shapes.large
                 )
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(AppTheme.paddings.padding16),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16)
         ) {
             Image(
                 modifier = Modifier
@@ -53,8 +53,8 @@ fun AppDialog(
             )
             Text(
                 text = dialogText,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyLarge,
+                color = AppTheme.colors.onBackground,
+                style = AppTheme.typography.bodyLarge,
             )
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -63,8 +63,8 @@ fun AppDialog(
                 TextButton(
                     onClick = { onDismissRequest() },
                     colors = ButtonDefaults.buttonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = AppTheme.colors.primary,
+                        contentColor = AppTheme.colors.onPrimary
                     )
                 ) {
                     Text(stringResource(R.string.ok))

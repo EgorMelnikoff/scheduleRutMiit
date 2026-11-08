@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Grey
 
 data class BarItem(
@@ -50,17 +50,17 @@ fun AppNavigationBar(
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         Color.Transparent,
-                        MaterialTheme.colorScheme.background
+                        AppTheme.colors.background
                     ),
                     startY = 0f,
                     endY = Float.POSITIVE_INFINITY
                 )
             )
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = AppTheme.paddings.padding24)
             .padding(
-                top = 12.dp,
+                top = AppTheme.paddings.padding12,
                 bottom = WindowInsets.navigationBars.asPaddingValues()
-                    .calculateBottomPadding() + 8.dp
+                    .calculateBottomPadding() + AppTheme.paddings.padding8
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -76,9 +76,9 @@ fun AppNavigationBar(
                             shape = CircleShape,
                             brush = Brush.verticalGradient(
                                 colors = listOf(
-                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.2f),
+                                    AppTheme.colors.onSecondaryContainer.copy(alpha = 0.2f),
                                     Color.Transparent,
-                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.1f)
+                                    AppTheme.colors.onSecondaryContainer.copy(alpha = 0.1f)
                                 )
                             )
                         )
@@ -94,11 +94,11 @@ fun AppNavigationBar(
                     }
                 }
                 .background(
-                    color = MaterialTheme.colorScheme.background,
+                    color = AppTheme.colors.background,
                     shape = CircleShape
                 )
                 .height(IntrinsicSize.Min)
-                .padding(4.dp),
+                .padding(AppTheme.paddings.padding4),
             contentAlignment = Alignment.Center
         ) {
             Row(

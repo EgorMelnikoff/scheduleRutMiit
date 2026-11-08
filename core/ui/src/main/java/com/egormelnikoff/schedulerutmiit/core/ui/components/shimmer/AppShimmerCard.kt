@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -21,6 +20,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun AppShimmerCard(
@@ -42,9 +42,9 @@ fun AppShimmerCard(
                     it.height(height)
                 } else it
             }
-            .clip(shape ?: MaterialTheme.shapes.medium)
+            .clip(shape ?: AppTheme.shapes.medium)
             .shimmer(
-                color = MaterialTheme.colorScheme.primaryContainer
+                color = AppTheme.colors.primaryContainer
             )
 
     )

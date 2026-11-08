@@ -4,13 +4,11 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ScaffoldLazyColumn
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
@@ -88,8 +86,7 @@ fun EventScreenWidget(
                 }
             }
             if (eventState.showDeleteDialog) {
-                AppAlertDialog(
-                    dialogIcon = ImageVector.vectorResource(R.drawable.delete),
+                AppAlertBottomSheet(
                     dialogTitle = "${stringResource(R.string.delete_event)}?",
                     dialogText = stringResource(R.string.event_deleting_alert),
                     onDismissRequest = {
@@ -105,8 +102,7 @@ fun EventScreenWidget(
                 )
             }
             if (eventState.showHideDialog) {
-                AppAlertDialog(
-                    dialogIcon = ImageVector.vectorResource(R.drawable.visibility_off),
+                AppAlertBottomSheet(
                     dialogTitle = "${stringResource(R.string.hide_event)}?",
                     dialogText = stringResource(R.string.event_visibility_alert),
                     onDismissRequest = {

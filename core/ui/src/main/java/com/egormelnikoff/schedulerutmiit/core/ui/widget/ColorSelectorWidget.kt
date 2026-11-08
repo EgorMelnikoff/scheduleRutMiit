@@ -1,12 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.widget
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -18,8 +15,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerWidth
 import com.egormelnikoff.schedulerutmiit.core.ui.components.button_row.appRowItemShape
-import com.egormelnikoff.schedulerutmiit.core.ui.theme.baseItemSpacing
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.colors
 
 @Composable
@@ -38,7 +36,7 @@ fun ColorSelectorWidget(
                     colors = SegmentedButtonDefaults.colors().copy(
                         activeContainerColor = color.value,
                         activeBorderColor = Color.Transparent,
-                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
+                        activeContentColor = AppTheme.colors.onPrimary,
                         inactiveContainerColor = color.value,
                         inactiveBorderColor = Color.Transparent,
                         inactiveContentColor = Color.Transparent
@@ -59,9 +57,7 @@ fun ColorSelectorWidget(
                     }
                 )
                 if (index != colors.size - 1) {
-                    Spacer(
-                        modifier = Modifier.width(baseItemSpacing)
-                    )
+                    SpacerWidth(AppTheme.paddings.padding2)
                 }
             }
         }

@@ -2,14 +2,14 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote
 
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.fetcher.HtmlFetcher
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.TimetableDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.parser.ScheduleParser
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.mapper.ScheduleMapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

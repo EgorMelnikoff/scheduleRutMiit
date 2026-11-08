@@ -6,10 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 internal fun LazyStaggeredGridScope.newsListLoadingItem() {
     item(
@@ -18,11 +17,14 @@ internal fun LazyStaggeredGridScope.newsListLoadingItem() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 32.dp),
+                .padding(
+                    horizontal = AppTheme.paddings.padding16,
+                    vertical = AppTheme.paddings.padding32
+                ),
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
-                color = MaterialTheme.colorScheme.primary
+                color = AppTheme.colors.primary
             )
         }
     }

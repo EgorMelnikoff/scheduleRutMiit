@@ -5,9 +5,12 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalConfiguration
@@ -19,6 +22,14 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.amoledColorScheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.animation
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.defaultTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.themes
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.paddings.AppPaddings
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.paddings.LocalAppPaddings
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.radius.AppRadius
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.radius.LocalAppRadius
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.shapes.AppShapes
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.shapes.LocalAppShapes
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.typography.AppTypography
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.typography.LocalAppTypography
 
 @Composable
 fun ScheduleRutMiitTheme(
@@ -48,12 +59,39 @@ fun ScheduleRutMiitTheme(
     }
 
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
+    val paddings = AppPaddings()
+    val radius = AppRadius()
+    val shapes = AppShapes()
+    val typography = AppTypography()
+
+    CompositionLocalProvider(
+        LocalAppPaddings provides paddings,
+        LocalAppRadius provides radius,
+        LocalAppShapes provides shapes,
+        LocalAppTypography provides typography
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography(
+                headlineLarge = typography.headlineLarge,
+                bodyLarge = typography.bodyLarge,
+                bodyMedium = typography.bodyMedium,
+                bodySmall = typography.bodySmall,
+                titleLarge = typography.titleLarge,
+                titleMedium = typography.bodyMedium,
+                titleSmall = typography.titleSmall
+            ),
+            shapes = Shapes(
+                extraSmall = shapes.extraSmall,
+                small = shapes.small,
+                medium = shapes.medium,
+                large = shapes.large,
+                extraLarge = shapes.extraLarge
+            ),
+
+            content = content
+        )
+    }
 }
 
 @Composable

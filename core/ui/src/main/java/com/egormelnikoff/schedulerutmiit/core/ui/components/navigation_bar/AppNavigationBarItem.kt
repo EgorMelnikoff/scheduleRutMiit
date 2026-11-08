@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Red
 
 @Composable
@@ -55,10 +55,10 @@ fun AppNavigationBarItem(
                 onClick = onClick
             )
             .scale(scale)
-            .padding(8.dp)
+            .padding(AppTheme.paddings.padding8)
             .width(52.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
     ) {
         BadgedBox(
             badge = {
@@ -76,16 +76,16 @@ fun AppNavigationBarItem(
                     ImageVector.vectorResource(barItem.selectedIconRes)
                 else ImageVector.vectorResource(barItem.iconRes),
                 contentDescription = stringResource(barItem.title),
-                tint = if (isSelected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.onSecondaryContainer
+                tint = if (isSelected) AppTheme.colors.primary
+                else AppTheme.colors.onSecondaryContainer
             )
         }
 
         Text(
             text = stringResource(barItem.title),
-            style = MaterialTheme.typography.bodySmall,
-            color = if (isSelected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.onSecondaryContainer,
+            style = AppTheme.typography.bodySmall,
+            color = if (isSelected) AppTheme.colors.primary
+            else AppTheme.colors.onSecondaryContainer,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             textAlign = TextAlign.Center

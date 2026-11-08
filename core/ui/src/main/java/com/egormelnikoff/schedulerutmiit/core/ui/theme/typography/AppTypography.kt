@@ -1,6 +1,6 @@
-package com.egormelnikoff.schedulerutmiit.core.ui.theme
+package com.egormelnikoff.schedulerutmiit.core.ui.theme.typography
 
-import androidx.compose.material3.Typography
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -8,8 +8,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.unit.sp
 
-val Typography = Typography(
-    headlineLarge = TextStyle(
+@Immutable
+data class AppTypography(
+    val headlineLarge: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         fontSize = 36.sp,
@@ -19,7 +20,7 @@ val Typography = Typography(
         textMotion = TextMotion.Static,
         letterSpacing = 0.sp
     ),
-    bodyLarge = TextStyle(
+    val bodyLarge: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
@@ -29,7 +30,7 @@ val Typography = Typography(
         textMotion = TextMotion.Static,
         letterSpacing = 0.sp
     ),
-    bodyMedium = TextStyle(
+    val bodyMedium: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         textMotion = TextMotion.Static,
@@ -39,7 +40,7 @@ val Typography = Typography(
         ),
         letterSpacing = 0.sp
     ),
-    bodySmall = TextStyle(
+    val bodySmall: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         textMotion = TextMotion.Static,
@@ -50,14 +51,14 @@ val Typography = Typography(
         letterSpacing = 0.sp
     ),
 
-    titleLarge = TextStyle(
+    val titleLarge: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         textMotion = TextMotion.Static,
         letterSpacing = 0.sp
     ),
-    titleMedium = TextStyle(
+    val titleMedium: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         textMotion = TextMotion.Static,
@@ -67,7 +68,7 @@ val Typography = Typography(
         ),
         letterSpacing = 0.sp
     ),
-    titleSmall = TextStyle(
+    val titleSmall: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         textMotion = TextMotion.Static,

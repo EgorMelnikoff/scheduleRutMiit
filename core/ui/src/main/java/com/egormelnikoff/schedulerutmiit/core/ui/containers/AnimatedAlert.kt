@@ -10,12 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun AnimatedAlert(
-    paddingVertical: Dp = 8.dp,
-    paddingHorizontal: Dp = 16.dp,
+    paddingVertical: Dp = AppTheme.paddings.padding8,
+    paddingHorizontal: Dp = AppTheme.paddings.padding16,
     isHidden: Boolean,
     content: @Composable () -> Unit
 ) {

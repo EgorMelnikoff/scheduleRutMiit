@@ -3,10 +3,10 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.converters
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.GroupEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.LecturerEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.RoomEntity
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.LocalDateTime

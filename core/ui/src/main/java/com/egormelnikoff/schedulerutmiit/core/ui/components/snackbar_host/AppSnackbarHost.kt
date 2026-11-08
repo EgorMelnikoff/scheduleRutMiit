@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -17,15 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun AppSnackbarHost(
     snackBarHostState: SnackbarHostState,
 ) {
     SnackbarHost(
-        modifier = Modifier.padding(horizontal = 24.dp),
+        modifier = Modifier.padding(horizontal = AppTheme.paddings.padding24),
         hostState = snackBarHostState
     ) { data ->
         val visuals = data.visuals as? AppSnackbarVisuals
@@ -35,19 +34,19 @@ fun AppSnackbarHost(
             modifier = Modifier
                 .clip(CircleShape)
                 .background(
-                    color = if (isError) MaterialTheme.colorScheme.error
-                    else MaterialTheme.colorScheme.primary,
-                    shape = MaterialTheme.shapes.medium
+                    color = if (isError) AppTheme.colors.error
+                    else AppTheme.colors.primary,
+                    shape = AppTheme.shapes.medium
                 )
-                .padding(horizontal = 12.dp, vertical = 4.dp),
+                .padding(horizontal = AppTheme.paddings.padding12, vertical = AppTheme.paddings.padding4),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
         ) {
             Text(
                 modifier = Modifier.weight(1f),
                 text = data.visuals.message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary
+                style = AppTheme.typography.bodyMedium,
+                color = AppTheme.colors.onPrimary
             )
             IconButton(
                 onClick = {
@@ -57,7 +56,7 @@ fun AppSnackbarHost(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.clear),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = AppTheme.colors.onPrimary
                 )
             }
         }

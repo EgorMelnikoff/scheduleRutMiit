@@ -1,18 +1,16 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.widget
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheetButton
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 
@@ -34,12 +32,12 @@ fun BottomSheetEventWidget(
         EventNameWidget(
             timetableType, event, 16.dp
         )
-        Spacer(modifier = Modifier.height(0.dp))
+        SpacerHeight(0.dp)
         onHideEvent?.let {
             AppBottomSheetButton(
                 icon = ImageVector.vectorResource(R.drawable.visibility_off),
                 title = stringResource(R.string.hide_event),
-                contentColor = MaterialTheme.colorScheme.onBackground
+                contentColor = AppTheme.colors.onBackground
             ) {
                 onHideEvent()
                 onDismiss()
@@ -49,7 +47,7 @@ fun BottomSheetEventWidget(
             AppBottomSheetButton(
                 icon = ImageVector.vectorResource(R.drawable.edit),
                 title = stringResource(R.string.edit),
-                contentColor = MaterialTheme.colorScheme.onBackground
+                contentColor = AppTheme.colors.onBackground
             ) {
                 onEditEvent()
                 onDismiss()
@@ -59,7 +57,7 @@ fun BottomSheetEventWidget(
             AppBottomSheetButton(
                 icon = ImageVector.vectorResource(R.drawable.delete),
                 title = stringResource(R.string.delete_event),
-                contentColor = MaterialTheme.colorScheme.error
+                contentColor = AppTheme.colors.error
             ) {
                 onDeleteEvent()
                 onDismiss()

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventState
 
@@ -30,25 +30,25 @@ fun LazyListScope.eventGroupsWidget(
     eventState.event.groups?.let { groups ->
         item {
             Box(
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16)
             ) {
                 ColumnGroup(
                     title = stringResource(R.string.groups),
-                    titleColor = MaterialTheme.colorScheme.primary,
+                    titleColor = AppTheme.colors.primary,
                     withBackground = false,
                     items = listOf {
                         FlowRow(
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4),
+                            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
                         ) {
                             groups.forEach { group ->
                                 Box(
                                     contentAlignment = Alignment.Center,
                                     modifier = Modifier
-                                        .clip(MaterialTheme.shapes.extraSmall)
-                                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                                        .clip(AppTheme.shapes.extraSmall)
+                                        .background(AppTheme.colors.secondaryContainer)
                                         .defaultMinSize(minWidth = 80.dp)
                                         .let {
                                             if (!eventState.event.isCustomEvent) {
@@ -70,12 +70,12 @@ fun LazyListScope.eventGroupsWidget(
                                                 )
                                             } else it
                                         }
-                                        .padding(8.dp)
+                                        .padding(AppTheme.paddings.padding8)
                                 ) {
                                     Text(
                                         text = group.name,
-                                        style = MaterialTheme.typography.titleSmall,
-                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = AppTheme.typography.titleSmall,
+                                        color = AppTheme.colors.onBackground,
                                         overflow = TextOverflow.Ellipsis,
                                         maxLines = 2
                                     )

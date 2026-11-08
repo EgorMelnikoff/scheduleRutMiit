@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +16,7 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -29,12 +29,12 @@ fun LazyListScope.scheduleListStickyHeaderWidget(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(vertical = 12.dp),
+                .background(AppTheme.colors.background)
+                .padding(vertical = AppTheme.paddings.padding12),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
         ) {
-            val color = MaterialTheme.colorScheme.primary
+            val color = AppTheme.colors.primary
 
             Icon(
                 modifier = Modifier.width(16.dp),
@@ -50,7 +50,7 @@ fun LazyListScope.scheduleListStickyHeaderWidget(
                         LocalLocale.current.platformLocale
                     ).replaceFirstChar { it.uppercase() }
                 }, ${date.format(formatter)}",
-                style = MaterialTheme.typography.titleMedium,
+                style = AppTheme.typography.titleMedium,
                 color = color
             )
         }

@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local
 
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.dao.EventExtraDao
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.mapper.toDomain
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.mapper.toEntity
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
 import java.time.LocalDate
 import javax.inject.Inject
 

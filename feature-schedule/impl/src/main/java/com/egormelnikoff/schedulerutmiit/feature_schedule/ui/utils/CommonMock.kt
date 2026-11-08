@@ -1,10 +1,10 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils
 
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule

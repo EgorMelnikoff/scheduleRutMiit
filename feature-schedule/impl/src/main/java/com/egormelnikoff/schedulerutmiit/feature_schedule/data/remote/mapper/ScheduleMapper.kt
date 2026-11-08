@@ -1,16 +1,16 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.mapper
 
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.EventDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.GroupDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.LecturerDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.RecurrenceDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.RoomDto
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs

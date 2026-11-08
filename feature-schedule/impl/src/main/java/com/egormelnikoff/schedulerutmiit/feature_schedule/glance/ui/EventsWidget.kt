@@ -14,7 +14,11 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.cornerRadius
+import androidx.glance.appwidget.lazy.LazyColumn
+import androidx.glance.appwidget.lazy.itemsIndexed
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
@@ -36,21 +40,17 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.findEventExtra
 import com.egormelnikoff.schedulerutmiit.feature_schedule.di.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.feature_schedule.glance.model.WidgetData
+import com.egormelnikoff.schedulerutmiit.feature_schedule.glance.model.WidgetDataEventItem
 import com.egormelnikoff.schedulerutmiit.feature_schedule.glance.ui.theme.ScheduleGlanceTheme
 import dagger.hilt.EntryPoints
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
-import java.time.LocalDate
 
 class EventsWidget : GlanceAppWidget() {
     private lateinit var json: Json
@@ -98,19 +98,6 @@ class EventsWidget : GlanceAppWidget() {
         widgetData: WidgetData?,
         onUpdate: () -> Unit
     ) {
-        val today = LocalDate.now()
-
-//        val subHeader = remember(widgetData) {
-//            buildString {
-//                if (widgetData?.namedSchedule != null) {
-//                    append(widgetData.namedSchedule.shortName)
-//                }
-//                if (widgetData?.settledSchedule != null) {
-//                    append(" (${widgetData.settledSchedule.timetableType.typeName})")
-//                }
-//            }
-//        }
-
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
@@ -119,130 +106,106 @@ class EventsWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Empty(
-                title = glanceStringResource(R.string.empty_here),
-                onClick = onUpdate
-            )
+            if (widgetData?.scheduleString != null && widgetData.dateString != null) {
+                Row(
+                    modifier = GlanceModifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = GlanceModifier.defaultWeight(),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = widgetData.dateString,
+                                style = TextStyle(
+                                    color = GlanceTheme.colors.onBackground,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                maxLines = 1
+                            )
 
-//            if (widgetData?.settledSchedule != null && widgetData.summaryState != null) {
-//                val header = when (widgetData.summaryState.date) {
-//                    today -> {
-//                        "${glanceStringResource(R.string.today)}, " +
-//                                "${widgetData.summaryState.date.format(dayMonthNameFormatter)}"
-//                    }
-//
-//                    today.plusDays(1) -> {
-//                        "${glanceStringResource(R.string.tomorrow)}, " +
-//                                "${widgetData.summaryState.date.format(dayMonthNameFormatter)}"
-//                    }
-//
-//                    else -> {
-//                        widgetData.summaryState.date.format(dayMonthNameFormatter)
-//                    }
-//                }
-//
-//                Row(
-//                    modifier = GlanceModifier.fillMaxWidth(),
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Column(
-//                        modifier = GlanceModifier.defaultWeight(),
-//                        horizontalAlignment = Alignment.Start
-//                    ) {
-//                        Row(
-//                            verticalAlignment = Alignment.CenterVertically
-//                        ) {
-//                            Text(
-//                                text = header,
-//                                style = TextStyle(
-//                                    color = GlanceTheme.colors.onBackground,
-//                                    fontSize = 12.sp,
-//                                    fontWeight = FontWeight.Bold
-//                                ),
-//                                maxLines = 1
-//                            )
-//
-//                            if (widgetData.summaryState.currentWeek != -1) {
-//                                Spacer(modifier = GlanceModifier.width(4.dp))
-//                                Image(
-//                                    modifier = GlanceModifier.size(16.dp),
-//                                    provider = when (widgetData.summaryState.currentWeek) {
-//                                        1 -> ImageProvider(R.drawable.one)
-//                                        2 -> ImageProvider(R.drawable.two)
-//                                        else -> ImageProvider(R.drawable.resource_null)
-//                                    },
-//                                    contentDescription = null,
-//                                    colorFilter = ColorFilter.tint(
-//                                        colorProvider = GlanceTheme.colors.onBackground
-//                                    )
-//                                )
-//                            }
-//                        }
-//
-//                        Text(
-//                            text = subHeader,
-//                            style = TextStyle(
-//                                color = GlanceTheme.colors.onSecondaryContainer,
-//                                fontSize = 10.sp
-//                            ),
-//                            maxLines = 1
-//                        )
-//                    }
-//
-//                    Image(
-//                        modifier = GlanceModifier
-//                            .cornerRadius(8.dp)
-//                            .clickable {
-//                                onUpdate()
-//                            }
-//                            .size(32.dp)
-//                            .padding(8.dp),
-//                        provider = ImageProvider(R.drawable.refresh),
-//                        contentDescription = null,
-//                        colorFilter = ColorFilter.tint(
-//                            colorProvider = GlanceTheme.colors.onBackground
-//                        )
-//                    )
-//                }
-//                val displayedEvents = widgetData.summaryState.events.toList()
-//
-//                if (displayedEvents.isNotEmpty()) {
-//                    Spacer(modifier = GlanceModifier.height(12.dp))
-//                    LazyColumn {
-//                        itemsIndexed(displayedEvents) { index, events ->
-//                            Column {
-//                                Event(
-//                                    events = events.second,
-//                                    eventsExtraData = widgetData.eventsExtraData,
-//                                    date = widgetData.summaryState.date,
-//                                    eventExtraPolicy = widgetData.eventExtraPolicy
-//                                )
-//                                if (index != displayedEvents.lastIndex) {
-//                                    Spacer(modifier = GlanceModifier.height(4.dp))
-//                                }
-//                            }
-//                        }
-//                        item {
-//                            Spacer(modifier = GlanceModifier.height(16.dp))
-//                        }
-//                    }
-//                } else {
-//                    Empty(
-//                        title = glanceStringResource(R.string.empty_day)
-//                    )
-//                }
-//            } else {
-//
-//            }
+                            if (widgetData.currentWeek != -1) {
+                                Spacer(modifier = GlanceModifier.width(4.dp))
+                                Image(
+                                    modifier = GlanceModifier.size(16.dp),
+                                    provider = when (widgetData.currentWeek) {
+                                        1 -> ImageProvider(R.drawable.one)
+                                        2 -> ImageProvider(R.drawable.two)
+                                        else -> ImageProvider(R.drawable.resource_null)
+                                    },
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(
+                                        colorProvider = GlanceTheme.colors.onBackground
+                                    )
+                                )
+                            }
+                        }
+
+                        Text(
+                            text = widgetData.scheduleString,
+                            style = TextStyle(
+                                color = GlanceTheme.colors.onSecondaryContainer,
+                                fontSize = 10.sp
+                            ),
+                            maxLines = 1
+                        )
+                    }
+
+                    Image(
+                        modifier = GlanceModifier
+                            .cornerRadius(8.dp)
+                            .clickable {
+                                onUpdate()
+                            }
+                            .size(32.dp)
+                            .padding(8.dp),
+                        provider = ImageProvider(R.drawable.refresh),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(
+                            colorProvider = GlanceTheme.colors.onBackground
+                        )
+                    )
+                }
+                val displayedEvents = widgetData.events.toList()
+
+                if (displayedEvents.isNotEmpty()) {
+                    Spacer(modifier = GlanceModifier.height(12.dp))
+                    LazyColumn {
+                        itemsIndexed(displayedEvents) { index, events ->
+                            Column {
+                                Event(
+                                    events = events.second,
+                                )
+                                if (index != displayedEvents.lastIndex) {
+                                    Spacer(modifier = GlanceModifier.height(4.dp))
+                                }
+                            }
+                        }
+                        item {
+                            Spacer(modifier = GlanceModifier.height(16.dp))
+                        }
+                    }
+                } else {
+                    Empty(
+                        title = glanceStringResource(R.string.empty_day)
+                    )
+                }
+            } else {
+                Empty(
+                    title = glanceStringResource(R.string.empty_here),
+                    onClick = onUpdate
+                )
+            }
         }
     }
 
     @Composable
     private fun Event(
-        events: List<Event>,
-        eventsExtraData: Map<Long, List<EventExtraData>>,
-        date: LocalDate,
-        eventExtraPolicy: EventExtraPolicy
+        events: List<WidgetDataEventItem>,
     ) {
         Row(
             modifier = GlanceModifier
@@ -258,9 +221,9 @@ class EventsWidget : GlanceAppWidget() {
         ) {
             Text(
                 text = "${
-                    events.first().startDatetime.toLocalTimeWithTimeZone()
+                    events.first().startDateTime.toLocalTimeWithTimeZone()
                 }\n${
-                    events.first().endDatetime.toLocalTimeWithTimeZone()
+                    events.first().endDateTime.toLocalTimeWithTimeZone()
                 }",
                 style = TextStyle(
                     color = GlanceTheme.colors.onBackground,
@@ -282,12 +245,7 @@ class EventsWidget : GlanceAppWidget() {
             Column {
                 events.forEachIndexed { index, event ->
                     EventSingle(
-                        event = event,
-                        eventExtraData = eventsExtraData.findEventExtra(
-                            eventExtraPolicy = eventExtraPolicy,
-                            eventId = event.id,
-                            date = date
-                        )
+                        event = event
                     )
                     if (index != events.lastIndex) {
                         Spacer(modifier = GlanceModifier.height(8.dp))
@@ -297,13 +255,13 @@ class EventsWidget : GlanceAppWidget() {
         }
     }
 
+
     @SuppressLint("RestrictedApi")
     @Composable
     private fun EventSingle(
-        event: Event,
-        eventExtraData: EventExtraData?
+        event: WidgetDataEventItem,
     ) {
-        event.typeName?.let {
+        event.type?.let {
             Text(
                 text = it,
                 style = TextStyle(
@@ -325,7 +283,7 @@ class EventsWidget : GlanceAppWidget() {
         val rooms = event.rooms
         if (!rooms.isNullOrEmpty()) {
             EventComment(
-                title = rooms.joinToString { it.name },
+                title = rooms,
             ) {
                 Image(
                     modifier = GlanceModifier.size(8.dp),
@@ -337,12 +295,12 @@ class EventsWidget : GlanceAppWidget() {
                 )
             }
         }
-        if (eventExtraData != null && eventExtraData.comment.isNotBlank()) {
+        if (event.comment?.isNotBlank() == true) {
             EventComment(
-                title = eventExtraData.comment.replace(Regex("\\s+"), " "),
-                image = if (eventExtraData.tag != 0) {
+                title = event.comment.replace(Regex("\\s+"), " "),
+                image = if (event.tag != 0) {
                     {
-                        val color = eventExtraData.tag.getColorByIndex()
+                        val color = event.tag.getColorByIndex()
                         Image(
                             modifier = GlanceModifier.size(8.dp),
                             provider = ImageProvider(R.drawable.circle),

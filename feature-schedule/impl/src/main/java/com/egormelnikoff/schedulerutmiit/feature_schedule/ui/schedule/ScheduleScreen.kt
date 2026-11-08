@@ -22,7 +22,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -43,7 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
-import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.rememberCalendarState
@@ -52,6 +51,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.pull_to_refresh.AppP
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.AnimatedAlert
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.GridGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget.ScheduleCalendarWidget
@@ -62,6 +62,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget.Sch
 
 @Composable
 fun ScreenSchedule(
+    page: Route.Page.Schedule,
     contentPadding: PaddingValues,
     snackbarHostState: SnackbarHostState,
 ) {
@@ -216,37 +217,37 @@ fun ScreenSchedule(
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .clip(MaterialTheme.shapes.medium)
+                                        .clip(AppTheme.shapes.medium)
                                         .background(
-                                            MaterialTheme.colorScheme.primary
+                                            AppTheme.colors.primary
                                         )
                                 ) {
                                     AppCell(
                                         verticalPadding = 4.dp,
                                         title = stringResource(R.string.schedule_is_not_saved),
-                                        titleColor = MaterialTheme.colorScheme.onPrimary,
-                                        titleTypography = MaterialTheme.typography.titleSmall,
+                                        titleColor = AppTheme.colors.onPrimary,
+                                        titleTypography = AppTheme.typography.titleSmall,
                                         leadingIcon = {
                                             Icon(
                                                 modifier = Modifier.size(24.dp),
                                                 imageVector = ImageVector.vectorResource(R.drawable.info),
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onPrimary
+                                                tint = AppTheme.colors.onPrimary
                                             )
                                         },
                                         trailingIcon = {
                                             Button(
                                                 colors = ButtonDefaults.buttonColors()
                                                     .copy(
-                                                        containerColor = MaterialTheme.colorScheme.primary,
-                                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                                        containerColor = AppTheme.colors.primary,
+                                                        contentColor = AppTheme.colors.onPrimary
                                                     ),
                                                 onClick = {
                                                     scheduleViewModel.saveCurrentNamedSchedule()
                                                 },
                                                 contentPadding = PaddingValues(
-                                                    horizontal = 8.dp,
-                                                    vertical = 2.dp
+                                                    horizontal = AppTheme.paddings.padding8,
+                                                    vertical = AppTheme.paddings.padding2
                                                 )
                                             ) {
                                                 CompositionLocalProvider(
@@ -254,7 +255,7 @@ fun ScreenSchedule(
                                                 ) {
                                                     Text(
                                                         text = stringResource(R.string.save),
-                                                        style = MaterialTheme.typography.titleSmall
+                                                        style = AppTheme.typography.titleSmall
                                                     )
                                                 }
                                             }
@@ -323,8 +324,7 @@ fun ScreenSchedule(
                         }
                     }
                     if (deleteNamedScheduleDialog) {
-                        AppAlertDialog(
-                            dialogIcon = ImageVector.vectorResource(R.drawable.delete),
+                        AppAlertBottomSheet(
                             dialogTitle = "${stringResource(R.string.delete_schedule)}?",
                             dialogText = stringResource(R.string.impossible_restore_eventextra),
                             onDismissRequest = {
@@ -383,9 +383,10 @@ fun ScreenSchedule(
     }
 
     if (backDialog) {
-        AppAlertDialog(
+        AppAlertBottomSheet(
             dialogTitle = stringResource(R.string.return_default_schedule),
             dialogText = stringResource(R.string.do_you_want_continue),
+            confirmText = "Вернуть",
             onDismissRequest = {
                 backDialog = false
             },

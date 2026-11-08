@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule.widge
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -19,6 +18,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule.AddScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule.AddScheduleState
@@ -63,12 +63,12 @@ fun AddScheduleInfoWidget(
 
                         else -> stringResource(R.string.dates)
                     },
-                    titleTypography = MaterialTheme.typography.titleSmall,
+                    titleTypography = AppTheme.typography.titleSmall,
                     leadingIcon = {
                         LeadingIcon(
                             imageVector = ImageVector.vectorResource(R.drawable.calendar),
                             iconSize = 20.dp,
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = AppTheme.colors.onBackground
                         )
                     }
                 ) {

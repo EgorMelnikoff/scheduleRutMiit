@@ -17,10 +17,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.error.getMessage
 import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumAction
@@ -45,9 +45,9 @@ internal fun CurriculumScreenWidget(
         Column(
             modifier = Modifier
                 .padding(
-                    top = contentPadding.calculateTopPadding() + 16.dp
+                    top = contentPadding.calculateTopPadding() + AppTheme.paddings.padding16
                 ),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16)
         ) {
             CurriculumSearchInputWidget(
                 state = state,

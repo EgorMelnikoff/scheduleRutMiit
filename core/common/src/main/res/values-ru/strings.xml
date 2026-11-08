@@ -57,6 +57,7 @@
     <string name="display_each_lesson">Отображать каждую пару</string>
     <string name="display_number_lessons">Отображать количество пар на день</string>
     <string name="do_you_want_continue">Вы действительно хотите продолжить?</string>
+    <string name="_continue">Продолжить</string>
     <string name="dont_show">Не показывать</string>
     <string name="download_pdf">Скачать pdf</string>
     <string name="download_latest_release">Скачать последнюю версию</string>

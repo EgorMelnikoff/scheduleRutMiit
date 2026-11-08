@@ -27,9 +27,8 @@ import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsScreen
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsState
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsViewModel
 import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
+import com.egormelnikoff.schedulerutmiit.core.ui.widget.bottom_nav.AppBottonNavBarWidget
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumScreen
-import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsScreen
-import com.egormelnikoff.schedulerutmiit.news.ui.news_list.NewsScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule.AddScheduleScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventScreen
@@ -37,11 +36,12 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.hidden_events.Hidde
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.rename_schedule.RenameScheduleScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScreenSchedule
+import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsScreen
+import com.egormelnikoff.schedulerutmiit.news.ui.news_list.NewsScreen
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchScreen
 import com.egormelnikoff.schedulerutmiit.tasks.ui.add_task.AddTaskDialog
 import com.egormelnikoff.schedulerutmiit.tasks.ui.edit_task.EditTaskDialog
 import com.egormelnikoff.schedulerutmiit.tasks.ui.list.TasksScreen
-import com.egormelnikoff.schedulerutmiit.core.ui.widget.bottom_nav.AppBottonNavBarWidget
 
 @Composable
 fun ScheduleRutMiitApp(
@@ -109,8 +109,9 @@ fun PageHost(
                     )
                 }
 
-                entry<Route.Page.Schedule> {
+                entry<Route.Page.Schedule> { page ->
                     ScreenSchedule(
+                        page = page,
                         snackbarHostState = snackbarHostState,
                         contentPadding = padding,
                     )

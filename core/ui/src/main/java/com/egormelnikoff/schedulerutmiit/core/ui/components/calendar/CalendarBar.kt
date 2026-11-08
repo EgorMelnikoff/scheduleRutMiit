@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import java.time.LocalDate
 import java.time.format.TextStyle
 
@@ -50,8 +50,8 @@ fun CalendarBar(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+            .background(AppTheme.colors.background),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
     ) {
         if (showMonth) {
             val firstDayOfCurrentWeek = remember(
@@ -84,9 +84,9 @@ fun CalendarBar(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = AppTheme.paddings.padding8),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
             ) {
                 Icon(
                     modifier = Modifier
@@ -100,11 +100,11 @@ fun CalendarBar(
                                 calendarState.selectDate(calendarState.calendarData.startDate)
                             }
                         )
-                        .padding(8.dp),
+                        .padding(AppTheme.paddings.padding8),
                     imageVector = ImageVector.vectorResource(R.drawable.left),
                     tint = if (enabledLeftButton)
-                        MaterialTheme.colorScheme.onBackground
-                    else MaterialTheme.colorScheme.outline,
+                        AppTheme.colors.onBackground
+                    else AppTheme.colors.outline,
                     contentDescription = null
                 )
 
@@ -120,10 +120,10 @@ fun CalendarBar(
                                 onShowCalendarDialog(!showCalendarDialog)
                             }
                         )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = AppTheme.paddings.padding8, vertical = AppTheme.paddings.padding4)
                         .height(32.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding6, Alignment.CenterHorizontally)
                 ) {
                     Text(
                         text = buildString {
@@ -137,8 +137,8 @@ fun CalendarBar(
                                 append(" ${displayDate.year}")
                             }
                         },
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        style = AppTheme.typography.bodyLarge,
+                        color = AppTheme.colors.onBackground,
                         textAlign = TextAlign.Center
                     )
                     monthBadge.invoke(firstDayOfCurrentWeek)
@@ -155,11 +155,11 @@ fun CalendarBar(
                                 calendarState.selectDate(calendarState.calendarData.endDate)
                             }
                         )
-                        .padding(8.dp),
+                        .padding(AppTheme.paddings.padding8),
                     imageVector = ImageVector.vectorResource(R.drawable.right),
                     tint = if (enabledRightButton)
-                        MaterialTheme.colorScheme.onBackground
-                    else MaterialTheme.colorScheme.outline,
+                        AppTheme.colors.onBackground
+                    else AppTheme.colors.outline,
                     contentDescription = null
                 )
             }
@@ -168,10 +168,10 @@ fun CalendarBar(
             modifier = Modifier.fillMaxWidth(),
             state = calendarState.getPagerWeeks(),
             verticalAlignment = Alignment.Top,
-            pageSpacing = 16.dp,
+            pageSpacing = AppTheme.paddings.padding16,
             contentPadding = PaddingValues(
-                top = 8.dp, bottom = 12.dp,
-                start = 16.dp, end = 16.dp
+                top = AppTheme.paddings.padding8, bottom = AppTheme.paddings.padding12,
+                start = AppTheme.paddings.padding16, end = AppTheme.paddings.padding16
             )
         ) { index ->
             Row(
@@ -201,15 +201,15 @@ fun CalendarBarItem(
     badge: @Composable () -> Unit = {}
 ) {
     val backgroundColor = when {
-        isSelected -> MaterialTheme.colorScheme.primary
-        isToday -> MaterialTheme.colorScheme.secondaryContainer
+        isSelected -> AppTheme.colors.primary
+        isToday -> AppTheme.colors.secondaryContainer
         else -> Color.Unspecified
     }
     val textColor = when {
-        isDisabled -> MaterialTheme.colorScheme.outline
-        isSelected -> MaterialTheme.colorScheme.onPrimary
-        (currentDate.dayOfWeek.value == 7) -> MaterialTheme.colorScheme.error
-        else -> MaterialTheme.colorScheme.onSecondaryContainer
+        isDisabled -> AppTheme.colors.outline
+        isSelected -> AppTheme.colors.onPrimary
+        (currentDate.dayOfWeek.value == 7) -> AppTheme.colors.error
+        else -> AppTheme.colors.onSecondaryContainer
     }
 
     Column(
@@ -217,7 +217,7 @@ fun CalendarBarItem(
             minWidth = 40.dp
         ),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
     ) {
         Column(
             modifier = Modifier
@@ -232,21 +232,21 @@ fun CalendarBarItem(
                         }
                     } else it
                 }
-                .padding(vertical = 10.dp, horizontal = 12.dp),
+                .padding(vertical = AppTheme.paddings.padding10, horizontal = AppTheme.paddings.padding12),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8, Alignment.CenterVertically)
         ) {
             Text(
                 text = currentDate.dayOfWeek.getDisplayName(
                     TextStyle.SHORT_STANDALONE,
                     LocalLocale.current.platformLocale
                 ).lowercase(),
-                style = MaterialTheme.typography.bodyMedium,
+                style = AppTheme.typography.bodyMedium,
                 color = textColor
             )
             Text(
                 text = currentDate.dayOfMonth.toString(),
-                style = MaterialTheme.typography.bodyMedium,
+                style = AppTheme.typography.bodyMedium,
                 color = textColor
             )
         }

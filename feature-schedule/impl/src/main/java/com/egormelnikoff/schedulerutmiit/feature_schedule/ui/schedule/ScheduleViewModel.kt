@@ -15,12 +15,12 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiText
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendInfoEvent
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.FetchScheduleEvent
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.cache.FetchScheduleCache
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.FetchScheduleEvent
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.findDefault
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.DeleteNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.RefreshNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.SetDefaultScheduleUseCase

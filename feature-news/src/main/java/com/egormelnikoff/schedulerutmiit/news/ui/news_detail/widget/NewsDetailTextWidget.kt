@@ -6,12 +6,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.news.domain.model.News
 
 internal fun LazyListScope.newsDetailTextWidget(
@@ -22,10 +21,10 @@ internal fun LazyListScope.newsDetailTextWidget(
             "p", "li" -> {
                 val text = paragraph.second as AnnotatedString
                 Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
                     text = text,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground
+                    style = AppTheme.typography.bodyLarge,
+                    color = AppTheme.colors.onBackground
                 )
             }
 
@@ -35,14 +34,14 @@ internal fun LazyListScope.newsDetailTextWidget(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp, horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                        .padding(vertical = AppTheme.paddings.padding4, horizontal = AppTheme.paddings.padding16),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
                 ) {
                     tableRow.forEach { text ->
                         Text(
                             text = text.toString(),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onBackground,
+                            style = AppTheme.typography.bodyLarge,
+                            color = AppTheme.colors.onBackground,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )

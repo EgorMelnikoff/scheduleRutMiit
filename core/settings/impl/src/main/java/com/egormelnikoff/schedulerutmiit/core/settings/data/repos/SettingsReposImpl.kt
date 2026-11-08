@@ -1,14 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.core.settings.data.repos
 
-import com.egormelnikoff.schedulerutmiit.core.settings.data.local.AppInfoProvider
-import com.egormelnikoff.schedulerutmiit.core.settings.data.local.SettingsLocal
-import com.egormelnikoff.schedulerutmiit.core.settings.data.local.mapper.parseVersionCode
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.LatestRelease
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.Theme
 import com.egormelnikoff.schedulerutmiit.core.settings.api.repos.SettingsRepos
+import com.egormelnikoff.schedulerutmiit.core.settings.data.local.AppInfoProvider
+import com.egormelnikoff.schedulerutmiit.core.settings.data.local.SettingsLocal
+import com.egormelnikoff.schedulerutmiit.core.settings.data.local.mapper.parseVersionCode
 import com.egormelnikoff.schedulerutmiit.core.settings.data.remote.LatestReleaseRemote
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit

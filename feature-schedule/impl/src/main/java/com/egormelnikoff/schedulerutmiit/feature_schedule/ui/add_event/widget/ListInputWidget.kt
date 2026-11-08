@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun <T> ListInputWidget(
@@ -36,17 +36,17 @@ fun <T> ListInputWidget(
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 modifier = Modifier.weight(1f),
                 text = title,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                style = AppTheme.typography.titleSmall,
+                color = AppTheme.colors.onSecondaryContainer,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
@@ -55,12 +55,12 @@ fun <T> ListInputWidget(
                 onClick = onAddElement,
                 enabled = enabledAdd,
                 colors = IconButtonDefaults.iconButtonColors().copy(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    disabledContentColor = MaterialTheme.colorScheme.outline
+                    containerColor = AppTheme.colors.primary,
+                    contentColor = AppTheme.colors.onPrimary,
+                    disabledContentColor = AppTheme.colors.outline
                 ),
                 border = if (!enabledAdd) {
-                    BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline)
+                    BorderStroke(0.5.dp, AppTheme.colors.outline)
                 } else null
             ) {
                 Icon(
@@ -72,7 +72,7 @@ fun <T> ListInputWidget(
         }
         Column(
             modifier = Modifier.animateContentSize(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
         ) {
             elements.forEachIndexed { index, element ->
                 elementContent(index, element)

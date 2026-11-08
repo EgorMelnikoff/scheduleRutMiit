@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,6 +46,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBott
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,19 +60,19 @@ fun InfoModalDialog(
     val clipboard = LocalClipboard.current
 
     AppBottomSheet(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp),
-        showDragHandle = false,
+        modifier = Modifier.padding(start = AppTheme.paddings.padding16, end = AppTheme.paddings.padding16, top = AppTheme.paddings.padding24, bottom = AppTheme.paddings.padding16),
+        showHandle = false,
         onDismiss = onDismiss
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .background(AppTheme.colors.background),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding20)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16)
             ) {
                 Icon(
                     modifier = Modifier
@@ -83,35 +83,35 @@ fun InfoModalDialog(
                     tint = Color.Unspecified
                 )
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
                 ) {
                     Text(
                         text = stringResource(R.string.app_name),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        style = AppTheme.typography.titleLarge,
+                        color = AppTheme.colors.onBackground,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
 
                     Row(
                         modifier = Modifier.height(IntrinsicSize.Min),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .background(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = MaterialTheme.shapes.small
+                                    color = AppTheme.colors.primary,
+                                    shape = AppTheme.shapes.small
                                 )
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                                .padding(horizontal = AppTheme.paddings.padding8, vertical = AppTheme.paddings.padding4),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = "${packageInfo.versionName} (${getLongVersionCode(packageInfo)})",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                style = AppTheme.typography.titleMedium,
+                                color = AppTheme.colors.onPrimary,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
@@ -121,13 +121,13 @@ fun InfoModalDialog(
                                     .fillMaxHeight()
                                     .aspectRatio(1f)
                                     .background(
-                                        color = MaterialTheme.colorScheme.error,
-                                        shape = MaterialTheme.shapes.small
+                                        color = AppTheme.colors.error,
+                                        shape = AppTheme.shapes.small
                                     )
-                                    .padding(4.dp),
+                                    .padding(AppTheme.paddings.padding4),
                                 imageVector = ImageVector.vectorResource(R.drawable.alert),
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                tint = AppTheme.colors.onPrimary
                             )
                         }
                     }
@@ -141,18 +141,18 @@ fun InfoModalDialog(
             ) {
                 LazyRow(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
                 ) {
                     item {
                         AppAssistChip(
                             imageVector = ImageVector.vectorResource(R.drawable.logo_github),
                             colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.background,
-                                labelColor = MaterialTheme.colorScheme.onBackground,
-                                leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                containerColor = AppTheme.colors.background,
+                                labelColor = AppTheme.colors.onBackground,
+                                leadingIconContentColor = AppTheme.colors.onSecondaryContainer
                             ),
                             border = BorderStroke(
-                                color = MaterialTheme.colorScheme.outline,
+                                color = AppTheme.colors.outline,
                                 width = 0.5.dp
                             ),
                             title = stringResource(R.string.github),
@@ -166,13 +166,13 @@ fun InfoModalDialog(
                         AppAssistChip(
                             imageVector = ImageVector.vectorResource(R.drawable.logo_google_play),
                             colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.background,
-                                labelColor = MaterialTheme.colorScheme.onBackground,
+                                containerColor = AppTheme.colors.background,
+                                labelColor = AppTheme.colors.onBackground,
                                 leadingIconContentColor = Color.Unspecified
                             ),
                             isUnspecifiedIconColor = true,
                             border = BorderStroke(
-                                color = MaterialTheme.colorScheme.outline,
+                                color = AppTheme.colors.outline,
                                 width = 0.5.dp
                             ),
                             title = stringResource(R.string.google_play),
@@ -186,13 +186,13 @@ fun InfoModalDialog(
                         AppAssistChip(
                             imageVector = ImageVector.vectorResource(R.drawable.logo_rustore),
                             colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.background,
-                                labelColor = MaterialTheme.colorScheme.onBackground,
+                                containerColor = AppTheme.colors.background,
+                                labelColor = AppTheme.colors.onBackground,
                                 leadingIconContentColor = Color.Unspecified
                             ),
                             isUnspecifiedIconColor = true,
                             border = BorderStroke(
-                                color = MaterialTheme.colorScheme.outline,
+                                color = AppTheme.colors.outline,
                                 width = 0.5.dp
                             ),
                             title = stringResource(R.string.rustore),
@@ -211,19 +211,19 @@ fun InfoModalDialog(
             ) {
                 LazyRow(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
                 ) {
                     item {
                         AppAssistChip(
                             imageVector = ImageVector.vectorResource(R.drawable.logo_telegram),
                             colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.background,
-                                labelColor = MaterialTheme.colorScheme.onBackground,
+                                containerColor = AppTheme.colors.background,
+                                labelColor = AppTheme.colors.onBackground,
                                 leadingIconContentColor = Color.Unspecified
                             ),
                             isUnspecifiedIconColor = true,
                             border = BorderStroke(
-                                color = MaterialTheme.colorScheme.outline,
+                                color = AppTheme.colors.outline,
                                 width = 0.5.dp
                             ),
                             title = stringResource(R.string.telegram),
@@ -237,12 +237,12 @@ fun InfoModalDialog(
                         AppAssistChip(
                             imageVector = ImageVector.vectorResource(R.drawable.email),
                             colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.background,
-                                labelColor = MaterialTheme.colorScheme.onBackground,
-                                leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                containerColor = AppTheme.colors.background,
+                                labelColor = AppTheme.colors.onBackground,
+                                leadingIconContentColor = AppTheme.colors.onSecondaryContainer
                             ),
                             border = BorderStroke(
-                                color = MaterialTheme.colorScheme.outline,
+                                color = AppTheme.colors.outline,
                                 width = 0.5.dp
                             ),
                             title = stringResource(R.string.email),

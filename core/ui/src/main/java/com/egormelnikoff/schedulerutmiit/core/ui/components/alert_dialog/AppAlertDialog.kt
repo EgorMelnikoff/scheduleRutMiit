@@ -2,13 +2,13 @@ package com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun AppAlertDialog(
@@ -37,7 +37,7 @@ fun AppAlertDialog(
         text = {
             Text(
                 text = dialogText,
-                style = MaterialTheme.typography.bodyLarge,
+                style = AppTheme.typography.bodyLarge,
             )
         },
         onDismissRequest = onDismissRequest,
@@ -50,8 +50,8 @@ fun AppAlertDialog(
             ) {
                 Text(
                     text = confirmText ?: stringResource(R.string.yes),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    style = AppTheme.typography.bodyLarge,
+                    color = AppTheme.colors.primary
                 )
             }
         },
@@ -61,14 +61,14 @@ fun AppAlertDialog(
             ) {
                 Text(
                     text = dismissText ?: stringResource(R.string.no),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    style = AppTheme.typography.bodyLarge,
+                    color = AppTheme.colors.primary
                 )
             }
         },
-        containerColor = MaterialTheme.colorScheme.background,
-        titleContentColor = MaterialTheme.colorScheme.onBackground,
-        textContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-        iconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        containerColor = AppTheme.colors.background,
+        titleContentColor = AppTheme.colors.onBackground,
+        textContentColor = AppTheme.colors.onSecondaryContainer,
+        iconContentColor = AppTheme.colors.onSecondaryContainer
     )
 }
