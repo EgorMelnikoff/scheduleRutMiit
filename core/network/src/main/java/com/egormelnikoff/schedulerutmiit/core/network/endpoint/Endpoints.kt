@@ -14,7 +14,7 @@ object Endpoints {
     const val GROUPS = "/data-service/data/timetable/groups-catalog"
     const val TIMETABLE = "/data-service/data/timetable/v2/{type}/{apiId}"
 
-    //const val SCHEDULE = "/data-service/data/timetable/v2/{type}/{apiId}/{timetableId}"
+    const val SCHEDULE = "/data-service/data/timetable/v2/{type}/{apiId}/{timetableId}"
     const val NEWS_CATALOG = "/data-service/data/news"
     const val NEWS = "/data-service/data/news/{newsId}"
 

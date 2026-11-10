@@ -3,6 +3,10 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.fetcher.HtmlFetcher
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.EventDto
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.NonPeriodicContentDto
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.PeriodicContentDto
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.RecurrenceDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.TimetableDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getShortName
@@ -10,6 +14,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.parser.Sche
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.mapper.ScheduleMapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -38,9 +43,11 @@ class ScheduleRemoteDataSource @Inject constructor(
             .filter { it.endDate >= LocalDate.now() }
             .mapIndexed { index, timetable ->
                 async {
-                    val scheduleDto = parseSchedule(
-                        timetable, name, apiId, type
-                    )
+                    val scheduleDto =  scheduleApi.getSchedule(
+                        type.typeName,
+                        apiId.toString(),
+                        timetable.id
+                    ).normalize()
 
                     scheduleMapper(
                         scheduleDto,
@@ -97,18 +104,54 @@ class ScheduleRemoteDataSource @Inject constructor(
         return scheduleDto
     }
 
-    suspend fun fetchCurrentWeek(
-        namedScheduleType: NamedScheduleType,
-        apiId: Int,
-        startDate: String,
-        type: String
-    ): Int {
-        htmlFetcher(
-            url = Endpoints.scheduleUrl(
-                namedScheduleType, apiId, startDate, type
+
+    private fun ScheduleDto.normalize(): ScheduleDto {
+        return if (this.timetable.type == TimetableType.PERIODIC) {
+            ScheduleDto(
+                timetable = this.timetable,
+                periodic = this.periodic
+                    ?: PeriodicContentDto(
+                        events = this.nonPeriodic?.events?.normalizePeriodicEvents(),
+                        recurrence = RecurrenceDto(
+                            interval = 2,
+                            currentNumber = 1
+                        )
+                    ),
+                nonPeriodic = null
             )
-        ).let { document ->
-            return ScheduleParser.parseCurrentWeek(document)
+        } else {
+            ScheduleDto(
+                timetable = this.timetable,
+                periodic = null,
+                nonPeriodic = NonPeriodicContentDto(
+                    events = this.nonPeriodic?.events
+                        ?: this.periodic?.events
+                )
+            )
         }
     }
+
+    private fun List<EventDto>.normalizePeriodicEvents(): List<EventDto> {
+        return this
+            .groupBy { it.customHashCode(true) }
+            .flatMap { (_, events) ->
+                events
+                    .groupBy { it.collisionKey() }
+                    .map { (_, sameEvents) ->
+                        sameEvents.first().let { event ->
+                            if (sameEvents.size > 1) {
+                                event.copy(
+                                    recurrence = event.recurrence?.copy(interval = 1)
+                                )
+                            } else {
+                                event
+                            }
+                        }
+                    }
+            }
+    }
+
+    private fun EventDto.collisionKey() =
+        rooms to lecturers
+
 }
