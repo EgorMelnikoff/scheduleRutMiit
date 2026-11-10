@@ -53,6 +53,10 @@ fun ReviewTopBarWidget(
             DayPeriod.EVENING -> stringResource(R.string.good_evening)
             DayPeriod.NIGHT -> stringResource(R.string.good_night)
         } + "!",
+        showTitleChevron = true,
+        onTitleClick = {
+            //onAction(ReviewAction.)
+        },
         subtitleText = reviewState.summaryState?.let { reviewData ->
             buildString {
                 when (reviewData.date) {

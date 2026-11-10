@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -186,6 +187,9 @@ fun ScreenSchedule(
                     ScheduleHeaderWidget(
                         onSetScheduleView = {
                             scheduleViewModel.setScheduleView(it)
+                        },
+                        onTitleClick = {
+
                         },
                         onShowNamedScheduleDialog = { newValue ->
                             namedScheduleDialog = newValue

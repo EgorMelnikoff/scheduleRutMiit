@@ -41,6 +41,7 @@ fun ScheduleHeaderWidget(
             scheduleTypeName
         } else null,
         onTitleClick = onTitleClick,
+        showTitleChevron = true,
         actions = {
             IconButton(
                 onClick = {
