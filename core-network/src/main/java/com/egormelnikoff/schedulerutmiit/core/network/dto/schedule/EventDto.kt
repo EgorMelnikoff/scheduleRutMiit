@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.core.network.dto.schedule
 
+import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeInstantSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -7,10 +8,10 @@ import java.time.LocalDateTime
 
 @Serializable
 data class EventDto(
-    @Serializable(with = LocalDateTimeSerializer::class)
+    @Serializable(with = LocalDateTimeInstantSerializer::class)
     @SerialName("startDatetime")
     val startDatetime: LocalDateTime?,
-    @Serializable(with = LocalDateTimeSerializer::class)
+    @Serializable(with = LocalDateTimeInstantSerializer::class)
     @SerialName("endDatetime")
     val endDatetime: LocalDateTime?,
     @SerialName("recurrenceRule")

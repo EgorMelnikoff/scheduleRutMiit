@@ -3,8 +3,10 @@ package com.egormelnikoff.schedulerutmiit.core.network.api
 import com.egormelnikoff.schedulerutmiit.core.network.dto.institutes.InstitutesDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsListDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetablesDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
+import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.SCHEDULE
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -19,6 +21,13 @@ interface MiitApi {
         @Path("type") typeName: String,
         @Path("apiId") apiId: Int
     ): Response<TimetablesDto>
+
+    @GET(SCHEDULE)
+    suspend fun getSchedule(
+        @Path("type") type: String,
+        @Path("apiId") apiId: String,
+        @Path("timetableId") timetableId: String?
+    ): Response<ScheduleDto>
 
     @GET(Endpoints.NEWS_CATALOG)
     suspend fun getNewsList(
