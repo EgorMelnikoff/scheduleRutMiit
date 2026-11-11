@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event
 
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 
 sealed interface EventAction {
     data object OnBackClicked : EventAction
@@ -50,6 +51,14 @@ sealed interface EventAction {
 
     data class OnGroupLongClicked(
         val group: Group
+    ) : EventAction
+
+    data class OnRoomClicked(
+        val room: Room
+    ) : EventAction
+
+    data class OnRoomLongClicked(
+        val room: Room
     ) : EventAction
 
     data class OnLecturerClicked(

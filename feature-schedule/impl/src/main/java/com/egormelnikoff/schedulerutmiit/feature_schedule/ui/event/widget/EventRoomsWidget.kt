@@ -10,10 +10,12 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventState
 
 fun LazyListScope.eventRoomsWidget(
-    eventState: EventState.Loaded
+    eventState: EventState.Loaded,
+    onAction: (EventAction) -> Unit
 ) {
     eventState.event.rooms?.let { rooms ->
         item {
@@ -28,7 +30,13 @@ fun LazyListScope.eventRoomsWidget(
                             AppCell(
                                 title = room.hint.ifBlank { room.name },
                                 titleMaxLines = 2,
-                                defaultMinHeight = 32.dp
+                                defaultMinHeight = 32.dp,
+                                onLongClick = {
+                                    onAction(EventAction.OnRoomLongClicked(room))
+                                },
+                                onClick = {
+                                    onAction(EventAction.OnRoomClicked(room))
+                                },
                             )
                         }
                     }

@@ -45,7 +45,7 @@ fun EventScreenWidget(
                     }
                     eventGroupsWidget(eventState, onAction)
 
-                    eventRoomsWidget(eventState)
+                    eventRoomsWidget(eventState, onAction)
 
                     eventLecturersWidget(eventState, onAction)
 

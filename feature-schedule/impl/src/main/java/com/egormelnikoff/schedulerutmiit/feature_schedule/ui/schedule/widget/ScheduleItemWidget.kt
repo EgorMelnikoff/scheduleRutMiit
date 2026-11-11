@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
@@ -50,9 +49,9 @@ fun ScheduleItemWidget(
             Text(
                 text =
                     "${
-                        eventsWithExtra.first().first.startDatetime.toLocalTimeWithTimeZone()
+                        eventsWithExtra.first().first.startDatetime.toLocalTime()
                     } - ${
-                        eventsWithExtra.first().first.endDatetime.toLocalTimeWithTimeZone()
+                        eventsWithExtra.first().first.endDatetime.toLocalTime()
                     }",
                 style = AppTheme.typography.titleSmall,
                 color = AppTheme.colors.primary

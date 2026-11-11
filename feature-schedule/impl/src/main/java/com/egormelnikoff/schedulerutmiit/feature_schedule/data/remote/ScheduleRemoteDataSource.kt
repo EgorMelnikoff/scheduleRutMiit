@@ -47,7 +47,7 @@ class ScheduleRemoteDataSource @Inject constructor(
                         type.typeName,
                         apiId.toString(),
                         timetable.id
-                    ).normalize()
+                    ).normalize(timetable)
 
                     scheduleMapper(
                         scheduleDto,
@@ -105,10 +105,12 @@ class ScheduleRemoteDataSource @Inject constructor(
     }
 
 
-    private fun ScheduleDto.normalize(): ScheduleDto {
+    private fun ScheduleDto.normalize(
+        timetable: TimetableDto
+    ): ScheduleDto {
         return if (this.timetable.type == TimetableType.PERIODIC) {
             ScheduleDto(
-                timetable = this.timetable,
+                timetable = timetable,
                 periodic = this.periodic
                     ?: PeriodicContentDto(
                         events = this.nonPeriodic?.events?.normalizePeriodicEvents(),
@@ -121,7 +123,7 @@ class ScheduleRemoteDataSource @Inject constructor(
             )
         } else {
             ScheduleDto(
-                timetable = this.timetable,
+                timetable = timetable,
                 periodic = null,
                 nonPeriodic = NonPeriodicContentDto(
                     events = this.nonPeriodic?.events

@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.hourMinuteFormatter
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -34,13 +33,13 @@ fun HiddenEventItemWidget(
 
     val startTime = remember(event) {
         event.startDatetime
-            .toLocalTimeWithTimeZone()
+            .toLocalTime()
             .format(hourMinuteFormatter)
     }
 
     val endTime = remember(event) {
         event.endDatetime
-            .toLocalTimeWithTimeZone()
+            .toLocalTime()
             .format(hourMinuteFormatter)
     }
 

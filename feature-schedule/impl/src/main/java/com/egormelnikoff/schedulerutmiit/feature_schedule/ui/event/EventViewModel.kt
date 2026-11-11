@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.helper.ClipboardHelper
 import com.egormelnikoff.schedulerutmiit.core.common.helper.ShareHelper
@@ -13,6 +14,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedSchedul
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.LoadEventUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.UpdateEventCommentUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.UpdateEventTagUseCase
@@ -88,6 +90,8 @@ class EventViewModel @AssistedInject constructor(
             is EventAction.OnLecturerLongClicked -> onCopyText(action.lecturer.fullFio)
 
             is EventAction.OnSendClicked -> onSendClicked(action.text)
+            is EventAction.OnRoomClicked -> onRoomClicked(action.room)
+            is EventAction.OnRoomLongClicked -> onCopyText(action.room.name)
         }
     }
 
@@ -113,8 +117,8 @@ class EventViewModel @AssistedInject constructor(
         launchToCoroutine(
             errorHandler(
                 "onGroupClicked"
-            ) {
-                println("BOOOOM")
+            ) { e ->
+                Log.e("onGroupClicked", e.message, e)
             }
         ) {
             fetchScheduleCache.addFetchEvent(
@@ -133,8 +137,8 @@ class EventViewModel @AssistedInject constructor(
         launchToCoroutine(
             errorHandler(
                 "onLecturerClicked"
-            ) {
-                println("BOOOOM")
+            ) { e ->
+                Log.e("onLecturerClicked", e.message, e)
             }
         ) {
             fetchScheduleCache.addFetchEvent(
@@ -142,6 +146,27 @@ class EventViewModel @AssistedInject constructor(
                     name = lecturer.shortFio,
                     apiId = lecturer.id,
                     type = NamedScheduleType.PERSON
+                )
+            )
+            appRouter.navigateToStartRage()
+            appRouter.onBack()
+        }
+    }
+
+
+    private fun onRoomClicked(room: Room) {
+        launchToCoroutine(
+            errorHandler(
+                "onRoomClicked"
+            ) { e ->
+                Log.e("onRoomClicked", e.message, e)
+            }
+        ) {
+            fetchScheduleCache.addFetchEvent(
+                FetchScheduleEvent(
+                    name = room.name,
+                    apiId = room.id,
+                    type = NamedScheduleType.ROOM
                 )
             )
             appRouter.navigateToStartRage()

@@ -36,7 +36,7 @@ data class SummaryState(
             )
 
             val isFinishedEvents = events.isNotEmpty() && dateTime.toLocalTime().isAfter(
-                events.values.flatten().last().endDatetime.toLocalTimeWithTimeZone()
+                events.values.flatten().last().endDatetime.toLocalTime()
             )
 
             val nextDay = events.isEmpty() && dateTime.toLocalTime().isAfter(eveningTime)
