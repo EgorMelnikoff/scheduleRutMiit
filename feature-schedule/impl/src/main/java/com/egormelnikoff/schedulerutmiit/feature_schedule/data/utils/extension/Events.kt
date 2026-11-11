@@ -2,6 +2,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension
 
 import android.content.Context
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
@@ -82,7 +83,7 @@ fun Event.customToString(context: Context): String {
         this@customToString.typeName?.let {
             append("\n${context.getString(R.string.class_type)}: $it")
         }
-        append("\n${context.getString(R.string.time)}: ${this@customToString.startDatetime.toLocalTime()} - ${this@customToString.endDatetime.toLocalTime()}")
+        append("\n${context.getString(R.string.time)}: ${this@customToString.startDatetime.toLocalTimeWithTimeZone()} - ${this@customToString.endDatetime.toLocalTimeWithTimeZone()}")
 
         this@customToString.timeSlotName?.let {
             append(" ($it)")

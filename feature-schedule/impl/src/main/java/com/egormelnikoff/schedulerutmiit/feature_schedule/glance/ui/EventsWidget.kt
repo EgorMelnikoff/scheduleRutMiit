@@ -39,6 +39,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.feature_schedule.di.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.WidgetDataUpdater
@@ -220,9 +221,9 @@ class EventsWidget : GlanceAppWidget() {
         ) {
             Text(
                 text = "${
-                    events.first().startDateTime.toLocalTime()
+                    events.first().startDateTime.toLocalTimeWithTimeZone()
                 }\n${
-                    events.first().endDateTime.toLocalTime()
+                    events.first().endDateTime.toLocalTimeWithTimeZone()
                 }",
                 style = TextStyle(
                     color = GlanceTheme.colors.onBackground,
