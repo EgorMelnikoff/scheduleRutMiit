@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Schedule
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.navigation.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.preferences.EventView
@@ -50,9 +51,9 @@ fun Event(
             Text(
                 text =
                     "${
-                        eventsWithExtra.first().first.startDatetime.toLocalTime()
+                        eventsWithExtra.first().first.startDatetime.toLocalTimeWithTimeZone()
                     } - ${
-                        eventsWithExtra.first().first.endDatetime.toLocalTime()
+                        eventsWithExtra.first().first.endDatetime.toLocalTimeWithTimeZone()
                     }",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary

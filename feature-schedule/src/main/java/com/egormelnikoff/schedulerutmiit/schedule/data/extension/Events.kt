@@ -5,6 +5,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -82,7 +83,7 @@ fun Event.customToString(context: Context): String {
         this@customToString.typeName?.let {
             append("\n${context.getString(R.string.class_type)}: $it")
         }
-        append("\n${context.getString(R.string.time)}: ${this@customToString.startDatetime.toLocalTime()} - ${this@customToString.endDatetime.toLocalTime()}")
+        append("\n${context.getString(R.string.time)}: ${this@customToString.startDatetime.toLocalTimeWithTimeZone()} - ${this@customToString.endDatetime.toLocalTimeWithTimeZone()}")
 
         this@customToString.timeSlotName?.let {
             append(" ($it)")

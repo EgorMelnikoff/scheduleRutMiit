@@ -65,8 +65,6 @@ class FetchNamedScheduleUseCase @Inject constructor(
                     .filter { it.endDate >= LocalDate.now() }
                     .mapIndexed { index, timetable ->
                         async {
-                            println("testt")
-                            println(timetable)
                             scheduleRemoteDataSource.fetchSchedule(
                                 namedScheduleType = namedScheduleType,
                                 name = name,

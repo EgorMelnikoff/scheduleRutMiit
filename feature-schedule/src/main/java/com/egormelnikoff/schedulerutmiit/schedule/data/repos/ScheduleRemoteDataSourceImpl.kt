@@ -3,18 +3,23 @@ package com.egormelnikoff.schedulerutmiit.schedule.data.repos
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.common.result.Result
 import com.egormelnikoff.schedulerutmiit.core.network.api.MiitApi
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.EventDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.NonPeriodicContentDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.PeriodicContentDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.RecurrenceDto
+import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.RecurrenceEventDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.schedule.ScheduleDto
 import com.egormelnikoff.schedulerutmiit.core.network.dto.timetable.TimetableDto
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.network.helper.NetworkExecutor
+import com.egormelnikoff.schedulerutmiit.schedule.data.extension.getTimeSlotName
 import com.egormelnikoff.schedulerutmiit.schedule.data.parser.ScheduleParser
 import com.egormelnikoff.schedulerutmiit.schedule.domain.repos.ScheduleRemoteDataSource
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -78,14 +83,16 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
     private fun ScheduleDto.normalize(
         timetable: TimetableDto
     ): ScheduleDto {
-        return if (this.timetable.type == TimetableType.PERIODIC) {
+        return if (timetable.type == TimetableType.PERIODIC) {
             ScheduleDto(
                 timetable = timetable,
                 periodic = if (this.periodic != null) {
                     this.periodic
                 } else {
                     PeriodicContentDto(
-                        events = this.nonPeriodic?.events?.normalizePeriodicEvents(),
+                        events = this.nonPeriodic?.events
+                            ?.filter { it.name != null }
+                            ?.normalizePeriodicEvents(timetable.startDate),
                         recurrence = RecurrenceDto(
                             interval = 2,
                             currentNumber = 1
@@ -106,27 +113,53 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-    private fun List<EventDto>.normalizePeriodicEvents(): List<EventDto> {
-        return this
-            .groupBy { it.customHashCode(true) }
-            .flatMap { (_, events) ->
-                events
-                    .groupBy { it.collisionKey() }
-                    .map { (_, sameEvents) ->
-                        sameEvents.first().let { event ->
-                            if (sameEvents.size > 1) {
-                                event.copy(
-                                    recurrence = event.recurrence?.copy(interval = 1)
-                                )
-                            } else {
-                                event
-                            }
-                        }
-                    }
+    private fun List<EventDto>.normalizePeriodicEvents(
+        startDate: LocalDate
+    ): List<EventDto> {
+        return groupBy { it.customHashCode(true) }
+            .map { (_, sameEvents) ->
+                val event = sameEvents.first()
+
+                if (sameEvents.size > 1) {
+                    event.copy(
+                        timeSlotName = getTimeSlotName(
+                            event.startDatetime,
+                            event.endDatetime,
+                        ),
+                        recurrence = event.recurrence?.copy(
+                            interval = 1
+                        )
+                    )
+                } else {
+                    event.copy(
+                        timeSlotName = getTimeSlotName(
+                            event.startDatetime,
+                            event.endDatetime,
+                        ),
+                        periodNumber = getPeriodNumber(
+                            event.startDatetime?.toLocalDate(),
+                            startDate
+                        ),
+                        recurrence = RecurrenceEventDto(
+                            frequency = "WEEKLY",
+                            interval = 2
+                        )
+                    )
+                }
             }
     }
 
-    private fun EventDto.collisionKey() =
-        rooms to lecturers
+    private fun getPeriodNumber(
+        eventDate: LocalDate?,
+        scheduleStartDate: LocalDate
+    ): Int {
+        if (eventDate == null) return 1
+        val weeks = ChronoUnit.WEEKS.between(
+            scheduleStartDate.getFirstDayOfWeek(),
+            eventDate.getFirstDayOfWeek()
+        )
+
+        return (weeks % 2).toInt() + 1
+    }
 
 }

@@ -59,6 +59,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColorSelector
@@ -523,7 +524,7 @@ fun EventHeader(
                     width = 0.5.dp,
                     color = MaterialTheme.colorScheme.outline
                 ),
-                title = "${event.startDatetime.toLocalTime()} - ${event.endDatetime.toLocalTime()}"
+                title = "${event.startDatetime.toLocalTimeWithTimeZone()} - ${event.endDatetime.toLocalTimeWithTimeZone()}"
             )
             val typeName = event.typeName
             typeName?.let {

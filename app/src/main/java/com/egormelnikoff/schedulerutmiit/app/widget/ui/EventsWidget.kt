@@ -46,6 +46,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.domain.EventExtraData
 import com.egormelnikoff.schedulerutmiit.core.common.enums.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.di.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.schedule.data.extension.findEventExtra
@@ -261,9 +262,9 @@ class EventsWidget : GlanceAppWidget() {
         ) {
             Text(
                 text = "${
-                    events.first().startDatetime.toLocalTime()
+                    events.first().startDatetime.toLocalTimeWithTimeZone()
                 }\n${
-                    events.first().endDatetime.toLocalTime()
+                    events.first().endDatetime.toLocalTimeWithTimeZone()
                 }",
                 style = TextStyle(
                     color = GlanceTheme.colors.onBackground,
