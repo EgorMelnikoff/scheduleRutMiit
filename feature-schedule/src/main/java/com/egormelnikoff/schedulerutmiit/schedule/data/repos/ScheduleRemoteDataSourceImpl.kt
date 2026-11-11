@@ -48,7 +48,7 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
                 is Result.Error -> document
 
                 is Result.Success -> Result.Success(
-                    document.data.normalize()
+                    document.data.normalize(timetable)
                 )
             }
         }
@@ -75,10 +75,12 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-    private fun ScheduleDto.normalize(): ScheduleDto {
+    private fun ScheduleDto.normalize(
+        timetable: TimetableDto
+    ): ScheduleDto {
         return if (this.timetable.type == TimetableType.PERIODIC) {
             ScheduleDto(
-                timetable = this.timetable,
+                timetable = timetable,
                 periodic = if (this.periodic != null) {
                     this.periodic
                 } else {
@@ -94,7 +96,7 @@ class ScheduleRemoteDataSourceImpl @Inject constructor(
             )
         } else {
             ScheduleDto(
-                timetable = this.timetable,
+                timetable = timetable,
                 periodic = null,
                 nonPeriodic = NonPeriodicContentDto(
                     events = this.nonPeriodic?.events

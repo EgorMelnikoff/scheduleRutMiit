@@ -59,7 +59,6 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.domain.Event
 import com.egormelnikoff.schedulerutmiit.core.common.enums.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.core.common.enums.TimetableType
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ColorSelector
@@ -243,7 +242,26 @@ fun EventDialog(
                                             ClickableItem(
                                                 title = room.hint,
                                                 titleMaxLines = 2,
-                                                defaultMinHeight = 32.dp
+                                                defaultMinHeight = 32.dp,
+                                                onLongClick = {
+                                                    clipboard.nativeClipboard.setPrimaryClip(
+                                                        ClipData.newPlainText(
+                                                            null,
+                                                            room.name
+                                                        )
+                                                    )
+                                                },
+                                                onClick = if (!eventState.event.isCustomEvent) {
+                                                    {
+                                                        fetchNamedSchedule(
+                                                            room.name,
+                                                            room.id,
+                                                            NamedScheduleType.ROOM
+                                                        )
+                                                        navigateToStartPage()
+                                                        onBack()
+                                                    }
+                                                } else null,
                                             )
                                         }
                                     }
@@ -505,7 +523,7 @@ fun EventHeader(
                     width = 0.5.dp,
                     color = MaterialTheme.colorScheme.outline
                 ),
-                title = "${event.startDatetime.toLocalTimeWithTimeZone()} - ${event.endDatetime.toLocalTimeWithTimeZone()}"
+                title = "${event.startDatetime.toLocalTime()} - ${event.endDatetime.toLocalTime()}"
             )
             val typeName = event.typeName
             typeName?.let {

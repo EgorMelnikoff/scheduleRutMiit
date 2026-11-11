@@ -26,7 +26,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.ClickableItem
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.CustomTopAppBar
 import com.egormelnikoff.schedulerutmiit.core.ui.elements.composable.Empty
@@ -70,11 +69,9 @@ fun HiddenEventsDialog(
                             .clip(MaterialTheme.shapes.medium)
                             .background(MaterialTheme.colorScheme.secondaryContainer)
                     ) {
-                        val startTime = event.startDatetime
-                            .toLocalTimeWithTimeZone()
+                        val startTime = event.startDatetime.toLocalTime()
                             .format(hourMinuteFormatter)
-                        val endTime = event.endDatetime
-                            .toLocalTimeWithTimeZone()
+                        val endTime = event.endDatetime.toLocalTime()
                             .format(hourMinuteFormatter)
 
                         val day = if (event.interval != null) {
