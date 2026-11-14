@@ -1,9 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.core.settings.ui.widget
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,6 +14,10 @@ import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Custom
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
@@ -29,6 +31,7 @@ fun CountEventsModalDialog(
 ) {
     AppBottomSheet(
         modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
+        showHandle = false,
         onDismiss = onDismiss
     ) {
         ColumnGroup(
@@ -36,44 +39,60 @@ fun CountEventsModalDialog(
             items = EventsCountView.entries.map {
                 {
                     AppCell(
-                        title = when (it) {
-                            EventsCountView.DETAILS -> stringResource(R.string.details)
-                            EventsCountView.BRIEFLY -> stringResource(R.string.briefly)
-                            EventsCountView.OFF -> stringResource(R.string.dont_show)
-                        },
-                        subtitle =  when (it) {
-                            EventsCountView.DETAILS -> stringResource(R.string.display_each_lesson)
-                            EventsCountView.BRIEFLY -> stringResource(R.string.display_number_lessons)
-                            EventsCountView.OFF -> null
-                        },
-                        leadingIcon = {
+                        start = {
                             Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = when (it) {
+                                icon = when (it) {
                                     EventsCountView.DETAILS -> ImageVector.vectorResource(R.drawable.points)
                                     EventsCountView.BRIEFLY -> ImageVector.vectorResource(R.drawable.one)
                                     EventsCountView.OFF -> ImageVector.vectorResource(R.drawable.visibility_off)
                                 },
-                                contentDescription = null,
-                                tint = AppTheme.colors.onSecondaryContainer
+                                iconSize = 20.dp,
+                                iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
-                        trailingIcon = {
-                            RadioButton(
-                                selected = (it == eventsCountView),
-                                onClick = {
-                                    onAction(
-                                        SettingsAction.OnSetEventsCountView(it)
+                        center = {
+                            CenterContent(
+                                title = {
+                                    TextBlock(
+                                        text = when (it) {
+                                            EventsCountView.DETAILS -> stringResource(R.string.details)
+                                            EventsCountView.BRIEFLY -> stringResource(R.string.briefly)
+                                            EventsCountView.OFF -> stringResource(R.string.dont_show)
+                                        }
+                                    )
+                                },
+                                subtitle = {
+                                    TextBlock(
+                                        text = when (it) {
+                                            EventsCountView.DETAILS -> stringResource(R.string.display_each_lesson)
+                                            EventsCountView.BRIEFLY -> stringResource(R.string.display_number_lessons)
+                                            EventsCountView.OFF -> null
+                                        },
+                                        typography = AppTheme.typography.bodyMedium,
+                                        color = AppTheme.colors.onSecondaryContainer,
                                     )
                                 }
                             )
                         },
-                        showClickLabel = false
-                    ) {
-                        onAction(
-                            SettingsAction.OnSetEventsCountView(it)
-                        )
-                    }
+                        end = {
+                            Custom {
+                                RadioButton(
+                                    selected = (it == eventsCountView),
+                                    onClick = {
+                                        onAction(
+                                            SettingsAction.OnSetEventsCountView(it)
+                                        )
+                                    }
+                                )
+                            }
+                        },
+                        showChevron = false,
+                        onClick = {
+                            onAction(
+                                SettingsAction.OnSetEventsCountView(it)
+                            )
+                        }
+                    )
                 }
 
             }

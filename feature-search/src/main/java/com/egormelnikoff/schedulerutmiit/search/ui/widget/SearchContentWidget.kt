@@ -19,7 +19,9 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
-import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingAsyncImage
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AsyncImage
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.search.domain.model.RefreshArgs
@@ -56,20 +58,26 @@ internal fun SearchContentWidget(
                     modifier = Modifier.clip(AppTheme.shapes.medium)
                 ) {
                     AppCell(
-                        verticalPadding = 8.dp,
-                        horizontalPadding = 8.dp,
-                        title = group.name
-                    ) {
-                        onAction(
-                            SearchAction.OnNavigateSchedule(
-                                RefreshArgs(
-                                    group.name,
-                                    group.id,
-                                    NamedScheduleType.GROUP
+                        contentPadding = PaddingValues(
+                            AppTheme.paddings.padding8
+                        ),
+                        center = {
+                            TextBlock(
+                                text = group.name
+                            )
+                        },
+                        onClick = {
+                            onAction(
+                                SearchAction.OnNavigateSchedule(
+                                    RefreshArgs(
+                                        group.name,
+                                        group.id,
+                                        NamedScheduleType.GROUP
+                                    )
                                 )
                             )
-                        )
-                    }
+                        }
+                    )
                 }
             }
             item {
@@ -93,31 +101,47 @@ internal fun SearchContentWidget(
                     modifier = Modifier.clip(AppTheme.shapes.medium)
                 ) {
                     AppCell(
-                        verticalPadding = 8.dp,
-                        horizontalPadding = 8.dp,
-                        title = person.name,
-                        titleMaxLines = 2,
-                        subtitle = person.position,
-                        subtitleMaxLines = 3,
-                        leadingIcon = {
-                            LeadingAsyncImage(
-                                title = person.name,
-                                titleSize = 20.sp,
+                        contentPadding = PaddingValues(
+                            AppTheme.paddings.padding8
+                        ),
+                        start = {
+                            AsyncImage(
                                 imageUrl = personImageUrl(person.id),
+                                imageTitle = person.name,
+                                titleSize = 20.sp,
                                 imageSize = 60.dp
                             )
-                        }
-                    ) {
-                        onAction(
-                            SearchAction.OnNavigateSchedule(
-                                RefreshArgs(
-                                    person.name,
-                                    person.id,
-                                    NamedScheduleType.PERSON
+                        },
+                        center = {
+                            CenterContent(
+                                title = {
+                                    TextBlock(
+                                        text = person.name,
+                                        maxLines = 2,
+                                    )
+                                },
+                                subtitle = {
+                                    TextBlock(
+                                        text = person.position,
+                                        maxLines = 3,
+                                        typography = AppTheme.typography.bodyMedium,
+                                        color = AppTheme.colors.onSecondaryContainer,
+                                    )
+                                },
+                            )
+                        },
+                        onClick = {
+                            onAction(
+                                SearchAction.OnNavigateSchedule(
+                                    RefreshArgs(
+                                        person.name,
+                                        person.id,
+                                        NamedScheduleType.PERSON
+                                    )
                                 )
                             )
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }

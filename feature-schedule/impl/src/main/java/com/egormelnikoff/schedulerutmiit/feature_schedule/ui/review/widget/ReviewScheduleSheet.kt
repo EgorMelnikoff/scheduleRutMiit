@@ -2,9 +2,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.widget
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -14,6 +12,8 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
@@ -67,51 +67,56 @@ fun ReviewScheduleSheet(
                 if (!namedSchedule.isDefault) {
                     add {
                         AppCell(
-                            title = stringResource(R.string.make_default),
-                            leadingIcon = {
+
+                            start = {
                                 Icon(
-                                    modifier = Modifier.size(20.dp),
-                                    imageVector = ImageVector.vectorResource(R.drawable.check),
-                                    tint = AppTheme.colors.onBackground,
-                                    contentDescription = null
+                                    icon = ImageVector.vectorResource(R.drawable.check),
+                                    iconSize = 20.dp,
+                                    iconColor = AppTheme.colors.onBackground
                                 )
                             },
-                            defaultMinHeight = 24.dp,
-                            showClickLabel = false
-                        ) {
-                            onAction(
-                                ReviewAction.OnSetNamedSchedule(
-                                    namedScheduleId = namedSchedule.id,
-                                    setDefault = true
+                            center = {
+                                TextBlock(
+                                    text = stringResource(R.string.make_default),
                                 )
-                            )
-                        }
-
+                            },
+                            showChevron = false,
+                            onClick = {
+                                onAction(
+                                    ReviewAction.OnSetNamedSchedule(
+                                        namedScheduleId = namedSchedule.id,
+                                        setDefault = true
+                                    )
+                                )
+                            }
+                        )
                     }
                 }
 
                 add {
                     AppCell(
-                        title = stringResource(R.string.open),
-                        leadingIcon = {
+                        start = {
                             Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.open_panel),
-                                tint = AppTheme.colors.onBackground,
-                                contentDescription = null
+                                icon = ImageVector.vectorResource(R.drawable.open_panel),
+                                iconSize = 20.dp,
+                                iconColor = AppTheme.colors.onBackground,
                             )
                         },
-                        defaultMinHeight = 24.dp
-                    ) {
-                        onAction(
-                            ReviewAction.OnSetNamedSchedule(
-                                namedScheduleId = namedSchedule.id,
-                                setDefault = false
+                        center = {
+                            TextBlock(
+                                text = stringResource(R.string.open),
                             )
-                        )
-                    }
+                        },
+                        onClick = {
+                            onAction(
+                                ReviewAction.OnSetNamedSchedule(
+                                    namedScheduleId = namedSchedule.id,
+                                    setDefault = false
+                                )
+                            )
+                        }
+                    )
                 }
-
             }
         )
     }

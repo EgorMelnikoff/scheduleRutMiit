@@ -34,11 +34,13 @@ import java.time.format.TextStyle
 
 @Composable
 fun EventNameWidget(
+    modifier: Modifier = Modifier,
     timetableType: TimetableType,
     event: Event,
     horizontalPadding: Dp
 ) {
     Column(
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
     ) {
         Text(
@@ -129,9 +131,9 @@ fun EventNameWidget(
 fun EventScreenPreview() {
     PreviewLightTheme {
         EventNameWidget(
-            eventStateMock.schedule.timetableType,
-            eventStateMock.event,
-            16.dp
+            timetableType = eventStateMock.schedule.timetableType,
+            event = eventStateMock.event,
+            horizontalPadding = 16.dp
         )
     }
 }

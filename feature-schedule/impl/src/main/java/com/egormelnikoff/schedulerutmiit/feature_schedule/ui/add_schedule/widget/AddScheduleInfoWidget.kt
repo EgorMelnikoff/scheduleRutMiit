@@ -15,7 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
-import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingIcon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -47,34 +48,38 @@ fun AddScheduleInfoWidget(
                 }
             }, {
                 AppCell(
-                    defaultMinHeight = 32.dp,
-                    showClickLabel = false,
-                    title = when {
-                        addScheduleState.startDate != null && addScheduleState.startDate == addScheduleState.endDate ->
-                            "${addScheduleState.startDate.format(dayMonthYearFormatter)}"
-
-                        addScheduleState.startDate != null && addScheduleState.endDate != null ->
-                            "${addScheduleState.startDate.format(dayMonthYearFormatter)}" +
-                                    " - ${
-                                        addScheduleState.endDate.format(
-                                            dayMonthYearFormatter
-                                        )
-                                    }"
-
-                        else -> stringResource(R.string.dates)
-                    },
-                    titleTypography = AppTheme.typography.titleSmall,
-                    leadingIcon = {
-                        LeadingIcon(
-                            imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                    showChevron = false,
+                    start = {
+                        Icon(
+                            icon = ImageVector.vectorResource(R.drawable.calendar),
                             iconSize = 20.dp,
-                            color = AppTheme.colors.onBackground
+                            iconColor = AppTheme.colors.onBackground
                         )
+                    },
+                    center = {
+                        TextBlock(
+                            text = when {
+                                addScheduleState.startDate != null && addScheduleState.startDate == addScheduleState.endDate ->
+                                    "${addScheduleState.startDate.format(dayMonthYearFormatter)}"
+
+                                addScheduleState.startDate != null && addScheduleState.endDate != null ->
+                                    "${addScheduleState.startDate.format(dayMonthYearFormatter)}" +
+                                            " - ${
+                                                addScheduleState.endDate.format(
+                                                    dayMonthYearFormatter
+                                                )
+                                            }"
+
+                                else -> stringResource(R.string.dates)
+                            },
+                            typography = AppTheme.typography.titleSmall,
+                        )
+                    },
+                    onClick = {
+                        focusManager.clearFocus()
+                        onAction(AddScheduleAction.OnShowDialogDate(true))
                     }
-                ) {
-                    focusManager.clearFocus()
-                    onAction(AddScheduleAction.OnShowDialogDate(true))
-                }
+                )
             }
         )
     )

@@ -1,12 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.hidden_events.widget
 
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.vectorResource
@@ -16,6 +12,9 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.IconButton
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
@@ -55,37 +54,42 @@ fun HiddenEventItemWidget(
     }
     RoundedBox {
         AppCell(
-            title = event.name,
-            titleMaxLines = 1,
-            subtitle = buildString {
-                event.typeName?.let {
-                    append(it)
-                }
-
-                append(" ($day, $startTime - $endTime)")
-            }.trim(),
-            subtitleMaxLines = 2,
-            showClickLabel = false,
-            trailingIcon = {
-                IconButton(
-                    onClick = {
-                        onAction(HiddenEventsAction.OnShowEvent(event.id))
-                    },
-                    colors = IconButtonDefaults.iconButtonColors()
-                        .copy(
-                            contentColor = AppTheme.colors.onSecondaryContainer
+            showChevron = false,
+            center = {
+                CenterContent(
+                    title = {
+                        TextBlock(
+                            text = event.name,
+                            maxLines = 1,
                         )
+                    },
+                    subtitle = {
+                        TextBlock(
+                            text = buildString {
+                                event.typeName?.let {
+                                    append(it)
+                                }
+
+                                append(" ($day, $startTime - $endTime)")
+                            }.trim(),
+                            maxLines = 2,
+                            typography = AppTheme.typography.bodyMedium,
+                            color = AppTheme.colors.onSecondaryContainer,
+                        )
+                    },
+                )
+            },
+            end = {
+                IconButton(
+                    icon = ImageVector.vectorResource(R.drawable.visibility),
+                    iconButtonColors = IconButtonDefaults.iconButtonColors().copy(
+                        contentColor = AppTheme.colors.onSecondaryContainer
+                    ),
+                    iconSize = 24.dp
                 ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp),
-                        imageVector = ImageVector.vectorResource(
-                            R.drawable.visibility
-                        ),
-                        contentDescription = null
-                    )
+                    onAction(HiddenEventsAction.OnShowEvent(event.id))
                 }
-            }
+            },
         )
     }
 }
@@ -93,7 +97,7 @@ fun HiddenEventItemWidget(
 @Preview(locale = "ru")
 @Composable
 fun HiddenEventItemWidgetPreview() {
-    PreviewLightTheme{
+    PreviewLightTheme {
         HiddenEventItemWidget(eventMock) { }
     }
 }

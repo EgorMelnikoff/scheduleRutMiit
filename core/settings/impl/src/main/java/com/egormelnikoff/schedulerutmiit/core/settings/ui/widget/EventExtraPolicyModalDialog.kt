@@ -1,9 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.core.settings.ui.widget
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,6 +14,10 @@ import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolic
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Custom
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
@@ -28,6 +30,7 @@ fun EventExtraPolicyModalDialog(
 ) {
     AppBottomSheet(
         modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
+        showHandle = false,
         onDismiss = onDismiss
     ) {
         ColumnGroup(
@@ -35,45 +38,61 @@ fun EventExtraPolicyModalDialog(
             items = EventExtraPolicy.entries.map {
                 {
                     AppCell(
-                        title = when (it) {
-                            EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
-                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string._synchronized)
-                            EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates)
-                        },
-                        subtitle = when (it) {
-                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string.sync_tag_comments_message)
-                            EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates_message)
-                            EventExtraPolicy.DEFAULT -> null
-                        },
-                        subtitleMaxLines = 2,
-                        leadingIcon = {
+                        start = {
                             Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = when (it) {
+                                icon = when (it) {
                                     EventExtraPolicy.SYNCHRONIZED -> ImageVector.vectorResource(R.drawable.sync)
                                     EventExtraPolicy.BY_DATES -> ImageVector.vectorResource(R.drawable.calendar)
                                     EventExtraPolicy.DEFAULT -> ImageVector.vectorResource(R.drawable.split)
                                 },
-                                contentDescription = null,
-                                tint = AppTheme.colors.onSecondaryContainer
+                                iconSize = 20.dp,
+                                iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
-                        trailingIcon = {
-                            RadioButton(
-                                selected = (it == eventExtraPolicy),
-                                onClick = {
-                                    onAction(
-                                        SettingsAction.OnSetEventExtraPolicy(it)
+                        center = {
+                            CenterContent(
+                                title = {
+                                    TextBlock(
+                                        text = when (it) {
+                                            EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
+                                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string._synchronized)
+                                            EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates)
+                                        }
+                                    )
+                                },
+                                subtitle = {
+                                    TextBlock(
+                                        text = when (it) {
+                                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string.sync_tag_comments_message)
+                                            EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates_message)
+                                            EventExtraPolicy.DEFAULT -> null
+                                        },
+                                        maxLines = 2,
+                                        typography = AppTheme.typography.bodyMedium,
+                                        color = AppTheme.colors.onSecondaryContainer,
                                     )
                                 }
                             )
                         },
-                        showClickLabel = false
-                    ) {
-                        onAction(
-                            SettingsAction.OnSetEventExtraPolicy(it)
-                        )
-                    }
+                        end = {
+                            Custom {
+                                RadioButton(
+                                    selected = (it == eventExtraPolicy),
+                                    onClick = {
+                                        onAction(
+                                            SettingsAction.OnSetEventExtraPolicy(it)
+                                        )
+                                    }
+                                )
+                            }
+                        },
+                        showChevron = false,
+                        onClick = {
+                            onAction(
+                                SettingsAction.OnSetEventExtraPolicy(it)
+                            )
+                        }
+                    )
                 }
 
             }

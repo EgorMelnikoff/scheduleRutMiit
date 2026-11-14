@@ -77,6 +77,7 @@ class ReviewViewModel @Inject constructor(
             ReviewAction.OnCreateScheduleClicked -> onCreateScheduleClicked()
             ReviewAction.OnFindScheduleClicked -> onFindScheduleClicked()
             ReviewAction.OnCurriculumClicked -> onCurriculumClicked()
+            ReviewAction.OnTasksClicked -> onTasksClicked()
             ReviewAction.OnNewsCLicked -> onNewsCLicked()
             is ReviewAction.OnRenameScheduleClicked -> onRenameScheduleClicked(action.namedScheduleId)
 
@@ -120,6 +121,10 @@ class ReviewViewModel @Inject constructor(
         appRouter.openDialog(Route.Dialog.CurriculumDialog)
     }
 
+    private fun onTasksClicked() {
+        appRouter.openPage(Route.Page.Tasks)
+    }
+
     private fun onNewsCLicked() {
         appRouter.openDialog(Route.Dialog.NewsList)
     }
@@ -137,7 +142,6 @@ class ReviewViewModel @Inject constructor(
                 setDefaultNamedScheduleUseCase(namedScheduleId)
                 namedScheduleRepos.openDefault()
             } else {
-                println("testt")
                 namedScheduleRepos.getAndOpen(namedScheduleId)
                 appRouter.navigateToStartRage()
             }

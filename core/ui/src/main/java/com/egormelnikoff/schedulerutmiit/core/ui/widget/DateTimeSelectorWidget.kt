@@ -10,7 +10,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
-import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingIcon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.GridGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import java.time.LocalDate
@@ -31,60 +32,72 @@ fun DateTimeSelectorWidget(
         items = listOf(
             listOf {
                 AppCell(
-                    defaultMinHeight = 32.dp,
-                    showClickLabel = false,
-                    title = dateEvent?.format(dayMonthYearFormatter)
-                        ?: stringResource(R.string.date),
-                    titleTypography = AppTheme.typography.titleSmall,
-                    leadingIcon = {
-                        LeadingIcon(
-                            imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                    showChevron = false,
+                    start = {
+                        Icon(
+                            icon = ImageVector.vectorResource(R.drawable.calendar),
                             iconSize = 20.dp,
-                            color = AppTheme.colors.onBackground
+                            iconColor = AppTheme.colors.onBackground
                         )
+                    },
+                    center = {
+                        TextBlock(
+                            text = dateEvent?.format(dayMonthYearFormatter)
+                                ?: stringResource(R.string.date),
+                            typography = AppTheme.typography.titleSmall,
+                        )
+                    },
+                    onClick = {
+                        onShowDialogDate(true)
+                        focusManager.clearFocus()
                     }
-                ) {
-                    onShowDialogDate(true)
-                    focusManager.clearFocus()
-                }
+                )
             },
             listOf(
                 {
                     AppCell(
-                        defaultMinHeight = 32.dp,
-                        showClickLabel = false,
-                        title = startTime?.format(hourMinuteFormatter)
-                            ?: stringResource(R.string.start_time),
-                        titleTypography = AppTheme.typography.titleSmall,
-                        leadingIcon = {
-                            LeadingIcon(
-                                imageVector = ImageVector.vectorResource(R.drawable.time),
+                        showChevron = false,
+                        start = {
+                            Icon(
+                                icon = ImageVector.vectorResource(R.drawable.time),
                                 iconSize = 20.dp,
-                                color = AppTheme.colors.onBackground
+                                iconColor = AppTheme.colors.onBackground
                             )
+                        },
+                        center = {
+                            TextBlock(
+                                text = startTime?.format(hourMinuteFormatter)
+                                    ?: stringResource(R.string.start_time),
+                                typography = AppTheme.typography.titleSmall,
+                            )
+                        },
+                        onClick = {
+                            onShowDialogStartTime(true)
+                            focusManager.clearFocus()
                         }
-                    ) {
-                        onShowDialogStartTime(true)
-                        focusManager.clearFocus()
-                    }
+                    )
                 }, {
                     AppCell(
-                        defaultMinHeight = 32.dp,
-                        showClickLabel = false,
-                        title = endTime?.format(hourMinuteFormatter)
-                            ?: stringResource(R.string.end_time),
-                        titleTypography = AppTheme.typography.titleSmall,
-                        leadingIcon = {
-                            LeadingIcon(
-                                imageVector = ImageVector.vectorResource(R.drawable.time),
+                        showChevron = false,
+                        start = {
+                            Icon(
+                                icon = ImageVector.vectorResource(R.drawable.time),
                                 iconSize = 20.dp,
-                                color = AppTheme.colors.onBackground
+                                iconColor = AppTheme.colors.onBackground
                             )
+                        },
+                        center = {
+                            TextBlock(
+                                text = endTime?.format(hourMinuteFormatter)
+                                    ?: stringResource(R.string.end_time),
+                                typography = AppTheme.typography.titleSmall,
+                            )
+                        },
+                        onClick = {
+                            onShowDialogEndTime(true)
+                            focusManager.clearFocus()
                         }
-                    ) {
-                        onShowDialogEndTime(true)
-                        focusManager.clearFocus()
-                    }
+                    )
                 }
             )
         )

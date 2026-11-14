@@ -14,6 +14,8 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components._switch.AppSwitch
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Custom
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
@@ -30,6 +32,7 @@ internal fun ThemeModalDialog(
     AppBottomSheet(
         isDarkTheme = themePreferences.theme.isDarkTheme(),
         modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
+        showHandle = false,
         onDismiss = onDismiss
     ) {
         ColumnGroup(
@@ -48,14 +51,19 @@ internal fun ThemeModalDialog(
                     }
                 }, {
                     AppCell(
-                        title = stringResource(R.string.use_amoled),
-                        defaultMinHeight = 36.dp,
-                        trailingIcon = {
-                            AppSwitch(
-                                checked = themePreferences.usedAmoled,
-                                enabled = themePreferences.theme.isDarkTheme(),
-                            ) { used ->
-                                onAction(SettingsAction.OnSetUsedAmoled(used))
+                        center = {
+                            TextBlock(
+                                text = stringResource(R.string.use_amoled),
+                            )
+                        },
+                        end = {
+                            Custom {
+                                AppSwitch(
+                                    checked = themePreferences.usedAmoled,
+                                    enabled = themePreferences.theme.isDarkTheme(),
+                                ) { used ->
+                                    onAction(SettingsAction.OnSetUsedAmoled(used))
+                                }
                             }
                         }
                     )

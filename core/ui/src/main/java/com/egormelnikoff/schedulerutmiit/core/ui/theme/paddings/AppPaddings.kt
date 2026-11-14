@@ -19,6 +19,7 @@ data class AppPaddings(
     val padding16: Dp = 16.dp,
     val padding20: Dp = 20.dp,
     val padding24: Dp = 24.dp,
+    val padding28: Dp = 28.dp,
     val padding32: Dp = 32.dp,
     val padding48: Dp = 48.dp
 )

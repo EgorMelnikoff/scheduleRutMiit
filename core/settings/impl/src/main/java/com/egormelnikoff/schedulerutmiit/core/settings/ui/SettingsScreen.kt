@@ -1,18 +1,13 @@
 package com.egormelnikoff.schedulerutmiit.core.settings.ui
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -34,7 +29,12 @@ import com.egormelnikoff.schedulerutmiit.core.settings.ui.widget.InfoModalDialog
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.widget.ScheduleViewModalDialog
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.widget.ThemeModalDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.components._switch.AppSwitch
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AnimatedIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Custom
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.StatusBarProtection
@@ -95,138 +95,172 @@ fun SettingsScreen(
                     items = listOf(
                         {
                             AppCell(
-                                title = stringResource(R.string.schedule_view),
-                                leadingIcon = {
-                                    AnimatedContent(
+                                start = {
+                                    AnimatedIcon(
                                         targetState = state.appSettings.scheduleView,
-                                        transitionSpec = {
-                                            scaleIn() togetherWith scaleOut()
-                                        }
-                                    ) { state ->
-                                        Icon(
-                                            modifier = Modifier.size(20.dp),
-                                            imageVector = when (state) {
-                                                ScheduleView.CALENDAR -> ImageVector.vectorResource(
-                                                    R.drawable.calendar
-                                                )
+                                        iconProvider = { state ->
+                                            when (state) {
+                                                ScheduleView.CALENDAR -> {
+                                                    ImageVector.vectorResource(R.drawable.calendar)
+                                                }
 
-                                                ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
-                                            },
-                                            contentDescription = null,
-                                            tint = AppTheme.colors.onSecondaryContainer
+                                                ScheduleView.LIST -> {
+                                                    ImageVector.vectorResource(R.drawable.list)
+                                                }
+                                            }
+                                        }
+                                    )
+                                },
+                                center = {
+                                    CenterContent(
+                                        title = {
+                                            TextBlock(
+                                                text = stringResource(R.string.schedule_view),
+                                            )
+                                        },
+                                        subtitle = {
+                                            TextBlock(
+                                                text = when (state.appSettings.scheduleView) {
+                                                    ScheduleView.CALENDAR -> stringResource(R.string.calendar)
+                                                    ScheduleView.LIST -> stringResource(R.string.full_list)
+                                                },
+                                                typography = AppTheme.typography.bodyMedium,
+                                                color = AppTheme.colors.onSecondaryContainer,
+                                            )
+                                        },
+                                    )
+                                },
+                                onClick = {
+                                    onAction(
+                                        SettingsAction.OnSetActiveDialog(
+                                            SettingsDialog.ScheduleView
                                         )
-                                    }
-                                },
-                                subtitle = when (state.appSettings.scheduleView) {
-                                    ScheduleView.CALENDAR -> stringResource(R.string.calendar)
-                                    ScheduleView.LIST -> stringResource(R.string.full_list)
-                                },
-                                defaultMinHeight = 36.dp,
-                                enableToolTip = true
-                            ) {
-                                onAction(
-                                    SettingsAction.OnSetActiveDialog(
-                                        SettingsDialog.ScheduleView
                                     )
-                                )
-                            }
+                                }
+                            )
                         }, {
                             AppCell(
-                                title = stringResource(R.string.event_view),
-                                leadingIcon = {
+                                start = {
                                     Icon(
-                                        modifier = Modifier.size(20.dp),
-                                        imageVector = ImageVector.vectorResource(R.drawable.event_view),
-                                        contentDescription = null,
-                                        tint = AppTheme.colors.onSecondaryContainer
+                                        icon = ImageVector.vectorResource(R.drawable.event_view),
+                                        iconSize = 20.dp,
+                                        iconColor = AppTheme.colors.onSecondaryContainer
                                     )
                                 },
-                                subtitle = visibleSettings
-                                    .joinToString(", ")
-                                    .lowercase()
-                                    .replaceFirstChar { it.uppercase() },
-                                subtitleMaxLines = 1,
-                                defaultMinHeight = 36.dp,
-                                enableToolTip = true
-                            ) {
-                                onAction(
-                                    SettingsAction.OnSetActiveDialog(
-                                        SettingsDialog.EventView
+                                center = {
+                                    CenterContent(
+                                        title = {
+                                            TextBlock(
+                                                text = stringResource(R.string.event_view)
+                                            )
+                                        },
+                                        subtitle = {
+                                            TextBlock(
+                                                text = visibleSettings
+                                                    .joinToString(", ")
+                                                    .lowercase()
+                                                    .replaceFirstChar { it.uppercase() },
+                                                maxLines = 1,
+                                                typography = AppTheme.typography.bodyMedium,
+                                                color = AppTheme.colors.onSecondaryContainer,
+                                            )
+                                        }
                                     )
-                                )
-                            }
+                                },
+                                onClick = {
+                                    onAction(
+                                        SettingsAction.OnSetActiveDialog(
+                                            SettingsDialog.EventView
+                                        )
+                                    )
+                                }
+                            )
                         }, {
                             AppCell(
-                                title = stringResource(R.string.show_count_classes),
-                                subtitle = when (state.appSettings.eventsCountView) {
-                                    EventsCountView.DETAILS -> stringResource(R.string.details)
-                                    EventsCountView.BRIEFLY -> stringResource(R.string.briefly)
-                                    EventsCountView.OFF -> stringResource(R.string.off)
-                                },
-                                leadingIcon = {
-                                    AnimatedContent(
+                                start = {
+                                    AnimatedIcon(
                                         targetState = state.appSettings.eventsCountView,
-                                        transitionSpec = {
-                                            scaleIn() togetherWith scaleOut()
+                                        iconProvider = { state ->
+                                            when (state) {
+                                                EventsCountView.DETAILS -> {
+                                                    ImageVector.vectorResource(
+                                                        R.drawable.points
+                                                    )
+                                                }
+
+                                                EventsCountView.BRIEFLY -> {
+                                                    ImageVector.vectorResource(R.drawable.one)
+                                                }
+
+                                                EventsCountView.OFF -> {
+                                                    ImageVector.vectorResource(R.drawable.visibility_off)
+                                                }
+                                            }
                                         }
-                                    ) { state ->
-                                        Icon(
-                                            modifier = Modifier.size(20.dp),
-                                            imageVector = when (state) {
-                                                EventsCountView.DETAILS -> ImageVector.vectorResource(
-                                                    R.drawable.points
-                                                )
-
-                                                EventsCountView.BRIEFLY -> ImageVector.vectorResource(
-                                                    R.drawable.one
-                                                )
-
-                                                EventsCountView.OFF -> ImageVector.vectorResource(R.drawable.visibility_off)
-                                            },
-                                            contentDescription = null,
-                                            tint = AppTheme.colors.onSecondaryContainer
-                                        )
-                                    }
-                                },
-                                defaultMinHeight = 36.dp,
-                                enableToolTip = true
-                            ) {
-                                onAction(
-                                    SettingsAction.OnSetActiveDialog(
-                                        SettingsDialog.CountEvents
                                     )
-                                )
-                            }
+                                },
+                                center = {
+                                    CenterContent(
+                                        title = {
+                                            TextBlock(
+                                                text = stringResource(R.string.show_count_classes)
+                                            )
+                                        },
+                                        subtitle = {
+                                            TextBlock(
+                                                text = when (state.appSettings.eventsCountView) {
+                                                    EventsCountView.DETAILS -> stringResource(R.string.details)
+                                                    EventsCountView.BRIEFLY -> stringResource(R.string.briefly)
+                                                    EventsCountView.OFF -> stringResource(R.string.off)
+                                                },
+                                                typography = AppTheme.typography.bodyMedium,
+                                                color = AppTheme.colors.onSecondaryContainer,
+                                            )
+                                        }
+                                    )
+                                },
+                                onClick = {
+                                    onAction(
+                                        SettingsAction.OnSetActiveDialog(
+                                            SettingsDialog.CountEvents
+                                        )
+                                    )
+                                }
+                            )
                         }, {
                             AppCell(
-                                title = stringResource(R.string.use_image),
-                                leadingIcon = {
+                                start = {
                                     Icon(
-                                        modifier = Modifier.size(20.dp),
-                                        imageVector = ImageVector.vectorResource(R.drawable.sun),
-                                        contentDescription = null,
-                                        tint = AppTheme.colors.onSecondaryContainer
+                                        icon = ImageVector.vectorResource(R.drawable.sun),
+                                        iconSize = 20.dp,
+                                        iconColor = AppTheme.colors.onSecondaryContainer
                                     )
                                 },
-                                defaultMinHeight = 36.dp,
-                                trailingIcon = {
-                                    AppSwitch(
-                                        checked = state.appSettings.usedImageInReview
-                                    ) {
-                                        onAction(
-                                            SettingsAction.OnSetUsedImageInReview(it)
-                                        )
+                                center = {
+                                    TextBlock(
+                                        text = stringResource(R.string.use_image),
+                                    )
+                                },
+                                end = {
+                                    Custom {
+                                        AppSwitch(
+                                            checked = state.appSettings.usedImageInReview
+                                        ) {
+                                            onAction(
+                                                SettingsAction.OnSetUsedImageInReview(it)
+                                            )
+                                        }
                                     }
                                 },
-                                showClickLabel = false,
-                                enableToolTip = true
-                            ) {
-                                onAction(
-                                    SettingsAction.OnSetUsedImageInReview(
-                                        !state.appSettings.usedImageInReview
+                                showChevron = false,
+                                onClick = {
+                                    onAction(
+                                        SettingsAction.OnSetUsedImageInReview(
+                                            !state.appSettings.usedImageInReview
+                                        )
                                     )
-                                )
-                            }
+                                }
+                            )
                         }
                     )
                 )
@@ -238,74 +272,99 @@ fun SettingsScreen(
                     items = listOf(
                         {
                             AppCell(
-                                title = stringResource(R.string.comments_and_tags),
-                                subtitle = when (state.appSettings.eventExtraPolicy) {
-                                    EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
-                                    EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string._synchronized)
-                                    EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates)
-                                },
-                                leadingIcon = {
-                                    AnimatedContent(
+                                start = {
+                                    AnimatedIcon(
                                         targetState = state.appSettings.eventExtraPolicy,
-                                        transitionSpec = {
-                                            scaleIn() togetherWith scaleOut()
+                                        iconProvider = { state ->
+                                            when (state) {
+                                                EventExtraPolicy.SYNCHRONIZED -> {
+                                                    ImageVector.vectorResource(R.drawable.sync)
+                                                }
+
+                                                EventExtraPolicy.BY_DATES -> {
+                                                    ImageVector.vectorResource(R.drawable.calendar)
+                                                }
+
+                                                EventExtraPolicy.DEFAULT -> {
+                                                    ImageVector.vectorResource(R.drawable.split)
+                                                }
+                                            }
                                         }
-                                    ) { state ->
-                                        Icon(
-                                            modifier = Modifier.size(20.dp),
-                                            imageVector = when (state) {
-                                                EventExtraPolicy.SYNCHRONIZED -> ImageVector.vectorResource(
-                                                    R.drawable.sync
-                                                )
-
-                                                EventExtraPolicy.BY_DATES -> ImageVector.vectorResource(
-                                                    R.drawable.calendar
-                                                )
-
-                                                EventExtraPolicy.DEFAULT -> ImageVector.vectorResource(
-                                                    R.drawable.split
-                                                )
-                                            },
-                                            contentDescription = null,
-                                            tint = AppTheme.colors.onSecondaryContainer
-                                        )
-                                    }
-                                },
-                                defaultMinHeight = 36.dp,
-                                enableToolTip = true
-                            ) {
-                                onAction(
-                                    SettingsAction.OnSetActiveDialog(
-                                        SettingsDialog.EventExtraPolicy
                                     )
-                                )
-                            }
+                                },
+                                center = {
+                                    CenterContent(
+                                        title = {
+                                            TextBlock(
+                                                text = stringResource(R.string.comments_and_tags)
+                                            )
+                                        },
+                                        subtitle = {
+                                            TextBlock(
+                                                text = when (state.appSettings.eventExtraPolicy) {
+                                                    EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
+                                                    EventExtraPolicy.SYNCHRONIZED -> stringResource(
+                                                        R.string._synchronized
+                                                    )
+
+                                                    EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates)
+                                                },
+                                                typography = AppTheme.typography.bodyMedium,
+                                                color = AppTheme.colors.onSecondaryContainer,
+                                            )
+                                        }
+                                    )
+                                },
+                                onClick = {
+                                    onAction(
+                                        SettingsAction.OnSetActiveDialog(
+                                            SettingsDialog.EventExtraPolicy
+                                        )
+                                    )
+                                }
+                            )
                         }, {
                             AppCell(
-                                title = stringResource(R.string.not_delete_schedules),
-                                subtitle = stringResource(R.string.not_delete_schedules_message),
-                                subtitleMaxLines = 3,
-                                leadingIcon = {
+                                start = {
                                     Icon(
-                                        modifier = Modifier.size(20.dp),
-                                        imageVector = ImageVector.vectorResource(R.drawable.undelete),
-                                        contentDescription = null,
-                                        tint = AppTheme.colors.onSecondaryContainer
+                                        icon = ImageVector.vectorResource(R.drawable.undelete),
+                                        iconSize = 20.dp,
+                                        iconColor = AppTheme.colors.onSecondaryContainer
                                     )
                                 },
-                                defaultMinHeight = 36.dp,
-                                trailingIcon = {
-                                    AppSwitch(
-                                        checked = !state.appSettings.schedulesDeletable
-                                    ) {
-                                        onAction(SettingsAction.OnSetSchedulesDeletable(!it))
+                                center = {
+                                    CenterContent(
+                                        title = {
+                                            TextBlock(
+                                                text = stringResource(R.string.not_delete_schedules),
+                                            )
+                                        },
+                                        subtitle = {
+                                            TextBlock(
+                                                text = stringResource(R.string.not_delete_schedules_message),
+                                                maxLines = 3,
+                                                typography = AppTheme.typography.bodyMedium,
+                                                color = AppTheme.colors.onSecondaryContainer,
+                                            )
+                                        },
+                                    )
+                                },
+                                end = {
+                                    Custom {
+                                        AppSwitch(
+                                            checked = !state.appSettings.schedulesDeletable
+                                        ) {
+                                            onAction(SettingsAction.OnSetSchedulesDeletable(!it))
+                                        }
                                     }
                                 },
-                                showClickLabel = false,
-                                enableToolTip = true
-                            ) {
-                                onAction(SettingsAction.OnSetSchedulesDeletable(!state.appSettings.schedulesDeletable))
-                            }
+                                showChevron = false,
+                                onClick = {
+                                    onAction(
+                                        SettingsAction.OnSetSchedulesDeletable(!state.appSettings.schedulesDeletable)
+                                    )
+                                }
+                            )
                         }
                     )
 
@@ -318,61 +377,72 @@ fun SettingsScreen(
                     items = listOf(
                         {
                             AppCell(
-                                title = stringResource(R.string.theme),
-                                subtitle = when (state.appSettings.themePreferences.theme) {
-                                    Theme.LIGHT -> stringResource(R.string.light)
-                                    Theme.DARK -> stringResource(R.string.dark)
-                                    Theme.SYSTEM -> stringResource(R.string.auto)
-                                },
-                                leadingIcon = {
-                                    AnimatedContent(
+                                start = {
+                                    AnimatedIcon(
                                         targetState = state.appSettings.themePreferences.theme.isDarkTheme(),
-                                        transitionSpec = {
-                                            scaleIn() togetherWith scaleOut()
-                                        }
-                                    ) { state ->
-                                        Icon(
-                                            modifier = Modifier.size(20.dp),
-                                            imageVector = if (state) {
+                                        iconProvider = { state ->
+                                            if (state) {
                                                 ImageVector.vectorResource(R.drawable.moon)
                                             } else {
                                                 ImageVector.vectorResource(R.drawable.sun)
-                                            },
-                                            contentDescription = null,
-                                            tint = AppTheme.colors.onSecondaryContainer
-                                        )
-                                    }
-                                },
-                                defaultMinHeight = 36.dp,
-                                enableToolTip = true
-                            ) {
-                                onAction(
-                                    SettingsAction.OnSetActiveDialog(
-                                        SettingsDialog.Decor
+                                            }
+                                        }
                                     )
-                                )
-                            }
+                                },
+                                center = {
+                                    CenterContent(
+                                        title = {
+                                            TextBlock(
+                                                text = stringResource(R.string.theme)
+                                            )
+                                        },
+                                        subtitle = {
+                                            TextBlock(
+                                                text = when (state.appSettings.themePreferences.theme) {
+                                                    Theme.LIGHT -> stringResource(R.string.light)
+                                                    Theme.DARK -> stringResource(R.string.dark)
+                                                    Theme.SYSTEM -> stringResource(R.string.auto)
+                                                },
+                                                typography = AppTheme.typography.bodyMedium,
+                                                color = AppTheme.colors.onSecondaryContainer,
+                                            )
+                                        },
+                                    )
+                                },
+                                onClick = {
+                                    onAction(
+                                        SettingsAction.OnSetActiveDialog(
+                                            SettingsDialog.Decor
+                                        )
+                                    )
+                                }
+                            )
                         }, {
                             AppCell(
-                                title = stringResource(R.string.about_app),
-                                showBadge = state.updatesAvailable,
-                                leadingIcon = {
+                                start = {
                                     Icon(
-                                        modifier = Modifier.size(20.dp),
-                                        imageVector = ImageVector.vectorResource(R.drawable.info),
-                                        contentDescription = null,
-                                        tint = AppTheme.colors.onSecondaryContainer
+                                        icon = ImageVector.vectorResource(R.drawable.info),
+                                        iconSize = 20.dp,
+                                        iconColor = AppTheme.colors.onSecondaryContainer,
+                                        showBadge = state.updatesAvailable,
                                     )
                                 },
-                                defaultMinHeight = 36.dp,
-                                enableToolTip = true
-                            ) {
-                                onAction(
-                                    SettingsAction.OnSetActiveDialog(
-                                        SettingsDialog.Info
+                                center = {
+                                    TextBlock(
+                                        modifier = Modifier.padding(
+                                            vertical = AppTheme.paddings.padding8
+                                        ),
+                                        text = stringResource(R.string.about_app)
                                     )
-                                )
-                            }
+                                },
+                                onClick = {
+                                    onAction(
+                                        SettingsAction.OnSetActiveDialog(
+                                            SettingsDialog.Info
+                                        )
+                                    )
+                                }
+                            )
                         }
                     )
                 )

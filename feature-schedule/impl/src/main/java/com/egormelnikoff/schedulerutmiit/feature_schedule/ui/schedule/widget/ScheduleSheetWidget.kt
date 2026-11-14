@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +28,9 @@ import com.egormelnikoff.schedulerutmiit.core.common.extension.getStartMs
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Custom
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -58,6 +62,7 @@ fun ScheduleSheetWidget(
     val uriHandler = LocalUriHandler.current
 
     AppBottomSheet(
+        showHandle = false,
         verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16),
         onDismiss = {
             onDismiss(null)
@@ -163,10 +168,47 @@ fun ScheduleSheetWidget(
                 items = schedules.map { schedule ->
                     {
                         AppCell(
-                            defaultMinHeight = 40.dp,
-                            title = schedule.timetableType.typeName,
-                            subtitle = "${schedule.startDate.format(dayMonthYearFormatter)} - " +
-                                    "${schedule.endDate.format(dayMonthYearFormatter)}",
+                            contentPadding = PaddingValues(
+                                vertical = AppTheme.paddings.padding8,
+                                horizontal = AppTheme.paddings.padding12
+                            ),
+                            start = {
+                                Custom {
+                                    if (schedules.size > 1) {
+                                        RadioButton(
+                                            selected = (schedule.id == currentSchedule?.id && isSavedNamedSchedule)
+                                                    || schedule.isDefault,
+                                            onClick = {
+                                                scheduleViewModel.setDefaultSchedule(
+                                                    schedule.id,
+                                                    schedule.timetableId
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+                            },
+                            center = {
+                                CenterContent(
+                                    title = {
+                                        TextBlock(
+                                            text = schedule.timetableType.typeName,
+                                        )
+                                    },
+                                    subtitle = {
+                                        TextBlock(
+                                            text = "${
+                                                schedule.startDate.format(
+                                                    dayMonthYearFormatter
+                                                )
+                                            } - " +
+                                                    "${schedule.endDate.format(dayMonthYearFormatter)}",
+                                            typography = AppTheme.typography.bodyMedium,
+                                            color = AppTheme.colors.onSecondaryContainer,
+                                        )
+                                    },
+                                )
+                            },
                             onClick = {
                                 if (schedules.size > 1) {
                                     scheduleViewModel.setDefaultSchedule(
@@ -175,38 +217,25 @@ fun ScheduleSheetWidget(
                                     )
                                 }
                             },
-                            leadingIcon = if (schedules.size > 1) {
-                                {
-                                    RadioButton(
-                                        selected = (schedule.id == currentSchedule?.id && isSavedNamedSchedule)
-                                                || schedule.isDefault,
-                                        onClick = {
-                                            scheduleViewModel.setDefaultSchedule(
-                                                schedule.id,
-                                                schedule.timetableId
-                                            )
-                                        }
-                                    )
-                                }
-                            } else null,
-                            trailingIcon = {
-                                val progress = remember(schedule) {
-                                    calculateProgress(
-                                        startDate = schedule.startDate,
-                                        endDate = schedule.endDate
-                                    )
-                                }
+                            end = {
+                                Custom {
+                                    val progress = remember(schedule) {
+                                        calculateProgress(
+                                            startDate = schedule.startDate,
+                                            endDate = schedule.endDate
+                                        )
+                                    }
 
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    progress = { progress },
-                                    color = AppTheme.colors.primary,
-                                    trackColor = AppTheme.colors.primaryContainer,
-                                    strokeWidth = 3.dp
-                                )
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp),
+                                        progress = { progress },
+                                        color = AppTheme.colors.primary,
+                                        trackColor = AppTheme.colors.primaryContainer,
+                                        strokeWidth = 3.dp
+                                    )
+                                }
                             },
-                            showClickLabel = false,
-                            verticalPadding = 8.dp
+                            showChevron = false,
                         )
                     }
                 }

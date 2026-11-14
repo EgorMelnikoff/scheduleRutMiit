@@ -1,9 +1,15 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.components.cell
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,23 +17,21 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -52,190 +56,177 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Red
 
-@OptIn(ExperimentalMaterial3Api::class)
+interface AppCellScope : RowScope
+interface AppCellCenterScope : RowScope
+interface AppCellStartScope : AppCellScope
+interface AppCellEndScope : AppCellScope
+
+private class AppCellScopeImpl(rowScope: RowScope) : AppCellScope, RowScope by rowScope
+
+private class AppCellStartScopeImpl(rowScope: RowScope) : AppCellStartScope,
+    AppCellScope by AppCellScopeImpl(rowScope)
+
+private class AppCellEndScopeImpl(rowScope: RowScope) : AppCellEndScope,
+    AppCellScope by AppCellScopeImpl(rowScope)
+
+private class AppCellCenterScopeImpl(rowScope: RowScope) : AppCellCenterScope, RowScope by rowScope
+
 @Composable
 fun AppCell(
     modifier: Modifier = Modifier,
-    horizontalPadding: Dp = AppTheme.paddings.padding12,
-    verticalPadding: Dp = AppTheme.paddings.padding12,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(AppTheme.paddings.padding4),
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(AppTheme.paddings.padding12),
-    defaultMinHeight: Dp? = null,
-
-    showBadge: Boolean = false,
-    title: String? = null,
-    titleDecoration: TextDecoration? = null,
-    titleTypography: TextStyle = AppTheme.typography.titleMedium,
-    titleMaxLines: Int = 1,
-    titleColor: Color = AppTheme.colors.onBackground,
-    titleLabel: (@Composable () -> Unit)? = null,
-
-    subtitle: String? = null,
-    subtitleTypography: TextStyle = AppTheme.typography.bodyMedium,
-    subtitleMaxLines: Int = 1,
-    subtitleColor: Color = AppTheme.colors.onSecondaryContainer,
-    subtitleLabel: (@Composable () -> Unit)? = null,
-
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
-    clickLabel: ImageVector = ImageVector.vectorResource(R.drawable.right),
-    showClickLabel: Boolean = true,
-    enableToolTip: Boolean = false,
-    clickLabelColor: Color = AppTheme.colors.onSecondaryContainer,
+    contentPadding: PaddingValues = PaddingValues(
+        horizontal = AppTheme.paddings.padding12,
+        vertical = AppTheme.paddings.padding12,
+    ),
     onLongClick: (() -> Unit)? = null,
-    onDoubleCLick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
+    showChevron: Boolean = true,
+    start: @Composable AppCellStartScope.() -> Unit = {},
+    end: @Composable AppCellEndScope.() -> Unit = {},
+    center: @Composable AppCellCenterScope.() -> Unit = {},
 ) {
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Above,
-            spacingBetweenTooltipAndAnchor = AppTheme.paddings.padding2
-        ),
-        tooltip = {
-            PlainTooltip(
-                modifier = Modifier.padding(horizontal = AppTheme.paddings.padding2),
-
-                ) { Text(title.toString()) }
-        },
-        enableUserInput = enableToolTip,
-        state = rememberTooltipState()
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .let { modifier ->
+                onClick?.let {
+                    modifier.combinedClickable(
+                        onClick = onClick,
+                        onLongClick = onLongClick,
+                    )
+                } ?: modifier
+            }
+            .padding(contentPadding),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
     ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .let { modifier ->
-                    onClick?.let {
-                        modifier.combinedClickable(
-                            onClick = onClick,
-                            onLongClick = onLongClick,
-                            onDoubleClick = onDoubleCLick
-                        )
-                    } ?: modifier
-                }
-                .padding(
-                    horizontal = horizontalPadding,
-                    vertical = verticalPadding
-                )
-                .let { modifier ->
-                    if (defaultMinHeight != null) {
-                        modifier.defaultMinSize(
-                            minHeight = defaultMinHeight
-                        )
-                    } else modifier
-                },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = horizontalArrangement
-        ) {
-            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                leadingIcon?.let {
-                    BadgedBox(
-                        badge = {
-                            if (showBadge) {
-                                Badge(
-                                    containerColor = Red,
-                                    contentColor = Color.Unspecified
-                                )
-                            }
-                        }
-                    ) {
-                        leadingIcon.invoke()
-                    }
-                }
-            }
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = verticalArrangement,
-            ) {
-                title?.let {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
-                    ) {
-                        Text(
-                            text = title,
-                            textDecoration = titleDecoration,
-                            style = titleTypography,
-                            color = titleColor,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = titleMaxLines
-                        )
-                        AnimatedVisibility(
-                            visible = titleLabel != null,
-                            enter = fadeIn(),
-                            exit = fadeOut()
-                        ) {
-                            titleLabel?.invoke()
-                        }
-                    }
-                }
-                subtitle?.let {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
-                    ) {
-                        subtitleLabel?.invoke()
-                        Text(
-                            text = subtitle,
-                            style = subtitleTypography,
-                            color = subtitleColor,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = subtitleMaxLines
-                        )
-                    }
-                }
-            }
-            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                trailingIcon?.invoke()
-            }
+        val startScope = AppCellStartScopeImpl(this)
+        val centerScope = AppCellCenterScopeImpl(this)
+        val endScope = AppCellEndScopeImpl(this)
 
-            if (showClickLabel && onClick != null) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = clickLabel,
-                    contentDescription = null,
-                    tint = clickLabelColor
-                )
-            }
+        startScope.start()
+
+        Box(
+            modifier = Modifier.weight(1f)
+        ) {
+            centerScope.center()
+        }
+
+        endScope.end()
+
+        if (showChevron && onClick != null) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.right),
+                contentDescription = null,
+                tint = AppTheme.colors.onSecondaryContainer,
+            )
         }
     }
 }
 
-@Composable
-fun LeadingAsyncImage(
-    title: String,
-    imageUrl: String? = null,
-    imageSize: Dp = 32.dp,
-    titleSize: TextUnit = 12.sp,
-) {
-    val painter = rememberAsyncImagePainter(imageUrl)
-    val transition by animateFloatAsState(
-        targetValue = if (painter.state is AsyncImagePainter.State.Success) 1f else 0f
-    )
 
-    Box(
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            modifier = Modifier
-                .size(imageSize)
-                .clip(CircleShape)
-                .alpha(transition),
-            contentScale = ContentScale.Crop,
-            painter = painter,
-            contentDescription = title,
-        )
-        if (painter.state !is AsyncImagePainter.State.Success) {
-            LeadingTitle(
-                title = title.first(),
-                titleSize = titleSize,
-                imageSize = imageSize,
+@Composable
+fun AppCellScope.Custom(
+    content: @Composable () -> Unit
+) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+        content()
+    }
+}
+
+@Composable
+fun AppCellScope.Icon(
+    icon: ImageVector,
+    iconSize: Dp = 24.dp,
+    iconColor: Color = Color.Unspecified,
+    showBadge: Boolean = false
+) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+        BadgedBox(
+            badge = {
+                if (showBadge) {
+                    Badge(
+                        containerColor = Red,
+                        contentColor = Color.Unspecified
+                    )
+                }
+            }
+        ) {
+            Icon(
+                modifier = Modifier.size(iconSize),
+                imageVector = icon,
+                contentDescription = null,
+                tint = iconColor
             )
         }
     }
 }
 
 @Composable
-fun LeadingTitle(
+fun AppCellScope.IconButton(
+    icon: ImageVector,
+    iconSize: Dp = 24.dp,
+    iconButtonColors: IconButtonColors = IconButtonDefaults.iconButtonColors().copy(
+        contentColor = AppTheme.colors.onSecondaryContainer
+    ),
+    onClick: () -> Unit
+) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+        IconButton(
+            modifier = Modifier.size(36.dp),
+            colors = iconButtonColors,
+            onClick = onClick
+        ) {
+            Icon(
+                modifier = Modifier.size(iconSize),
+                imageVector = icon,
+                contentDescription = null,
+            )
+        }
+    }
+}
+
+
+@Composable
+fun AppCellStartScope.AsyncImage(
+    imageUrl: String,
+    imageTitle: String,
+    imageSize: Dp = 24.dp,
+    titleSize: TextUnit = 12.sp,
+) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+        val painter = rememberAsyncImagePainter(imageUrl)
+        val transition by animateFloatAsState(
+            targetValue = if (painter.state is AsyncImagePainter.State.Success) 1f else 0f
+        )
+
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(imageSize)
+                    .clip(CircleShape)
+                    .alpha(transition),
+                contentScale = ContentScale.Crop,
+                painter = painter,
+                contentDescription = null,
+            )
+
+            if (painter.state !is AsyncImagePainter.State.Success) {
+                this@AsyncImage.Title(
+                    title = imageTitle.first(),
+                    titleSize = titleSize,
+                    imageSize = imageSize,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppCellStartScope.Title(
     title: Char,
     titleSize: TextUnit = 12.sp,
     imageSize: Dp = 32.dp
@@ -262,16 +253,80 @@ fun LeadingTitle(
     }
 }
 
+
 @Composable
-fun LeadingIcon(
-    imageVector: ImageVector,
-    iconSize: Dp = 36.dp,
-    color: Color = Color.Unspecified
+fun <T> AppCellScope.AnimatedIcon(
+    targetState: T,
+    iconSize: Dp = 20.dp,
+    color: Color = AppTheme.colors.onSecondaryContainer,
+    transitionSpec: AnimatedContentTransitionScope<T>.() -> ContentTransform = {
+        scaleIn() togetherWith scaleOut()
+    },
+    iconProvider: @Composable (T) -> ImageVector
 ) {
-    Icon(
-        modifier = Modifier.size(iconSize),
-        imageVector = imageVector,
-        contentDescription = null,
-        tint = color
-    )
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+        AnimatedContent(
+            targetState = targetState,
+            transitionSpec = transitionSpec,
+            label = "StartAnimatedIcon"
+        ) { state ->
+            Icon(
+                modifier = Modifier.size(iconSize),
+                imageVector = iconProvider(state),
+                contentDescription = null,
+                tint = color
+            )
+        }
+    }
+}
+
+
+@Composable
+fun AppCellCenterScope.CenterContent(
+    title: @Composable (AppCellCenterScope.() -> Unit)? = null,
+    subtitle: @Composable (AppCellCenterScope.() -> Unit)? = null,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(AppTheme.paddings.padding4)
+) {
+    Column(
+        verticalArrangement = verticalArrangement
+    ) {
+        title?.invoke(this@CenterContent)
+        subtitle?.invoke(this@CenterContent)
+    }
+}
+
+@Composable
+fun AppCellCenterScope.TextBlock(
+    modifier: Modifier = Modifier,
+    text: String? = null,
+    decoration: TextDecoration? = null,
+    typography: TextStyle = AppTheme.typography.titleMedium,
+    maxLines: Int = 1,
+    label: (@Composable () -> Unit)? = null,
+    color: Color = AppTheme.colors.onBackground,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
+    ) {
+        text?.let {
+            Text(
+                text = text,
+                textDecoration = decoration,
+                style = typography,
+                color = color,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = maxLines
+            )
+        }
+
+        AnimatedVisibility(
+            visible = label != null,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            label?.invoke()
+        }
+    }
 }

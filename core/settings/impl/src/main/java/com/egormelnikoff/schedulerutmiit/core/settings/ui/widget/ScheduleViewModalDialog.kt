@@ -1,9 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.core.settings.ui.widget
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,6 +14,10 @@ import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Custom
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
@@ -28,6 +30,7 @@ fun ScheduleViewModalDialog(
 ) {
     AppBottomSheet(
         modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
+        showHandle = false,
         onDismiss = onDismiss
     ) {
         ColumnGroup(
@@ -35,38 +38,57 @@ fun ScheduleViewModalDialog(
             items = ScheduleView.entries.map {
                 {
                     AppCell(
-                        title = when (it) {
-                            ScheduleView.CALENDAR -> stringResource(R.string.calendar)
-                            ScheduleView.LIST -> stringResource(R.string.full_list)
-                        },
-                        subtitle = when (it) {
-                            ScheduleView.CALENDAR -> stringResource(R.string.calendar_message)
-                            ScheduleView.LIST -> stringResource(R.string.full_list_message)
-                        },
-                        subtitleMaxLines = 2,
-                        leadingIcon = {
+                        start = {
                             Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = when (it) {
+                                icon = when (it) {
                                     ScheduleView.CALENDAR -> ImageVector.vectorResource(R.drawable.calendar)
                                     ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
                                 },
-                                contentDescription = null,
-                                tint = AppTheme.colors.onSecondaryContainer
+                                iconSize = 20.dp,
+                                iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
-                        trailingIcon = {
-                            RadioButton(
-                                selected = (it == scheduleView),
-                                onClick = {
-                                    onAction(SettingsAction.OnSetScheduleView(it))
-                                }
+                        center = {
+                            CenterContent(
+                                title = {
+                                    TextBlock(
+                                        text = when (it) {
+                                            ScheduleView.CALENDAR -> stringResource(R.string.calendar)
+                                            ScheduleView.LIST -> stringResource(R.string.full_list)
+                                        },
+                                    )
+                                },
+                                subtitle = {
+                                    TextBlock(
+                                        text = when (it) {
+                                            ScheduleView.CALENDAR -> stringResource(R.string.calendar_message)
+                                            ScheduleView.LIST -> stringResource(R.string.full_list_message)
+                                        },
+                                        maxLines = 2,
+                                        typography = AppTheme.typography.bodyMedium,
+                                        color = AppTheme.colors.onSecondaryContainer,
+                                    )
+                                },
+
                             )
                         },
-                        showClickLabel = false
-                    ) {
-                        onAction(SettingsAction.OnSetScheduleView(it))
-                    }
+                        end = {
+                            Custom {
+                                RadioButton(
+                                    selected = (it == scheduleView),
+                                    onClick = {
+                                        onAction(SettingsAction.OnSetScheduleView(it))
+                                    }
+                                )
+                            }
+                        },
+                        showChevron = false,
+                        onClick = {
+                            onAction(
+                                SettingsAction.OnSetScheduleView(it)
+                            )
+                        }
+                    )
                 }
 
             }

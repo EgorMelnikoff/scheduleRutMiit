@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,11 +16,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
@@ -48,6 +45,9 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.rememberCalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Custom
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.components.pull_to_refresh.AppPullToRefreshBox
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEventProcessor
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.AnimatedAlert
@@ -60,6 +60,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget.Sch
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget.ScheduleListWidget
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget.ScheduleLoadingWidget
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget.ScheduleSheetWidget
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget.SchedulesSheetWidget
 
 @Composable
 fun ScreenSchedule(
@@ -83,6 +84,7 @@ fun ScreenSchedule(
         snackbarHostState
     )
 
+    var schedulesDialog by remember { mutableStateOf(false) }
     var backDialog by remember { mutableStateOf(false) }
     var namedScheduleDialog by remember { mutableStateOf<Boolean?>(null) }
     var deleteNamedScheduleDialog by remember { mutableStateOf(false) }
@@ -189,7 +191,7 @@ fun ScreenSchedule(
                             scheduleViewModel.setScheduleView(it)
                         },
                         onTitleClick = {
-
+                            schedulesDialog = !schedulesDialog
                         },
                         onShowNamedScheduleDialog = { newValue ->
                             namedScheduleDialog = newValue
@@ -227,44 +229,51 @@ fun ScreenSchedule(
                                         )
                                 ) {
                                     AppCell(
-                                        verticalPadding = 4.dp,
-                                        title = stringResource(R.string.schedule_is_not_saved),
-                                        titleColor = AppTheme.colors.onPrimary,
-                                        titleTypography = AppTheme.typography.titleSmall,
-                                        leadingIcon = {
+                                        contentPadding = PaddingValues(
+                                            horizontal = AppTheme.paddings.padding12,
+                                            vertical = AppTheme.paddings.padding4
+                                        ),
+                                        start = {
                                             Icon(
-                                                modifier = Modifier.size(24.dp),
-                                                imageVector = ImageVector.vectorResource(R.drawable.info),
-                                                contentDescription = null,
-                                                tint = AppTheme.colors.onPrimary
+                                                icon = ImageVector.vectorResource(R.drawable.info),
+                                                iconSize = 24.dp,
+                                                iconColor = AppTheme.colors.onPrimary
                                             )
                                         },
-                                        trailingIcon = {
-                                            Button(
-                                                colors = ButtonDefaults.buttonColors()
-                                                    .copy(
-                                                        containerColor = AppTheme.colors.primary,
-                                                        contentColor = AppTheme.colors.onPrimary
-                                                    ),
-                                                onClick = {
-                                                    scheduleViewModel.saveCurrentNamedSchedule()
-                                                },
-                                                contentPadding = PaddingValues(
-                                                    horizontal = AppTheme.paddings.padding8,
-                                                    vertical = AppTheme.paddings.padding2
-                                                )
-                                            ) {
-                                                CompositionLocalProvider(
-                                                    LocalMinimumInteractiveComponentSize provides 0.dp
-                                                ) {
-                                                    Text(
-                                                        text = stringResource(R.string.save),
-                                                        style = AppTheme.typography.titleSmall
+                                        center = {
+                                            TextBlock(
+                                                text = stringResource(R.string.schedule_is_not_saved),
+                                                color = AppTheme.colors.onPrimary,
+                                                typography = AppTheme.typography.titleSmall,
+                                            )
+                                        },
+                                        end = {
+                                            Custom {
+                                                Button(
+                                                    colors = ButtonDefaults.buttonColors()
+                                                        .copy(
+                                                            containerColor = AppTheme.colors.primary,
+                                                            contentColor = AppTheme.colors.onPrimary
+                                                        ),
+                                                    onClick = {
+                                                        scheduleViewModel.saveCurrentNamedSchedule()
+                                                    },
+                                                    contentPadding = PaddingValues(
+                                                        horizontal = AppTheme.paddings.padding8,
+                                                        vertical = AppTheme.paddings.padding2
                                                     )
+                                                ) {
+                                                    CompositionLocalProvider(
+                                                        LocalMinimumInteractiveComponentSize provides 0.dp
+                                                    ) {
+                                                        Text(
+                                                            text = stringResource(R.string.save),
+                                                            style = AppTheme.typography.titleSmall
+                                                        )
+                                                    }
                                                 }
                                             }
-
-                                        }
+                                        },
                                     )
                                 }
                             }
@@ -396,6 +405,15 @@ fun ScreenSchedule(
             },
             onConfirmation = {
                 scheduleViewModel.refreshScheduleState(showLoading = false)
+            }
+        )
+    }
+
+    if (schedulesDialog) {
+        SchedulesSheetWidget(
+            namedSchedules = emptyList(),
+            onDismiss = {
+                schedulesDialog = false
             }
         )
     }

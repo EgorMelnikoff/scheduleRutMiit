@@ -29,7 +29,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
-import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.LeadingIcon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.components.time_picker.AppTimePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
@@ -90,54 +91,67 @@ fun AddTaskDialog() {
                     items = listOf(
                         {
                             AppCell(
-                                defaultMinHeight = 32.dp,
-                                showClickLabel = false,
-                                title = when {
-                                    addTaskForm.startDate != null && addTaskForm.startDate == addTaskForm.endDate -> "${
-                                        addTaskForm.startDate.format(
-                                            DateTimeFormatters.dayMonthYearFormatter
-                                        )
-                                    }"
-
-                                    addTaskForm.startDate != null && addTaskForm.endDate != null -> "${
-                                        addTaskForm.startDate.format(
-                                            DateTimeFormatters.dayMonthYearFormatter
-                                        )
-                                    }" +
-                                            " - ${addTaskForm.endDate.format(DateTimeFormatters.dayMonthYearFormatter)}"
-
-                                    else -> stringResource(R.string.dates)
-                                },
-                                titleTypography = AppTheme.typography.titleSmall,
-                                leadingIcon = {
-                                    LeadingIcon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                                showChevron = false,
+                                start = {
+                                    Icon(
+                                        icon = ImageVector.vectorResource(R.drawable.calendar),
                                         iconSize = 20.dp,
-                                        color = AppTheme.colors.onBackground
+                                        iconColor = AppTheme.colors.onBackground
                                     )
+                                },
+                                center = {
+                                    TextBlock(
+                                        text = when {
+                                            addTaskForm.startDate != null && addTaskForm.startDate == addTaskForm.endDate -> "${
+                                                addTaskForm.startDate.format(
+                                                    DateTimeFormatters.dayMonthYearFormatter
+                                                )
+                                            }"
+
+                                            addTaskForm.startDate != null && addTaskForm.endDate != null -> "${
+                                                addTaskForm.startDate.format(
+                                                    DateTimeFormatters.dayMonthYearFormatter
+                                                )
+                                            }" +
+                                                    " - ${
+                                                        addTaskForm.endDate.format(
+                                                            DateTimeFormatters.dayMonthYearFormatter
+                                                        )
+                                                    }"
+
+                                            else -> stringResource(R.string.dates)
+                                        },
+
+                                        typography = AppTheme.typography.titleSmall,
+                                    )
+                                },
+                                onClick = {
+                                    focusManager.clearFocus()
+                                    showDialogDate = true
                                 }
-                            ) {
-                                focusManager.clearFocus()
-                                showDialogDate = true
-                            }
+                            )
                         }, {
                             AppCell(
-                                defaultMinHeight = 32.dp,
-                                showClickLabel = false,
-                                title = addTaskForm.time?.format(DateTimeFormatters.hourMinuteFormatter)
-                                    ?: stringResource(R.string.time),
-                                titleTypography = AppTheme.typography.titleSmall,
-                                leadingIcon = {
-                                    LeadingIcon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.time),
+                                showChevron = false,
+                                start = {
+                                    Icon(
+                                        icon = ImageVector.vectorResource(R.drawable.time),
                                         iconSize = 20.dp,
-                                        color = AppTheme.colors.onBackground
+                                        iconColor = AppTheme.colors.onBackground
                                     )
+                                },
+                                center = {
+                                    TextBlock(
+                                        text = addTaskForm.time?.format(DateTimeFormatters.hourMinuteFormatter)
+                                            ?: stringResource(R.string.time),
+                                        typography = AppTheme.typography.titleSmall,
+                                    )
+                                },
+                                onClick = {
+                                    focusManager.clearFocus()
+                                    showDialogTime = true
                                 }
-                            ) {
-                                focusManager.clearFocus()
-                                showDialogTime = true
-                            }
+                            )
                         }
                     )
                 )

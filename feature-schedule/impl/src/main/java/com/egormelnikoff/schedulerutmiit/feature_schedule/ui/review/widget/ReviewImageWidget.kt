@@ -7,10 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -45,15 +44,21 @@ fun LazyListScope.reviewImageWidget(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(52.dp)
+                    .height(10.dp)
                     .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                AppTheme.colors.background
-                            )
+                        color = AppTheme.colors.background,
+                        shape = AppTheme.shapes.medium.copy(
+                            bottomEnd = CornerSize(0.dp),
+                            bottomStart = CornerSize(0.dp),
                         )
+//                        Brush.verticalGradient(
+//                            colors = listOf(
+//                                Color.Transparent,
+//                                AppTheme.colors.background
+//                            )
+//                        )
                     )
+
             )
         }
     }

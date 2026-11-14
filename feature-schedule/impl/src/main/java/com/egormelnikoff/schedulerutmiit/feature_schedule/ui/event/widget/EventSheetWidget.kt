@@ -1,13 +1,14 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.widget
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheetButton
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -30,9 +31,13 @@ fun BottomSheetEventWidget(
         }
     ) {
         EventNameWidget(
-            timetableType, event, 16.dp
+            modifier = Modifier.padding(
+                bottom = AppTheme.paddings.padding8
+            ),
+            timetableType = timetableType,
+            event = event,
+            horizontalPadding = 16.dp
         )
-        SpacerHeight(0.dp)
         onHideEvent?.let {
             AppBottomSheetButton(
                 icon = ImageVector.vectorResource(R.drawable.visibility_off),

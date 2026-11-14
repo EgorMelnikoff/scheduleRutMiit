@@ -42,6 +42,10 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.CalendarBar
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarData
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.rememberCalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Custom
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.components.check_box.AppCheckBox
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
@@ -237,37 +241,53 @@ internal fun SingleTask(
 
     RoundedBox {
         AppCell(
-            title = task.text,
-            titleDecoration = if (task.isCompleted) {
-                TextDecoration.LineThrough
-            } else null,
-            subtitle = task.date.format(DateTimeFormatters.dayMonthYearFormatter)
-                    + ", " + task.time.format(DateTimeFormatters.hourMinuteFormatter),
-            trailingIcon = {
-                AppCheckBox(
-                    checked = task.isCompleted,
-                    onCheckedChange = { newValue ->
-                        onComplete(newValue)
+            start = {
+                if (task.tag != 0) {
+                    Icon(
+                        icon = ImageVector.vectorResource(R.drawable.circle),
+                        iconSize = 16.dp,
+                        iconColor = task.tag.getColorByIndex()
+                    )
+                }
+            },
+            center = {
+                CenterContent(
+                    title = {
+                        TextBlock(
+                            text = task.text,
+                            decoration = if (task.isCompleted) {
+                                TextDecoration.LineThrough
+                            } else null,
+                        )
+                    },
+                    subtitle = {
+                        TextBlock(
+                            text = task.date.format(DateTimeFormatters.dayMonthYearFormatter)
+                                    + ", " + task.time.format(DateTimeFormatters.hourMinuteFormatter),
+                            typography = AppTheme.typography.bodyMedium,
+                            color = AppTheme.colors.onSecondaryContainer,
+                        )
                     }
                 )
             },
-            leadingIcon = if (task.tag != 0) {
-                {
-                    Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.circle),
-                        contentDescription = null,
-                        tint = task.tag.getColorByIndex()
+            end = {
+                Custom {
+                    AppCheckBox(
+                        checked = task.isCompleted,
+                        onCheckedChange = { newValue ->
+                            onComplete(newValue)
+                        }
                     )
                 }
-            } else null,
-            showClickLabel = false,
+            },
+            showChevron = false,
             onLongClick = {
                 showExpandedMenu = !showExpandedMenu
+            },
+            onClick = {
+                onOpen(task)
             }
-        ) {
-            onOpen(task)
-        }
+        )
         DropdownMenu(
             containerColor = AppTheme.colors.background,
             expanded = showExpandedMenu,

@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowCompat
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,6 +56,8 @@ fun AppBottomSheet(
                 ) {
                     Box(Modifier.size(width = 36.dp, height = 4.dp))
                 }
+            } else {
+                SpacerHeight(AppTheme.paddings.padding28)
             }
         },
         sheetState = sheetState ?: rememberModalBottomSheetState(),

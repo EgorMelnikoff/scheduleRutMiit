@@ -44,6 +44,8 @@ import com.egormelnikoff.schedulerutmiit.core.common.consts.AppConst.DEVELOPER_E
 import com.egormelnikoff.schedulerutmiit.core.common.consts.Links
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -60,7 +62,11 @@ fun InfoModalDialog(
     val clipboard = LocalClipboard.current
 
     AppBottomSheet(
-        modifier = Modifier.padding(start = AppTheme.paddings.padding16, end = AppTheme.paddings.padding16, top = AppTheme.paddings.padding24, bottom = AppTheme.paddings.padding16),
+        modifier = Modifier.padding(
+            start = AppTheme.paddings.padding16,
+            end = AppTheme.paddings.padding16,
+            bottom = AppTheme.paddings.padding16
+        ),
         showHandle = false,
         onDismiss = onDismiss
     ) {
@@ -105,7 +111,10 @@ fun InfoModalDialog(
                                     color = AppTheme.colors.primary,
                                     shape = AppTheme.shapes.small
                                 )
-                                .padding(horizontal = AppTheme.paddings.padding8, vertical = AppTheme.paddings.padding4),
+                                .padding(
+                                    horizontal = AppTheme.paddings.padding8,
+                                    vertical = AppTheme.paddings.padding4
+                                ),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -271,29 +280,49 @@ fun InfoModalDialog(
 
             RoundedBox {
                 AppCell(
-                    title = DEVELOPER,
-                    subtitle = stringResource(R.string.developer),
+                    center = {
+                        CenterContent(
+                            title = {
+                                TextBlock(
+                                    text = DEVELOPER
+                                )
+                            },
+                            subtitle = {
+                                TextBlock(
+                                    text = stringResource(R.string.developer),
+                                    typography = AppTheme.typography.bodyMedium,
+                                    color = AppTheme.colors.onSecondaryContainer,
+                                )
+                            }
+                        )
+                    },
                     onLongClick = {
                         clipboard.nativeClipboard.setPrimaryClip(
                             ClipData.newPlainText(null, Links.TG_AUTHOR_CHANNEL_URL)
                         )
+                    },
+                    onClick = {
+                        uriHandler.openUri(Links.TG_AUTHOR_CHANNEL_URL)
                     }
-                ) {
-                    uriHandler.openUri(Links.TG_AUTHOR_CHANNEL_URL)
-                }
+                )
             }
 
             RoundedBox {
                 AppCell(
-                    title = stringResource(R.string.privacy_policy),
+                    center = {
+                        TextBlock(
+                            text = stringResource(R.string.privacy_policy),
+                        )
+                    },
                     onLongClick = {
                         clipboard.nativeClipboard.setPrimaryClip(
                             ClipData.newPlainText(null, Links.PRIVACY_POLICY)
                         )
+                    },
+                    onClick = {
+                        uriHandler.openUri(Links.PRIVACY_POLICY)
                     }
-                ) {
-                    uriHandler.openUri(Links.PRIVACY_POLICY)
-                }
+                )
             }
         }
     }

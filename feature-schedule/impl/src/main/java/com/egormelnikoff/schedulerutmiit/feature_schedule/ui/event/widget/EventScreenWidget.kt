@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.widget
 
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ScaffoldLazyColumn
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventAction
@@ -40,7 +42,12 @@ fun EventScreenWidget(
                 ) {
                     item {
                         EventNameWidget(
-                            eventState.schedule.timetableType, eventState.event, 16.dp
+                            modifier = Modifier.padding(
+                                bottom = AppTheme.paddings.padding8
+                            ),
+                            timetableType = eventState.schedule.timetableType,
+                            event = eventState.event,
+                            horizontalPadding = 16.dp
                         )
                     }
                     eventGroupsWidget(eventState, onAction)

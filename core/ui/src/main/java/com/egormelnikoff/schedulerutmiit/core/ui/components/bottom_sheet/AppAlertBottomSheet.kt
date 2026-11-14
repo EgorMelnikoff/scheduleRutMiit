@@ -34,7 +34,7 @@ fun AppAlertBottomSheet(
         showHandle = false,
         onDismiss = onDismissRequest,
         contentPadding = PaddingValues(
-            top = 40.dp,
+            top = 20.dp,
             start = AppTheme.paddings.padding32,
             end = AppTheme.paddings.padding32,
             bottom = AppTheme.paddings.padding12

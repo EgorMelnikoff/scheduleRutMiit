@@ -1,9 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.core.settings.ui.widget
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -16,6 +14,9 @@ import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Custom
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.components.check_box.AppCheckBox
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -29,91 +30,110 @@ fun EventViewModalDialog(
 ) {
     AppBottomSheet(
         modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
+        showHandle = false,
         onDismiss = onDismiss
     ) {
         ColumnGroup(
             items = listOf(
                 {
                     AppCell(
-                        title = stringResource(R.string.groups),
-                        leadingIcon = {
+                        start = {
                             Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.group),
-                                contentDescription = stringResource(R.string.groups),
-                                tint = AppTheme.colors.onSecondaryContainer
+                                icon = ImageVector.vectorResource(R.drawable.group),
+                                iconSize = 20.dp,
+                                iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
-                        trailingIcon = {
-                            AppCheckBox(
-                                checked = eventView.groupsVisible,
-                                onCheckedChange = { visible ->
-                                    onAction(
-                                        SettingsAction.OnSetEventGroupsVisibility(visible)
-                                    )
-                                }
+                        center = {
+                            TextBlock(
+                                text = stringResource(R.string.groups),
                             )
                         },
-                        showClickLabel = false
-                    ) {
-                        onAction(
-                            SettingsAction.OnSetEventGroupsVisibility(!eventView.groupsVisible)
-                        )
-                    }
+                        end = {
+                            Custom {
+                                AppCheckBox(
+                                    checked = eventView.groupsVisible,
+                                    onCheckedChange = { visible ->
+                                        onAction(
+                                            SettingsAction.OnSetEventGroupsVisibility(visible)
+                                        )
+                                    }
+                                )
+                            }
+                        },
+                        showChevron = false,
+                        onClick = {
+                            onAction(
+                                SettingsAction.OnSetEventGroupsVisibility(!eventView.groupsVisible)
+                            )
+                        }
+                    )
                 }, {
                     AppCell(
-                        title = stringResource(R.string.rooms),
-                        leadingIcon = {
+                        start = {
                             Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.room),
-                                contentDescription = stringResource(R.string.rooms),
-                                tint = AppTheme.colors.onSecondaryContainer
+                                icon = ImageVector.vectorResource(R.drawable.room),
+                                iconSize = 20.dp,
+                                iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
-                        trailingIcon = {
-                            AppCheckBox(
-                                checked = eventView.roomsVisible,
-                                onCheckedChange = { visible ->
-                                    onAction(
-                                        SettingsAction.OnSetEventRoomsVisibility(visible)
-                                    )
-                                }
+                        center = {
+                            TextBlock(
+                                text = stringResource(R.string.rooms),
                             )
                         },
-                        showClickLabel = false
-                    ) {
-                        onAction(
-                            SettingsAction.OnSetEventRoomsVisibility(!eventView.roomsVisible)
-                        )
-                    }
+                        end = {
+                            Custom {
+                                AppCheckBox(
+                                    checked = eventView.roomsVisible,
+                                    onCheckedChange = { visible ->
+                                        onAction(
+                                            SettingsAction.OnSetEventRoomsVisibility(visible)
+                                        )
+                                    }
+                                )
+                            }
+                        },
+                        showChevron = false,
+                        onClick = {
+                            onAction(
+                                SettingsAction.OnSetEventRoomsVisibility(!eventView.roomsVisible)
+                            )
+                        }
+                    )
                 }, {
                     AppCell(
-                        title = stringResource(R.string.lecturers),
-                        leadingIcon = {
+                        start = {
                             Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.person),
-                                contentDescription = stringResource(R.string.lecturers),
-                                tint = AppTheme.colors.onSecondaryContainer
+                                icon = ImageVector.vectorResource(R.drawable.person),
+                                iconSize = 20.dp,
+                                iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
-                        trailingIcon = {
-                            AppCheckBox(
-                                checked = eventView.lecturersVisible,
-                                onCheckedChange = { visible ->
-                                    onAction(
-                                        SettingsAction.OnSetEventLecturersVisibility(visible)
-                                    )
-                                }
+                        center = {
+                            TextBlock(
+                                text = stringResource(R.string.lecturers),
                             )
                         },
-                        showClickLabel = false
-                    ) {
-                        onAction(
-                            SettingsAction.OnSetEventLecturersVisibility(!eventView.lecturersVisible)
-                        )
-                    }
+                        end = {
+                            Custom {
+                                AppCheckBox(
+                                    checked = eventView.lecturersVisible,
+                                    onCheckedChange = { visible ->
+                                        onAction(
+                                            SettingsAction.OnSetEventLecturersVisibility(visible)
+                                        )
+                                    }
+                                )
+                            }
+                        },
+                        showChevron = false,
+                        onClick = {
+                            onAction(
+                                SettingsAction.OnSetEventLecturersVisibility(!eventView.lecturersVisible)
+                            )
+                        }
+                    )
                 }
             )
         )
@@ -122,58 +142,70 @@ fun EventViewModalDialog(
             items = listOf(
                 {
                     AppCell(
-                        title = stringResource(R.string.tag),
-                        leadingIcon = {
+                        start = {
                             Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.tag),
-                                contentDescription = stringResource(R.string.tag),
-                                tint = AppTheme.colors.onSecondaryContainer
+                                icon = ImageVector.vectorResource(R.drawable.tag),
+                                iconSize = 20.dp,
+                                iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
-                        trailingIcon = {
-                            AppCheckBox(
-                                checked = eventView.tagVisible,
-                                onCheckedChange = { visible ->
-                                    onAction(
-                                        SettingsAction.OnSetEventTagVisibility(visible)
-                                    )
-                                }
+                        center = {
+                            TextBlock(
+                                text = stringResource(R.string.tag),
                             )
                         },
-                        showClickLabel = false
-                    ) {
-                        onAction(
-                            SettingsAction.OnSetEventTagVisibility(!eventView.tagVisible)
-                        )
-                    }
+                        end = {
+                            Custom {
+                                AppCheckBox(
+                                    checked = eventView.tagVisible,
+                                    onCheckedChange = { visible ->
+                                        onAction(
+                                            SettingsAction.OnSetEventTagVisibility(visible)
+                                        )
+                                    }
+                                )
+                            }
+                        },
+                        showChevron = false,
+                        onClick = {
+                            onAction(
+                                SettingsAction.OnSetEventTagVisibility(!eventView.tagVisible)
+                            )
+                        }
+                    )
                 }, {
                     AppCell(
-                        title = stringResource(R.string.comment),
-                        leadingIcon = {
+                        start = {
                             Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.comment),
-                                contentDescription = stringResource(R.string.comment),
-                                tint = AppTheme.colors.onSecondaryContainer
+                                icon = ImageVector.vectorResource(R.drawable.comment),
+                                iconSize = 20.dp,
+                                iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
-                        trailingIcon = {
-                            AppCheckBox(
-                                checked = eventView.commentVisible,
-                                onCheckedChange = { visible ->
-                                    onAction(
-                                        SettingsAction.OnSetEventCommentVisibility(visible)
-                                    )
-                                }
+                        center = {
+                            TextBlock(
+                                text = stringResource(R.string.comment),
                             )
                         },
-                        showClickLabel = false
-                    ) {
-                        onAction(
-                            SettingsAction.OnSetEventCommentVisibility(!eventView.commentVisible)
-                        )
-                    }
+                        end = {
+                            Custom {
+                                AppCheckBox(
+                                    checked = eventView.commentVisible,
+                                    onCheckedChange = { visible ->
+                                        onAction(
+                                            SettingsAction.OnSetEventCommentVisibility(visible)
+                                        )
+                                    }
+                                )
+                            }
+                        },
+                        showChevron = false,
+                        onClick = {
+                            onAction(
+                                SettingsAction.OnSetEventCommentVisibility(!eventView.commentVisible)
+                            )
+                        }
+                    )
                 }
             )
         )
