@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.settings.api.repos.SettingsRepos
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.NamedScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.ScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
@@ -15,7 +14,6 @@ import javax.inject.Inject
 
 class RefreshNamedScheduleUseCase @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
-    private val namedScheduleDataSource: NamedScheduleDataSource,
     private val scheduleDataSource: ScheduleDataSource,
     private val settingsRepos: SettingsRepos,
 ) {
@@ -28,9 +26,9 @@ class RefreshNamedScheduleUseCase @Inject constructor(
         updating: Boolean = false
     ) {
         val namedSchedule = namedScheduleId?.let {
-            namedScheduleDataSource.getById(namedScheduleId).namedSchedule
+            namedScheduleRepos.getById(namedScheduleId).namedSchedule
         }
-            ?: namedScheduleDataSource.getDefault()
+            ?: namedScheduleRepos.getDefault()
             ?: namedScheduleRepos.getAll().firstOrNull()
 
         if (namedSchedule != null && updating) {
@@ -70,7 +68,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             namedSchedule.type
         )
 
-        val oldNamedSchedule = namedScheduleDataSource.getById(namedSchedule.id)
+        val oldNamedSchedule = namedScheduleRepos.getById(namedSchedule.id)
 
         mergeAndUpdateSchedules(
             oldNamedScheduleWithSchedules = oldNamedSchedule,
@@ -84,7 +82,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             )
         }
 
-        namedScheduleDataSource.updateLastTimeUpdate(
+        namedScheduleRepos.updateLastTimeUpdate(
             namedScheduleId = oldNamedSchedule.namedSchedule.id
         )
 

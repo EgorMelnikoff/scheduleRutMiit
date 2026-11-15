@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.rename_schedule
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.NamedScheduleDataSource
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
     assistedFactory = RenameScheduleViewModel.Factory::class
 )
 class RenameScheduleViewModel @AssistedInject constructor(
-    private val namedScheduleDataSource: NamedScheduleDataSource,
+    private val namedScheduleRepos: NamedScheduleRepos,
     private val appRouter: AppRouter,
     @Assisted
     private val namedScheduleId: Long
@@ -23,7 +23,7 @@ class RenameScheduleViewModel @AssistedInject constructor(
     override fun onScreenInitialized() {
         super.onScreenInitialized()
         viewModelScope.launch {
-            val namedSchedule = namedScheduleDataSource.getById(namedScheduleId).namedSchedule
+            val namedSchedule = namedScheduleRepos.getById(namedScheduleId).namedSchedule
 
             updateState {
                 RenameScheduleState.Loaded(
@@ -57,7 +57,7 @@ class RenameScheduleViewModel @AssistedInject constructor(
         if (!state.renameEnabled) return
 
         viewModelScope.launch {
-            namedScheduleDataSource.updateName(
+            namedScheduleRepos.updateName(
                 namedScheduleId = namedScheduleId,
                 newName = state.newName.trim()
             )

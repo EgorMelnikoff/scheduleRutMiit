@@ -20,6 +20,14 @@ interface NamedScheduleRepos {
         type: NamedScheduleType = NamedScheduleType.GROUP,
     ): NamedScheduleWithSchedules
 
+    suspend fun getById(
+        namedScheduleId: Long
+    ): NamedScheduleWithSchedules
+
+    suspend fun getDefault(): NamedSchedule?
+
+    fun observeDefault(): Flow<NamedScheduleWithSchedules?>
+
     suspend fun getAndOpen(
         namedScheduleId: Long = 0,
         name: String = "",
@@ -32,4 +40,10 @@ interface NamedScheduleRepos {
     fun observeAll(): Flow<List<NamedSchedule>>
     suspend fun getAll(): List<NamedSchedule>
     suspend fun setDefault(namedScheduleId: Long)
+    suspend fun updateName(
+        namedScheduleId: Long,
+        newName: String
+    )
+
+    suspend fun updateLastTimeUpdate(namedScheduleId: Long)
 }

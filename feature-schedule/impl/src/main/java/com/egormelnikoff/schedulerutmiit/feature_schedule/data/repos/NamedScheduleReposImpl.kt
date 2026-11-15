@@ -72,6 +72,14 @@ class NamedScheduleReposImpl @Inject constructor(
         source.value = ScheduleSource.Temporary(schedule)
     }
 
+    override suspend fun getById(
+        namedScheduleId: Long
+    ) = namedScheduleDataSource.getById(namedScheduleId)
+
+    override suspend fun getDefault() = namedScheduleDataSource.getDefault()
+
+    override fun observeDefault() = namedScheduleDataSource.observeDefault()
+
     override suspend fun openTemp(namedScheduleWithSchedules: NamedScheduleWithSchedules) {
         source.value = ScheduleSource.Temporary(namedScheduleWithSchedules)
     }
@@ -118,5 +126,19 @@ class NamedScheduleReposImpl @Inject constructor(
 
     override suspend fun setDefault(namedScheduleId: Long) {
         namedScheduleDataSource.setDefault(namedScheduleId)
+    }
+
+    override suspend fun updateName(
+        namedScheduleId: Long,
+        newName: String
+    ) {
+        namedScheduleDataSource.updateName(
+            namedScheduleId = namedScheduleId,
+            newName = newName
+        )
+    }
+
+    override suspend fun updateLastTimeUpdate(namedScheduleId: Long) {
+        namedScheduleDataSource.updateLastTimeUpdate(namedScheduleId)
     }
 }
