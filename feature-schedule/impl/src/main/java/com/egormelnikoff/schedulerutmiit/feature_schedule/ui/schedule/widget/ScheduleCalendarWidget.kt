@@ -40,12 +40,12 @@ import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getCurrentWeek
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getEventsForDate
-import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
 import java.time.LocalDate
 
 @Composable
 fun ScheduleCalendarWidget(
-    scheduleState: ScheduleState,
+    scheduleVo: ScheduleVo,
     isSavedSchedule: Boolean,
     scheduleCalendarState: CalendarState,
     appSettings: AppSettings,
@@ -65,12 +65,12 @@ fun ScheduleCalendarWidget(
             showCalendarDialog = it
         },
         monthBadge = { firstDayOfCurrentWeek ->
-            if (scheduleState.schedule.recurrence != null &&
-                scheduleState.schedule.recurrence.interval > 1
+            if (scheduleVo.schedule.recurrence != null &&
+                scheduleVo.schedule.recurrence.interval > 1
             ) {
                 val selectedWeek = firstDayOfCurrentWeek.getCurrentWeek(
-                    startDate = scheduleState.schedule.startDate,
-                    recurrence = scheduleState.schedule.recurrence
+                    startDate = scheduleVo.schedule.startDate,
+                    recurrence = scheduleVo.schedule.recurrence
                 )
                 Icon(
                     modifier = Modifier.size(3.dp),
@@ -106,15 +106,15 @@ fun ScheduleCalendarWidget(
         calendarBarItem = { _, currentDate ->
             val eventsForDate = remember(
                 currentDate,
-                scheduleState.schedule,
-                scheduleState.periodicEvents,
-                scheduleState.nonPeriodicEvents,
-                scheduleState.haveHiddenEvents
+                scheduleVo.schedule,
+                scheduleVo.periodicEvents,
+                scheduleVo.nonPeriodicEvents,
+                scheduleVo.haveHiddenEvents
             ) {
-                scheduleState.schedule.getEventsForDate(
+                scheduleVo.schedule.getEventsForDate(
                     date = currentDate,
-                    periodicEvents = scheduleState.periodicEvents,
-                    nonPeriodicEvents = scheduleState.nonPeriodicEvents
+                    periodicEvents = scheduleVo.periodicEvents,
+                    nonPeriodicEvents = scheduleVo.nonPeriodicEvents
                 )
             }
 
@@ -122,7 +122,7 @@ fun ScheduleCalendarWidget(
                 currentDate = currentDate,
 
                 isSelected = scheduleCalendarState.selectedDate == currentDate,
-                isDisabled = currentDate !in scheduleState.schedule.startDate..scheduleState.schedule.endDate,
+                isDisabled = currentDate !in scheduleVo.schedule.startDate..scheduleVo.schedule.endDate,
                 isToday = isToday(currentDate),
 
                 selectDate = { date ->
@@ -133,7 +133,7 @@ fun ScheduleCalendarWidget(
                     ScheduleEventsDetailBadgeWidget(
                         currentDate = currentDate,
                         events = eventsForDate,
-                        eventsExtraData = scheduleState.eventsExtraData,
+                        eventsExtraData = scheduleVo.eventsExtraData,
                         eventExtraPolicy = appSettings.eventExtraPolicy
                     )
                 } else if (appSettings.eventsCountView == EventsCountView.BRIEFLY && eventsForDate.isNotEmpty()) {
@@ -146,19 +146,19 @@ fun ScheduleCalendarWidget(
     ) { _, currentDate ->
         val enrichedEvents = remember(
             currentDate,
-            scheduleState.schedule,
-            scheduleState.periodicEvents,
-            scheduleState.nonPeriodicEvents,
-            scheduleState.haveHiddenEvents
+            scheduleVo.schedule,
+            scheduleVo.periodicEvents,
+            scheduleVo.nonPeriodicEvents,
+            scheduleVo.haveHiddenEvents
         ) {
-            scheduleState.schedule
+            scheduleVo.schedule
                 .getEventsForDate(
                     date = currentDate,
-                    periodicEvents = scheduleState.periodicEvents,
-                    nonPeriodicEvents = scheduleState.nonPeriodicEvents
+                    periodicEvents = scheduleVo.periodicEvents,
+                    nonPeriodicEvents = scheduleVo.nonPeriodicEvents
                 )
                 .getEnrichedEvents(
-                    eventsExtraData = scheduleState.eventsExtraData,
+                    eventsExtraData = scheduleVo.eventsExtraData,
                     eventExtraPolicy = appSettings.eventExtraPolicy,
                     date = currentDate,
                 )
@@ -197,7 +197,7 @@ fun ScheduleCalendarWidget(
                         onHideEvent = onHideEvent,
 
                         eventsWithExtra = events.second,
-                        schedule = scheduleState.schedule,
+                        schedule = scheduleVo.schedule,
                         date = if (appSettings.eventExtraPolicy == EventExtraPolicy.BY_DATES) {
                             currentDate
                         } else null,
@@ -223,8 +223,8 @@ fun ScheduleCalendarWidget(
             onDateSelect = { date ->
                 scheduleCalendarState.selectDate(date)
             },
-            startDate = scheduleState.schedule.startDate,
-            endDate = scheduleState.schedule.endDate,
+            startDate = scheduleVo.schedule.startDate,
+            endDate = scheduleVo.schedule.endDate,
             onShowDialog = {
                 showCalendarDialog = it
             }

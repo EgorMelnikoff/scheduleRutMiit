@@ -17,12 +17,12 @@ fun LargeIconButton(
     contentDescription: String
 ) {
     IconButton(
-        modifier = Modifier.size(48.dp),
+        modifier = Modifier.size(44.dp),
         onClick = onClick,
         colors = colors
     ) {
         Icon(
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(20.dp),
             imageVector = icon,
             contentDescription = contentDescription
         )

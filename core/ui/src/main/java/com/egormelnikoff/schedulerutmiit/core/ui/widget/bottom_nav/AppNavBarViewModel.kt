@@ -16,7 +16,7 @@ import javax.inject.Inject
 class AppNavBarViewModel @Inject constructor(
     private val appRouter: AppRouter,
     private val settingsRepos: SettingsRepos
-) : BaseViewModel<AppNavBarState, AppNavBarAction>(AppNavBarState()) {
+) : BaseViewModel<AppNavBarState, AppNavBarState, AppNavBarAction>(AppNavBarState()) {
 
     override fun onScreenInitialized() {
         super.onScreenInitialized()

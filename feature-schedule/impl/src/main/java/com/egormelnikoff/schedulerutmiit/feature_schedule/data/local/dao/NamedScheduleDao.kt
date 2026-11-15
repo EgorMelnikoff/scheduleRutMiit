@@ -24,7 +24,7 @@ interface NamedScheduleDao {
     suspend fun deleteAll()
 
 
-    @Query("SELECT * FROM NamedSchedules ORDER BY isDefaultNamedSchedule DESC")
+    @Query("SELECT * FROM NamedSchedules")
     fun observeAll(): Flow<List<NamedScheduleEntity>>
 
     @Transaction

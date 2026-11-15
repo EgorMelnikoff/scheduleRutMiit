@@ -1,5 +1,6 @@
-package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule
+package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model
 
+import androidx.compose.runtime.Immutable
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarData
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getGroupedEvents
@@ -13,7 +14,8 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-data class ScheduleState(
+@Immutable
+data class ScheduleVo(
     val schedule: Schedule,
     val calendarData: CalendarData,
 
@@ -24,8 +26,9 @@ data class ScheduleState(
 
     val haveHiddenEvents: Boolean = false
 ) {
+    //TODO ВЫПИЛИТЬ НАХРЕН
     companion object {
-        fun fromSchedule(scheduleWithEvents: ScheduleWithEvents): ScheduleState {
+        fun fromSchedule(scheduleWithEvents: ScheduleWithEvents): ScheduleVo {
             val splitEvents = scheduleWithEvents.events.partition { it.isHidden }
 
             var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
@@ -47,12 +50,12 @@ data class ScheduleState(
                 schedule = scheduleWithEvents.schedule,
             )
 
-            val calendarData = CalendarData(
+            val calendarData = CalendarData.Companion(
                 startDate = scheduleWithEvents.schedule.startDate,
                 endDate = scheduleWithEvents.schedule.endDate
             )
 
-            return ScheduleState(
+            return ScheduleVo(
                 schedule = scheduleWithEvents.schedule,
 
                 periodicEvents = periodicEventsForCalendar,
@@ -64,7 +67,7 @@ data class ScheduleState(
             )
         }
 
-        fun ScheduleState.withExtraData(eventsExtraData: List<EventExtraData>?): ScheduleState {
+        fun ScheduleVo.withExtraData(eventsExtraData: List<EventExtraData>?): ScheduleVo {
             return this@withExtraData.copy(
                 eventsExtraData = eventsExtraData?.groupBy { it.eventId } ?: mapOf()
             )

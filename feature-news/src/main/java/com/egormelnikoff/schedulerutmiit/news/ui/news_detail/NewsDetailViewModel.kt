@@ -18,7 +18,7 @@ internal class NewsDetailViewModel @AssistedInject constructor(
     private val appRouter: AppRouter,
     @Assisted
     private val newsId: Long
-) : BaseViewModel<NewsDetailState, NewsDetailAction>(NewsDetailState.Loading) {
+) : BaseViewModel<NewsDetailState, NewsDetailState, NewsDetailAction>(NewsDetailState.Loading) {
 
     override fun onAction(action: NewsDetailAction) {
         when (action) {

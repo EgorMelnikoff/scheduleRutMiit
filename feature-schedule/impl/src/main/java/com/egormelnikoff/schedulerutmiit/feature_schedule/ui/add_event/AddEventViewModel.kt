@@ -30,7 +30,7 @@ class AddEventViewModel @AssistedInject constructor(
     private val eventId: Long?,
     @Assisted
     private val scheduleId: Long
-) : BaseViewModel<AddEventState, AddEventAction>(AddEventState.Loading) {
+) : BaseViewModel<AddEventState, AddEventState, AddEventAction>(AddEventState.Loading) {
 
     override fun onScreenInitialized() {
         super.onScreenInitialized()

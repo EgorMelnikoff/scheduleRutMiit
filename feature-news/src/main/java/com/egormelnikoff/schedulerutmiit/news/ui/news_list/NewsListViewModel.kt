@@ -16,7 +16,7 @@ import javax.inject.Inject
 internal class NewsListViewModel @Inject constructor(
     getNewsListUseCase: GetNewsListUseCase,
     private val appRouter: AppRouter
-) : BaseViewModel<Unit, NewsListAction>(Unit) {
+) : BaseViewModel<Unit, Unit, NewsListAction>(Unit) {
 
     val newsListFlow: Flow<PagingData<NewsShort>> =
         getNewsListUseCase().cachedIn(viewModelScope)

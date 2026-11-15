@@ -39,6 +39,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
+import com.egormelnikoff.schedulerutmiit.core.settings.api.model.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
@@ -65,6 +66,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget.Sch
 @Composable
 fun ScreenSchedule(
     page: Route.Page.Schedule,
+    appSettings: AppSettings,
     contentPadding: PaddingValues,
     snackbarHostState: SnackbarHostState,
 ) {
@@ -72,9 +74,9 @@ fun ScreenSchedule(
     val namedScheduleState =
         scheduleViewModel.namedScheduleState.collectAsStateWithLifecycle().value
     val hourlyDateTime by scheduleViewModel.hourlyDateTime.collectAsStateWithLifecycle()
-    val appSettings by scheduleViewModel.appSettings.collectAsStateWithLifecycle()
     val screenState by scheduleViewModel.screenState.collectAsStateWithLifecycle()
 
+    val namedSchedules by scheduleViewModel.namedSchedules.collectAsStateWithLifecycle()
     val scheduleCalendarState = rememberScheduleCalendarState(namedScheduleState)
     val scheduleListState = rememberLazyListState()
 
@@ -84,6 +86,7 @@ fun ScreenSchedule(
         snackbarHostState
     )
 
+    var importDialog by remember { mutableStateOf(false) }
     var schedulesDialog by remember { mutableStateOf(false) }
     var backDialog by remember { mutableStateOf(false) }
     var namedScheduleDialog by remember { mutableStateOf<Boolean?>(null) }
@@ -95,6 +98,13 @@ fun ScreenSchedule(
         scheduleViewModel.onImportData(uri)
     }
 
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let {
+            scheduleViewModel.onExportData(uri)
+        }
+    }
 
 
 
@@ -197,12 +207,12 @@ fun ScreenSchedule(
                             namedScheduleDialog = newValue
                         },
                         namedSchedule = namedScheduleState.namedScheduleWithSchedules.namedSchedule,
-                        scheduleTypeName = namedScheduleState.scheduleState?.schedule?.timetableType?.typeName,
-                        scheduleView = appSettings?.scheduleView ?: ScheduleView.CALENDAR
+                        scheduleTypeName = namedScheduleState.scheduleVo?.schedule?.timetableType?.typeName,
+                        scheduleView = appSettings.scheduleView
                     )
                 }
             ) { padding ->
-                if (scheduleCalendarState != null && namedScheduleState.scheduleState?.schedule != null) {
+                if (scheduleCalendarState != null && namedScheduleState.scheduleVo?.schedule != null) {
                     AppPullToRefreshBox(
                         modifier = Modifier
                             .fillMaxSize()
@@ -278,7 +288,7 @@ fun ScreenSchedule(
                                 }
                             }
                             AnimatedContent(
-                                targetState = appSettings?.scheduleView,
+                                targetState = appSettings.scheduleView,
                                 transitionSpec = {
                                     fadeIn() + slideInVertically(
                                         initialOffsetY = { it / 2 }
@@ -294,9 +304,9 @@ fun ScreenSchedule(
                                             scheduleListState = scheduleListState,
 
                                             isSavedSchedule = screenState.isSaved,
-                                            scheduleState = namedScheduleState.scheduleState,
+                                            scheduleVo = namedScheduleState.scheduleVo,
 
-                                            appSettings = appSettings!!, //TODO
+                                            appSettings = appSettings,
                                             paddingBottom = contentPadding.calculateBottomPadding(),
                                             onOpenDialog = { dialog ->
                                                 scheduleViewModel.onOpenDialog(dialog)
@@ -312,11 +322,11 @@ fun ScreenSchedule(
 
                                     else -> {
                                         ScheduleCalendarWidget(
-                                            scheduleState = namedScheduleState.scheduleState,
+                                            scheduleVo = namedScheduleState.scheduleVo,
                                             isSavedSchedule = screenState.isSaved,
 
                                             scheduleCalendarState = scheduleCalendarState,
-                                            appSettings = appSettings!!,
+                                            appSettings = appSettings,
                                             paddingBottom = contentPadding.calculateBottomPadding(),
                                             onOpenDialog = { dialog ->
                                                 scheduleViewModel.onOpenDialog(dialog)
@@ -364,13 +374,13 @@ fun ScreenSchedule(
             namedScheduleDialog?.let {
                 ScheduleSheetWidget(
                     namedSchedule = namedScheduleState.namedScheduleWithSchedules.namedSchedule,
-                    currentSchedule = namedScheduleState.scheduleState?.schedule,
+                    currentSchedule = namedScheduleState.scheduleVo?.schedule,
                     schedules = namedScheduleState.namedScheduleWithSchedules.schedulesWithEvents.map { s -> s.schedule },
                     scheduleViewModel = scheduleViewModel,
 
                     isSavedNamedSchedule = screenState.isSaved,
-                    haveHiddenEvents = namedScheduleState.scheduleState?.haveHiddenEvents ?: false,
-                    haveNotEmptySchedules = namedScheduleState.namedScheduleWithSchedules.schedulesWithEvents.isNotEmpty() && namedScheduleState.scheduleState?.schedule != null,
+                    haveHiddenEvents = namedScheduleState.scheduleVo?.haveHiddenEvents ?: false,
+                    haveNotEmptySchedules = namedScheduleState.namedScheduleWithSchedules.schedulesWithEvents.isNotEmpty() && namedScheduleState.scheduleVo?.schedule != null,
                     onOpenDialog = { dialog ->
                         scheduleViewModel.onOpenDialog(dialog)
                     },
@@ -411,12 +421,33 @@ fun ScreenSchedule(
 
     if (schedulesDialog) {
         SchedulesSheetWidget(
-            namedSchedules = emptyList(),
+            namedSchedules = namedSchedules,
+            onClickNamedSchedule = { namedScheduleId ->
+                scheduleViewModel.onSetNamedSchedule(namedScheduleId)
+            },
+            onImport = {
+                importDialog = !importDialog
+            },
+            onExport = {
+                exportLauncher.launch("backup")
+            },
             onDismiss = {
                 schedulesDialog = false
             }
         )
     }
+
+    if (importDialog) {
+        AppAlertBottomSheet(
+            onDismissRequest = { importDialog = false },
+            onConfirmation = {
+                importLauncher.launch(arrayOf("application/json"))
+            },
+            dialogTitle = stringResource(R.string._import) + "?",
+            dialogText = stringResource(R.string.import_message)
+        )
+    }
+
 }
 
 @Composable
@@ -424,7 +455,7 @@ fun rememberScheduleCalendarState(
     namedScheduleState: NamedScheduleState
 ): CalendarState? {
     val calendarData = (namedScheduleState as? NamedScheduleState.Loaded)
-        ?.scheduleState
+        ?.scheduleVo
         ?.calendarData
 
     return if (calendarData != null) {

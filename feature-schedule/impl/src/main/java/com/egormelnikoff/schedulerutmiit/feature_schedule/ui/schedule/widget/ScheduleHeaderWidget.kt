@@ -46,7 +46,7 @@ fun ScheduleHeaderWidget(
             IconButton(
                 onClick = {
                     onSetScheduleView(
-                        scheduleView.next()
+                        scheduleView
                     )
                 }
             ) {

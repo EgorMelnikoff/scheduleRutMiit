@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.NamedSchedu
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.SummaryState
-import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -18,12 +18,12 @@ class ObserveSummaryUseCase @Inject constructor(
             ?.findDefault()
             ?: return@map null
 
-        val scheduleState = ScheduleState.fromSchedule(schedule)
+        val scheduleVo = ScheduleVo.fromSchedule(schedule)
 
         SummaryState(
-            schedule = scheduleState.schedule,
-            periodicEvents = scheduleState.periodicEvents,
-            nonPeriodicEvents = scheduleState.nonPeriodicEvents
+            schedule = scheduleVo.schedule,
+            periodicEvents = scheduleVo.periodicEvents,
+            nonPeriodicEvents = scheduleVo.nonPeriodicEvents
         )
     }
 }

@@ -29,6 +29,7 @@ interface NamedScheduleRepos {
 
     suspend fun save(namedScheduleWithSchedules: NamedScheduleWithSchedules): Pair<Long, Boolean>
     suspend fun delete(namedScheduleId: Long)
+    fun observeAll(): Flow<List<NamedSchedule>>
     suspend fun getAll(): List<NamedSchedule>
     suspend fun setDefault(namedScheduleId: Long)
 }

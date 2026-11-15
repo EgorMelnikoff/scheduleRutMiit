@@ -46,7 +46,7 @@ class EventViewModel @AssistedInject constructor(
     private val eventId: Long,
     @Assisted
     private val date: LocalDate?
-) : BaseViewModel<EventState, EventAction>(EventState.Loading) {
+) : BaseViewModel<EventState, EventState, EventAction>(EventState.Loading) {
 
     private var updateEventCommentJob: Job? = null
 

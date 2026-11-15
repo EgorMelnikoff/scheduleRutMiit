@@ -10,16 +10,26 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<State, Action>(initialState: State) : ViewModel() {
+abstract class BaseViewModel<State, UiState, Action>(initialState: State) : ViewModel() {
     private var isInitialized = false
 
     private val _state = MutableStateFlow(initialState)
-    val state: StateFlow<State> = _state.asStateFlow()
+
+    val state: StateFlow<UiState> = _state
+        .map { it.toUiState() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = initialState.toUiState()
+        )
 
     protected val screenState: State
         get() = _state.value
@@ -27,6 +37,9 @@ abstract class BaseViewModel<State, Action>(initialState: State) : ViewModel() {
     protected fun updateState(block: State.() -> State) {
         _state.update { it.block() }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    protected open fun State.toUiState(): UiState = this as UiState
 
     fun initScreen() {
         if (!isInitialized) {
@@ -58,7 +71,7 @@ abstract class BaseViewModel<State, Action>(initialState: State) : ViewModel() {
 }
 
 @Composable
-fun BaseViewModel<*, *>.Initialize() {
+fun BaseViewModel<*, *, *>.Initialize() {
     LaunchedEffect(this) {
         initScreen()
     }

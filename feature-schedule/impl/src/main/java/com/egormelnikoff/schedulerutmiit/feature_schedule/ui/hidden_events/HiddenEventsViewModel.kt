@@ -20,7 +20,7 @@ class HiddenEventsViewModel @AssistedInject constructor(
     private val appRouter: AppRouter,
     @Assisted
     private val scheduleId: Long
-) : BaseViewModel<Unit, HiddenEventsAction>(Unit) {
+) : BaseViewModel<Unit, Unit, HiddenEventsAction>(Unit) {
     val hiddenEvents = eventDataSource.observeHiddenEvents(scheduleId)
         .stateIn(
             viewModelScope,

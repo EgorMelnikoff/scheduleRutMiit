@@ -26,7 +26,8 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.Refres
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.SetDefaultScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.export.ExportDataUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.export.ImportDataUseCase
-import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleState.Companion.withExtraData
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo.Companion.withExtraData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -78,6 +79,14 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
+    val namedSchedules = namedScheduleRepos
+        .observeAll()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
+
     val namedScheduleState = namedScheduleRepos.currentNamedSchedule
         .map { current ->
             val state = handleNamedSchedule(
@@ -112,7 +121,7 @@ class ScheduleViewModel @Inject constructor(
             initialValue = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS)
         )
 
-     fun onImportData(uri: Uri?) {
+    fun onImportData(uri: Uri?) {
         viewModelScope.launch {
             if (uri == null) {
                 _uiEventFlow.sendErrorEvent(AppError.EmptyBodyError)
@@ -136,7 +145,7 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    private fun exportData(uri: Uri) {
+    fun onExportData(uri: Uri) {
         viewModelScope.launch {
             try {
                 exportDataUseCase(uri)
@@ -233,6 +242,14 @@ class ScheduleViewModel @Inject constructor(
 
     }
 
+    fun onSetNamedSchedule(
+        namedScheduleId: Long,
+    ) {
+        viewModelScope.launch {
+            namedScheduleRepos.getAndOpen(namedScheduleId)
+        }
+    }
+
     fun saveCurrentNamedSchedule() {
         viewModelScope.launch {
             namedScheduleRepos.saveOpened()
@@ -282,7 +299,7 @@ class ScheduleViewModel @Inject constructor(
 
     fun setScheduleView(scheduleView: ScheduleView) {
         viewModelScope.launch {
-            settingsRepos.setScheduleView(scheduleView)
+            settingsRepos.setScheduleView(scheduleView.next())
         }
     }
 
@@ -324,22 +341,22 @@ class ScheduleViewModel @Inject constructor(
         val oldSchedule = state.namedScheduleWithSchedules.schedulesWithEvents.findDefault()
         val newSchedule = newNamedSchedule.schedulesWithEvents.findDefault()
 
-        val scheduleState = when {
-            state.scheduleState == null ->
-                newSchedule?.let(ScheduleState::fromSchedule)
+        val scheduleVo = when {
+            state.scheduleVo == null ->
+                newSchedule?.let(ScheduleVo::fromSchedule)
 
             oldSchedule?.events == newSchedule?.events && oldSchedule?.eventsExtraData != newSchedule?.eventsExtraData ->
-                state.scheduleState.withExtraData(newSchedule?.eventsExtraData)
+                state.scheduleVo.withExtraData(newSchedule?.eventsExtraData)
 
             oldSchedule != newSchedule ->
-                newSchedule?.let(ScheduleState::fromSchedule)
+                newSchedule?.let(ScheduleVo::fromSchedule)
 
-            else -> state.scheduleState
+            else -> state.scheduleVo
         }
 
         return newNamedSchedule to state.copy(
             namedScheduleWithSchedules = newNamedSchedule,
-            scheduleState = scheduleState
+            scheduleVo = scheduleVo
         )
     }
 }

@@ -36,7 +36,7 @@ internal class SearchViewModel @Inject constructor(
     private val fetchScheduleCache: FetchScheduleCache,
     private val searchUseCase: SearchUseCase,
     private val appRouter: AppRouter,
-) : BaseViewModel<SearchState, SearchAction>(SearchState()) {
+) : BaseViewModel<SearchState, SearchState, SearchAction>(SearchState()) {
 
     val history = searchRepos.observeHistory()
         .stateIn(

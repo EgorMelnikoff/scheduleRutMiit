@@ -110,6 +110,8 @@ class NamedScheduleReposImpl @Inject constructor(
         namedScheduleDataSource.deleteById(namedScheduleId)
     }
 
+    override fun observeAll() = namedScheduleDataSource.observeAll()
+
     override suspend fun getAll(): List<NamedSchedule> {
         return namedScheduleDataSource.getAll()
     }

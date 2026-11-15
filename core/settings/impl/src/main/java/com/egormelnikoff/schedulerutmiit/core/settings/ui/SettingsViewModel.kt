@@ -22,7 +22,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val settingsRepos: SettingsRepos,
     private val checkLatestReleaseUseCase: CheckLatestReleaseUseCase
-) : BaseViewModel<SettingsState, SettingsAction>(SettingsState()) {
+) : BaseViewModel<SettingsState, SettingsState, SettingsAction>(SettingsState()) {
 
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEventFlow.asSharedFlow()

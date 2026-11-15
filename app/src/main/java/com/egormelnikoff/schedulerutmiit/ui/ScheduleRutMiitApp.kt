@@ -112,6 +112,7 @@ fun PageHost(
                 entry<Route.Page.Schedule> { page ->
                     ScreenSchedule(
                         page = page,
+                        appSettings = settingsState.appSettings!!,
                         snackbarHostState = snackbarHostState,
                         contentPadding = padding,
                     )

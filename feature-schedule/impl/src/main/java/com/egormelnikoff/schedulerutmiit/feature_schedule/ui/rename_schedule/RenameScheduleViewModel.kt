@@ -18,7 +18,7 @@ class RenameScheduleViewModel @AssistedInject constructor(
     private val appRouter: AppRouter,
     @Assisted
     private val namedScheduleId: Long
-) : BaseViewModel<RenameScheduleState, RenameScheduleAction>(RenameScheduleState.Loading) {
+) : BaseViewModel<RenameScheduleState, RenameScheduleState, RenameScheduleAction>(RenameScheduleState.Loading) {
 
     override fun onScreenInitialized() {
         super.onScreenInitialized()

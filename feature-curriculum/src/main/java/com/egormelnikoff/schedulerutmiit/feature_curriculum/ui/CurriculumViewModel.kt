@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 internal class CurriculumViewModel @Inject constructor(
     private val curriculumRepos: CurriculumRepos
-) : BaseViewModel<CurriculumState, CurriculumAction>(CurriculumState()) {
+) : BaseViewModel<CurriculumState, CurriculumState, CurriculumAction>(CurriculumState()) {
 
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEventFlow.asSharedFlow()

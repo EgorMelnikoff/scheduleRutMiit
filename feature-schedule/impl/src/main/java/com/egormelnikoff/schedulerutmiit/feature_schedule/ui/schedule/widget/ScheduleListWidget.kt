@@ -20,7 +20,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getEnrichedEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleState
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
 import java.time.LocalDate
 
 private sealed interface ListEntry {
@@ -36,7 +36,7 @@ private sealed interface ListEntry {
 fun ScheduleListWidget(
     scheduleListState: LazyListState,
     isSavedSchedule: Boolean,
-    scheduleState: ScheduleState,
+    scheduleVo: ScheduleVo,
 
     appSettings: AppSettings,
     paddingBottom: Dp,
@@ -45,17 +45,17 @@ fun ScheduleListWidget(
     onHideEvent: (Long) -> Unit
 ) {
     val listItems = remember(
-        scheduleState.fullEventList,
-        scheduleState.eventsExtraData,
+        scheduleVo.fullEventList,
+        scheduleVo.eventsExtraData,
         appSettings.eventExtraPolicy
     ) {
         buildList {
-            scheduleState.fullEventList.forEach { (date, eventsMap) ->
+            scheduleVo.fullEventList.forEach { (date, eventsMap) ->
                 add(ListEntry.Header(date))
 
                 eventsMap.entries.forEach { entry ->
                     val enriched = entry.getEnrichedEvents(
-                        eventsExtraData = scheduleState.eventsExtraData,
+                        eventsExtraData = scheduleVo.eventsExtraData,
                         eventExtraPolicy = appSettings.eventExtraPolicy,
                         date = date
                     )
@@ -112,7 +112,7 @@ fun ScheduleListWidget(
                                     item.date
                                 } else null,
                                 eventsWithExtra = item.enrichedEvents,
-                                schedule = scheduleState.schedule,
+                                schedule = scheduleVo.schedule,
                                 isSavedSchedule = isSavedSchedule,
                                 eventView = appSettings.eventView
                             )

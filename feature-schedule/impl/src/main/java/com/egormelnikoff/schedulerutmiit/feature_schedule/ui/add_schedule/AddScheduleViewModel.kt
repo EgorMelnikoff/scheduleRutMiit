@@ -14,7 +14,7 @@ class AddScheduleViewModel @Inject constructor(
     private val addCustomNamedScheduleUseCase: AddCustomNamedScheduleUseCase,
     private val appRouter: AppRouter,
     private val namedScheduleRepos: NamedScheduleRepos
-) : BaseViewModel<AddScheduleState, AddScheduleAction>(AddScheduleState()) {
+) : BaseViewModel<AddScheduleState, AddScheduleState, AddScheduleAction>(AddScheduleState()) {
 
     override fun onAction(action: AddScheduleAction) {
         when (action) {

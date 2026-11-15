@@ -28,13 +28,12 @@ class ReviewViewModel @Inject constructor(
 
     private val appRouter: AppRouter,
     private val namedScheduleRepos: NamedScheduleRepos,
-    private val namedScheduleDataSource: NamedScheduleDataSource,
     private val settingsRepos: SettingsRepos
-) : BaseViewModel<ReviewState, ReviewAction>(ReviewState()) {
+) : BaseViewModel<ReviewState, ReviewState, ReviewAction>(ReviewState()) {
 
     override fun onScreenInitialized() {
         super.onScreenInitialized()
-        namedScheduleDataSource.observeAll().onEach { schedules ->
+        namedScheduleRepos.observeAll().onEach { schedules ->
             updateState {
                 copy(namedSchedules = schedules)
             }

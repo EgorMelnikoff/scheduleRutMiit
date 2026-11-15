@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -81,45 +82,57 @@ fun AppCell(
     onLongClick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
     showChevron: Boolean = true,
+    showSeparator: Boolean = false,
     start: @Composable AppCellStartScope.() -> Unit = {},
     end: @Composable AppCellEndScope.() -> Unit = {},
     center: @Composable AppCellCenterScope.() -> Unit = {},
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .let { modifier ->
-                onClick?.let {
-                    modifier.combinedClickable(
-                        onClick = onClick,
-                        onLongClick = onLongClick,
-                    )
-                } ?: modifier
-            }
-            .padding(contentPadding),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
+    Column(
+        modifier = modifier.fillMaxWidth()
     ) {
-        val startScope = AppCellStartScopeImpl(this)
-        val centerScope = AppCellCenterScopeImpl(this)
-        val endScope = AppCellEndScopeImpl(this)
-
-        startScope.start()
-
-        Box(
-            modifier = Modifier.weight(1f)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .let { modifier ->
+                    onClick?.let {
+                        modifier.combinedClickable(
+                            onClick = onClick,
+                            onLongClick = onLongClick,
+                        )
+                    } ?: modifier
+                }
+                .padding(contentPadding),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
         ) {
-            centerScope.center()
+            val startScope = AppCellStartScopeImpl(this)
+            val centerScope = AppCellCenterScopeImpl(this)
+            val endScope = AppCellEndScopeImpl(this)
+
+            startScope.start()
+
+            Box(
+                modifier = Modifier.weight(1f)
+            ) {
+                centerScope.center()
+            }
+
+            endScope.end()
+
+            if (showChevron && onClick != null) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = ImageVector.vectorResource(R.drawable.right),
+                    contentDescription = null,
+                    tint = AppTheme.colors.onSecondaryContainer,
+                )
+            }
         }
 
-        endScope.end()
-
-        if (showChevron && onClick != null) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.right),
-                contentDescription = null,
-                tint = AppTheme.colors.onSecondaryContainer,
+        if (showSeparator) {
+            HorizontalDivider(
+                thickness = 0.dp,
+                color = AppTheme.colors.outline
             )
         }
     }
