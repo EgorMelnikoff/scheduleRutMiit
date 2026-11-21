@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local
 
+import android.content.Context
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
@@ -472,10 +473,51 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
     }
 }
 
-val MIGRATION_12_13 = object : Migration(12, 13) {
+fun migration12to13(context: Context): Migration = object : Migration(12, 13) {
     override fun migrate(db: SupportSQLiteDatabase) {
+        val taskDbPath = context.getDatabasePath(TASK_DATABASE_NAME).absolutePath
+        db.execSQL("ATTACH DATABASE '$taskDbPath' AS taskdb")
+
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `Tasks` (
+                `TaskId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `text` TEXT NOT NULL
+            )
+        """.trimIndent()
+        )
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `TaskCompletions` (
+                `taskId` INTEGER NOT NULL,
+                `date` TEXT NOT NULL,
+                `time` TEXT NOT NULL,
+                `tag` INTEGER NOT NULL,
+                `isCompleted` INTEGER NOT NULL,
+                PRIMARY KEY(`taskId`, `date`),
+                FOREIGN KEY(`taskId`) REFERENCES `Tasks`(`TaskId`) ON UPDATE NO ACTION ON DELETE CASCADE
+            )
+        """.trimIndent()
+        )
+
+        db.execSQL(
+            """
+            INSERT OR IGNORE INTO taskdb.`Tasks` (`TaskId`, `text`)
+            SELECT `TaskId`, `text` FROM main.`Tasks`
+        """.trimIndent()
+        )
+        db.execSQL(
+            """
+            INSERT OR IGNORE INTO taskdb.`TaskCompletions` (`taskId`, `date`, `time`, `tag`, `isCompleted`)
+            SELECT `taskId`, `date`, `time`, `tag`, `isCompleted` FROM main.`TaskCompletions`
+        """.trimIndent()
+        )
+        db.execSQL("DETACH DATABASE taskdb")
+
         db.execSQL("DROP TABLE Tasks")
         db.execSQL("DROP TABLE TaskCompletions")
         db.execSQL("DROP TABLE SearchHistory")
     }
 }
+
+private const val TASK_DATABASE_NAME = "task_database"

@@ -55,7 +55,7 @@ abstract class ScheduleDatabase : RoomDatabase() {
                     .addMigrations(MIGRATION_9_10)
                     .addMigrations(MIGRATION_10_11)
                     .addMigrations(MIGRATION_11_12)
-                    .addMigrations(MIGRATION_12_13)
+                    .addMigrations(migration12to13(context))
                     .build()
                 INSTANCE = instance
                 instance
