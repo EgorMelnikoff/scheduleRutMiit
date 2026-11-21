@@ -1,5 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,6 +29,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.LargeIconButton
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -35,16 +38,21 @@ import java.time.ZoneId
 @Composable
 fun SchedulesSheetWidget(
     namedSchedules: List<NamedSchedule>,
-    onImport: () -> Unit,
-    onExport: () -> Unit,
-    onClickNamedSchedule: (Long) -> Unit,
-    onDismiss: () -> Unit
+    onAction: (ScheduleAction) -> Unit
 ) {
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let {
+            onAction(ScheduleAction.OnExportData(it))
+        }
+    }
+
     AppBottomSheet(
         showHandle = false,
         verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.none),
         onDismiss = {
-            onDismiss()
+            onAction(ScheduleAction.OnDismissSchedulesSheet)
         }
     ) {
         Row(
@@ -65,8 +73,8 @@ fun SchedulesSheetWidget(
 
             LargeIconButton(
                 onClick = {
-                    onDismiss()
-                    onImport()
+                    onAction(ScheduleAction.OnDismissSchedulesSheet)
+                    onAction(ScheduleAction.OnImportClicked)
                 },
                 colors = IconButtonDefaults.iconButtonColors().copy(
                     containerColor = AppTheme.colors.secondaryContainer,
@@ -78,8 +86,8 @@ fun SchedulesSheetWidget(
 
             LargeIconButton(
                 onClick = {
-                    onDismiss()
-                    onExport()
+                    onAction(ScheduleAction.OnDismissSchedulesSheet)
+                    exportLauncher.launch("backup")
                 },
                 colors = IconButtonDefaults.iconButtonColors().copy(
                     containerColor = AppTheme.colors.secondaryContainer,
@@ -137,7 +145,7 @@ fun SchedulesSheetWidget(
                 showChevron = !namedSchedule.isDefault,
                 showSeparator = index != namedSchedules.lastIndex,
                 onClick = {
-                    onClickNamedSchedule(namedSchedule.id)
+                    onAction(ScheduleAction.OnChangeSchedule(namedSchedule.id))
                 }
             )
         }

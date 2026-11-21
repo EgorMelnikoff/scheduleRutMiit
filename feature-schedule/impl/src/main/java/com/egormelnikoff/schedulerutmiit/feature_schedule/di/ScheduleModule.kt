@@ -3,10 +3,10 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.di
 import android.content.Context
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.core.settings.api.repos.SettingsRepos
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.NamedScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.ScheduleApi
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.file.FileExporter
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.file.FileImporter
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.feature_schedule.glance.model.WidgetDataUpdaterImpl
 import dagger.Module
 import dagger.Provides
@@ -40,13 +40,13 @@ object ScheduleModule {
     @Singleton
     fun provideWidgetUpdater(
         @ApplicationContext context: Context,
-        namedScheduleDataSource: NamedScheduleDataSource,
+        namedScheduleRepos: NamedScheduleRepos,
         settingsRepos: SettingsRepos,
         json: Json
     ): WidgetDataUpdaterImpl = WidgetDataUpdaterImpl(
         context = context,
         settingsRepos = settingsRepos,
-        namedScheduleDataSource = namedScheduleDataSource,
+        namedScheduleRepos = namedScheduleRepos,
         json = json
     )
 }

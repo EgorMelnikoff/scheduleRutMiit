@@ -1,172 +1,141 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule
 
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
+import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarData
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.findDefault
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getGroupedEvents
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.findEventExtra
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getPeriodicEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.EventTimeGroupVo
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.EventVo
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
-import kotlin.collections.forEach
 
 class ScheduleUiStateConverter @Inject constructor() {
+
+    private data class ScheduleCacheKey(
+        val namedScheduleWithSchedules: NamedScheduleWithSchedules?,
+        val eventExtraPolicy: EventExtraPolicy,
+        val today: LocalDate
+    )
+
+    private var scheduleCache: Pair<ScheduleCacheKey, ScheduleVo>? = null
+
     fun toUiState(
-        state: TestState
+        state: ScheduleState
     ): ScheduleUiState {
+        val today = state.time.toLocalDate()
+
         return ScheduleUiState(
-            mode = state.mode.toVo(),
+            mode = state.mode.toUi(),
             isSaved = state.isSaved,
             isRefreshing = state.isRefreshing,
             time = state.time,
             namedSchedules = state.namedSchedules,
             namedSchedule = state.namedScheduleWithSchedules?.namedSchedule,
-            scheduleVo = state.namedScheduleWithSchedules.toVo(),
-            scheduleSheet = state.scheduleSheet,
+            schedules = state.namedScheduleWithSchedules?.schedulesWithEvents?.map { it.schedule }
+                .orEmpty(),
+            scheduleVo = state.namedScheduleWithSchedules.toScheduleVo(
+                eventExtraPolicy = state.eventExtraPolicy,
+                today = today
+            ),
+            eventView = state.eventView,
+            scheduleView = state.scheduleView,
+            eventsCountView = state.eventsCountView,
             schedulesSheet = state.schedulesSheet,
+            scheduleSheet = state.scheduleSheet,
             importSheet = state.importSheet,
-            hideEventSheet = state.hideEventSheet,
-            deleteEventSheet = state.deleteEventSheet,
-            returnScheduleSheet = state.returnScheduleSheet,
-            deleteScheduleSheet = state.deleteScheduleSheet
+            returnScheduleSheet = state.returnScheduleSheet
         )
     }
 
-    private fun TestState.Mode.toVo(): ScheduleUiState.Mode {
+    private fun ScheduleState.Mode.toUi(): ScheduleUiState.Mode {
         return when (this) {
-            TestState.Mode.Content -> ScheduleUiState.Mode.Content
-            TestState.Mode.Empty -> ScheduleUiState.Mode.Empty
-            is TestState.Mode.Error -> ScheduleUiState.Mode.Error(this.appError)
-            TestState.Mode.Loading -> ScheduleUiState.Mode.Loading
+            ScheduleState.Mode.Content -> ScheduleUiState.Mode.Content
+            ScheduleState.Mode.Empty -> ScheduleUiState.Mode.Empty
+            is ScheduleState.Mode.Error -> ScheduleUiState.Mode.Error(this.appError)
+            ScheduleState.Mode.Loading -> ScheduleUiState.Mode.Loading
         }
     }
 
-
-    private fun Event.toVo(
-        eventsExtraData: Map<Long, List<EventExtraData>>?,
-    ): EventVo {
-        return EventVo(
-            id = id,
-            scheduleId = scheduleId,
-            isHidden = isHidden,
-            isCustomEvent = isCustomEvent,
-            startDatetime = startDatetime,
-            endDatetime = endDatetime,
-            interval = interval,
-            periodNumber = periodNumber,
-            name = name,
-            typeName = typeName,
-            timeSlotName = timeSlotName,
-            lecturers = lecturers,
-            rooms = rooms,
-            groups = groups,
-            eventsExtraData = eventsExtraData?.get(id)?.associateBy { it.date }.orEmpty()
-        )
-    }
-
-    private fun NamedScheduleWithSchedules?.toVo(): ScheduleVo? {
+    private fun NamedScheduleWithSchedules?.toScheduleVo(
+        eventExtraPolicy: EventExtraPolicy,
+        today: LocalDate
+    ): ScheduleVo? {
         val scheduleWithEvents = this?.schedulesWithEvents?.findDefault() ?: return null
 
-        val splitEvents = scheduleWithEvents.events.partition { it.isHidden }
+        val cacheKey = ScheduleCacheKey(this, eventExtraPolicy, today)
+        scheduleCache?.takeIf { it.first == cacheKey }?.let { return it.second }
 
-        var periodicEventsForCalendar: Map<Int, Map<DayOfWeek, List<Event>>>? = null
-        var nonPeriodicEventsForCalendar: Map<LocalDate, List<Event>>? = null
-
-        if (scheduleWithEvents.schedule.recurrence != null) {
-            periodicEventsForCalendar = splitEvents.second.getPeriodicEvents(
-                scheduleWithEvents.schedule.recurrence.interval
-            )
-        } else {
-            nonPeriodicEventsForCalendar = splitEvents.second.groupBy {
-                it.startDatetime.toLocalDate()
-            }
+        return scheduleWithEvents.toVo(eventExtraPolicy, today).also { scheduleVo ->
+            scheduleCache = cacheKey to scheduleVo
         }
+    }
 
-        val fullEventList = getFullEventsList(
-            periodicEvents = periodicEventsForCalendar,
-            nonPeriodicEventsList = splitEvents.second,
-            schedule = scheduleWithEvents.schedule,
-        )
+    private fun ScheduleWithEvents.toVo(
+        eventExtraPolicy: EventExtraPolicy,
+        today: LocalDate
+    ): ScheduleVo {
+        val visibleEvents = events.filter { !it.isHidden }
 
-        val calendarData = CalendarData(
-            startDate = scheduleWithEvents.schedule.startDate,
-            endDate = scheduleWithEvents.schedule.endDate
-        )
+        val eventsByDate = visibleEvents
+            .expandOccurrences(schedule)
+            .groupBy { it.startDatetime.toLocalDate() }
+            .mapValues { (_, events) ->
+                events.toTimeGroups(eventExtraPolicy, eventsExtraData)
+            }
+            .toMap()
 
         return ScheduleVo(
-            schedule = scheduleWithEvents.schedule,
-
-            periodicEvents = periodicEventsForCalendar,
-            nonPeriodicEvents = nonPeriodicEventsForCalendar,
-            calendarData = calendarData,
-            fullEventList = fullEventList,
-            eventsExtraData = scheduleWithEvents.eventsExtraData.groupBy { it.eventId },
-            haveHiddenEvents = splitEvents.first.isNotEmpty()
-        )
-    }
-
-
-    private fun getFullEventsList(
-        schedule: Schedule,
-        periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
-        nonPeriodicEventsList: List<Event>?
-    ): Map<LocalDate, Map<String, List<Event>>> {
-        val today = LocalDate.now()
-
-        val fullEventsList = when {
-            periodicEvents == null && nonPeriodicEventsList == null -> emptyList()
-
-            periodicEvents != null && schedule.recurrence != null ->
-                periodicEvents.getFullPeriodicEventList(
-                    schedule,
-                    today
+            schedule = schedule,
+            calendarData = CalendarData(
+                startDate = schedule.startDate,
+                endDate = schedule.endDate
+            ),
+            eventsByDate = eventsByDate,
+            fullEventList = eventsByDate.filter { (date, _) -> !date.isBefore(today) },
+            eventsCountByDate = eventsByDate.mapValues { (_, groups) -> groups.size }.toMap(),
+            weekByFirstDayOfWeek = schedule.recurrence?.let { recurrence ->
+                getWeekByFirstDayOfWeek(
+                    startDate = schedule.startDate,
+                    endDate = schedule.endDate,
+                    recurrence = recurrence
                 )
-
-            else -> nonPeriodicEventsList ?: emptyList()
-        }
-
-        return fullEventsList
-            .asSequence()
-            .filter { it.startDatetime.toLocalDate()?.isAfter(today.minusDays(1)) == true }
-            .sortedBy { it.startDatetime }
-            .groupBy { it.startDatetime.toLocalDate() }
-            .mapValues {
-                it.value.getGroupedEvents()
-            }
+            }.orEmpty(),
+            haveHiddenEvents = visibleEvents.size != events.size
+        )
     }
 
+    private fun List<Event>.expandOccurrences(schedule: Schedule): List<Event> {
+        val recurrence = schedule.recurrence ?: return this
 
-    private fun Map<Int, Map<DayOfWeek, List<Event>>>.getFullPeriodicEventList(
-        schedule: Schedule,
-        today: LocalDate
-    ): List<Event> {
-        val currentStartDate = maxOf(today, schedule.startDate)
+        val periodicEvents = getPeriodicEvents(recurrence.interval)
 
-        val weeksNumbers = getWeekNumbers(
-            currentStartDate = currentStartDate,
-            startDate = schedule.startDate,
-            endDate = schedule.endDate,
-            recurrence = schedule.recurrence!!
-        )
+        val weeksCount = ChronoUnit.WEEKS.between(
+            schedule.startDate.getFirstDayOfWeek(),
+            schedule.endDate.getFirstDayOfWeek()
+        ).toInt() + 1
 
         return buildList {
-            var currentWeekStartDate = currentStartDate
+            var currentWeekStartDate = schedule.startDate
 
-            weeksNumbers.forEach { week ->
-                val weekMap = this@getFullPeriodicEventList[week] ?: emptyMap()
+            for (week in 1..weeksCount) {
+                val weekNumber = ((week + recurrence.firstWeekNumber) % recurrence.interval) + 1
+                val weekMap = periodicEvents[weekNumber].orEmpty()
 
                 weekMap.values.forEach { eventsInDay ->
                     eventsInDay.forEach { event ->
                         val dayShift = event.startDatetime.dayOfWeek.value
-                            .minus(currentStartDate.dayOfWeek.value)
+                            .minus(schedule.startDate.dayOfWeek.value)
 
                         val newDate = currentWeekStartDate
                             .plusDays(dayShift.toLong())
@@ -187,24 +156,67 @@ class ScheduleUiStateConverter @Inject constructor() {
         }
     }
 
-    private fun getWeekNumbers(
-        currentStartDate: LocalDate,
+    private fun List<Event>.toTimeGroups(
+        eventExtraPolicy: EventExtraPolicy,
+        eventsExtraData: List<EventExtraData>
+    ): List<EventTimeGroupVo> {
+        val extrasByEventId = eventsExtraData.groupBy { it.eventId }
+
+        return sortedBy { it.startDatetime }
+            .groupBy {
+                it.startDatetime.toLocalTimeWithTimeZone() to it.endDatetime.toLocalTimeWithTimeZone()
+            }
+            .map { (time, events) ->
+                EventTimeGroupVo(
+                    timeSlotName = events.first().timeSlotName,
+                    startTime = time.first,
+                    endTime = time.second,
+                    events = events.map { it.toVo(eventExtraPolicy, extrasByEventId) }
+                )
+            }
+    }
+
+    private fun Event.toVo(
+        eventExtraPolicy: EventExtraPolicy,
+        extrasByEventId: Map<Long, List<EventExtraData>>
+    ): EventVo {
+        val date = startDatetime.toLocalDate()
+        val extra = extrasByEventId.findEventExtra(eventExtraPolicy, id, date)
+
+        return EventVo(
+            id = id,
+            scheduleId = scheduleId,
+            isCustomEvent = isCustomEvent,
+            startDatetime = startDatetime,
+            endDatetime = endDatetime,
+            name = name,
+            typeName = typeName,
+            timeSlotName = timeSlotName,
+            lecturers = lecturers,
+            rooms = rooms,
+            groups = groups,
+            comment = extra?.comment?.takeIf { it.isNotBlank() }
+                ?.replace(Regex("\\s+"), " "),
+            tag = extra?.tag,
+            dialogDate = if (eventExtraPolicy == EventExtraPolicy.BY_DATES) date else null
+        )
+    }
+
+    private fun getWeekByFirstDayOfWeek(
         startDate: LocalDate,
         endDate: LocalDate,
         recurrence: Recurrence
-    ): List<Int> {
+    ): Map<LocalDate, Int> {
+        val firstWeekStartDate = startDate.getFirstDayOfWeek()
+
         val weeksCount = ChronoUnit.WEEKS.between(
-            startDate.getFirstDayOfWeek(),
+            firstWeekStartDate,
             endDate.getFirstDayOfWeek()
         ).toInt() + 1
 
-        val weeksRemaining = ChronoUnit.WEEKS.between(
-            currentStartDate.getFirstDayOfWeek(),
-            endDate.getFirstDayOfWeek()
-        ).toInt()
-
-        return (weeksCount - weeksRemaining..weeksCount).map { week ->
-            ((week + recurrence.firstWeekNumber) % recurrence.interval).plus(1)
+        return (0 until weeksCount).associate { weekIndex ->
+            firstWeekStartDate.plusWeeks(weekIndex.toLong()) to
+                    ((weekIndex + 1 + recurrence.firstWeekNumber) % recurrence.interval) + 1
         }
     }
 }

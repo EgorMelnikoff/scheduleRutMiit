@@ -23,13 +23,15 @@ abstract class BaseViewModel<State, UiState, Action>(initialState: State) : View
 
     private val _state = MutableStateFlow(initialState)
 
-    val state: StateFlow<UiState> = _state
-        .map { it.toUiState() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = initialState.toUiState()
-        )
+    val state: StateFlow<UiState> by lazy {
+        _state
+            .map { it.toUiState() }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = _state.value.toUiState()
+            )
+    }
 
     protected val screenState: State
         get() = _state.value

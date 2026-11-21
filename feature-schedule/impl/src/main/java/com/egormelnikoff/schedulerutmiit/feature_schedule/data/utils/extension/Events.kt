@@ -49,34 +49,6 @@ fun Map<Long, List<EventExtraData>>.findEventExtra(
     }
 }
 
-fun Map.Entry<String, List<Event>>.getEnrichedEvents(
-    eventsExtraData: Map<Long, List<EventExtraData>>,
-    eventExtraPolicy: EventExtraPolicy,
-    date: LocalDate
-): List<Pair<Event, EventExtraData?>> {
-    return this.value.map { event ->
-        event to eventsExtraData.findEventExtra(
-            eventExtraPolicy = eventExtraPolicy,
-            eventId = event.id,
-            date = date
-        )
-    }
-}
-
-fun Map<String, List<Event>>?.getEnrichedEvents(
-    date: LocalDate,
-    eventExtraPolicy: EventExtraPolicy,
-    eventsExtraData: Map<Long, List<EventExtraData>>
-): List<Pair<String, List<Pair<Event, EventExtraData?>>>> {
-    if (this == null) return emptyList()
-
-    return this.map { entry ->
-        val enriched = entry.getEnrichedEvents(eventsExtraData, eventExtraPolicy, date)
-        entry.key to enriched
-    }
-}
-
-
 fun Event.customToString(context: Context): String {
     return buildString {
         append("${context.getString(R.string._class)}: ${this@customToString.name}")

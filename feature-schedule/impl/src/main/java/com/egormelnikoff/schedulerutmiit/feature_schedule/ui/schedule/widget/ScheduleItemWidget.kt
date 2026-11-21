@@ -9,27 +9,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
-import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
-import java.time.LocalDate
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.EventTimeGroupVo
 
 @Composable
 fun ScheduleItemWidget(
-    eventsWithExtra: List<Pair<Event, EventExtraData?>>,
-    schedule: Schedule,
-    isSavedSchedule: Boolean,
+    timeGroup: EventTimeGroupVo,
     eventView: EventView,
-    date: LocalDate?,
-    navigateToEvent: (Route.Dialog.EventDialog) -> Unit,
-    navigateToEditEvent: (Route.Dialog.EditEventDialog) -> Unit,
-    onDeleteEvent: (Long) -> Unit,
-    onHideEvent: (Long) -> Unit
+    isSavedSchedule: Boolean,
+    onAction: (ScheduleAction) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -39,46 +30,29 @@ fun ScheduleItemWidget(
             modifier = Modifier.padding(vertical = AppTheme.paddings.padding4),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (eventsWithExtra.first().first.timeSlotName != null) {
+            if (timeGroup.timeSlotName != null) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = eventsWithExtra.first().first.timeSlotName.toString(),
+                    text = timeGroup.timeSlotName,
                     style = AppTheme.typography.titleSmall,
                     color = AppTheme.colors.primary
                 )
             }
             Text(
-                text =
-                    "${
-                        eventsWithExtra.first().first.startDatetime.toLocalTimeWithTimeZone()
-                    } - ${
-                        eventsWithExtra.first().first.endDatetime.toLocalTimeWithTimeZone()
-                    }",
+                text = "${timeGroup.startTime} - ${timeGroup.endTime}",
                 style = AppTheme.typography.titleSmall,
                 color = AppTheme.colors.primary
             )
         }
 
         ColumnGroup(
-            items = eventsWithExtra.map { event ->
+            items = timeGroup.events.map { event ->
                 {
                     ScheduleItemSingleWidget(
-                        navigateToEvent = navigateToEvent,
-                        navigateToEditEvent = navigateToEditEvent,
-                        onDeleteEvent = onDeleteEvent,
-                        onUpdateHiddenEvent = onHideEvent,
+                        event = event,
+                        eventView = eventView,
                         isSavedSchedule = isSavedSchedule,
-                        event = event.first,
-                        eventExtraData = event.second,
-                        eventDialog = Route.Dialog.EventDialog(
-                            eventId = event.first.id,
-                            date = date
-                        ),
-                        editEventDialog = Route.Dialog.EditEventDialog(
-                            eventId = event.first.id,
-                            scheduleId = schedule.id
-                        ),
-                        eventView = eventView
+                        onAction = onAction
                     )
                 }
             }

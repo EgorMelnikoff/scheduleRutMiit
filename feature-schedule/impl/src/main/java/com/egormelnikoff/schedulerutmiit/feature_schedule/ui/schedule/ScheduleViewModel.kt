@@ -1,7 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule
 
 import android.net.Uri
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.error.AppError
@@ -9,40 +8,32 @@ import com.egormelnikoff.schedulerutmiit.core.common.error.toAppError
 import com.egormelnikoff.schedulerutmiit.core.common.time_provider.TimeProvider
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
+import com.egormelnikoff.schedulerutmiit.core.network.handler.errorHandler
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.settings.api.repos.SettingsRepos
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiText
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendInfoEvent
+import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.cache.FetchScheduleCache
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.FetchScheduleEvent
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventDataSource
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.findDefault
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.DeleteNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.RefreshNamedScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.SetDefaultScheduleUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.export.ExportDataUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.export.ImportDataUseCase
-import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
-import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo.Companion.withExtraData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -58,70 +49,177 @@ class ScheduleViewModel @Inject constructor(
     private val importDataUseCase: ImportDataUseCase,
     private val exportDataUseCase: ExportDataUseCase,
     private val appRouter: AppRouter,
-    timeProvider: TimeProvider
-) : ViewModel() {
-    private var previousState: NamedScheduleState = NamedScheduleState.Loading
+    private val timeProvider: TimeProvider,
+    private val scheduleUiStateConverter: ScheduleUiStateConverter
+) : BaseViewModel<ScheduleState, ScheduleUiState, ScheduleAction>(ScheduleState()) {
 
-    private val _screenState = MutableStateFlow(ScreenState())
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEventFlow.asSharedFlow()
 
     private var fetchScheduleJob: Job? = null
     private var updateScheduleJob: Job? = null
 
-    val screenState = _screenState.asStateFlow()
-    val uiEvent = _uiEventFlow.asSharedFlow()
-
     init {
-        viewModelScope.launch {
-            fetchScheduleCache.scheduleRequests.collect { event ->
+        fetchScheduleCache.scheduleRequests
+            .onEach { event ->
                 handleFetchEvent(event)
             }
+            .launchIn(viewModelScope)
+    }
+
+    override fun ScheduleState.toUiState(): ScheduleUiState {
+        return scheduleUiStateConverter.toUiState(this)
+    }
+
+    override fun onScreenInitialized() {
+        namedScheduleRepos.observeAll()
+            .onEach { schedules ->
+                updateState {
+                    copy(namedSchedules = schedules)
+                }
+            }
+            .launchIn(viewModelScope)
+
+        namedScheduleRepos.currentNamedSchedule
+            .onEach { current ->
+                updateState {
+                    copy(
+                        namedScheduleWithSchedules = current,
+                        isSaved = !namedScheduleRepos.isSaved,
+                        mode = when {
+                            current != null -> ScheduleState.Mode.Content
+                            mode is ScheduleState.Mode.Error -> mode
+                            else -> ScheduleState.Mode.Empty
+                        }
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
+
+        settingsRepos.observeAppSettings()
+            .onEach { appSettings ->
+                updateState {
+                    copy(
+                        eventExtraPolicy = appSettings.eventExtraPolicy,
+                        eventView = appSettings.eventView,
+                        scheduleView = appSettings.scheduleView,
+                        eventsCountView = appSettings.eventsCountView
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
+
+        timeProvider.currentHour
+            .onEach { dateTime ->
+                updateState {
+                    copy(time = dateTime)
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    override fun onAction(action: ScheduleAction) {
+        when (action) {
+            ScheduleAction.OnP2R -> onP2R()
+            is ScheduleAction.OnViewClicked -> onViewClicked(action.view)
+
+            ScheduleAction.OnTitleClicked -> updateState {
+                copy(schedulesSheet = true)
+            }
+
+            ScheduleAction.OnDismissSchedulesSheet -> updateState {
+                copy(schedulesSheet = false)
+            }
+
+            is ScheduleAction.OnChangeSchedule -> onSetNamedSchedule(action.id)
+
+            ScheduleAction.OnMenuVertClicked -> updateState {
+                copy(scheduleSheet = true)
+            }
+
+            ScheduleAction.OnDismissScheduleSheet -> updateState {
+                copy(scheduleSheet = false)
+            }
+
+            is ScheduleAction.OnSetDefaultSchedule -> onSetDefaultSchedule(
+                action.scheduleId,
+                action.timetableId
+            )
+
+            ScheduleAction.OnSaveScheduleClicked -> saveCurrentNamedSchedule()
+
+            ScheduleAction.OnDeleteNamedSchedule -> deleteNamedSchedule()
+
+            ScheduleAction.OnImportClicked -> updateState {
+                copy(importSheet = true)
+            }
+
+            ScheduleAction.OnDismissImportSheet -> updateState {
+                copy(importSheet = false)
+            }
+
+            is ScheduleAction.OnImportData -> onImportData(action.uri)
+            is ScheduleAction.OnExportData -> onExportData(action.uri)
+
+            ScheduleAction.OnReturnToDefaultClicked -> updateState {
+                copy(returnScheduleSheet = true)
+            }
+
+            ScheduleAction.OnDismissReturnToDefault -> updateState {
+                copy(returnScheduleSheet = false)
+            }
+
+            ScheduleAction.OnReturnToDefault -> {
+                updateState {
+                    copy(returnScheduleSheet = false)
+                }
+                refreshScheduleState(showLoading = false)
+            }
+
+            is ScheduleAction.OnEventClicked -> onEventClicked(action.id, action.date)
+            is ScheduleAction.OnEditEventClicked -> appRouter.openDialog(
+                Route.Dialog.EditEventDialog(
+                    eventId = action.eventId,
+                    scheduleId = action.scheduleId
+                )
+            )
+
+            is ScheduleAction.OnHideEvent -> onHideEvent(action.id)
+            is ScheduleAction.OnDeleteEvent -> onDeleteEvent(action.id)
+
+            ScheduleAction.OnCancelLoading -> cancelLoading()
+            ScheduleAction.OnCancelRefresh -> cancelRefresh()
+
+            is ScheduleAction.OnOpenDialog -> appRouter.openDialog(action.dialog)
         }
     }
 
-    val namedSchedules = namedScheduleRepos
-        .observeAll()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            emptyList()
+    private fun onP2R() {
+        val current = screenState.namedScheduleWithSchedules ?: return
+
+        refreshScheduleState(
+            namedScheduleId = current.namedSchedule.id,
+            updating = true,
+            showLoading = false
         )
+    }
 
-    val namedScheduleState = namedScheduleRepos.currentNamedSchedule
-        .map { current ->
-            val state = handleNamedSchedule(
-                oldState = previousState,
-                newNamedSchedule = current
-            ).second
-
-            updateScreenState(
-                isSaved = !namedScheduleRepos.isSaved
-            )
-
-            previousState = state
-
-            state
+    private fun onViewClicked(view: ScheduleView) {
+        viewModelScope.launch {
+            settingsRepos.setScheduleView(view.next())
         }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            NamedScheduleState.Loading
+    }
+
+    private fun onEventClicked(eventId: Long, date: LocalDate?) {
+        appRouter.openDialog(
+            Route.Dialog.EventDialog(
+                eventId = eventId,
+                date = date
+            )
         )
+    }
 
-    val appSettings = settingsRepos.observeAppSettings().stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        null
-    )
-
-    val hourlyDateTime: StateFlow<LocalDateTime> = timeProvider.currentHour
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS)
-        )
-
-    fun onImportData(uri: Uri?) {
+    private fun onImportData(uri: Uri?) {
         viewModelScope.launch {
             if (uri == null) {
                 _uiEventFlow.sendErrorEvent(AppError.EmptyBodyError)
@@ -129,11 +227,6 @@ class ScheduleViewModel @Inject constructor(
             }
             try {
                 importDataUseCase(uri)
-                _uiEventFlow.emit(
-                    UiEvent.InfoMessage(
-                        UiText.StringResource(R.string.success)
-                    )
-                )
                 _uiEventFlow.sendInfoEvent(
                     UiEvent.InfoMessage(
                         UiText.StringResource(R.string.success)
@@ -145,7 +238,7 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    fun onExportData(uri: Uri) {
+    private fun onExportData(uri: Uri) {
         viewModelScope.launch {
             try {
                 exportDataUseCase(uri)
@@ -157,59 +250,73 @@ class ScheduleViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiEventFlow.sendErrorEvent(e.toAppError())
             }
-
         }
     }
 
-    fun onOpenDialog(dialog: Route.Dialog) {
-        appRouter.openDialog(dialog)
-    }
-
-    fun cancelLoading() {
+    private fun cancelLoading() {
         viewModelScope.launch {
             fetchScheduleJob?.cancelAndJoin()
-            updateScreenState(
-                isLoading = false,
-                isRefreshing = false,
-                isError = false
-            )
+            updateScheduleJob?.cancelAndJoin()
+            updateState {
+                copy(mode = dataMode())
+            }
         }
     }
 
-    fun cancelRefresh() {
+    private fun cancelRefresh() {
         viewModelScope.launch {
             updateScheduleJob?.cancelAndJoin()
-            updateScreenState(
-                isLoading = false,
-                isRefreshing = false,
-                isError = false
-            )
+            updateState {
+                copy(
+                    isRefreshing = false,
+                    mode = dataMode()
+                )
+            }
         }
     }
 
-    fun refreshScheduleState(
+    private fun refreshScheduleState(
         namedScheduleId: Long? = null,
         updating: Boolean = false,
         showLoading: Boolean = true
     ) {
-        val newUpdateScheduleJob = viewModelScope.launch {
-            updateScheduleJob?.cancelAndJoin()
-            updateScreenState(
-                isLoading = showLoading,
-                isRefreshing = updating,
-                isError = false
-            )
-            refreshNamedScheduleUseCase(
-                namedScheduleId, updating
-            )
+        val previousJob = updateScheduleJob
 
-            if (namedScheduleId != null) namedScheduleRepos.getAndOpen(namedScheduleId)
-            else namedScheduleRepos.openDefault()
+        val newUpdateScheduleJob = launchToCoroutine(
+            handler = errorHandler(
+                "refreshScheduleState"
+            ) { throwable ->
+                viewModelScope.launch {
+                    _uiEventFlow.sendErrorEvent(throwable.toAppError())
+                }
+            }
+        ) {
+            previousJob?.cancelAndJoin()
 
-            updateScreenState(
-                isLoading = false,
-                isRefreshing = false
-            )
+            if (showLoading) {
+                updateState {
+                    copy(mode = ScheduleState.Mode.Loading)
+                }
+            }
+            updateState {
+                copy(isRefreshing = updating)
+            }
+
+            try {
+                refreshNamedScheduleUseCase(
+                    namedScheduleId, updating
+                )
+
+                if (namedScheduleId != null) namedScheduleRepos.getAndOpen(namedScheduleId)
+                else namedScheduleRepos.openDefault()
+            } finally {
+                updateState {
+                    copy(
+                        isRefreshing = false,
+                        mode = if (showLoading) dataMode() else mode
+                    )
+                }
+            }
         }
         updateScheduleJob = newUpdateScheduleJob
     }
@@ -217,14 +324,24 @@ class ScheduleViewModel @Inject constructor(
     private fun handleFetchEvent(
         fetchScheduleEvent: FetchScheduleEvent
     ) {
-        // TODO заменить на launchToCoroutine
+        val previousJob = fetchScheduleJob
 
-        val fetchJob = viewModelScope.launch {
-            fetchScheduleJob?.cancelAndJoin()
+        val fetchJob = launchToCoroutine(
+            handler = errorHandler(
+                "handleFetchEvent"
+            ) { throwable ->
+                updateState {
+                    copy(
+                        mode = ScheduleState.Mode.Error(throwable.toAppError())
+                    )
+                }
+            },
+        ) {
+            previousJob?.cancelAndJoin()
 
-            updateScreenState(
-                isLoading = true
-            )
+            updateState {
+                copy(mode = ScheduleState.Mode.Loading)
+            }
 
             namedScheduleRepos.getAndOpen(
                 name = fetchScheduleEvent.name,
@@ -232,17 +349,15 @@ class ScheduleViewModel @Inject constructor(
                 type = fetchScheduleEvent.type
             )
 
-            updateScreenState(
-                isError = false,
-                isLoading = false
-            )
+            updateState {
+                copy(mode = dataMode())
+            }
         }
 
         fetchScheduleJob = fetchJob
-
     }
 
-    fun onSetNamedSchedule(
+    private fun onSetNamedSchedule(
         namedScheduleId: Long,
     ) {
         viewModelScope.launch {
@@ -250,34 +365,42 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    fun saveCurrentNamedSchedule() {
+    private fun saveCurrentNamedSchedule() {
         viewModelScope.launch {
             namedScheduleRepos.saveOpened()
         }
     }
 
-    fun deleteNamedSchedule(
-        namedScheduleId: Long,
-        isDefault: Boolean
-    ) {
+    private fun deleteNamedSchedule() {
+        val current = screenState.namedScheduleWithSchedules ?: return
+
+        updateState {
+            copy(
+                scheduleSheet = false
+            )
+        }
+
         viewModelScope.launch {
             namedScheduleRepos.openDefault()
 
             deleteNamedScheduleUseCase(
-                namedScheduleId, isDefault
+                current.namedSchedule.id,
+                current.namedSchedule.isDefault
             )
         }
     }
 
-    fun setDefaultSchedule(
+    private fun onSetDefaultSchedule(
         scheduleId: Long,
         timetableId: String
     ) {
+        val current = screenState.namedScheduleWithSchedules ?: return
+
         viewModelScope.launch {
             setDefaultScheduleUseCase(
-                currentNamedScheduleWithSchedules = currentNamedSchedule(),
+                currentNamedScheduleWithSchedules = current,
                 scheduleId = scheduleId,
-                isSaved = _screenState.value.isSaved,
+                isSaved = screenState.isSaved,
                 timetableId = timetableId
             )?.let { result ->
                 namedScheduleRepos.openTemp(result)
@@ -285,78 +408,15 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteEvent(eventId: Long) {
+    private fun onDeleteEvent(eventId: Long) {
         viewModelScope.launch {
             eventDataSource.deleteById(eventId)
         }
     }
 
-    fun onHideEvent(eventId: Long) {
+    private fun onHideEvent(eventId: Long) {
         viewModelScope.launch {
             eventDataSource.updateIsHidden(eventId, true)
         }
-    }
-
-    fun setScheduleView(scheduleView: ScheduleView) {
-        viewModelScope.launch {
-            settingsRepos.setScheduleView(scheduleView.next())
-        }
-    }
-
-
-    private fun currentNamedSchedule(): NamedScheduleWithSchedules {
-        val state = namedScheduleState.value
-
-        require(state is NamedScheduleState.Loaded)
-        return requireNotNull(state.namedScheduleWithSchedules)
-    }
-
-    private fun updateScreenState(
-        isError: Boolean? = null,
-        isRefreshing: Boolean? = null,
-        isLoading: Boolean? = null,
-        isSaved: Boolean? = null
-    ) {
-        _screenState.update { state ->
-            state.copy(
-                isError = isError ?: state.isError,
-                isRefreshing = isRefreshing ?: state.isRefreshing,
-                isLoading = isLoading ?: state.isLoading,
-                isSaved = isSaved ?: state.isSaved
-            )
-        }
-    }
-
-    private fun handleNamedSchedule(
-        newNamedSchedule: NamedScheduleWithSchedules?,
-        oldState: NamedScheduleState
-    ): Pair<NamedScheduleWithSchedules?, NamedScheduleState> {
-        if (newNamedSchedule == null) {
-            return null to NamedScheduleState.Empty
-        }
-
-        val state = oldState as? NamedScheduleState.Loaded
-            ?: NamedScheduleState.Loaded(newNamedSchedule)
-
-        val oldSchedule = state.namedScheduleWithSchedules.schedulesWithEvents.findDefault()
-        val newSchedule = newNamedSchedule.schedulesWithEvents.findDefault()
-
-        val scheduleVo = when {
-            state.scheduleVo == null ->
-                newSchedule?.let(ScheduleVo::fromSchedule)
-
-            oldSchedule?.events == newSchedule?.events && oldSchedule?.eventsExtraData != newSchedule?.eventsExtraData ->
-                state.scheduleVo.withExtraData(newSchedule?.eventsExtraData)
-
-            oldSchedule != newSchedule ->
-                newSchedule?.let(ScheduleVo::fromSchedule)
-
-            else -> state.scheduleVo
-        }
-
-        return newNamedSchedule to state.copy(
-            namedScheduleWithSchedules = newNamedSchedule,
-            scheduleVo = scheduleVo
-        )
     }
 }

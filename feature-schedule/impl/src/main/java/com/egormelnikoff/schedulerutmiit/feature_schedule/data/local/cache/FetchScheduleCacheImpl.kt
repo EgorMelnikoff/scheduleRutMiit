@@ -10,7 +10,7 @@ import javax.inject.Inject
 class FetchScheduleCacheImpl @Inject constructor(
 ) : FetchScheduleCache {
     private val _scheduleRequests = MutableSharedFlow<FetchScheduleEvent>(
-        extraBufferCapacity = 1,
+        replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 

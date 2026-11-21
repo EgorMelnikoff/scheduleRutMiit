@@ -20,16 +20,15 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleHeaderWidget(
-    onSetScheduleView: (ScheduleView) -> Unit,
-    onShowNamedScheduleDialog: (Boolean) -> Unit,
-    onTitleClick: (() -> Unit)? = null,
     namedSchedule: NamedSchedule,
     scheduleTypeName: String?,
-    scheduleView: ScheduleView
+    scheduleView: ScheduleView,
+    onAction: (ScheduleAction) -> Unit
 ) {
     val isCustomSchedule = remember(namedSchedule.type) {
         namedSchedule.type == NamedScheduleType.MY
@@ -40,14 +39,14 @@ fun ScheduleHeaderWidget(
         subtitleText = if (scheduleTypeName != null && !isCustomSchedule) {
             scheduleTypeName
         } else null,
-        onTitleClick = onTitleClick,
+        onTitleClick = {
+            onAction(ScheduleAction.OnTitleClicked)
+        },
         showTitleChevron = true,
         actions = {
             IconButton(
                 onClick = {
-                    onSetScheduleView(
-                        scheduleView
-                    )
+                    onAction(ScheduleAction.OnViewClicked(scheduleView))
                 }
             ) {
                 AnimatedContent(
@@ -74,7 +73,7 @@ fun ScheduleHeaderWidget(
             }
             IconButton(
                 onClick = {
-                    onShowNamedScheduleDialog(namedSchedule.isDefault)
+                    onAction(ScheduleAction.OnMenuVertClicked)
                 }
             ) {
                 Icon(

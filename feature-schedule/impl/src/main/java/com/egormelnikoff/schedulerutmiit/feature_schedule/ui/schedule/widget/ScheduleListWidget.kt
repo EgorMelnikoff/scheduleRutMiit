@@ -11,15 +11,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
-import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
-import com.egormelnikoff.schedulerutmiit.core.settings.api.model.AppSettings
-import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getEnrichedEvents
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.EventTimeGroupVo
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
 import java.time.LocalDate
 
@@ -27,8 +24,7 @@ private sealed interface ListEntry {
     data class Header(val date: LocalDate) : ListEntry
     data class EventItem(
         val key: Any,
-        val date: LocalDate,
-        val enrichedEvents: List<Pair<Event, EventExtraData?>>
+        val timeGroup: EventTimeGroupVo
     ) : ListEntry
 }
 
@@ -37,52 +33,30 @@ fun ScheduleListWidget(
     scheduleListState: LazyListState,
     isSavedSchedule: Boolean,
     scheduleVo: ScheduleVo,
-
-    appSettings: AppSettings,
+    eventView: EventView,
     paddingBottom: Dp,
-    onOpenDialog: (Route.Dialog) -> Unit,
-    onDeleteEvent: (Long) -> Unit,
-    onHideEvent: (Long) -> Unit
+    onAction: (ScheduleAction) -> Unit
 ) {
-    val listItems = remember(
-        scheduleVo.fullEventList,
-        scheduleVo.eventsExtraData,
-        appSettings.eventExtraPolicy
-    ) {
+    val listItems = remember(scheduleVo.fullEventList) {
         buildList {
-            scheduleVo.fullEventList.forEach { (date, eventsMap) ->
+            scheduleVo.fullEventList.forEach { (date, timeGroups) ->
                 add(ListEntry.Header(date))
 
-                eventsMap.entries.forEach { entry ->
-                    val enriched = entry.getEnrichedEvents(
-                        eventsExtraData = scheduleVo.eventsExtraData,
-                        eventExtraPolicy = appSettings.eventExtraPolicy,
-                        date = date
-                    )
-                    val firstEvent = entry.value.firstOrNull()
+                timeGroups.forEach { timeGroup ->
+                    val firstEvent = timeGroup.events.firstOrNull()
                     val itemKey = if (isSavedSchedule && firstEvent != null) {
                         "${firstEvent.id}_${firstEvent.startDatetime}"
                     } else {
-                        entry.hashCode()
+                        timeGroup.hashCode()
                     }
 
-                    add(ListEntry.EventItem(key = itemKey, date = date, enrichedEvents = enriched))
+                    add(ListEntry.EventItem(key = itemKey, timeGroup = timeGroup))
                 }
             }
         }
     }
 
     if (listItems.isNotEmpty()) {
-        val navigateToEvent = remember {
-            { dialog: Route.Dialog.EventDialog ->
-                onOpenDialog(dialog)
-            }
-        }
-        val navigateToEditEvent = remember {
-            { dialog: Route.Dialog.EditEventDialog ->
-                onOpenDialog(dialog)
-            }
-        }
         LazyColumn(
             state = scheduleListState,
             contentPadding = PaddingValues(
@@ -101,20 +75,12 @@ fun ScheduleListWidget(
                     }
 
                     is ListEntry.EventItem -> {
-                        item {
+                        item(key = item.key) {
                             ScheduleItemWidget(
-                                navigateToEvent = navigateToEvent,
-                                navigateToEditEvent = navigateToEditEvent,
-                                onDeleteEvent = onDeleteEvent,
-                                onHideEvent = onHideEvent,
-
-                                date = if (appSettings.eventExtraPolicy == EventExtraPolicy.BY_DATES) {
-                                    item.date
-                                } else null,
-                                eventsWithExtra = item.enrichedEvents,
-                                schedule = scheduleVo.schedule,
+                                timeGroup = item.timeGroup,
+                                eventView = eventView,
                                 isSavedSchedule = isSavedSchedule,
-                                eventView = appSettings.eventView
+                                onAction = onAction
                             )
                             SpacerHeight(AppTheme.paddings.padding8)
                         }

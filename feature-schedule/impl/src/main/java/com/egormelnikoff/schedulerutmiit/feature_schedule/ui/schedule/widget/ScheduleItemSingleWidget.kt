@@ -29,26 +29,19 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.EventVo
 
 @Composable
 fun ScheduleItemSingleWidget(
-    navigateToEvent: (Route.Dialog.EventDialog) -> Unit,
-    navigateToEditEvent: (Route.Dialog.EditEventDialog) -> Unit,
-    onDeleteEvent: (Long) -> Unit,
-    onUpdateHiddenEvent: (Long) -> Unit,
-    eventDialog: Route.Dialog.EventDialog,
-    editEventDialog: Route.Dialog.EditEventDialog,
-    isSavedSchedule: Boolean,
+    event: EventVo,
     eventView: EventView,
-    event: Event,
-    eventExtraData: EventExtraData?
+    isSavedSchedule: Boolean,
+    onAction: (ScheduleAction) -> Unit
 ) {
     var showExpandedMenu by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -60,14 +53,19 @@ fun ScheduleItemSingleWidget(
             .combinedClickable(
                 enabled = isSavedSchedule,
                 onClick = {
-                    navigateToEvent(eventDialog)
+                    onAction(
+                        ScheduleAction.OnEventClicked(
+                            id = event.id,
+                            date = event.dialogDate
+                        )
+                    )
                 },
                 onLongClick = {
                     showExpandedMenu = true
                 }
             )
     ) {
-        if (eventView.tagVisible && eventExtraData?.tag != null) {
+        if (eventView.tagVisible && event.tag != null) {
             Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -76,7 +74,7 @@ fun ScheduleItemSingleWidget(
                 drawLine(
                     start = Offset(x = 0f, y = 0f),
                     end = Offset(x = size.width, y = 0f),
-                    color = eventExtraData.tag.getColorByIndex(),
+                    color = event.tag.getColorByIndex(),
                     strokeWidth = 20f
                 )
             }
@@ -178,14 +176,14 @@ fun ScheduleItemSingleWidget(
                 }
             }
 
-            if (eventView.commentVisible && eventExtraData != null && eventExtraData.comment.isNotBlank()) {
+            if (eventView.commentVisible && event.comment != null) {
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = AppTheme.paddings.padding4),
                     color = AppTheme.colors.outline,
                     thickness = 0.5.dp
                 )
                 Text(
-                    text = eventExtraData.comment.replace(Regex("\\s+"), " "),
+                    text = event.comment,
                     style = AppTheme.typography.bodyMedium,
                     color = AppTheme.colors.onBackground,
                     overflow = TextOverflow.Ellipsis,
@@ -240,7 +238,12 @@ fun ScheduleItemSingleWidget(
                         )
                     },
                     onClick = {
-                        navigateToEditEvent(editEventDialog)
+                        onAction(
+                            ScheduleAction.OnEditEventClicked(
+                                eventId = event.id,
+                                scheduleId = event.scheduleId
+                            )
+                        )
                         showExpandedMenu = false
                     }
                 )
@@ -272,7 +275,7 @@ fun ScheduleItemSingleWidget(
             AppAlertBottomSheet(
                 onDismissRequest = { showDeleteDialog = false },
                 onConfirmation = {
-                    onDeleteEvent(event.id)
+                    onAction(ScheduleAction.OnDeleteEvent(event.id))
                 },
                 dialogTitle = "${stringResource(R.string.delete_event)}?",
                 dialogText = stringResource(R.string.event_deleting_alert)
@@ -283,7 +286,7 @@ fun ScheduleItemSingleWidget(
             AppAlertBottomSheet(
                 onDismissRequest = { showHideDialog = false },
                 onConfirmation = {
-                    onUpdateHiddenEvent(event.id)
+                    onAction(ScheduleAction.OnHideEvent(event.id))
                     showHideDialog = false
                 },
                 dialogTitle = "${stringResource(R.string.hide_event)}?",

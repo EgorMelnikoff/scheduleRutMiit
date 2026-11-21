@@ -26,9 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
-import com.egormelnikoff.schedulerutmiit.core.settings.api.model.AppSettings
-import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.badge.AppBadge
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.Calendar
@@ -37,9 +35,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_shee
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getCurrentWeek
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getEnrichedEvents
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getEventsForDate
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
 import java.time.LocalDate
 
@@ -48,12 +44,11 @@ fun ScheduleCalendarWidget(
     scheduleVo: ScheduleVo,
     isSavedSchedule: Boolean,
     scheduleCalendarState: CalendarState,
-    appSettings: AppSettings,
+    today: LocalDate,
+    eventsCountView: EventsCountView,
+    eventView: EventView,
     paddingBottom: Dp,
-    isToday: (LocalDate) -> Boolean,
-    onOpenDialog: (Route.Dialog) -> Unit,
-    onDeleteEvent: (Long) -> Unit,
-    onHideEvent: (Long) -> Unit
+    onAction: (ScheduleAction) -> Unit
 ) {
     var showCalendarDialog by remember { mutableStateOf(false) }
 
@@ -65,13 +60,10 @@ fun ScheduleCalendarWidget(
             showCalendarDialog = it
         },
         monthBadge = { firstDayOfCurrentWeek ->
-            if (scheduleVo.schedule.recurrence != null &&
-                scheduleVo.schedule.recurrence.interval > 1
-            ) {
-                val selectedWeek = firstDayOfCurrentWeek.getCurrentWeek(
-                    startDate = scheduleVo.schedule.startDate,
-                    recurrence = scheduleVo.schedule.recurrence
-                )
+            val recurrence = scheduleVo.schedule.recurrence
+            if (recurrence != null && recurrence.interval > 1) {
+                val selectedWeek = scheduleVo.weekByFirstDayOfWeek[firstDayOfCurrentWeek] ?: 0
+
                 Icon(
                     modifier = Modifier.size(3.dp),
                     imageVector = ImageVector.vectorResource(R.drawable.circle),
@@ -104,65 +96,36 @@ fun ScheduleCalendarWidget(
             }
         },
         calendarBarItem = { _, currentDate ->
-            val eventsForDate = remember(
-                currentDate,
-                scheduleVo.schedule,
-                scheduleVo.periodicEvents,
-                scheduleVo.nonPeriodicEvents,
-                scheduleVo.haveHiddenEvents
-            ) {
-                scheduleVo.schedule.getEventsForDate(
-                    date = currentDate,
-                    periodicEvents = scheduleVo.periodicEvents,
-                    nonPeriodicEvents = scheduleVo.nonPeriodicEvents
-                )
-            }
+            val timeGroups = scheduleVo.eventsByDate[currentDate].orEmpty()
 
             CalendarBarItem(
                 currentDate = currentDate,
 
                 isSelected = scheduleCalendarState.selectedDate == currentDate,
                 isDisabled = currentDate !in scheduleVo.schedule.startDate..scheduleVo.schedule.endDate,
-                isToday = isToday(currentDate),
+                isToday = today == currentDate,
 
                 selectDate = { date ->
-                    scheduleCalendarState.selectDate(date, eventsForDate.isEmpty())
+                    scheduleCalendarState.selectDate(date, timeGroups.isEmpty())
                 }
             ) {
-                if (appSettings.eventsCountView == EventsCountView.DETAILS) {
-                    ScheduleEventsDetailBadgeWidget(
-                        currentDate = currentDate,
-                        events = eventsForDate,
-                        eventsExtraData = scheduleVo.eventsExtraData,
-                        eventExtraPolicy = appSettings.eventExtraPolicy
-                    )
-                } else if (appSettings.eventsCountView == EventsCountView.BRIEFLY && eventsForDate.isNotEmpty()) {
-                    AppBadge(
-                        count = eventsForDate.size
-                    )
+                when {
+                    eventsCountView == EventsCountView.DETAILS && timeGroups.isNotEmpty() -> {
+                        ScheduleEventsDetailBadgeWidget(
+                            eventTimeGroups = timeGroups
+                        )
+                    }
+
+                    eventsCountView == EventsCountView.BRIEFLY && timeGroups.isNotEmpty() -> {
+                        AppBadge(
+                            count = scheduleVo.eventsCountByDate[currentDate] ?: 0
+                        )
+                    }
                 }
             }
         }
     ) { _, currentDate ->
-        val enrichedEvents = remember(
-            currentDate,
-            scheduleVo.schedule,
-            scheduleVo.periodicEvents,
-            scheduleVo.nonPeriodicEvents,
-            scheduleVo.haveHiddenEvents
-        ) {
-            scheduleVo.schedule
-                .getEventsForDate(
-                    date = currentDate,
-                    periodicEvents = scheduleVo.periodicEvents,
-                    nonPeriodicEvents = scheduleVo.nonPeriodicEvents
-                )
-                .getEnrichedEvents(
-                    eventsExtraData = scheduleVo.eventsExtraData,
-                    eventExtraPolicy = appSettings.eventExtraPolicy,
-                    date = currentDate,
-                )
-        }
+        val timeGroups = scheduleVo.eventsByDate[currentDate].orEmpty()
 
         LazyColumn(
             contentPadding = PaddingValues(
@@ -172,37 +135,18 @@ fun ScheduleCalendarWidget(
             ),
             verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
         ) {
-            if (enrichedEvents.isNotEmpty()) {
+            if (timeGroups.isNotEmpty()) {
                 items(
-                    items = enrichedEvents,
-                    key = { item ->
-                        if (isSavedSchedule) item.second.first().first.id else item.hashCode()
+                    items = timeGroups,
+                    key = { timeGroup ->
+                        if (isSavedSchedule) timeGroup.events.first().id else timeGroup.hashCode()
                     }
-                ) { events ->
-                    val navigateToEvent = remember {
-                        { dialog: Route.Dialog.EventDialog ->
-                            onOpenDialog(dialog)
-                        }
-                    }
-                    val navigateToEditEvent = remember {
-                        { dialog: Route.Dialog.EditEventDialog ->
-                            onOpenDialog(dialog)
-                        }
-                    }
-
+                ) { timeGroup ->
                     ScheduleItemWidget(
-                        navigateToEvent = navigateToEvent,
-                        navigateToEditEvent = navigateToEditEvent,
-                        onDeleteEvent = onDeleteEvent,
-                        onHideEvent = onHideEvent,
-
-                        eventsWithExtra = events.second,
-                        schedule = scheduleVo.schedule,
-                        date = if (appSettings.eventExtraPolicy == EventExtraPolicy.BY_DATES) {
-                            currentDate
-                        } else null,
+                        timeGroup = timeGroup,
+                        eventView = eventView,
                         isSavedSchedule = isSavedSchedule,
-                        eventView = appSettings.eventView
+                        onAction = onAction
                     )
                 }
             } else {

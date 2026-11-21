@@ -12,49 +12,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.findEventExtra
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
-import java.time.LocalDate
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.EventTimeGroupVo
 
 @Composable
 fun ScheduleEventsDetailBadgeWidget(
-    currentDate: LocalDate,
-    events: Map<String, List<Event>>,
-    eventsExtraData: Map<Long, List<EventExtraData>>,
-    eventExtraPolicy: EventExtraPolicy
+    eventTimeGroups: List<EventTimeGroupVo>
 ) {
     val onBackground = AppTheme.colors.onBackground
 
-    val badgeRows = remember(events, eventsExtraData, eventExtraPolicy, currentDate) {
-        events.map { (_, groupedEvents) ->
-            groupedEvents.map { event ->
-                val extra = eventsExtraData.findEventExtra(
-                    eventExtraPolicy = eventExtraPolicy,
-                    eventId = event.id,
-                    date = currentDate
-                )
-                extra?.tag.getColorByIndex(defaultColor = onBackground)
-            }
+    val badgeRows = remember(eventTimeGroups) {
+        eventTimeGroups.map { timeGroup ->
+            timeGroup.events.map { it.tag }
         }
     }
 
     FlowRow(
         modifier = Modifier.defaultMinSize(minHeight = 6.dp),
-        maxItemsInEachRow = if (events.size in 6..8) 4 else 5,
+        maxItemsInEachRow = if (eventTimeGroups.size in 6..8) 4 else 5,
         horizontalArrangement = Arrangement.spacedBy(
             2.dp,
             Alignment.CenterHorizontally
         ),
         verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding2)
     ) {
-        badgeRows.forEach { colors ->
-            if (colors.isEmpty()) return@forEach
+        badgeRows.forEach { tags ->
+            if (tags.isEmpty()) return@forEach
 
-            val canvasWidth = 6.dp + (5.dp * (colors.size - 1))
+            val canvasWidth = 6.dp + (5.dp * (tags.size - 1))
 
             Box {
                 Canvas(
@@ -63,9 +49,9 @@ fun ScheduleEventsDetailBadgeWidget(
                     val radius = 3.dp.toPx()
                     val offsetStep = 5.dp.toPx()
 
-                    colors.forEachIndexed { index, color ->
+                    tags.forEachIndexed { index, tag ->
                         drawCircle(
-                            color = color,
+                            color = tag.getColorByIndex(defaultColor = onBackground),
                             radius = radius,
                             center = Offset(
                                 x = radius + (index * offsetStep),

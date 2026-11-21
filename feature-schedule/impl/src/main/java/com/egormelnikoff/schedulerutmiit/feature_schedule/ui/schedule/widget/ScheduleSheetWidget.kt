@@ -35,11 +35,10 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.findDefault
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.ModalDialogNamedScheduleHeader
-import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleViewModel
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
 import java.time.LocalDate
 import java.time.ZoneId
 
@@ -49,15 +48,13 @@ fun ScheduleSheetWidget(
     namedSchedule: NamedSchedule,
     currentSchedule: Schedule? = null,
     schedules: List<Schedule>,
+    today: LocalDate,
 
-    scheduleViewModel: ScheduleViewModel,
     isSavedNamedSchedule: Boolean,
     haveHiddenEvents: Boolean = false,
     haveNotEmptySchedules: Boolean = false,
 
-    onOpenDialog: (Route.Dialog) -> Unit,
-    onDeleteNamedSchedule: () -> Unit,
-    onDismiss: (NamedSchedule?) -> Unit
+    onAction: (ScheduleAction) -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
 
@@ -65,18 +62,22 @@ fun ScheduleSheetWidget(
         showHandle = false,
         verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16),
         onDismiss = {
-            onDismiss(null)
+            onAction(ScheduleAction.OnDismissScheduleSheet)
         }
     ) {
         ModalDialogNamedScheduleHeader(
-            onDeleteNamedSchedule = onDeleteNamedSchedule,
+            onDeleteNamedSchedule = {
+                onAction(ScheduleAction.OnDeleteNamedSchedule)
+            },
             namedSchedule = namedSchedule,
             isSavedNamedSchedule = isSavedNamedSchedule,
-            schedule = schedules.findDefault(),
+            schedule = currentSchedule,
             onOpenRenameDialog = {
-                onOpenDialog(Route.Dialog.RenameNamedScheduleDialog(namedSchedule.id))
+                onAction(ScheduleAction.OnOpenDialog(Route.Dialog.RenameNamedScheduleDialog(namedSchedule.id)))
             },
-            onDismiss = { onDismiss(null) }
+            onDismiss = {
+                onAction(ScheduleAction.OnDismissScheduleSheet)
+            }
         )
         currentSchedule?.let { schedule ->
             Row(
@@ -126,11 +127,13 @@ fun ScheduleSheetWidget(
                         ),
                         title = stringResource(R.string.add_class),
                         onClick = {
-                            onDismiss(null)
-                            onOpenDialog(
-                                Route.Dialog.EditEventDialog(
-                                    eventId = null,
-                                    scheduleId = schedule.id
+                            onAction(ScheduleAction.OnDismissScheduleSheet)
+                            onAction(
+                                ScheduleAction.OnOpenDialog(
+                                    Route.Dialog.EditEventDialog(
+                                        eventId = null,
+                                        scheduleId = schedule.id
+                                    )
                                 )
                             )
                         }
@@ -152,9 +155,11 @@ fun ScheduleSheetWidget(
                         ),
                         title = stringResource(R.string.hidden_events),
                         onClick = {
-                            onDismiss(null)
-                            onOpenDialog(
-                                Route.Dialog.HiddenEventsDialog(schedule.id)
+                            onAction(ScheduleAction.OnDismissScheduleSheet)
+                            onAction(
+                                ScheduleAction.OnOpenDialog(
+                                    Route.Dialog.HiddenEventsDialog(schedule.id)
+                                )
                             )
                         }
                     )
@@ -179,9 +184,11 @@ fun ScheduleSheetWidget(
                                             selected = (schedule.id == currentSchedule?.id && isSavedNamedSchedule)
                                                     || schedule.isDefault,
                                             onClick = {
-                                                scheduleViewModel.setDefaultSchedule(
-                                                    schedule.id,
-                                                    schedule.timetableId
+                                                onAction(
+                                                    ScheduleAction.OnSetDefaultSchedule(
+                                                        scheduleId = schedule.id,
+                                                        timetableId = schedule.timetableId
+                                                    )
                                                 )
                                             }
                                         )
@@ -211,18 +218,21 @@ fun ScheduleSheetWidget(
                             },
                             onClick = {
                                 if (schedules.size > 1) {
-                                    scheduleViewModel.setDefaultSchedule(
-                                        schedule.id,
-                                        schedule.timetableId
+                                    onAction(
+                                        ScheduleAction.OnSetDefaultSchedule(
+                                            scheduleId = schedule.id,
+                                            timetableId = schedule.timetableId
+                                        )
                                     )
                                 }
                             },
                             end = {
                                 Custom {
-                                    val progress = remember(schedule) {
+                                    val progress = remember(schedule, today) {
                                         calculateProgress(
                                             startDate = schedule.startDate,
-                                            endDate = schedule.endDate
+                                            endDate = schedule.endDate,
+                                            currentDate = today
                                         )
                                     }
 
