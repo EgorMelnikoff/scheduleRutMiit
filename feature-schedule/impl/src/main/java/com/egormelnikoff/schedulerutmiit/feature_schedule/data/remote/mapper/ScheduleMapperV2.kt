@@ -4,6 +4,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.v2.ScheduleItemDtoV2
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
@@ -92,7 +93,7 @@ class ScheduleMapperV2 @Inject constructor() {
     }
 
     private fun List<ScheduleItemDtoV2>.mapPeriodic(): List<Event> {
-        return groupBy { it.idSchedule }
+        return groupBy { it.idSchedule to it.edGroupsXml }
             .map { (_, sameEvents) ->
                 val item = sameEvents.first()
 
@@ -193,11 +194,17 @@ class ScheduleMapperV2 @Inject constructor() {
 
         val document = Jsoup.parse(this, "", Parser.xmlParser())
 
+
         return document.select("lecturer").map { lecturer ->
+            val fullFio = lecturer.selectFirst("full_fio")?.text()
+            val shortFio = lecturer.selectFirst("short_fio")?.text().orEmpty()
+
             Lecturer(
                 id = lecturer.selectFirst("id")?.text()?.toIntOrNull() ?: -1,
-                shortFio = lecturer.selectFirst("short_fio")?.text().orEmpty(),
-                fullFio = lecturer.selectFirst("full_fio")?.text().orEmpty(),
+                shortFio = if (fullFio == null) shortFio.getShortName(
+                    NamedScheduleType.PERSON
+                ) else shortFio,
+                fullFio = fullFio ?: shortFio,
                 hint = lecturer.selectFirst("description")?.text().orEmpty(),
             )
         }

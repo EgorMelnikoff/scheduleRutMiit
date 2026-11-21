@@ -229,7 +229,7 @@ fun AppCellStartScope.AsyncImage(
 
             if (painter.state !is AsyncImagePainter.State.Success) {
                 this@AsyncImage.Title(
-                    title = imageTitle.first(),
+                    title = imageTitle.firstOrNull() ?: ' ',
                     titleSize = titleSize,
                     imageSize = imageSize,
                 )
