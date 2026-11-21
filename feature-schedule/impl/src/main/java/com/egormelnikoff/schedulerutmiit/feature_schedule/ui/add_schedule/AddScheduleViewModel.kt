@@ -38,11 +38,25 @@ class AddScheduleViewModel @Inject constructor(
             }
 
             is AddScheduleAction.OnShowBackDialog -> updateState {
-                copy(showBackDialog = action.show)
+                if (action.show) {
+                    copy(
+                        showBackDialog = true,
+                        showDialogDate = false
+                    )
+                } else {
+                    copy(showBackDialog = false)
+                }
             }
 
             is AddScheduleAction.OnShowDialogDate -> updateState {
-                copy(showDialogDate = action.show)
+                if (action.show) {
+                    copy(
+                        showDialogDate = true,
+                        showBackDialog = false
+                    )
+                } else {
+                    copy(showDialogDate = false)
+                }
             }
         }
     }

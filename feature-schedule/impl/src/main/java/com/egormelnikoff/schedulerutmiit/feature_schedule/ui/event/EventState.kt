@@ -16,16 +16,22 @@ sealed interface EventState {
         val showHideDialog: Boolean = false,
         val showActionsDialog: Boolean = false
     ) : EventState {
-        fun showDeleteDialog(showDeleteDialog: Boolean) = copy(
-            showDeleteDialog = showDeleteDialog
-        )
+        fun showDeleteDialog(showDeleteDialog: Boolean) = if (showDeleteDialog) copy(
+            showDeleteDialog = true,
+            showHideDialog = false,
+            showActionsDialog = false
+        ) else copy(showDeleteDialog = false)
 
-        fun showHideDialog(showHideDialog: Boolean) = copy(
-            showHideDialog = showHideDialog
-        )
+        fun showHideDialog(showHideDialog: Boolean) = if (showHideDialog) copy(
+            showHideDialog = true,
+            showDeleteDialog = false,
+            showActionsDialog = false
+        ) else copy(showHideDialog = false)
 
-        fun showActionsDialog(showActionsDialog: Boolean) = copy(
-            showActionsDialog = showActionsDialog
-        )
+        fun showActionsDialog(showActionsDialog: Boolean) = if (showActionsDialog) copy(
+            showActionsDialog = true,
+            showDeleteDialog = false,
+            showHideDialog = false
+        ) else copy(showActionsDialog = false)
     }
 }

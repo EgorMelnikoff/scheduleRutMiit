@@ -124,7 +124,12 @@ class ScheduleViewModel @Inject constructor(
             is ScheduleAction.OnViewClicked -> onViewClicked(action.view)
 
             ScheduleAction.OnTitleClicked -> updateState {
-                copy(schedulesSheet = true)
+                copy(
+                    schedulesSheet = true,
+                    scheduleSheet = false,
+                    importSheet = false,
+                    returnScheduleSheet = false
+                )
             }
 
             ScheduleAction.OnDismissSchedulesSheet -> updateState {
@@ -134,7 +139,12 @@ class ScheduleViewModel @Inject constructor(
             is ScheduleAction.OnChangeSchedule -> onSetNamedSchedule(action.id)
 
             ScheduleAction.OnMenuVertClicked -> updateState {
-                copy(scheduleSheet = true)
+                copy(
+                    scheduleSheet = true,
+                    schedulesSheet = false,
+                    importSheet = false,
+                    returnScheduleSheet = false
+                )
             }
 
             ScheduleAction.OnDismissScheduleSheet -> updateState {
@@ -151,7 +161,12 @@ class ScheduleViewModel @Inject constructor(
             ScheduleAction.OnDeleteNamedSchedule -> deleteNamedSchedule()
 
             ScheduleAction.OnImportClicked -> updateState {
-                copy(importSheet = true)
+                copy(
+                    importSheet = true,
+                    schedulesSheet = false,
+                    scheduleSheet = false,
+                    returnScheduleSheet = false
+                )
             }
 
             ScheduleAction.OnDismissImportSheet -> updateState {
@@ -162,7 +177,12 @@ class ScheduleViewModel @Inject constructor(
             is ScheduleAction.OnExportData -> onExportData(action.uri)
 
             ScheduleAction.OnReturnToDefaultClicked -> updateState {
-                copy(returnScheduleSheet = true)
+                copy(
+                    returnScheduleSheet = true,
+                    schedulesSheet = false,
+                    scheduleSheet = false,
+                    importSheet = false
+                )
             }
 
             ScheduleAction.OnDismissReturnToDefault -> updateState {

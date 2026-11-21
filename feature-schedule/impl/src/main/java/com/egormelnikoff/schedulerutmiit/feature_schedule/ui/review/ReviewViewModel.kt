@@ -98,11 +98,25 @@ class ReviewViewModel @Inject constructor(
             }
 
             is ReviewAction.OnShowDeleteScheduleSheet -> updateState {
-                copy(scheduleDeleteSheet = action.namedSchedule)
+                if (action.namedSchedule != null) {
+                    copy(
+                        scheduleDeleteSheet = action.namedSchedule,
+                        scheduleSheet = null
+                    )
+                } else {
+                    copy(scheduleDeleteSheet = null)
+                }
             }
 
             is ReviewAction.OnShowScheduleSheet -> updateState {
-                copy(scheduleSheet = action.namedSchedule)
+                if (action.namedSchedule != null) {
+                    copy(
+                        scheduleSheet = action.namedSchedule,
+                        scheduleDeleteSheet = null
+                    )
+                } else {
+                    copy(scheduleSheet = null)
+                }
             }
         }
     }

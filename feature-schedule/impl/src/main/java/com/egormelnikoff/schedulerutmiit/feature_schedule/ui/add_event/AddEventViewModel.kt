@@ -85,19 +85,55 @@ class AddEventViewModel @AssistedInject constructor(
             }
 
             is AddEventAction.OnShowDialogDate -> updateLoadedState {
-                copy(showDialogDate = action.show)
+                if (action.show) {
+                    copy(
+                        showDialogDate = true,
+                        showDialogStartTime = false,
+                        showDialogEndTime = false,
+                        showBackDialog = false
+                    )
+                } else {
+                    copy(showDialogDate = false)
+                }
             }
 
             is AddEventAction.OnShowDialogEndTime -> updateLoadedState {
-                copy(showDialogEndTime = action.show)
+                if (action.show) {
+                    copy(
+                        showDialogEndTime = true,
+                        showDialogDate = false,
+                        showDialogStartTime = false,
+                        showBackDialog = false
+                    )
+                } else {
+                    copy(showDialogEndTime = false)
+                }
             }
 
             is AddEventAction.OnShowDialogStartTime -> updateLoadedState {
-                copy(showDialogStartTime = action.show)
+                if (action.show) {
+                    copy(
+                        showDialogStartTime = true,
+                        showDialogDate = false,
+                        showDialogEndTime = false,
+                        showBackDialog = false
+                    )
+                } else {
+                    copy(showDialogStartTime = false)
+                }
             }
 
             is AddEventAction.OnShowBackDialog -> updateLoadedState {
-                copy(showBackDialog = action.show)
+                if (action.show) {
+                    copy(
+                        showBackDialog = true,
+                        showDialogDate = false,
+                        showDialogStartTime = false,
+                        showDialogEndTime = false
+                    )
+                } else {
+                    copy(showBackDialog = false)
+                }
             }
         }
     }
