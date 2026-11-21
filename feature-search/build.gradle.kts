@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.devtoolsKsp)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -16,10 +17,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            consumerProguardFiles("proguard-rules.pro")
         }
     }
     compileOptions {
@@ -33,12 +31,16 @@ android {
 }
 
 dependencies {
-    implementation(projects.coreUi)
-    implementation(projects.coreNetwork)
-    implementation(projects.coreDatabase)
+    implementation(projects.core.common)
+    implementation(projects.featureSchedule.api)
+    implementation(projects.core.ui)
+    implementation(projects.core.navigation)
+    implementation(projects.core.network)
+    
 
     implementation(platform(libs.androidx.compose.bom))
 
+    implementation(libs.androidx.room.ktx)
     implementation(libs.hilt.android)
     implementation(libs.bundles.compose)
     implementation(libs.bundles.navigation)
@@ -48,4 +50,5 @@ dependencies {
     debugImplementation(libs.bundles.androidx.ui.debug)
 
     ksp(libs.hilt.android.compiler)
+    ksp(libs.androidx.room.compiler)
 }

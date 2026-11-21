@@ -17,7 +17,7 @@ android {
         minSdk = 29
         targetSdk = 37
         versionCode = 97
-        versionName = "2.8.1"
+        versionName = "3.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -49,13 +49,16 @@ android {
 }
 
 dependencies {
-    implementation(projects.coreUi)
-    implementation(projects.featureSchedule)
+    implementation(projects.core.common)
+    implementation(projects.core.settings.api)
+    implementation(projects.core.settings.impl)
+    implementation(projects.core.navigation)
+    implementation(projects.core.ui)
+    implementation(projects.featureSchedule.api)
+    implementation(projects.featureSchedule.impl)
     implementation(projects.featureSearch)
     implementation(projects.featureCurriculum)
-    implementation(projects.featureLatestRelease)
     implementation(projects.featureNews)
-    implementation(projects.featureExport)
     implementation(projects.featureTasks)
 
     implementation(platform(libs.firebase.bom))
@@ -66,7 +69,6 @@ dependencies {
     implementation(libs.bundles.work)
     implementation(libs.bundles.compose)
     implementation(libs.bundles.navigation)
-    implementation(libs.bundles.glance)
     implementation(libs.firebase.analytics)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.core.splashscreen)

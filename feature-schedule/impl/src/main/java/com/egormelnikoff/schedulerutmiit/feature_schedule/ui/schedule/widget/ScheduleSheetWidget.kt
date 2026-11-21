@@ -1,0 +1,276 @@
+package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.RadioButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
+import com.egormelnikoff.schedulerutmiit.core.common.extension.getStartMs
+import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
+import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Custom
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
+import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.ModalDialogNamedScheduleHeader
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
+import java.time.LocalDate
+import java.time.ZoneId
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScheduleSheetWidget(
+    namedSchedule: NamedSchedule,
+    currentSchedule: Schedule? = null,
+    schedules: List<Schedule>,
+    today: LocalDate,
+
+    isSavedNamedSchedule: Boolean,
+    haveHiddenEvents: Boolean = false,
+    haveNotEmptySchedules: Boolean = false,
+
+    onAction: (ScheduleAction) -> Unit
+) {
+    val uriHandler = LocalUriHandler.current
+
+    AppBottomSheet(
+        showHandle = false,
+        verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16),
+        onDismiss = {
+            onAction(ScheduleAction.OnDismissScheduleSheet)
+        }
+    ) {
+        ModalDialogNamedScheduleHeader(
+            onDeleteNamedSchedule = {
+                onAction(ScheduleAction.OnDeleteNamedSchedule)
+            },
+            namedSchedule = namedSchedule,
+            isSavedNamedSchedule = isSavedNamedSchedule,
+            schedule = currentSchedule,
+            onOpenRenameDialog = {
+                onAction(ScheduleAction.OnOpenDialog(Route.Dialog.RenameNamedScheduleDialog(namedSchedule.id)))
+            },
+            onDismiss = {
+                onAction(ScheduleAction.OnDismissScheduleSheet)
+            }
+        )
+        currentSchedule?.let { schedule ->
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .padding(
+                        horizontal = AppTheme.paddings.padding16
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
+            ) {
+                AnimatedVisibility(
+                    visible = schedule.downloadUrl != null,
+                ) {
+                    AppAssistChip(
+                        imageVector = ImageVector.vectorResource(R.drawable.download),
+                        colors = AssistChipDefaults.assistChipColors(
+                            containerColor = AppTheme.colors.background,
+                            labelColor = AppTheme.colors.onBackground,
+                            leadingIconContentColor = AppTheme.colors.onSecondaryContainer
+                        ),
+                        border = BorderStroke(
+                            color = AppTheme.colors.outline,
+                            width = 0.5.dp
+                        ),
+                        title = stringResource(R.string.download_pdf),
+                        onClick = {
+                            schedule.downloadUrl?.let { url ->
+                                uriHandler.openUri(url)
+                            }
+                        }
+                    )
+                }
+                AnimatedVisibility(
+                    visible = isSavedNamedSchedule && haveNotEmptySchedules
+                ) {
+                    AppAssistChip(
+                        imageVector = ImageVector.vectorResource(R.drawable.add),
+                        colors = AssistChipDefaults.assistChipColors(
+                            containerColor = AppTheme.colors.background,
+                            labelColor = AppTheme.colors.onBackground,
+                            leadingIconContentColor = AppTheme.colors.onSecondaryContainer
+                        ),
+                        border = BorderStroke(
+                            color = AppTheme.colors.outline,
+                            width = 0.5.dp
+                        ),
+                        title = stringResource(R.string.add_class),
+                        onClick = {
+                            onAction(ScheduleAction.OnDismissScheduleSheet)
+                            onAction(
+                                ScheduleAction.OnOpenDialog(
+                                    Route.Dialog.EditEventDialog(
+                                        eventId = null,
+                                        scheduleId = schedule.id
+                                    )
+                                )
+                            )
+                        }
+                    )
+                }
+                AnimatedVisibility(
+                    visible = haveHiddenEvents
+                ) {
+                    AppAssistChip(
+                        imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
+                        colors = AssistChipDefaults.assistChipColors(
+                            containerColor = AppTheme.colors.background,
+                            labelColor = AppTheme.colors.onBackground,
+                            leadingIconContentColor = AppTheme.colors.onSecondaryContainer
+                        ),
+                        border = BorderStroke(
+                            color = AppTheme.colors.outline,
+                            width = 0.5.dp
+                        ),
+                        title = stringResource(R.string.hidden_events),
+                        onClick = {
+                            onAction(ScheduleAction.OnDismissScheduleSheet)
+                            onAction(
+                                ScheduleAction.OnOpenDialog(
+                                    Route.Dialog.HiddenEventsDialog(schedule.id)
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+        }
+
+        if (namedSchedule.type != NamedScheduleType.MY) {
+            ColumnGroup(
+                modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
+                items = schedules.map { schedule ->
+                    {
+                        AppCell(
+                            contentPadding = PaddingValues(
+                                vertical = AppTheme.paddings.padding8,
+                                horizontal = AppTheme.paddings.padding12
+                            ),
+                            start = {
+                                Custom {
+                                    if (schedules.size > 1) {
+                                        RadioButton(
+                                            selected = (schedule.id == currentSchedule?.id && isSavedNamedSchedule)
+                                                    || schedule.isDefault,
+                                            onClick = {
+                                                onAction(
+                                                    ScheduleAction.OnSetDefaultSchedule(
+                                                        scheduleId = schedule.id,
+                                                        timetableId = schedule.timetableId
+                                                    )
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+                            },
+                            center = {
+                                CenterContent(
+                                    title = {
+                                        TextBlock(
+                                            text = schedule.timetableType.typeName,
+                                        )
+                                    },
+                                    subtitle = {
+                                        TextBlock(
+                                            text = "${
+                                                schedule.startDate.format(
+                                                    dayMonthYearFormatter
+                                                )
+                                            } - " +
+                                                    "${schedule.endDate.format(dayMonthYearFormatter)}",
+                                            typography = AppTheme.typography.bodyMedium,
+                                            color = AppTheme.colors.onSecondaryContainer,
+                                        )
+                                    },
+                                )
+                            },
+                            onClick = {
+                                if (schedules.size > 1) {
+                                    onAction(
+                                        ScheduleAction.OnSetDefaultSchedule(
+                                            scheduleId = schedule.id,
+                                            timetableId = schedule.timetableId
+                                        )
+                                    )
+                                }
+                            },
+                            end = {
+                                Custom {
+                                    val progress = remember(schedule, today) {
+                                        calculateProgress(
+                                            startDate = schedule.startDate,
+                                            endDate = schedule.endDate,
+                                            currentDate = today
+                                        )
+                                    }
+
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp),
+                                        progress = { progress },
+                                        color = AppTheme.colors.primary,
+                                        trackColor = AppTheme.colors.primaryContainer,
+                                        strokeWidth = 3.dp
+                                    )
+                                }
+                            },
+                            showChevron = false,
+                        )
+                    }
+                }
+            )
+        }
+    }
+}
+
+
+fun calculateProgress(
+    startDate: LocalDate,
+    endDate: LocalDate,
+    currentDate: LocalDate = LocalDate.now()
+): Float {
+    val zone = ZoneId.systemDefault()
+
+    val startMs = startDate.getStartMs(zone)
+    val endMs = endDate.getStartMs(zone)
+    val currentMs = currentDate.getStartMs(zone)
+
+    if (currentMs <= startMs) return 0.0f
+    if (currentMs >= endMs) return 1.0f
+
+    val totalDuration = endMs - startMs
+    val elapsedDuration = currentMs - startMs
+
+    return elapsedDuration.toFloat() / totalDuration.toFloat()
+}

@@ -1,1 +1,0 @@
--keep class com.egormelnikoff.schedulerutmiit.core.database.entity.** { *; }

@@ -1,0 +1,88 @@
+package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
+import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScheduleHeaderWidget(
+    namedSchedule: NamedSchedule,
+    scheduleTypeName: String?,
+    scheduleView: ScheduleView,
+    onAction: (ScheduleAction) -> Unit
+) {
+    val isCustomSchedule = remember(namedSchedule.type) {
+        namedSchedule.type == NamedScheduleType.MY
+    }
+
+    AppTopBar(
+        titleText = namedSchedule.shortName,
+        subtitleText = if (scheduleTypeName != null && !isCustomSchedule) {
+            scheduleTypeName
+        } else null,
+        onTitleClick = {
+            onAction(ScheduleAction.OnTitleClicked)
+        },
+        showTitleChevron = true,
+        actions = {
+            IconButton(
+                onClick = {
+                    onAction(ScheduleAction.OnViewClicked(scheduleView))
+                }
+            ) {
+                AnimatedContent(
+                    targetState = scheduleView,
+                    transitionSpec = {
+                        scaleIn() togetherWith scaleOut()
+                    }
+                ) { view ->
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = when (view) {
+                            ScheduleView.CALENDAR -> {
+                                ImageVector.vectorResource(R.drawable.list)
+                            }
+
+                            ScheduleView.LIST -> {
+                                ImageVector.vectorResource(R.drawable.calendar)
+                            }
+                        },
+                        contentDescription = null,
+                        tint = AppTheme.colors.onBackground
+                    )
+                }
+            }
+            IconButton(
+                onClick = {
+                    onAction(ScheduleAction.OnMenuVertClicked)
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = ImageVector.vectorResource(R.drawable.more_vert),
+                    contentDescription = null,
+                    tint = AppTheme.colors.onBackground
+                )
+            }
+        }
+    )
+}

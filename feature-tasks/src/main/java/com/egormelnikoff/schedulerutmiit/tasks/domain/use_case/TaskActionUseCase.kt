@@ -1,12 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.tasks.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Task
-import com.egormelnikoff.schedulerutmiit.tasks.data.repos.TaskRepos
-import com.egormelnikoff.schedulerutmiit.tasks.ui.dialog.add_task.view_model.state.AddTaskForm
+import com.egormelnikoff.schedulerutmiit.tasks.domain.model.Task
+import com.egormelnikoff.schedulerutmiit.tasks.domain.repos.TaskRepos
+import com.egormelnikoff.schedulerutmiit.tasks.ui.add_task.AddTaskForm
 import java.time.LocalDate
 import javax.inject.Inject
 
-sealed interface TaskAction {
+internal sealed interface TaskAction {
     data class Add(
         val addTaskForm: AddTaskForm
     ) : TaskAction
@@ -31,7 +31,7 @@ sealed interface TaskAction {
     ) : TaskAction
 }
 
-class TaskActionUseCase @Inject constructor(
+internal class TaskActionUseCase @Inject constructor(
     private val taskRepos: TaskRepos
 ) {
     suspend operator fun invoke(

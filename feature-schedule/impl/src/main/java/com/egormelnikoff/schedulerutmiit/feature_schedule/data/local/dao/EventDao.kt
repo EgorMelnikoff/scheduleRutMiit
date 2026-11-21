@@ -1,0 +1,51 @@
+package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.REPLACE
+import androidx.room.Query
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.EventEntity
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface EventDao {
+    @Insert(onConflict = REPLACE)
+    suspend fun insert(event: EventEntity)
+
+    @Insert(onConflict = REPLACE)
+    suspend fun insertAll(events: List<EventEntity>)
+
+    @Query("DELETE FROM Events WHERE eventScheduleId = :scheduleId")
+    suspend fun deleteByScheduleId(scheduleId: Long)
+
+    @Query("DELETE FROM Events WHERE EventId = :eventId")
+    suspend fun deleteById(eventId: Long)
+
+    @Query("DELETE FROM Events")
+    suspend fun deleteAll()
+
+    @Query("SELECT * FROM Events WHERE eventScheduleId = :scheduleId AND isHidden = 1")
+    fun observeHiddenEvents(scheduleId: Long): Flow<List<EventEntity>>
+
+    @Query("SELECT * FROM Events WHERE EventId = :id")
+    suspend fun getById(id: Long): EventEntity
+
+    @Query("SELECT COUNT(*) FROM Events WHERE eventScheduleId = :scheduleId AND SUBSTRING(startDatetime, 1, 10) = :date")
+    suspend fun getCountPerDate(date: String, scheduleId: Long): Int
+
+    @Query("SELECT * FROM Events WHERE name = :name AND typeName = :typeName AND eventScheduleId = :scheduleId")
+    suspend fun getByNameAndType(
+        name: String,
+        typeName: String?,
+        scheduleId: Long
+    ): List<EventEntity>
+
+    @Query("SELECT * FROM Events")
+    suspend fun getAll(): List<EventEntity>
+
+    @Query("UPDATE Events SET isHidden = :isHidden WHERE EventId = :eventId")
+    suspend fun updateIsHidden(
+        eventId: Long,
+        isHidden: Boolean
+    )
+}

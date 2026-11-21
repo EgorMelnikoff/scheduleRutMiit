@@ -1,0 +1,3 @@
+-keep class com.egormelnikoff.schedulerutmiit.tasks.domain.model.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.tasks.data.local.entity.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.tasks.ui.** { *; }

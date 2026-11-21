@@ -4,12 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,13 +23,13 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.ui.elements.PagerScreenContainer
-import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
-
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
+import com.egormelnikoff.schedulerutmiit.core.ui.containers.PagerScreenContainer
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
 fun WelcomePage(
-    preferencesViewModel: PreferencesViewModel
+    onSkip: () -> Unit
 ) {
     Scaffold { padding ->
         val scope = rememberCoroutineScope()
@@ -44,12 +42,8 @@ fun WelcomePage(
             pagerState = pagerState,
             scope = scope,
             isNextEnabled = { true },
-            onFinish = {
-                preferencesViewModel.skipWelcomePage()
-            },
-            onCancel = {
-                preferencesViewModel.skipWelcomePage()
-            },
+            onFinish = onSkip,
+            onCancel = onSkip,
             cancelTitle = stringResource(R.string.skip),
             finishTitle = stringResource(R.string.start) + "!",
             paddingValues = padding
@@ -95,35 +89,34 @@ fun Page(
     painter: Painter? = null,
 ) {
     Box(
-        modifier = Modifier.padding(horizontal = 20.dp)
+        modifier = Modifier.padding(horizontal = AppTheme.paddings.padding20)
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
         ) {
             painter?.let {
                 Image(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(imageHeight)
-                        .clip(MaterialTheme.shapes.extraLarge),
+                        .clip(AppTheme.shapes.extraLarge),
                     painter = painter,
                     contentDescription = null,
                     contentScale = ContentScale.Crop
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-
+                SpacerHeight(AppTheme.paddings.padding16)
             }
 
             Text(
                 text = title,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleLarge,
+                color = AppTheme.colors.onBackground,
+                style = AppTheme.typography.titleLarge,
                 fontSize = titleSize
             )
             Text(
                 text = subtitle,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                style = MaterialTheme.typography.bodyMedium,
+                color = AppTheme.colors.onSecondaryContainer,
+                style = AppTheme.typography.bodyMedium,
             )
         }
     }

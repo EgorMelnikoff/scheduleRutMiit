@@ -1,0 +1,65 @@
+package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.widget
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
+import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.DayPeriod
+
+fun LazyListScope.reviewImageWidget(
+    reviewState: ReviewState
+) {
+    item {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(270.dp)
+        ) {
+            Image(
+                modifier = Modifier
+                    .fillMaxSize(),
+                painter = when (reviewState.dayPeriod) {
+                    DayPeriod.MORNING -> painterResource(R.drawable.day)
+                    DayPeriod.DAY -> painterResource(R.drawable.day)
+                    DayPeriod.EVENING -> painterResource(R.drawable.evening)
+                    DayPeriod.NIGHT -> painterResource(R.drawable.night)
+                },
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+            )
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .background(
+                        color = AppTheme.colors.background,
+                        shape = AppTheme.shapes.medium.copy(
+                            bottomEnd = CornerSize(0.dp),
+                            bottomStart = CornerSize(0.dp),
+                        )
+//                        Brush.verticalGradient(
+//                            colors = listOf(
+//                                Color.Transparent,
+//                                AppTheme.colors.background
+//                            )
+//                        )
+                    )
+
+            )
+        }
+    }
+}

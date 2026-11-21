@@ -1,2 +1,0 @@
--keep class com.egormelnikoff.schedulerutmiit.core.common.domain.** { *; }
--keep class com.egormelnikoff.schedulerutmiit.core.common.enums.** { *; }

@@ -1,10 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.search.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Group
-import com.egormelnikoff.schedulerutmiit.core.common.domain.Person
-import com.egormelnikoff.schedulerutmiit.core.common.result.Result
+import com.egormelnikoff.schedulerutmiit.search.domain.model.Group
+import com.egormelnikoff.schedulerutmiit.search.domain.model.Person
 
-data class SearchResult(
-    val groups: Result<List<Group>>?,
-    val people: Result<List<Person>>?
+internal data class SearchResult(
+    val groups: List<Group>?,
+    val people: List<Person>?
 )

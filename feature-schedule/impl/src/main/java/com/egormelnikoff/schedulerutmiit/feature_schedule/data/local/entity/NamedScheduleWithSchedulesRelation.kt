@@ -1,0 +1,15 @@
+package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity
+
+import androidx.room.Embedded
+import androidx.room.Relation
+
+data class NamedScheduleWithSchedulesRelation(
+    @Embedded
+    val namedScheduleEntity: NamedScheduleEntity,
+    @Relation(
+        entity = ScheduleEntity::class,
+        parentColumn = "NamedScheduleId",
+        entityColumn = "namedScheduleId"
+    )
+    val scheduleWithEvents: List<ScheduleWithEventsRelation>
+)

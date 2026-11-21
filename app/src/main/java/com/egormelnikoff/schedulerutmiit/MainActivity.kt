@@ -12,30 +12,36 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
+import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsViewModel
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.ScheduleRutMiitTheme
 import com.egormelnikoff.schedulerutmiit.ui.ScheduleRutMiitApp
 import com.egormelnikoff.schedulerutmiit.ui.WelcomePage
-import com.egormelnikoff.schedulerutmiit.ui.view_model.PreferencesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val preferencesViewModel: PreferencesViewModel by viewModels()
+    @Inject
+    lateinit var appRouter: AppRouter
+    private val settingsViewModel: SettingsViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition {
-           preferencesViewModel.appSettings.value == null
+            settingsViewModel.state.value.appSettings == null
         }
 
         setContent {
-            val appSettings by preferencesViewModel.appSettings.collectAsStateWithLifecycle()
+            val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
 
-            appSettings?.let { settings ->
+            settingsState.appSettings?.let { settings ->
                 ScheduleRutMiitTheme(
-                    decorPreferences = settings.decorPreferences
+                    themePreferences = settings.themePreferences
                 ) {
                     AnimatedContent(
                         targetState = settings.skipWelcomePage,
@@ -45,11 +51,14 @@ class MainActivity : ComponentActivity() {
                     ) { skipWelcomePage ->
                         if (skipWelcomePage) {
                             ScheduleRutMiitApp(
-                                preferencesViewModel = preferencesViewModel,
-                                appSettings = settings
+                                settingsViewModel = settingsViewModel,
+                                settingsState = settingsState,
+                                appRouter = appRouter
                             )
                         } else {
-                            WelcomePage(preferencesViewModel)
+                            WelcomePage {
+                                settingsViewModel.onAction(SettingsAction.OnSkipWelcomePage)
+                            }
                         }
                     }
                 }

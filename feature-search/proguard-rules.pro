@@ -1,1 +1,5 @@
--keep class com.egormelnikoff.schedulerutmiit.search.ui.view_model.state.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.search.domain.model.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.search.data.remote.model.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.search.data.local.entity.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.search.ui.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.search.utils.** { *; }

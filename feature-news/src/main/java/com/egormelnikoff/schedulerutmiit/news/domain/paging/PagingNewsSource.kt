@@ -2,15 +2,13 @@ package com.egormelnikoff.schedulerutmiit.news.domain.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.egormelnikoff.schedulerutmiit.core.common.result.Result
-import com.egormelnikoff.schedulerutmiit.core.common.result.TypedErrorException
-import com.egormelnikoff.schedulerutmiit.core.network.dto.news.NewsShortDto
-import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsShort
+import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRepos
 
-class PagingNewsSource(
-    private val newsRemoteDataSource: NewsRemoteDataSource
-) : PagingSource<Int, NewsShortDto>() {
-    override fun getRefreshKey(state: PagingState<Int, NewsShortDto>): Int? {
+internal class PagingNewsSource(
+    private val newsRemoteDataSource: NewsRepos
+) : PagingSource<Int, NewsShort>() {
+    override fun getRefreshKey(state: PagingState<Int, NewsShort>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
@@ -19,29 +17,20 @@ class PagingNewsSource(
 
     override suspend fun load(
         params: LoadParams<Int>
-    ): LoadResult<Int, NewsShortDto> {
+    ): LoadResult<Int, NewsShort> {
         val currentPage = params.key ?: 1
         val pageSize = params.loadSize
 
+        val response = newsRemoteDataSource.getNewsList(pageSize, currentPage)
 
-        return when (val response = newsRemoteDataSource.getNewsList(pageSize, currentPage)) {
-            is Result.Error -> {
-                LoadResult.Error(
-                    TypedErrorException(response.typedError)
-                )
-            }
+        val nextKey = if (currentPage < response.maxPage) currentPage + 1 else null
 
-            is Result.Success -> {
-                val nextKey = if (currentPage < response.data.maxPage) currentPage + 1 else null
+        val updatedItems = response.items.filter { it.text != "Наши защиты" }
 
-                val updatedItems = response.data.items.filter { it.secondary.text != "Наши защиты" }
-
-                LoadResult.Page(
-                    data = updatedItems,
-                    prevKey = if (currentPage == 1) null else currentPage - 1,
-                    nextKey = nextKey
-                )
-            }
-        }
+        return LoadResult.Page(
+            data = updatedItems,
+            prevKey = if (currentPage == 1) null else currentPage - 1,
+            nextKey = nextKey
+        )
     }
 }
