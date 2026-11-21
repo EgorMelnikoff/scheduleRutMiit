@@ -83,6 +83,8 @@ class AddScheduleViewModel @Inject constructor(
             } else {
                 namedScheduleRepos.getAndOpen(result.first)
             }
+
+            appRouter.onBack()
         }
     }
 }

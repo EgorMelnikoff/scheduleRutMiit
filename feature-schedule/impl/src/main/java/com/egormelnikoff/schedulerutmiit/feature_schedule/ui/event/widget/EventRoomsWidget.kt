@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.widget
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.ui.Modifier
@@ -28,6 +29,10 @@ fun LazyListScope.eventRoomsWidget(
                     items = rooms.map { room ->
                         {
                             AppCell(
+                                contentPadding = PaddingValues(
+                                    horizontal = AppTheme.paddings.padding12,
+                                    vertical = AppTheme.paddings.padding16,
+                                ),
                                 center = {
                                     TextBlock(
                                         text = room.hint.ifBlank { room.name },

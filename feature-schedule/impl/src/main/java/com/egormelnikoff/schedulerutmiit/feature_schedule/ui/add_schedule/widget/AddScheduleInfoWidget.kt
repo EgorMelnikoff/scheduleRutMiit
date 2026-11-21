@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule.widget
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -49,6 +50,10 @@ fun AddScheduleInfoWidget(
             }, {
                 AppCell(
                     showChevron = false,
+                    contentPadding = PaddingValues(
+                        horizontal = AppTheme.paddings.padding12,
+                        vertical = AppTheme.paddings.padding16,
+                    ),
                     start = {
                         Icon(
                             icon = ImageVector.vectorResource(R.drawable.calendar),

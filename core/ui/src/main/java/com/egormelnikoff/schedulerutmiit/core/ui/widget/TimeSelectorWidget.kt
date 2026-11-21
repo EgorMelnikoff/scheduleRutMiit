@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.widget
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -29,6 +30,10 @@ fun TimeSelector(
             {
                 AppCell(
                     showChevron = false,
+                    contentPadding = PaddingValues(
+                        horizontal = AppTheme.paddings.padding12,
+                        vertical = AppTheme.paddings.padding16,
+                    ),
                     start = {
                         Icon(
                             icon = ImageVector.vectorResource(R.drawable.time),
@@ -58,6 +63,10 @@ fun TimeSelector(
                             iconColor = AppTheme.colors.onBackground
                         )
                     },
+                    contentPadding = PaddingValues(
+                        horizontal = AppTheme.paddings.padding12,
+                        vertical = AppTheme.paddings.padding16,
+                    ),
                     center = {
                         TextBlock(
                             text = endTime?.format(hourMinuteFormatter)
