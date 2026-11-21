@@ -77,6 +77,13 @@ fun PageHost(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        snackbarHost = {
+            if (appRouter.dialogBackStack.size <= 1) {
+                AppSnackbarHost(
+                    snackBarHostState = snackbarHostState
+                )
+            }
+        },
         bottomBar = {
             AppBottonNavBarWidget()
         }

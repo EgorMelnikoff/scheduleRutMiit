@@ -37,6 +37,12 @@ fun ScheduleScreenWidget(
         onAction(ScheduleAction.OnImportData(uri))
     }
 
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let { onAction(ScheduleAction.OnExportData(it)) }
+    }
+
     val scheduleListState = rememberLazyListState()
     val scheduleCalendarState = rememberScheduleCalendarState(state.scheduleVo?.calendarData)
 
@@ -147,7 +153,10 @@ fun ScheduleScreenWidget(
         SchedulesSheetWidget(
             namedSchedules = state.namedSchedules,
             currentNamedScheduleId = state.namedSchedule?.id,
-            onAction = onAction
+            onAction = onAction,
+            onExportClick = {
+                exportLauncher.launch("backup")
+            }
         )
     }
 

@@ -1,7 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -39,15 +37,9 @@ import java.time.ZoneId
 fun SchedulesSheetWidget(
     currentNamedScheduleId: Long? = null,
     namedSchedules: List<NamedSchedule>,
-    onAction: (ScheduleAction) -> Unit
+    onAction: (ScheduleAction) -> Unit,
+    onExportClick: () -> Unit
 ) {
-    val exportLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("application/json")
-    ) { uri ->
-        uri?.let {
-            onAction(ScheduleAction.OnExportData(it))
-        }
-    }
 
     AppBottomSheet(
         showHandle = false,
@@ -88,7 +80,7 @@ fun SchedulesSheetWidget(
             LargeIconButton(
                 onClick = {
                     onAction(ScheduleAction.OnDismissSchedulesSheet)
-                    exportLauncher.launch("backup")
+                    onExportClick()
                 },
                 colors = IconButtonDefaults.iconButtonColors().copy(
                     containerColor = AppTheme.colors.secondaryContainer,
