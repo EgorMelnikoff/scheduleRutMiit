@@ -141,13 +141,6 @@ fun ScheduleScreenWidget(
                 )
             }
         }
-
-        else -> {
-            ErrorScreen(
-                title = stringResource(R.string.error),
-                paddingBottom = contentPadding.calculateBottomPadding()
-            )
-        }
     }
 
     if (state.schedulesSheet) {
