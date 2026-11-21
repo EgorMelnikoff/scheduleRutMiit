@@ -1,9 +1,8 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote
 
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
-import com.egormelnikoff.schedulerutmiit.core.network.fetcher.HtmlFetcher
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.mapper.ScheduleMapperV2
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.EventDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.NonPeriodicContentDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.PeriodicContentDto
@@ -13,12 +12,10 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.Sche
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.TimetableDto
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getTimeSlotName
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.parser.ScheduleParser
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
-import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.mapper.ScheduleMapper
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.mapper.ScheduleMapperV1
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -28,10 +25,47 @@ import javax.inject.Inject
 
 class ScheduleRemoteDataSource @Inject constructor(
     private val scheduleApi: ScheduleApi,
-    private val htmlFetcher: HtmlFetcher,
-    private val scheduleMapper: ScheduleMapper,
+    private val scheduleMapperV1: ScheduleMapperV1,
+    private val scheduleMapperV2: ScheduleMapperV2
 ) {
     suspend fun getSchedule(
+        namedScheduleId: Long,
+        name: String,
+        apiId: Int,
+        type: NamedScheduleType
+    ): NamedScheduleWithSchedules = coroutineScope {
+        val scheduleDto = when (type) {
+            NamedScheduleType.GROUP -> scheduleApi.getGroupScheduleV2(apiId)
+            NamedScheduleType.PERSON -> scheduleApi.getPersonScheduleV2(apiId)
+            NamedScheduleType.ROOM -> emptyList()
+            else -> emptyList()
+        }
+
+        val schedules = scheduleMapperV2.map(
+            namedScheduleId = namedScheduleId,
+            namedScheduleType = type,
+            apiId = apiId,
+            dto = scheduleDto
+        )
+
+        val namedSchedule = NamedSchedule(
+            id = namedScheduleId,
+            fullName = name,
+            shortName = name.getShortName(type),
+            apiId = apiId.toString(),
+            type = type,
+            isDefault = false,
+            lastTimeUpdate = System.currentTimeMillis()
+        )
+
+        NamedScheduleWithSchedules(
+            namedSchedule = namedSchedule,
+            schedulesWithEvents = schedules
+        )
+    }
+
+
+    suspend fun getScheduleOld(
         namedScheduleId: Long,
         name: String,
         apiId: Int,
@@ -51,9 +85,9 @@ class ScheduleRemoteDataSource @Inject constructor(
                         type.typeName,
                         apiId.toString(),
                         timetable.id
-                    ).normalize(timetable)
+                    ).normalizeOld(timetable)
 
-                    scheduleMapper(
+                    scheduleMapperV1.map(
                         scheduleDto,
                         namedScheduleId,
                         index
@@ -79,37 +113,7 @@ class ScheduleRemoteDataSource @Inject constructor(
         )
     }
 
-    private suspend fun parseSchedule(
-        timetable: TimetableDto,
-        name: String,
-        apiId: Int,
-        type: NamedScheduleType,
-    ): ScheduleDto {
-        val document = htmlFetcher.invoke(
-            url = Endpoints.scheduleUrl(
-                type,
-                apiId,
-                timetable.startDate.toString(),
-                timetable.type.id.toString()
-            )
-        )
-
-        val scheduleDto = ScheduleParser(
-            document = document,
-            timetable = timetable,
-            if (type == NamedScheduleType.GROUP) {
-                Group(
-                    id = apiId,
-                    name = name
-                )
-            } else null
-        )
-
-        return scheduleDto
-    }
-
-
-    private fun ScheduleDto.normalize(
+    private fun ScheduleDto.normalizeOld(
         timetable: TimetableDto
     ): ScheduleDto {
         return if (timetable.type == TimetableType.PERIODIC) {

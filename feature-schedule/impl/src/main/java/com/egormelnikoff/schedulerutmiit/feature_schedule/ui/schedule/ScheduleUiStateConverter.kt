@@ -89,6 +89,7 @@ class ScheduleUiStateConverter @Inject constructor() {
 
         val eventsByDate = visibleEvents
             .expandOccurrences(schedule)
+            .sortedBy { it.startDatetime }
             .groupBy { it.startDatetime.toLocalDate() }
             .mapValues { (_, events) ->
                 events.toTimeGroups(eventExtraPolicy, eventsExtraData)

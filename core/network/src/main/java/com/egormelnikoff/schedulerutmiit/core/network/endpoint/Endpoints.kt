@@ -18,28 +18,21 @@ object Endpoints {
     const val NEWS_CATALOG = "/data-service/data/news"
     const val NEWS = "/data-service/data/news/{newsId}"
 
-    //WEB MIIT
-    fun scheduleUrl(
-        namedScheduleType: NamedScheduleType,
+    const val SCHEDULE_GROUP_V2 = "/api/timetable/{groupId}"
+    const val SCHEDULE_PERSON_V2 = "/api/profTimetable/{personId}"
+
+    fun downloadUrl(
+        isPerson: Boolean,
         apiId: Int,
-        startDate: String?,
-        timetableType: String?,
+        type: Int
     ): String {
-        val base = when (namedScheduleType) {
-            NamedScheduleType.PERSON ->
-                "$BASE_RUT_MIIT_URL/people/$apiId/timetable"
-
-            else ->
-                "$BASE_RUT_MIIT_URL/timetable/$apiId"
+        return if (isPerson) {
+            "${BASE_MIIT_URL}/api/pdf-processor/profTimetable/${apiId}/pdf?type=${type}"
+        } else {
+            "${BASE_MIIT_URL}/api/pdf-processor/timetable/${apiId}/pdf?type=${type}"
         }
-
-        val query = listOfNotNull(
-            startDate?.let { "start=$it" },
-            timetableType?.let { "type=$it" }
-        ).joinToString("&")
-
-        return if (query.isEmpty()) base else "$base?$query"
     }
+
 
     fun peopleUrl(query: String) =
         "${BASE_RUT_MIIT_URL}/people?query=$query"

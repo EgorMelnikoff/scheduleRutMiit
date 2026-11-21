@@ -40,8 +40,8 @@ fun ScheduleScreenWidget(
     val scheduleListState = rememberLazyListState()
     val scheduleCalendarState = rememberScheduleCalendarState(state.scheduleVo?.calendarData)
 
-    when {
-        state.mode is ScheduleUiState.Mode.Loading -> {
+    when (state.mode) {
+        is ScheduleUiState.Mode.Loading -> {
             if (state.scheduleVo != null) {
                 BackHandler {
                     onAction(ScheduleAction.OnCancelLoading)
@@ -50,7 +50,7 @@ fun ScheduleScreenWidget(
             ScheduleLoadingWidget()
         }
 
-        state.mode is ScheduleUiState.Mode.Empty -> {
+        is ScheduleUiState.Mode.Empty -> {
             ErrorScreen(
                 title = stringResource(R.string.no_saved_schedule),
                 subtitle = stringResource(R.string.empty_base),
@@ -99,7 +99,7 @@ fun ScheduleScreenWidget(
             )
         }
 
-        state.mode is ScheduleUiState.Mode.Error -> {
+        is ScheduleUiState.Mode.Error -> {
             ErrorScreen(
                 title = stringResource(R.string.error),
                 subtitle = stringResource(R.string.error_load_schedule),
@@ -118,7 +118,7 @@ fun ScheduleScreenWidget(
             )
         }
 
-        state.mode is ScheduleUiState.Mode.Content -> {
+        is ScheduleUiState.Mode.Content -> {
             val scheduleVo = state.scheduleVo
             val namedSchedule = state.namedSchedule
 

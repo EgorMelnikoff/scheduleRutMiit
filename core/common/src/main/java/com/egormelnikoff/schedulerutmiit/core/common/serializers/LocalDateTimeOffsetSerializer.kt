@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.core.common.serializers
 
+import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -16,10 +17,10 @@ object LocalDateTimeOffsetSerializer : KSerializer<LocalDateTime> {
         PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: LocalDateTime) {
-        encoder.encodeString(value.format(formatter))
+        encoder.encodeString(value.toUtcDateTime().format(formatter))
     }
 
     override fun deserialize(decoder: Decoder): LocalDateTime {
-        return LocalDateTime.parse(decoder.decodeString(), formatter)
+        return LocalDateTime.parse(decoder.decodeString(), formatter).toUtcDateTime()
     }
 }

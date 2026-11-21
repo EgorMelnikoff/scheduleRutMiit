@@ -28,6 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_sheet.BottomSheetDateRangePicker
+import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarData
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
@@ -37,6 +39,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,6 +47,14 @@ fun AddTaskDialog() {
     val addTaskViewModel = hiltViewModel<AddTaskViewModel>()
     val addTaskForm = addTaskViewModel.addTaskForm.collectAsStateWithLifecycle().value
 
+    val calendarData = remember {
+        val today = LocalDate.now()
+
+        CalendarData(
+            startDate = today.minusYears(5),
+            endDate = today.plusYears(5)
+        )
+    }
     var showDialogDate by remember { mutableStateOf(false) }
     var showDialogTime by remember { mutableStateOf(false) }
 
@@ -181,21 +192,20 @@ fun AddTaskDialog() {
         }
 
         if (showDialogDate) {
-            // TODO даты
-//            BottomSheetDateRangePicker(
-//                selectableStartDate = calendarData.startDate,
-//                selectableEndDate = calendarData.endDate,
-//
-//                selectedStartDate = addTaskForm.startDate,
-//                selectedEndDate = addTaskForm.endDate,
-//
-//                onShowDialog = {
-//                    showDialogDate = it
-//                },
-//                onDateSelect = { start, end ->
-//                    addTaskViewModel.onDatesChanged(start, end)
-//                }
-//            )
+            BottomSheetDateRangePicker(
+                selectableStartDate = calendarData.startDate,
+                selectableEndDate = calendarData.endDate,
+
+                selectedStartDate = addTaskForm.startDate,
+                selectedEndDate = addTaskForm.endDate,
+
+                onShowDialog = {
+                    showDialogDate = it
+                },
+                onDateSelect = { start, end ->
+                    addTaskViewModel.onDatesChanged(start, end)
+                }
+            )
         }
         if (showDialogTime) {
             AppTimePicker(
