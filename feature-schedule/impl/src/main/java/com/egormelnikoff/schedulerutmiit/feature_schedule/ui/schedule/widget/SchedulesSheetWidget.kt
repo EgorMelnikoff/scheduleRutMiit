@@ -1,9 +1,12 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.widget
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
@@ -20,9 +23,9 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AnimatedIcon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
-import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
@@ -93,63 +96,76 @@ fun SchedulesSheetWidget(
 
         SpacerHeight(AppTheme.paddings.padding12)
 
-        namedSchedules.forEachIndexed { index, namedSchedule ->
-            val locale = LocalLocale.current.platformLocale
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+         ) {
+            namedSchedules.forEachIndexed { index, namedSchedule ->
+                val locale = LocalLocale.current.platformLocale
 
-            val lastTimeUpdate = remember(
-                namedSchedule.lastTimeUpdate
-            ) {
-                LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(namedSchedule.lastTimeUpdate),
-                    ZoneId.systemDefault()
-                ).format(dayMonthNameFormatter.withLocale(locale))
+                val lastTimeUpdate = remember(
+                    namedSchedule.lastTimeUpdate
+                ) {
+                    LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(namedSchedule.lastTimeUpdate),
+                        ZoneId.systemDefault()
+                    ).format(dayMonthNameFormatter.withLocale(locale))
 
-            }
-
-            AppCell(
-                contentPadding = PaddingValues(
-                    horizontal = AppTheme.paddings.padding16,
-                    vertical = AppTheme.paddings.padding16
-                ),
-                center = {
-                    CenterContent(
-                        title = {
-                            TextBlock(
-                                text = namedSchedule.shortName,
-                                label = if (namedSchedule.isDefault) {
-                                    {
-                                        BadgeWidget(
-                                            title = stringResource(R.string._default),
-                                        )
-                                    }
-                                } else {
-                                    null
-                                }
-                            )
-                        },
-                        subtitle = {
-                            TextBlock(
-                                text = "${stringResource(R.string.current_on)} $lastTimeUpdate",
-                                typography = AppTheme.typography.bodyMedium,
-                                color = AppTheme.colors.onSecondaryContainer,
-                            )
-                        }
-                    )
-                },
-                end = {
-                    if (currentNamedScheduleId == namedSchedule.id) {
-                        Icon(
-                            icon = ImageVector.vectorResource(R.drawable.check),
-                            iconColor = AppTheme.colors.primary
-                        )
-                    }
-                },
-                showChevron = currentNamedScheduleId != namedSchedule.id,
-                showSeparator = index != namedSchedules.lastIndex,
-                onClick = {
-                    onAction(ScheduleAction.OnChangeSchedule(namedSchedule.id))
                 }
-            )
+
+                AppCell(
+                    contentPadding = PaddingValues(
+                        horizontal = AppTheme.paddings.padding16,
+                        vertical = AppTheme.paddings.padding16
+                    ),
+                    center = {
+                        CenterContent(
+                            title = {
+                                TextBlock(
+                                    text = namedSchedule.shortName,
+                                    label = if (namedSchedule.isDefault) {
+                                        {
+                                            BadgeWidget(
+                                                title = stringResource(R.string._default),
+                                            )
+                                        }
+                                    } else {
+                                        null
+                                    }
+                                )
+                            },
+                            subtitle = {
+                                TextBlock(
+                                    text = "${stringResource(R.string.current_on)} $lastTimeUpdate",
+                                    typography = AppTheme.typography.bodyMedium,
+                                    color = AppTheme.colors.onSecondaryContainer,
+                                )
+                            }
+                        )
+                    },
+                    end = {
+                        val isCurrent = currentNamedScheduleId == namedSchedule.id
+                        AnimatedIcon(
+                            targetState = currentNamedScheduleId == namedSchedule.id,
+                            color = if (isCurrent) {
+                                AppTheme.colors.primary
+                            } else {
+                                AppTheme.colors.onSecondaryContainer
+                            }
+                        ) { state ->
+                           if (state) {
+                               ImageVector.vectorResource(R.drawable.check)
+                           } else {
+                               ImageVector.vectorResource(R.drawable.right)
+                           }
+                        }
+                    },
+                    showChevron = false,
+                    showSeparator = index != namedSchedules.lastIndex,
+                    onClick = {
+                        onAction(ScheduleAction.OnChangeSchedule(namedSchedule.id))
+                    }
+                )
+            }
         }
     }
 }

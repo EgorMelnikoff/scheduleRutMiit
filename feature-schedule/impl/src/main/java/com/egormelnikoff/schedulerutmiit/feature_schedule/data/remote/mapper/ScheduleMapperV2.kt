@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.mapper
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.v2.ScheduleItemDtoV2
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.v2.ScheduleEventDtoV2
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
@@ -25,11 +25,11 @@ class ScheduleMapperV2 @Inject constructor() {
         namedScheduleId: Long,
         namedScheduleType: NamedScheduleType,
         apiId: Int,
-        dto: List<ScheduleItemDtoV2>
+        dto: List<ScheduleEventDtoV2>
     ): List<ScheduleWithEvents> {
         val groupedItems = dto.groupBy {
             ScheduleGroupKey(
-                timetableType = it.timetableTypeInt.mapToTimetableType(),
+                timetableType = it.timetableType.mapToTimetableType(),
                 valueFrom = it.validFrom.toLocalDate(),
                 valueTo = it.validTo.toLocalDate(),
             )
@@ -87,13 +87,13 @@ class ScheduleMapperV2 @Inject constructor() {
         }
     }
 
-    fun List<ScheduleItemDtoV2>.getCurrentPeriodNumber(): Int? {
-        return firstOrNull { it.isCurrentEduWeekInt == 1 }
-            ?.eduWeekNumber
+    fun List<ScheduleEventDtoV2>.getCurrentPeriodNumber(): Int? {
+        return firstOrNull { it.isCurrentWeek == 1 }
+            ?.periodNumber
     }
 
-    private fun List<ScheduleItemDtoV2>.mapPeriodic(): List<Event> {
-        return groupBy { it.idSchedule to it.edGroupsXml }
+    private fun List<ScheduleEventDtoV2>.mapPeriodic(): List<Event> {
+        return groupBy { it.eventId to it.groups }
             .map { (_, sameEvents) ->
                 val item = sameEvents.first()
 
@@ -107,14 +107,14 @@ class ScheduleMapperV2 @Inject constructor() {
                     buildEvent(
                         item = item,
                         interval = 2,
-                        periodNumber = item.eduWeekNumber,
+                        periodNumber = item.periodNumber,
                     )
                 }
             }
     }
 
 
-    private fun List<ScheduleItemDtoV2>.mapNonPeriodic(): List<Event> {
+    private fun List<ScheduleEventDtoV2>.mapNonPeriodic(): List<Event> {
         return this.map { item ->
             buildEvent(
                 item = item,
@@ -125,23 +125,23 @@ class ScheduleMapperV2 @Inject constructor() {
     }
 
     private fun buildEvent(
-        item: ScheduleItemDtoV2,
+        item: ScheduleEventDtoV2,
         interval: Int?,
         periodNumber: Int?
     ): Event {
         return Event(
             isHidden = false,
             isCustomEvent = false,
-            startDatetime = item.eventStartDateTime,
-            endDatetime = item.eventEndDateTime,
+            startDatetime = item.startDateTime,
+            endDatetime = item.endDateTime,
             interval = interval,
             periodNumber = periodNumber,
-            name = item.text,
-            typeName = item.textTitle,
-            timeSlotName = item.slotName,
-            lecturers = item.lecturersXml?.parseLecturers(),
-            rooms = item.roomsXml?.parseRooms(),
-            groups = item.edGroupsXml?.parseGroups()
+            name = item.name,
+            typeName = item.typeName,
+            timeSlotName = item.timeSlotName,
+            lecturers = item.lecturers?.parseLecturers(),
+            rooms = item.rooms?.parseRooms(),
+            groups = item.groups?.parseGroups()
         )
     }
 

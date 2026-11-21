@@ -13,7 +13,7 @@ data class ReviewState(
 
 
     val theme: Theme = Theme.DARK,
-    val usedPhoto: Boolean = true,
+    val usedPhoto: Boolean = false,
     val showSchedules: Boolean = true,
     val showServices: Boolean = true,
     val scheduleSheet: NamedSchedule? = null,

@@ -7,44 +7,44 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Serializable
-data class ScheduleItemDtoV2(
+data class ScheduleEventDtoV2(
     @SerialName("idGroup")
     val idGroup: Long? = null,
     @SerialName("egName")
-    val egName: String? = null,
+    val groupName: String? = null,
     @SerialName("empId")
-    val empId: Long? = null,
+    val personId: Long? = null,
     @SerialName("empFio")
-    val empFio: String? = null,
+    val personFio: String? = null,
 
 
     @SerialName("idSchedule")
-    val idSchedule: Long,
+    val eventId: Long,
     @SerialName("timetableTypeInt")
-    val timetableTypeInt: Int,
+    val timetableType: Int,
     @SerialName("timetableTypeDisplay")
-    val timetableTypeDisplay: String,
+    val timetableTypeName: String,
     @SerialName("eduWeekNumber")
-    val eduWeekNumber: Int,
+    val periodNumber: Int,
     @SerialName("isCurrentEduWeekInt")
-    val isCurrentEduWeekInt: Int,
+    val isCurrentWeek: Int,
     @SerialName("textTitle")
-    val textTitle: String,
+    val typeName: String,
     @SerialName("text")
-    val text: String,
+    val name: String,
     @Serializable(with = LocalDateTimeOffsetSerializer::class)
     @SerialName("eventStartDateTime")
-    val eventStartDateTime: LocalDateTime,
+    val startDateTime: LocalDateTime,
     @Serializable(with = LocalDateTimeOffsetSerializer::class)
     @SerialName("eventEndDateTime")
-    val eventEndDateTime: LocalDateTime,
+    val endDateTime: LocalDateTime,
 
     @SerialName("roomsXml")
-    val roomsXml: String?,
+    val rooms: String?,
     @SerialName("edGroupsXml")
-    val edGroupsXml: String?,
+    val groups: String?,
     @SerialName("lecturersXml")
-    val lecturersXml: String?,
+    val lecturers: String?,
 
     @Serializable(with = LocalDateTimeInstantSerializer::class)
     @SerialName("validFrom")
@@ -55,8 +55,8 @@ data class ScheduleItemDtoV2(
     val validTo: LocalDateTime,
 
     @SerialName("idkPeriodicity")
-    val idkPeriodicity: Int,
+    val isPeriodic: Int,
 
     @SerialName("slotName")
-    val slotName: String? = null
+    val timeSlotName: String? = null
 )
