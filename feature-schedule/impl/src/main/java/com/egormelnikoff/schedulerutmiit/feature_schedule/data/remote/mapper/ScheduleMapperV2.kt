@@ -35,8 +35,12 @@ class ScheduleMapperV2 @Inject constructor() {
         }
 
         val today = LocalDate.now()
+        var isDefaultAssigned = false
 
         return groupedItems.map { (schedule, items) ->
+            val isDefault = !isDefaultAssigned && today in schedule.valueFrom..schedule.valueTo
+            if (isDefault) isDefaultAssigned = true
+
             ScheduleWithEvents(
                 schedule = Schedule(
                     namedScheduleId = namedScheduleId,
@@ -58,7 +62,7 @@ class ScheduleMapperV2 @Inject constructor() {
                     } else {
                         null
                     },
-                    isDefault = today in schedule.valueFrom..schedule.valueTo
+                    isDefault = isDefault
                 ),
                 events = if (schedule.timetableType.isPeriodic()) {
                     items.mapPeriodic()

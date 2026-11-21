@@ -37,9 +37,6 @@ fun LazyListScope.eventRoomsWidget(
                                 onLongClick = {
                                     onAction(EventAction.OnRoomLongClicked(room))
                                 },
-                                onClick = {
-                                    onAction(EventAction.OnRoomClicked(room))
-                                },
                             )
                         }
                     }
