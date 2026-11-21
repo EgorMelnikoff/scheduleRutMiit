@@ -60,25 +60,38 @@ fun ScheduleSheetWidget(
 
     AppBottomSheet(
         showHandle = false,
+        contentPadding = PaddingValues(
+            top = AppTheme.paddings.padding8,
+            bottom = AppTheme.paddings.padding12
+        ),
         verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16),
         onDismiss = {
             onAction(ScheduleAction.OnDismissScheduleSheet)
         }
     ) {
         ModalDialogNamedScheduleHeader(
-            onDeleteNamedSchedule = {
-                onAction(ScheduleAction.OnDeleteNamedSchedule)
-            },
             namedSchedule = namedSchedule,
             isSavedNamedSchedule = isSavedNamedSchedule,
             schedule = currentSchedule,
+            onDeleteNamedSchedule = {
+                onAction(
+                    ScheduleAction.OnDeleteNamedSchedule
+                )
+            },
             onOpenRenameDialog = {
-                onAction(ScheduleAction.OnOpenDialog(Route.Dialog.RenameNamedScheduleDialog(namedSchedule.id)))
+                onAction(
+                    ScheduleAction.OnOpenDialog(
+                        Route.Dialog.RenameNamedScheduleDialog(
+                            namedSchedule.id
+                        )
+                    )
+                )
             },
             onDismiss = {
                 onAction(ScheduleAction.OnDismissScheduleSheet)
             }
         )
+
         currentSchedule?.let { schedule ->
             Row(
                 modifier = Modifier

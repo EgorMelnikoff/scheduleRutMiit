@@ -20,7 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
-import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
+import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
@@ -121,7 +121,7 @@ fun ModalDialogNamedScheduleHeader(
     }
 
     if (showDeleteDialog) {
-        AppAlertBottomSheet(
+        AppAlertDialog(
             dialogTitle = stringResource(R.string.delete_schedule),
             dialogText = stringResource(R.string.do_you_want_continue),
             onDismissRequest = {
