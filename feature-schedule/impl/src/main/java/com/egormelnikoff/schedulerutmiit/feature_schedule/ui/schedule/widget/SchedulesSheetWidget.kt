@@ -37,6 +37,7 @@ import java.time.ZoneId
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SchedulesSheetWidget(
+    currentNamedScheduleId: Long? = null,
     namedSchedules: List<NamedSchedule>,
     onAction: (ScheduleAction) -> Unit
 ) {
@@ -64,7 +65,7 @@ fun SchedulesSheetWidget(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = "Ваши расписания",
+                text = stringResource(R.string.your_schedules),
                 style = AppTheme.typography.titleLarge,
                 color = AppTheme.colors.onBackground,
                 overflow = TextOverflow.Ellipsis,
@@ -122,7 +123,16 @@ fun SchedulesSheetWidget(
                     CenterContent(
                         title = {
                             TextBlock(
-                                text = namedSchedule.shortName
+                                text = namedSchedule.shortName,
+                                label = if (namedSchedule.isDefault) {
+                                    {
+                                        BadgeWidget(
+                                            title = stringResource(R.string._default),
+                                        )
+                                    }
+                                } else {
+                                    null
+                                }
                             )
                         },
                         subtitle = {
@@ -135,14 +145,14 @@ fun SchedulesSheetWidget(
                     )
                 },
                 end = {
-                    if (namedSchedule.isDefault) {
+                    if (currentNamedScheduleId == namedSchedule.id) {
                         Icon(
                             icon = ImageVector.vectorResource(R.drawable.check),
                             iconColor = AppTheme.colors.primary
                         )
                     }
                 },
-                showChevron = !namedSchedule.isDefault,
+                showChevron = currentNamedScheduleId != namedSchedule.id,
                 showSeparator = index != namedSchedules.lastIndex,
                 onClick = {
                     onAction(ScheduleAction.OnChangeSchedule(namedSchedule.id))

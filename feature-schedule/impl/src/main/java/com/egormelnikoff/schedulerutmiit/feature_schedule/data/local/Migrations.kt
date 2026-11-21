@@ -1,8 +1,11 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local
 
 import android.content.Context
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.core.database.sqlite.transaction
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
@@ -476,47 +479,84 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
 fun migration12to13(context: Context): Migration = object : Migration(12, 13) {
     override fun migrate(db: SupportSQLiteDatabase) {
         val taskDbPath = context.getDatabasePath(TASK_DATABASE_NAME).absolutePath
-        db.execSQL("ATTACH DATABASE '$taskDbPath' AS taskdb")
-
-        db.execSQL(
-            """
-            CREATE TABLE IF NOT EXISTS `Tasks` (
-                `TaskId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                `text` TEXT NOT NULL
+        val taskDb = SQLiteDatabase.openDatabase(
+            taskDbPath,
+            null,
+            SQLiteDatabase.OPEN_READWRITE or SQLiteDatabase.CREATE_IF_NECESSARY
+        )
+        taskDb.use { taskDb ->
+            taskDb.execSQL(
+                """
+                    CREATE TABLE IF NOT EXISTS `Tasks` (
+                        `TaskId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `text` TEXT NOT NULL
+                    )
+                """.trimIndent()
             )
-        """.trimIndent()
-        )
-        db.execSQL(
-            """
-            CREATE TABLE IF NOT EXISTS `TaskCompletions` (
-                `taskId` INTEGER NOT NULL,
-                `date` TEXT NOT NULL,
-                `time` TEXT NOT NULL,
-                `tag` INTEGER NOT NULL,
-                `isCompleted` INTEGER NOT NULL,
-                PRIMARY KEY(`taskId`, `date`),
-                FOREIGN KEY(`taskId`) REFERENCES `Tasks`(`TaskId`) ON UPDATE NO ACTION ON DELETE CASCADE
+            taskDb.execSQL(
+                """
+                    CREATE TABLE IF NOT EXISTS `TaskCompletions` (
+                        `taskId` INTEGER NOT NULL,
+                        `date` TEXT NOT NULL,
+                        `time` TEXT NOT NULL,
+                        `tag` INTEGER NOT NULL,
+                        `isCompleted` INTEGER NOT NULL,
+                        PRIMARY KEY(`taskId`, `date`),
+                        FOREIGN KEY(`taskId`) REFERENCES `Tasks`(`TaskId`) ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent()
             )
-        """.trimIndent()
-        )
 
-        db.execSQL(
-            """
-            INSERT OR IGNORE INTO taskdb.`Tasks` (`TaskId`, `text`)
-            SELECT `TaskId`, `text` FROM main.`Tasks`
-        """.trimIndent()
-        )
-        db.execSQL(
-            """
-            INSERT OR IGNORE INTO taskdb.`TaskCompletions` (`taskId`, `date`, `time`, `tag`, `isCompleted`)
-            SELECT `taskId`, `date`, `time`, `tag`, `isCompleted` FROM main.`TaskCompletions`
-        """.trimIndent()
-        )
-        db.execSQL("DETACH DATABASE taskdb")
+            copyTable(
+                from = db,
+                to = taskDb,
+                table = "Tasks",
+                columns = listOf("TaskId", "text")
+            )
+            copyTable(
+                from = db,
+                to = taskDb,
+                table = "TaskCompletions",
+                columns = listOf("taskId", "date", "time", "tag", "isCompleted")
+            )
+        }
 
         db.execSQL("DROP TABLE Tasks")
         db.execSQL("DROP TABLE TaskCompletions")
         db.execSQL("DROP TABLE SearchHistory")
+    }
+
+    private fun copyTable(
+        from: SupportSQLiteDatabase,
+        to: SQLiteDatabase,
+        table: String,
+        columns: List<String>
+    ) {
+        val columnList = columns.joinToString(", ")
+        val placeholders = columns.joinToString(", ") { "?" }
+        to.transaction {
+            try {
+                from.query("SELECT $columnList FROM `$table`").use { cursor ->
+                    while (cursor.moveToNext()) {
+                        val values = arrayOfNulls<Any>(cursor.columnCount)
+                        for (i in values.indices) {
+                            values[i] = when (cursor.getType(i)) {
+                                Cursor.FIELD_TYPE_INTEGER -> cursor.getLong(i)
+                                Cursor.FIELD_TYPE_FLOAT -> cursor.getDouble(i)
+                                Cursor.FIELD_TYPE_STRING -> cursor.getString(i)
+                                Cursor.FIELD_TYPE_BLOB -> cursor.getBlob(i)
+                                else -> null
+                            }
+                        }
+                        execSQL(
+                            "INSERT OR IGNORE INTO `$table` ($columnList) VALUES ($placeholders)",
+                            values
+                        )
+                    }
+                }
+            } finally {
+            }
+        }
     }
 }
 

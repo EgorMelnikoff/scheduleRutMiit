@@ -146,6 +146,7 @@ fun ScheduleScreenWidget(
     if (state.schedulesSheet) {
         SchedulesSheetWidget(
             namedSchedules = state.namedSchedules,
+            currentNamedScheduleId = state.namedSchedule?.id,
             onAction = onAction
         )
     }
