@@ -1,0 +1,2 @@
+-keep class com.egormelnikoff.schedulerutmiit.core.settings.api.model.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.core.settings.data.remote.dto.** { *; }

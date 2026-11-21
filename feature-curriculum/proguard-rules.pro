@@ -1,1 +1,3 @@
--keep class com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.view_model.state.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.feature_curriculum.domain.model.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.feature_curriculum.data.remote.model.** { *; }
+-keep class com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.** { *; }

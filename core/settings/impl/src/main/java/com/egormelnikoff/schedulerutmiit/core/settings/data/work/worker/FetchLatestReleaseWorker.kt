@@ -9,7 +9,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-internal class FetchLatestReleaseWorker @AssistedInject constructor(
+open class FetchLatestReleaseWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val settingsRepos: SettingsRepos,
