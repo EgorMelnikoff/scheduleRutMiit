@@ -35,7 +35,7 @@ internal fun LazyStaggeredGridScope.newsListItemsWidget(
     items(newsList.itemCount) { index ->
         val news = newsList[index]
         if (news != null) {
-            val model = rememberAsyncImagePainter(newsImageUrl(news.picUrl))
+            val model = rememberAsyncImagePainter(news.picUrl)
             val transition by animateFloatAsState(
                 targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
             )
@@ -75,7 +75,7 @@ internal fun LazyStaggeredGridScope.newsListItemsWidget(
                         maxLines = 3
                     )
                     DateNewsWidget(
-                        date = news.date.format(dayMonthNameFormatter)
+                        date = news.date
                     )
                 }
             }

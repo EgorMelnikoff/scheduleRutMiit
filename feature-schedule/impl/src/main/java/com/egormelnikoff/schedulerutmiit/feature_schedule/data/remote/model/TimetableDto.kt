@@ -6,6 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
+@Deprecated("Новая ручка")
 @Serializable
 data class TimetableDto(
     @SerialName("id")

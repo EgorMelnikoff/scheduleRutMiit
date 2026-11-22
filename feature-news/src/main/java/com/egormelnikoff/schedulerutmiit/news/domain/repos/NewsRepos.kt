@@ -6,4 +6,6 @@ import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsList
 internal interface NewsRepos {
     suspend fun getNewsById(id: Long): News
     suspend fun getNewsList(pageSize: Int, page: Int): NewsList
+
+    suspend fun getNewsListV2(pageSize: Int, page: Int): NewsList
 }

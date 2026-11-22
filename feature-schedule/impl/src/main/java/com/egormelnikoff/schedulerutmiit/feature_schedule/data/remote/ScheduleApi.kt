@@ -9,12 +9,14 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface ScheduleApi {
+    @Deprecated("Новая ручка")
     @GET(Endpoints.TIMETABLE)
     suspend fun getTimetablesWithoutResponse(
         @Path("type") typeName: String,
         @Path("apiId") apiId: Int
     ): TimetablesDto
 
+    @Deprecated("Новая ручка")
     @GET(Endpoints.SCHEDULE)
     suspend fun getSchedule(
         @Path("type") type: String,
@@ -22,6 +24,7 @@ interface ScheduleApi {
         @Path("timetableId") timetableId: String?
     ): ScheduleDto
 
+    @Deprecated("Новая ручка")
     @GET(Endpoints.TIMETABLE)
     suspend fun getTimetables(
         @Path("type") typeName: String,

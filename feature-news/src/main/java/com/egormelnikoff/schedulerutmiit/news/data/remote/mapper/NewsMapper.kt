@@ -7,9 +7,12 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
+import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.NewsDto
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.NewsListDto
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.NewsShortDto
+import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.v2.NewsListDtoV2
+import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.v2.NewsShortDtoV2
 import com.egormelnikoff.schedulerutmiit.news.domain.model.News
 import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsList
 import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsShort
@@ -25,7 +28,22 @@ internal fun NewsListDto.toDomain() = NewsList(
 )
 
 internal fun NewsShortDto.toDomain() = NewsShort(
-    id, title, date, picUrl, secondary.text
+    id, title, "date", picUrl, secondary.text
+)
+
+internal fun NewsListDtoV2.toDomain() = NewsList(
+    maxPage = size,
+    items = articles.map {
+        it.toDomain()
+    }
+)
+
+internal fun NewsShortDtoV2.toDomain() = NewsShort(
+    id = id,
+    title = title,
+    date = date.orEmpty(),
+    picUrl = "${Endpoints.BASE_MIIT_URL}${imageUrl}",
+    text = source.orEmpty()
 )
 
 internal fun NewsDto.toDomain(): News {

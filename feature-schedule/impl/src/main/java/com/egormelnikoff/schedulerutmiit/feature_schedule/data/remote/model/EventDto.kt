@@ -5,6 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
+@Deprecated("Новая ручка")
 @Serializable
 data class EventDto(
     @Serializable(with = LocalDateTimeOffsetSerializer::class)

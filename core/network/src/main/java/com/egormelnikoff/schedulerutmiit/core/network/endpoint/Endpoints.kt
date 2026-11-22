@@ -10,15 +10,31 @@ object Endpoints {
     //API MIIT
     const val BASE_RUT_MIIT_URL = "https://rut-miit.ru"
     const val BASE_MIIT_URL = "https://www.miit.ru"
-    const val GROUPS = "/data-service/data/timetable/groups-catalog"
-    const val TIMETABLE = "/data-service/data/timetable/v2/{type}/{apiId}"
 
+
+
+    @Deprecated("Новая ручка")
+    const val GROUPS = "/data-service/data/timetable/groups-catalog"
+    @Deprecated("Новая ручка")
+    const val TIMETABLE = "/data-service/data/timetable/v2/{type}/{apiId}"
+    @Deprecated("Новая ручка")
     const val SCHEDULE = "/data-service/data/timetable/v2/{type}/{apiId}/{timetableId}"
+    @Deprecated("Новая ручка")
     const val NEWS_CATALOG = "/data-service/data/news"
+    @Deprecated("Новая ручка")
     const val NEWS = "/data-service/data/news/{newsId}"
 
     const val SCHEDULE_GROUP_V2 = "/api/timetable/{groupId}"
     const val SCHEDULE_PERSON_V2 = "/api/profTimetable/{personId}"
+
+    const val GROUPS_V2 = "/api/timetableCatalog"
+    const val PEOPLE_V2 = "/api/getPeopleByDeptAndName?name={query}&profOnly={profOnly}&chunk={chunk}&num={num}"
+
+    const val NEWS_CATEGORIES_V2 = "/api/getAllCategories"
+    const val NEWS_LIST_V2 = "/api/findArticleByName"
+    const val NEWS_V2 = "/api/getArticle/{newsId}"
+
+
 
     fun downloadUrl(
         isPerson: Boolean,

@@ -14,7 +14,8 @@ internal class GetNewsListUseCase @Inject constructor(
     operator fun invoke(): Flow<PagingData<NewsShort>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 10,
+                pageSize = 12,
+                initialLoadSize = 12,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { pagingSourceFactory.create() }

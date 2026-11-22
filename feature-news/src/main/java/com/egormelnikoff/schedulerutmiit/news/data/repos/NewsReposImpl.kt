@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.news.data.repos
 
 import com.egormelnikoff.schedulerutmiit.news.data.remote.NewsRemoteDataSource
+import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsList
 import com.egormelnikoff.schedulerutmiit.news.domain.repos.NewsRepos
 import javax.inject.Inject
 
@@ -10,6 +11,8 @@ internal  class NewsReposImpl @Inject constructor(
     override suspend fun getNewsList(pageSize: Int, page: Int) =
         newsRemoteDataSource.getNewsList(pageSize, page)
 
+    override suspend fun getNewsListV2(pageSize: Int, page: Int) =
+        newsRemoteDataSource.getNewsListV2(pageSize, page)
 
     override suspend fun getNewsById(id: Long) =
         newsRemoteDataSource.getNewsById(id)
