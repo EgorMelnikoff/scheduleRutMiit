@@ -66,7 +66,7 @@ class RefreshNamedScheduleUseCase @Inject constructor(
             namedSchedule.shortName,
             namedSchedule.apiId?.toInt() ?: 0,
             namedSchedule.type
-        )
+        ).second
 
         val oldNamedSchedule = namedScheduleRepos.getById(namedSchedule.id)
 
