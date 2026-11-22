@@ -11,8 +11,10 @@ fun LocalDateTime.toLocalTimeWithTimeZone(): LocalTime = this
     .withZoneSameInstant(ZoneId.systemDefault())
     .toLocalTime()
 
-fun LocalDateTime.toUtcDateTime(): LocalDateTime = this
-    .atZone(ZoneId.systemDefault())
+fun LocalDateTime.toUtcDateTime(
+    zoneId: ZoneId = ZoneId.systemDefault()
+): LocalDateTime = this
+    .atZone(zoneId)
     .withZoneSameInstant(ZoneOffset.UTC)
     .toLocalDateTime()
 
