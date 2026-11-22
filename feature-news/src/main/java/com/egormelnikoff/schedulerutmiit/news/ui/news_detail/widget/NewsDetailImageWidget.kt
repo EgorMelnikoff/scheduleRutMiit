@@ -28,7 +28,7 @@ internal fun LazyListScope.newsDetailImageWidget(
     item {
         if (news.images.isNotEmpty()) {
             val model =
-                rememberAsyncImagePainter(newsImageUrl(url = news.images.first(), width = 500))
+                rememberAsyncImagePainter(news.images.first())
             val transition by animateFloatAsState(
                 targetValue = if (model.state is AsyncImagePainter.State.Success) 1f else 0f
             )

@@ -4,6 +4,7 @@ import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.NewsDto
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.NewsListDto
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.v2.NewsCategory
+import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.v2.NewsDtoV2
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.v2.NewsListDtoV2
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -29,6 +30,11 @@ internal interface NewsApi {
         @Query("chunkSize") pageSize: Int,
         @Query("pageNum") pageNum: Int,
     ): NewsListDtoV2
+
+    @GET(Endpoints.NEWS_V2)
+    suspend fun getNewsV2(
+        @Path("newsId") newsId: Long,
+    ): NewsDtoV2
 
     @GET(Endpoints.NEWS)
     suspend fun getNewsById(

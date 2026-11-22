@@ -57,8 +57,7 @@ object Endpoints {
     fun personImageUrl(personId: Int?, width: Int = 100) =
         "${BASE_MIIT_URL}/content/e$personId.jpg?id_fe=$personId&SWidth=$width"
 
-    fun newsImageUrl(url: String, width: Int = 360): String {
-        val uri = url.toUri()
-        return "$BASE_MIIT_URL/content/photo.jpg?id_wm=${uri.getQueryParameter("id_wm")}&SWidth=$width"
+    fun newsImageUrl(url: String): String {
+        return "$BASE_MIIT_URL$url"
     }
 }

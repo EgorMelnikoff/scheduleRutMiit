@@ -11,6 +11,7 @@ import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.NewsDto
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.NewsListDto
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.NewsShortDto
+import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.v2.NewsDtoV2
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.v2.NewsListDtoV2
 import com.egormelnikoff.schedulerutmiit.news.data.remote.dto.v2.NewsShortDtoV2
 import com.egormelnikoff.schedulerutmiit.news.domain.model.News
@@ -42,7 +43,9 @@ internal fun NewsShortDtoV2.toDomain() = NewsShort(
     id = id,
     title = title,
     date = date.orEmpty(),
-    picUrl = "${Endpoints.BASE_MIIT_URL}${imageUrl}",
+    picUrl = imageUrl?.let { url ->
+        Endpoints.newsImageUrl(url)
+    }.orEmpty(),
     text = source.orEmpty()
 )
 
@@ -83,6 +86,57 @@ internal fun NewsDto.toDomain(): News {
                 val imageUrl = element.attr("src")
                 if (imageUrl.isNotEmpty()) {
                     parsedImages.add(imageUrl)
+                }
+            }
+        }
+    }
+
+    return News(
+        title = this.title,
+        date = this.date,
+        paragraphs = parsedElements,
+        images = parsedImages
+    )
+}
+
+
+internal fun NewsDtoV2.toDomain(): News {
+    val document = Jsoup.parse(this.content)
+    val elements = document.select("p, li, tr, img")
+    val parsedElements = mutableListOf<Pair<String, Any>>()
+    val parsedImages = mutableListOf<String>()
+    for (element in elements) {
+        when (element.tagName()) {
+            "p" -> {
+                val annotatedString = htmlToAnnotatedString(element.html())
+                if (annotatedString.isNotEmpty()) {
+                    parsedElements.add("p" to annotatedString)
+                }
+            }
+
+            "li" -> {
+                val annotatedString = htmlToAnnotatedString("• ${element.html()}")
+                if (annotatedString.isNotEmpty()) {
+                    parsedElements.add("li" to annotatedString)
+                }
+            }
+
+            "tr" -> {
+                val tableRow = element.select("td")
+                val tableRowItems = mutableListOf<String>()
+                tableRow.forEach { td ->
+                    val text = td.text().trim()
+                    if (text.isNotEmpty()) {
+                        tableRowItems.add(text)
+                    }
+                }
+                parsedElements.add("tr" to tableRowItems)
+            }
+
+            "img" -> {
+                val imageUrl = element.attr("src")
+                if (imageUrl.isNotEmpty()) {
+                    parsedImages.add(Endpoints.newsImageUrl(imageUrl))
                 }
             }
         }

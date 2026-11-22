@@ -12,6 +12,9 @@ internal class NewsRemoteDataSource @Inject constructor(
     suspend fun getNewsList(pageSize: Int, page: Int): NewsList =
         newsApi.getNewsList(pageSize, page, page, 2).toDomain()
 
+    suspend fun getNewsById(id: Long): News =
+        newsApi.getNewsById(id).toDomain()
+
     suspend fun getNewsListV2(pageSize: Int, page: Int): NewsList {
         return newsApi.getNewsListV2(
             pageSize = pageSize,
@@ -20,7 +23,7 @@ internal class NewsRemoteDataSource @Inject constructor(
         ).toDomain()
     }
 
-
-    suspend fun getNewsById(id: Long): News =
-        newsApi.getNewsById(id).toDomain()
+    suspend fun getNewsV2(id: Long): News {
+        return newsApi.getNewsV2(id).toDomain()
+    }
 }

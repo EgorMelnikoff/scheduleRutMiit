@@ -36,12 +36,7 @@ internal fun LazyListScope.newsDetailImagesWidget(
                             .width(300.dp)
                             .clip(AppTheme.shapes.extraLarge)
                             .background(AppTheme.colors.secondaryContainer),
-                        painter = rememberAsyncImagePainter(
-                            newsImageUrl(
-                                url = link,
-                                width = 500
-                            )
-                        ),
+                        painter = rememberAsyncImagePainter(link),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )

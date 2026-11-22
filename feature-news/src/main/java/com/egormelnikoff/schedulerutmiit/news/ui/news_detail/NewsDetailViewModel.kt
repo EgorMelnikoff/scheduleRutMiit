@@ -46,7 +46,7 @@ internal class NewsDetailViewModel @AssistedInject constructor(
                 }
             }
         ) {
-            val news = newsRemoteDataSource.getNewsById(id)
+            val news = newsRemoteDataSource.getNewsV2(id)
 
             updateState {
                 NewsDetailState.Loaded(news)

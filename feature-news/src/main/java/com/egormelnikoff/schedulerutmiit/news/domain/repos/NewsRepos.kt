@@ -8,4 +8,5 @@ internal interface NewsRepos {
     suspend fun getNewsList(pageSize: Int, page: Int): NewsList
 
     suspend fun getNewsListV2(pageSize: Int, page: Int): NewsList
+    suspend fun getNewsV2(id: Long): News
 }
