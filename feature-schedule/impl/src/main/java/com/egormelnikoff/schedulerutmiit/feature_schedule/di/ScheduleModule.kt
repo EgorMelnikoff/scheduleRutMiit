@@ -19,7 +19,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ScheduleModule {
+internal object ScheduleModule {
     @Provides
     @Singleton
     fun provideFileExporter(@ApplicationContext context: Context) = FileExporter(context)

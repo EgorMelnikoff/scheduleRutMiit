@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.export.mod
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LecturerImport(
+internal data class LecturerImport(
     val id: Int = -1,
     val shortFio: String,
     val fullFio: String,

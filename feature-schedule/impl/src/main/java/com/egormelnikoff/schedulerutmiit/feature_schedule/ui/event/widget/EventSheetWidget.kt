@@ -17,7 +17,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Timetable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetEventWidget(
+internal fun BottomSheetEventWidget(
     timetableType: TimetableType,
     event: Event,
     onHideEvent: (() -> Unit)? = null,

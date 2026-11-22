@@ -5,7 +5,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtr
 import java.time.LocalDate
 import javax.inject.Inject
 
-class UpdateEventCommentUseCase @Inject constructor(
+internal class UpdateEventCommentUseCase @Inject constructor(
     private val core: UpdateEventExtraCore
 ) {
     suspend operator fun invoke(

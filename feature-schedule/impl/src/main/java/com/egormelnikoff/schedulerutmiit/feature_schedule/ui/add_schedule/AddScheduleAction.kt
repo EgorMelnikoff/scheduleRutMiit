@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 import java.time.LocalDate
 
-sealed interface AddScheduleAction {
+internal sealed interface AddScheduleAction {
     data class OnUpdateName(
         val name: String
     ) : AddScheduleAction

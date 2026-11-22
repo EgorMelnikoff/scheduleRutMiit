@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ReviewViewModel @Inject constructor(
+internal class ReviewViewModel @Inject constructor(
     private val observeSummaryUseCase: ObserveSummaryUseCase,
     private val timeProvider: TimeProvider,
 

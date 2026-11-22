@@ -30,7 +30,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 @Composable
-fun ModalDialogNamedScheduleHeader(
+internal fun ModalDialogNamedScheduleHeader(
     namedSchedule: NamedSchedule,
     schedule: Schedule?,
     isSavedNamedSchedule: Boolean,

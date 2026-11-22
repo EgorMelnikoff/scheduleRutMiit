@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event
 
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 
-sealed interface AddEventState {
+internal sealed interface AddEventState {
     data object Loading : AddEventState
 
     data class Loaded(

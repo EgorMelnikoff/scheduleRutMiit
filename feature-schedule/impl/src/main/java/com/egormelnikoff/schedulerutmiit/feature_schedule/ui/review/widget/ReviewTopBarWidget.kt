@@ -28,7 +28,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.DayPeriod
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewTopBarWidget(
+internal fun ReviewTopBarWidget(
     scrollBehavior: TopAppBarScrollBehavior,
     overlappedFraction: Float,
     showTopBarActions: Boolean,

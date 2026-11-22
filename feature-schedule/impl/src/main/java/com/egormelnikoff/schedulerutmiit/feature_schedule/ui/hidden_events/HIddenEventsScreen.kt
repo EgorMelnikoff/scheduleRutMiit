@@ -30,7 +30,7 @@ fun HiddenEventsScreen(
 
 @Preview(locale = "ru")
 @Composable
-fun HiddenEventsScreenPreview() {
+internal fun HiddenEventsScreenPreview() {
     PreviewLightTheme{
         HiddenEventsScreenWidget(listOf(eventMock, eventMock)) { }
     }

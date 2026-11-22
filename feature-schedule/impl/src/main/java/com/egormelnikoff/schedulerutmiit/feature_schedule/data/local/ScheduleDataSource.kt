@@ -9,7 +9,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.mapper.toEn
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 import javax.inject.Inject
 
-class ScheduleDataSource @Inject constructor(
+internal class ScheduleDataSource @Inject constructor(
     private val db: ScheduleDatabase,
     private val scheduleDao: ScheduleDao,
     private val eventDao: EventDao,

@@ -9,7 +9,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtr
 import java.time.LocalDate
 import javax.inject.Inject
 
-class UpdateEventExtraCore @Inject constructor(
+internal class UpdateEventExtraCore @Inject constructor(
     private val settingsRepos: SettingsRepos,
     private val eventDataSource: EventDataSource,
     val eventExtraDataSource: EventExtraDataSource

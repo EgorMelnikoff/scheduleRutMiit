@@ -10,7 +10,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.Name
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface NamedScheduleDao {
+internal interface NamedScheduleDao {
     @Insert(onConflict = REPLACE)
     suspend fun insert(namedScheduleEntity: NamedScheduleEntity): Long
 

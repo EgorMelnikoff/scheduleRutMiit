@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Serializable
-data class EventV1(
+internal data class EventV1(
     val id: Long,
     val scheduleId: Long,
     val isHidden: Boolean = false,

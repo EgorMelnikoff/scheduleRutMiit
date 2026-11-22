@@ -21,27 +21,27 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 
-fun NamedScheduleWithSchedulesRelation.toDomain() = NamedScheduleWithSchedules(
+internal fun NamedScheduleWithSchedulesRelation.toDomain() = NamedScheduleWithSchedules(
     namedScheduleEntity.toDomain(), scheduleWithEvents.map { it.toDomain() }
 )
 
-fun ScheduleWithEventsRelation.toDomain() = ScheduleWithEvents(
+internal fun ScheduleWithEventsRelation.toDomain() = ScheduleWithEvents(
     scheduleEntity.toDomain(),
     events.map { it.toDomain() },
     eventsExtraData.map { it.toDomain() }
 )
 
 //NamedSchedule
-fun NamedScheduleEntity.toDomain() = NamedSchedule(
+internal fun NamedScheduleEntity.toDomain() = NamedSchedule(
     id, fullName, shortName, apiId, type, isDefault, lastTimeUpdate
 )
 
-fun NamedSchedule.toEntity() = NamedScheduleEntity(
+internal fun NamedSchedule.toEntity() = NamedScheduleEntity(
     id, fullName, shortName, apiId, type, isDefault, lastTimeUpdate
 )
 
 //Schedule
-fun ScheduleEntity.toDomain() = Schedule(
+internal fun ScheduleEntity.toDomain() = Schedule(
     id,
     namedScheduleId,
     timetableId,
@@ -53,7 +53,7 @@ fun ScheduleEntity.toDomain() = Schedule(
     isDefault
 )
 
-fun Schedule.toEntity(
+internal fun Schedule.toEntity(
     newNamedScheduleId: Long? = null
 ) = ScheduleEntity(
     id,
@@ -68,7 +68,7 @@ fun Schedule.toEntity(
 )
 
 //Event
-fun EventEntity.toDomain() = Event(
+internal fun EventEntity.toDomain() = Event(
     id,
     scheduleId,
     isHidden,
@@ -85,7 +85,7 @@ fun EventEntity.toDomain() = Event(
     groups?.map { it.toDomain() }
 )
 
-fun Event.toEntity(
+internal fun Event.toEntity(
     newScheduleId: Long? = null
 ) = EventEntity(
     id,
@@ -105,11 +105,11 @@ fun Event.toEntity(
 )
 
 //EventExtra
-fun EventExtraDataEntity.toDomain() = EventExtraData(
+internal fun EventExtraDataEntity.toDomain() = EventExtraData(
     id, eventId, scheduleId, eventName, date, comment, tag
 )
 
-fun EventExtraData.toEntity(
+internal fun EventExtraData.toEntity(
     newScheduleId: Long? = null
 ) = EventExtraDataEntity(
     id, eventId, newScheduleId ?: scheduleId, eventName, date, comment, tag
@@ -117,17 +117,17 @@ fun EventExtraData.toEntity(
 
 
 //Group
-fun GroupEntity.toDomain() = Group(id, name)
-fun Group.toEntity() = GroupEntity(id, name)
+internal fun GroupEntity.toDomain() = Group(id, name)
+internal fun Group.toEntity() = GroupEntity(id, name)
 
 //Lecturer
-fun LecturerEntity.toDomain() = Lecturer(id, shortFio, fullFio, hint)
-fun Lecturer.toEntity() = LecturerEntity(id, shortFio, fullFio, hint)
+internal fun LecturerEntity.toDomain() = Lecturer(id, shortFio, fullFio, hint)
+internal fun Lecturer.toEntity() = LecturerEntity(id, shortFio, fullFio, hint)
 
 //Room
-fun RoomEntity.toDomain() = Room(id, name, hint)
-fun Room.toEntity() = RoomEntity(id, name, hint)
+internal fun RoomEntity.toDomain() = Room(id, name, hint)
+internal fun Room.toEntity() = RoomEntity(id, name, hint)
 
 //Recurrence
-fun RecurrenceEntity.toDomain() = Recurrence(interval, firstWeekNumber)
-fun Recurrence.toEntity() = RecurrenceEntity(interval, firstWeekNumber)
+internal fun RecurrenceEntity.toDomain() = Recurrence(interval, firstWeekNumber)
+internal fun Recurrence.toEntity() = RecurrenceEntity(interval, firstWeekNumber)

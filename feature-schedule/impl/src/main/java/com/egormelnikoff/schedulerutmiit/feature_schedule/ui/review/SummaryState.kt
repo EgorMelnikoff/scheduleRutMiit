@@ -10,9 +10,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-val eveningTime: LocalTime = LocalTime.of(18, 0)
+internal val eveningTime: LocalTime = LocalTime.of(18, 0)
 
-data class SummaryState(
+internal data class SummaryState(
     val date: LocalDate,
     val events: Map<String, List<Event>> = mapOf(),
     val currentWeek: Int = -1

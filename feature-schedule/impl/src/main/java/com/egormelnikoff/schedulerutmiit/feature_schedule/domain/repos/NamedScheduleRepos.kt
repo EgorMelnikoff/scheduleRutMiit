@@ -5,7 +5,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSche
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import kotlinx.coroutines.flow.Flow
 
-interface NamedScheduleRepos {
+internal interface NamedScheduleRepos {
     val currentNamedSchedule: Flow<NamedScheduleWithSchedules?>
     val isSaved: Boolean
 

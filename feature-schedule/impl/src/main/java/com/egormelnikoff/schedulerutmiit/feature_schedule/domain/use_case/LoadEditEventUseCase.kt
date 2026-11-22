@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventS
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.EditForm
 import javax.inject.Inject
 
-class LoadEditEventUseCase @Inject constructor(
+internal class LoadEditEventUseCase @Inject constructor(
     private val scheduleDataSource: ScheduleDataSource,
     private val eventDataSource: EventDataSource,
 ) {

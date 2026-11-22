@@ -37,7 +37,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-class ScheduleViewModel @Inject constructor(
+internal class ScheduleViewModel @Inject constructor(
     private val refreshNamedScheduleUseCase: RefreshNamedScheduleUseCase,
 
     private val deleteNamedScheduleUseCase: DeleteNamedScheduleUseCase,

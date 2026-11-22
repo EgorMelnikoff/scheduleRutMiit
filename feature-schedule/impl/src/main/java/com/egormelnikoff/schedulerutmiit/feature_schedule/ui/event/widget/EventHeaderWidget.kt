@@ -22,7 +22,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.eventStateMoc
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventHeaderWidget(
+internal fun EventHeaderWidget(
     eventState: EventState.Loaded,
     onAction: (EventAction) -> Unit,
 ) {
@@ -71,7 +71,7 @@ fun EventHeaderWidget(
 
 @Preview(locale = "ru")
 @Composable
-fun EventHeaderPreview() {
+internal fun EventHeaderPreview() {
     PreviewLightTheme {
         EventHeaderWidget(eventStateMock) { }
     }

@@ -17,8 +17,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventState
 
-
-fun LazyListScope.eventLecturersWidget(
+internal fun LazyListScope.eventLecturersWidget(
     eventState: EventState.Loaded,
     onAction: (EventAction) -> Unit
 ) {

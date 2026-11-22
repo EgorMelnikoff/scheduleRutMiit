@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 @Serializable
-data class ScheduleImport(
+internal data class ScheduleImport(
     val id: Long = 0,
     val namedScheduleId: Long,
     val timetableId: String,

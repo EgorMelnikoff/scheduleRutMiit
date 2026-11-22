@@ -18,16 +18,16 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.export.mode
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.export.model.ScheduleImport
 
 //NamedSchedule
-fun NamedScheduleEntity.toImport() = NamedScheduleImport(
+internal fun NamedScheduleEntity.toImport() = NamedScheduleImport(
     id, fullName, shortName, apiId, type, isDefault, lastTimeUpdate
 )
 
-fun NamedScheduleImport.toEntity() = NamedScheduleEntity(
+internal fun NamedScheduleImport.toEntity() = NamedScheduleEntity(
     id, fullName, shortName, apiId, type, isDefault, lastTimeUpdate
 )
 
 //Schedule
-fun ScheduleEntity.toImport() = ScheduleImport(
+internal fun ScheduleEntity.toImport() = ScheduleImport(
     id,
     namedScheduleId,
     timetableId,
@@ -39,7 +39,7 @@ fun ScheduleEntity.toImport() = ScheduleImport(
     isDefault
 )
 
-fun ScheduleImport.toEntity(
+internal fun ScheduleImport.toEntity(
     newNamedScheduleId: Long? = null
 ) = ScheduleEntity(
     id,
@@ -54,7 +54,7 @@ fun ScheduleImport.toEntity(
 )
 
 //Event
-fun EventEntity.toImport() = EventImport(
+internal fun EventEntity.toImport() = EventImport(
     id,
     scheduleId,
     isHidden,
@@ -71,7 +71,7 @@ fun EventEntity.toImport() = EventImport(
     groups?.map { it.toImport() }
 )
 
-fun EventImport.toEntity(
+internal fun EventImport.toEntity(
     newScheduleId: Long? = null
 ) = EventEntity(
     id,
@@ -91,11 +91,11 @@ fun EventImport.toEntity(
 )
 
 //EventExtra
-fun EventExtraDataEntity.toImport() = EventExtraDataImport(
+internal fun EventExtraDataEntity.toImport() = EventExtraDataImport(
     id, eventId, scheduleId, eventName, date, comment, tag
 )
 
-fun EventExtraDataImport.toEntity(
+internal fun EventExtraDataImport.toEntity(
     newScheduleId: Long? = null
 ) = EventExtraDataEntity(
     id, eventId, newScheduleId ?: scheduleId, eventName, date, comment, tag
@@ -103,17 +103,17 @@ fun EventExtraDataImport.toEntity(
 
 
 //Group
-fun GroupEntity.toImport() = GroupImport(id, name)
-fun GroupImport.toEntity() = GroupEntity(id, name)
+internal fun GroupEntity.toImport() = GroupImport(id, name)
+internal fun GroupImport.toEntity() = GroupEntity(id, name)
 
 //Lecturer
-fun LecturerEntity.toImport() = LecturerImport(id, shortFio, fullFio, hint)
-fun LecturerImport.toEntity() = LecturerEntity(id, shortFio, fullFio, hint)
+internal fun LecturerEntity.toImport() = LecturerImport(id, shortFio, fullFio, hint)
+internal fun LecturerImport.toEntity() = LecturerEntity(id, shortFio, fullFio, hint)
 
 //Room
-fun RoomEntity.toImport() = RoomImport(id, name, hint)
-fun RoomImport.toEntity() = RoomEntity(id, name, hint)
+internal fun RoomEntity.toImport() = RoomImport(id, name, hint)
+internal fun RoomImport.toEntity() = RoomEntity(id, name, hint)
 
 //Recurrence
-fun RecurrenceEntity.toImport() = RecurrenceImport(interval, firstWeekNumber)
-fun RecurrenceImport.toEntity() = RecurrenceEntity(interval, firstWeekNumber)
+internal fun RecurrenceEntity.toImport() = RecurrenceImport(interval, firstWeekNumber)
+internal fun RecurrenceImport.toEntity() = RecurrenceEntity(interval, firstWeekNumber)

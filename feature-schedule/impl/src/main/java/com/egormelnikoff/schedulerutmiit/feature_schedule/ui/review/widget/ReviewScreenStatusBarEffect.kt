@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 @Composable
-fun ReviewScreenStatusBarEffect(
+internal fun ReviewScreenStatusBarEffect(
     overlappedFraction: Float,
     isDarkTheme: Boolean
 ) {

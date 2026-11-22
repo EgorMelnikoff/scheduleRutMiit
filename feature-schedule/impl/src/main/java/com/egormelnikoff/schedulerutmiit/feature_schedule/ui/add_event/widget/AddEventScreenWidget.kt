@@ -24,7 +24,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addEventState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEventScreenWidget(
+internal fun AddEventScreenWidget(
     state: AddEventState,
     onAction: (AddEventAction) -> Unit
 ) {
@@ -189,7 +189,7 @@ fun AddEventScreenWidget(
 
 @Preview(locale = "ru")
 @Composable
-fun EventScreenWidgetPreview() {
+internal fun EventScreenWidgetPreview() {
     PreviewLightTheme {
         AddEventScreenWidget(addEventStateMock) { }
     }

@@ -20,7 +20,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.renameSchedul
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RenameScheduleScreenWidget(
+internal fun RenameScheduleScreenWidget(
     renameScheduleState: RenameScheduleState,
     onAction: (RenameScheduleAction) -> Unit
 ) {

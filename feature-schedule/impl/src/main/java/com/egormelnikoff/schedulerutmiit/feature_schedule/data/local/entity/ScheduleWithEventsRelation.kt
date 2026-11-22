@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity
 import androidx.room.Embedded
 import androidx.room.Relation
 
-data class ScheduleWithEventsRelation(
+internal data class ScheduleWithEventsRelation(
     @Embedded
     val scheduleEntity: ScheduleEntity,
     @Relation(

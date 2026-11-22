@@ -20,7 +20,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventS
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addEventStateMock
 
 @Composable
-fun ThirdStepAddEventWidget(
+internal fun ThirdStepAddEventWidget(
     focusManager: FocusManager,
     state: AddEventState.Loaded,
     onAction: (AddEventAction) -> Unit

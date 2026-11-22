@@ -26,7 +26,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAc
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleUiState
 
 @Composable
-fun ScheduleScreenWidget(
+internal fun ScheduleScreenWidget(
     state: ScheduleUiState,
     contentPadding: PaddingValues,
     onAction: (ScheduleAction) -> Unit

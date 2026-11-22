@@ -22,7 +22,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addEventStateMock
 
 @Composable
-fun RecurrenceWidget(
+internal fun RecurrenceWidget(
     maxInterval: Int,
     currentInterval: Int,
     currentPeriod: Int,

@@ -8,7 +8,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedSchedul
 @Entity(
     tableName = "NamedSchedules"
 )
-data class NamedScheduleEntity(
+internal data class NamedScheduleEntity(
     @ColumnInfo(name = "NamedScheduleId")
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

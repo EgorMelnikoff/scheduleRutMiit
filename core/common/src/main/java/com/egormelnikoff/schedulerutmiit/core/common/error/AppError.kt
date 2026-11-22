@@ -51,7 +51,7 @@ fun AppError.getMessage(context: Context): String {
         is AppError.HttpError -> "${context.getString(R.string.server_error)}: ${this.code}"
         is AppError.SerializationError -> context.getString(R.string.serialization_error)
         is AppError.IllegalArgumentError -> context.getString(R.string.illegal_argument)
-        is AppError.EmptyBodyError -> context.getString(R.string.empty_response)
+        is AppError.EmptyBodyError -> context.getString(R.string.no_data)
         is AppError.UnexpectedError -> {
             this.exception.message?.let {
                 "${context.getString(R.string.error)}: $it}"

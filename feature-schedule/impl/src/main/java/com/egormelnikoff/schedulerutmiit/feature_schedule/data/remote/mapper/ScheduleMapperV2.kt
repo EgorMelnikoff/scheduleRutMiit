@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.mapper
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
-import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.v2.ScheduleEventDtoV2
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.ScheduleEventDtoV2
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
@@ -20,7 +20,7 @@ import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlin.math.abs
 
-class ScheduleMapperV2 @Inject constructor() {
+internal class ScheduleMapperV2 @Inject constructor() {
     fun map(
         namedScheduleId: Long,
         namedScheduleType: NamedScheduleType,
@@ -225,7 +225,7 @@ class ScheduleMapperV2 @Inject constructor() {
     }
 }
 
-data class ScheduleGroupKey(
+internal data class ScheduleGroupKey(
     val valueFrom: LocalDate,
     val valueTo: LocalDate,
     val timetableType: TimetableType

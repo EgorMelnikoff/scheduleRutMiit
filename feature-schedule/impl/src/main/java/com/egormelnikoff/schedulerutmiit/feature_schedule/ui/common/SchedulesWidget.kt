@@ -14,7 +14,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedSchedul
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 
 @Composable
-fun SchedulesWidget(
+internal fun SchedulesWidget(
     namedSchedules: List<NamedSchedule>,
     onClickItem: (NamedSchedule) -> Unit
 ) {

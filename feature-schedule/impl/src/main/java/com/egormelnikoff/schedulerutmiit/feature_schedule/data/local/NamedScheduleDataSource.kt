@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class NamedScheduleDataSource @Inject constructor(
+internal class NamedScheduleDataSource @Inject constructor(
     private val db: ScheduleDatabase,
     private val namedScheduleDao: NamedScheduleDao,
     private val scheduleDao: ScheduleDao,

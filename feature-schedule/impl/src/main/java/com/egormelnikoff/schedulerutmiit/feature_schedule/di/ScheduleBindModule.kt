@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class BindScheduleModule {
+internal abstract class BindScheduleModule {
     @Binds
     @Singleton
     abstract fun bindDataRepos(dataReposImpl: ExportReposImpl): ExportRepos

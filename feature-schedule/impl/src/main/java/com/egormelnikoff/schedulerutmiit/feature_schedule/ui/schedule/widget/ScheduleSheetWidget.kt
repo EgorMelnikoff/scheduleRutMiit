@@ -44,7 +44,7 @@ import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleSheetWidget(
+internal fun ScheduleSheetWidget(
     namedSchedule: NamedSchedule,
     currentSchedule: Schedule? = null,
     schedules: List<Schedule>,

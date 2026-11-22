@@ -18,7 +18,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.groupMock
 
 @Composable
-fun GroupInputWidget(
+internal fun GroupInputWidget(
     group: Group,
     onValueChanged: (Group) -> Unit,
     onRemove: () -> Unit

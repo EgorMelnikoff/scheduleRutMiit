@@ -22,7 +22,7 @@ import java.time.LocalTime
 @HiltViewModel(
     assistedFactory = AddEventViewModel.Factory::class
 )
-class AddEventViewModel @AssistedInject constructor(
+internal class AddEventViewModel @AssistedInject constructor(
     private val loadEditEventUseCase: LoadEditEventUseCase,
     private val eventDataSource: EventDataSource,
     private val appRouter: AppRouter,

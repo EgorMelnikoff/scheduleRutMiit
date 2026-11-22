@@ -12,7 +12,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.SchedulesWid
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
 
-fun LazyListScope.reviewSchedulesWidget(
+internal fun LazyListScope.reviewSchedulesWidget(
     reviewState: ReviewState,
     onAction: (ReviewAction) -> Unit
 ) {

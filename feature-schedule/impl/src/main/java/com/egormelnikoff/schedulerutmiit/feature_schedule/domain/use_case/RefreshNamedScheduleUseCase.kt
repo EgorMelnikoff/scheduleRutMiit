@@ -12,7 +12,7 @@ import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class RefreshNamedScheduleUseCase @Inject constructor(
+internal class RefreshNamedScheduleUseCase @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
     private val scheduleDataSource: ScheduleDataSource,
     private val settingsRepos: SettingsRepos,

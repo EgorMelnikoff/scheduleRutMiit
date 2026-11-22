@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.export.mode
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ImportSchedulePayload(
+internal data class ImportSchedulePayload(
     val namedSchedules: List<NamedScheduleImport>,
     val schedules: List<ScheduleImport>,
     val events: List<EventImport>,

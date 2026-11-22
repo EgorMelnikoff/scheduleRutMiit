@@ -13,7 +13,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.mapper.toIm
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.ExportRepos
 import javax.inject.Inject
 
-class ExportReposImpl @Inject constructor(
+internal class ExportReposImpl @Inject constructor(
     private val db: ScheduleDatabase,
     private val namedScheduleDao: NamedScheduleDao,
     private val scheduleDao: ScheduleDao,

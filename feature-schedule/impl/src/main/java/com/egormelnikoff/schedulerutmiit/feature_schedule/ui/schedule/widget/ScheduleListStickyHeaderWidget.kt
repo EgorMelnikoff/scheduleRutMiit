@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 
-fun LazyListScope.scheduleListStickyHeaderWidget(
+internal fun LazyListScope.scheduleListStickyHeaderWidget(
     date: LocalDate,
     formatter: DateTimeFormatter
 ) {

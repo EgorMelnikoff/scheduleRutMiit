@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSche
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.WidgetDataUpdater
 import javax.inject.Inject
 
-class SetDefaultScheduleUseCase @Inject constructor(
+internal class SetDefaultScheduleUseCase @Inject constructor(
     private val scheduleDataSource: ScheduleDataSource,
     private val eventExtraDataSource: EventExtraDataSource,
     private val widgetDataUpdater: WidgetDataUpdater,

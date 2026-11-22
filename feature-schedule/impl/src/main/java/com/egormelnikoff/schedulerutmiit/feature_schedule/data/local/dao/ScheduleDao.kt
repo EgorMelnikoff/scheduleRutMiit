@@ -7,7 +7,7 @@ import androidx.room.Query
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.ScheduleEntity
 
 @Dao
-interface ScheduleDao {
+internal interface ScheduleDao {
     @Insert(onConflict = REPLACE)
     suspend fun insertAll(scheduleEntities: List<ScheduleEntity>): List<Long>
 

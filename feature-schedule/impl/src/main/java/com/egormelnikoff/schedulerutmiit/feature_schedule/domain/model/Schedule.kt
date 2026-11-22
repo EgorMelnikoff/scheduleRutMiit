@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model
 
 import java.time.LocalDate
 
-data class Schedule(
+internal data class Schedule(
     val id: Long = 0,
     val namedScheduleId: Long,
     val timetableId: String,

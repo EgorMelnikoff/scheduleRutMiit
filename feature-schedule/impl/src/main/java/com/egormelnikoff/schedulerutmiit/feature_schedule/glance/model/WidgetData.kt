@@ -13,7 +13,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 @Serializable
-data class WidgetData(
+internal data class WidgetData(
     val scheduleString: String? = null,
     val dateString: String? = null,
     val currentWeek: Int = -1,

@@ -44,7 +44,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleUi
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
 
 @Composable
-fun ScheduleContentWidget(
+internal fun ScheduleContentWidget(
     state: ScheduleUiState,
     namedSchedule: NamedSchedule,
     scheduleVo: ScheduleVo,

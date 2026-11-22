@@ -15,7 +15,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule.AddSch
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addNonPeriodicScheduleStateMock
 
 @Composable
-fun AddScheduleTypeWidget(
+internal fun AddScheduleTypeWidget(
     addScheduleState: AddScheduleState,
     onAction: (AddScheduleAction) -> Unit
 ) {
@@ -51,7 +51,7 @@ fun AddScheduleTypeWidget(
 
 @Preview(locale = "ru", showBackground = true)
 @Composable
-fun AddScheduleTypeWidgetPreview() {
+internal fun AddScheduleTypeWidgetPreview() {
     PreviewLightTheme {
         AddScheduleTypeWidget(addNonPeriodicScheduleStateMock) { }
     }

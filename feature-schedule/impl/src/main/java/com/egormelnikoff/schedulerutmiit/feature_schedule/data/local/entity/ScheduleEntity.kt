@@ -18,7 +18,7 @@ import java.time.LocalDate
 //        )
     ]
 )
-data class ScheduleEntity(
+internal data class ScheduleEntity(
     @ColumnInfo(name = "ScheduleId")
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

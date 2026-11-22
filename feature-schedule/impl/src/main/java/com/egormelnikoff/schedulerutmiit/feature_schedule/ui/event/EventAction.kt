@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 
-sealed interface EventAction {
+internal sealed interface EventAction {
     data object OnBackClicked : EventAction
 
     data class OnEditEventClicked(

@@ -18,7 +18,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NamedScheduleReposImpl @Inject constructor(
+internal class NamedScheduleReposImpl @Inject constructor(
     private val namedScheduleDataSource: NamedScheduleDataSource,
     private val scheduleDataSource: ScheduleDataSource,
     private val scheduleRemoteDataSource: ScheduleRemoteDataSource

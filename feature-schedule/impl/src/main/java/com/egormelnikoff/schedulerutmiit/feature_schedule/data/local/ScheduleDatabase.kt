@@ -26,7 +26,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.Sche
     exportSchema = false
 )
 @TypeConverters(ScheduleConverters::class)
-abstract class ScheduleDatabase : RoomDatabase() {
+internal abstract class ScheduleDatabase : RoomDatabase() {
     abstract fun namedScheduleDao(): NamedScheduleDao
     abstract fun scheduleDao(): ScheduleDao
     abstract fun eventDao(): EventDao

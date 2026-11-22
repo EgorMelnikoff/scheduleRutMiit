@@ -10,7 +10,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtr
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class EventDataSource @Inject constructor(
+internal class EventDataSource @Inject constructor(
     private val db: ScheduleDatabase,
     private val eventDao: EventDao,
     private val eventExtraDao: EventExtraDao

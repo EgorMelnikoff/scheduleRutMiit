@@ -8,7 +8,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.Even
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface EventDao {
+internal interface EventDao {
     @Insert(onConflict = REPLACE)
     suspend fun insert(event: EventEntity)
 

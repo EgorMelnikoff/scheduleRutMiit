@@ -24,7 +24,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.rename_schedule.Ren
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.renameScheduleStateMock
 
 @Composable
-fun RenameScheduleInputWidget(
+internal fun RenameScheduleInputWidget(
     renameScheduleState: RenameScheduleState.Loaded,
     onAction: (RenameScheduleAction) -> Unit
 ) {

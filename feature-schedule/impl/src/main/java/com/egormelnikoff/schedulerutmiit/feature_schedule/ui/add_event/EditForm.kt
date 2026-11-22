@@ -9,7 +9,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import java.time.LocalDate
 import java.time.LocalTime
 
-data class EditForm(
+internal data class EditForm(
     val isEdit: Boolean,
     val name: String = "",
     val type: String? = DefaultEventParams.types.first(),

@@ -94,6 +94,7 @@ internal class EditTaskViewModel @AssistedInject constructor(
                         )
                     )
                 )
+                appRouter.onBack()
             }
         }
     }

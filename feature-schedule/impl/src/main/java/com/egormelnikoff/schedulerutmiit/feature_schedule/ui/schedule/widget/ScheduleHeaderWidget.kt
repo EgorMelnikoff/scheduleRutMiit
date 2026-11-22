@@ -24,7 +24,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAc
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleHeaderWidget(
+internal fun ScheduleHeaderWidget(
     namedSchedule: NamedSchedule,
     scheduleTypeName: String?,
     scheduleView: ScheduleView,

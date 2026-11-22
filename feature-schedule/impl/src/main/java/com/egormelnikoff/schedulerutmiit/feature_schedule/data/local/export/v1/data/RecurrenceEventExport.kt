@@ -3,6 +3,6 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.export.v1.
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RecurrenceEventExport(
+internal data class RecurrenceEventExport(
     val interval: Int?
 )

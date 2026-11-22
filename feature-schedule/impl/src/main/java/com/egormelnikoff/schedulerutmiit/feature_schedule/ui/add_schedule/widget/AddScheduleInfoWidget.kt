@@ -27,7 +27,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule.AddSch
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addNonPeriodicScheduleStateMock
 
 @Composable
-fun AddScheduleInfoWidget(
+internal fun AddScheduleInfoWidget(
     focusManager: FocusManager,
     addScheduleState: AddScheduleState,
     onAction: (AddScheduleAction) -> Unit
@@ -92,7 +92,7 @@ fun AddScheduleInfoWidget(
 
 @Preview(locale = "ru", showBackground = true)
 @Composable
-fun AddScheduleInfoWidgetPreview() {
+internal fun AddScheduleInfoWidgetPreview() {
     PreviewLightTheme {
         AddScheduleInfoWidget(LocalFocusManager.current, addNonPeriodicScheduleStateMock) { }
     }

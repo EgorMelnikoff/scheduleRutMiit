@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventState
 import java.time.LocalDate
 import javax.inject.Inject
 
-class LoadEventUseCase @Inject constructor(
+internal class LoadEventUseCase @Inject constructor(
     private val eventDataSource: EventDataSource,
     private val eventExtraDataSource: EventExtraDataSource,
     private val scheduleDataSource: ScheduleDataSource

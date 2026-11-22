@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LargeIconButton(
+internal fun LargeIconButton(
     onClick: () -> Unit,
     colors: IconButtonColors,
     icon: ImageVector,

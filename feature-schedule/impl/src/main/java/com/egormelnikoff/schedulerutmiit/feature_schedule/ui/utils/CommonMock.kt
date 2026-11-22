@@ -12,22 +12,23 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Timetable
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-val lecturerMock = Lecturer(
+internal val lecturerMock = Lecturer(
     fullFio = "Иванов Иван Иванович",
     shortFio = "Иванов И. И.",
     hint = ""
 )
 
-val groupMock = Group(
+internal val groupMock = Group(
     id = 0,
     name = "УВВ-311"
 )
-val roomMock = Room(
+
+internal val roomMock = Room(
     name = "Аудитория 1333",
     hint = "ГУК-1, 1333"
 )
 
-val eventMock = Event(
+internal val eventMock = Event(
     id = 0L,
     scheduleId = 0L,
     startDatetime = LocalDateTime.of(2026, 9, 1, 10, 5),
@@ -51,7 +52,7 @@ val eventMock = Event(
     isCustomEvent = false
 )
 
-val namedScheduleMock = NamedSchedule(
+internal val namedScheduleMock = NamedSchedule(
     id = 0,
     fullName = "УВП-411",
     shortName = "УВП-411",
@@ -61,7 +62,7 @@ val namedScheduleMock = NamedSchedule(
     lastTimeUpdate = 0L
 )
 
-val periodicScheduleMock = Schedule(
+internal val periodicScheduleMock = Schedule(
     namedScheduleId = 0,
     timetableId = "",
     timetableType = TimetableType.PERIODIC,

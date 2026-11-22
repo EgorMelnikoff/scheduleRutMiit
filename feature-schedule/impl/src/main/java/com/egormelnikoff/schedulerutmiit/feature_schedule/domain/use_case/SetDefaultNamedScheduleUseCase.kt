@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedSche
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.WidgetDataUpdater
 import javax.inject.Inject
 
-class SetDefaultNamedScheduleUseCase @Inject constructor(
+internal class SetDefaultNamedScheduleUseCase @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
     private val widgetDataUpdater: WidgetDataUpdater,
 ) {

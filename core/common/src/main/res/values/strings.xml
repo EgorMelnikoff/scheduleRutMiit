@@ -54,6 +54,7 @@
     <string name="day_off">Day off</string>
     <string name="decor">Decor</string>
     <string name="delete">Delete</string>
+    <string name="delete_all">Delete all</string>
     <string name="delete_event">Delete class</string>
     <string name="delete_schedule">Delete schedule</string>
     <string name="details">Details</string>
@@ -71,7 +72,7 @@
     <string name="empty_base">Save at least one schedule to display it</string>
     <string name="empty_day">There are no classes scheduled for this day</string>
     <string name="empty_here">It`s empty here</string>
-    <string name="empty_response">Empty response</string>
+    <string name="no_data">No data</string>
     <string name="end_date">Start date</string>
     <string name="end_time">End time</string>
     <string name="enter_comment">Enter comment</string>
@@ -115,7 +116,6 @@
     <string name="make_default">Make default</string>
     <string name="my">My</string>
     <string name="name">Name</string>
-    <string name="delete_all">Удалить всё</string>
     <string name="no_tasks_at_day">There are no tasks for this day</string>
     <string name="no_tasks">No tasks</string>
     <string name="create_task">Create task</string>

@@ -17,7 +17,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.EventTimeGroupVo
 
 @Composable
-fun ScheduleEventsDetailBadgeWidget(
+internal fun ScheduleEventsDetailBadgeWidget(
     eventTimeGroups: List<EventTimeGroupVo>
 ) {
     val onBackground = AppTheme.colors.onBackground

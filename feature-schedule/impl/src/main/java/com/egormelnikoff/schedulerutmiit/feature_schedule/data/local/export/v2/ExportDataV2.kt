@@ -5,7 +5,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.export.Vers
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ExportDataV2(
+internal data class ExportDataV2(
     val importSchedulePayload: ImportSchedulePayload
 ) : VersionedExportData {
     override val version: Int = 2

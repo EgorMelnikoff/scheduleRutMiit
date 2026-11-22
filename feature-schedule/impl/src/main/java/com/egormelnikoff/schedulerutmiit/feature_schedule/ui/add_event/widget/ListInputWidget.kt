@@ -23,7 +23,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
-fun <T> ListInputWidget(
+internal fun <T> ListInputWidget(
     title: String,
     onAddElement: () -> Unit,
     maxCount: Int,

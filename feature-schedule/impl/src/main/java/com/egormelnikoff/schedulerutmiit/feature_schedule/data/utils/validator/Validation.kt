@@ -6,16 +6,15 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import java.time.LocalDate
 import java.time.LocalTime
 
-fun isValidSchedule(
+internal fun isValidSchedule(
     name: String,
     start: LocalDate?,
     end: LocalDate?
 ): Boolean {
-    if (name.isBlank() || start == null || end == null) return false
-    return true
+    return !(name.isBlank() || start == null || end == null)
 }
 
-fun isValidEvent(
+internal fun isValidEvent(
     name: String,
     date: LocalDate?,
     startTime: LocalTime?,

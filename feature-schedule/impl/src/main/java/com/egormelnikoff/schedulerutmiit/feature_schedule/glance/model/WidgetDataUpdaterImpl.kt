@@ -13,7 +13,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.glance.ui.EventsWidget
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class WidgetDataUpdaterImpl @Inject constructor(
+internal class WidgetDataUpdaterImpl @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
     private val settingsRepos: SettingsRepos,
     private val context: Context,

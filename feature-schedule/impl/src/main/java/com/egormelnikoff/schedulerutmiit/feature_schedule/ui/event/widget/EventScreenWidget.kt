@@ -19,7 +19,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.eventStateMock
 
 @Composable
-fun EventScreenWidget(
+internal fun EventScreenWidget(
     eventState: EventState,
     onAction: (EventAction) -> Unit,
 ) {
@@ -131,7 +131,7 @@ fun EventScreenWidget(
 
 @Preview(locale = "ru")
 @Composable
-fun EventScreenWidgetPreview() {
+internal fun EventScreenWidgetPreview() {
     PreviewLightTheme{
         EventScreenWidget(eventStateMock) { }
     }

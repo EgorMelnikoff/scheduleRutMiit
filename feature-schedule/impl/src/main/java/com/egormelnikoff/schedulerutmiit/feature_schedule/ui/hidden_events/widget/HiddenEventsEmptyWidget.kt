@@ -7,7 +7,7 @@ import androidx.compose.ui.res.stringResource
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 
-fun LazyListScope.hiddenEventsEmptyWidget(
+internal fun LazyListScope.hiddenEventsEmptyWidget(
     contentPadding: PaddingValues
 ) {
     item {

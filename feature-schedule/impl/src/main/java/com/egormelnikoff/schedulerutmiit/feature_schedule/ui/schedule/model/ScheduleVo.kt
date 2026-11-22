@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import java.time.LocalDate
 
 @Immutable
-data class ScheduleVo(
+internal data class ScheduleVo(
     val schedule: Schedule,
     val calendarData: CalendarData,
 

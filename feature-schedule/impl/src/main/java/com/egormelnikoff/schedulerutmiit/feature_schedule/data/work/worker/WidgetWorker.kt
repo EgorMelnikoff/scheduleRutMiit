@@ -9,7 +9,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-open class WidgetWorker @AssistedInject constructor(
+internal class WidgetWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val widgetDataUpdater: WidgetDataUpdaterImpl

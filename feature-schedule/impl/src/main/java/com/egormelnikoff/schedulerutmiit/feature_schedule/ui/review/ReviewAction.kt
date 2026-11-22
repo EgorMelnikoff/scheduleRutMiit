@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review
 
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 
-sealed interface ReviewAction {
+internal sealed interface ReviewAction {
     data object OnFindScheduleClicked : ReviewAction
     data object OnCreateScheduleClicked : ReviewAction
     data object OnNewsCLicked : ReviewAction

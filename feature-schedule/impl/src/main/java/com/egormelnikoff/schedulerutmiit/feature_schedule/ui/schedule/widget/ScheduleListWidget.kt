@@ -29,7 +29,7 @@ private sealed interface ListEntry {
 }
 
 @Composable
-fun ScheduleListWidget(
+internal fun ScheduleListWidget(
     scheduleListState: LazyListState,
     isSavedSchedule: Boolean,
     scheduleVo: ScheduleVo,

@@ -4,7 +4,7 @@ import android.net.Uri
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.file.FileExporter
 import javax.inject.Inject
 
-class ExportDataUseCase @Inject constructor(
+internal class ExportDataUseCase @Inject constructor(
     private val serializeUseCase: SerializeUseCase,
     private val fileExporter: FileExporter
 ) {

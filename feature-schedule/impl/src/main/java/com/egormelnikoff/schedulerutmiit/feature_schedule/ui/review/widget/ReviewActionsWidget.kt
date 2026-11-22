@@ -19,7 +19,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.containers.RowGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 
-fun LazyListScope.reviewActionsWidget(
+internal fun LazyListScope.reviewActionsWidget(
     onChangeTopBarVisibility: (Float) -> Unit,
     onAction: (ReviewAction) -> Unit
 ) {

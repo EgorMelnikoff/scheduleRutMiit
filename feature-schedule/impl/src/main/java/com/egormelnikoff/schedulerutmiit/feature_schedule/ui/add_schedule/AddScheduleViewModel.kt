@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddScheduleViewModel @Inject constructor(
+internal class AddScheduleViewModel @Inject constructor(
     private val addCustomNamedScheduleUseCase: AddCustomNamedScheduleUseCase,
     private val appRouter: AppRouter,
     private val namedScheduleRepos: NamedScheduleRepos

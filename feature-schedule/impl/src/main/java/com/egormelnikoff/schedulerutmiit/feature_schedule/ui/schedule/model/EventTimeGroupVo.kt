@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import java.time.LocalTime
 
 @Immutable
-data class EventTimeGroupVo(
+internal data class EventTimeGroupVo(
     val timeSlotName: String?,
     val startTime: LocalTime,
     val endTime: LocalTime,

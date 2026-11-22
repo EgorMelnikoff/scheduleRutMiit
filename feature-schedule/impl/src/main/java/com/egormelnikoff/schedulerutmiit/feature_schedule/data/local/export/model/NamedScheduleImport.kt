@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedSchedul
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NamedScheduleImport(
+internal data class NamedScheduleImport(
     val id: Long,
     val fullName: String,
     val shortName: String,

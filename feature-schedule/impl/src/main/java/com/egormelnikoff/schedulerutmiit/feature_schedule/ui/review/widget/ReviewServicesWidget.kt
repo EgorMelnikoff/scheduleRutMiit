@@ -18,7 +18,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
 
-fun LazyListScope.reviewServicesWidget(
+internal fun LazyListScope.reviewServicesWidget(
     reviewState: ReviewState,
     onAction: (ReviewAction) -> Unit
 ) {

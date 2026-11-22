@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model
 
-enum class TimetableType(
+internal enum class TimetableType(
     val typeName: String,
     val id: Int
 ) {

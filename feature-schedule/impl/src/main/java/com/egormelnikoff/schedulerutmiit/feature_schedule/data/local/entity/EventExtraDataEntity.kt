@@ -16,7 +16,7 @@ import java.time.LocalDate
 //        )
     ]
 )
-data class EventExtraDataEntity(
+internal data class EventExtraDataEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0,

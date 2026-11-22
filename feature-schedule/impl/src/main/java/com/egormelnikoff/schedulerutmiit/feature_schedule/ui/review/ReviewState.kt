@@ -5,7 +5,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSche
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.DayPeriod
 import java.time.LocalDate
 
-data class ReviewState(
+internal data class ReviewState(
     val currentDate: LocalDate? = null,
     val dayPeriod: DayPeriod = DayPeriod.DAY,
     val summaryState: SummaryState? = null,

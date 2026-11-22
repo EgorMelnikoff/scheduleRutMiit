@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.export.mod
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RecurrenceImport(
+internal data class RecurrenceImport(
     val interval: Int,
     val firstWeekNumber: Int
 )

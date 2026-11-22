@@ -8,7 +8,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtr
 import java.time.LocalDate
 import javax.inject.Inject
 
-class EventExtraDataSource @Inject constructor(
+internal class EventExtraDataSource @Inject constructor(
     private val eventExtraDao: EventExtraDao
 ) {
     suspend fun save(

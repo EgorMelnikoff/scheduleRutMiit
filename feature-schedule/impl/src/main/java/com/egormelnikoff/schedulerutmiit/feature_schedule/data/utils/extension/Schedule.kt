@@ -13,15 +13,15 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
-fun List<ScheduleWithEvents>.findDefault(): ScheduleWithEvents? {
+internal fun List<ScheduleWithEvents>.findDefault(): ScheduleWithEvents? {
     return this.find { it.schedule.isDefault } ?: this.firstOrNull()
 }
 
-fun List<Schedule>.findDefault(): Schedule? {
+internal fun List<Schedule>.findDefault(): Schedule? {
     return this.find { it.isDefault } ?: this.firstOrNull()
 }
 
-fun Schedule.getEventsForDate(
+internal fun Schedule.getEventsForDate(
     date: LocalDate,
     periodicEvents: Map<Int, Map<DayOfWeek, List<Event>>>?,
     nonPeriodicEvents: Map<LocalDate, List<Event>>?
@@ -86,7 +86,7 @@ fun getTimeSlotName(
     }
 }
 
-fun LocalDate.getCurrentWeek(
+internal fun LocalDate.getCurrentWeek(
     startDate: LocalDate,
     recurrence: Recurrence?
 ): Int {

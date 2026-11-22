@@ -37,7 +37,7 @@ fun RenameScheduleScreen(
 
 @Preview(locale = "ru")
 @Composable
-fun RenameScheduleScreenPreview() {
+internal fun RenameScheduleScreenPreview() {
     PreviewLightTheme {
         RenameScheduleScreenWidget(renameScheduleStateMock) { }
     }

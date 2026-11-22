@@ -33,7 +33,7 @@ fun EventScreen(
 
 @Preview(locale = "ru")
 @Composable
-fun EventScreenPreview() {
+internal fun EventScreenPreview() {
     PreviewLightTheme {
         EventScreenWidget(eventStateMock) { }
     }

@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.validator.i
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 import java.time.LocalDate
 
-data class AddScheduleState(
+internal data class AddScheduleState(
     val name: String = "",
     val startDate: LocalDate? = null,
     val endDate: LocalDate? = null,

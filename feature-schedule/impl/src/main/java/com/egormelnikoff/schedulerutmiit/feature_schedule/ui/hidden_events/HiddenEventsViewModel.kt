@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(
     assistedFactory = HiddenEventsViewModel.Factory::class
 )
-class HiddenEventsViewModel @AssistedInject constructor(
+internal class HiddenEventsViewModel @AssistedInject constructor(
     private val eventDataSource: EventDataSource,
     private val appRouter: AppRouter,
     @Assisted

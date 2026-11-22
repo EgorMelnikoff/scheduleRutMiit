@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
-interface ProviderEntryPoint {
+internal interface ProviderEntryPoint {
     fun json(): Json {
         return Json {
             ignoreUnknownKeys = true

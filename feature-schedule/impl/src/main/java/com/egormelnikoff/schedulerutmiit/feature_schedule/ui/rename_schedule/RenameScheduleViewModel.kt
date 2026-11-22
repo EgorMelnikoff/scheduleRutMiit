@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(
     assistedFactory = RenameScheduleViewModel.Factory::class
 )
-class RenameScheduleViewModel @AssistedInject constructor(
+internal class RenameScheduleViewModel @AssistedInject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
     private val appRouter: AppRouter,
     @Assisted

@@ -5,7 +5,7 @@ import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import java.time.LocalDate
 
-sealed interface ScheduleAction {
+internal sealed interface ScheduleAction {
     data object OnP2R : ScheduleAction
     data class OnViewClicked(
         val view: ScheduleView

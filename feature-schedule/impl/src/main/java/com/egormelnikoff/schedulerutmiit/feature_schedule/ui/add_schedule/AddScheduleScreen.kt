@@ -28,7 +28,7 @@ fun AddScheduleScreen() {
 
 @Preview(locale = "ru")
 @Composable
-fun AddScheduleScreenPreview() {
+internal fun AddScheduleScreenPreview() {
     PreviewLightTheme {
         AddScheduleScreenWidget(addNonPeriodicScheduleStateMock) { }
     }

@@ -40,7 +40,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.Sche
 import java.time.LocalDate
 
 @Composable
-fun ScheduleCalendarWidget(
+internal fun ScheduleCalendarWidget(
     scheduleVo: ScheduleVo,
     isSavedSchedule: Boolean,
     scheduleCalendarState: CalendarState,

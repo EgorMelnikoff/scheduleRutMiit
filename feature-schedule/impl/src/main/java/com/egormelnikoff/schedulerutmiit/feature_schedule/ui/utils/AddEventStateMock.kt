@@ -4,7 +4,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.EditForm
 
-val addEventStateMock = AddEventState.Loaded(
+internal val addEventStateMock = AddEventState.Loaded(
     schedule = periodicScheduleMock,
     editForm = EditForm(
         isEdit = false,

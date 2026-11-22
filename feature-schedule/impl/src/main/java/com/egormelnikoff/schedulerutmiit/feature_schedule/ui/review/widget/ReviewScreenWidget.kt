@@ -31,7 +31,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.reviewStateMo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewScreenWidget(
+internal fun ReviewScreenWidget(
     contentPadding: PaddingValues,
     reviewState: ReviewState,
     onAction: (ReviewAction) -> Unit,
@@ -131,7 +131,7 @@ fun ReviewScreenWidget(
 
 @Preview(locale = "ru")
 @Composable
-fun ReviewScreenWidgetWithImagePreview() {
+internal fun ReviewScreenWidgetWithImagePreview() {
     PreviewLightTheme {
         ReviewScreenWidget(
             contentPadding = PaddingValues(AppTheme.paddings.none),
@@ -143,7 +143,7 @@ fun ReviewScreenWidgetWithImagePreview() {
 
 @Preview(locale = "ru")
 @Composable
-fun ReviewScreenWidgetWithoutImagePreview() {
+internal fun ReviewScreenWidgetWithoutImagePreview() {
     PreviewLightTheme {
         ReviewScreenWidget(
             contentPadding = PaddingValues(AppTheme.paddings.none),

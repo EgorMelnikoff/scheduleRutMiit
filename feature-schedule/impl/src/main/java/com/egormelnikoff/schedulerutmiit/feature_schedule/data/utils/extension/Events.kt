@@ -9,7 +9,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtr
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-fun List<Event>.getGroupedEvents(): Map<String, List<Event>> {
+internal fun List<Event>.getGroupedEvents(): Map<String, List<Event>> {
     if (this.isEmpty()) return mapOf()
     return this
         .sortedBy { event ->
@@ -19,7 +19,7 @@ fun List<Event>.getGroupedEvents(): Map<String, List<Event>> {
         }
 }
 
-fun List<Event>.getPeriodicEvents(
+internal fun List<Event>.getPeriodicEvents(
     interval: Int
 ): Map<Int, Map<DayOfWeek, List<Event>>> {
     return buildMap {
@@ -37,7 +37,7 @@ fun List<Event>.getPeriodicEvents(
     }
 }
 
-fun Map<Long, List<EventExtraData>>.findEventExtra(
+internal fun Map<Long, List<EventExtraData>>.findEventExtra(
     eventExtraPolicy: EventExtraPolicy,
     eventId: Long,
     date: LocalDate
@@ -49,7 +49,7 @@ fun Map<Long, List<EventExtraData>>.findEventExtra(
     }
 }
 
-fun Event.customToString(context: Context): String {
+internal fun Event.customToString(context: Context): String {
     return buildString {
         append("${context.getString(R.string._class)}: ${this@customToString.name}")
         this@customToString.typeName?.let {

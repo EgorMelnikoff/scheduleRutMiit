@@ -28,6 +28,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.LargeIconButton
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
@@ -37,13 +38,12 @@ import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SchedulesSheetWidget(
+internal fun SchedulesSheetWidget(
     currentNamedScheduleId: Long? = null,
     namedSchedules: List<NamedSchedule>,
     onAction: (ScheduleAction) -> Unit,
     onExportClick: () -> Unit
 ) {
-
     AppBottomSheet(
         showHandle = false,
         verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.none),
@@ -133,12 +133,16 @@ fun SchedulesSheetWidget(
                                     }
                                 )
                             },
-                            subtitle = {
-                                TextBlock(
-                                    text = "${stringResource(R.string.current_on)} $lastTimeUpdate",
-                                    typography = AppTheme.typography.bodyMedium,
-                                    color = AppTheme.colors.onSecondaryContainer,
-                                )
+                            subtitle = if (namedSchedule.type != NamedScheduleType.MY){
+                                {
+                                    TextBlock(
+                                        text = "${stringResource(R.string.current_on)} $lastTimeUpdate",
+                                        typography = AppTheme.typography.bodyMedium,
+                                        color = AppTheme.colors.onSecondaryContainer,
+                                    )
+                                }
+                            } else {
+                                null
                             }
                         )
                     },

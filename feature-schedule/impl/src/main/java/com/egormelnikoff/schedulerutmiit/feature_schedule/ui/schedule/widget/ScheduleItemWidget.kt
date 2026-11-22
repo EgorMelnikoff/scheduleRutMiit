@@ -16,7 +16,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAc
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.EventTimeGroupVo
 
 @Composable
-fun ScheduleItemWidget(
+internal fun ScheduleItemWidget(
     timeGroup: EventTimeGroupVo,
     eventView: EventView,
     isSavedSchedule: Boolean,

@@ -33,7 +33,7 @@ fun ReviewScreen(
 
 @Preview(locale = "ru")
 @Composable
-fun ReviewScreenPreview(){
+internal fun ReviewScreenPreview(){
     PreviewLightTheme {
         ReviewScreenWidget(
             contentPadding = PaddingValues(AppTheme.paddings.none),

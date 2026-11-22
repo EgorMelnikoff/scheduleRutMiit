@@ -7,7 +7,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.SummaryState
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class ObserveSummaryUseCase @Inject constructor(
+internal class ObserveSummaryUseCase @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos
 ) {
     operator fun invoke() = namedScheduleRepos.observeDefault().map { namedSchedule ->

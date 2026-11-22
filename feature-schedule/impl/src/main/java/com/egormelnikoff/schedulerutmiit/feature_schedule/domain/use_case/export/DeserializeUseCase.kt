@@ -8,7 +8,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.ExportRep
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class DeserializeUseCase @Inject constructor(
+internal class DeserializeUseCase @Inject constructor(
     private val exportRepos: ExportRepos,
     private val json: Json,
 ) {

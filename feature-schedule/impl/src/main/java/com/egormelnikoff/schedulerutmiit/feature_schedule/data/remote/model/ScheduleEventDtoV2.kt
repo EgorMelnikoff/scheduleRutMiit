@@ -1,4 +1,4 @@
-package com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.v2
+package com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model
 
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeInstantSerializer
 import com.egormelnikoff.schedulerutmiit.core.common.serializers.LocalDateTimeOffsetSerializer
@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Serializable
-data class ScheduleEventDtoV2(
+internal data class ScheduleEventDtoV2(
     @SerialName("idGroup")
     val idGroup: Long? = null,
     @SerialName("egName")

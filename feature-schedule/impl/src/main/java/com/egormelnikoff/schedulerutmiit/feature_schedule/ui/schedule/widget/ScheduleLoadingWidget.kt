@@ -16,7 +16,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.shimmer.AppShimmerCa
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
-fun ScheduleLoadingWidget() {
+internal fun ScheduleLoadingWidget() {
     Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier

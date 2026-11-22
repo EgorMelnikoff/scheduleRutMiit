@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.rename_schedule
 
-sealed interface RenameScheduleState {
+internal sealed interface RenameScheduleState {
     data object Loading : RenameScheduleState
 
     data class Loaded(

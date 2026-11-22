@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ScheduleDbModule {
+internal object ScheduleDbModule {
     @Provides
     @Singleton
     fun provideScheduleDatabase(

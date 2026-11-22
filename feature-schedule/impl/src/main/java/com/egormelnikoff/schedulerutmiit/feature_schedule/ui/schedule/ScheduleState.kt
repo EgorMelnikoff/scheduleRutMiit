@@ -10,7 +10,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSche
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
-data class ScheduleState(
+internal data class ScheduleState(
     val mode: Mode = Mode.Loading,
     val isSaved: Boolean = true,
     val isRefreshing: Boolean = false,

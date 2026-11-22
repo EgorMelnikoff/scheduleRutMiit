@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 
 @ProvidedTypeConverter
-class ScheduleConverters @Inject constructor(
+internal class ScheduleConverters @Inject constructor(
     private val json: Json
 ) {
     @TypeConverter

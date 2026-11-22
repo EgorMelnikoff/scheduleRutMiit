@@ -11,7 +11,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedSche
 import java.time.LocalDate
 import javax.inject.Inject
 
-class AddCustomNamedScheduleUseCase @Inject constructor(
+internal class AddCustomNamedScheduleUseCase @Inject constructor(
     private val namedScheduleRepos: NamedScheduleRepos,
 ) {
     suspend operator fun invoke(

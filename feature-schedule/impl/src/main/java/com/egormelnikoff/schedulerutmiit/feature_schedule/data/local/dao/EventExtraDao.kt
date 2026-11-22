@@ -8,7 +8,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.Even
 import java.time.LocalDate
 
 @Dao
-interface EventExtraDao {
+internal interface EventExtraDao {
     @Insert(onConflict = REPLACE)
     suspend fun insert(eventExtraData: EventExtraDataEntity)
 

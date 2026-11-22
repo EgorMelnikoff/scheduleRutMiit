@@ -6,7 +6,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import java.time.LocalDate
 import java.time.LocalTime
 
-sealed interface AddEventAction {
+internal sealed interface AddEventAction {
     data object OnBackClicked : AddEventAction
     data class OnNameChanged(val name: String) : AddEventAction
     data class OnTypeChanged(val type: String?) : AddEventAction

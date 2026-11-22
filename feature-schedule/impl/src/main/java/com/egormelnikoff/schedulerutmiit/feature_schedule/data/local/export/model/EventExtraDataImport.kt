@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 @Serializable
-data class EventExtraDataImport(
+internal data class EventExtraDataImport(
     val id: Long = 0,
     val eventId: Long,
     val scheduleId: Long,

@@ -11,7 +11,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.Sche
 import java.time.LocalDateTime
 
 @Immutable
-data class ScheduleUiState(
+internal data class ScheduleUiState(
     val mode: Mode,
     val isSaved: Boolean,
     val isRefreshing: Boolean,

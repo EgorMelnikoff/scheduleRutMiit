@@ -8,7 +8,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSche
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
-class ScheduleRemoteDataSource @Inject constructor(
+internal class ScheduleRemoteDataSource @Inject constructor(
     private val scheduleApi: ScheduleApi,
     private val scheduleMapperV2: ScheduleMapperV2
 ) {

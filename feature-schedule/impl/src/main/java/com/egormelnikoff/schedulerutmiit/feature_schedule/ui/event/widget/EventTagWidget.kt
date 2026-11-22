@@ -12,7 +12,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventState
 
-fun LazyListScope.eventTagWidget(
+internal fun LazyListScope.eventTagWidget(
     eventState: EventState.Loaded,
     onAction: (EventAction) -> Unit
 ) {

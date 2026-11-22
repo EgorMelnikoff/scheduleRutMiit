@@ -33,7 +33,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.eventStateMoc
 import java.time.format.TextStyle
 
 @Composable
-fun EventNameWidget(
+internal fun EventNameWidget(
     modifier: Modifier = Modifier,
     timetableType: TimetableType,
     event: Event,
@@ -128,7 +128,7 @@ fun EventNameWidget(
 
 @Preview
 @Composable
-fun EventScreenPreview() {
+internal fun EventScreenPreview() {
     PreviewLightTheme {
         EventNameWidget(
             timetableType = eventStateMock.schedule.timetableType,

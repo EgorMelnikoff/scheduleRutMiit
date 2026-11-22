@@ -22,7 +22,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewScheduleSheet(
+internal fun ReviewScheduleSheet(
     namedSchedule: NamedSchedule,
     onAction: (ReviewAction) -> Unit,
 ) {

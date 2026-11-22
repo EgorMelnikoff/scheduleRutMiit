@@ -24,7 +24,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.eventMock
 import java.time.format.TextStyle
 
 @Composable
-fun HiddenEventItemWidget(
+internal fun HiddenEventItemWidget(
     event: Event,
     onAction: (HiddenEventsAction) -> Unit
 ) {

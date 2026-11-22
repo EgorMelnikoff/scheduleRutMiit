@@ -12,7 +12,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
-fun RemoveButtonWidget(
+internal fun RemoveButtonWidget(
     onRemove: () -> Unit
 ) {
     OutlinedIconButton(

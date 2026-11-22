@@ -22,7 +22,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addNonPeriodi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddScheduleScreenWidget(
+internal fun AddScheduleScreenWidget(
     addScheduleState: AddScheduleState,
     onAction: (AddScheduleAction) -> Unit
 ) {
@@ -100,7 +100,7 @@ fun AddScheduleScreenWidget(
 
 @Preview(locale = "ru")
 @Composable
-fun AddScheduleScreenWidgetPreview() {
+internal fun AddScheduleScreenWidgetPreview() {
     PreviewLightTheme {
         AddScheduleScreenWidget(addNonPeriodicScheduleStateMock) { }
     }

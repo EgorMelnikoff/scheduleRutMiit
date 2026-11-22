@@ -18,7 +18,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.roomMock
 
 @Composable
-fun RoomInputWidget(
+internal fun RoomInputWidget(
     room: Room,
     onValueChanged: (Room) -> Unit,
     onRemove: () -> Unit

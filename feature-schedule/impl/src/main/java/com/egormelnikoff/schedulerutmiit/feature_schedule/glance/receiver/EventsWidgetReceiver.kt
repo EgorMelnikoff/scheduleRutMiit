@@ -10,7 +10,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.di.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.feature_schedule.glance.ui.EventsWidget
 import dagger.hilt.EntryPoints
 
-class EventsWidgetReceiver : GlanceAppWidgetReceiver() {
+internal class EventsWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = EventsWidget()
 
     override fun onReceive(context: Context, intent: Intent) {

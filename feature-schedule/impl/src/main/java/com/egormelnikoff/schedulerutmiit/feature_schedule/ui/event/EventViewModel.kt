@@ -32,7 +32,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel(
     assistedFactory = EventViewModel.Factory::class
 )
-class EventViewModel @AssistedInject constructor(
+internal class EventViewModel @AssistedInject constructor(
     private val loadEventUseCase: LoadEventUseCase,
     private val eventDataSource: EventDataSource,
     private val updateEventCommentUseCase: UpdateEventCommentUseCase,

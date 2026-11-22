@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
 
-class FetchScheduleCacheImpl @Inject constructor(
+internal class FetchScheduleCacheImpl @Inject constructor(
 ) : FetchScheduleCache {
     private val _scheduleRequests = MutableSharedFlow<FetchScheduleEvent>(
         replay = 1,

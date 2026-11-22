@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model
 
-object DefaultEventParams {
+internal object DefaultEventParams {
     val types = arrayOf(
         null,
         "Лекция",

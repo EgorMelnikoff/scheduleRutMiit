@@ -20,7 +20,7 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
-class ScheduleUiStateConverter @Inject constructor() {
+internal class ScheduleUiStateConverter @Inject constructor() {
 
     private data class ScheduleCacheKey(
         val namedScheduleWithSchedules: NamedScheduleWithSchedules?,

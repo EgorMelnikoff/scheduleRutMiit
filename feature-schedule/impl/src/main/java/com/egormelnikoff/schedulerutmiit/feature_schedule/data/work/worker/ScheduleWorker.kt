@@ -12,7 +12,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-open class ScheduleWorker @AssistedInject constructor(
+internal class ScheduleWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val namedScheduleRepos: NamedScheduleRepos,

@@ -68,7 +68,7 @@
     <string name="empty_base">Сохраните как минимум одно расписание для его отображения</string>
     <string name="empty_day">На этот день пары не запланированы</string>
     <string name="empty_here">Здесь пусто</string>
-    <string name="empty_response">Пустой ответ</string>
+    <string name="no_data">Нет данных</string>
     <string name="end_date">Дата окончания</string>
     <string name="end_time">Время окончания</string>
     <string name="enter_comment">Введите комментарий</string>
@@ -108,7 +108,7 @@
     <string name="make_default">Сделать основным</string>
     <string name="my">Мои</string>
     <string name="name">Имя</string>
-    <string name="delete_all">Delete all</string>
+    <string name="delete_all">Удалить всё</string>
     <string name="create_task">Создать задание</string>
     <string name="no_tasks">Заданий нет</string>
     <string name="privacy_policy">Политика конфиденциальности</string>

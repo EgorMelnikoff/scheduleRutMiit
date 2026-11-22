@@ -18,7 +18,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.lecturerMock
 
 @Composable
-fun LecturerInputWidget(
+internal fun LecturerInputWidget(
     lecturer: Lecturer,
     onValueChanged: (Lecturer) -> Unit,
     onRemove: () -> Unit

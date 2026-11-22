@@ -8,7 +8,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Immutable
-data class EventVo(
+internal data class EventVo(
     val id: Long,
     val scheduleId: Long,
     val isCustomEvent: Boolean,

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Serializable
-data class WidgetDataEventItem(
+internal data class WidgetDataEventItem(
     val name: String,
     @Serializable(with = LocalDateTimeSerializer::class)
     val startDateTime: LocalDateTime,

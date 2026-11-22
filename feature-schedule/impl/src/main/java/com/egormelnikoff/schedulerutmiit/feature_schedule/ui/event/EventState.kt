@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 
-sealed interface EventState {
+internal sealed interface EventState {
     data object Loading : EventState
 
     data class Loaded(

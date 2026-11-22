@@ -18,7 +18,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.DayPeriod
 
-fun LazyListScope.reviewImageWidget(
+internal fun LazyListScope.reviewImageWidget(
     reviewState: ReviewState
 ) {
     item {

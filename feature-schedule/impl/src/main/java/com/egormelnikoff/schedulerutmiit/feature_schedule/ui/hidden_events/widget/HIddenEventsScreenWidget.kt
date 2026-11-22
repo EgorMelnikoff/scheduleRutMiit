@@ -15,7 +15,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.eventMock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HiddenEventsScreenWidget(
+internal fun HiddenEventsScreenWidget(
     hiddenEvents: List<Event>,
     onAction: (HiddenEventsAction) -> Unit
 ) {
@@ -43,7 +43,7 @@ fun HiddenEventsScreenWidget(
 
 @Preview(locale = "ru")
 @Composable
-fun HiddenEventsScreenWidgetPreview() {
+internal fun HiddenEventsScreenWidgetPreview() {
     PreviewLightTheme {
         HiddenEventsScreenWidget(listOf(eventMock, eventMock)) { }
     }
