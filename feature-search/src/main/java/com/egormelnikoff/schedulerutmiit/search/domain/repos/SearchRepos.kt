@@ -12,6 +12,8 @@ internal interface SearchRepos {
     suspend fun deleteQueryById(queryId: Long)
 
     suspend fun fetchAllGroups(): List<Group>
+    suspend fun getGroupsV2(): List<Group>
+    suspend fun getPeopleV2(query: String): List<Person>
     suspend fun fetchPeopleByQuery(
         query: String
     ): List<Person>

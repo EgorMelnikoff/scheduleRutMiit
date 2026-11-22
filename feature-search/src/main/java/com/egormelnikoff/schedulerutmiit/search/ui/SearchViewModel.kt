@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.search.ui
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.error.toAppError
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
@@ -66,6 +67,7 @@ internal class SearchViewModel @Inject constructor(
                     try {
                         searchUseCase(params)
                     } catch (e: Exception) {
+                        Log.e("", "", e)
                         _uiEventFlow.sendErrorEvent(e.toAppError())
                         setDefaultSearchState()
                         null

@@ -17,7 +17,7 @@ internal class SearchUseCase @Inject constructor(
         searchParams: Pair<String, SearchType>
     ): SearchResult = withContext(Dispatchers.IO) {
         if (cachedGroups == null) {
-            searchRepos.fetchAllGroups().let { groups ->
+            searchRepos.getGroupsV2().let { groups ->
                 cachedGroups = groups
             }
         }
@@ -31,7 +31,7 @@ internal class SearchUseCase @Inject constructor(
         }
 
         if (searchParams.second == SearchType.ALL || searchParams.second == SearchType.PEOPLE) {
-            people = searchRepos.fetchPeopleByQuery(searchParams.first)
+            people = searchRepos.getPeopleV2(searchParams.first)
         }
 
         return@withContext SearchResult(

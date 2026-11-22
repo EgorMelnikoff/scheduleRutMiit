@@ -12,7 +12,6 @@ object Endpoints {
     const val BASE_MIIT_URL = "https://www.miit.ru"
 
 
-
     @Deprecated("Новая ручка")
     const val GROUPS = "/data-service/data/timetable/groups-catalog"
     @Deprecated("Новая ручка")
@@ -28,7 +27,7 @@ object Endpoints {
     const val SCHEDULE_PERSON_V2 = "/api/profTimetable/{personId}"
 
     const val GROUPS_V2 = "/api/timetableCatalog"
-    const val PEOPLE_V2 = "/api/getPeopleByDeptAndName?name={query}&profOnly={profOnly}&chunk={chunk}&num={num}"
+    const val PEOPLE_V2 = "/api/getPeopleByDeptAndName"
 
     const val NEWS_CATEGORIES_V2 = "/api/getAllCategories"
     const val NEWS_LIST_V2 = "/api/findArticleByName"

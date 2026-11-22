@@ -31,6 +31,14 @@ internal class SearchReposImpl @Inject constructor(
         return searchRemoteDataSource.fetchAllGroups()
     }
 
+    override suspend fun getGroupsV2(): List<Group> {
+        return searchRemoteDataSource.getGroupsV2()
+    }
+
+    override suspend fun getPeopleV2(query: String): List<Person> {
+        return searchRemoteDataSource.getPeopleV2(query)
+    }
+
     override suspend fun fetchPeopleByQuery(
         query: String
     ): List<Person> {

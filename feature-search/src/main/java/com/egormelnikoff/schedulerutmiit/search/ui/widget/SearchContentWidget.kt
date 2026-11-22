@@ -123,7 +123,7 @@ internal fun SearchContentWidget(
                                 subtitle = {
                                     TextBlock(
                                         text = person.position,
-                                        maxLines = 3,
+                                        maxLines = Int.MAX_VALUE,
                                         typography = AppTheme.typography.bodyMedium,
                                         color = AppTheme.colors.onSecondaryContainer,
                                     )

@@ -13,6 +13,21 @@ internal class SearchRemoteDataSource @Inject constructor(
     private val searchApi: SearchApi,
     private val htmlFetcher: HtmlFetcher
 ) {
+    suspend fun getGroupsV2(): List<Group> {
+        val groups = searchApi.getGroups()
+
+        return groups.map { it.toDomain() }
+    }
+
+    suspend fun getPeopleV2(query: String): List<Person> {
+        val people = searchApi.getPeople(
+            name = query
+        )
+
+        return people.simplePersons.map { it.toDomain() }
+    }
+
+    @Deprecated("Пользоваться v2")
     suspend fun fetchAllGroups(): List<Group> {
         val institutes = searchApi.getInstitutes()
 
@@ -20,6 +35,7 @@ internal class SearchRemoteDataSource @Inject constructor(
     }
 
 
+    @Deprecated("Пользоваться v2")
     suspend fun fetchPeopleByQuery(query: String): List<Person> {
         val people = htmlFetcher(
             url = Endpoints.peopleUrl(query)
