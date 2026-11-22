@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AsyncImage
@@ -106,7 +105,7 @@ internal fun SearchContentWidget(
                         ),
                         start = {
                             AsyncImage(
-                                imageUrl = personImageUrl(person.id),
+                                imageUrl = person.picUrl.orEmpty(),
                                 imageTitle = person.name,
                                 titleSize = 20.sp,
                                 imageSize = 60.dp

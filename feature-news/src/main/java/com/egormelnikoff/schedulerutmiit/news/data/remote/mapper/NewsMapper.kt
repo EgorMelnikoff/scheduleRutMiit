@@ -44,7 +44,7 @@ internal fun NewsShortDtoV2.toDomain() = NewsShort(
     title = title,
     date = date.orEmpty(),
     picUrl = imageUrl?.let { url ->
-        Endpoints.newsImageUrl(url)
+        Endpoints.picUrlWithHost(url)
     }.orEmpty(),
     text = source.orEmpty()
 )
@@ -136,7 +136,7 @@ internal fun NewsDtoV2.toDomain(): News {
             "img" -> {
                 val imageUrl = element.attr("src")
                 if (imageUrl.isNotEmpty()) {
-                    parsedImages.add(Endpoints.newsImageUrl(imageUrl))
+                    parsedImages.add(Endpoints.picUrlWithHost(imageUrl))
                 }
             }
         }

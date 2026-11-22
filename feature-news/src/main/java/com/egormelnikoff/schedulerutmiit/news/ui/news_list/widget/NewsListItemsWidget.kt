@@ -21,8 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
-import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.newsImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsShort
 import com.egormelnikoff.schedulerutmiit.news.ui.common.DateNewsWidget

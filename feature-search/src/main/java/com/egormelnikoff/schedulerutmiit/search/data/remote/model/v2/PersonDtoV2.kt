@@ -9,6 +9,8 @@ internal data class PersonDtoV2(
     val fio: String,
     @SerialName("idE")
     val idE: Int,
+    @SerialName("photoUrl")
+    val photoUrl: String?,
     @SerialName("postNames")
     val postNames: List<PostNameDtoV2>
 )

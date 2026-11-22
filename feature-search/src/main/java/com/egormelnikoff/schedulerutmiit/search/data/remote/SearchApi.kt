@@ -2,15 +2,11 @@ package com.egormelnikoff.schedulerutmiit.search.data.remote
 
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
 import com.egormelnikoff.schedulerutmiit.search.data.remote.model.v2.GroupDtoV2
-import com.egormelnikoff.schedulerutmiit.search.data.remote.model.InstitutesDto
 import com.egormelnikoff.schedulerutmiit.search.data.remote.model.v2.PeopleDtoV2
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 internal interface SearchApi {
-    @GET(Endpoints.GROUPS)
-    suspend fun getInstitutes(): InstitutesDto
-
     @GET(Endpoints.GROUPS_V2)
     suspend fun getGroups(): List<GroupDtoV2>
 
