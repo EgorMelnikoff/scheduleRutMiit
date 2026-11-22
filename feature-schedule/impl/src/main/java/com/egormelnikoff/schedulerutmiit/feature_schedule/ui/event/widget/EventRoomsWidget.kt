@@ -18,7 +18,8 @@ fun LazyListScope.eventRoomsWidget(
     eventState: EventState.Loaded,
     onAction: (EventAction) -> Unit
 ) {
-    eventState.event.rooms?.let { rooms ->
+    if (!eventState.event.rooms.isNullOrEmpty()) {
+        val rooms = eventState.event.rooms
         item {
             Box(
                 modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16)
