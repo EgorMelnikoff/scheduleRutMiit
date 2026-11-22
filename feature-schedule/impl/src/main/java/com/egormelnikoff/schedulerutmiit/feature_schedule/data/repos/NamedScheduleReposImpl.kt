@@ -46,16 +46,16 @@ class NamedScheduleReposImpl @Inject constructor(
         name: String,
         apiId: Int,
         type: NamedScheduleType,
-    ): NamedScheduleWithSchedules {
+    ): Pair<Boolean, NamedScheduleWithSchedules> {
         if (namedScheduleId != 0L) {
-            return namedScheduleDataSource.getById(namedScheduleId)
+            return true to namedScheduleDataSource.getById(namedScheduleId)
         } else if (apiId != 0) {
             namedScheduleDataSource.getByApiId(apiId)?.let {
-                return it
+                return true to it
             }
         }
 
-        return scheduleRemoteDataSource.getSchedule(namedScheduleId, name, apiId, type)
+        return false to scheduleRemoteDataSource.getSchedule(namedScheduleId, name, apiId, type)
     }
 
     override suspend fun getAndOpen(
@@ -69,7 +69,12 @@ class NamedScheduleReposImpl @Inject constructor(
             return
         }
         val schedule = get(namedScheduleId, name, apiId, type)
-        source.value = ScheduleSource.Temporary(schedule)
+
+        source.value = if (schedule.first) {
+            ScheduleSource.ById(schedule.second.namedSchedule.id)
+        } else {
+            ScheduleSource.Temporary(schedule.second)
+        }
     }
 
     override suspend fun getById(

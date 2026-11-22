@@ -18,7 +18,7 @@ interface NamedScheduleRepos {
         name: String = "",
         apiId: Int = 0,
         type: NamedScheduleType = NamedScheduleType.GROUP,
-    ): NamedScheduleWithSchedules
+    ): Pair<Boolean,NamedScheduleWithSchedules>
 
     suspend fun getById(
         namedScheduleId: Long
