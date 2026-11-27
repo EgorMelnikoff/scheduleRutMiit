@@ -22,10 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
@@ -74,7 +72,7 @@ fun ExpandedItem(
                     .graphicsLayer(
                         rotationZ = rotationAngle
                     ),
-                imageVector = ImageVector.vectorResource(R.drawable.down),
+                imageVector = AppTheme.icons.down,
                 contentDescription = null
             )
         }

@@ -13,12 +13,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.curriculum.R
@@ -42,7 +39,7 @@ internal fun CurriculumSearchInputWidget(
             placeholderText = stringResource(R.string.curriculum_number),
             leadingIcon = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CommonR.drawable.search),
+                    imageVector = AppTheme.icons.search,
                     contentDescription = null,
                     tint = AppTheme.colors.onSecondaryContainer
                 )
@@ -59,7 +56,7 @@ internal fun CurriculumSearchInputWidget(
                         }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.clear),
+                            imageVector = AppTheme.icons.clear,
                             contentDescription = null,
                             tint = AppTheme.colors.primary
                         )
@@ -81,7 +78,7 @@ internal fun CurriculumSearchInputWidget(
             }
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(CommonR.drawable.info),
+                imageVector = AppTheme.icons.info,
                 contentDescription = null,
                 tint = AppTheme.colors.onBackground
             )

@@ -14,12 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
@@ -77,7 +74,7 @@ internal fun SchedulesSheetWidget(
                     containerColor = AppTheme.colors.secondaryContainer,
                     contentColor = AppTheme.colors.onBackground
                 ),
-                icon = ImageVector.vectorResource(CommonR.drawable.resource_import),
+                icon = AppTheme.icons.resourceImport,
                 contentDescription = stringResource(R.string.schedule_rename)
             )
 
@@ -90,7 +87,7 @@ internal fun SchedulesSheetWidget(
                     containerColor = AppTheme.colors.secondaryContainer,
                     contentColor = AppTheme.colors.onBackground
                 ),
-                icon = ImageVector.vectorResource(CommonR.drawable.export),
+                icon = AppTheme.icons.export,
                 contentDescription = stringResource(R.string.schedule_rename)
             )
         }
@@ -149,9 +146,9 @@ internal fun SchedulesSheetWidget(
                             }
                         ) { state ->
                            if (state) {
-                               ImageVector.vectorResource(CommonR.drawable.check)
+                               AppTheme.icons.check
                            } else {
-                               ImageVector.vectorResource(CommonR.drawable.right)
+                               AppTheme.icons.right
                            }
                         }
                     },

@@ -6,14 +6,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
@@ -57,7 +54,7 @@ internal fun AddScheduleInfoWidget(
                     ),
                     start = {
                         Icon(
-                            icon = ImageVector.vectorResource(CommonR.drawable.calendar),
+                            icon = AppTheme.icons.calendar,
                             iconSize = 20.dp,
                             iconColor = AppTheme.colors.onBackground
                         )

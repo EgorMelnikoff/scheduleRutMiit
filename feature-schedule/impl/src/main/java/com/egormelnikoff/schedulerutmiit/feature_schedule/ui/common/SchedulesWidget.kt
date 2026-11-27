@@ -1,10 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
@@ -25,21 +22,13 @@ internal fun SchedulesWidget(
                     start = {
                         Icon(
                             icon = when (namedSchedule.type) {
-                                ScheduleType.GROUP -> ImageVector.vectorResource(
-                                    R.drawable.group
-                                )
+                                ScheduleType.GROUP -> AppTheme.icons.group
 
-                                ScheduleType.PERSON -> ImageVector.vectorResource(
-                                    R.drawable.person
-                                )
+                                ScheduleType.PERSON -> AppTheme.icons.person
 
-                                ScheduleType.ROOM -> ImageVector.vectorResource(
-                                    R.drawable.room
-                                )
+                                ScheduleType.ROOM -> AppTheme.icons.room
 
-                                ScheduleType.MY -> ImageVector.vectorResource(
-                                    R.drawable.edit
-                                )
+                                ScheduleType.MY -> AppTheme.icons.edit
                             },
                             iconSize = 16.dp,
                             iconColor = AppTheme.colors.onSecondaryContainer
@@ -54,7 +43,7 @@ internal fun SchedulesWidget(
                     end = {
                         if (namedSchedule.isDefault) {
                             Icon(
-                                icon =  ImageVector.vectorResource(R.drawable.check),
+                                icon =  AppTheme.icons.check,
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.primary
                             )

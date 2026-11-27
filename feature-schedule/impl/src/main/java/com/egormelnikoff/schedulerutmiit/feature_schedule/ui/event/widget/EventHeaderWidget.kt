@@ -6,12 +6,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
@@ -46,7 +43,7 @@ internal fun EventHeaderWidget(
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.share),
+                    imageVector = AppTheme.icons.share,
                     contentDescription = null,
                     tint = AppTheme.colors.onBackground
                 )
@@ -59,7 +56,7 @@ internal fun EventHeaderWidget(
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.more_vert),
+                    imageVector = AppTheme.icons.moreVert,
                     contentDescription = null,
                     tint = AppTheme.colors.onBackground
                 )

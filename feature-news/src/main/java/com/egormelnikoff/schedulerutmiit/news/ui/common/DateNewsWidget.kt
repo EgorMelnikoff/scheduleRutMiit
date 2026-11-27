@@ -11,11 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
@@ -32,7 +29,7 @@ internal fun DateNewsWidget(
     ) {
         Icon(
             modifier = Modifier.size(12.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.schedule),
+            imageVector = AppTheme.icons.schedule,
             contentDescription = null,
             tint = AppTheme.colors.onPrimary
         )

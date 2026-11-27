@@ -11,10 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerWidth
 import com.egormelnikoff.schedulerutmiit.core.ui.components.button_row.appRowItemShape
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -51,7 +48,7 @@ fun ColorSelectorWidget(
                     icon = {},
                     label = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.check),
+                            imageVector = AppTheme.icons.check,
                             contentDescription = null
                         )
                     }

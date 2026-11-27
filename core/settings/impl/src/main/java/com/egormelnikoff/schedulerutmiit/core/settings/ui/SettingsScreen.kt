@@ -14,11 +14,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventsCountView
@@ -103,11 +100,11 @@ fun SettingsScreen(
                                             iconProvider = { state ->
                                                 when (state) {
                                                     ScheduleView.CALENDAR -> {
-                                                        ImageVector.vectorResource(CommonR.drawable.calendar)
+                                                        AppTheme.icons.calendar
                                                     }
 
                                                     ScheduleView.LIST -> {
-                                                        ImageVector.vectorResource(CommonR.drawable.list)
+                                                        AppTheme.icons.list
                                                     }
                                                 }
                                             }
@@ -144,7 +141,7 @@ fun SettingsScreen(
                                 AppCell(
                                     start = {
                                         Icon(
-                                            icon = ImageVector.vectorResource(CommonR.drawable.event_view),
+                                            icon = AppTheme.icons.eventView,
                                             iconSize = 20.dp,
                                             iconColor = AppTheme.colors.onSecondaryContainer
                                         )
@@ -185,17 +182,15 @@ fun SettingsScreen(
                                             iconProvider = { state ->
                                                 when (state) {
                                                     EventsCountView.DETAILS -> {
-                                                        ImageVector.vectorResource(
-                                                            CommonR.drawable.points
-                                                        )
+                                                        AppTheme.icons.points
                                                     }
 
                                                     EventsCountView.BRIEFLY -> {
-                                                        ImageVector.vectorResource(CommonR.drawable.one)
+                                                        AppTheme.icons.one
                                                     }
 
                                                     EventsCountView.OFF -> {
-                                                        ImageVector.vectorResource(CommonR.drawable.visibility_off)
+                                                        AppTheme.icons.visibilityOff
                                                     }
                                                 }
                                             }
@@ -233,7 +228,7 @@ fun SettingsScreen(
                                 AppCell(
                                     start = {
                                         Icon(
-                                            icon = ImageVector.vectorResource(CommonR.drawable.sun),
+                                            icon = AppTheme.icons.sun,
                                             iconSize = 20.dp,
                                             iconColor = AppTheme.colors.onSecondaryContainer
                                         )
@@ -280,15 +275,15 @@ fun SettingsScreen(
                                             iconProvider = { state ->
                                                 when (state) {
                                                     EventExtraPolicy.SYNCHRONIZED -> {
-                                                        ImageVector.vectorResource(CommonR.drawable.sync)
+                                                        AppTheme.icons.sync
                                                     }
 
                                                     EventExtraPolicy.BY_DATES -> {
-                                                        ImageVector.vectorResource(CommonR.drawable.calendar)
+                                                        AppTheme.icons.calendar
                                                     }
 
                                                     EventExtraPolicy.DEFAULT -> {
-                                                        ImageVector.vectorResource(CommonR.drawable.split)
+                                                        AppTheme.icons.split
                                                     }
                                                 }
                                             }
@@ -329,7 +324,7 @@ fun SettingsScreen(
                                 AppCell(
                                     start = {
                                         Icon(
-                                            icon = ImageVector.vectorResource(CommonR.drawable.undelete),
+                                            icon = AppTheme.icons.undelete,
                                             iconSize = 20.dp,
                                             iconColor = AppTheme.colors.onSecondaryContainer
                                         )
@@ -384,9 +379,9 @@ fun SettingsScreen(
                                             targetState = state.appSettings.themePreferences.theme.isDarkTheme(),
                                             iconProvider = { state ->
                                                 if (state) {
-                                                    ImageVector.vectorResource(CommonR.drawable.moon)
+                                                    AppTheme.icons.moon
                                                 } else {
-                                                    ImageVector.vectorResource(CommonR.drawable.sun)
+                                                    AppTheme.icons.sun
                                                 }
                                             }
                                         )
@@ -423,7 +418,7 @@ fun SettingsScreen(
                                 AppCell(
                                     start = {
                                         Icon(
-                                            icon = ImageVector.vectorResource(CommonR.drawable.info),
+                                            icon = AppTheme.icons.info,
                                             iconSize = 20.dp,
                                             iconColor = AppTheme.colors.onSecondaryContainer,
                                             showBadge = state.updatesAvailable,

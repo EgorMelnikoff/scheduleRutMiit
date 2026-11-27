@@ -5,12 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.navigation_bar.AppNavigationBar
 import com.egormelnikoff.schedulerutmiit.core.ui.components.navigation_bar.AppNavigationBarItem
 import com.egormelnikoff.schedulerutmiit.core.ui.components.navigation_bar.BarItem
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.Initialize
 
@@ -22,6 +22,14 @@ fun AppBottonNavBarWidget() {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val scheduleIcon = AppTheme.icons.schedule
+    val scheduleFillIcon = AppTheme.icons.scheduleFill
+    val newsIcon = AppTheme.icons.news
+    val tasksIcon = AppTheme.icons.tasks
+    val tasksFillIcon = AppTheme.icons.tasksFill
+    val reviewIcon = AppTheme.icons.review
+    val reviewFillIcon = AppTheme.icons.reviewFill
+
     AppNavigationBar(
         barItems = {
 
@@ -29,8 +37,8 @@ fun AppBottonNavBarWidget() {
                 barItem = remember {
                     BarItem(
                         title = R.string.ui_schedule,
-                        iconRes = CommonR.drawable.schedule,
-                        selectedIconRes = CommonR.drawable.schedule_fill,
+                        icon = scheduleIcon,
+                        selectedIcon = scheduleFillIcon,
                     )
                 },
                 isSelected = state.currentPage is Route.Page.Schedule,
@@ -46,8 +54,8 @@ fun AppBottonNavBarWidget() {
                 barItem = remember {
                     BarItem(
                         title = R.string.ui_news,
-                        iconRes = CommonR.drawable.news,
-                        selectedIconRes = CommonR.drawable.news,
+                        icon = newsIcon,
+                        selectedIcon = newsIcon,
                     )
                 },
                 showBadge = state.updatesAvailable,
@@ -62,8 +70,8 @@ fun AppBottonNavBarWidget() {
                 barItem = remember {
                     BarItem(
                         title = R.string.ui_tasks,
-                        iconRes = CommonR.drawable.tasks,
-                        selectedIconRes = CommonR.drawable.tasks_fill,
+                        icon = tasksIcon,
+                        selectedIcon = tasksFillIcon,
                     )
                 },
                 isSelected = state.currentPage is Route.Page.Tasks,
@@ -77,8 +85,8 @@ fun AppBottonNavBarWidget() {
                 barItem = remember {
                     BarItem(
                         title = R.string.ui_review,
-                        iconRes = CommonR.drawable.review,
-                        selectedIconRes = CommonR.drawable.review_fill,
+                        icon = reviewIcon,
+                        selectedIcon = reviewFillIcon,
                     )
                 },
                 isSelected = state.currentPage is Route.Page.Review

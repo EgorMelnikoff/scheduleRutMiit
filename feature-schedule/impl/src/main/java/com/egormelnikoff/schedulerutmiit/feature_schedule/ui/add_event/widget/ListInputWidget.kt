@@ -15,11 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
@@ -65,7 +62,7 @@ internal fun <T> ListInputWidget(
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.add),
+                    imageVector = AppTheme.icons.add,
                     contentDescription = null
                 )
             }

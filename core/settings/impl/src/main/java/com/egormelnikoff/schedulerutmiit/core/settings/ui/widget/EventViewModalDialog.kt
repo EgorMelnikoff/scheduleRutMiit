@@ -4,11 +4,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
@@ -40,7 +37,7 @@ fun EventViewModalDialog(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(CommonR.drawable.group),
+                                icon = AppTheme.icons.group,
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
                             )
@@ -73,7 +70,7 @@ fun EventViewModalDialog(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(CommonR.drawable.room),
+                                icon = AppTheme.icons.room,
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
                             )
@@ -106,7 +103,7 @@ fun EventViewModalDialog(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(CommonR.drawable.person),
+                                icon = AppTheme.icons.person,
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
                             )
@@ -145,7 +142,7 @@ fun EventViewModalDialog(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(CommonR.drawable.tag),
+                                icon = AppTheme.icons.tag,
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
                             )
@@ -178,7 +175,7 @@ fun EventViewModalDialog(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(CommonR.drawable.comment),
+                                icon = AppTheme.icons.comment,
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
                             )

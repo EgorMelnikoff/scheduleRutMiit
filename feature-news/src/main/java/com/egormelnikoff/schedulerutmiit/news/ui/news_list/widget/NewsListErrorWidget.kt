@@ -3,16 +3,14 @@ package com.egormelnikoff.schedulerutmiit.news.ui.news_list.widget
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.error.getMessage
 import com.egormelnikoff.schedulerutmiit.core.common.error.toAppError
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.news.R
 import com.egormelnikoff.schedulerutmiit.news.domain.model.NewsShort
@@ -31,7 +29,7 @@ internal fun NewsListErrorWidget(
             AppButton(
                 modifier = Modifier.fillMaxWidth(),
                 buttonTitle = stringResource(R.string.news_repeat),
-                imageVector = ImageVector.vectorResource(CommonR.drawable.refresh),
+                imageVector = AppTheme.icons.refresh,
                 onClick = {
                     newsList.refresh()
                 }

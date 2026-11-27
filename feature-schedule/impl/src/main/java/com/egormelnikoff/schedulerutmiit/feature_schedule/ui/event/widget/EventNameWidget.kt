@@ -13,15 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
@@ -64,7 +61,7 @@ internal fun EventNameWidget(
             horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
         ) {
             AppFilterChip(
-                imageVector = ImageVector.vectorResource(CommonR.drawable.calendar),
+                imageVector = AppTheme.icons.calendar,
                 colors = FilterChipDefaults.filterChipColors(
                     disabledContainerColor = Color.Transparent,
                     disabledLabelColor = AppTheme.colors.onBackground,
@@ -95,7 +92,7 @@ internal fun EventNameWidget(
                 }"
             )
             AppFilterChip(
-                imageVector = ImageVector.vectorResource(CommonR.drawable.time),
+                imageVector = AppTheme.icons.time,
                 colors = FilterChipDefaults.filterChipColors(
                     disabledContainerColor = Color.Transparent,
                     disabledLabelColor = AppTheme.colors.onBackground,

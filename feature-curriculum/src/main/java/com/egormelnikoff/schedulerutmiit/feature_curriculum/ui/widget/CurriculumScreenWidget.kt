@@ -13,11 +13,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.error.getMessage
 import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -75,7 +72,7 @@ internal fun CurriculumScreenWidget(
 
                     animatedState.isEmptyQuery -> {
                         EmptyScreen(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.search),
+                            imageVector = AppTheme.icons.search,
                             subtitle = stringResource(R.string.curriculum_enter_your_query)
                         )
                     }

@@ -4,13 +4,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.dialog.AppDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEventProcessor
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.Initialize
 import com.egormelnikoff.schedulerutmiit.curriculum.R
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.widget.CurriculumScreenWidget
@@ -38,7 +37,7 @@ fun CurriculumScreen() {
     if (state.showAdviceDialog) {
         AppDialog(
             dialogText = stringResource(R.string.curriculum_search_advice),
-            painter = painterResource(CommonR.drawable.advice),
+            painter = AppTheme.images.advice,
             onDismissRequest = {
                 viewModel.onAction(
                     CurriculumAction.OnHideAdviceDialog

@@ -22,6 +22,10 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.amoledColorScheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.animation
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.defaultTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.themes
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.icons.AppIcons
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.icons.LocalAppIcons
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.images.AppImages
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.images.LocalAppImages
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.paddings.AppPaddings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.paddings.LocalAppPaddings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.radius.AppRadius
@@ -68,7 +72,9 @@ fun ScheduleRutMiitTheme(
         LocalAppPaddings provides paddings,
         LocalAppRadius provides radius,
         LocalAppShapes provides shapes,
-        LocalAppTypography provides typography
+        LocalAppTypography provides typography,
+        LocalAppIcons provides AppIcons(),
+        LocalAppImages provides AppImages()
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

@@ -5,11 +5,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
@@ -42,9 +39,9 @@ fun EventExtraPolicyModalDialog(
                         start = {
                             Icon(
                                 icon = when (it) {
-                                    EventExtraPolicy.SYNCHRONIZED -> ImageVector.vectorResource(CommonR.drawable.sync)
-                                    EventExtraPolicy.BY_DATES -> ImageVector.vectorResource(CommonR.drawable.calendar)
-                                    EventExtraPolicy.DEFAULT -> ImageVector.vectorResource(CommonR.drawable.split)
+                                    EventExtraPolicy.SYNCHRONIZED -> AppTheme.icons.sync
+                                    EventExtraPolicy.BY_DATES -> AppTheme.icons.calendar
+                                    EventExtraPolicy.DEFAULT -> AppTheme.icons.split
                                 },
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer

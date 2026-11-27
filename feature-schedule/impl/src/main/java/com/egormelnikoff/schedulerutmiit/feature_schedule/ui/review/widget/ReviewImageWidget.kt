@@ -11,9 +11,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.DayPeriod
@@ -31,10 +29,10 @@ internal fun LazyListScope.reviewImageWidget(
                 modifier = Modifier
                     .fillMaxSize(),
                 painter = when (reviewState.dayPeriod) {
-                    DayPeriod.MORNING -> painterResource(R.drawable.day)
-                    DayPeriod.DAY -> painterResource(R.drawable.day)
-                    DayPeriod.EVENING -> painterResource(R.drawable.evening)
-                    DayPeriod.NIGHT -> painterResource(R.drawable.night)
+                    DayPeriod.MORNING -> AppTheme.images.day
+                    DayPeriod.DAY -> AppTheme.images.day
+                    DayPeriod.EVENING -> AppTheme.images.evening
+                    DayPeriod.NIGHT -> AppTheme.images.night
                 },
                 contentScale = ContentScale.Crop,
                 contentDescription = null,

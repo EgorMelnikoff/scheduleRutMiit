@@ -13,12 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -97,7 +94,7 @@ internal fun ModalDialogNamedScheduleHeader(
                     containerColor = AppTheme.colors.secondaryContainer,
                     contentColor = AppTheme.colors.onBackground
                 ),
-                icon = ImageVector.vectorResource(CommonR.drawable.edit),
+                icon = AppTheme.icons.edit,
                 contentDescription = stringResource(R.string.schedule_rename)
             )
         }
@@ -110,7 +107,7 @@ internal fun ModalDialogNamedScheduleHeader(
                     containerColor = AppTheme.colors.error,
                     contentColor = AppTheme.colors.onPrimary
                 ),
-                icon = ImageVector.vectorResource(CommonR.drawable.delete),
+                icon = AppTheme.icons.delete,
                 contentDescription = stringResource(R.string.schedule_delete)
             )
         }

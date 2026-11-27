@@ -28,17 +28,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import androidx.core.net.toUri
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.AppConst.DEVELOPER
 import com.egormelnikoff.schedulerutmiit.core.common.consts.AppConst.DEVELOPER_EMAIL
 import com.egormelnikoff.schedulerutmiit.core.common.consts.Links
@@ -85,7 +82,7 @@ fun InfoModalDialog(
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(84.dp),
-                    imageVector = ImageVector.vectorResource(CommonR.drawable.logo_app),
+                    imageVector = AppTheme.icons.logoApp,
                     contentDescription = null,
                     tint = Color.Unspecified
                 )
@@ -135,7 +132,7 @@ fun InfoModalDialog(
                                         shape = AppTheme.shapes.small
                                     )
                                     .padding(AppTheme.paddings.padding4),
-                                imageVector = ImageVector.vectorResource(CommonR.drawable.alert),
+                                imageVector = AppTheme.icons.alert,
                                 contentDescription = null,
                                 tint = AppTheme.colors.onPrimary
                             )
@@ -155,7 +152,7 @@ fun InfoModalDialog(
                 ) {
                     item {
                         AppAssistChip(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.logo_github),
+                            imageVector = AppTheme.icons.logoGithub,
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = AppTheme.colors.background,
                                 labelColor = AppTheme.colors.onBackground,
@@ -174,7 +171,7 @@ fun InfoModalDialog(
 
                     item {
                         AppAssistChip(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.logo_google_play),
+                            imageVector = AppTheme.icons.logoGooglePlay,
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = AppTheme.colors.background,
                                 labelColor = AppTheme.colors.onBackground,
@@ -194,7 +191,7 @@ fun InfoModalDialog(
 
                     item {
                         AppAssistChip(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.logo_rustore),
+                            imageVector = AppTheme.icons.logoRustore,
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = AppTheme.colors.background,
                                 labelColor = AppTheme.colors.onBackground,
@@ -225,7 +222,7 @@ fun InfoModalDialog(
                 ) {
                     item {
                         AppAssistChip(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.logo_telegram),
+                            imageVector = AppTheme.icons.logoTelegram,
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = AppTheme.colors.background,
                                 labelColor = AppTheme.colors.onBackground,
@@ -245,7 +242,7 @@ fun InfoModalDialog(
 
                     item {
                         AppAssistChip(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.email),
+                            imageVector = AppTheme.icons.email,
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = AppTheme.colors.background,
                                 labelColor = AppTheme.colors.onBackground,

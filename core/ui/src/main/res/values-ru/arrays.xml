@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="days_of_week">
+    <array name="ui_days_of_week">
         <item>пн</item>
         <item>вт</item>
         <item>ср</item>

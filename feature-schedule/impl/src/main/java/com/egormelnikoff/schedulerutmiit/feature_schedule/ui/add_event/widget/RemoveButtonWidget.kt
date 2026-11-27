@@ -5,10 +5,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
@@ -23,7 +20,7 @@ internal fun RemoveButtonWidget(
         )
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.delete),
+            imageVector = AppTheme.icons.delete,
             contentDescription = null
         )
     }

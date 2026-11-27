@@ -14,9 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
@@ -54,7 +51,7 @@ fun AppSnackbarHost(
                 }
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.clear),
+                    imageVector = AppTheme.icons.clear,
                     contentDescription = null,
                     tint = AppTheme.colors.onPrimary
                 )

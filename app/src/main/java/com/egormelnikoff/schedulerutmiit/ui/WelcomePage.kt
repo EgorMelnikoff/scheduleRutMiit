@@ -16,14 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.egormelnikoff.schedulerutmiit.R
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.PagerScreenContainer
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -60,21 +58,21 @@ fun WelcomePage(
                 1 -> Page(
                     title = stringResource(R.string.app_schedule_title),
                     subtitle = stringResource(R.string.app_schedule_subtitle),
-                    painter = painterResource(CommonR.drawable.schedules),
+                    painter = AppTheme.images.schedules,
                 )
 
 
                 2 -> Page(
                     title = stringResource(R.string.app_features_title),
                     subtitle = stringResource(R.string.app_features_subtitle),
-                    painter = painterResource(CommonR.drawable.comment_and_tag),
+                    painter = AppTheme.images.commentAndTag,
                 )
 
 
                 3 -> Page(
                     title = stringResource(R.string.app_widget_title),
                     subtitle = stringResource(R.string.app_widget_subtitle),
-                    painter = painterResource(CommonR.drawable.widget),
+                    painter = AppTheme.images.widget,
                 )
             }
         }

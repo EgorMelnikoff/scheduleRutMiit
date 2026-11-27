@@ -3,11 +3,8 @@ package com.egormelnikoff.schedulerutmiit.core.ui.widget
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
@@ -37,7 +34,7 @@ fun TimeSelector(
                     ),
                     start = {
                         Icon(
-                            icon = ImageVector.vectorResource(CommonR.drawable.time),
+                            icon = AppTheme.icons.time,
                             iconSize = 20.dp,
                             iconColor = AppTheme.colors.onBackground
                         )
@@ -59,7 +56,7 @@ fun TimeSelector(
                     showChevron = false,
                     start = {
                         Icon(
-                            icon = ImageVector.vectorResource(CommonR.drawable.time),
+                            icon = AppTheme.icons.time,
                             iconSize = 20.dp,
                             iconColor = AppTheme.colors.onBackground
                         )

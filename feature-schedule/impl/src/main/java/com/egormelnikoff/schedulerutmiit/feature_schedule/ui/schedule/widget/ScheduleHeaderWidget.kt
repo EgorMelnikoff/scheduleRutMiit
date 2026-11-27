@@ -11,10 +11,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -59,11 +56,11 @@ internal fun ScheduleHeaderWidget(
                         modifier = Modifier.size(24.dp),
                         imageVector = when (view) {
                             ScheduleView.CALENDAR -> {
-                                ImageVector.vectorResource(R.drawable.list)
+                                AppTheme.icons.list
                             }
 
                             ScheduleView.LIST -> {
-                                ImageVector.vectorResource(R.drawable.calendar)
+                                AppTheme.icons.calendar
                             }
                         },
                         contentDescription = null,
@@ -78,7 +75,7 @@ internal fun ScheduleHeaderWidget(
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.more_vert),
+                    imageVector = AppTheme.icons.moreVert,
                     contentDescription = null,
                     tint = AppTheme.colors.onBackground
                 )

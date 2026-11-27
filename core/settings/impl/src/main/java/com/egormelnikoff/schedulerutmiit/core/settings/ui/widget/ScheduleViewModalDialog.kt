@@ -5,11 +5,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
@@ -42,8 +39,8 @@ fun ScheduleViewModalDialog(
                         start = {
                             Icon(
                                 icon = when (it) {
-                                    ScheduleView.CALENDAR -> ImageVector.vectorResource(CommonR.drawable.calendar)
-                                    ScheduleView.LIST -> ImageVector.vectorResource(CommonR.drawable.list)
+                                    ScheduleView.CALENDAR -> AppTheme.icons.calendar
+                                    ScheduleView.LIST -> AppTheme.icons.list
                                 },
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer

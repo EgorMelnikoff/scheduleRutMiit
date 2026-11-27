@@ -5,13 +5,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
@@ -47,7 +44,7 @@ internal fun LazyListScope.reviewActionsWidget(
                             ),
                             start = {
                                 Icon(
-                                    icon = ImageVector.vectorResource(CommonR.drawable.search),
+                                    icon = AppTheme.icons.search,
                                     iconSize = 20.dp,
                                     iconColor = AppTheme.colors.onBackground
                                 )
@@ -71,7 +68,7 @@ internal fun LazyListScope.reviewActionsWidget(
                             ),
                             start = {
                                 Icon(
-                                    icon = ImageVector.vectorResource(CommonR.drawable.add),
+                                    icon = AppTheme.icons.add,
                                     iconSize = 20.dp,
                                     iconColor = AppTheme.colors.onBackground
                                 )

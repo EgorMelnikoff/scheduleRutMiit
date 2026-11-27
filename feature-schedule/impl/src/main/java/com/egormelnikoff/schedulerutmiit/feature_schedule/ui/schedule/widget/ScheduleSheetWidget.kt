@@ -17,12 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getStartMs
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
@@ -107,7 +104,7 @@ internal fun ScheduleSheetWidget(
                     visible = schedule.downloadUrl != null,
                 ) {
                     AppAssistChip(
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.download),
+                        imageVector = AppTheme.icons.download,
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = AppTheme.colors.background,
                             labelColor = AppTheme.colors.onBackground,
@@ -129,7 +126,7 @@ internal fun ScheduleSheetWidget(
                     visible = isSavedNamedSchedule && haveNotEmptySchedules
                 ) {
                     AppAssistChip(
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.add),
+                        imageVector = AppTheme.icons.add,
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = AppTheme.colors.background,
                             labelColor = AppTheme.colors.onBackground,
@@ -157,7 +154,7 @@ internal fun ScheduleSheetWidget(
                     visible = haveHiddenEvents
                 ) {
                     AppAssistChip(
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.visibility_off),
+                        imageVector = AppTheme.icons.visibilityOff,
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = AppTheme.colors.background,
                             labelColor = AppTheme.colors.onBackground,

@@ -4,11 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
@@ -40,7 +37,7 @@ internal fun LazyListScope.reviewServicesWidget(
                             AppCell(
                                 start = {
                                     Icon(
-                                        icon = ImageVector.vectorResource(CommonR.drawable.news),
+                                        icon = AppTheme.icons.news,
                                         iconSize = 16.dp,
                                         iconColor = AppTheme.colors.onSecondaryContainer
                                     )
@@ -58,7 +55,7 @@ internal fun LazyListScope.reviewServicesWidget(
                             AppCell(
                                 start = {
                                     Icon(
-                                        icon = ImageVector.vectorResource(CommonR.drawable.person),
+                                        icon = AppTheme.icons.person,
                                         iconSize = 16.dp,
                                         iconColor = AppTheme.colors.onSecondaryContainer
                                     )
@@ -76,7 +73,7 @@ internal fun LazyListScope.reviewServicesWidget(
                             AppCell(
                                 start = {
                                     Icon(
-                                        icon = ImageVector.vectorResource(CommonR.drawable.tasks),
+                                        icon = AppTheme.icons.tasks,
                                         iconSize = 16.dp,
                                         iconColor = AppTheme.colors.onSecondaryContainer
                                     )

@@ -5,11 +5,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
@@ -43,9 +40,9 @@ fun CountEventsModalDialog(
                         start = {
                             Icon(
                                 icon = when (it) {
-                                    EventsCountView.DETAILS -> ImageVector.vectorResource(CommonR.drawable.points)
-                                    EventsCountView.BRIEFLY -> ImageVector.vectorResource(CommonR.drawable.one)
-                                    EventsCountView.OFF -> ImageVector.vectorResource(CommonR.drawable.visibility_off)
+                                    EventsCountView.DETAILS -> AppTheme.icons.points
+                                    EventsCountView.BRIEFLY -> AppTheme.icons.one
+                                    EventsCountView.OFF -> AppTheme.icons.visibilityOff
                                 },
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer

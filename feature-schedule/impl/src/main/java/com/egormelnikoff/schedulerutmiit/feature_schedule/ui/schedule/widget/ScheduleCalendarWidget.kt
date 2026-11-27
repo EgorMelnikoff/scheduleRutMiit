@@ -18,14 +18,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.badge.AppBadge
@@ -67,7 +64,7 @@ internal fun ScheduleCalendarWidget(
 
                 Icon(
                     modifier = Modifier.size(3.dp),
-                    imageVector = ImageVector.vectorResource(CommonR.drawable.circle),
+                    imageVector = AppTheme.icons.circle,
                     contentDescription = null,
                     tint = AppTheme.colors.onSecondaryContainer
                 )

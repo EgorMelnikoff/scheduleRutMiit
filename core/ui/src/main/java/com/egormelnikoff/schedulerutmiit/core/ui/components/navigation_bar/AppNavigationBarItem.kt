@@ -22,9 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -72,9 +70,8 @@ fun AppNavigationBarItem(
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                imageVector = if (isSelected && barItem.selectedIconRes != null)
-                    ImageVector.vectorResource(barItem.selectedIconRes)
-                else ImageVector.vectorResource(barItem.iconRes),
+                imageVector = if (isSelected) barItem.selectedIcon ?: barItem.icon
+                else barItem.icon,
                 contentDescription = stringResource(barItem.title),
                 tint = if (isSelected) AppTheme.colors.primary
                 else AppTheme.colors.onSecondaryContainer

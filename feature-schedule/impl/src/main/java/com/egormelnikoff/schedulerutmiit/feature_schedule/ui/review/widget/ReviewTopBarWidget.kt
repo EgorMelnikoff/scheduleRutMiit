@@ -14,11 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -99,7 +96,7 @@ internal fun ReviewTopBarWidget(
                         }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.search),
+                            imageVector = AppTheme.icons.search,
                             contentDescription = null
                         )
                     }
@@ -109,7 +106,7 @@ internal fun ReviewTopBarWidget(
                         }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.add),
+                            imageVector = AppTheme.icons.add,
                             contentDescription = null
                         )
                     }
@@ -122,7 +119,7 @@ internal fun ReviewTopBarWidget(
                 }
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CommonR.drawable.settings_fill),
+                    imageVector = AppTheme.icons.settingsFill,
                     contentDescription = null
                 )
             }

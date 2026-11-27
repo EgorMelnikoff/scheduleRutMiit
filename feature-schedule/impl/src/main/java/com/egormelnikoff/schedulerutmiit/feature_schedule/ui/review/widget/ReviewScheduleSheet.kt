@@ -6,11 +6,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
@@ -77,7 +74,7 @@ internal fun ReviewScheduleSheet(
 
                             start = {
                                 Icon(
-                                    icon = ImageVector.vectorResource(CommonR.drawable.check),
+                                    icon = AppTheme.icons.check,
                                     iconSize = 20.dp,
                                     iconColor = AppTheme.colors.onBackground
                                 )
@@ -104,7 +101,7 @@ internal fun ReviewScheduleSheet(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(CommonR.drawable.open_panel),
+                                icon = AppTheme.icons.openPanel,
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onBackground,
                             )

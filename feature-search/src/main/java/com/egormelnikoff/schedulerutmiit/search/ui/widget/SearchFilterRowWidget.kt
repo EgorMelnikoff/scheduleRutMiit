@@ -6,10 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.search.R
@@ -34,7 +31,7 @@ internal fun SearchFilterRowWidget(
         )
         AppFilterChip(
             title = stringResource(R.string.search_groups),
-            imageVector = ImageVector.vectorResource(CommonR.drawable.group),
+            imageVector = AppTheme.icons.group,
             selected = selectedOption == SearchType.GROUPS,
             onClick = {
                 onSelectOption(SearchType.GROUPS)
@@ -42,7 +39,7 @@ internal fun SearchFilterRowWidget(
         )
         AppFilterChip(
             title = stringResource(R.string.search_people),
-            imageVector = ImageVector.vectorResource(CommonR.drawable.person),
+            imageVector = AppTheme.icons.person,
             selected = selectedOption == SearchType.PEOPLE,
             onClick = {
                 onSelectOption(SearchType.PEOPLE)

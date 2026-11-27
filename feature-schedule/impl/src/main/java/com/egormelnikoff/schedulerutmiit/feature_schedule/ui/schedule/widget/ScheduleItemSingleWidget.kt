@@ -23,12 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -111,7 +108,7 @@ internal fun ScheduleItemSingleWidget(
                     Icon(
                         modifier = Modifier
                             .size(14.dp),
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.group),
+                        imageVector = AppTheme.icons.group,
                         contentDescription = null,
                         tint = AppTheme.colors.onSecondaryContainer
                     )
@@ -136,7 +133,7 @@ internal fun ScheduleItemSingleWidget(
                     Icon(
                         modifier = Modifier
                             .size(14.dp),
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.room),
+                        imageVector = AppTheme.icons.room,
                         contentDescription = null,
                         tint = AppTheme.colors.onSecondaryContainer
                     )
@@ -161,7 +158,7 @@ internal fun ScheduleItemSingleWidget(
                     Icon(
                         modifier = Modifier
                             .size(14.dp),
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.person),
+                        imageVector = AppTheme.icons.person,
                         contentDescription = null,
                         tint = AppTheme.colors.onSecondaryContainer
                     )
@@ -206,7 +203,7 @@ internal fun ScheduleItemSingleWidget(
                 ),
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.visibility_off),
+                        imageVector = AppTheme.icons.visibilityOff,
                         contentDescription = null
                     )
                 },
@@ -229,7 +226,7 @@ internal fun ScheduleItemSingleWidget(
                     ),
                     leadingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.edit),
+                            imageVector = AppTheme.icons.edit,
                             contentDescription = null
                         )
                     },
@@ -255,7 +252,7 @@ internal fun ScheduleItemSingleWidget(
                     ),
                     leadingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.delete),
+                            imageVector = AppTheme.icons.delete,
                             contentDescription = null
                         )
                     },

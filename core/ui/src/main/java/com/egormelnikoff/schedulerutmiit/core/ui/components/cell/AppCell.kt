@@ -43,7 +43,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Red
 
@@ -122,7 +120,7 @@ fun AppCell(
             if (showChevron && onClick != null) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.right),
+                    imageVector = AppTheme.icons.right,
                     contentDescription = null,
                     tint = AppTheme.colors.onSecondaryContainer,
                 )

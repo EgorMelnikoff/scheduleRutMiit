@@ -8,11 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
@@ -21,6 +18,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.Calen
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.rememberCalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.GridGroup
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ErrorScreen
 import com.egormelnikoff.schedulerutmiit.feature_schedule.R
@@ -80,7 +78,7 @@ internal fun ScheduleScreenWidget(
                                     AppButton(
                                         modifier = Modifier.fillMaxWidth(),
                                         buttonTitle = stringResource(R.string.schedule_find),
-                                        imageVector = ImageVector.vectorResource(CommonR.drawable.search),
+                                        imageVector = AppTheme.icons.search,
                                         shape = shape,
                                         onClick = {
                                             onAction(ScheduleAction.OnOpenDialog(Route.Dialog.SearchDialog))
@@ -91,7 +89,7 @@ internal fun ScheduleScreenWidget(
                                     AppButton(
                                         modifier = Modifier.fillMaxWidth(),
                                         buttonTitle = stringResource(R.string.schedule_create),
-                                        imageVector = ImageVector.vectorResource(CommonR.drawable.add),
+                                        imageVector = AppTheme.icons.add,
                                         shape = shape,
                                         onClick = {
                                             onAction(ScheduleAction.OnOpenDialog(Route.Dialog.AddScheduleDialog))
@@ -103,7 +101,7 @@ internal fun ScheduleScreenWidget(
                                 AppButton(
                                     modifier = Modifier.fillMaxWidth(),
                                     buttonTitle = stringResource(R.string.schedule_import),
-                                    imageVector = ImageVector.vectorResource(CommonR.drawable.resource_import),
+                                    imageVector = AppTheme.icons.resourceImport,
                                     shape = shape,
                                     onClick = {
                                         importLauncher.launch(arrayOf("application/json"))
@@ -126,7 +124,7 @@ internal fun ScheduleScreenWidget(
                     AppButton(
                         modifier = Modifier.fillMaxWidth(),
                         buttonTitle = stringResource(R.string.schedule_back),
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.back),
+                        imageVector = AppTheme.icons.back,
                         onClick = {
                             onAction(ScheduleAction.OnReturnToDefault)
                         },

@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
@@ -42,7 +41,7 @@ fun DaySelector(
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding2)
         ) {
-            stringArrayResource(CommonR.array.days_of_week).forEachIndexed { index, _ ->
+            stringArrayResource(R.array.ui_days_of_week).forEachIndexed { index, _ ->
                 val currentDate = firstDayOfWeek.plusDays(index.toLong())
                 AppFilterChip(
                     title = currentDate.dayOfWeek.getDisplayName(

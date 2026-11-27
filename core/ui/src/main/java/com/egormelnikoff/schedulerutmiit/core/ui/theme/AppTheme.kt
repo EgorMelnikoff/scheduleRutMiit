@@ -4,6 +4,10 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.icons.AppIcons
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.icons.LocalAppIcons
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.images.AppImages
+import com.egormelnikoff.schedulerutmiit.core.ui.theme.images.LocalAppImages
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.paddings.AppPaddings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.paddings.LocalAppPaddings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.radius.AppRadius
@@ -38,4 +42,14 @@ object AppTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAppTypography.current
+
+    val icons: AppIcons
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppIcons.current
+
+    val images: AppImages
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppImages.current
 }

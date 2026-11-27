@@ -23,11 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
@@ -106,7 +103,7 @@ internal fun ScheduleContentWidget(
                                 ),
                                 start = {
                                     Icon(
-                                        icon = ImageVector.vectorResource(CommonR.drawable.info),
+                                        icon = AppTheme.icons.info,
                                         iconSize = 24.dp,
                                         iconColor = AppTheme.colors.onPrimary
                                     )

@@ -20,11 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +32,7 @@ fun AppTopBar(
     subtitleText: String? = null,
     shadowElevation: Dp = 0.dp,
     navAction: (() -> Unit)? = null,
-    navImageVector: ImageVector = ImageVector.vectorResource(R.drawable.back),
+    navImageVector: ImageVector = AppTheme.icons.back,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     contentColor: Color = AppTheme.colors.onBackground,
     showTitleChevron: Boolean = false,
@@ -76,7 +74,7 @@ fun AppTopBar(
                             if (onTitleClick != null && showTitleChevron) {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
-                                    imageVector = ImageVector.vectorResource(R.drawable.right),
+                                    imageVector = AppTheme.icons.right,
                                     contentDescription = null
                                 )
                             }

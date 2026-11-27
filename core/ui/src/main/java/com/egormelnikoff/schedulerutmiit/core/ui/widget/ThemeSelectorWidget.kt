@@ -9,10 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.Theme
 import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.button_row.AppButtonRow
@@ -32,12 +30,12 @@ fun ThemeSelectorWidget(
     val themes = mapOf(
         0 to ThemeSelectorItemContent(
             theme = Theme.LIGHT,
-            imageVector = ImageVector.vectorResource(CommonR.drawable.sun),
+            imageVector = AppTheme.icons.sun,
             displayedName = stringResource(R.string.ui_light)
         ),
         1 to ThemeSelectorItemContent(
             theme = Theme.DARK,
-            imageVector = ImageVector.vectorResource(CommonR.drawable.moon),
+            imageVector = AppTheme.icons.moon,
             displayedName = stringResource(R.string.ui_dark)
         ),
         2 to ThemeSelectorItemContent(

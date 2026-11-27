@@ -3,12 +3,9 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.hidden_events.widg
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLocale
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.hourMinuteFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
@@ -81,7 +78,7 @@ internal fun HiddenEventItemWidget(
             },
             end = {
                 IconButton(
-                    icon = ImageVector.vectorResource(R.drawable.visibility),
+                    icon = AppTheme.icons.visibility,
                     iconButtonColors = IconButtonDefaults.iconButtonColors().copy(
                         contentColor = AppTheme.colors.onSecondaryContainer
                     ),

@@ -24,12 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLocale
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -101,7 +98,7 @@ fun CalendarBar(
                             }
                         )
                         .padding(AppTheme.paddings.padding8),
-                    imageVector = ImageVector.vectorResource(R.drawable.left),
+                    imageVector = AppTheme.icons.left,
                     tint = if (enabledLeftButton)
                         AppTheme.colors.onBackground
                     else AppTheme.colors.outline,
@@ -156,7 +153,7 @@ fun CalendarBar(
                             }
                         )
                         .padding(AppTheme.paddings.padding8),
-                    imageVector = ImageVector.vectorResource(R.drawable.right),
+                    imageVector = AppTheme.icons.right,
                     tint = if (enabledRightButton)
                         AppTheme.colors.onBackground
                     else AppTheme.colors.outline,

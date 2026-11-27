@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.core.ui.components.navigation_bar
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -32,10 +32,8 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Grey
 data class BarItem(
     @param:StringRes
     val title: Int,
-    @param:DrawableRes
-    val iconRes: Int,
-    @param:DrawableRes
-    val selectedIconRes: Int? = null
+    val icon: ImageVector,
+    val selectedIcon: ImageVector? = null
 )
 
 @Composable

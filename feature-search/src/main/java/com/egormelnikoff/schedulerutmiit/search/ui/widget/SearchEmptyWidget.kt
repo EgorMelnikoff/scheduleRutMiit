@@ -9,10 +9,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.IconButton
@@ -40,7 +37,7 @@ internal fun SearchEmptyWidget(
                     ),
                     start = {
                         Icon(
-                            icon = ImageVector.vectorResource(R.drawable.history),
+                            icon = AppTheme.icons.history,
                             iconSize = 20.dp,
                             iconColor = AppTheme.colors.onSecondaryContainer
                         )
@@ -53,7 +50,7 @@ internal fun SearchEmptyWidget(
                     },
                     end = {
                         IconButton(
-                            icon = ImageVector.vectorResource(R.drawable.clear),
+                            icon = AppTheme.icons.clear,
                             iconButtonColors = IconButtonDefaults.iconButtonColors().copy(
                                 contentColor = AppTheme.colors.onBackground
                             )

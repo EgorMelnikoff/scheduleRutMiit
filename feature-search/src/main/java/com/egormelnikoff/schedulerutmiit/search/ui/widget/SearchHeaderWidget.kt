@@ -13,11 +13,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.search.R
@@ -51,7 +48,7 @@ internal fun SearchHeaderWidget(
                     },
             leadingIcon = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CommonR.drawable.search),
+                    imageVector = AppTheme.icons.search,
                     contentDescription = null,
                     tint = AppTheme.colors.onSecondaryContainer
                 )
@@ -68,7 +65,7 @@ internal fun SearchHeaderWidget(
                         }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CommonR.drawable.clear),
+                            imageVector = AppTheme.icons.clear,
                             contentDescription = null,
                             tint = AppTheme.colors.primary
                         )

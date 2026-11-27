@@ -11,11 +11,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLocale
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -38,7 +35,7 @@ internal fun LazyListScope.scheduleListStickyHeaderWidget(
 
             Icon(
                 modifier = Modifier.width(16.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                imageVector = AppTheme.icons.calendar,
                 contentDescription = null,
                 tint = color
             )

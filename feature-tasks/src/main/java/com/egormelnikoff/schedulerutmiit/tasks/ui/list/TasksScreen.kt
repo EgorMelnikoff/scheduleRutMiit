@@ -27,14 +27,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.ui.components.badge.AppBadge
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.Calendar
@@ -91,7 +88,7 @@ fun TasksScreen(
                 ) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.add),
+                        imageVector = AppTheme.icons.add,
                         contentDescription = null,
                         tint = AppTheme.colors.onBackground
                     )
@@ -245,7 +242,7 @@ internal fun SingleTask(
             start = {
                 if (task.tag != 0) {
                     Icon(
-                        icon = ImageVector.vectorResource(CommonR.drawable.circle),
+                        icon = AppTheme.icons.circle,
                         iconSize = 16.dp,
                         iconColor = task.tag.getColorByIndex()
                     )
@@ -302,7 +299,7 @@ internal fun SingleTask(
                 ),
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.delete),
+                        imageVector = AppTheme.icons.delete,
                         contentDescription = null
                     )
                 },
@@ -322,7 +319,7 @@ internal fun SingleTask(
                 ),
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CommonR.drawable.delete_all),
+                        imageVector = AppTheme.icons.deleteAll,
                         contentDescription = null
                     )
                 },

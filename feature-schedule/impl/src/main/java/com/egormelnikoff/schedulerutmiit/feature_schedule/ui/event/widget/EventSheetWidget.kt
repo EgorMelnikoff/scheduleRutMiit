@@ -4,11 +4,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheetButton
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -41,7 +38,7 @@ internal fun BottomSheetEventWidget(
         )
         onHideEvent?.let {
             AppBottomSheetButton(
-                icon = ImageVector.vectorResource(CommonR.drawable.visibility_off),
+                icon = AppTheme.icons.visibilityOff,
                 title = stringResource(R.string.schedule_hide_event),
                 contentColor = AppTheme.colors.onBackground
             ) {
@@ -51,7 +48,7 @@ internal fun BottomSheetEventWidget(
         }
         onEditEvent?.let {
             AppBottomSheetButton(
-                icon = ImageVector.vectorResource(CommonR.drawable.edit),
+                icon = AppTheme.icons.edit,
                 title = stringResource(R.string.schedule_edit),
                 contentColor = AppTheme.colors.onBackground
             ) {
@@ -61,7 +58,7 @@ internal fun BottomSheetEventWidget(
         }
         onDeleteEvent?.let {
             AppBottomSheetButton(
-                icon = ImageVector.vectorResource(CommonR.drawable.delete),
+                icon = AppTheme.icons.delete,
                 title = stringResource(R.string.schedule_delete_event),
                 contentColor = AppTheme.colors.error
             ) {
