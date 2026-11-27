@@ -8,13 +8,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
 
@@ -27,7 +28,7 @@ internal fun LazyListScope.reviewServicesWidget(
             modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16)
         ) {
             ExpandedItem(
-                title = stringResource(R.string.services),
+                title = stringResource(R.string.schedule_services),
                 visible = reviewState.showServices,
                 onChangeVisibility = { show ->
                     onAction(ReviewAction.OnShowServices(show))
@@ -39,14 +40,14 @@ internal fun LazyListScope.reviewServicesWidget(
                             AppCell(
                                 start = {
                                     Icon(
-                                        icon = ImageVector.vectorResource(R.drawable.news),
+                                        icon = ImageVector.vectorResource(CommonR.drawable.news),
                                         iconSize = 16.dp,
                                         iconColor = AppTheme.colors.onSecondaryContainer
                                     )
                                 },
                                 center = {
                                     TextBlock(
-                                        text = stringResource(R.string.news),
+                                        text = stringResource(R.string.schedule_news),
                                     )
                                 },
                                 onClick = {
@@ -57,14 +58,14 @@ internal fun LazyListScope.reviewServicesWidget(
                             AppCell(
                                 start = {
                                     Icon(
-                                        icon = ImageVector.vectorResource(R.drawable.person),
+                                        icon = ImageVector.vectorResource(CommonR.drawable.person),
                                         iconSize = 16.dp,
                                         iconColor = AppTheme.colors.onSecondaryContainer
                                     )
                                 },
                                 center = {
                                     TextBlock(
-                                        text = stringResource(R.string.curriculum),
+                                        text = stringResource(R.string.schedule_curriculum),
                                     )
                                 },
                                 onClick = {
@@ -75,14 +76,14 @@ internal fun LazyListScope.reviewServicesWidget(
                             AppCell(
                                 start = {
                                     Icon(
-                                        icon = ImageVector.vectorResource(R.drawable.tasks),
+                                        icon = ImageVector.vectorResource(CommonR.drawable.tasks),
                                         iconSize = 16.dp,
                                         iconColor = AppTheme.colors.onSecondaryContainer
                                     )
                                 },
                                 center = {
                                     TextBlock(
-                                        text = stringResource(R.string.tasks),
+                                        text = stringResource(R.string.schedule_tasks),
                                     )
                                 },
                                 onClick = {

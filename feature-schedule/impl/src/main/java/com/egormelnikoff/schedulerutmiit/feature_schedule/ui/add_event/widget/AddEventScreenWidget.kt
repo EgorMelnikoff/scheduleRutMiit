@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toUtcDateTime
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_sheet.BottomSheetDatePicker
@@ -18,6 +17,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.containers.PagerScreenContainer
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addEventStateMock
@@ -34,9 +34,9 @@ internal fun AddEventScreenWidget(
         topBar = {
             AppTopBar(
                 titleText = if (state is AddEventState.Loaded && state.editForm.isEdit) stringResource(
-                    R.string.editing
+                    R.string.schedule_editing
                 )
-                else stringResource(R.string.create_class),
+                else stringResource(R.string.schedule_create_class),
                 navAction = {
                     onAction(AddEventAction.OnShowBackDialog(true))
                 }
@@ -78,9 +78,9 @@ internal fun AddEventScreenWidget(
                         bottom = contentPadding.calculateBottomPadding()
                     ),
                     finishTitle = if (state.editForm.isEdit) {
-                        stringResource(R.string.save)
+                        stringResource(R.string.schedule_save)
                     } else {
-                        stringResource(R.string.create)
+                        stringResource(R.string.schedule_create)
                     }
                 ) { page ->
                     when (page) {
@@ -168,8 +168,8 @@ internal fun AddEventScreenWidget(
                 }
                 if (state.showBackDialog) {
                     AppAlertBottomSheet(
-                        dialogTitle = stringResource(R.string.exit),
-                        dialogText = stringResource(R.string.exit_message),
+                        dialogTitle = stringResource(R.string.schedule_exit),
+                        dialogText = stringResource(R.string.schedule_exit_message),
                         onDismissRequest = {
                             onAction(AddEventAction.OnShowBackDialog(false))
                         },

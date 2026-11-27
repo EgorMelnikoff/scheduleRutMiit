@@ -2,10 +2,10 @@ package com.egormelnikoff.schedulerutmiit.core.common.error
 
 import android.content.Context
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import kotlinx.serialization.SerializationException
-import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
+import kotlinx.serialization.SerializationException
+import retrofit2.HttpException
 
 sealed interface AppError {
     data class NetworkError(val exception: IOException) : AppError
@@ -46,16 +46,16 @@ fun AppError.isRetryable(): Boolean =
 
 fun AppError.getMessage(context: Context): String {
     return when (this) {
-        is AppError.NetworkError -> context.getString(R.string.network_error)
-        is AppError.TimeoutError -> context.getString(R.string.timeout_expired)
-        is AppError.HttpError -> "${context.getString(R.string.server_error)}: ${this.code}"
-        is AppError.SerializationError -> context.getString(R.string.serialization_error)
-        is AppError.IllegalArgumentError -> context.getString(R.string.illegal_argument)
-        is AppError.EmptyBodyError -> context.getString(R.string.no_data)
+        is AppError.NetworkError -> context.getString(R.string.common_network_error)
+        is AppError.TimeoutError -> context.getString(R.string.common_timeout_expired)
+        is AppError.HttpError -> "${context.getString(R.string.common_server_error)}: ${this.code}"
+        is AppError.SerializationError -> context.getString(R.string.common_serialization_error)
+        is AppError.IllegalArgumentError -> context.getString(R.string.common_illegal_argument)
+        is AppError.EmptyBodyError -> context.getString(R.string.common_no_data)
         is AppError.UnexpectedError -> {
             this.exception.message?.let {
-                "${context.getString(R.string.error)}: $it}"
-            } ?: context.getString(R.string.unknown_error)
+                "${context.getString(R.string.common_error)}: $it}"
+            } ?: context.getString(R.string.common_unknown_error)
         }
     }
 }

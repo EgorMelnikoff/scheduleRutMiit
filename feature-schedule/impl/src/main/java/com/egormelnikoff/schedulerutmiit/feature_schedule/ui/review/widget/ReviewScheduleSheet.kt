@@ -10,13 +10,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.ModalDialogNamedScheduleHeader
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
@@ -76,14 +77,14 @@ internal fun ReviewScheduleSheet(
 
                             start = {
                                 Icon(
-                                    icon = ImageVector.vectorResource(R.drawable.check),
+                                    icon = ImageVector.vectorResource(CommonR.drawable.check),
                                     iconSize = 20.dp,
                                     iconColor = AppTheme.colors.onBackground
                                 )
                             },
                             center = {
                                 TextBlock(
-                                    text = stringResource(R.string.make_default),
+                                    text = stringResource(R.string.schedule_make_default),
                                 )
                             },
                             showChevron = false,
@@ -103,14 +104,14 @@ internal fun ReviewScheduleSheet(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(R.drawable.open_panel),
+                                icon = ImageVector.vectorResource(CommonR.drawable.open_panel),
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onBackground,
                             )
                         },
                         center = {
                             TextBlock(
-                                text = stringResource(R.string.open),
+                                text = stringResource(R.string.schedule_open),
                             )
                         },
                         onClick = {

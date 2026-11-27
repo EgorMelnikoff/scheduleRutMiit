@@ -28,11 +28,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.EventVo
 
@@ -110,7 +111,7 @@ internal fun ScheduleItemSingleWidget(
                     Icon(
                         modifier = Modifier
                             .size(14.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.group),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.group),
                         contentDescription = null,
                         tint = AppTheme.colors.onSecondaryContainer
                     )
@@ -135,7 +136,7 @@ internal fun ScheduleItemSingleWidget(
                     Icon(
                         modifier = Modifier
                             .size(14.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.room),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.room),
                         contentDescription = null,
                         tint = AppTheme.colors.onSecondaryContainer
                     )
@@ -160,7 +161,7 @@ internal fun ScheduleItemSingleWidget(
                     Icon(
                         modifier = Modifier
                             .size(14.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.person),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.person),
                         contentDescription = null,
                         tint = AppTheme.colors.onSecondaryContainer
                     )
@@ -205,13 +206,13 @@ internal fun ScheduleItemSingleWidget(
                 ),
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.visibility_off),
                         contentDescription = null
                     )
                 },
                 text = {
                     Text(
-                        text = stringResource(R.string.hide)
+                        text = stringResource(R.string.schedule_hide)
                     )
                 },
                 onClick = {
@@ -228,13 +229,13 @@ internal fun ScheduleItemSingleWidget(
                     ),
                     leadingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.edit),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.edit),
                             contentDescription = null
                         )
                     },
                     text = {
                         Text(
-                            text = stringResource(R.string.edit)
+                            text = stringResource(R.string.schedule_edit)
                         )
                     },
                     onClick = {
@@ -254,13 +255,13 @@ internal fun ScheduleItemSingleWidget(
                     ),
                     leadingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.delete),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.delete),
                             contentDescription = null
                         )
                     },
                     text = {
                         Text(
-                            text = stringResource(R.string.delete)
+                            text = stringResource(R.string.schedule_delete)
                         )
                     },
                     onClick = {
@@ -277,8 +278,8 @@ internal fun ScheduleItemSingleWidget(
                 onConfirmation = {
                     onAction(ScheduleAction.OnDeleteEvent(event.id))
                 },
-                dialogTitle = "${stringResource(R.string.delete_event)}?",
-                dialogText = stringResource(R.string.event_deleting_alert)
+                dialogTitle = "${stringResource(R.string.schedule_delete_event)}?",
+                dialogText = stringResource(R.string.schedule_event_deleting_alert)
             )
         }
 
@@ -289,8 +290,8 @@ internal fun ScheduleItemSingleWidget(
                     onAction(ScheduleAction.OnHideEvent(event.id))
                     showHideDialog = false
                 },
-                dialogTitle = "${stringResource(R.string.hide_event)}?",
-                dialogText = stringResource(R.string.event_visibility_alert)
+                dialogTitle = "${stringResource(R.string.schedule_hide_event)}?",
+                dialogText = stringResource(R.string.schedule_event_visibility_alert)
             )
         }
     }

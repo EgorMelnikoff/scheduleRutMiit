@@ -8,7 +8,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
+import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
@@ -39,14 +40,14 @@ fun EventViewModalDialog(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(R.drawable.group),
+                                icon = ImageVector.vectorResource(CommonR.drawable.group),
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
                         center = {
                             TextBlock(
-                                text = stringResource(R.string.groups),
+                                text = stringResource(R.string.settings_groups),
                             )
                         },
                         end = {
@@ -72,14 +73,14 @@ fun EventViewModalDialog(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(R.drawable.room),
+                                icon = ImageVector.vectorResource(CommonR.drawable.room),
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
                         center = {
                             TextBlock(
-                                text = stringResource(R.string.rooms),
+                                text = stringResource(R.string.settings_rooms),
                             )
                         },
                         end = {
@@ -105,14 +106,14 @@ fun EventViewModalDialog(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(R.drawable.person),
+                                icon = ImageVector.vectorResource(CommonR.drawable.person),
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
                         center = {
                             TextBlock(
-                                text = stringResource(R.string.lecturers),
+                                text = stringResource(R.string.settings_lecturers),
                             )
                         },
                         end = {
@@ -144,14 +145,14 @@ fun EventViewModalDialog(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(R.drawable.tag),
+                                icon = ImageVector.vectorResource(CommonR.drawable.tag),
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
                         center = {
                             TextBlock(
-                                text = stringResource(R.string.tag),
+                                text = stringResource(R.string.settings_tag),
                             )
                         },
                         end = {
@@ -177,14 +178,14 @@ fun EventViewModalDialog(
                     AppCell(
                         start = {
                             Icon(
-                                icon = ImageVector.vectorResource(R.drawable.comment),
+                                icon = ImageVector.vectorResource(CommonR.drawable.comment),
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
                             )
                         },
                         center = {
                             TextBlock(
-                                text = stringResource(R.string.comment),
+                                text = stringResource(R.string.settings_comment),
                             )
                         },
                         end = {

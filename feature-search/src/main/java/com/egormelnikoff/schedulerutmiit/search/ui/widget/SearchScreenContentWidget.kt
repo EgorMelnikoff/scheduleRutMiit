@@ -17,11 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.search.R
 import com.egormelnikoff.schedulerutmiit.search.domain.model.SearchQuery
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchAction
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchState
@@ -71,8 +72,8 @@ internal fun SearchScreenContentWidget(
 
                     searchState.isEmptyQuery && history.isEmpty() -> {
                         EmptyScreen(
-                            imageVector = ImageVector.vectorResource(R.drawable.search),
-                            subtitle = stringResource(R.string.enter_your_query)
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.search),
+                            subtitle = stringResource(R.string.search_enter_your_query)
                         )
                     }
 
@@ -85,7 +86,7 @@ internal fun SearchScreenContentWidget(
 
                     searchState.groups.isEmpty() && searchState.people.isEmpty() ->
                         EmptyScreen(
-                            subtitle = stringResource(R.string.nothing_found)
+                            subtitle = stringResource(R.string.search_nothing_found)
                         )
 
                     else -> {

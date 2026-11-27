@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -61,7 +61,7 @@ fun AppTimePicker(
 
         AppButton(
             modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.paddings.padding16),
-            buttonTitle = stringResource(R.string.confirm),
+            buttonTitle = stringResource(R.string.ui_confirm),
             onClick = {
                 onTimeSelect(LocalTime.of(timePickerState.hour, timePickerState.minute))
                 onShowDialog(false)

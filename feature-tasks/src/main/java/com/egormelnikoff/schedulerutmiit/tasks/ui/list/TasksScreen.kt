@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.ui.components.badge.AppBadge
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.Calendar
@@ -55,6 +55,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Red
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.Yellow
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.tasks.R
 import com.egormelnikoff.schedulerutmiit.tasks.domain.model.Task
 import com.egormelnikoff.schedulerutmiit.tasks.domain.use_case.TaskAction
 import java.time.LocalDate
@@ -81,7 +82,7 @@ fun TasksScreen(
     Scaffold(
         topBar = {
             AppTopBar(
-                titleText = stringResource(R.string.tasks)
+                titleText = stringResource(R.string.tasks_title)
             ) {
                 IconButton(
                     onClick = {
@@ -90,7 +91,7 @@ fun TasksScreen(
                 ) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.add),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.add),
                         contentDescription = null,
                         tint = AppTheme.colors.onBackground
                     )
@@ -219,8 +220,8 @@ fun TasksScreen(
                     item {
                         EmptyScreen(
                             modifier = Modifier.fillParentMaxSize(),
-                            title = stringResource(R.string.no_tasks),
-                            subtitle = stringResource(R.string.no_tasks_at_day)
+                            title = stringResource(R.string.tasks_no_tasks),
+                            subtitle = stringResource(R.string.tasks_no_tasks_at_day)
                         )
                     }
                 }
@@ -244,7 +245,7 @@ internal fun SingleTask(
             start = {
                 if (task.tag != 0) {
                     Icon(
-                        icon = ImageVector.vectorResource(R.drawable.circle),
+                        icon = ImageVector.vectorResource(CommonR.drawable.circle),
                         iconSize = 16.dp,
                         iconColor = task.tag.getColorByIndex()
                     )
@@ -301,13 +302,13 @@ internal fun SingleTask(
                 ),
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.delete),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.delete),
                         contentDescription = null
                     )
                 },
                 text = {
                     Text(
-                        text = stringResource(R.string.delete)
+                        text = stringResource(R.string.tasks_delete)
                     )
                 },
                 onClick = {
@@ -321,13 +322,13 @@ internal fun SingleTask(
                 ),
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.delete_all),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.delete_all),
                         contentDescription = null
                     )
                 },
                 text = {
                     Text(
-                        text = stringResource(R.string.delete_all)
+                        text = stringResource(R.string.tasks_delete_all)
                     )
                 },
                 onClick = {

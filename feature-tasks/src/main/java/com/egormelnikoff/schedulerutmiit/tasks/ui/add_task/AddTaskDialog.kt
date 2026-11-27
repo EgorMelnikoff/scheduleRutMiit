@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_sheet.BottomSheetDateRangePicker
@@ -39,6 +39,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
+import com.egormelnikoff.schedulerutmiit.tasks.R
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +64,7 @@ fun AddTaskDialog() {
     Scaffold(
         topBar = {
             AppTopBar(
-                titleText = stringResource(R.string.create_task),
+                titleText = stringResource(R.string.tasks_create_task),
                 navAction = {
                     addTaskViewModel.onBack()
                 }
@@ -90,7 +91,7 @@ fun AddTaskDialog() {
                 AppTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = addTaskForm.text,
-                    placeholderText = stringResource(R.string.class_name),
+                    placeholderText = stringResource(R.string.tasks_class_name),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = false, imeAction = ImeAction.Done
                     )
@@ -105,7 +106,7 @@ fun AddTaskDialog() {
                                 showChevron = false,
                                 start = {
                                     Icon(
-                                        icon = ImageVector.vectorResource(R.drawable.calendar),
+                                        icon = ImageVector.vectorResource(CommonR.drawable.calendar),
                                         iconSize = 20.dp,
                                         iconColor = AppTheme.colors.onBackground
                                     )
@@ -130,7 +131,7 @@ fun AddTaskDialog() {
                                                         )
                                                     }"
 
-                                            else -> stringResource(R.string.dates)
+                                            else -> stringResource(R.string.tasks_dates)
                                         },
 
                                         typography = AppTheme.typography.titleSmall,
@@ -146,7 +147,7 @@ fun AddTaskDialog() {
                                 showChevron = false,
                                 start = {
                                     Icon(
-                                        icon = ImageVector.vectorResource(R.drawable.time),
+                                        icon = ImageVector.vectorResource(CommonR.drawable.time),
                                         iconSize = 20.dp,
                                         iconColor = AppTheme.colors.onBackground
                                     )
@@ -154,7 +155,7 @@ fun AddTaskDialog() {
                                 center = {
                                     TextBlock(
                                         text = addTaskForm.time?.format(DateTimeFormatters.hourMinuteFormatter)
-                                            ?: stringResource(R.string.time),
+                                            ?: stringResource(R.string.tasks_time),
                                         typography = AppTheme.typography.titleSmall,
                                     )
                                 },
@@ -168,7 +169,7 @@ fun AddTaskDialog() {
                 )
 
                 ColumnGroup(
-                    title = stringResource(R.string.tag),
+                    title = stringResource(R.string.tasks_tag),
                     titleColor = AppTheme.colors.primary,
                     withBackground = false,
                     items = listOf {
@@ -183,7 +184,7 @@ fun AddTaskDialog() {
             }
             AppButton(
                 modifier = Modifier.fillMaxWidth(),
-                buttonTitle = stringResource(R.string.create),
+                buttonTitle = stringResource(R.string.tasks_create),
                 enabled = addTaskForm.isButtonEnabled,
                 onClick = {
                     addTaskViewModel.addTask()

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_about_app">About app</string>
+    <string name="settings_app_name">Schedule MIIT</string>
+    <string name="settings_auto">Auto</string>
+    <string name="settings_briefly">Briefly</string>
+    <string name="settings_by_dates">By dates</string>
+    <string name="settings_by_dates_message">Comments and tags will be attached to the date</string>
+    <string name="settings_by_default">By default</string>
+    <string name="settings_calendar">Calendar</string>
+    <string name="settings_calendar_message">Display by week and day</string>
+    <string name="settings_color_style">Color style</string>
+    <string name="settings_comment">Comment</string>
+    <string name="settings_comments_and_tags">Comments and tags</string>
+    <string name="settings_contacts">Contacts</string>
+    <string name="settings_dark">Dark</string>
+    <string name="settings_details">Details</string>
+    <string name="settings_developer">Developer</string>
+    <string name="settings_display_each_lesson">Display each lesson</string>
+    <string name="settings_display_number_lessons">Display the number of classes per day</string>
+    <string name="settings_dont_show">Don`t show</string>
+    <string name="settings_download_latest_release">Download latest release</string>
+    <string name="settings_email">Email</string>
+    <string name="settings_event_view">Class view</string>
+    <string name="settings_full_list">Full list</string>
+    <string name="settings_full_list_message">All classes until the end of the schedule</string>
+    <string name="settings_general">General</string>
+    <string name="settings_github" translatable="false">GitHub</string>
+    <string name="settings_google_play" translatable="false">Google Play</string>
+    <string name="settings_groups">Groups</string>
+    <string name="settings_interface">Interface</string>
+    <string name="settings_lecturers">Lecturers</string>
+    <string name="settings_light">Light</string>
+    <string name="settings_not_delete_schedules">Do not delete</string>
+    <string name="settings_not_delete_schedules_message">After the expiration date, the schedules will remain in memory and will not be deleted</string>
+    <string name="settings_off">Off</string>
+    <string name="settings_privacy_policy">Privacy policy</string>
+    <string name="settings_rooms">Rooms</string>
+    <string name="settings_rustore" translatable="false">RuStore</string>
+    <string name="settings_schedule">Schedule</string>
+    <string name="settings_schedule_view">Schedule view</string>
+    <string name="settings_show_count_classes">Count classes in calendar</string>
+    <string name="settings_sync_tag_comments_message">Comments and tags will be automatically synchronized for classes of the same subject and type.</string>
+    <string name="settings_synchronized">Synchronized</string>
+    <string name="settings_tag">Tag</string>
+    <string name="settings_telegram" translatable="false">Telegram</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_use_amoled">Use AMOLED</string>
+    <string name="settings_use_image">Use image</string>
+</resources>

@@ -2,7 +2,6 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule
 
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.error.AppError
 import com.egormelnikoff.schedulerutmiit.core.common.error.toAppError
 import com.egormelnikoff.schedulerutmiit.core.common.time_provider.TimeProvider
@@ -16,6 +15,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiText
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendInfoEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.cache.FetchScheduleCache
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.FetchScheduleEvent
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventDataSource
@@ -26,6 +26,8 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.SetDef
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.export.ExportDataUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.export.ImportDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,8 +35,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import javax.inject.Inject
 
 @HiltViewModel
 internal class ScheduleViewModel @Inject constructor(
@@ -249,7 +249,7 @@ internal class ScheduleViewModel @Inject constructor(
                 importDataUseCase(uri)
                 _uiEventFlow.sendInfoEvent(
                     UiEvent.InfoMessage(
-                        UiText.StringResource(R.string.success)
+                        UiText.StringResource(R.string.schedule_success)
                     )
                 )
             } catch (e: Exception) {
@@ -264,7 +264,7 @@ internal class ScheduleViewModel @Inject constructor(
                 exportDataUseCase(uri)
                 _uiEventFlow.sendInfoEvent(
                     UiEvent.InfoMessage(
-                        UiText.StringResource(R.string.success)
+                        UiText.StringResource(R.string.schedule_success)
                     )
                 )
             } catch (e: Exception) {

@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerWidth
@@ -28,6 +27,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAler
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.isDarkTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.reviewStateMock
@@ -115,8 +115,8 @@ internal fun ReviewScreenWidget(
 
     reviewState.scheduleDeleteSheet?.let {
         AppAlertBottomSheet(
-            dialogTitle = "${stringResource(R.string.delete_schedule)}?",
-            dialogText = stringResource(R.string.impossible_restore_eventextra),
+            dialogTitle = "${stringResource(R.string.schedule_delete_schedule)}?",
+            dialogText = stringResource(R.string.schedule_impossible_restore_eventextra),
             onDismissRequest = {
                 onAction(
                     ReviewAction.OnShowDeleteScheduleSheet(null)

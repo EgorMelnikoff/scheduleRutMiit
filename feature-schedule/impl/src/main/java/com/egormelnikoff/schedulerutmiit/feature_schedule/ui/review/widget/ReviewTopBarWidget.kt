@@ -18,10 +18,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.DayPeriod
@@ -49,27 +50,27 @@ internal fun ReviewTopBarWidget(
 
     AppTopBar(
         titleText = when (reviewState.dayPeriod) {
-            DayPeriod.MORNING -> stringResource(R.string.good_morning)
-            DayPeriod.DAY -> stringResource(R.string.good_afternoon)
-            DayPeriod.EVENING -> stringResource(R.string.good_evening)
-            DayPeriod.NIGHT -> stringResource(R.string.good_night)
+            DayPeriod.MORNING -> stringResource(R.string.schedule_good_morning)
+            DayPeriod.DAY -> stringResource(R.string.schedule_good_afternoon)
+            DayPeriod.EVENING -> stringResource(R.string.schedule_good_evening)
+            DayPeriod.NIGHT -> stringResource(R.string.schedule_good_night)
         } + "!",
         subtitleText = reviewState.summaryState?.let { reviewData ->
             buildString {
                 when (reviewData.date) {
-                    reviewState.currentDate -> append(stringResource(R.string.today))
-                    reviewState.currentDate?.plusDays(1) -> append(stringResource(R.string.tomorrow))
+                    reviewState.currentDate -> append(stringResource(R.string.schedule_today))
+                    reviewState.currentDate?.plusDays(1) -> append(stringResource(R.string.schedule_tomorrow))
                     else -> reviewData.date.format(dayMonthYearFormatter)
                 }
 
                 append(" ")
 
                 if (reviewData.events.isEmpty()) {
-                    append(stringResource(R.string.no_events).replaceFirstChar { it.lowercase() })
+                    append(stringResource(R.string.schedule_no_events).replaceFirstChar { it.lowercase() })
                 } else {
                     append(
                         "${reviewData.events.size} " + pluralStringResource(
-                            R.plurals.events,
+                            R.plurals.schedule_events,
                             reviewData.events.size
                         )
                     )
@@ -98,7 +99,7 @@ internal fun ReviewTopBarWidget(
                         }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.search),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.search),
                             contentDescription = null
                         )
                     }
@@ -108,7 +109,7 @@ internal fun ReviewTopBarWidget(
                         }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.add),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.add),
                             contentDescription = null
                         )
                     }
@@ -121,7 +122,7 @@ internal fun ReviewTopBarWidget(
                 }
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.settings_fill),
+                    imageVector = ImageVector.vectorResource(CommonR.drawable.settings_fill),
                     contentDescription = null
                 )
             }

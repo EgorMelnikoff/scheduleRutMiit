@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.ButtonType
@@ -27,8 +27,8 @@ fun AppAlertBottomSheet(
     dismissOnConfirm: Boolean = true,
     dialogTitle: String,
     dialogText: String,
-    confirmText: String = stringResource(R.string._continue),
-    dismissText: String = stringResource(R.string.cancel)
+    confirmText: String = stringResource(R.string.ui_continue),
+    dismissText: String = stringResource(R.string.ui_cancel)
 ) {
     AppBottomSheet(
         showHandle = false,

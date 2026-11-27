@@ -38,10 +38,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat.getLongVersionCode
 import androidx.core.net.toUri
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.AppConst.DEVELOPER
 import com.egormelnikoff.schedulerutmiit.core.common.consts.AppConst.DEVELOPER_EMAIL
 import com.egormelnikoff.schedulerutmiit.core.common.consts.Links
+import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
@@ -84,7 +85,7 @@ fun InfoModalDialog(
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(84.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.logo_app),
+                    imageVector = ImageVector.vectorResource(CommonR.drawable.logo_app),
                     contentDescription = null,
                     tint = Color.Unspecified
                 )
@@ -92,7 +93,7 @@ fun InfoModalDialog(
                     verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12)
                 ) {
                     Text(
-                        text = stringResource(R.string.app_name),
+                        text = stringResource(R.string.settings_app_name),
                         style = AppTheme.typography.titleLarge,
                         color = AppTheme.colors.onBackground,
                         overflow = TextOverflow.Ellipsis,
@@ -134,7 +135,7 @@ fun InfoModalDialog(
                                         shape = AppTheme.shapes.small
                                     )
                                     .padding(AppTheme.paddings.padding4),
-                                imageVector = ImageVector.vectorResource(R.drawable.alert),
+                                imageVector = ImageVector.vectorResource(CommonR.drawable.alert),
                                 contentDescription = null,
                                 tint = AppTheme.colors.onPrimary
                             )
@@ -144,7 +145,7 @@ fun InfoModalDialog(
             }
 
             RoundedBox(
-                title = stringResource(R.string.download_latest_release),
+                title = stringResource(R.string.settings_download_latest_release),
                 shape = null,
                 backgroundColor = Color.Unspecified
             ) {
@@ -154,7 +155,7 @@ fun InfoModalDialog(
                 ) {
                     item {
                         AppAssistChip(
-                            imageVector = ImageVector.vectorResource(R.drawable.logo_github),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.logo_github),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = AppTheme.colors.background,
                                 labelColor = AppTheme.colors.onBackground,
@@ -164,7 +165,7 @@ fun InfoModalDialog(
                                 color = AppTheme.colors.outline,
                                 width = 0.5.dp
                             ),
-                            title = stringResource(R.string.github),
+                            title = stringResource(R.string.settings_github),
                             onClick = {
                                 uriHandler.openUri(Links.GITHUB_APP_LATEST_RELEASE)
                             }
@@ -173,7 +174,7 @@ fun InfoModalDialog(
 
                     item {
                         AppAssistChip(
-                            imageVector = ImageVector.vectorResource(R.drawable.logo_google_play),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.logo_google_play),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = AppTheme.colors.background,
                                 labelColor = AppTheme.colors.onBackground,
@@ -184,7 +185,7 @@ fun InfoModalDialog(
                                 color = AppTheme.colors.outline,
                                 width = 0.5.dp
                             ),
-                            title = stringResource(R.string.google_play),
+                            title = stringResource(R.string.settings_google_play),
                             onClick = {
                                 uriHandler.openUri(Links.GOOGLE_PLAY)
                             }
@@ -193,7 +194,7 @@ fun InfoModalDialog(
 
                     item {
                         AppAssistChip(
-                            imageVector = ImageVector.vectorResource(R.drawable.logo_rustore),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.logo_rustore),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = AppTheme.colors.background,
                                 labelColor = AppTheme.colors.onBackground,
@@ -204,7 +205,7 @@ fun InfoModalDialog(
                                 color = AppTheme.colors.outline,
                                 width = 0.5.dp
                             ),
-                            title = stringResource(R.string.rustore),
+                            title = stringResource(R.string.settings_rustore),
                             onClick = {
                                 uriHandler.openUri(Links.RU_STORE)
                             }
@@ -214,7 +215,7 @@ fun InfoModalDialog(
             }
 
             RoundedBox(
-                title = stringResource(R.string.contacts),
+                title = stringResource(R.string.settings_contacts),
                 shape = null,
                 backgroundColor = Color.Unspecified
             ) {
@@ -224,7 +225,7 @@ fun InfoModalDialog(
                 ) {
                     item {
                         AppAssistChip(
-                            imageVector = ImageVector.vectorResource(R.drawable.logo_telegram),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.logo_telegram),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = AppTheme.colors.background,
                                 labelColor = AppTheme.colors.onBackground,
@@ -235,7 +236,7 @@ fun InfoModalDialog(
                                 color = AppTheme.colors.outline,
                                 width = 0.5.dp
                             ),
-                            title = stringResource(R.string.telegram),
+                            title = stringResource(R.string.settings_telegram),
                             onClick = {
                                 uriHandler.openUri(Links.TG_APP_CHANNEL_URL)
                             }
@@ -244,7 +245,7 @@ fun InfoModalDialog(
 
                     item {
                         AppAssistChip(
-                            imageVector = ImageVector.vectorResource(R.drawable.email),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.email),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = AppTheme.colors.background,
                                 labelColor = AppTheme.colors.onBackground,
@@ -254,7 +255,7 @@ fun InfoModalDialog(
                                 color = AppTheme.colors.outline,
                                 width = 0.5.dp
                             ),
-                            title = stringResource(R.string.email),
+                            title = stringResource(R.string.settings_email),
                             onClick = {
                                 val intent = Intent(Intent.ACTION_SENDTO).apply {
                                     data = "mailto:".toUri()
@@ -289,7 +290,7 @@ fun InfoModalDialog(
                             },
                             subtitle = {
                                 TextBlock(
-                                    text = stringResource(R.string.developer),
+                                    text = stringResource(R.string.settings_developer),
                                     typography = AppTheme.typography.bodyMedium,
                                     color = AppTheme.colors.onSecondaryContainer,
                                 )
@@ -311,7 +312,7 @@ fun InfoModalDialog(
                 AppCell(
                     center = {
                         TextBlock(
-                            text = stringResource(R.string.privacy_policy),
+                            text = stringResource(R.string.settings_privacy_policy),
                         )
                     },
                     onLongClick = {

@@ -15,10 +15,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.rename_schedule.RenameScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.rename_schedule.RenameScheduleState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.renameScheduleStateMock
@@ -36,7 +37,7 @@ internal fun RenameScheduleInputWidget(
             autoCorrectEnabled = false,
             imeAction = ImeAction.Default
         ),
-        placeholderText = stringResource(R.string.name),
+        placeholderText = stringResource(R.string.schedule_name_hint),
         trailingIcon = {
             AnimatedVisibility(
                 visible = renameScheduleState.newName.isNotEmpty(),
@@ -49,7 +50,7 @@ internal fun RenameScheduleInputWidget(
                     }
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.clear),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.clear),
                         contentDescription = null,
                         tint = AppTheme.colors.primary
                     )

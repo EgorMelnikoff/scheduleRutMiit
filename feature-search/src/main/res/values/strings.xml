@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_all">All</string>
+    <string name="search_enter_your_query">Enter your query</string>
+    <string name="search_example_group" translatable="false">УВВ-311</string>
+    <string name="search_example_lecturer" translatable="false">Иванов Иван</string>
+    <string name="search_for_example">For example</string>
+    <string name="search_groups">Groups</string>
+    <string name="search_nothing_found">Nothing found</string>
+    <string name="search_or">or</string>
+    <string name="search_people">People</string>
+</resources>

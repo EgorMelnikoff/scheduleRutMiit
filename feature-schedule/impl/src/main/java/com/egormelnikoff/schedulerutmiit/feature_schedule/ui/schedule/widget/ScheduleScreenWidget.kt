@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
@@ -23,6 +23,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.remem
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.GridGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ErrorScreen
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleUiState
 
@@ -69,8 +70,8 @@ internal fun ScheduleScreenWidget(
 
         is ScheduleUiState.Mode.Empty -> {
             ErrorScreen(
-                title = stringResource(R.string.no_saved_schedule),
-                subtitle = stringResource(R.string.empty_base),
+                title = stringResource(R.string.schedule_no_saved_schedule),
+                subtitle = stringResource(R.string.schedule_empty_base),
                 button = {
                     GridGroup(
                         items = listOf(
@@ -78,8 +79,8 @@ internal fun ScheduleScreenWidget(
                                 { shape ->
                                     AppButton(
                                         modifier = Modifier.fillMaxWidth(),
-                                        buttonTitle = stringResource(R.string.find),
-                                        imageVector = ImageVector.vectorResource(R.drawable.search),
+                                        buttonTitle = stringResource(R.string.schedule_find),
+                                        imageVector = ImageVector.vectorResource(CommonR.drawable.search),
                                         shape = shape,
                                         onClick = {
                                             onAction(ScheduleAction.OnOpenDialog(Route.Dialog.SearchDialog))
@@ -89,8 +90,8 @@ internal fun ScheduleScreenWidget(
                                 { shape ->
                                     AppButton(
                                         modifier = Modifier.fillMaxWidth(),
-                                        buttonTitle = stringResource(R.string.create),
-                                        imageVector = ImageVector.vectorResource(R.drawable.add),
+                                        buttonTitle = stringResource(R.string.schedule_create),
+                                        imageVector = ImageVector.vectorResource(CommonR.drawable.add),
                                         shape = shape,
                                         onClick = {
                                             onAction(ScheduleAction.OnOpenDialog(Route.Dialog.AddScheduleDialog))
@@ -101,8 +102,8 @@ internal fun ScheduleScreenWidget(
                             listOf { shape ->
                                 AppButton(
                                     modifier = Modifier.fillMaxWidth(),
-                                    buttonTitle = stringResource(R.string._import),
-                                    imageVector = ImageVector.vectorResource(R.drawable.resource_import),
+                                    buttonTitle = stringResource(R.string.schedule_import),
+                                    imageVector = ImageVector.vectorResource(CommonR.drawable.resource_import),
                                     shape = shape,
                                     onClick = {
                                         importLauncher.launch(arrayOf("application/json"))
@@ -118,14 +119,14 @@ internal fun ScheduleScreenWidget(
 
         is ScheduleUiState.Mode.Error -> {
             ErrorScreen(
-                title = stringResource(R.string.error),
-                subtitle = stringResource(R.string.error_load_schedule),
+                title = stringResource(R.string.schedule_error),
+                subtitle = stringResource(R.string.schedule_error_load_schedule),
                 paddingTop = contentPadding.calculateTopPadding(),
                 button = {
                     AppButton(
                         modifier = Modifier.fillMaxWidth(),
-                        buttonTitle = stringResource(R.string.back),
-                        imageVector = ImageVector.vectorResource(R.drawable.back),
+                        buttonTitle = stringResource(R.string.schedule_back),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.back),
                         onClick = {
                             onAction(ScheduleAction.OnReturnToDefault)
                         },
@@ -142,7 +143,7 @@ internal fun ScheduleScreenWidget(
             if (scheduleVo == null || namedSchedule == null) {
                 EmptyScreen(
                     title = "¯\\_(ツ)_/¯",
-                    subtitle = stringResource(R.string.empty_here),
+                    subtitle = stringResource(R.string.schedule_empty_here),
                     isBoldTitle = false,
                     paddingBottom = contentPadding.calculateBottomPadding()
                 )
@@ -180,15 +181,15 @@ internal fun ScheduleScreenWidget(
                 onAction(ScheduleAction.OnDismissImportSheet)
                 importLauncher.launch(arrayOf("application/json"))
             },
-            dialogTitle = stringResource(R.string._import) + "?",
-            dialogText = stringResource(R.string.import_message)
+            dialogTitle = stringResource(R.string.schedule_import) + "?",
+            dialogText = stringResource(R.string.schedule_import_message)
         )
     }
 
     if (state.returnScheduleSheet) {
         AppAlertBottomSheet(
-            dialogTitle = stringResource(R.string.return_default_schedule),
-            dialogText = stringResource(R.string.do_you_want_continue),
+            dialogTitle = stringResource(R.string.schedule_return_default_schedule),
+            dialogText = stringResource(R.string.schedule_do_you_want_continue),
             confirmText = "Вернуть",
             onDismissRequest = {
                 onAction(ScheduleAction.OnDismissReturnToDefault)

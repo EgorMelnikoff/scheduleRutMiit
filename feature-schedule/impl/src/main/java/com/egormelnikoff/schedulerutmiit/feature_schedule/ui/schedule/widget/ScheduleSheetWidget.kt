@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getStartMs
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
@@ -34,6 +34,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
@@ -106,7 +107,7 @@ internal fun ScheduleSheetWidget(
                     visible = schedule.downloadUrl != null,
                 ) {
                     AppAssistChip(
-                        imageVector = ImageVector.vectorResource(R.drawable.download),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.download),
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = AppTheme.colors.background,
                             labelColor = AppTheme.colors.onBackground,
@@ -116,7 +117,7 @@ internal fun ScheduleSheetWidget(
                             color = AppTheme.colors.outline,
                             width = 0.5.dp
                         ),
-                        title = stringResource(R.string.download_pdf),
+                        title = stringResource(R.string.schedule_download_pdf),
                         onClick = {
                             schedule.downloadUrl?.let { url ->
                                 uriHandler.openUri(url)
@@ -128,7 +129,7 @@ internal fun ScheduleSheetWidget(
                     visible = isSavedNamedSchedule && haveNotEmptySchedules
                 ) {
                     AppAssistChip(
-                        imageVector = ImageVector.vectorResource(R.drawable.add),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.add),
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = AppTheme.colors.background,
                             labelColor = AppTheme.colors.onBackground,
@@ -138,7 +139,7 @@ internal fun ScheduleSheetWidget(
                             color = AppTheme.colors.outline,
                             width = 0.5.dp
                         ),
-                        title = stringResource(R.string.add_class),
+                        title = stringResource(R.string.schedule_add_class),
                         onClick = {
                             onAction(ScheduleAction.OnDismissScheduleSheet)
                             onAction(
@@ -156,7 +157,7 @@ internal fun ScheduleSheetWidget(
                     visible = haveHiddenEvents
                 ) {
                     AppAssistChip(
-                        imageVector = ImageVector.vectorResource(R.drawable.visibility_off),
+                        imageVector = ImageVector.vectorResource(CommonR.drawable.visibility_off),
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = AppTheme.colors.background,
                             labelColor = AppTheme.colors.onBackground,
@@ -166,7 +167,7 @@ internal fun ScheduleSheetWidget(
                             color = AppTheme.colors.outline,
                             width = 0.5.dp
                         ),
-                        title = stringResource(R.string.hidden_events),
+                        title = stringResource(R.string.schedule_hidden_events),
                         onClick = {
                             onAction(ScheduleAction.OnDismissScheduleSheet)
                             onAction(

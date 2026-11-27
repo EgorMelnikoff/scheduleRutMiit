@@ -38,9 +38,10 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.di.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.WidgetDataUpdater
 import com.egormelnikoff.schedulerutmiit.feature_schedule.glance.model.WidgetData
@@ -133,9 +134,9 @@ class EventsWidget : GlanceAppWidget() {
                                 Image(
                                     modifier = GlanceModifier.size(16.dp),
                                     provider = when (widgetData.currentWeek) {
-                                        1 -> ImageProvider(R.drawable.one)
-                                        2 -> ImageProvider(R.drawable.two)
-                                        else -> ImageProvider(R.drawable.resource_null)
+                                        1 -> ImageProvider(CommonR.drawable.one)
+                                        2 -> ImageProvider(CommonR.drawable.two)
+                                        else -> ImageProvider(CommonR.drawable.resource_null)
                                     },
                                     contentDescription = null,
                                     colorFilter = ColorFilter.tint(
@@ -163,7 +164,7 @@ class EventsWidget : GlanceAppWidget() {
                             }
                             .size(32.dp)
                             .padding(8.dp),
-                        provider = ImageProvider(R.drawable.refresh),
+                        provider = ImageProvider(CommonR.drawable.refresh),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(
                             colorProvider = GlanceTheme.colors.onBackground
@@ -191,12 +192,12 @@ class EventsWidget : GlanceAppWidget() {
                     }
                 } else {
                     Empty(
-                        title = glanceStringResource(R.string.empty_day)
+                        title = glanceStringResource(R.string.schedule_empty_day)
                     )
                 }
             } else {
                 Empty(
-                    title = glanceStringResource(R.string.empty_here),
+                    title = glanceStringResource(R.string.schedule_empty_here),
                     onClick = onUpdate
                 )
             }
@@ -211,7 +212,7 @@ class EventsWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxWidth()
                 .background(
-                    imageProvider = ImageProvider(R.drawable.medium_rounded),
+                    imageProvider = ImageProvider(CommonR.drawable.medium_rounded),
                     colorFilter = ColorFilter.tint(
                         colorProvider = GlanceTheme.colors.secondaryContainer
                     )
@@ -287,7 +288,7 @@ class EventsWidget : GlanceAppWidget() {
             ) {
                 Image(
                     modifier = GlanceModifier.size(8.dp),
-                    provider = ImageProvider(R.drawable.room),
+                    provider = ImageProvider(CommonR.drawable.room),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(
                         colorProvider = GlanceTheme.colors.onSecondaryContainer
@@ -303,7 +304,7 @@ class EventsWidget : GlanceAppWidget() {
                         val color = event.tag.getColorByIndex()
                         Image(
                             modifier = GlanceModifier.size(8.dp),
-                            provider = ImageProvider(R.drawable.circle),
+                            provider = ImageProvider(CommonR.drawable.circle),
                             contentDescription = null,
                             colorFilter = ColorFilter.tint(
                                 colorProvider = ColorProvider(

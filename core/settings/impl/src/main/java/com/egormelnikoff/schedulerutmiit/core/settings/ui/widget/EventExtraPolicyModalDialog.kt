@@ -9,7 +9,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
+import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
@@ -34,16 +35,16 @@ fun EventExtraPolicyModalDialog(
         onDismiss = onDismiss
     ) {
         ColumnGroup(
-            title = stringResource(R.string.comments_and_tags),
+            title = stringResource(R.string.settings_comments_and_tags),
             items = EventExtraPolicy.entries.map {
                 {
                     AppCell(
                         start = {
                             Icon(
                                 icon = when (it) {
-                                    EventExtraPolicy.SYNCHRONIZED -> ImageVector.vectorResource(R.drawable.sync)
-                                    EventExtraPolicy.BY_DATES -> ImageVector.vectorResource(R.drawable.calendar)
-                                    EventExtraPolicy.DEFAULT -> ImageVector.vectorResource(R.drawable.split)
+                                    EventExtraPolicy.SYNCHRONIZED -> ImageVector.vectorResource(CommonR.drawable.sync)
+                                    EventExtraPolicy.BY_DATES -> ImageVector.vectorResource(CommonR.drawable.calendar)
+                                    EventExtraPolicy.DEFAULT -> ImageVector.vectorResource(CommonR.drawable.split)
                                 },
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
@@ -54,17 +55,17 @@ fun EventExtraPolicyModalDialog(
                                 title = {
                                     TextBlock(
                                         text = when (it) {
-                                            EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
-                                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string._synchronized)
-                                            EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates)
+                                            EventExtraPolicy.DEFAULT -> stringResource(R.string.settings_by_default)
+                                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string.settings_synchronized)
+                                            EventExtraPolicy.BY_DATES -> stringResource(R.string.settings_by_dates)
                                         }
                                     )
                                 },
                                 subtitle = {
                                     TextBlock(
                                         text = when (it) {
-                                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string.sync_tag_comments_message)
-                                            EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates_message)
+                                            EventExtraPolicy.SYNCHRONIZED -> stringResource(R.string.settings_sync_tag_comments_message)
+                                            EventExtraPolicy.BY_DATES -> stringResource(R.string.settings_by_dates_message)
                                             EventExtraPolicy.DEFAULT -> null
                                         },
                                         maxLines = 2,

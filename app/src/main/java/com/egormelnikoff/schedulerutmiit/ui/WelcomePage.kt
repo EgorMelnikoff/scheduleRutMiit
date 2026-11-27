@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.PagerScreenContainer
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -44,36 +45,36 @@ fun WelcomePage(
             isNextEnabled = { true },
             onFinish = onSkip,
             onCancel = onSkip,
-            cancelTitle = stringResource(R.string.skip),
-            finishTitle = stringResource(R.string.start) + "!",
+            cancelTitle = stringResource(R.string.app_skip),
+            finishTitle = stringResource(R.string.app_start) + "!",
             paddingValues = padding
         ) { page ->
             when (page) {
                 0 -> Page(
-                    title = stringResource(R.string.welcome_title),
+                    title = stringResource(R.string.app_welcome_title),
                     titleSize = 30.sp,
-                    subtitle = stringResource(R.string.welcome_subtitle)
+                    subtitle = stringResource(R.string.app_welcome_subtitle)
                 )
 
 
                 1 -> Page(
-                    title = stringResource(R.string.schedule_title),
-                    subtitle = stringResource(R.string.schedule_subtitle),
-                    painter = painterResource(R.drawable.schedules),
+                    title = stringResource(R.string.app_schedule_title),
+                    subtitle = stringResource(R.string.app_schedule_subtitle),
+                    painter = painterResource(CommonR.drawable.schedules),
                 )
 
 
                 2 -> Page(
-                    title = stringResource(R.string.features_title),
-                    subtitle = stringResource(R.string.features_subtitle),
-                    painter = painterResource(R.drawable.comment_and_tag),
+                    title = stringResource(R.string.app_features_title),
+                    subtitle = stringResource(R.string.app_features_subtitle),
+                    painter = painterResource(CommonR.drawable.comment_and_tag),
                 )
 
 
                 3 -> Page(
-                    title = stringResource(R.string.widget_title),
-                    subtitle = stringResource(R.string.widget_subtitle),
-                    painter = painterResource(R.drawable.widget),
+                    title = stringResource(R.string.app_widget_title),
+                    subtitle = stringResource(R.string.app_widget_subtitle),
+                    painter = painterResource(CommonR.drawable.widget),
                 )
             }
         }

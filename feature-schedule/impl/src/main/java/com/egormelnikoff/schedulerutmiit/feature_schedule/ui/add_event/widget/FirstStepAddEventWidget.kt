@@ -18,12 +18,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.DefaultEventParams
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventState
@@ -44,7 +44,7 @@ internal fun FirstStepAddEventWidget(
         AppTextField(
             modifier = Modifier.fillMaxWidth(),
             value = state.editForm.name,
-            placeholderText = stringResource(R.string.class_name),
+            placeholderText = stringResource(R.string.schedule_class_name),
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Done
@@ -54,7 +54,7 @@ internal fun FirstStepAddEventWidget(
         }
         RoundedBox(
             backgroundColor = Color.Unspecified,
-            title = stringResource(R.string.class_type),
+            title = stringResource(R.string.schedule_class_type),
         ) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8),
@@ -66,7 +66,7 @@ internal fun FirstStepAddEventWidget(
                 DefaultEventParams.types.forEach { type ->
                     AppFilterChip(
                         title = type
-                            ?: stringResource(R.string.not_specified),
+                            ?: stringResource(R.string.schedule_not_specified),
                         imageVector = null,
                         selected = type == state.editForm.type,
                         onClick = {

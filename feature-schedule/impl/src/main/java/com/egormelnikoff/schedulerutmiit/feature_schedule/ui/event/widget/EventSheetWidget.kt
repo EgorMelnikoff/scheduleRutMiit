@@ -8,10 +8,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheetButton
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 
@@ -40,8 +41,8 @@ internal fun BottomSheetEventWidget(
         )
         onHideEvent?.let {
             AppBottomSheetButton(
-                icon = ImageVector.vectorResource(R.drawable.visibility_off),
-                title = stringResource(R.string.hide_event),
+                icon = ImageVector.vectorResource(CommonR.drawable.visibility_off),
+                title = stringResource(R.string.schedule_hide_event),
                 contentColor = AppTheme.colors.onBackground
             ) {
                 onHideEvent()
@@ -50,8 +51,8 @@ internal fun BottomSheetEventWidget(
         }
         onEditEvent?.let {
             AppBottomSheetButton(
-                icon = ImageVector.vectorResource(R.drawable.edit),
-                title = stringResource(R.string.edit),
+                icon = ImageVector.vectorResource(CommonR.drawable.edit),
+                title = stringResource(R.string.schedule_edit),
                 contentColor = AppTheme.colors.onBackground
             ) {
                 onEditEvent()
@@ -60,8 +61,8 @@ internal fun BottomSheetEventWidget(
         }
         onDeleteEvent?.let {
             AppBottomSheetButton(
-                icon = ImageVector.vectorResource(R.drawable.delete),
-                title = stringResource(R.string.delete_event),
+                icon = ImageVector.vectorResource(CommonR.drawable.delete),
+                title = stringResource(R.string.schedule_delete_event),
                 contentColor = AppTheme.colors.error
             ) {
                 onDeleteEvent()

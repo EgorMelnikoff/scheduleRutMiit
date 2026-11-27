@@ -17,7 +17,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 
 @Composable
 fun Empty(
@@ -43,7 +43,7 @@ fun Empty(
             )
             Button(
                 modifier = GlanceModifier.cornerRadius(12.dp),
-                text = glanceStringResource(R.string.update),
+                text = glanceStringResource(R.string.schedule_update),
                 onClick = it,
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,

@@ -8,9 +8,9 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.SummaryState
-import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate
+import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class WidgetData(
@@ -59,12 +59,12 @@ internal data class WidgetData(
 
                 val dateString = when (summaryState.date) {
                     today -> {
-                        "Сегодня, " + //${glanceStringResource(R.string.today)}
+                        "Сегодня, " + //${glanceStringResource(R.string.schedule_today)}
                                 "${summaryState.date.format(dayMonthNameFormatter)}"
                     }
 
                     today.plusDays(1) -> {
-                        "Завтра, " + //${glanceStringResource(R.string.tomorrow)}
+                        "Завтра, " + //${glanceStringResource(R.string.schedule_tomorrow)}
                                 "${summaryState.date.format(dayMonthNameFormatter)}"
                     }
 

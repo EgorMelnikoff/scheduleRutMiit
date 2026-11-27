@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.lecturerMock
 
@@ -35,7 +35,7 @@ internal fun LecturerInputWidget(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next
             ),
-            placeholderText = stringResource(R.string.full_name_of_lecturer),
+            placeholderText = stringResource(R.string.schedule_full_name_of_lecturer),
         ) { newValue ->
             onValueChanged(lecturer.copy(shortFio = newValue, fullFio = newValue))
         }

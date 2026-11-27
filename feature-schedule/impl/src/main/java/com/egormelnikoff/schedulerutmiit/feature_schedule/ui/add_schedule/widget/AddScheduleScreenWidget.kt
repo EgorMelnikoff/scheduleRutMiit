@@ -9,13 +9,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_sheet.BottomSheetDateRangePicker
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ScaffoldLazyColumn
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule.AddScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_schedule.AddScheduleState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addNonPeriodicScheduleStateMock
@@ -31,7 +31,7 @@ internal fun AddScheduleScreenWidget(
     Scaffold(
         topBar = {
             AppTopBar(
-                titleText = stringResource(R.string.create_schedule),
+                titleText = stringResource(R.string.schedule_create_schedule),
                 navAction = {
                     onAction(AddScheduleAction.OnShowBackDialog(true))
                 }
@@ -60,7 +60,7 @@ internal fun AddScheduleScreenWidget(
             item {
                 AppButton(
                     modifier = Modifier.fillMaxWidth(),
-                    buttonTitle = stringResource(R.string.create),
+                    buttonTitle = stringResource(R.string.schedule_create),
                     enabled = addScheduleState.isButtonEnabled,
                     onClick = {
                         onAction(AddScheduleAction.OnSaveClicked)
@@ -85,8 +85,8 @@ internal fun AddScheduleScreenWidget(
 
     if (addScheduleState.showBackDialog) {
         AppAlertBottomSheet(
-            dialogTitle = stringResource(R.string.exit),
-            dialogText = stringResource(R.string.exit_message),
+            dialogTitle = stringResource(R.string.schedule_exit),
+            dialogText = stringResource(R.string.schedule_exit_message),
             onDismissRequest = {
                 onAction(AddScheduleAction.OnShowBackDialog(false))
             },

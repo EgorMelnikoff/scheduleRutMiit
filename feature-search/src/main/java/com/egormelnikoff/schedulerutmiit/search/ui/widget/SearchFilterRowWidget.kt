@@ -9,9 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.search.R
 import com.egormelnikoff.schedulerutmiit.search.utils.SearchType
 
 @Composable
@@ -24,7 +25,7 @@ internal fun SearchFilterRowWidget(
         horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
     ) {
         AppFilterChip(
-            title = stringResource(R.string.all),
+            title = stringResource(R.string.search_all),
             imageVector = null,
             selected = selectedOption == SearchType.ALL,
             onClick = {
@@ -32,16 +33,16 @@ internal fun SearchFilterRowWidget(
             }
         )
         AppFilterChip(
-            title = stringResource(R.string.groups),
-            imageVector = ImageVector.vectorResource(R.drawable.group),
+            title = stringResource(R.string.search_groups),
+            imageVector = ImageVector.vectorResource(CommonR.drawable.group),
             selected = selectedOption == SearchType.GROUPS,
             onClick = {
                 onSelectOption(SearchType.GROUPS)
             }
         )
         AppFilterChip(
-            title = stringResource(R.string.people),
-            imageVector = ImageVector.vectorResource(R.drawable.person),
+            title = stringResource(R.string.search_people),
+            imageVector = ImageVector.vectorResource(CommonR.drawable.person),
             selected = selectedOption == SearchType.PEOPLE,
             onClick = {
                 onSelectOption(SearchType.PEOPLE)

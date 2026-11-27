@@ -12,13 +12,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.button_row.AppButtonRow
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addEventStateMock
 
 @Composable
@@ -32,7 +32,7 @@ internal fun RecurrenceWidget(
     Column {
         RoundedBox(
             backgroundColor = Color.Unspecified,
-            title = stringResource(R.string.repetition),
+            title = stringResource(R.string.schedule_repetition),
         ) {
             AppButtonRow(
                 selectedElement = currentInterval,
@@ -43,9 +43,9 @@ internal fun RecurrenceWidget(
                 label = { element ->
                     Text(
                         text = if (element.second == 1) {
-                            stringResource(R.string.every_week)
+                            stringResource(R.string.schedule_every_week)
                         } else {
-                            stringResource(R.string.once_week, element.second)
+                            stringResource(R.string.schedule_once_week, element.second)
                         },
                         style = AppTheme.typography.bodyMedium,
                         maxLines = 1,
@@ -62,7 +62,7 @@ internal fun RecurrenceWidget(
         ) {
             Column {
                 ColumnGroup(
-                    title = stringResource(R.string.week, ""),
+                    title = stringResource(R.string.schedule_week, ""),
                     withBackground = false,
                     items = listOf {
                         AppButtonRow(

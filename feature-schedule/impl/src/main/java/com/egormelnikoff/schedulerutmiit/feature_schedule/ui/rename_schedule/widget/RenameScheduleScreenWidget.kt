@@ -8,12 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ScaffoldLazyColumn
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.rename_schedule.RenameScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.rename_schedule.RenameScheduleState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.renameScheduleStateMock
@@ -31,7 +31,7 @@ internal fun RenameScheduleScreenWidget(
             Scaffold(
                 topBar = {
                     AppTopBar(
-                        titleText = stringResource(R.string.renaming),
+                        titleText = stringResource(R.string.schedule_renaming),
                         navAction = {
                             onAction(RenameScheduleAction.OnBackClicked)
                         }
@@ -52,7 +52,7 @@ internal fun RenameScheduleScreenWidget(
                     item {
                         AppButton(
                             modifier = Modifier.fillMaxWidth(),
-                            buttonTitle = stringResource(R.string.save),
+                            buttonTitle = stringResource(R.string.schedule_save),
                             enabled = renameScheduleState.renameEnabled,
                             onClick = {
                                 onAction(RenameScheduleAction.OnSaveClicked)

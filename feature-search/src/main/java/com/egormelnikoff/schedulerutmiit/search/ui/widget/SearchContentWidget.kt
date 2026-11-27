@@ -15,7 +15,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AsyncImage
@@ -23,6 +22,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
+import com.egormelnikoff.schedulerutmiit.search.R
 import com.egormelnikoff.schedulerutmiit.search.domain.model.RefreshArgs
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchAction
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchState
@@ -44,7 +44,7 @@ internal fun SearchContentWidget(
             item {
                 Text(
                     modifier = Modifier.padding(horizontal = AppTheme.paddings.padding8),
-                    text = stringResource(R.string.groups),
+                    text = stringResource(R.string.search_groups),
                     style = AppTheme.typography.titleSmall,
                     color = AppTheme.colors.onSecondaryContainer
                 )
@@ -87,7 +87,7 @@ internal fun SearchContentWidget(
             item {
                 Text(
                     modifier = Modifier.padding(horizontal = AppTheme.paddings.padding8),
-                    text = stringResource(R.string.people),
+                    text = stringResource(R.string.search_people),
                     style = AppTheme.typography.titleSmall,
                     color = AppTheme.colors.onSecondaryContainer
                 )

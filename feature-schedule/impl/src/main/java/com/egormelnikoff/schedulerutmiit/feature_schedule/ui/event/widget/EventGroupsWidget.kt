@@ -16,9 +16,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventState
 
@@ -34,7 +34,7 @@ internal fun LazyListScope.eventGroupsWidget(
                 modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16)
             ) {
                 ColumnGroup(
-                    title = stringResource(R.string.groups),
+                    title = stringResource(R.string.schedule_groups),
                     titleColor = AppTheme.colors.primary,
                     withBackground = false,
                     items = listOf {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="curriculum_enter_your_query">Введите свой запрос</string>
+    <string name="curriculum_nothing_found">Ничего не найдено</string>
+    <string name="curriculum_number">Номер учебного плана</string>
+    <string name="curriculum_search_advice">Для поиска используйте идентификационный номер учебного плана</string>
+</resources>

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
@@ -39,6 +39,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.ColorSelectorWidget
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.tasks.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +60,7 @@ fun EditTaskDialog(
             Scaffold(
                 topBar = {
                     AppTopBar(
-                        titleText = stringResource(R.string.task),
+                        titleText = stringResource(R.string.tasks_task),
                         navAction = {
                             editTaskViewModel.onBack()
                         }
@@ -86,7 +87,7 @@ fun EditTaskDialog(
                         AppTextField(
                             modifier = Modifier.fillMaxWidth(),
                             value = editTaskState.editTaskForm.text,
-                            placeholderText = stringResource(R.string.class_name),
+                            placeholderText = stringResource(R.string.tasks_class_name),
                             keyboardOptions = KeyboardOptions(
                                 autoCorrectEnabled = false, imeAction = ImeAction.Done
                             )
@@ -100,7 +101,7 @@ fun EditTaskDialog(
                                     showChevron = false,
                                     start = {
                                         Icon(
-                                            icon = ImageVector.vectorResource(R.drawable.time),
+                                            icon = ImageVector.vectorResource(CommonR.drawable.time),
                                             iconSize = 20.dp,
                                             iconColor = AppTheme.colors.onBackground
                                         )
@@ -122,7 +123,7 @@ fun EditTaskDialog(
                         )
 
                         ColumnGroup(
-                            title = stringResource(R.string.tag),
+                            title = stringResource(R.string.tasks_tag),
                             titleColor = AppTheme.colors.primary,
                             withBackground = false,
                             items = listOf {
@@ -139,7 +140,7 @@ fun EditTaskDialog(
                     AppButton(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        buttonTitle = stringResource(R.string.save),
+                        buttonTitle = stringResource(R.string.tasks_save),
                         enabled = editTaskState.isButtonEnabled,
                         onClick = {
                             editTaskViewModel.saveChanges()

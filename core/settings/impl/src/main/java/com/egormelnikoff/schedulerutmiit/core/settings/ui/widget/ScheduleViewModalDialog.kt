@@ -9,7 +9,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
+import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
@@ -34,15 +35,15 @@ fun ScheduleViewModalDialog(
         onDismiss = onDismiss
     ) {
         ColumnGroup(
-            title = stringResource(R.string.schedule_view),
+            title = stringResource(R.string.settings_schedule_view),
             items = ScheduleView.entries.map {
                 {
                     AppCell(
                         start = {
                             Icon(
                                 icon = when (it) {
-                                    ScheduleView.CALENDAR -> ImageVector.vectorResource(R.drawable.calendar)
-                                    ScheduleView.LIST -> ImageVector.vectorResource(R.drawable.list)
+                                    ScheduleView.CALENDAR -> ImageVector.vectorResource(CommonR.drawable.calendar)
+                                    ScheduleView.LIST -> ImageVector.vectorResource(CommonR.drawable.list)
                                 },
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
@@ -53,16 +54,16 @@ fun ScheduleViewModalDialog(
                                 title = {
                                     TextBlock(
                                         text = when (it) {
-                                            ScheduleView.CALENDAR -> stringResource(R.string.calendar)
-                                            ScheduleView.LIST -> stringResource(R.string.full_list)
+                                            ScheduleView.CALENDAR -> stringResource(R.string.settings_calendar)
+                                            ScheduleView.LIST -> stringResource(R.string.settings_full_list)
                                         },
                                     )
                                 },
                                 subtitle = {
                                     TextBlock(
                                         text = when (it) {
-                                            ScheduleView.CALENDAR -> stringResource(R.string.calendar_message)
-                                            ScheduleView.LIST -> stringResource(R.string.full_list_message)
+                                            ScheduleView.CALENDAR -> stringResource(R.string.settings_calendar_message)
+                                            ScheduleView.LIST -> stringResource(R.string.settings_full_list_message)
                                         },
                                         maxLines = 2,
                                         typography = AppTheme.typography.bodyMedium,

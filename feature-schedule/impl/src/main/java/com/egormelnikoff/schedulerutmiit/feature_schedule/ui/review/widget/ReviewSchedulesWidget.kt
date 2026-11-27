@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ExpandedItem
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.SchedulesWidget
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewState
@@ -21,7 +21,7 @@ internal fun LazyListScope.reviewSchedulesWidget(
             modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16)
         ) {
             ExpandedItem(
-                title = stringResource(R.string.saved_schedules),
+                title = stringResource(R.string.schedule_saved_schedules),
                 visible = reviewState.showSchedules,
                 onChangeVisibility = { show ->
                     onAction(ReviewAction.OnShowSchedules(show))

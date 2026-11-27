@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_auto">Auto</string>
+    <string name="ui_back">Back</string>
+    <string name="ui_cancel">Cancel</string>
+    <string name="ui_confirm">Confirm</string>
+    <string name="ui_continue">Continue</string>
+    <string name="ui_dark">Dark</string>
+    <string name="ui_date">Date</string>
+    <string name="ui_date_and_time">Date and time</string>
+    <string name="ui_day_of_week">Day of week</string>
+    <string name="ui_end_time">End time</string>
+    <string name="ui_forward">Forward</string>
+    <string name="ui_light">Light</string>
+    <string name="ui_news">News</string>
+    <string name="ui_no">No</string>
+    <string name="ui_not_specified">Not specified</string>
+    <string name="ui_ok">OK</string>
+    <string name="ui_ready">Ready</string>
+    <string name="ui_review">Review</string>
+    <string name="ui_schedule">Schedule</string>
+    <string name="ui_start_time">Start time</string>
+    <string name="ui_tasks">Tasks</string>
+    <string name="ui_time">Time</string>
+    <string name="ui_yes">Yes</string>
+</resources>

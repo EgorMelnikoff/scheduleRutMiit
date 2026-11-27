@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
@@ -28,6 +28,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.LargeIconButton
@@ -60,7 +61,7 @@ internal fun SchedulesSheetWidget(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.your_schedules),
+                text = stringResource(R.string.schedule_your_schedules),
                 style = AppTheme.typography.titleLarge,
                 color = AppTheme.colors.onBackground,
                 overflow = TextOverflow.Ellipsis,
@@ -76,8 +77,8 @@ internal fun SchedulesSheetWidget(
                     containerColor = AppTheme.colors.secondaryContainer,
                     contentColor = AppTheme.colors.onBackground
                 ),
-                icon = ImageVector.vectorResource(R.drawable.resource_import),
-                contentDescription = stringResource(R.string.rename)
+                icon = ImageVector.vectorResource(CommonR.drawable.resource_import),
+                contentDescription = stringResource(R.string.schedule_rename)
             )
 
             LargeIconButton(
@@ -89,8 +90,8 @@ internal fun SchedulesSheetWidget(
                     containerColor = AppTheme.colors.secondaryContainer,
                     contentColor = AppTheme.colors.onBackground
                 ),
-                icon = ImageVector.vectorResource(R.drawable.export),
-                contentDescription = stringResource(R.string.rename)
+                icon = ImageVector.vectorResource(CommonR.drawable.export),
+                contentDescription = stringResource(R.string.schedule_rename)
             )
         }
 
@@ -115,7 +116,7 @@ internal fun SchedulesSheetWidget(
                                     label = if (namedSchedule.isDefault) {
                                         {
                                             BadgeWidget(
-                                                title = stringResource(R.string._default),
+                                                title = stringResource(R.string.schedule_default),
                                             )
                                         }
                                     } else {
@@ -126,7 +127,7 @@ internal fun SchedulesSheetWidget(
                             subtitle = if (namedSchedule.type != ScheduleType.MY){
                                 {
                                     TextBlock(
-                                        text = "${stringResource(R.string.current_on)} " +
+                                        text = "${stringResource(R.string.schedule_current_on)} " +
                                                 "${namedSchedule.lastTimeUpdate.format(dayMonthNameFormatter.withLocale(locale))}",
                                         typography = AppTheme.typography.bodyMedium,
                                         color = AppTheme.colors.onSecondaryContainer,
@@ -148,9 +149,9 @@ internal fun SchedulesSheetWidget(
                             }
                         ) { state ->
                            if (state) {
-                               ImageVector.vectorResource(R.drawable.check)
+                               ImageVector.vectorResource(CommonR.drawable.check)
                            } else {
-                               ImageVector.vectorResource(R.drawable.right)
+                               ImageVector.vectorResource(CommonR.drawable.right)
                            }
                         }
                     },

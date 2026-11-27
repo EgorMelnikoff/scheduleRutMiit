@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
@@ -38,6 +38,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.pull_to_refresh.AppP
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.AnimatedAlert
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleUiState
@@ -105,7 +106,7 @@ internal fun ScheduleContentWidget(
                                 ),
                                 start = {
                                     Icon(
-                                        icon = ImageVector.vectorResource(R.drawable.info),
+                                        icon = ImageVector.vectorResource(CommonR.drawable.info),
                                         iconSize = 24.dp,
                                         iconColor = AppTheme.colors.onPrimary
                                     )
@@ -137,7 +138,7 @@ internal fun ScheduleContentWidget(
                                                 LocalMinimumInteractiveComponentSize provides 0.dp
                                             ) {
                                                 Text(
-                                                    text = stringResource(R.string.save),
+                                                    text = stringResource(R.string.schedule_save),
                                                     style = AppTheme.typography.titleSmall
                                                 )
                                             }
@@ -189,7 +190,7 @@ internal fun ScheduleContentWidget(
         } else {
             EmptyScreen(
                 title = "¯\\_(ツ)_/¯",
-                subtitle = stringResource(R.string.empty_here),
+                subtitle = stringResource(R.string.schedule_empty_here),
                 isBoldTitle = false,
                 paddingBottom = contentPadding.calculateBottomPadding()
             )

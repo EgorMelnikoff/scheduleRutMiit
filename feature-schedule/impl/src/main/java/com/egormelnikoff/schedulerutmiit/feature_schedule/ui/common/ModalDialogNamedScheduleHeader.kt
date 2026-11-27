@@ -18,10 +18,11 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
@@ -62,7 +63,7 @@ internal fun ModalDialogNamedScheduleHeader(
             when {
                 isSavedNamedSchedule && namedSchedule.type != ScheduleType.MY -> {
                     Text(
-                        text = "${stringResource(R.string.current_on)} " +
+                        text = "${stringResource(R.string.schedule_current_on)} " +
                                 "${
                                     namedSchedule.lastTimeUpdate.format(
                                         dayMonthNameFormatter.withLocale(locale)
@@ -96,8 +97,8 @@ internal fun ModalDialogNamedScheduleHeader(
                     containerColor = AppTheme.colors.secondaryContainer,
                     contentColor = AppTheme.colors.onBackground
                 ),
-                icon = ImageVector.vectorResource(R.drawable.edit),
-                contentDescription = stringResource(R.string.rename)
+                icon = ImageVector.vectorResource(CommonR.drawable.edit),
+                contentDescription = stringResource(R.string.schedule_rename)
             )
         }
         if (isSavedNamedSchedule) {
@@ -109,16 +110,16 @@ internal fun ModalDialogNamedScheduleHeader(
                     containerColor = AppTheme.colors.error,
                     contentColor = AppTheme.colors.onPrimary
                 ),
-                icon = ImageVector.vectorResource(R.drawable.delete),
-                contentDescription = stringResource(R.string.delete)
+                icon = ImageVector.vectorResource(CommonR.drawable.delete),
+                contentDescription = stringResource(R.string.schedule_delete)
             )
         }
     }
 
     if (showDeleteDialog) {
         AppAlertDialog(
-            dialogTitle = stringResource(R.string.delete_schedule),
-            dialogText = stringResource(R.string.do_you_want_continue),
+            dialogTitle = stringResource(R.string.schedule_delete_schedule),
+            dialogText = stringResource(R.string.schedule_do_you_want_continue),
             onDismissRequest = {
                 showDeleteDialog = false
             },

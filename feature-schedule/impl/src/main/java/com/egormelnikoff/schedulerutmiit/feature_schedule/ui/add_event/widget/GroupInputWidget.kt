@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.groupMock
 
@@ -35,7 +35,7 @@ internal fun GroupInputWidget(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next
             ),
-            placeholderText = stringResource(R.string.group_number),
+            placeholderText = stringResource(R.string.schedule_group_number),
         ) { newValue ->
             onValueChanged(group.copy(name = newValue))
         }

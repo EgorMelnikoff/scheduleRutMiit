@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_all">Все</string>
+    <string name="search_enter_your_query">Введите свой запрос</string>
+    <string name="search_for_example">Например</string>
+    <string name="search_groups">Группы</string>
+    <string name="search_nothing_found">Ничего не найдено</string>
+    <string name="search_or">или</string>
+    <string name="search_people">Преподаватели</string>
+</resources>

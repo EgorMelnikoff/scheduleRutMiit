@@ -9,12 +9,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.EventTimeGroupVo
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
@@ -91,7 +91,7 @@ internal fun ScheduleListWidget(
     } else {
         EmptyScreen(
             title = "¯\\_(ツ)_/¯",
-            subtitle = stringResource(R.string.no_classes),
+            subtitle = stringResource(R.string.schedule_no_classes),
             isBoldTitle = false,
             paddingBottom = paddingBottom
         )

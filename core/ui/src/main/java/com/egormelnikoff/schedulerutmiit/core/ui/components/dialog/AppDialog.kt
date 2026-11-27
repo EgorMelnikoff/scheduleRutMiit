@@ -21,7 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
+import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 
@@ -67,7 +68,7 @@ fun AppDialog(
                         contentColor = AppTheme.colors.onPrimary
                     )
                 ) {
-                    Text(stringResource(R.string.ok))
+                    Text(stringResource(R.string.ui_ok))
                 }
             }
         }
@@ -80,7 +81,7 @@ fun AppDialogPreview() {
     PreviewLightTheme {
         AppDialog(
             dialogText = "Очень большой текст для диалога",
-            painter = painterResource(R.drawable.info),
+            painter = painterResource(CommonR.drawable.info),
             onDismissRequest = {}
         )
     }

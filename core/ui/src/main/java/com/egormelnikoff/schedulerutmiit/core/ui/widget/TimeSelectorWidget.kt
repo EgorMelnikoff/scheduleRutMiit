@@ -7,8 +7,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.hourMinuteFormatter
+import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
@@ -25,7 +26,7 @@ fun TimeSelector(
     focusManager: FocusManager
 ) {
     RowGroup(
-        title = stringResource(R.string.time),
+        title = stringResource(R.string.ui_time),
         items = listOf(
             {
                 AppCell(
@@ -36,7 +37,7 @@ fun TimeSelector(
                     ),
                     start = {
                         Icon(
-                            icon = ImageVector.vectorResource(R.drawable.time),
+                            icon = ImageVector.vectorResource(CommonR.drawable.time),
                             iconSize = 20.dp,
                             iconColor = AppTheme.colors.onBackground
                         )
@@ -44,7 +45,7 @@ fun TimeSelector(
                     center = {
                         TextBlock(
                             text = startTime?.format(hourMinuteFormatter)
-                                ?: stringResource(R.string.start_time),
+                                ?: stringResource(R.string.ui_start_time),
                             typography = AppTheme.typography.titleSmall,
                         )
                     },
@@ -58,7 +59,7 @@ fun TimeSelector(
                     showChevron = false,
                     start = {
                         Icon(
-                            icon = ImageVector.vectorResource(R.drawable.time),
+                            icon = ImageVector.vectorResource(CommonR.drawable.time),
                             iconSize = 20.dp,
                             iconColor = AppTheme.colors.onBackground
                         )
@@ -70,7 +71,7 @@ fun TimeSelector(
                     center = {
                         TextBlock(
                             text = endTime?.format(hourMinuteFormatter)
-                                ?: stringResource(R.string.end_time),
+                                ?: stringResource(R.string.ui_end_time),
                             typography = AppTheme.typography.titleSmall,
                         )
                     },

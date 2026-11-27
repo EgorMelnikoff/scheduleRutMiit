@@ -17,9 +17,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.search.R
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchAction
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchState
 import com.egormelnikoff.schedulerutmiit.search.utils.SearchType
@@ -37,20 +38,20 @@ internal fun SearchHeaderWidget(
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
             value = state.query,
-            placeholderText = "${stringResource(R.string.for_example)}, " +
+            placeholderText = "${stringResource(R.string.search_for_example)}, " +
                     when (state.searchType) {
                         SearchType.ALL ->
-                            stringResource(R.string.example_group) +
-                                    " ${stringResource(R.string.or)} " +
-                                    stringResource(R.string.example_lecturer)
+                            stringResource(R.string.search_example_group) +
+                                    " ${stringResource(R.string.search_or)} " +
+                                    stringResource(R.string.search_example_lecturer)
 
-                        SearchType.GROUPS -> stringResource(R.string.example_group)
+                        SearchType.GROUPS -> stringResource(R.string.search_example_group)
 
-                        SearchType.PEOPLE -> stringResource(R.string.example_lecturer)
+                        SearchType.PEOPLE -> stringResource(R.string.search_example_lecturer)
                     },
             leadingIcon = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.search),
+                    imageVector = ImageVector.vectorResource(CommonR.drawable.search),
                     contentDescription = null,
                     tint = AppTheme.colors.onSecondaryContainer
                 )
@@ -67,7 +68,7 @@ internal fun SearchHeaderWidget(
                         }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.clear),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.clear),
                             contentDescription = null,
                             tint = AppTheme.colors.primary
                         )

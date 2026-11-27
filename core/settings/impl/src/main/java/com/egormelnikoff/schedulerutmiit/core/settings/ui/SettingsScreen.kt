@@ -18,7 +18,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
+import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
@@ -64,11 +65,11 @@ fun SettingsScreen(
             val visibleSettingsIds by remember(state.appSettings.eventView) {
                 derivedStateOf {
                     buildList {
-                        if (state.appSettings.eventView.groupsVisible) add(R.string.groups)
-                        if (state.appSettings.eventView.roomsVisible) add(R.string.rooms)
-                        if (state.appSettings.eventView.lecturersVisible) add(R.string.lecturers)
-                        if (state.appSettings.eventView.tagVisible) add(R.string.tag)
-                        if (state.appSettings.eventView.commentVisible) add(R.string.comment)
+                        if (state.appSettings.eventView.groupsVisible) add(R.string.settings_groups)
+                        if (state.appSettings.eventView.roomsVisible) add(R.string.settings_rooms)
+                        if (state.appSettings.eventView.lecturersVisible) add(R.string.settings_lecturers)
+                        if (state.appSettings.eventView.tagVisible) add(R.string.settings_tag)
+                        if (state.appSettings.eventView.commentVisible) add(R.string.settings_comment)
                     }
                 }
             }
@@ -92,7 +93,7 @@ fun SettingsScreen(
             ) {
                 item {
                     ColumnGroup(
-                        title = stringResource(R.string._interface),
+                        title = stringResource(R.string.settings_interface),
                         items = listOf(
                             {
                                 AppCell(
@@ -102,11 +103,11 @@ fun SettingsScreen(
                                             iconProvider = { state ->
                                                 when (state) {
                                                     ScheduleView.CALENDAR -> {
-                                                        ImageVector.vectorResource(R.drawable.calendar)
+                                                        ImageVector.vectorResource(CommonR.drawable.calendar)
                                                     }
 
                                                     ScheduleView.LIST -> {
-                                                        ImageVector.vectorResource(R.drawable.list)
+                                                        ImageVector.vectorResource(CommonR.drawable.list)
                                                     }
                                                 }
                                             }
@@ -116,14 +117,14 @@ fun SettingsScreen(
                                         CenterContent(
                                             title = {
                                                 TextBlock(
-                                                    text = stringResource(R.string.schedule_view),
+                                                    text = stringResource(R.string.settings_schedule_view),
                                                 )
                                             },
                                             subtitle = {
                                                 TextBlock(
                                                     text = when (state.appSettings.scheduleView) {
-                                                        ScheduleView.CALENDAR -> stringResource(R.string.calendar)
-                                                        ScheduleView.LIST -> stringResource(R.string.full_list)
+                                                        ScheduleView.CALENDAR -> stringResource(R.string.settings_calendar)
+                                                        ScheduleView.LIST -> stringResource(R.string.settings_full_list)
                                                     },
                                                     typography = AppTheme.typography.bodyMedium,
                                                     color = AppTheme.colors.onSecondaryContainer,
@@ -143,7 +144,7 @@ fun SettingsScreen(
                                 AppCell(
                                     start = {
                                         Icon(
-                                            icon = ImageVector.vectorResource(R.drawable.event_view),
+                                            icon = ImageVector.vectorResource(CommonR.drawable.event_view),
                                             iconSize = 20.dp,
                                             iconColor = AppTheme.colors.onSecondaryContainer
                                         )
@@ -152,7 +153,7 @@ fun SettingsScreen(
                                         CenterContent(
                                             title = {
                                                 TextBlock(
-                                                    text = stringResource(R.string.event_view)
+                                                    text = stringResource(R.string.settings_event_view)
                                                 )
                                             },
                                             subtitle = {
@@ -185,16 +186,16 @@ fun SettingsScreen(
                                                 when (state) {
                                                     EventsCountView.DETAILS -> {
                                                         ImageVector.vectorResource(
-                                                            R.drawable.points
+                                                            CommonR.drawable.points
                                                         )
                                                     }
 
                                                     EventsCountView.BRIEFLY -> {
-                                                        ImageVector.vectorResource(R.drawable.one)
+                                                        ImageVector.vectorResource(CommonR.drawable.one)
                                                     }
 
                                                     EventsCountView.OFF -> {
-                                                        ImageVector.vectorResource(R.drawable.visibility_off)
+                                                        ImageVector.vectorResource(CommonR.drawable.visibility_off)
                                                     }
                                                 }
                                             }
@@ -204,15 +205,15 @@ fun SettingsScreen(
                                         CenterContent(
                                             title = {
                                                 TextBlock(
-                                                    text = stringResource(R.string.show_count_classes)
+                                                    text = stringResource(R.string.settings_show_count_classes)
                                                 )
                                             },
                                             subtitle = {
                                                 TextBlock(
                                                     text = when (state.appSettings.eventsCountView) {
-                                                        EventsCountView.DETAILS -> stringResource(R.string.details)
-                                                        EventsCountView.BRIEFLY -> stringResource(R.string.briefly)
-                                                        EventsCountView.OFF -> stringResource(R.string.off)
+                                                        EventsCountView.DETAILS -> stringResource(R.string.settings_details)
+                                                        EventsCountView.BRIEFLY -> stringResource(R.string.settings_briefly)
+                                                        EventsCountView.OFF -> stringResource(R.string.settings_off)
                                                     },
                                                     typography = AppTheme.typography.bodyMedium,
                                                     color = AppTheme.colors.onSecondaryContainer,
@@ -232,14 +233,14 @@ fun SettingsScreen(
                                 AppCell(
                                     start = {
                                         Icon(
-                                            icon = ImageVector.vectorResource(R.drawable.sun),
+                                            icon = ImageVector.vectorResource(CommonR.drawable.sun),
                                             iconSize = 20.dp,
                                             iconColor = AppTheme.colors.onSecondaryContainer
                                         )
                                     },
                                     center = {
                                         TextBlock(
-                                            text = stringResource(R.string.use_image),
+                                            text = stringResource(R.string.settings_use_image),
                                         )
                                     },
                                     end = {
@@ -269,7 +270,7 @@ fun SettingsScreen(
 
                 item {
                     ColumnGroup(
-                        title = stringResource(R.string.schedule),
+                        title = stringResource(R.string.settings_schedule),
                         items = listOf(
                             {
                                 AppCell(
@@ -279,15 +280,15 @@ fun SettingsScreen(
                                             iconProvider = { state ->
                                                 when (state) {
                                                     EventExtraPolicy.SYNCHRONIZED -> {
-                                                        ImageVector.vectorResource(R.drawable.sync)
+                                                        ImageVector.vectorResource(CommonR.drawable.sync)
                                                     }
 
                                                     EventExtraPolicy.BY_DATES -> {
-                                                        ImageVector.vectorResource(R.drawable.calendar)
+                                                        ImageVector.vectorResource(CommonR.drawable.calendar)
                                                     }
 
                                                     EventExtraPolicy.DEFAULT -> {
-                                                        ImageVector.vectorResource(R.drawable.split)
+                                                        ImageVector.vectorResource(CommonR.drawable.split)
                                                     }
                                                 }
                                             }
@@ -297,18 +298,18 @@ fun SettingsScreen(
                                         CenterContent(
                                             title = {
                                                 TextBlock(
-                                                    text = stringResource(R.string.comments_and_tags)
+                                                    text = stringResource(R.string.settings_comments_and_tags)
                                                 )
                                             },
                                             subtitle = {
                                                 TextBlock(
                                                     text = when (state.appSettings.eventExtraPolicy) {
-                                                        EventExtraPolicy.DEFAULT -> stringResource(R.string.by_default)
+                                                        EventExtraPolicy.DEFAULT -> stringResource(R.string.settings_by_default)
                                                         EventExtraPolicy.SYNCHRONIZED -> stringResource(
-                                                            R.string._synchronized
+                                                            R.string.settings_synchronized
                                                         )
 
-                                                        EventExtraPolicy.BY_DATES -> stringResource(R.string.by_dates)
+                                                        EventExtraPolicy.BY_DATES -> stringResource(R.string.settings_by_dates)
                                                     },
                                                     typography = AppTheme.typography.bodyMedium,
                                                     color = AppTheme.colors.onSecondaryContainer,
@@ -328,7 +329,7 @@ fun SettingsScreen(
                                 AppCell(
                                     start = {
                                         Icon(
-                                            icon = ImageVector.vectorResource(R.drawable.undelete),
+                                            icon = ImageVector.vectorResource(CommonR.drawable.undelete),
                                             iconSize = 20.dp,
                                             iconColor = AppTheme.colors.onSecondaryContainer
                                         )
@@ -337,12 +338,12 @@ fun SettingsScreen(
                                         CenterContent(
                                             title = {
                                                 TextBlock(
-                                                    text = stringResource(R.string.not_delete_schedules),
+                                                    text = stringResource(R.string.settings_not_delete_schedules),
                                                 )
                                             },
                                             subtitle = {
                                                 TextBlock(
-                                                    text = stringResource(R.string.not_delete_schedules_message),
+                                                    text = stringResource(R.string.settings_not_delete_schedules_message),
                                                     maxLines = 3,
                                                     typography = AppTheme.typography.bodyMedium,
                                                     color = AppTheme.colors.onSecondaryContainer,
@@ -374,7 +375,7 @@ fun SettingsScreen(
 
                 item {
                     ColumnGroup(
-                        title = stringResource(R.string.general),
+                        title = stringResource(R.string.settings_general),
                         items = listOf(
                             {
                                 AppCell(
@@ -383,9 +384,9 @@ fun SettingsScreen(
                                             targetState = state.appSettings.themePreferences.theme.isDarkTheme(),
                                             iconProvider = { state ->
                                                 if (state) {
-                                                    ImageVector.vectorResource(R.drawable.moon)
+                                                    ImageVector.vectorResource(CommonR.drawable.moon)
                                                 } else {
-                                                    ImageVector.vectorResource(R.drawable.sun)
+                                                    ImageVector.vectorResource(CommonR.drawable.sun)
                                                 }
                                             }
                                         )
@@ -394,15 +395,15 @@ fun SettingsScreen(
                                         CenterContent(
                                             title = {
                                                 TextBlock(
-                                                    text = stringResource(R.string.theme)
+                                                    text = stringResource(R.string.settings_theme)
                                                 )
                                             },
                                             subtitle = {
                                                 TextBlock(
                                                     text = when (state.appSettings.themePreferences.theme) {
-                                                        Theme.LIGHT -> stringResource(R.string.light)
-                                                        Theme.DARK -> stringResource(R.string.dark)
-                                                        Theme.SYSTEM -> stringResource(R.string.auto)
+                                                        Theme.LIGHT -> stringResource(R.string.settings_light)
+                                                        Theme.DARK -> stringResource(R.string.settings_dark)
+                                                        Theme.SYSTEM -> stringResource(R.string.settings_auto)
                                                     },
                                                     typography = AppTheme.typography.bodyMedium,
                                                     color = AppTheme.colors.onSecondaryContainer,
@@ -422,7 +423,7 @@ fun SettingsScreen(
                                 AppCell(
                                     start = {
                                         Icon(
-                                            icon = ImageVector.vectorResource(R.drawable.info),
+                                            icon = ImageVector.vectorResource(CommonR.drawable.info),
                                             iconSize = 20.dp,
                                             iconColor = AppTheme.colors.onSecondaryContainer,
                                             showBadge = state.updatesAvailable,
@@ -433,7 +434,7 @@ fun SettingsScreen(
                                             modifier = Modifier.padding(
                                                 vertical = AppTheme.paddings.padding8
                                             ),
-                                            text = stringResource(R.string.about_app)
+                                            text = stringResource(R.string.settings_about_app)
                                         )
                                     },
                                     onClick = {

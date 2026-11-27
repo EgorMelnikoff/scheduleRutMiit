@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="news_error">Ошибка</string>
+    <string name="news_repeat">Повторить</string>
+    <string name="news_retry">Повторить</string>
+</resources>

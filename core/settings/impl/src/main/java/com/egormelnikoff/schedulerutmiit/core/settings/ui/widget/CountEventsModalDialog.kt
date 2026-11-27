@@ -9,7 +9,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
+import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
@@ -35,16 +36,16 @@ fun CountEventsModalDialog(
         onDismiss = onDismiss
     ) {
         ColumnGroup(
-            title = stringResource(R.string.show_count_classes),
+            title = stringResource(R.string.settings_show_count_classes),
             items = EventsCountView.entries.map {
                 {
                     AppCell(
                         start = {
                             Icon(
                                 icon = when (it) {
-                                    EventsCountView.DETAILS -> ImageVector.vectorResource(R.drawable.points)
-                                    EventsCountView.BRIEFLY -> ImageVector.vectorResource(R.drawable.one)
-                                    EventsCountView.OFF -> ImageVector.vectorResource(R.drawable.visibility_off)
+                                    EventsCountView.DETAILS -> ImageVector.vectorResource(CommonR.drawable.points)
+                                    EventsCountView.BRIEFLY -> ImageVector.vectorResource(CommonR.drawable.one)
+                                    EventsCountView.OFF -> ImageVector.vectorResource(CommonR.drawable.visibility_off)
                                 },
                                 iconSize = 20.dp,
                                 iconColor = AppTheme.colors.onSecondaryContainer
@@ -55,17 +56,17 @@ fun CountEventsModalDialog(
                                 title = {
                                     TextBlock(
                                         text = when (it) {
-                                            EventsCountView.DETAILS -> stringResource(R.string.details)
-                                            EventsCountView.BRIEFLY -> stringResource(R.string.briefly)
-                                            EventsCountView.OFF -> stringResource(R.string.dont_show)
+                                            EventsCountView.DETAILS -> stringResource(R.string.settings_details)
+                                            EventsCountView.BRIEFLY -> stringResource(R.string.settings_briefly)
+                                            EventsCountView.OFF -> stringResource(R.string.settings_dont_show)
                                         }
                                     )
                                 },
                                 subtitle = {
                                     TextBlock(
                                         text = when (it) {
-                                            EventsCountView.DETAILS -> stringResource(R.string.display_each_lesson)
-                                            EventsCountView.BRIEFLY -> stringResource(R.string.display_number_lessons)
+                                            EventsCountView.DETAILS -> stringResource(R.string.settings_display_each_lesson)
+                                            EventsCountView.BRIEFLY -> stringResource(R.string.settings_display_number_lessons)
                                             EventsCountView.OFF -> null
                                         },
                                         typography = AppTheme.typography.bodyMedium,

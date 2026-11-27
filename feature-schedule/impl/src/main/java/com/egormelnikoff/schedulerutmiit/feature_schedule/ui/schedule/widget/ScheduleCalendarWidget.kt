@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventView
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.badge.AppBadge
@@ -35,6 +35,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.bottom_shee
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarState
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.model.ScheduleVo
 import java.time.LocalDate
@@ -66,13 +67,13 @@ internal fun ScheduleCalendarWidget(
 
                 Icon(
                     modifier = Modifier.size(3.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.circle),
+                    imageVector = ImageVector.vectorResource(CommonR.drawable.circle),
                     contentDescription = null,
                     tint = AppTheme.colors.onSecondaryContainer
                 )
                 Text(
                     text = stringResource(
-                        R.string.week,
+                        R.string.schedule_week,
                         selectedWeek.toString()
                     ).replaceFirstChar { it.lowercase() },
                     style = AppTheme.typography.bodyLarge,
@@ -153,8 +154,8 @@ internal fun ScheduleCalendarWidget(
                 item {
                     EmptyScreen(
                         modifier = Modifier.fillParentMaxSize(),
-                        title = stringResource(R.string.day_off),
-                        subtitle = stringResource(R.string.empty_day)
+                        title = stringResource(R.string.schedule_day_off),
+                        subtitle = stringResource(R.string.schedule_empty_day)
                     )
                 }
             }

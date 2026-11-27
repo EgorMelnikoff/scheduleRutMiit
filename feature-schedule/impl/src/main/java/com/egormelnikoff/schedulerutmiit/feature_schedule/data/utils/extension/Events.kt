@@ -1,9 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension
 
 import android.content.Context
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.EventExtraData
 import java.time.DayOfWeek
@@ -51,26 +51,26 @@ internal fun Map<Long, List<EventExtraData>>.findEventExtra(
 
 internal fun Event.customToString(context: Context): String {
     return buildString {
-        append("${context.getString(R.string._class)}: ${this@customToString.name}")
+        append("${context.getString(R.string.schedule_class)}: ${this@customToString.name}")
         this@customToString.typeName?.let {
-            append("\n${context.getString(R.string.class_type)}: $it")
+            append("\n${context.getString(R.string.schedule_class_type)}: $it")
         }
-        append("\n${context.getString(R.string.time)}: ${this@customToString.startDatetime.toLocalTimeWithTimeZone()} - ${this@customToString.endDatetime.toLocalTimeWithTimeZone()}")
+        append("\n${context.getString(R.string.schedule_time)}: ${this@customToString.startDatetime.toLocalTimeWithTimeZone()} - ${this@customToString.endDatetime.toLocalTimeWithTimeZone()}")
 
         this@customToString.timeSlotName?.let {
             append(" ($it)")
         }
 
         if (!this@customToString.rooms.isNullOrEmpty()) {
-            append("\n${context.getString(R.string.place)}: ${this@customToString.rooms.joinToString { it.name }}")
+            append("\n${context.getString(R.string.schedule_place)}: ${this@customToString.rooms.joinToString { it.name }}")
         }
 
         if (!this@customToString.lecturers.isNullOrEmpty()) {
-            append("\n${context.getString(R.string.lecturers)}: ${this@customToString.lecturers.joinToString { it.shortFio }}")
+            append("\n${context.getString(R.string.schedule_lecturers)}: ${this@customToString.lecturers.joinToString { it.shortFio }}")
         }
 
         if (!this@customToString.groups.isNullOrEmpty()) {
-            append("\n${context.getString(R.string.groups)}: ${this@customToString.groups.joinToString { it.name }}")
+            append("\n${context.getString(R.string.schedule_groups)}: ${this@customToString.groups.joinToString { it.name }}")
         }
     }
 }

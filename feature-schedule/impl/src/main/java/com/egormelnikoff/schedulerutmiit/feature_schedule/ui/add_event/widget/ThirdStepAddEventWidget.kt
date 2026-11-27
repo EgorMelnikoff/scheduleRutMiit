@@ -12,9 +12,9 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.add_event.AddEventState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.addEventStateMock
@@ -32,7 +32,7 @@ internal fun ThirdStepAddEventWidget(
         verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding12, Alignment.Top)
     ) {
         ListInputWidget(
-            title = stringResource(R.string.room),
+            title = stringResource(R.string.schedule_room),
             elements = state.editForm.rooms,
             onAddElement = {
                 onAction(AddEventAction.OnAddRoom)
@@ -51,7 +51,7 @@ internal fun ThirdStepAddEventWidget(
             )
         }
         ListInputWidget(
-            title = stringResource(R.string.lecturers),
+            title = stringResource(R.string.schedule_lecturers),
             elements = state.editForm.lecturers,
             onAddElement = {
                 onAction(AddEventAction.OnAddLecturer)
@@ -75,7 +75,7 @@ internal fun ThirdStepAddEventWidget(
             )
         }
         ListInputWidget(
-            title = stringResource(R.string.groups),
+            title = stringResource(R.string.schedule_groups),
             elements = state.editForm.groups,
             onAddElement = {
                 onAction(AddEventAction.OnAddGroup)

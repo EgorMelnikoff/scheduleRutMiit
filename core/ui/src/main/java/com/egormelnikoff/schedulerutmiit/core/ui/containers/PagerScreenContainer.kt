@@ -35,7 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -49,10 +49,10 @@ fun PagerScreenContainer(
     onFinish: () -> Unit,
     showIndicator: Boolean = true,
     onCancel: (() -> Unit)? = null,
-    backTitle: String = stringResource(R.string.back),
-    nextTitle: String = stringResource(R.string.forward),
-    finishTitle: String = stringResource(R.string.ready),
-    cancelTitle: String = stringResource(R.string.cancel),
+    backTitle: String = stringResource(R.string.ui_back),
+    nextTitle: String = stringResource(R.string.ui_forward),
+    finishTitle: String = stringResource(R.string.ui_ready),
+    cancelTitle: String = stringResource(R.string.ui_cancel),
     paddingValues: PaddingValues = PaddingValues(AppTheme.paddings.none),
     content: @Composable (Int) -> Unit
 ) {

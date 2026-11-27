@@ -11,12 +11,13 @@ import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RowGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.ReviewAction
 
 internal fun LazyListScope.reviewActionsWidget(
@@ -46,14 +47,14 @@ internal fun LazyListScope.reviewActionsWidget(
                             ),
                             start = {
                                 Icon(
-                                    icon = ImageVector.vectorResource(R.drawable.search),
+                                    icon = ImageVector.vectorResource(CommonR.drawable.search),
                                     iconSize = 20.dp,
                                     iconColor = AppTheme.colors.onBackground
                                 )
                             },
                             center = {
                                 TextBlock(
-                                    text = "${stringResource(R.string.find)} ${stringResource(R.string.schedule).replaceFirstChar { it.lowercase() }}",
+                                    text = "${stringResource(R.string.schedule_find)} ${stringResource(R.string.schedule_title).replaceFirstChar { it.lowercase() }}",
                                     typography = AppTheme.typography.titleSmall,
                                 )
                             },
@@ -70,16 +71,16 @@ internal fun LazyListScope.reviewActionsWidget(
                             ),
                             start = {
                                 Icon(
-                                    icon = ImageVector.vectorResource(R.drawable.add),
+                                    icon = ImageVector.vectorResource(CommonR.drawable.add),
                                     iconSize = 20.dp,
                                     iconColor = AppTheme.colors.onBackground
                                 )
                             },
                             center = {
                                 TextBlock(
-                                    text = "${stringResource(R.string.create)} ${
+                                    text = "${stringResource(R.string.schedule_create)} ${
                                         stringResource(
-                                            R.string.schedule
+                                            R.string.schedule_title
                                         ).replaceFirstChar { it.lowercase() }
                                     }",
                                     typography = AppTheme.typography.titleSmall,

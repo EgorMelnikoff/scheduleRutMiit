@@ -13,8 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
+import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.RoundedBox
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -32,7 +33,7 @@ fun DaySelector(
     }
 
     RoundedBox(
-        title = stringResource(R.string.day_of_week),
+        title = stringResource(R.string.ui_day_of_week),
         backgroundColor = Color.Unspecified
     ) {
         Row(
@@ -41,13 +42,13 @@ fun DaySelector(
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding2)
         ) {
-            stringArrayResource(R.array.days_of_week).forEachIndexed { index, _ ->
+            stringArrayResource(CommonR.array.days_of_week).forEachIndexed { index, _ ->
                 val currentDate = firstDayOfWeek.plusDays(index.toLong())
                 AppFilterChip(
                     title = currentDate.dayOfWeek.getDisplayName(
                         TextStyle.SHORT,
                         LocalLocale.current.platformLocale
-                    ) ?: stringResource(R.string.not_specified),
+                    ) ?: stringResource(R.string.ui_not_specified),
                     imageVector = null,
                     selected = currentDate.dayOfWeek == dateEvent?.dayOfWeek,
                     onClick = {

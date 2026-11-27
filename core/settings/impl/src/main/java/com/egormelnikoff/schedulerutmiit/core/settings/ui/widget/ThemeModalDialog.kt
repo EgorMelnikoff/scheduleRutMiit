@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.settings.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ThemePreferences
 import com.egormelnikoff.schedulerutmiit.core.settings.ui.SettingsAction
 import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
@@ -36,7 +36,7 @@ internal fun ThemeModalDialog(
         onDismiss = onDismiss
     ) {
         ColumnGroup(
-            title = stringResource(R.string.theme),
+            title = stringResource(R.string.settings_theme),
             items = listOf(
                 {
                     Box(
@@ -53,7 +53,7 @@ internal fun ThemeModalDialog(
                     AppCell(
                         center = {
                             TextBlock(
-                                text = stringResource(R.string.use_amoled),
+                                text = stringResource(R.string.settings_use_amoled),
                             )
                         },
                         end = {
@@ -73,7 +73,7 @@ internal fun ThemeModalDialog(
         SpacerHeight(0.dp)
 
         ColumnGroup(
-            title = stringResource(R.string.color_style),
+            title = stringResource(R.string.settings_color_style),
             items = listOf {
                 ColorSelectorWidget(
                     currentSelected = themePreferences.decorColorIndex

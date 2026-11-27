@@ -5,10 +5,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ScaffoldLazyColumn
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.hidden_events.HiddenEventsAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.eventMock
@@ -22,7 +22,7 @@ internal fun HiddenEventsScreenWidget(
     Scaffold(
         topBar = {
             AppTopBar(
-                titleText = stringResource(R.string.hidden_events),
+                titleText = stringResource(R.string.schedule_hidden_events),
                 navAction = {
                     onAction(HiddenEventsAction.OnBackClicked)
                 }

@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 
 internal fun LazyListScope.hiddenEventsEmptyWidget(
     contentPadding: PaddingValues
@@ -14,7 +14,7 @@ internal fun LazyListScope.hiddenEventsEmptyWidget(
         EmptyScreen(
             modifier = Modifier.fillParentMaxSize(),
             title = "¯\\_(ツ)_/¯",
-            subtitle = stringResource(R.string.empty_here),
+            subtitle = stringResource(R.string.schedule_empty_here),
             isBoldTitle = false,
             paddingBottom = contentPadding.calculateBottomPadding()
         )

@@ -21,12 +21,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthYearFormatter
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppFilterChip
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.eventStateMock
@@ -63,7 +64,7 @@ internal fun EventNameWidget(
             horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
         ) {
             AppFilterChip(
-                imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                imageVector = ImageVector.vectorResource(CommonR.drawable.calendar),
                 colors = FilterChipDefaults.filterChipColors(
                     disabledContainerColor = Color.Transparent,
                     disabledLabelColor = AppTheme.colors.onBackground,
@@ -83,7 +84,7 @@ internal fun EventNameWidget(
                     } else {
                         "$dayName, ${
                             stringResource(
-                                R.string.week,
+                                R.string.schedule_week,
                                 event.periodNumber ?: 0
                             ).replaceFirstChar { it.lowercase() }
                         }"
@@ -94,7 +95,7 @@ internal fun EventNameWidget(
                 }"
             )
             AppFilterChip(
-                imageVector = ImageVector.vectorResource(R.drawable.time),
+                imageVector = ImageVector.vectorResource(CommonR.drawable.time),
                 colors = FilterChipDefaults.filterChipColors(
                     disabledContainerColor = Color.Transparent,
                     disabledLabelColor = AppTheme.colors.onBackground,

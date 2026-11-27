@@ -18,10 +18,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventState
 
@@ -34,7 +35,7 @@ internal fun LazyListScope.eventCommentWidget(
             modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16)
         ) {
             ColumnGroup(
-                title = stringResource(R.string.comment),
+                title = stringResource(R.string.schedule_comment),
                 titleColor = AppTheme.colors.primary,
                 withBackground = false,
                 items = listOf {
@@ -48,7 +49,7 @@ internal fun LazyListScope.eventCommentWidget(
                             imeAction = ImeAction.Default
                         ),
                         maxSymbols = 100,
-                        placeholderText = stringResource(R.string.enter_comment),
+                        placeholderText = stringResource(R.string.schedule_enter_comment),
                         trailingIcon = {
                             AnimatedVisibility(
                                 visible = eventState.comment.isNotEmpty(),
@@ -61,7 +62,7 @@ internal fun LazyListScope.eventCommentWidget(
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.clear),
+                                        imageVector = ImageVector.vectorResource(CommonR.drawable.clear),
                                         contentDescription = null,
                                         tint = AppTheme.colors.primary
                                     )

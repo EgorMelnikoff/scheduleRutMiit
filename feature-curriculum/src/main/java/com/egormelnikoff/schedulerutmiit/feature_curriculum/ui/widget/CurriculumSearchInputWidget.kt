@@ -18,9 +18,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.curriculum.R
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumAction
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumState
 
@@ -41,7 +42,7 @@ internal fun CurriculumSearchInputWidget(
             placeholderText = stringResource(R.string.curriculum_number),
             leadingIcon = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.search),
+                    imageVector = ImageVector.vectorResource(CommonR.drawable.search),
                     contentDescription = null,
                     tint = AppTheme.colors.onSecondaryContainer
                 )
@@ -58,7 +59,7 @@ internal fun CurriculumSearchInputWidget(
                         }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.clear),
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.clear),
                             contentDescription = null,
                             tint = AppTheme.colors.primary
                         )
@@ -80,7 +81,7 @@ internal fun CurriculumSearchInputWidget(
             }
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.info),
+                imageVector = ImageVector.vectorResource(CommonR.drawable.info),
                 contentDescription = null,
                 tint = AppTheme.colors.onBackground
             )

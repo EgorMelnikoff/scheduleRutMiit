@@ -8,12 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ScaffoldLazyColumn
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventState
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.eventStateMock
@@ -94,8 +94,8 @@ internal fun EventScreenWidget(
             }
             if (eventState.showDeleteDialog) {
                 AppAlertBottomSheet(
-                    dialogTitle = "${stringResource(R.string.delete_event)}?",
-                    dialogText = stringResource(R.string.event_deleting_alert),
+                    dialogTitle = "${stringResource(R.string.schedule_delete_event)}?",
+                    dialogText = stringResource(R.string.schedule_event_deleting_alert),
                     onDismissRequest = {
                         onAction(EventAction.OnShowDeleteDialog(false))
                     },
@@ -110,8 +110,8 @@ internal fun EventScreenWidget(
             }
             if (eventState.showHideDialog) {
                 AppAlertBottomSheet(
-                    dialogTitle = "${stringResource(R.string.hide_event)}?",
-                    dialogText = stringResource(R.string.event_visibility_alert),
+                    dialogTitle = "${stringResource(R.string.schedule_hide_event)}?",
+                    dialogText = stringResource(R.string.schedule_event_visibility_alert),
                     onDismissRequest = {
                         onAction(EventAction.OnShowHideDialog(false))
                     },

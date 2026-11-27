@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="curriculum_enter_your_query">Enter your query</string>
+    <string name="curriculum_nothing_found">Nothing found</string>
+    <string name="curriculum_number">Curriculum number</string>
+    <string name="curriculum_search_advice">Please use the curriculum identification number to search</string>
+</resources>

@@ -7,7 +7,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
@@ -49,7 +49,7 @@ fun AppAlertDialog(
                 }
             ) {
                 Text(
-                    text = confirmText ?: stringResource(R.string.yes),
+                    text = confirmText ?: stringResource(R.string.ui_yes),
                     style = AppTheme.typography.bodyLarge,
                     color = AppTheme.colors.primary
                 )
@@ -60,7 +60,7 @@ fun AppAlertDialog(
                 onClick = onDismissRequest
             ) {
                 Text(
-                    text = dismissText ?: stringResource(R.string.no),
+                    text = dismissText ?: stringResource(R.string.ui_no),
                     style = AppTheme.typography.bodyLarge,
                     color = AppTheme.colors.primary
                 )

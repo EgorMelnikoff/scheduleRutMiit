@@ -17,12 +17,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.common.R as CommonR
 import com.egormelnikoff.schedulerutmiit.core.common.error.getMessage
 import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
+import com.egormelnikoff.schedulerutmiit.curriculum.R
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumAction
 import com.egormelnikoff.schedulerutmiit.feature_curriculum.ui.CurriculumState
 
@@ -74,14 +75,14 @@ internal fun CurriculumScreenWidget(
 
                     animatedState.isEmptyQuery -> {
                         EmptyScreen(
-                            imageVector = ImageVector.vectorResource(R.drawable.search),
-                            subtitle = stringResource(R.string.enter_your_query)
+                            imageVector = ImageVector.vectorResource(CommonR.drawable.search),
+                            subtitle = stringResource(R.string.curriculum_enter_your_query)
                         )
                     }
 
                     animatedState.subjectsList.isEmpty() ->
                         EmptyScreen(
-                            subtitle = stringResource(R.string.nothing_found)
+                            subtitle = stringResource(R.string.curriculum_nothing_found)
                         )
 
                     else -> {

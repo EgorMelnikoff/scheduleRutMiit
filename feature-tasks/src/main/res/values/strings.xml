@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tasks_class_name">Class name</string>
+    <string name="tasks_create">Create</string>
+    <string name="tasks_create_task">Create task</string>
+    <string name="tasks_dates">Dates</string>
+    <string name="tasks_delete">Delete</string>
+    <string name="tasks_delete_all">Delete all</string>
+    <string name="tasks_no_tasks">No tasks</string>
+    <string name="tasks_no_tasks_at_day">There are no tasks for this day</string>
+    <string name="tasks_save">Save</string>
+    <string name="tasks_tag">Tag</string>
+    <string name="tasks_task">Task</string>
+    <string name="tasks_time">Time</string>
+    <string name="tasks_title">Tasks</string>
+</resources>

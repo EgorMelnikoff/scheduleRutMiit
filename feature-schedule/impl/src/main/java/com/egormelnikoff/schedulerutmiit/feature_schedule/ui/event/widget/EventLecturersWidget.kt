@@ -7,13 +7,13 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints.personImageUrl
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AsyncImage
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventAction
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.event.EventState
 
@@ -28,7 +28,7 @@ internal fun LazyListScope.eventLecturersWidget(
                 modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16)
             ) {
                 ColumnGroup(
-                    title = stringResource(R.string.lecturers),
+                    title = stringResource(R.string.schedule_lecturers),
                     titleColor = AppTheme.colors.primary,
                     items = lecturers.map { lecturer ->
                         {

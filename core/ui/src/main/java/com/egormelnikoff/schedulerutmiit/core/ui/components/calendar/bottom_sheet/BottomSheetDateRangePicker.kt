@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.ui.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
@@ -70,7 +70,7 @@ fun BottomSheetDateRangePicker(
                             .fillMaxWidth()
                             .padding(horizontal = AppTheme.paddings.padding16),
                         enabled = datePickerState.selectedStartDateMillis != null,
-                        buttonTitle = stringResource(R.string.confirm),
+                        buttonTitle = stringResource(R.string.ui_confirm),
                         onClick = {
                             datePickerState.selectedStartDateMillis?.let { s ->
                                 val startDate = Instant

@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.ui.components.text_field.AppTextField
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
+import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.roomMock
 
@@ -35,7 +35,7 @@ internal fun RoomInputWidget(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next
             ),
-            placeholderText = stringResource(R.string.room_number),
+            placeholderText = stringResource(R.string.schedule_room_number),
         ) { newValue ->
             onValueChanged(room.copy(name = newValue, hint = newValue))
         }

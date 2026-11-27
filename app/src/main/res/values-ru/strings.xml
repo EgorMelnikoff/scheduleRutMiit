@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_features_subtitle">К парам можно добавлять текстовые комментарии и цветовые теги</string>
+    <string name="app_features_title">Комментарии и теги</string>
+    <string name="app_name">Расписание МИИТ</string>
+    <string name="app_schedule_subtitle">Сохраненные расписания доступны даже без интернета!</string>
+    <string name="app_schedule_title">Расписание</string>
+    <string name="app_skip">Пропустить</string>
+    <string name="app_start">Начать</string>
+    <string name="app_today_schedule">Сегодняшнее расписание</string>
+    <string name="app_welcome_subtitle">Это приложение для поиска и сохранения расписаний РУТ (МИИТ)</string>
+    <string name="app_welcome_title">Добро пожаловать!</string>
+    <string name="app_widget_subtitle">Также можно использовать виджет, который подскажет расписание пар!</string>
+    <string name="app_widget_title">Виджет</string>
+</resources>
