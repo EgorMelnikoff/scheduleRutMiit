@@ -11,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLocale
@@ -30,9 +29,6 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.LargeIconButton
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

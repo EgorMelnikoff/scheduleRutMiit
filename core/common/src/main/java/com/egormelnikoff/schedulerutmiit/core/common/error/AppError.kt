@@ -2,10 +2,10 @@ package com.egormelnikoff.schedulerutmiit.core.common.error
 
 import android.content.Context
 import com.egormelnikoff.schedulerutmiit.core.common.R
-import java.io.IOException
-import java.net.SocketTimeoutException
 import kotlinx.serialization.SerializationException
 import retrofit2.HttpException
+import java.io.IOException
+import java.net.SocketTimeoutException
 
 sealed interface AppError {
     data class NetworkError(val exception: IOException) : AppError

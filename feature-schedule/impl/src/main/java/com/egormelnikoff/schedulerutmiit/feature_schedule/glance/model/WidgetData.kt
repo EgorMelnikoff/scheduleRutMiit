@@ -8,9 +8,9 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.SummaryState
+import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate
-import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class WidgetData(

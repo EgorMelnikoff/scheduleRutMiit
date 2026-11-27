@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case
 
+import com.egormelnikoff.schedulerutmiit.core.common.extension.emptyDateTime
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
@@ -8,7 +9,6 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
-import com.egormelnikoff.schedulerutmiit.core.common.extension.emptyDateTime
 import java.time.LocalDate
 import javax.inject.Inject
 

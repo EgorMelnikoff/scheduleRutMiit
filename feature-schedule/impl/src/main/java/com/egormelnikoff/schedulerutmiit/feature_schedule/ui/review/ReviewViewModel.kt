@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.time_provider.TimeProvider
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
-import com.egormelnikoff.schedulerutmiit.core.settings.api.repos.SettingsRepos
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.DeleteNamedScheduleUseCase

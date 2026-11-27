@@ -23,9 +23,6 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 @Composable
 internal fun ModalDialogNamedScheduleHeader(

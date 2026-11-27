@@ -4,7 +4,6 @@ import com.egormelnikoff.schedulerutmiit.core.settings.api.model.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventExtraPolicy
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.EventsCountView
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.LatestRelease
-import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ReviewSettings
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.Theme
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ThemePreferences

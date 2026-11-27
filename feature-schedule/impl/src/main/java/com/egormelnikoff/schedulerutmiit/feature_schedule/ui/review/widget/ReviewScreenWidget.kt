@@ -21,8 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.AppSettings
-import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
-import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerWidth
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme

@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import com.egormelnikoff.schedulerutmiit.core.ui.components.snackbar_host.AppSnackbarHost
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.EmptyScreen
-import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.search.R
 import com.egormelnikoff.schedulerutmiit.search.domain.model.SearchQuery
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchAction

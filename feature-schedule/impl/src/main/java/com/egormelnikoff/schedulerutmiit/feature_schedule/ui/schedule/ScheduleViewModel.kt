@@ -26,8 +26,6 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.SetDef
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.export.ExportDataUseCase
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case.export.ImportDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDate
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,6 +33,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import javax.inject.Inject
 
 @HiltViewModel
 internal class ScheduleViewModel @Inject constructor(

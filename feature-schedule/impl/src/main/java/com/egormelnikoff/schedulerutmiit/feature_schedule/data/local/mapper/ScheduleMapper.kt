@@ -1,6 +1,5 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.mapper
 
-import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.EventExtraDataEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.GroupEntity
@@ -24,7 +23,6 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleW
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.Locale
 
 internal fun NamedScheduleWithSchedulesRelation.toDomain() = NamedScheduleWithSchedules(
     namedScheduleEntity.toDomain(), scheduleWithEvents.map { it.toDomain() }

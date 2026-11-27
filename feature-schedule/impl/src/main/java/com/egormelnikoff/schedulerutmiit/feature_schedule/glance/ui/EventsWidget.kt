@@ -40,7 +40,6 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.egormelnikoff.schedulerutmiit.core.common.extension.toLocalTimeWithTimeZone
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.color.getColorByIndex
-import com.egormelnikoff.schedulerutmiit.core.ui.R as UiR
 import com.egormelnikoff.schedulerutmiit.feature_schedule.R
 import com.egormelnikoff.schedulerutmiit.feature_schedule.di.ProviderEntryPoint
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.WidgetDataUpdater
@@ -52,6 +51,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
+import com.egormelnikoff.schedulerutmiit.core.ui.R as UiR
 
 class EventsWidget : GlanceAppWidget() {
     private lateinit var json: Json
