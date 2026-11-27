@@ -65,7 +65,7 @@ internal fun SearchScreenContentWidget(
                 }
             ) { searchState ->
                 when {
-                    searchState.isLoading -> LoadingScreen()
+                    searchState.isLoading -> SearchLoadingWidget()
 
                     searchState.isEmptyQuery && history.isEmpty() -> {
                         EmptyScreen(
