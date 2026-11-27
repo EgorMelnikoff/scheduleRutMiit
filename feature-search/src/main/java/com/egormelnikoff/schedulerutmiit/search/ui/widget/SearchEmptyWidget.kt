@@ -73,7 +73,7 @@ internal fun SearchEmptyWidget(
                                 RefreshArgs(
                                     query.name,
                                     query.apiId,
-                                    query.namedScheduleType
+                                    query.scheduleType
                                 )
                             )
                         )

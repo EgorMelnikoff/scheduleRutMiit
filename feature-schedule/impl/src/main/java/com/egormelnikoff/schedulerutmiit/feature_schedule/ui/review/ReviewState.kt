@@ -11,9 +11,6 @@ internal data class ReviewState(
     val summaryState: SummaryState? = null,
     val namedSchedules: List<NamedSchedule> = listOf(),
 
-
-    val theme: Theme = Theme.DARK,
-    val usedPhoto: Boolean = false,
     val showSchedules: Boolean = true,
     val showServices: Boolean = true,
     val scheduleSheet: NamedSchedule? = null,

@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos
 
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +17,7 @@ internal interface NamedScheduleRepos {
         namedScheduleId: Long = 0,
         name: String = "",
         apiId: Int = 0,
-        type: NamedScheduleType = NamedScheduleType.GROUP,
+        type: ScheduleType = ScheduleType.GROUP,
     ): Pair<Boolean,NamedScheduleWithSchedules>
 
     suspend fun getById(
@@ -32,7 +32,7 @@ internal interface NamedScheduleRepos {
         namedScheduleId: Long = 0,
         name: String = "",
         apiId: Int = 0,
-        type: NamedScheduleType = NamedScheduleType.GROUP,
+        type: ScheduleType = ScheduleType.GROUP,
     )
 
     suspend fun save(namedScheduleWithSchedules: NamedScheduleWithSchedules): Pair<Long, Boolean>

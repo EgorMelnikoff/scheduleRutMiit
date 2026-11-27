@@ -28,7 +28,6 @@ interface SettingsRepos {
     suspend fun onSkipWelcomePage()
 
     fun observeAppSettings(): Flow<AppSettings>
-    fun observeReviewSettings(): Flow<ReviewSettings>
     fun observeThemePreferences(): Flow<ThemePreferences>
     suspend fun updateLatestRelease(): LatestRelease
     suspend fun getLatestRelease() : LatestRelease?

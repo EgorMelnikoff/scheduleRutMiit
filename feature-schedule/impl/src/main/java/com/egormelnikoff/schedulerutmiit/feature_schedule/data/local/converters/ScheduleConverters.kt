@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.converters
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.GroupEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.LecturerEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.RoomEntity
@@ -60,10 +60,10 @@ internal class ScheduleConverters @Inject constructor(
 
 
     @TypeConverter
-    fun fromNamedScheduleType(type: NamedScheduleType) = type.ordinal
+    fun fromNamedScheduleType(type: ScheduleType) = type.ordinal
 
     @TypeConverter
-    fun toNamedScheduleType(value: Int) = NamedScheduleType.entries[value]
+    fun toNamedScheduleType(value: Int) = ScheduleType.entries[value]
 
     @TypeConverter
     fun fromTimetableType(type: TimetableType): Int = type.ordinal

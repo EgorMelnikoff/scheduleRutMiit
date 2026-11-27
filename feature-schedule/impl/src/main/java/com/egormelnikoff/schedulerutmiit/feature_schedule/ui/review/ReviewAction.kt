@@ -8,6 +8,7 @@ internal sealed interface ReviewAction {
     data object OnNewsCLicked : ReviewAction
     data object OnCurriculumClicked : ReviewAction
     data object OnTasksClicked : ReviewAction
+    data object OnSettingsClicked : ReviewAction
     data class OnRenameScheduleClicked(
         val namedScheduleId: Long
     ) : ReviewAction

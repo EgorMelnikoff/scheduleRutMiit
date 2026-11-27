@@ -19,7 +19,10 @@ internal fun NewsDetailContentWidget(
                 bottom = contentPadding.calculateBottomPadding()
             )
         ) {
-            newsDetailImageWidget(news)
+            newsDetailImageWidget(
+                topPadding = contentPadding.calculateTopPadding(),
+                news = news
+            )
             newsDetailHeaderWidget(news)
             newsDetailTextWidget(news)
             newsDetailImagesWidget(news)

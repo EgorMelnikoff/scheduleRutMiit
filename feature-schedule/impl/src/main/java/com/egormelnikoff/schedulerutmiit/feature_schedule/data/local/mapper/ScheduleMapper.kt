@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.mapper
 
+import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.EventEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.EventExtraDataEntity
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity.GroupEntity
@@ -20,6 +21,10 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrenc
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Room
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.Locale
 
 internal fun NamedScheduleWithSchedulesRelation.toDomain() = NamedScheduleWithSchedules(
     namedScheduleEntity.toDomain(), scheduleWithEvents.map { it.toDomain() }
@@ -33,11 +38,23 @@ internal fun ScheduleWithEventsRelation.toDomain() = ScheduleWithEvents(
 
 //NamedSchedule
 internal fun NamedScheduleEntity.toDomain() = NamedSchedule(
-    id, fullName, shortName, apiId, type, isDefault, lastTimeUpdate
+    id = id,
+    fullName = fullName,
+    shortName = shortName,
+    apiId = apiId,
+    type = type,
+    isDefault = isDefault,
+    lastTimeUpdate = lastTimeUpdate.toLocalDateTime()
 )
 
 internal fun NamedSchedule.toEntity() = NamedScheduleEntity(
-    id, fullName, shortName, apiId, type, isDefault, lastTimeUpdate
+    id = id,
+    fullName = fullName,
+    shortName = shortName,
+    apiId = apiId,
+    type = type,
+    isDefault = isDefault,
+    lastTimeUpdate = lastTimeUpdate.toLong()
 )
 
 //Schedule
@@ -131,3 +148,12 @@ internal fun Room.toEntity() = RoomEntity(id, name, hint)
 //Recurrence
 internal fun RecurrenceEntity.toDomain() = Recurrence(interval, firstWeekNumber)
 internal fun Recurrence.toEntity() = RecurrenceEntity(interval, firstWeekNumber)
+
+internal fun Long.toLocalDateTime() = LocalDateTime.ofInstant(
+    Instant.ofEpochMilli(this),
+    ZoneId.systemDefault()
+)
+
+internal fun LocalDateTime.toLong(zoneId: ZoneId = ZoneId.systemDefault()) = atZone(zoneId)
+    .toInstant()
+    .toEpochMilli()

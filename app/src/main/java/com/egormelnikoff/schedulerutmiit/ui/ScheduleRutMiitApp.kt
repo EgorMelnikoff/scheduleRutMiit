@@ -56,12 +56,13 @@ fun ScheduleRutMiitApp(
             pageHost = {
                 PageHost(
                     snackbarHostState = snackbarHostState,
-                    settingsViewModel = settingsViewModel,
                     settingsState = settingsState,
                     appRouter = appRouter,
                 )
             },
             snackbarHostState = snackbarHostState,
+            settingsState = settingsState,
+            settingsViewModel = settingsViewModel,
             appRouter = appRouter,
         )
     }
@@ -71,7 +72,6 @@ fun ScheduleRutMiitApp(
 @Composable
 fun PageHost(
     appRouter: AppRouter,
-    settingsViewModel: SettingsViewModel,
     settingsState: SettingsState,
     snackbarHostState: SnackbarHostState
 ) {
@@ -113,6 +113,7 @@ fun PageHost(
                 entry<Route.Page.Review> {
                     ReviewScreen(
                         contentPadding = padding,
+                        appSettings = settingsState.appSettings
                     )
                 }
 
@@ -129,14 +130,8 @@ fun PageHost(
                     )
                 }
 
-                entry<Route.Page.Settings> {
-                    SettingsScreen(
-                        state = settingsState,
-                        onAction = { action ->
-                            settingsViewModel.onAction(action)
-                        },
-                        contentPadding = padding
-                    )
+                entry<Route.Page.News> {
+                    NewsScreen()
                 }
             }
         )
@@ -148,6 +143,8 @@ fun PageHost(
 fun RootHost(
     pageHost: @Composable () -> Unit,
     appRouter: AppRouter,
+    settingsViewModel: SettingsViewModel,
+    settingsState: SettingsState,
     snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
@@ -201,14 +198,19 @@ fun RootHost(
                     pageHost.invoke()
                 }
 
+                entry<Route.Dialog.Settings> {
+                    SettingsScreen(
+                        state = settingsState,
+                        onAction = { action ->
+                            settingsViewModel.onAction(action)
+                        },
+                    )
+                }
+
                 entry<Route.Dialog.EventDialog> { dialog ->
                     EventScreen(
                         eventDialog = dialog,
                     )
-                }
-
-                entry<Route.Dialog.NewsList> {
-                    NewsScreen()
                 }
 
                 entry<Route.Dialog.NewsDialog> { dialog ->

@@ -23,20 +23,6 @@ fun AppBottonNavBarWidget() {
 
     AppNavigationBar(
         barItems = {
-            AppNavigationBarItem(
-                barItem = remember {
-                    BarItem(
-                        title = R.string.review,
-                        iconRes = R.drawable.review,
-                        selectedIconRes = R.drawable.review_fill,
-                    )
-                },
-                isSelected = state.currentPage is Route.Page.Review
-            ) {
-                viewModel.onAction(
-                    AppNavBarAction.OnNavigatePage(Route.Page.Review)
-                )
-            }
 
             AppNavigationBarItem(
                 barItem = remember {
@@ -53,6 +39,24 @@ fun AppBottonNavBarWidget() {
                     )
                 }
             )
+
+
+            AppNavigationBarItem(
+                barItem = remember {
+                    BarItem(
+                        title = R.string.news,
+                        iconRes = R.drawable.news,
+                        selectedIconRes = R.drawable.news,
+                    )
+                },
+                showBadge = state.updatesAvailable,
+                isSelected = state.currentPage is Route.Page.News,
+            ) {
+                viewModel.onAction(
+                    AppNavBarAction.OnNavigatePage(Route.Page.News)
+                )
+            }
+
             AppNavigationBarItem(
                 barItem = remember {
                     BarItem(
@@ -71,18 +75,18 @@ fun AppBottonNavBarWidget() {
             AppNavigationBarItem(
                 barItem = remember {
                     BarItem(
-                        title = R.string.settings,
-                        iconRes = R.drawable.settings,
-                        selectedIconRes = R.drawable.settings_fill,
+                        title = R.string.review,
+                        iconRes = R.drawable.review,
+                        selectedIconRes = R.drawable.review_fill,
                     )
                 },
-                showBadge = state.updatesAvailable,
-                isSelected = state.currentPage is Route.Page.Settings,
+                isSelected = state.currentPage is Route.Page.Review
             ) {
                 viewModel.onAction(
-                    AppNavBarAction.OnNavigatePage(Route.Page.Settings)
+                    AppNavBarAction.OnNavigatePage(Route.Page.Review)
                 )
             }
+
         },
         isDarkTheme = state.theme.isDarkTheme()
     )

@@ -10,24 +10,18 @@ class AppRouterImpl @Inject constructor() : AppRouter {
 
     override val dialogBackStack = mutableStateListOf<Route.Dialog>(Route.Dialog.Empty)
 
-    override fun openPage(page: Route.Page) {
-        when {
-            pageBackStack.size == 1 -> pageBackStack.add(page)
-            page is Route.Page.Schedule -> pageBackStack.removeAt(pageBackStack.lastIndex)
-            else -> pageBackStack[pageBackStack.lastIndex] = page
+    override fun navigateTo(
+        route: Route,
+        back: Boolean
+    ) {
+        when (route) {
+            is Route.Page -> openPage(route)
+            is Route.Dialog -> {
+                dialogBackStack.add(route)
+            }
         }
-    }
 
-    override fun navigateToStartRage() {
-        if (lastPage() !is Route.Page.Schedule) {
-            openPage(Route.Page.Schedule)
-        } else {
-            pageBackStack[pageBackStack.lastIndex] = Route.Page.Schedule
-        }
-    }
-
-    override fun openDialog(dialog: Route.Dialog) {
-        dialogBackStack.add(dialog)
+        if (back) onBack()
     }
 
     override fun onBack() {
@@ -42,4 +36,14 @@ class AppRouterImpl @Inject constructor() : AppRouter {
     }
 
     override fun lastPage() = pageBackStack.last()
+
+    private fun openPage(page: Route.Page) {
+        when {
+            page is Route.Page.Schedule -> if (pageBackStack.size > 1) {
+                pageBackStack.removeAt(pageBackStack.lastIndex)
+            }
+            pageBackStack.size == 1 -> pageBackStack.add(page)
+            else -> pageBackStack[pageBackStack.lastIndex] = page
+        }
+    }
 }

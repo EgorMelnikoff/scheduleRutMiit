@@ -32,11 +32,12 @@ internal fun ReviewTopBarWidget(
     scrollBehavior: TopAppBarScrollBehavior,
     overlappedFraction: Float,
     showTopBarActions: Boolean,
+    usedPhoto: Boolean,
     reviewState: ReviewState,
     onAction: (ReviewAction) -> Unit
 ) {
     val contentColor by animateColorAsState(
-        targetValue = if (reviewState.usedPhoto) {
+        targetValue = if (usedPhoto) {
             lerp(
                 start = AppTheme.colors.onPrimary,
                 stop = AppTheme.colors.onBackground,
@@ -75,38 +76,54 @@ internal fun ReviewTopBarWidget(
                 }
             }
         },
-        scrollBehavior = if (reviewState.usedPhoto) scrollBehavior else null,
+        scrollBehavior = if (usedPhoto) scrollBehavior else null,
         contentColor = contentColor
     ) {
-        AnimatedVisibility(
-            enter = fadeIn(),
-            exit = fadeOut(),
-            visible = !reviewState.usedPhoto || showTopBarActions
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
+            AnimatedVisibility(
+                enter = fadeIn(),
+                exit = fadeOut(),
+                visible = !usedPhoto || showTopBarActions
             ) {
-                IconButton(
-                    onClick = {
-                        onAction(ReviewAction.OnFindScheduleClicked)
-                    }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding4)
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.search),
-                        contentDescription = null
-                    )
-                }
-                IconButton(
-                    onClick = {
-                        onAction(ReviewAction.OnCreateScheduleClicked)
+                    IconButton(
+                        onClick = {
+                            onAction(ReviewAction.OnFindScheduleClicked)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.search),
+                            contentDescription = null
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.add),
-                        contentDescription = null
-                    )
+                    IconButton(
+                        onClick = {
+                            onAction(ReviewAction.OnCreateScheduleClicked)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.add),
+                            contentDescription = null
+                        )
+                    }
                 }
+            }
+
+            IconButton(
+                onClick = {
+                    onAction(ReviewAction.OnSettingsClicked)
+                }
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.settings_fill),
+                    contentDescription = null
+                )
             }
         }
     }

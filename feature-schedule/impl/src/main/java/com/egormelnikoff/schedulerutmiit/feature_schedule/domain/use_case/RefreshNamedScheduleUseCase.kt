@@ -1,8 +1,9 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case
 
 import com.egormelnikoff.schedulerutmiit.core.settings.api.repos.SettingsRepos
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.ScheduleDataSource
+import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.mapper.toLong
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
@@ -52,8 +53,8 @@ internal class RefreshNamedScheduleUseCase @Inject constructor(
     }
 
     private fun shouldUpdateNamedSchedule(namedSchedule: NamedSchedule): Boolean {
-        val timeSinceLastUpdate = System.currentTimeMillis() - namedSchedule.lastTimeUpdate
-        val isNotCustomSchedule = namedSchedule.type != NamedScheduleType.MY
+        val timeSinceLastUpdate = System.currentTimeMillis() - namedSchedule.lastTimeUpdate.toLong()
+        val isNotCustomSchedule = namedSchedule.type != ScheduleType.MY
         return timeSinceLastUpdate > SCHEDULE_UPDATE_THRESHOLD_MS && isNotCustomSchedule
     }
 

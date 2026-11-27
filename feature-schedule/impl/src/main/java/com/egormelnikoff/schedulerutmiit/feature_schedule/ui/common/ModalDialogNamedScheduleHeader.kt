@@ -22,7 +22,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.common.consts.DateTimeFormatters.dayMonthNameFormatter
 import com.egormelnikoff.schedulerutmiit.core.ui.components.alert_dialog.AppAlertDialog
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import java.time.Instant
@@ -60,19 +60,14 @@ internal fun ModalDialogNamedScheduleHeader(
             )
 
             when {
-                isSavedNamedSchedule && namedSchedule.type != NamedScheduleType.MY -> {
-                    val lastTimeUpdate = remember(
-                        namedSchedule.lastTimeUpdate
-                    ) {
-                        LocalDateTime.ofInstant(
-                            Instant.ofEpochMilli(namedSchedule.lastTimeUpdate),
-                            ZoneId.systemDefault()
-                        ).format(dayMonthNameFormatter.withLocale(locale))
-
-                    }
-
+                isSavedNamedSchedule && namedSchedule.type != ScheduleType.MY -> {
                     Text(
-                        text = "${stringResource(R.string.current_on)} $lastTimeUpdate",
+                        text = "${stringResource(R.string.current_on)} " +
+                                "${
+                                    namedSchedule.lastTimeUpdate.format(
+                                        dayMonthNameFormatter.withLocale(locale)
+                                    )
+                                }",
                         style = AppTheme.typography.bodyMedium,
                         color = AppTheme.colors.onSecondaryContainer,
                         overflow = TextOverflow.Ellipsis,

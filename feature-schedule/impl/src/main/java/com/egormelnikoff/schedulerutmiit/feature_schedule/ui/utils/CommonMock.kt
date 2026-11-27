@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils
 
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.core.common.extension.emptyDateTime
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
@@ -57,9 +58,9 @@ internal val namedScheduleMock = NamedSchedule(
     fullName = "УВП-411",
     shortName = "УВП-411",
     apiId = null,
-    type = NamedScheduleType.GROUP,
+    type = ScheduleType.GROUP,
     isDefault = true,
-    lastTimeUpdate = 0L
+    lastTimeUpdate = emptyDateTime()
 )
 
 internal val periodicScheduleMock = Schedule(

@@ -52,7 +52,7 @@ class AppNavBarViewModel @Inject constructor(
         if (page == screenState.currentPage) {
 
         } else {
-            appRouter.openPage(page)
+            appRouter.navigateTo(page)
         }
     }
 }

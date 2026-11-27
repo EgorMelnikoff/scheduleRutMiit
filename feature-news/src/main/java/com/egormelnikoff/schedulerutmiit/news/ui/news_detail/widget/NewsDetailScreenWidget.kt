@@ -1,5 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.news.ui.news_detail.widget
 
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import com.egormelnikoff.schedulerutmiit.core.ui.widget.LoadingScreen
 import com.egormelnikoff.schedulerutmiit.news.ui.news_detail.NewsDetailAction

@@ -18,6 +18,8 @@ fun LocalDateTime.toUtcDateTime(
     .withZoneSameInstant(ZoneOffset.UTC)
     .toLocalDateTime()
 
+fun emptyDateTime(): LocalDateTime = LocalDateTime.of(0, 0, 0, 0, 0)
+
 fun LocalDateTime.replaceDate(
     date: LocalDate
 ): LocalDateTime = date.atTime(this.toLocalTime())

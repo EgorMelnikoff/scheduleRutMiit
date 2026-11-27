@@ -34,7 +34,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.components.chip.AppAssistChip
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.ModalDialogNamedScheduleHeader
@@ -180,7 +180,7 @@ internal fun ScheduleSheetWidget(
             }
         }
 
-        if (namedSchedule.type != NamedScheduleType.MY) {
+        if (namedSchedule.type != ScheduleType.MY) {
             ColumnGroup(
                 modifier = Modifier.padding(horizontal = AppTheme.paddings.padding16),
                 items = schedules.map { schedule ->

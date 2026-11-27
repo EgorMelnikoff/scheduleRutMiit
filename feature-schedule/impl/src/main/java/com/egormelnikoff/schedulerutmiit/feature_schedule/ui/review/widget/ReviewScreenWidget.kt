@@ -21,6 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
+import com.egormelnikoff.schedulerutmiit.core.settings.api.model.AppSettings
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerWidth
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
@@ -33,6 +36,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.reviewStateMo
 @Composable
 internal fun ReviewScreenWidget(
     contentPadding: PaddingValues,
+    appSettings: AppSettings?,
     reviewState: ReviewState,
     onAction: (ReviewAction) -> Unit,
 ) {
@@ -49,10 +53,10 @@ internal fun ReviewScreenWidget(
         mutableStateOf(false)
     }
 
-    if (reviewState.usedPhoto) {
+    if (appSettings?.usedImageInReview == true) {
         ReviewScreenStatusBarEffect(
             overlappedFraction = overlappedFraction,
-            isDarkTheme = reviewState.theme.isDarkTheme()
+            isDarkTheme = appSettings.themePreferences.theme.isDarkTheme()
         )
     }
 
@@ -63,6 +67,7 @@ internal fun ReviewScreenWidget(
                 scrollBehavior = scrollBehavior,
                 overlappedFraction = overlappedFraction,
                 showTopBarActions = showTopBarActions,
+                usedPhoto = appSettings?.usedImageInReview == true,
                 reviewState = reviewState,
                 onAction = onAction
             )
@@ -73,12 +78,12 @@ internal fun ReviewScreenWidget(
                 .fillMaxSize()
                 .background(AppTheme.colors.background),
             contentPadding = PaddingValues(
-                top = if (reviewState.usedPhoto) 0.dp else internalPadding.calculateTopPadding() + AppTheme.paddings.padding12,
+                top = if (appSettings?.usedImageInReview == true) 0.dp else internalPadding.calculateTopPadding() + AppTheme.paddings.padding12,
                 bottom = contentPadding.calculateBottomPadding()
             ),
             verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding8)
         ) {
-            if (reviewState.usedPhoto) {
+            if (appSettings?.usedImageInReview == true) {
                 reviewImageWidget(reviewState)
 
                 reviewActionsWidget(
@@ -136,6 +141,7 @@ internal fun ReviewScreenWidgetWithImagePreview() {
         ReviewScreenWidget(
             contentPadding = PaddingValues(AppTheme.paddings.none),
             reviewState = reviewStateMock,
+            appSettings = null,
             onAction = {}
         )
     }
@@ -147,9 +153,8 @@ internal fun ReviewScreenWidgetWithoutImagePreview() {
     PreviewLightTheme {
         ReviewScreenWidget(
             contentPadding = PaddingValues(AppTheme.paddings.none),
-            reviewState = reviewStateMock.copy(
-                usedPhoto = false
-            ),
+            reviewState = reviewStateMock,
+            appSettings = null,
             onAction = {}
         )
     }

@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.domain.use_case
 
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedScheduleWithSchedules
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
@@ -8,6 +8,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.ScheduleWithEvents
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.TimetableType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.repos.NamedScheduleRepos
+import com.egormelnikoff.schedulerutmiit.core.common.extension.emptyDateTime
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -27,9 +28,9 @@ internal class AddCustomNamedScheduleUseCase @Inject constructor(
                     fullName = name,
                     shortName = name,
                     apiId = null,
-                    type = NamedScheduleType.MY,
+                    type = ScheduleType.MY,
                     isDefault = false,
-                    lastTimeUpdate = 0L
+                    lastTimeUpdate = emptyDateTime()
                 ),
                 schedulesWithEvents = listOf(
                     ScheduleWithEvents(
@@ -37,7 +38,7 @@ internal class AddCustomNamedScheduleUseCase @Inject constructor(
                             id = 0,
                             isDefault = true,
                             namedScheduleId = 0,
-                            timetableId = "d=${startDate};t=2",
+                            timetableId = "${startDate}${timetableType.id}",
                             timetableType = timetableType,
                             downloadUrl = null,
                             startDate = startDate,

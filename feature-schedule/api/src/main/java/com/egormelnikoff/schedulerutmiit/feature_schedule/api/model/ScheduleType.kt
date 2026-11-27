@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.api.model
 
-enum class NamedScheduleType(
+enum class ScheduleType(
     val typeName: String
 ) {
     GROUP("group"),

@@ -23,7 +23,7 @@ internal class NewsListViewModel @Inject constructor(
 
     override fun onAction(action: NewsListAction) {
         when (action) {
-            is NewsListAction.OnNewsClick -> appRouter.openDialog(Route.Dialog.NewsDialog(action.newsId))
+            is NewsListAction.OnNewsClick -> appRouter.navigateTo(Route.Dialog.NewsDialog(action.newsId))
         }
     }
 }

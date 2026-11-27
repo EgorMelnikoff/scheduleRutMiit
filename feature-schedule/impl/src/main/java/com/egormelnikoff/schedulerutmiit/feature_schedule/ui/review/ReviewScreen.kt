@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.egormelnikoff.schedulerutmiit.core.settings.api.model.AppSettings
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.PreviewLightTheme
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.Initialize
@@ -17,6 +18,7 @@ import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.utils.reviewStateMo
 @Composable
 fun ReviewScreen(
     contentPadding: PaddingValues,
+    appSettings: AppSettings?,
 ) {
     val viewModel = hiltViewModel<ReviewViewModel>()
     viewModel.Initialize()
@@ -25,6 +27,7 @@ fun ReviewScreen(
     ReviewScreenWidget(
         contentPadding = contentPadding,
         reviewState = reviewScreenState,
+        appSettings = appSettings,
         onAction = { action ->
             viewModel.onAction(action)
         }
@@ -38,6 +41,7 @@ internal fun ReviewScreenPreview(){
         ReviewScreenWidget(
             contentPadding = PaddingValues(AppTheme.paddings.none),
             reviewState = reviewStateMock,
+            appSettings = null,
             onAction = {}
         )
     }

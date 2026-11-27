@@ -18,7 +18,7 @@ import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.top_bar.AppTopBar
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
 
@@ -31,7 +31,7 @@ internal fun ScheduleHeaderWidget(
     onAction: (ScheduleAction) -> Unit
 ) {
     val isCustomSchedule = remember(namedSchedule.type) {
-        namedSchedule.type == NamedScheduleType.MY
+        namedSchedule.type == ScheduleType.MY
     }
 
     AppTopBar(

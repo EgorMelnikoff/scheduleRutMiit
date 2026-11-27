@@ -15,13 +15,16 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import com.egormelnikoff.schedulerutmiit.core.ui.components.SpacerHeight
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 import com.egormelnikoff.schedulerutmiit.news.domain.model.News
 
 internal fun LazyListScope.newsDetailImageWidget(
+    topPadding: Dp,
     news: News
 ) {
     item {
@@ -63,6 +66,8 @@ internal fun LazyListScope.newsDetailImageWidget(
                         )
                 )
             }
+        } else {
+            SpacerHeight(topPadding)
         }
     }
 }

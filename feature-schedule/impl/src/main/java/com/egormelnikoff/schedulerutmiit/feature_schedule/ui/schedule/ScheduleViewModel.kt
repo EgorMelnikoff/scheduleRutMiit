@@ -197,7 +197,7 @@ internal class ScheduleViewModel @Inject constructor(
             }
 
             is ScheduleAction.OnEventClicked -> onEventClicked(action.id, action.date)
-            is ScheduleAction.OnEditEventClicked -> appRouter.openDialog(
+            is ScheduleAction.OnEditEventClicked -> appRouter.navigateTo(
                 Route.Dialog.EditEventDialog(
                     eventId = action.eventId,
                     scheduleId = action.scheduleId
@@ -210,7 +210,7 @@ internal class ScheduleViewModel @Inject constructor(
             ScheduleAction.OnCancelLoading -> cancelLoading()
             ScheduleAction.OnCancelRefresh -> cancelRefresh()
 
-            is ScheduleAction.OnOpenDialog -> appRouter.openDialog(action.dialog)
+            is ScheduleAction.OnOpenDialog -> appRouter.navigateTo(action.dialog)
         }
     }
 
@@ -231,7 +231,7 @@ internal class ScheduleViewModel @Inject constructor(
     }
 
     private fun onEventClicked(eventId: Long, date: LocalDate?) {
-        appRouter.openDialog(
+        appRouter.navigateTo(
             Route.Dialog.EventDialog(
                 eventId = eventId,
                 date = date

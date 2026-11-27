@@ -10,7 +10,7 @@ import com.egormelnikoff.schedulerutmiit.core.network.handler.errorHandler
 import com.egormelnikoff.schedulerutmiit.core.ui.view_model.BaseViewModel
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.cache.FetchScheduleCache
 import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.FetchScheduleEvent
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.EventDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Group
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Lecturer
@@ -125,11 +125,10 @@ internal class EventViewModel @AssistedInject constructor(
                 FetchScheduleEvent(
                     name = group.name,
                     apiId = group.id,
-                    type = NamedScheduleType.GROUP
+                    type = ScheduleType.GROUP
                 )
             )
-            appRouter.navigateToStartRage()
-            appRouter.onBack()
+            appRouter.navigateTo(Route.Page.Schedule, true)
         }
     }
 
@@ -145,11 +144,10 @@ internal class EventViewModel @AssistedInject constructor(
                 FetchScheduleEvent(
                     name = lecturer.shortFio,
                     apiId = lecturer.id,
-                    type = NamedScheduleType.PERSON
+                    type = ScheduleType.PERSON
                 )
             )
-            appRouter.navigateToStartRage()
-            appRouter.onBack()
+            appRouter.navigateTo(Route.Page.Schedule, true)
         }
     }
 
@@ -166,11 +164,10 @@ internal class EventViewModel @AssistedInject constructor(
                 FetchScheduleEvent(
                     name = room.name,
                     apiId = room.id,
-                    type = NamedScheduleType.ROOM
+                    type = ScheduleType.ROOM
                 )
             )
-            appRouter.navigateToStartRage()
-            appRouter.onBack()
+            appRouter.navigateTo(Route.Page.Schedule, true)
         }
     }
 
@@ -189,11 +186,11 @@ internal class EventViewModel @AssistedInject constructor(
     private fun onEditEventClicked(
         eventId: Long, scheduleId: Long
     ) {
-        appRouter.onBack()
-        appRouter.openDialog(
+        appRouter.navigateTo(
             Route.Dialog.EditEventDialog(
                 eventId, scheduleId
-            )
+            ),
+            true
         )
     }
 

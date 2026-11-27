@@ -140,13 +140,6 @@ internal class SettingsLocal @Inject constructor(
         preferences.getSchedulesDeletable()
     }
 
-    fun observeReviewSettings() = context.dataStore.data.map { preferences ->
-        ReviewSettings(
-            theme = preferences.getTheme(),
-            usedImageInReview = preferences[PreferencesKeys.USED_IMAGE_IN_REVIEW] ?: true,
-        )
-    }
-
     fun observeThemePreferences() = context.dataStore.data.map { preferences ->
         preferences.getThemePreferences()
     }

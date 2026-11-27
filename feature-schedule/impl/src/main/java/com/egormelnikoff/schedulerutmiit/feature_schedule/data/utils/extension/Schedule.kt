@@ -1,7 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension
 
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Recurrence
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Schedule
@@ -55,8 +55,8 @@ internal fun Schedule.getEventsForDate(
     return displayedEvents.getGroupedEvents()
 }
 
-fun String.getShortName(type: NamedScheduleType): String {
-    if (type != NamedScheduleType.PERSON) return this
+fun String.getShortName(type: ScheduleType): String {
+    if (type != ScheduleType.PERSON) return this
     val nameParts = this.split(" ")
     return if (nameParts.size == 3) {
         "${nameParts.first()} ${nameParts[1][0]}. ${nameParts[2][0]}."

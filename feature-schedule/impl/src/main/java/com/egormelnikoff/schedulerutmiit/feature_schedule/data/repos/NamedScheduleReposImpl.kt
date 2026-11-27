@@ -1,6 +1,6 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.data.repos
 
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.NamedScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.ScheduleDataSource
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.ScheduleRemoteDataSource
@@ -45,7 +45,7 @@ internal class NamedScheduleReposImpl @Inject constructor(
         namedScheduleId: Long,
         name: String,
         apiId: Int,
-        type: NamedScheduleType,
+        type: ScheduleType,
     ): Pair<Boolean, NamedScheduleWithSchedules> {
         if (namedScheduleId != 0L) {
             return true to namedScheduleDataSource.getById(namedScheduleId)
@@ -62,7 +62,7 @@ internal class NamedScheduleReposImpl @Inject constructor(
         namedScheduleId: Long,
         name: String,
         apiId: Int,
-        type: NamedScheduleType
+        type: ScheduleType
     ) {
         if (namedScheduleId != 0L) {
             source.value = ScheduleSource.ById(namedScheduleId)

@@ -81,8 +81,6 @@ internal class SettingsReposImpl @Inject constructor(
 
     override fun observeAppSettings() = settingsLocal.observeAppSettings()
 
-    override fun observeReviewSettings() = settingsLocal.observeReviewSettings()
-
     override fun observeThemePreferences() = settingsLocal.observeThemePreferences()
 
     override suspend fun updateLatestRelease(): LatestRelease {

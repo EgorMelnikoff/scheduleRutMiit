@@ -14,6 +14,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.egormelnikoff.schedulerutmiit.core.common.R
 import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
+import com.egormelnikoff.schedulerutmiit.core.settings.api.model.ScheduleView
 import com.egormelnikoff.schedulerutmiit.core.ui.components.bottom_sheet.AppAlertBottomSheet
 import com.egormelnikoff.schedulerutmiit.core.ui.components.buttom.AppButton
 import com.egormelnikoff.schedulerutmiit.core.ui.components.calendar.state.CalendarData
@@ -53,7 +54,17 @@ internal fun ScheduleScreenWidget(
                     onAction(ScheduleAction.OnCancelLoading)
                 }
             }
-            ScheduleLoadingWidget()
+
+            when (state.scheduleView) {
+                ScheduleView.CALENDAR -> {
+                    SchedulePeriodicLoadingWidget()
+                }
+
+                ScheduleView.LIST -> {
+                    ScheduleNonPeriodicLoadingWidget()
+                }
+            }
+
         }
 
         is ScheduleUiState.Mode.Empty -> {
@@ -113,7 +124,7 @@ internal fun ScheduleScreenWidget(
                 button = {
                     AppButton(
                         modifier = Modifier.fillMaxWidth(),
-                        buttonTitle = stringResource(R.string.return_default),
+                        buttonTitle = stringResource(R.string.back),
                         imageVector = ImageVector.vectorResource(R.drawable.back),
                         onClick = {
                             onAction(ScheduleAction.OnReturnToDefault)

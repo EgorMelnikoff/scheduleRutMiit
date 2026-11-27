@@ -28,7 +28,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AppCell
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.common.LargeIconButton
 import com.egormelnikoff.schedulerutmiit.feature_schedule.ui.schedule.ScheduleAction
@@ -99,19 +99,9 @@ internal fun SchedulesSheetWidget(
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
          ) {
+            val locale = LocalLocale.current.platformLocale
+
             namedSchedules.forEachIndexed { index, namedSchedule ->
-                val locale = LocalLocale.current.platformLocale
-
-                val lastTimeUpdate = remember(
-                    namedSchedule.lastTimeUpdate
-                ) {
-                    LocalDateTime.ofInstant(
-                        Instant.ofEpochMilli(namedSchedule.lastTimeUpdate),
-                        ZoneId.systemDefault()
-                    ).format(dayMonthNameFormatter.withLocale(locale))
-
-                }
-
                 AppCell(
                     contentPadding = PaddingValues(
                         horizontal = AppTheme.paddings.padding16,
@@ -133,10 +123,11 @@ internal fun SchedulesSheetWidget(
                                     }
                                 )
                             },
-                            subtitle = if (namedSchedule.type != NamedScheduleType.MY){
+                            subtitle = if (namedSchedule.type != ScheduleType.MY){
                                 {
                                     TextBlock(
-                                        text = "${stringResource(R.string.current_on)} $lastTimeUpdate",
+                                        text = "${stringResource(R.string.current_on)} " +
+                                                "${namedSchedule.lastTimeUpdate.format(dayMonthNameFormatter.withLocale(locale))}",
                                         typography = AppTheme.typography.bodyMedium,
                                         color = AppTheme.colors.onSecondaryContainer,
                                     )

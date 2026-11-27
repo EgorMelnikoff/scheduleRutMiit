@@ -1,6 +1,7 @@
 package com.egormelnikoff.schedulerutmiit.feature_schedule.ui.review.widget
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -28,6 +29,11 @@ internal fun ReviewScheduleSheet(
 ) {
     AppBottomSheet(
         isDarkTheme = true,
+        showHandle = false,
+        contentPadding = PaddingValues(
+            top = AppTheme.paddings.padding8,
+            bottom = AppTheme.paddings.padding12
+        ),
         verticalArrangement = Arrangement.spacedBy(AppTheme.paddings.padding16),
         onDismiss = {
             onAction(

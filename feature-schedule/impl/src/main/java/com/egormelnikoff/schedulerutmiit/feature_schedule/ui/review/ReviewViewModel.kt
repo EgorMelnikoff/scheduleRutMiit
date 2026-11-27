@@ -26,8 +26,7 @@ internal class ReviewViewModel @Inject constructor(
     private val deleteNamedScheduleUseCase: DeleteNamedScheduleUseCase,
 
     private val appRouter: AppRouter,
-    private val namedScheduleRepos: NamedScheduleRepos,
-    private val settingsRepos: SettingsRepos
+    private val namedScheduleRepos: NamedScheduleRepos
 ) : BaseViewModel<ReviewState, ReviewState, ReviewAction>(ReviewState()) {
 
     override fun onScreenInitialized() {
@@ -54,17 +53,6 @@ internal class ReviewViewModel @Inject constructor(
             .onEach { summary ->
                 updateState {
                     copy(summaryState = summary)
-                }
-            }
-            .launchIn(viewModelScope)
-
-        settingsRepos.observeReviewSettings()
-            .onEach { reviewSettings ->
-                updateState {
-                    copy(
-                        theme = reviewSettings.theme,
-                        usedPhoto = reviewSettings.usedImageInReview
-                    )
                 }
             }
             .launchIn(viewModelScope)
@@ -118,31 +106,38 @@ internal class ReviewViewModel @Inject constructor(
                     copy(scheduleSheet = null)
                 }
             }
+
+            ReviewAction.OnSettingsClicked -> onSettingsClicked()
         }
     }
 
+    private fun onSettingsClicked() {
+        appRouter.navigateTo(Route.Dialog.Settings)
+    }
+
+
     private fun onCreateScheduleClicked() {
-        appRouter.openDialog(Route.Dialog.AddScheduleDialog)
+        appRouter.navigateTo(Route.Dialog.AddScheduleDialog)
     }
 
     private fun onFindScheduleClicked() {
-        appRouter.openDialog(Route.Dialog.SearchDialog)
+        appRouter.navigateTo(Route.Dialog.SearchDialog)
     }
 
     private fun onCurriculumClicked() {
-        appRouter.openDialog(Route.Dialog.CurriculumDialog)
+        appRouter.navigateTo(Route.Dialog.CurriculumDialog)
     }
 
     private fun onTasksClicked() {
-        appRouter.openPage(Route.Page.Tasks)
+        appRouter.navigateTo(Route.Page.Tasks)
     }
 
     private fun onNewsCLicked() {
-        appRouter.openDialog(Route.Dialog.NewsList)
+        appRouter.navigateTo(Route.Page.News)
     }
 
     private fun onRenameScheduleClicked(namedScheduleId: Long) {
-        appRouter.openDialog(Route.Dialog.RenameNamedScheduleDialog(namedScheduleId))
+        appRouter.navigateTo(Route.Dialog.RenameNamedScheduleDialog(namedScheduleId))
     }
 
     private fun onSetNamedSchedule(
@@ -155,7 +150,7 @@ internal class ReviewViewModel @Inject constructor(
                 namedScheduleRepos.openDefault()
             } else {
                 namedScheduleRepos.getAndOpen(namedScheduleId)
-                appRouter.navigateToStartRage()
+                appRouter.navigateTo(Route.Page.Schedule)
             }
 
             updateState {

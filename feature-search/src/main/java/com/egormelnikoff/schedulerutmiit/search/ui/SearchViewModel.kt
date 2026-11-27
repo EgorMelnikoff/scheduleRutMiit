@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.egormelnikoff.schedulerutmiit.core.common.error.toAppError
 import com.egormelnikoff.schedulerutmiit.core.navigation.AppRouter
+import com.egormelnikoff.schedulerutmiit.core.navigation.model.Route
 import com.egormelnikoff.schedulerutmiit.core.network.handler.errorHandler
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.UiEvent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.ui_event.sendErrorEvent
@@ -148,11 +149,10 @@ internal class SearchViewModel @Inject constructor(
                 SearchQuery(
                     apiId = refreshArgs.apiId,
                     name = refreshArgs.name,
-                    namedScheduleType = refreshArgs.type
+                    scheduleType = refreshArgs.type
                 )
             )
-            appRouter.onBack()
-            appRouter.navigateToStartRage()
+            appRouter.navigateTo(Route.Page.Schedule, true)
         }
     }
 

@@ -10,7 +10,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.Icon
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.containers.ColumnGroup
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.NamedSchedule
 
 @Composable
@@ -25,19 +25,19 @@ internal fun SchedulesWidget(
                     start = {
                         Icon(
                             icon = when (namedSchedule.type) {
-                                NamedScheduleType.GROUP -> ImageVector.vectorResource(
+                                ScheduleType.GROUP -> ImageVector.vectorResource(
                                     R.drawable.group
                                 )
 
-                                NamedScheduleType.PERSON -> ImageVector.vectorResource(
+                                ScheduleType.PERSON -> ImageVector.vectorResource(
                                     R.drawable.person
                                 )
 
-                                NamedScheduleType.ROOM -> ImageVector.vectorResource(
+                                ScheduleType.ROOM -> ImageVector.vectorResource(
                                     R.drawable.room
                                 )
 
-                                NamedScheduleType.MY -> ImageVector.vectorResource(
+                                ScheduleType.MY -> ImageVector.vectorResource(
                                     R.drawable.edit
                                 )
                             },

@@ -7,9 +7,8 @@ interface AppRouter {
     val pageBackStack: SnapshotStateList<Route.Page>
     val dialogBackStack: SnapshotStateList<Route.Dialog>
 
-    fun openPage(page: Route.Page)
-    fun navigateToStartRage()
-    fun openDialog(dialog: Route.Dialog)
+    fun navigateTo(route: Route, back: Boolean = false)
+
     fun onBack()
     fun lastPage(): Route.Page
 }

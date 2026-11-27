@@ -4,4 +4,4 @@ import com.egormelnikoff.schedulerutmiit.search.data.local.entity.SearchQueryEnt
 import com.egormelnikoff.schedulerutmiit.search.domain.model.SearchQuery
 
 internal fun SearchQueryEntity.toDomain() = SearchQuery(id, name, apiId, namedScheduleType)
-internal fun SearchQuery.toEntity() = SearchQueryEntity(id, name, apiId, namedScheduleType)
+internal fun SearchQuery.toEntity() = SearchQueryEntity(id, name, apiId, scheduleType)

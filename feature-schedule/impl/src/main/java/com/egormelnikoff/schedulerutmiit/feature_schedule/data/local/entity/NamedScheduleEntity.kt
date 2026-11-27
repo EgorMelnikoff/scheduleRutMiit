@@ -3,7 +3,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 
 @Entity(
     tableName = "NamedSchedules"
@@ -15,7 +15,7 @@ internal data class NamedScheduleEntity(
     val fullName: String,
     val shortName: String,
     val apiId: String?,
-    val type: NamedScheduleType,
+    val type: ScheduleType,
     @ColumnInfo(name = "isDefaultNamedSchedule")
     val isDefault: Boolean,
     val lastTimeUpdate: Long,

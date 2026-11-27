@@ -5,49 +5,49 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 @Serializable
-sealed class Route : NavKey {
-    sealed class Page : Route() {
-        data object Review : Page()
-        data object Schedule : Page()
-        data object Tasks : Page()
-        data object Settings : Page()
+sealed interface Route : NavKey {
+    sealed interface Page : Route {
+        data object Review : Page
+        data object Schedule : Page
+        data object Tasks : Page
+        data object News : Page
     }
 
-    sealed class Dialog : Route() {
-        data object Empty : Dialog()
+    sealed interface Dialog : Route {
+        data object Empty : Dialog
 
-        data object NewsList : Dialog()
+        data object Settings : Dialog
 
         data class EventDialog(
             val eventId: Long,
             val date: LocalDate?
-        ) : Dialog()
+        ) : Dialog
 
         data class EditTaskDialog(
             val taskId: Long,
             val date: LocalDate
-        ) : Dialog()
+        ) : Dialog
 
         data class EditEventDialog(
             val eventId: Long?,
             val scheduleId: Long
-        ) : Dialog()
+        ) : Dialog
 
         data class HiddenEventsDialog(
             val scheduleId: Long
-        ) : Dialog()
+        ) : Dialog
 
         data class RenameNamedScheduleDialog(
             val namedScheduleId: Long
-        ) : Dialog()
+        ) : Dialog
 
         data class NewsDialog(
             val newsId: Long
-        ) : Dialog()
+        ) : Dialog
 
-        data object SearchDialog : Dialog()
-        data object CurriculumDialog : Dialog()
-        data object AddScheduleDialog : Dialog()
-        data object AddTaskDialog : Dialog()
+        data object SearchDialog : Dialog
+        data object CurriculumDialog : Dialog
+        data object AddScheduleDialog : Dialog
+        data object AddTaskDialog : Dialog
     }
 }

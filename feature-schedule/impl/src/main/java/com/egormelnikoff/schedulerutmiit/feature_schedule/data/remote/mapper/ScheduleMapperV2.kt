@@ -2,7 +2,7 @@ package com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.mapper
 
 import com.egormelnikoff.schedulerutmiit.core.common.extension.getFirstDayOfWeek
 import com.egormelnikoff.schedulerutmiit.core.network.endpoint.Endpoints
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.remote.model.ScheduleEventDtoV2
 import com.egormelnikoff.schedulerutmiit.feature_schedule.data.utils.extension.getShortName
 import com.egormelnikoff.schedulerutmiit.feature_schedule.domain.model.Event
@@ -23,7 +23,7 @@ import kotlin.math.abs
 internal class ScheduleMapperV2 @Inject constructor() {
     fun map(
         namedScheduleId: Long,
-        namedScheduleType: NamedScheduleType,
+        scheduleType: ScheduleType,
         apiId: Int,
         dto: List<ScheduleEventDtoV2>
     ): List<ScheduleWithEvents> {
@@ -47,7 +47,7 @@ internal class ScheduleMapperV2 @Inject constructor() {
                     namedScheduleId = namedScheduleId,
                     timetableId = "${schedule.valueFrom}${schedule.timetableType.id}",
                     downloadUrl = Endpoints.downloadUrl(
-                        isPerson = namedScheduleType.isPerson(),
+                        isPerson = scheduleType.isPerson(),
                         apiId = apiId,
                         type = schedule.timetableType.id
                     ),
@@ -74,8 +74,8 @@ internal class ScheduleMapperV2 @Inject constructor() {
         }
     }
 
-    private fun NamedScheduleType.isPerson(): Boolean {
-        return if (this == NamedScheduleType.PERSON) true else false
+    private fun ScheduleType.isPerson(): Boolean {
+        return if (this == ScheduleType.PERSON) true else false
     }
 
     private fun Int.mapToTimetableType(): TimetableType {
@@ -202,7 +202,7 @@ internal class ScheduleMapperV2 @Inject constructor() {
             Lecturer(
                 id = lecturer.selectFirst("id")?.text()?.toIntOrNull() ?: -1,
                 shortFio = if (fullFio == null) shortFio.getShortName(
-                    NamedScheduleType.PERSON
+                    ScheduleType.PERSON
                 ) else shortFio,
                 fullFio = fullFio ?: shortFio,
                 hint = lecturer.selectFirst("description")?.text().orEmpty(),

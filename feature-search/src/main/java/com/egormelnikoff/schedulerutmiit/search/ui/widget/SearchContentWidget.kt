@@ -22,7 +22,7 @@ import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.AsyncImage
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.CenterContent
 import com.egormelnikoff.schedulerutmiit.core.ui.components.cell.TextBlock
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
-import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.NamedScheduleType
+import com.egormelnikoff.schedulerutmiit.feature_schedule.api.model.ScheduleType
 import com.egormelnikoff.schedulerutmiit.search.domain.model.RefreshArgs
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchAction
 import com.egormelnikoff.schedulerutmiit.search.ui.SearchState
@@ -71,7 +71,7 @@ internal fun SearchContentWidget(
                                     RefreshArgs(
                                         group.name,
                                         group.id,
-                                        NamedScheduleType.GROUP
+                                        ScheduleType.GROUP
                                     )
                                 )
                             )
@@ -135,7 +135,7 @@ internal fun SearchContentWidget(
                                     RefreshArgs(
                                         person.name,
                                         person.id,
-                                        NamedScheduleType.PERSON
+                                        ScheduleType.PERSON
                                     )
                                 )
                             )

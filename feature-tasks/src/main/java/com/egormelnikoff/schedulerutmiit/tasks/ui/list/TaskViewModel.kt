@@ -50,10 +50,10 @@ internal class TaskViewModel @Inject constructor(
     }
 
     fun onEditTaskClicked(taskId: Long, date: LocalDate) {
-        appRouter.openDialog(Route.Dialog.EditTaskDialog(taskId, date))
+        appRouter.navigateTo(Route.Dialog.EditTaskDialog(taskId, date))
     }
 
     fun onAddTaskClicked() {
-        appRouter.openDialog(Route.Dialog.AddTaskDialog)
+        appRouter.navigateTo(Route.Dialog.AddTaskDialog)
     }
 }

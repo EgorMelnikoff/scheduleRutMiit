@@ -15,7 +15,7 @@ internal interface SearchApi {
         @Query("name")
         name: String,
         @Query("profOnly")
-        profOnly: Boolean = false,
+        profOnly: Boolean = true,
         @Query("chunk")
         chunk: Int = 50,
         @Query("num")

@@ -8,11 +8,17 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
@@ -23,41 +29,14 @@ import androidx.compose.ui.unit.Dp
 import com.egormelnikoff.schedulerutmiit.core.ui.theme.AppTheme
 
 @Composable
-fun AppShimmerCard(
-    height: Dp? = null,
-    width: Dp? = null,
-    shape: CornerBasedShape? = null
+fun ShimmerBox(
+    modifier: Modifier = Modifier,
+    color: Color = AppTheme.colors.primaryContainer,
+    shimmerWidth: Float = 1000f,
+    content: @Composable (Brush) -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .let {
-                if (width != null) {
-                    it.width(width)
-                } else {
-                    it.fillMaxWidth()
-                }
-            }
-            .let {
-                if (height != null) {
-                    it.height(height)
-                } else it
-            }
-            .clip(shape ?: AppTheme.shapes.medium)
-            .shimmer(
-                color = AppTheme.colors.primaryContainer
-            )
-
-    )
-}
-
-fun Modifier.shimmer(
-    color: Color
-): Modifier = composed {
     val transition = rememberInfiniteTransition(label = "shimmer")
-
-    val shimmerWidth = 1000f
-
-    val translateAnim = transition.animateFloat(
+    val translateAnim by transition.animateFloat(
         initialValue = -shimmerWidth,
         targetValue = shimmerWidth * 2,
         animationSpec = infiniteRepeatable(
@@ -66,7 +45,8 @@ fun Modifier.shimmer(
                 easing = LinearEasing
             ),
             repeatMode = RepeatMode.Restart
-        )
+        ),
+        label = "shimmer_translate"
     )
 
     val brush = Brush.linearGradient(
@@ -75,9 +55,28 @@ fun Modifier.shimmer(
             color.copy(alpha = 0.3f),
             color.copy(alpha = 0.6f),
         ),
-        start = Offset(translateAnim.value, 0f),
-        end = Offset(translateAnim.value + shimmerWidth, shimmerWidth)
+        start = Offset(translateAnim, 0f),
+        end = Offset(translateAnim + shimmerWidth, shimmerWidth)
     )
 
-    background(brush)
+    Box(modifier = modifier) {
+        content(brush)
+    }
+}
+
+@Composable
+fun AppShimmerCard(
+    brush: Brush,
+    modifier: Modifier = Modifier,
+    height: Dp? = null,
+    width: Dp? = null,
+    shape: CornerBasedShape? = null
+) {
+    Box(
+        modifier = modifier
+            .let { if (width != null) it.width(width) else it.fillMaxWidth() }
+            .let { if (height != null) it.height(height) else it }
+            .clip(shape ?: AppTheme.shapes.medium)
+            .background(brush)
+    )
 }
