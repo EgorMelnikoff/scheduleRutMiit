@@ -39,12 +39,12 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
 
     implementation(libs.bundles.compose)
-    implementation(libs.androidx.navigation3.ui)
-    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     api(libs.coil.compose)
 
     androidTestImplementation(libs.bundles.androidx.ui.test)
     debugImplementation(libs.bundles.androidx.ui.debug)
+
+    testImplementation(libs.bundles.test)
 
     ksp(libs.hilt.android.compiler)
 }

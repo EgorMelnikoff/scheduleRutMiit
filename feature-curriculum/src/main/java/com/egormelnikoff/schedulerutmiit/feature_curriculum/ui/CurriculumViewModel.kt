@@ -35,7 +35,7 @@ internal class CurriculumViewModel @Inject constructor(
                 .debounce(300.milliseconds)
                 .distinctUntilChanged()
                 .mapLatest { queryId ->
-                    if (queryId.length < 3) {
+                    if (queryId.isBlank()) {
                         updateState {
                             setDefaultState()
                         }

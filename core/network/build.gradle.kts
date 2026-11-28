@@ -30,7 +30,6 @@ android {
 
 dependencies {
     implementation(projects.core.common)
-    implementation(projects.featureSchedule.api)
 
     api(libs.retrofit)
     api(libs.jsoup)
@@ -41,6 +40,5 @@ dependencies {
 
     testImplementation(libs.bundles.test)
 
-    ksp(libs.androidx.hilt.compiler)
     ksp(libs.hilt.android.compiler)
 }

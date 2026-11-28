@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -49,12 +48,10 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.common)
     implementation(projects.core.settings.api)
     implementation(projects.core.settings.impl)
     implementation(projects.core.navigation)
     implementation(projects.core.ui)
-    implementation(projects.featureSchedule.api)
     implementation(projects.featureSchedule.impl)
     implementation(projects.featureSearch)
     implementation(projects.featureCurriculum)
@@ -70,10 +67,8 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.navigation)
     implementation(libs.firebase.analytics)
-    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.hilt.android)
-    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.androidx.ui.test)

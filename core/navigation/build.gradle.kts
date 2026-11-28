@@ -32,7 +32,6 @@ dependencies {
     implementation(projects.core.common)
 
     api(libs.bundles.navigation)
-    implementation(libs.bundles.android.core)
     implementation(libs.hilt.android)
     implementation(libs.kotlinx.serialization.json)
 
